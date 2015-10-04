@@ -1,0 +1,8 @@
+include_defs("//defs/local.defs")
+
+local_jar(
+  name = "android-23",
+  binary_jar = "${ANDROID_SDK_HOME}/platforms/android-23/android.jar",
+  license = "Apache-2.0",
+  visibility = [ "PUBLIC" ],
+)

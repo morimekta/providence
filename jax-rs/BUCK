@@ -1,0 +1,9 @@
+java_library(
+  name = "jax-rs",
+  srcs = glob(["src/**/*.java"]),
+  deps = [
+    "//core:core",
+    "//third-party/javax-ws-rs:javax-ws-rs-api"
+  ],
+  visibility = [ "PUBLIC" ],
+)

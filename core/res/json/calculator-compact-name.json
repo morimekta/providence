@@ -1,0 +1,1 @@
+{"operand":"MULTIPLY","values":[{"operation":{"operand":"ADD","values":[{"integer":1234},{"real":4.321}]}},{"imaginary":{"v":1.7,"i":-2}}]}

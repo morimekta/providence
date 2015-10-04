@@ -1,0 +1,23 @@
+java_library(
+  name = "compiler",
+  srcs = glob(["src/**/*.java"]),
+  deps = [
+    "//core:core",
+    "//reflect:reflect",
+    "//reflect:model",
+    "//third-party/args4j:args4j",
+    "//third-party/json:json",
+    "//utils:utils",
+  ],
+)
+
+java_binary(
+  name = "thrift",
+  deps = [
+    ":compiler",
+  ],
+  main_class = "org.apache.thrift2.compiler.Compiler",
+  visibility = [
+    "PUBLIC"
+  ],
+)

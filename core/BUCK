@@ -1,0 +1,30 @@
+java_library(
+  name = "core",
+  srcs = glob(["src/**/*.java"]),
+  deps = [
+    "//third-party/json:json",
+  ],
+  visibility = [
+    "PUBLIC"
+  ],
+)
+
+java_library(
+  name = "generated",
+  srcs = glob(["generated/**/*.java"]),
+  deps = [
+    ":core",
+    "//third-party/android:android-23",
+  ],
+)
+
+java_test(
+  name = "test",
+  srcs = glob(["test/**/*.java"]),
+  deps = [
+    ":core",
+    ":generated",
+    "//third-party/junit:junit",
+    "//third-party/android:android-23",
+  ],
+)

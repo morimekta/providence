@@ -1,0 +1,9 @@
+java_library(
+  name = "protocol",
+  srcs = glob(["src/**/*.java"]),
+  deps = [
+    "//core:core",
+    "//third-party/thrift:libthrift",
+  ],
+  visibility = [ "PUBLIC" ],
+)

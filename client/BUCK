@@ -1,0 +1,9 @@
+java_library(
+  name = "client",
+  srcs = glob(["src/**/*.java"]),
+  deps = [
+    "//core:core",
+    "//third-party/json:json",
+    "//third-party/google-http:google-http-client",
+  ],
+)

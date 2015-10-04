@@ -1,0 +1,75 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements. See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership. The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License. You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+def define_license(name):
+    genrule(
+        name=name,
+        cmd='ln -s $SRCS $OUT',
+        srcs=['LICENSE-' + name],
+        out='LICENSE-' + name,
+        visibility=['PUBLIC'],
+    )
+
+
+def local_jar(name,
+              binary_jar,
+              license,
+              deps=[],
+              source_jar=None,
+              local_license=False,
+              exported_deps=[],
+              visibility=[]):
+    exported_deps = exported_deps[:]
+    binary_rule_name = '__%s_binary' % name
+    genrule(
+        name=binary_rule_name,
+        cmd='ln -s %s $OUT' % binary_jar,
+        out='%s.jar' % binary_rule_name,
+    )
+    binary_rule = ':' + binary_rule_name
+
+    source_rule = None
+    if source_jar is not None:
+        source_rule_name = '__%s_source' % name
+        genrule(
+            name=source_rule_name,
+            cmd='ln -s %s $OUT' % source_jar,
+            out='%s.jar' % source_rule_name
+        )
+        source_rule = ':' + source_rule_name
+
+    prebuilt_rule = '__%s_jar' % name
+    prebuilt_jar(
+        name=prebuilt_rule,
+        binary_jar=binary_rule,
+        source_jar=source_rule,
+        deps=deps,
+    )
+    exported_deps.append(':' + prebuilt_rule)
+
+    license = ':' + license
+    if not local_license:
+        license = '//third-party' + license
+    license = [license]
+
+    java_library(
+        name=name,
+        resources=license,
+        exported_deps=exported_deps,
+        visibility=visibility,
+    )
