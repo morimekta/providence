@@ -1,8 +1,11 @@
+[android]
+    target = Google Inc.:Google APIs:15
+
 [java]
-  src_roots = /*/src , /*/test , /*/generated , /reflect/model
-  src_level = 7
-  target_level = 7
+    src_roots = /*/src , /*/test , /*/generated , /reflect/model
+    src_level = 7
+    target_level = 7
 
 [maven_repositories]
-  central = https://repo1.maven.org/maven2
-  m2 = ~/.m2/repository
+    central = https://repo1.maven.org/maven2
+    m2 = ~/.m2/repository

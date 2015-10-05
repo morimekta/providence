@@ -23,8 +23,10 @@ projects within the same codebase. This project has at least 2 binaries
 
 Sadly there are no default APT package for buckbuild and android, so it has to
 be installed from source. The location does not matter, as long as it's
-available in the PATH, and android SDK it located at the `ANDROID_SDK_HOME`
+available in the PATH, and android SDK it located at the `ANDROID_HOME`
 location (you may have to set up the env variable yourself).
+
+Make sure to install android API 15 / 4.0.3 (ICE_CREAM_SANDWICH_MR1).
 
 ```
 # sudo apt-get install mvn

@@ -14,7 +14,7 @@ java_library(
   srcs = glob(["generated/**/*.java"]),
   deps = [
     ":core",
-    "//third-party/android:android-23",
+    "//third-party/android:android-sdk",
   ],
 )
 
@@ -25,6 +25,6 @@ java_test(
     ":core",
     ":generated",
     "//third-party/junit:junit",
-    "//third-party/android:android-23",
+    "//third-party/android:android-sdk",
   ],
 )
