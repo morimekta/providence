@@ -2,6 +2,6 @@ include_defs("//defs/maven.defs")
 
 maven_jar(
   name = "json",
-  id = "org.json:json:20141113",
+  id = "org.json:json:20140107",
   license = "org.json",
 )
