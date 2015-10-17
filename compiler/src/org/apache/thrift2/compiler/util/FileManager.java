@@ -27,7 +27,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by morimekta on 19.09.15.
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 19.09.15
  */
 public class FileManager {
     private final File mRoot;

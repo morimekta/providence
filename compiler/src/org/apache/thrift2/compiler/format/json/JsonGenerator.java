@@ -17,11 +17,13 @@
  * under the License.
  */
 
-package org.apache.thrift2.compiler.generator;
+package org.apache.thrift2.compiler.format.json;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.thrift2.compiler.generator.Generator;
+import org.apache.thrift2.compiler.generator.GeneratorException;
 import org.apache.thrift2.compiler.util.FileManager;
 import org.apache.thrift2.model.ThriftDocument;
 import org.apache.thrift2.reflect.TTypeLoader;
@@ -30,7 +32,8 @@ import org.apache.thrift2.serializer.TCompactJsonSerializer;
 import org.apache.thrift2.serializer.TSerializeException;
 
 /**
- * Created by morimekta on 22.09.15.
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 22.09.15
  */
 public class JsonGenerator extends Generator {
     private final TTypeLoader                 mLoader;

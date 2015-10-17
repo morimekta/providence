@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package org.apache.thrift2.compiler.generator;
-
-import org.apache.thrift2.compiler.format.ThriftFormatter;
-import org.apache.thrift2.compiler.util.FileManager;
-import org.apache.thrift2.reflect.contained.TContainedDocument;
+package org.apache.thrift2.compiler.format.thrift;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.thrift2.compiler.generator.Generator;
+import org.apache.thrift2.compiler.util.FileManager;
+import org.apache.thrift2.reflect.contained.TContainedDocument;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>

@@ -24,9 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.thrift2.compiler.generator.Generator;
-import org.apache.thrift2.compiler.generator.Java2Generator;
-import org.apache.thrift2.compiler.generator.JsonGenerator;
-import org.apache.thrift2.compiler.generator.ThriftGenerator;
+import org.apache.thrift2.compiler.format.java2.Java2Generator;
+import org.apache.thrift2.compiler.format.json.JsonGenerator;
+import org.apache.thrift2.compiler.format.thrift.ThriftGenerator;
 import org.apache.thrift2.compiler.util.FakeFileManager;
 import org.apache.thrift2.compiler.util.FileManager;
 import org.apache.thrift2.reflect.TTypeLoader;

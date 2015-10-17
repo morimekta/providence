@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.thrift2.compiler.format;
+package org.apache.thrift2.compiler.format.thrift;
 
 import java.io.IOException;
 import java.io.OutputStream;

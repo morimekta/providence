@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.thrift2.compiler.generator;
+package org.apache.thrift2.compiler.format.java2;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +26,8 @@ import org.apache.thrift2.compiler.format.java2.Java2EnumFormatter;
 import org.apache.thrift2.compiler.format.java2.Java2MessageFormatter;
 import org.apache.thrift2.compiler.format.java2.Java2TypeHelper;
 import org.apache.thrift2.compiler.format.java2.Java2Utils;
+import org.apache.thrift2.compiler.generator.Generator;
+import org.apache.thrift2.compiler.generator.GeneratorException;
 import org.apache.thrift2.compiler.util.FileManager;
 import org.apache.thrift2.util.io.IndentedPrintWriter;
 import org.apache.thrift2.descriptor.TDeclaredDescriptor;
