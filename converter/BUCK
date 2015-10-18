@@ -16,7 +16,7 @@ java_binary(
   deps = [
     ":converter",
   ],
-  main_class = "org.apache.thrift2.converter.Convert",
+  main_class = "org.apache.thrift.j2.converter.Convert",
   visibility = [
     "PUBLIC"
   ],

@@ -7,13 +7,13 @@ import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.apache.thrift2.TMessage;
-import org.apache.thrift2.TMessageBuilder;
-import org.apache.thrift2.TMessageBuilderFactory;
-import org.apache.thrift2.descriptor.TField;
-import org.apache.thrift2.descriptor.TStructDescriptor;
-import org.apache.thrift2.descriptor.TStructDescriptorProvider;
-import org.apache.thrift2.util.TTypeUtils;
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.TMessageBuilder;
+import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.util.TTypeUtils;
 
 public class Other
         implements TMessage<Other>, Serializable, Parcelable {

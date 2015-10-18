@@ -1,3 +1,3 @@
 #!/bin/sh
 
-buck run compiler:thrift -- --gen java2 --android --out core/generated  core/res/definitions/*.thrift
+buck run compiler:compile -- --gen java2 --android --out core/generated  core/res/definitions/*.thrift

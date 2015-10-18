@@ -24,20 +24,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.thrift2.TClient;
-import org.apache.thrift2.TException;
-import org.apache.thrift2.TMessage;
-import org.apache.thrift2.TMessageBuilder;
-import org.apache.thrift2.TMessageBuilderFactory;
-import org.apache.thrift2.TService;
-import org.apache.thrift2.descriptor.TField;
-import org.apache.thrift2.descriptor.TPrimitive;
-import org.apache.thrift2.descriptor.TServiceDescriptor;
-import org.apache.thrift2.descriptor.TServiceMethod;
-import org.apache.thrift2.descriptor.TStructDescriptor;
-import org.apache.thrift2.descriptor.TStructDescriptorProvider;
-import org.apache.thrift2.descriptor.TUnionDescriptor;
-import org.apache.thrift2.descriptor.TUnionDescriptorProvider;
+import org.apache.thrift.j2.TClient;
+import org.apache.thrift.j2.TException;
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.TMessageBuilder;
+import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TService;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TPrimitive;
+import org.apache.thrift.j2.descriptor.TServiceDescriptor;
+import org.apache.thrift.j2.descriptor.TServiceMethod;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TUnionDescriptor;
+import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>

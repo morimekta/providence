@@ -3,11 +3,11 @@ package org.apache.test.calculator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.thrift2.TEnumBuilder;
-import org.apache.thrift2.TEnumBuilderFactory;
-import org.apache.thrift2.TEnumValue;
-import org.apache.thrift2.descriptor.TEnumDescriptor;
-import org.apache.thrift2.descriptor.TEnumDescriptorProvider;
+import org.apache.thrift.j2.TEnumBuilder;
+import org.apache.thrift.j2.TEnumBuilderFactory;
+import org.apache.thrift.j2.TEnumValue;
+import org.apache.thrift.j2.descriptor.TEnumDescriptor;
+import org.apache.thrift.j2.descriptor.TEnumDescriptorProvider;
 
 public enum Operator implements TEnumValue<Operator> {
     IDENTITY(1),

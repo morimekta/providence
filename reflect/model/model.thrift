@@ -9,7 +9,7 @@
  *        The first space after '*' on each line is ignored. </li>
  * <ul>
  */
-namespace java org.apache.thrift2.model
+namespace java org.apache.thrift.j2.model
 
 /**
  * Struct variant for StructType. The lower-case of the enum value is the
