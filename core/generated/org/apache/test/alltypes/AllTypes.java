@@ -195,6 +195,11 @@ public class AllTypes
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof AllTypes)) return false;
         AllTypes other = (AllTypes) o;
@@ -265,7 +270,7 @@ public class AllTypes
         fieldList.add(new TField<>(null, 9, false, "v", Values.provider(), null));
         fieldList.add(new TField<>(null, 10, false, "o", Other.provider(), null));
         fieldList.add(new TField<>(null, 11, false, "self", AllTypes.provider(), null));
-        return new TStructDescriptor<>(null, "alltypes", "AllTypes", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "alltypes", "AllTypes", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<AllTypes> provider() {

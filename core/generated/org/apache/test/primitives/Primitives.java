@@ -169,6 +169,11 @@ public class Primitives
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Primitives)) return false;
         Primitives other = (Primitives) o;
@@ -233,7 +238,7 @@ public class Primitives
         fieldList.add(new TField<>(null, 7, false, "s", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 8, false, "bn", TPrimitive.BINARY.provider(), null));
         fieldList.add(new TField<>(null, 9, false, "v", Value.provider(), null));
-        return new TStructDescriptor<>(null, "primitives", "Primitives", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "primitives", "Primitives", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Primitives> provider() {

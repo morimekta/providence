@@ -135,6 +135,11 @@ public class ThriftField
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftField)) return false;
         ThriftField other = (ThriftField) o;
@@ -192,7 +197,7 @@ public class ThriftField
         fieldList.add(new TField<>(null, 4, true, "type", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 5, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 6, false, "default_value", TPrimitive.STRING.provider(), null));
-        return new TStructDescriptor<>(null, "model", "ThriftField", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "ThriftField", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftField> provider() {

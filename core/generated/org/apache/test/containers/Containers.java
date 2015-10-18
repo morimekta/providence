@@ -451,6 +451,11 @@ public class Containers
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Containers)) return false;
         Containers other = (Containers) o;
@@ -578,7 +583,7 @@ public class Containers
         fieldList.add(new TField<>(null, 41, false, "lp", TList.provider(Primitives.provider()), null));
         fieldList.add(new TField<>(null, 42, false, "sp", TSet.provider(Primitives.provider()), null));
         fieldList.add(new TField<>(null, 43, false, "mp", TMap.provider(TPrimitive.I32.provider(),Primitives.provider()), null));
-        return new TStructDescriptor<>(null, "containers", "Containers", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "containers", "Containers", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Containers> provider() {

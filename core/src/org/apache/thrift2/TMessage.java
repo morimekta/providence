@@ -59,5 +59,10 @@ public interface TMessage<T extends TMessage<T>>
      */
     boolean isValid();
 
+    /**
+     * @return If the message is compact.
+     */
+    boolean compact();
+
     @Override TStructDescriptor<T> descriptor();
 }

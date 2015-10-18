@@ -19,11 +19,11 @@
 
 package org.apache.thrift2.descriptor;
 
+import java.util.List;
+
 import org.apache.thrift2.TMessage;
 import org.apache.thrift2.TMessageBuilderFactory;
 import org.apache.thrift2.TMessageVariant;
-
-import java.util.List;
 
 /**
  * The definition of a thrift structure.
@@ -38,7 +38,7 @@ public class TExceptionDescriptor<T extends TMessage<T>>
                                 String name,
                                 List<TField<?>> fields,
                                 TMessageBuilderFactory<T> provider) {
-        super(comment, packageName, name, fields, provider);
+        super(comment, packageName, name, fields, provider, false);
     }
 
     @Override

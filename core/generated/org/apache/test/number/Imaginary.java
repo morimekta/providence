@@ -74,6 +74,11 @@ public class Imaginary
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Imaginary)) return false;
         Imaginary other = (Imaginary) o;
@@ -117,7 +122,7 @@ public class Imaginary
         List<TField<?>> fieldList = new LinkedList<>();
         fieldList.add(new TField<>(null, 1, true, "v", TPrimitive.DOUBLE.provider(), null));
         fieldList.add(new TField<>(null, 2, false, "i", TPrimitive.DOUBLE.provider(), new TDefaultValueProvider<>(kDefaultI)));
-        return new TStructDescriptor<>(null, "number", "Imaginary", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "number", "Imaginary", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Imaginary> provider() {

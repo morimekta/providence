@@ -126,6 +126,11 @@ public class ServiceMethod
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ServiceMethod)) return false;
         ServiceMethod other = (ServiceMethod) o;
@@ -181,7 +186,7 @@ public class ServiceMethod
         fieldList.add(new TField<>(null, 4, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 5, false, "params", TList.provider(ThriftField.provider()), null));
         fieldList.add(new TField<>(null, 6, false, "exceptions", TList.provider(ThriftField.provider()), null));
-        return new TStructDescriptor<>(null, "model", "ServiceMethod", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "ServiceMethod", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceMethod> provider() {

@@ -76,6 +76,11 @@ public class CalculateException
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof CalculateException)) return false;
         CalculateException other = (CalculateException) o;

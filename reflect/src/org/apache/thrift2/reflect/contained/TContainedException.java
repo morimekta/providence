@@ -101,6 +101,20 @@ public class TContainedException
     }
 
     @Override
+    public boolean compact() {
+        if (!descriptor().isCompactible()) return false;
+        boolean missing = false;
+        for (TField<?> field : descriptor().getFields()) {
+            if (has(field.getKey())) {
+                if (missing) return false;
+            } else {
+                missing = true;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TContainedException)) {
             return false;

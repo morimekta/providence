@@ -22,13 +22,14 @@ package org.apache.thrift2.compiler.format.java2;
 import java.io.IOException;
 
 import org.apache.thrift2.TMessageVariant;
-import org.apache.thrift2.TType;
 import org.apache.thrift2.compiler.generator.GeneratorException;
 import org.apache.thrift2.descriptor.TContainer;
 import org.apache.thrift2.descriptor.TDescriptor;
+import org.apache.thrift2.descriptor.TExceptionDescriptor;
 import org.apache.thrift2.descriptor.TField;
 import org.apache.thrift2.descriptor.TMap;
 import org.apache.thrift2.descriptor.TStructDescriptor;
+import org.apache.thrift2.descriptor.TUnionDescriptor;
 import org.apache.thrift2.util.io.IndentedPrintWriter;
 import org.json.JSONObject;
 
@@ -71,6 +72,7 @@ public class Java2MessageFormatter {
         appendInheritedGetter_num(writer, type);
         appendInheritedGetter_get(writer, type);
 
+        appendObjectCompact(writer, type);
         appendObjectEquals(writer, type);
         appendObjectHashCode(writer, type);
         appendObjectToString(writer);
@@ -88,6 +90,40 @@ public class Java2MessageFormatter {
         //  - Builder class
 
         appendClassDefinitionEnd(writer);
+    }
+
+    private void appendObjectCompact(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+        if (type.isCompactible()) {
+            writer.appendln("@Override")
+                  .appendln("public boolean compact() {")
+                  .begin()
+                  .appendln("boolean missing = false;");
+
+            for (TField<?> field : type.getFields()) {
+                writer.formatln("if (%s()) {", camelCase("has", field.getName()))
+                      .begin()
+                      .appendln("if (missing) return false;")
+                      .end()
+                      .appendln("} else {")
+                      .begin()
+                      .appendln("missing = true;")
+                      .end()
+                      .appendln('}');
+            }
+
+            writer.appendln("return true;")
+                  .end()
+                  .appendln('}')
+                  .newline();
+        } else {
+            writer.appendln("@Override")
+                  .appendln("public boolean compact() {")
+                  .begin()
+                  .appendln("return false;")
+                  .end()
+                  .appendln('}')
+                  .newline();
+        }
     }
 
     private void appendParcelable(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
@@ -678,13 +714,13 @@ public class Java2MessageFormatter {
         String typeClass;
         switch (type.getVariant()) {
             case STRUCT:
-                typeClass = "TStructDescriptor";
+                typeClass = TStructDescriptor.class.getSimpleName();
                 break;
             case UNION:
-                typeClass = "TUnionDescriptor";
+                typeClass = TUnionDescriptor.class.getSimpleName();
                 break;
             case EXCEPTION:
-                typeClass = "TExceptionDescriptor";
+                typeClass = TExceptionDescriptor.class.getSimpleName();
                 break;
             default:
                 throw new GeneratorException("Unable to determine type class for " + type.getVariant());
@@ -730,10 +766,18 @@ public class Java2MessageFormatter {
                             provider,
                             defValue);
         }
-        writer.formatln("return new %s<>(null, \"%s\", \"%s\", fieldList, new _Factory());",
-                        typeClass,
-                        type.getPackageName(),
-                        type.getName());
+        if (type.getVariant().equals(TMessageVariant.STRUCT)) {
+            writer.formatln("return new %s<>(null, \"%s\", \"%s\", fieldList, new _Factory(), %b);",
+                            typeClass,
+                            type.getPackageName(),
+                            type.getName(),
+                            type.isCompactible());
+        } else {
+            writer.formatln("return new %s<>(null, \"%s\", \"%s\", fieldList, new _Factory());",
+                            typeClass,
+                            type.getPackageName(),
+                            type.getName());
+        }
         writer.end()
               .appendln('}')
               .newline();

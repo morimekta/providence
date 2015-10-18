@@ -83,6 +83,11 @@ public class EnumValue
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumValue)) return false;
         EnumValue other = (EnumValue) o;
@@ -129,7 +134,7 @@ public class EnumValue
         fieldList.add(new TField<>(null, 1, false, "comment", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 2, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 3, false, "value", TPrimitive.I32.provider(), null));
-        return new TStructDescriptor<>(null, "model", "EnumValue", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "EnumValue", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<EnumValue> provider() {

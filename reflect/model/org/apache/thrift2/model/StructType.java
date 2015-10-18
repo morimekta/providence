@@ -104,6 +104,11 @@ public class StructType
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof StructType)) return false;
         StructType other = (StructType) o;
@@ -153,7 +158,7 @@ public class StructType
         fieldList.add(new TField<>(null, 2, false, "variant", StructVariant.provider(), new TDefaultValueProvider<>(kDefaultVariant)));
         fieldList.add(new TField<>(null, 3, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 4, false, "fields", TList.provider(ThriftField.provider()), null));
-        return new TStructDescriptor<>(null, "model", "StructType", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "StructType", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<StructType> provider() {

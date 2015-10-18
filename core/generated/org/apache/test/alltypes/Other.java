@@ -56,6 +56,11 @@ public class Other
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Other)) return false;
         Other other = (Other) o;
@@ -96,7 +101,7 @@ public class Other
     private static TStructDescriptor<Other> _createDescriptor() {
         List<TField<?>> fieldList = new LinkedList<>();
         fieldList.add(new TField<>(null, 1, false, "v", Values.provider(), null));
-        return new TStructDescriptor<>(null, "alltypes", "Other", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "alltypes", "Other", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Other> provider() {

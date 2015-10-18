@@ -86,6 +86,27 @@ public class Category
     }
 
     @Override
+    public boolean compact() {
+        boolean missing = false;
+        if (hasName()) {
+            if (missing) return false;
+        } else {
+            missing = true;
+        }
+        if (hasId()) {
+            if (missing) return false;
+        } else {
+            missing = true;
+        }
+        if (hasLabel()) {
+            if (missing) return false;
+        } else {
+            missing = true;
+        }
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Category)) return false;
         Category other = (Category) o;
@@ -133,7 +154,7 @@ public class Category
         fieldList.add(new TField<>(null, 1, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 2, true, "id", TPrimitive.I32.provider(), null));
         fieldList.add(new TField<>(null, 3, false, "label", TPrimitive.STRING.provider(), null));
-        return new TStructDescriptor<>(null, "compact", "Category", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "compact", "Category", fieldList, new _Factory(), true);
     }
 
     public static TStructDescriptorProvider<Category> provider() {

@@ -72,6 +72,11 @@ public class Operation
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Operation)) return false;
         Operation other = (Operation) o;
@@ -115,7 +120,7 @@ public class Operation
         List<TField<?>> fieldList = new LinkedList<>();
         fieldList.add(new TField<>(null, 1, false, "operator", Operator.provider(), null));
         fieldList.add(new TField<>(null, 2, false, "operands", TList.provider(Operand.provider()), null));
-        return new TStructDescriptor<>(null, "calculator", "Operation", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "calculator", "Operation", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Operation> provider() {

@@ -117,6 +117,11 @@ public class ThriftDocument
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftDocument)) return false;
         ThriftDocument other = (ThriftDocument) o;
@@ -169,7 +174,7 @@ public class ThriftDocument
         fieldList.add(new TField<>(null, 3, false, "includes", TList.provider(TPrimitive.STRING.provider()), null));
         fieldList.add(new TField<>(null, 4, false, "namespaces", TMap.provider(TPrimitive.STRING.provider(),TPrimitive.STRING.provider()), null));
         fieldList.add(new TField<>(null, 5, false, "decl", TList.provider(Declaration.provider()), null));
-        return new TStructDescriptor<>(null, "model", "ThriftDocument", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "ThriftDocument", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftDocument> provider() {

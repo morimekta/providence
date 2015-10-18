@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * The definition of a thrift structure.
@@ -41,12 +42,14 @@ public class TStructDescriptor<T extends TMessage<T>>
     private final Map<Integer, TField<?>>   mFieldIdMap;
     private final Map<String, TField<?>>    mFieldNameMap;
     private final TMessageBuilderFactory<T> mProvider;
+    private final boolean                   mCompactible;
 
     public TStructDescriptor(String comment,
                              String packageName,
                              String name,
                              List<TField<?>> fields,
-                             TMessageBuilderFactory<T> provider) {
+                             TMessageBuilderFactory<T> provider,
+                             boolean compactible) {
         super(comment, packageName, name);
 
         Map<Integer, TField<?>> fieldIdMap = new LinkedHashMap<>();
@@ -60,15 +63,12 @@ public class TStructDescriptor<T extends TMessage<T>>
         mFieldNameMap = Collections.unmodifiableMap(fieldNameMap);
 
         mProvider = provider;
+        mCompactible = compactible;
     }
 
     @Override
     public TType getType() {
         return TType.MESSAGE;
-    }
-
-    public TMessageVariant getVariant() {
-        return TMessageVariant.STRUCT;
     }
 
     @Override
@@ -104,14 +104,40 @@ public class TStructDescriptor<T extends TMessage<T>>
         return hash;
     }
 
+    /**
+     * @return True iff the struct can be (de)serialized with compact message
+     *         format.
+     */
+    public boolean isCompactible() {
+        return mCompactible;
+    }
+
+    /**
+     * @return The struct variant.
+     */
+    public TMessageVariant getVariant() {
+        return TMessageVariant.STRUCT;
+    }
+
+    /**
+     * @return An unmodifiable list of fields that the struct holds.
+     */
     public List<TField<?>> getFields() {
         return mFields;
     }
 
+    /**
+     * @param name Name of field to get.
+     * @return The field if present.
+     */
     public TField<?> getField(String name) {
         return mFieldNameMap.get(name);
     }
 
+    /**
+     * @param key The ID of the field to get.
+     * @return The field if present.
+     */
     public TField<?> getField(int key) {
         return mFieldIdMap.get(key);
     }

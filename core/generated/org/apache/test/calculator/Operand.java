@@ -87,6 +87,11 @@ public class Operand
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Operand)) return false;
         Operand other = (Operand) o;

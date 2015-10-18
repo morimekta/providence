@@ -68,6 +68,11 @@ public class TypedefType
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
@@ -111,7 +116,7 @@ public class TypedefType
         List<TField<?>> fieldList = new LinkedList<>();
         fieldList.add(new TField<>(null, 1, false, "type", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 2, false, "name", TPrimitive.STRING.provider(), null));
-        return new TStructDescriptor<>(null, "model", "TypedefType", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "TypedefType", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<TypedefType> provider() {

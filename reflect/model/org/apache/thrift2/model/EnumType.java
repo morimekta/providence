@@ -88,6 +88,11 @@ public class EnumType
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumType)) return false;
         EnumType other = (EnumType) o;
@@ -134,7 +139,7 @@ public class EnumType
         fieldList.add(new TField<>(null, 1, false, "comment", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 2, true, "name", TPrimitive.STRING.provider(), null));
         fieldList.add(new TField<>(null, 3, false, "values", TList.provider(EnumValue.provider()), null));
-        return new TStructDescriptor<>(null, "model", "EnumType", fieldList, new _Factory());
+        return new TStructDescriptor<>(null, "model", "EnumType", fieldList, new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<EnumType> provider() {

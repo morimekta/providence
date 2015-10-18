@@ -38,7 +38,7 @@ public class TUnionDescriptor<T extends TMessage<T>>
                             String name,
                             List<TField<?>> fields,
                             TMessageBuilderFactory<T> provider) {
-        super(comment, packageName, name, fields, provider);
+        super(comment, packageName, name, fields, provider, false);
     }
 
     @Override

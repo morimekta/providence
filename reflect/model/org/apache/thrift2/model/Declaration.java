@@ -106,6 +106,11 @@ public class Declaration
     }
 
     @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Declaration)) return false;
         Declaration other = (Declaration) o;

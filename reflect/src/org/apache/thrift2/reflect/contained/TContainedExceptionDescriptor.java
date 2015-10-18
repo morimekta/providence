@@ -38,7 +38,7 @@ public class TContainedExceptionDescriptor
                                          String packageName,
                                          String name,
                                          List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory());
+        super(comment, packageName, name, fields, new _Factory(), false);
         // TODO Auto-generated constructor stub
         ((_Factory) factory()).setType(this);
     }

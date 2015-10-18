@@ -20,6 +20,7 @@
 package org.apache.thrift2.reflect.contained;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.thrift2.TMessageBuilder;
 import org.apache.thrift2.TMessageBuilderFactory;
@@ -32,12 +33,15 @@ import org.apache.thrift2.descriptor.TStructDescriptor;
  */
 public class TContainedStructDescriptor
         extends TStructDescriptor<TContainedStruct> {
+    public static final Pattern COMPACT_RE = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
+    public static final int MAX_COMPACT_FIELDS = 5;
 
     public TContainedStructDescriptor(String comment,
                                       String packageName,
                                       String name,
                                       List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory());
+        super(comment, packageName, name, fields, new _Factory(),
+              isCompactCompatible(comment, fields));
         // TODO Auto-generated constructor stub
         ((_Factory) factory()).setType(this);
     }
@@ -56,4 +60,29 @@ public class TContainedStructDescriptor
             return new TContainedStruct.Builder(mType);
         }
     }
+
+    private static boolean isCompactCompatible(String comment, List<TField<?>> fields) {
+        if (comment == null)
+            return false;
+        if (!COMPACT_RE.matcher(comment).find()) {
+            return false;
+        }
+        if (fields.size() > MAX_COMPACT_FIELDS) {
+            return false;
+        }
+        int next = 1;
+        boolean hasOptional = false;
+        for (TField<?> field : fields) {
+            if (field.getKey() != next) {
+                return false;
+            }
+            if (hasOptional && field.getRequired()) {
+                return false;
+            }
+            if (!field.getRequired()) hasOptional = true;
+            next++;
+        }
+        return true;
+    }
+
 }
