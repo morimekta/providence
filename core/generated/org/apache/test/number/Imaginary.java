@@ -1,4 +1,4 @@
-package org.apache.number;
+package org.apache.test.number;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -161,7 +161,7 @@ public class Imaginary
                     case 2:
                         builder.setI(source.readDouble());
                         break;
-                    default: throw new IllegalArgumentException("Unknown field ID" + field);
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }
             }
 

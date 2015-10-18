@@ -1,4 +1,4 @@
-package org.apache.calculator;
+package org.apache.test.calculator;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -159,7 +159,7 @@ public class Operation
                     case 2:
                         builder.addToOperands((Operand[]) source.readParcelableArray(Operand.class.getClassLoader()));
                         break;
-                    default: throw new IllegalArgumentException("Unknown field ID" + field);
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }
             }
 

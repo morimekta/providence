@@ -19,10 +19,6 @@
 
 package org.apache.thrift2.util;
 
-import org.apache.calculator.Operand;
-import org.apache.calculator.Operation;
-import org.apache.calculator.Operator;
-import org.apache.number.Imaginary;
 import org.junit.Before;
 import org.junit.Test;
 

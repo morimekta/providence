@@ -33,7 +33,7 @@ public class TToken {
     public static final Pattern RE_IDENTIFIER = Pattern.compile(
             "[_a-zA-Z][_a-zA-Z0-9]*");
     public static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
-            "[_a-zA-Z][_a-zA-Z0-9]*([.]_?[a-zA-Z][_a-zA-Z0-9]*)*");
+            "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
     public static final Pattern RE_INTEGER = Pattern.compile(
             "[0-9]+");
 
@@ -85,11 +85,13 @@ public class TToken {
     }
 
     public boolean isIdentifier() {
-        return RE_IDENTIFIER.matcher(mToken).matches();
+        if (!RE_IDENTIFIER.matcher(mToken).matches()) return false;
+        return true;
     }
 
     public boolean isQualifiedIdentifier() {
-        return RE_QUALIFIED_IDENTIFIER.matcher(mToken).matches();
+        if (!RE_QUALIFIED_IDENTIFIER.matcher(mToken).matches()) return false;
+        return true;
     }
 
     public boolean isInteger() {

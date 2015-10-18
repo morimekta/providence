@@ -38,14 +38,22 @@ public class Java2HeaderFormatter {
         mIncludes = new TreeSet<>();
     }
 
+    public boolean hasIncluded(String javaClass) {
+        return mIncludes.contains(javaClass);
+    }
+
     public void include(String javaClass) {
         if (javaClass == null) return;
         int pos = javaClass.lastIndexOf('.');
-        String pkg = javaClass.substring(0, pos);
+        if (pos > 0) {
+            String pkg = javaClass.substring(0, pos);
 
-        if (!pkg.equals(mJavaPackage) && !pkg.equals("java.lang")) {
-            mIncludes.add(javaClass);
+            if (!pkg.equals(mJavaPackage) && !pkg.equals("java.lang")) {
+                mIncludes.add(javaClass);
+            }
         }
+        // Otherwise it has no package, so it's not a class, but a primitive type.
+        // e.g. byte or byte[]. Ignore.
     }
 
     public void format(IndentedPrintWriter writer) {

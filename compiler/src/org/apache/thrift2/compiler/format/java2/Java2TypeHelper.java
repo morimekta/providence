@@ -76,7 +76,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getName();
             case BINARY:
-                return byte[].class.getName();
+                return byte[].class.getCanonicalName();
             case MAP:
                 return LinkedHashMap.class.getName();
             case SET:

@@ -37,14 +37,14 @@ public class Java2EnumFormatter {
     public void format(IndentedPrintWriter writer, TEnumDescriptor<?> type) throws GeneratorException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
 
-        header.include("org.apache.thrift2.TEnumBuilder");
-        header.include("org.apache.thrift2.TEnumBuilderFactory");
-        header.include("org.apache.thrift2.TEnumValue");
-        header.include("org.apache.thrift2.descriptor.TEnumDescriptor");
-        header.include("org.apache.thrift2.descriptor.TEnumDescriptorProvider");
+        header.include(org.apache.thrift2.TEnumBuilder.class.getName());
+        header.include(org.apache.thrift2.TEnumBuilderFactory.class.getName());
+        header.include(org.apache.thrift2.TEnumValue.class.getName());
+        header.include(org.apache.thrift2.descriptor.TEnumDescriptor.class.getName());
+        header.include(org.apache.thrift2.descriptor.TEnumDescriptorProvider.class.getName());
 
-        header.include("java.util.LinkedList");
-        header.include("java.util.List");
+        header.include(java.util.LinkedList.class.getName());
+        header.include(java.util.List.class.getName());
 
         header.format(writer);
 

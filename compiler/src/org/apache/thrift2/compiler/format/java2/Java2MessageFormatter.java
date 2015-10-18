@@ -21,12 +21,13 @@ package org.apache.thrift2.compiler.format.java2;
 
 import java.io.IOException;
 
+import org.apache.thrift2.TMessageVariant;
+import org.apache.thrift2.TType;
 import org.apache.thrift2.compiler.generator.GeneratorException;
 import org.apache.thrift2.descriptor.TContainer;
 import org.apache.thrift2.descriptor.TDescriptor;
 import org.apache.thrift2.descriptor.TField;
 import org.apache.thrift2.descriptor.TMap;
-import org.apache.thrift2.TMessageVariant;
 import org.apache.thrift2.descriptor.TStructDescriptor;
 import org.apache.thrift2.util.io.IndentedPrintWriter;
 import org.json.JSONObject;
@@ -116,29 +117,29 @@ public class Java2MessageFormatter {
             writer.begin()
                   .formatln("dest.writeInt(%d);", field.getKey());
             switch (field.descriptor().getType()) {
-                        case BOOL:
-                            writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
-                            break;
-                        case BYTE:
-                            writer.formatln("dest.writeByte(%s);", fName);
-                            break;
-                        case I16:
-                        case I32:
-                            writer.formatln("dest.writeInt(%s);", fName);
-                            break;
-                        case I64:
-                            writer.formatln("dest.writeLong(%s);", fName);
-                            break;
-                        case DOUBLE:
-                            writer.formatln("dest.writeDouble(%s);", fName);
-                            break;
-                        case STRING:
-                            writer.formatln("dest.writeString(%s);", fName);
-                            break;
-                        case BINARY:
-                            writer.formatln("dest.writeInt(%s.length);", fName);
-                            writer.formatln("dest.writeByteArray(%s);", fName);
-                            break;
+                case BOOL:
+                    writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
+                    break;
+                case BYTE:
+                    writer.formatln("dest.writeByte(%s);", fName);
+                    break;
+                case I16:
+                case I32:
+                    writer.formatln("dest.writeInt(%s);", fName);
+                    break;
+                case I64:
+                    writer.formatln("dest.writeLong(%s);", fName);
+                    break;
+                case DOUBLE:
+                    writer.formatln("dest.writeDouble(%s);", fName);
+                    break;
+                case STRING:
+                    writer.formatln("dest.writeString(%s);", fName);
+                    break;
+                case BINARY:
+                    writer.formatln("dest.writeInt(%s.length);", fName);
+                    writer.formatln("dest.writeByteArray(%s);", fName);
+                    break;
                 case ENUM:
                     writer.formatln("dest.writeInt(%s.getValue());", fName);
                     break;
@@ -162,8 +163,8 @@ public class Java2MessageFormatter {
                             writer.formatln("dest.writeInt(%s.size());", fName)
                                   .formatln("for (byte[] item : %s) {", fName)
                                   .begin()
-                                  .formatln("dest.writeInt(%s.length);", fName)
-                                  .formatln("dest.writeByteArray(%s)")
+                                  .formatln("dest.writeInt(item.length);", fName)
+                                  .formatln("dest.writeByteArray(item);", fName)
                                   .end()
                                   .appendln('}');
                         default:
@@ -174,11 +175,7 @@ public class Java2MessageFormatter {
                     TMap<?, ?> mType = (TMap<?, ?>) field.descriptor();
                     String kTypeName = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
                     iTypeName = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
-                    writer.formatln("%s[] keys = %s.keySet().toArray(new %s[%s.size()]);",
-                                    kTypeName, fName, kTypeName, fName);
-                    writer.formatln("%s[] values = %s.values().toArray(new %s[%s.size()])",
-                                    iTypeName, fName, iTypeName, fName);
-                    writer.appendln("dest.writeInt(keys.length)");
+                    writer.formatln("dest.writeInt(%s.size());", fName);
                     switch (mType.keyDescriptor().getType()) {
                         case LIST:
                         case SET:
@@ -187,15 +184,16 @@ public class Java2MessageFormatter {
                         case MESSAGE:
                             throw new GeneratorException("Messages not allowed for map key.");
                         case BINARY:
-                            writer.appendln("for (byte[] item : keys) {")
+                            writer.formatln("for (byte[] item : %s.keySet()) {", fName)
                                   .begin()
                                   .appendln("dest.writeInt(item.length);")
-                                  .appendln("dest.writeByteArray(item)")
+                                  .appendln("dest.writeByteArray(item);")
                                   .end()
                                   .appendln('}');
                             break;
                         default:
-                            writer.formatln("dest.writeArray(keys);", fName);
+                            writer.formatln("dest.writeArray(%s.keySet().toArray(new %s[%s.size()]));",
+                                            fName, kTypeName, fName);
                             break;
 
                     }
@@ -205,21 +203,22 @@ public class Java2MessageFormatter {
                         case MAP:
                             throw new GeneratorException("Nested containers not allowed with --android");
                         case MESSAGE:
-                            writer.formatln(
-                                    "dest.writeParcelableArray(values, values.length);",
-                                    fName, iTypeName, fName, fName);
+                            writer.formatln("%s[] values = %s.values().toArray(new %s[%s.size()]);",
+                                            iTypeName, fName, iTypeName, fName);
+                            writer.appendln(
+                                    "dest.writeParcelableArray(values, values.length);");
                             break;
                         case BINARY:
-                            writer.appendln("dest.writeInt(values.length);")
-                                  .appendln("for (byte[] item : values) {")
+                            writer.formatln("for (byte[] item : %s.values()) {", fName)
                                   .begin()
                                   .appendln("dest.writeInt(item.length);")
-                                  .appendln("dest.writeByteArray(item)")
+                                  .appendln("dest.writeByteArray(item);")
                                   .end()
                                   .appendln('}');
                             break;
                         default:
-                            writer.appendln("dest.writeArray(values);");
+                            writer.formatln("dest.writeArray(%s.values().toArray(new %s[%s.size()]));",
+                                            fName, iTypeName, fName);
                             break;
                     }
                     break;
@@ -308,10 +307,10 @@ public class Java2MessageFormatter {
                         case BINARY:
                             writer.append(" {")
                                   .begin()
-                                  .formatln("int len = dest.readInt();")
+                                  .formatln("int len = source.readInt();")
                                   .appendln("for (int i = 0; i < len; ++i) {")
                                   .begin()
-                                  .appendln("int bl = dest.readInt();")
+                                  .appendln("int bl = source.readInt();")
                                   .appendln("byte[] bytes = new byte[bl];")
                                   .formatln("source.readByteArray(bytes);")
                                   .formatln("builder.%s(bytes);", addToF)
@@ -350,7 +349,7 @@ public class Java2MessageFormatter {
                             writer.appendln("byte[][] keys = new byte[len][];")
                                   .appendln("for (int i = 0; i < len; ++i) {")
                                   .begin()
-                                  .appendln("keys[i] = new byte[dest.readInt()];")
+                                  .appendln("keys[i] = new byte[source.readInt()];")
                                   .formatln("source.readByteArray(keys[i]);")
                                   .end()
                                   .appendln('}');
@@ -369,7 +368,7 @@ public class Java2MessageFormatter {
                             writer.appendln("byte[][] values = new byte[len][];")
                                   .appendln("for (int i = 0; i < len; ++i) {")
                                   .begin()
-                                  .appendln("values[i] = new byte[dest.readInt()];")
+                                  .appendln("values[i] = new byte[source.readInt()];")
                                   .formatln("source.readByteArray(values[i]);")
                                   .end()
                                   .appendln('}');
@@ -377,6 +376,7 @@ public class Java2MessageFormatter {
                         case MESSAGE:
                             writer.formatln("%s[] values = (%s[]) source.readParcelableArray(%s.class.getClassLoader());",
                                             miClass, miClass, miClass);
+                            break;
                         default:
                             writer.formatln("%s[] values = (%s[]) source.readArray(%s.class.getClassLoader());",
                                             miClass, miClass, miClass);
@@ -395,7 +395,7 @@ public class Java2MessageFormatter {
             writer.appendln("break;").end();
         }
 
-        writer.appendln("default: throw new IllegalArgumentException(\"Unknown field ID\" + field);")
+        writer.appendln("default: throw new IllegalArgumentException(\"Unknown field ID: \" + field);")
               .end()
               .appendln('}')
               .end()
@@ -1101,70 +1101,81 @@ public class Java2MessageFormatter {
               .newline();
     }
 
+    private void addTypeImports(Java2HeaderFormatter header, TDescriptor<?> descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
+            case ENUM:
+            case MESSAGE:
+                // Avoid never-ending recursion (with circular contained
+                // structs) by stopping on already included structs and enums.
+                String className = mTypeHelper.getQualifiedClassName(descriptor);
+                if (!header.hasIncluded(className)) {
+                    header.include(className);
+                }
+                break;
+            case LIST:
+                TContainer<?, ?> lType = (TContainer<?, ?>) descriptor;
+                header.include(java.util.Collection.class.getName());
+                header.include(java.util.Collections.class.getName());
+                header.include(org.apache.thrift2.descriptor.TList.class.getName());
+                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
+                addTypeImports(header, lType.itemDescriptor());
+                break;
+            case SET:
+                TContainer<?, ?> sType = (TContainer<?, ?>) descriptor;
+                header.include(java.util.Collection.class.getName());
+                header.include(java.util.Collections.class.getName());
+                header.include(org.apache.thrift2.descriptor.TSet.class.getName());
+                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
+                addTypeImports(header, sType.itemDescriptor());
+                break;
+            case MAP:
+                TMap<?,?> mType = (TMap<?,?>) descriptor;
+                header.include(java.util.Collections.class.getName());
+                header.include(org.apache.thrift2.descriptor.TMap.class.getName());
+                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
+                header.include(mTypeHelper.getQualifiedClassName(mType.itemDescriptor()));
+                header.include(mTypeHelper.getQualifiedClassName(mType.keyDescriptor()));
+                addTypeImports(header, mType.keyDescriptor());
+                addTypeImports(header, mType.itemDescriptor());
+                break;
+            default:
+                header.include(org.apache.thrift2.descriptor.TPrimitive.class.getName());
+                break;
+        }
+    }
+
     private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
-        header.include("java.io.Serializable");
-        header.include("java.util.LinkedList");
-        header.include("java.util.List");
-        header.include("org.apache.thrift2.TMessage");
-        header.include("org.apache.thrift2.TMessageBuilder");
-        header.include("org.apache.thrift2.TMessageBuilderFactory");
-        header.include("org.apache.thrift2.descriptor.TField");
-        header.include("org.apache.thrift2.util.TTypeUtils");
+        header.include(java.io.Serializable.class.getName());
+        header.include(java.util.LinkedList.class.getName());
+        header.include(java.util.List.class.getName());
+        header.include(org.apache.thrift2.TMessage.class.getName());
+        header.include(org.apache.thrift2.TMessageBuilder.class.getName());
+        header.include(org.apache.thrift2.TMessageBuilderFactory.class.getName());
+        header.include(org.apache.thrift2.descriptor.TField.class.getName());
+        header.include(org.apache.thrift2.util.TTypeUtils.class.getName());
         switch (type.getVariant()) {
             case STRUCT:
-                header.include("org.apache.thrift2.descriptor.TStructDescriptor");
-                header.include("org.apache.thrift2.descriptor.TStructDescriptorProvider");
+                header.include(org.apache.thrift2.descriptor.TStructDescriptor.class.getName());
+                header.include(org.apache.thrift2.descriptor.TStructDescriptorProvider.class.getName());
                 break;
             case UNION:
-                header.include("org.apache.thrift2.descriptor.TUnionDescriptor");
-                header.include("org.apache.thrift2.descriptor.TUnionDescriptorProvider");
+                header.include(org.apache.thrift2.descriptor.TUnionDescriptor.class.getName());
+                header.include(org.apache.thrift2.descriptor.TUnionDescriptorProvider.class.getName());
                 break;
             case EXCEPTION:
-                header.include("org.apache.thrift2.TException");
-                header.include("org.apache.thrift2.descriptor.TExceptionDescriptor");
-                header.include("org.apache.thrift2.descriptor.TExceptionDescriptorProvider");
+                header.include(org.apache.thrift2.TException.class.getName());
+                header.include(org.apache.thrift2.descriptor.TExceptionDescriptor.class.getName());
+                header.include(org.apache.thrift2.descriptor.TExceptionDescriptorProvider.class.getName());
                 break;
         }
         for (TField<?> field : type.getFields()) {
-            switch (field.descriptor().getType()) {
-                case ENUM:
-                case MESSAGE:
-                    header.include(mTypeHelper.getQualifiedClassName(field.descriptor()));
-                    break;
-                case LIST:
-                    TContainer<?, ?> lType = (TContainer<?, ?>) field.descriptor();
-                    header.include("java.util.Collection");
-                    header.include("java.util.Collections");
-                    header.include("org.apache.thrift2.descriptor.TList");
-                    header.include(mTypeHelper.getQualifiedClassName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedValueTypeName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedClassName(lType.itemDescriptor()));
-                    break;
-                case SET:
-                    TContainer<?, ?> sType = (TContainer<?, ?>) field.descriptor();
-                    header.include("java.util.Collection");
-                    header.include("java.util.Collections");
-                    header.include("org.apache.thrift2.descriptor.TSet");
-                    header.include(mTypeHelper.getQualifiedClassName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedValueTypeName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedClassName(sType.itemDescriptor()));
-                    break;
-                case MAP:
-                    TMap<?,?> mType = (TMap<?,?>) field.descriptor();
-                    header.include("java.util.Collections");
-                    header.include("org.apache.thrift2.descriptor.TMap");
-                    header.include(mTypeHelper.getQualifiedClassName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedValueTypeName(field.descriptor()));
-                    header.include(mTypeHelper.getQualifiedClassName(mType.itemDescriptor()));
-                    header.include(mTypeHelper.getQualifiedClassName(mType.keyDescriptor()));
-                    break;
-                default:
-                    header.include("org.apache.thrift2.descriptor.TPrimitive");
-                    break;
-            }
+            addTypeImports(header, field.descriptor());
             if (field.hasDefaultValue()) {
-                header.include("org.apache.thrift2.descriptor.TDefaultValueProvider");
+                header.include(org.apache.thrift2.descriptor.TDefaultValueProvider.class.getName());
             }
         }
         if (mAndroid) {

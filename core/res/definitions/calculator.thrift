@@ -1,4 +1,4 @@
-namespace java org.apache.calculator
+namespace java org.apache.test.calculator
 
 include "number.thrift"
 

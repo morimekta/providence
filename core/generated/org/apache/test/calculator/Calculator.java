@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.calculator;
+package org.apache.test.calculator;
 
 import java.io.IOException;
 import java.util.Collections;

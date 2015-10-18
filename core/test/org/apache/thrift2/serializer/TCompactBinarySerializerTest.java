@@ -23,10 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.apache.calculator.Operand;
-import org.apache.calculator.Operation;
-import org.apache.calculator.Operator;
-import org.apache.number.Imaginary;
 import org.apache.thrift2.util.TStringUtils;
 import org.junit.Before;
 import org.junit.Test;

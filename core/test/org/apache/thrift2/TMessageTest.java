@@ -19,8 +19,6 @@
 
 package org.apache.thrift2;
 
-import org.apache.calculator.Operand;
-import org.apache.number.Imaginary;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

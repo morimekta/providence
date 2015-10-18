@@ -1,4 +1,4 @@
-package org.apache.calculator;
+package org.apache.test.calculator;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -163,7 +163,7 @@ public class CalculateException
                     case 2:
                         builder.setOperation((Operation) source.readParcelable(Operation.class.getClassLoader()));
                         break;
-                    default: throw new IllegalArgumentException("Unknown field ID" + field);
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }
             }
 

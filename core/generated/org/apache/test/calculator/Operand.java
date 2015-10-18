@@ -1,4 +1,4 @@
-package org.apache.calculator;
+package org.apache.test.calculator;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -16,7 +16,7 @@ import org.apache.thrift2.descriptor.TUnionDescriptor;
 import org.apache.thrift2.descriptor.TUnionDescriptorProvider;
 import org.apache.thrift2.util.TTypeUtils;
 
-import org.apache.number.Imaginary;
+import org.apache.test.number.Imaginary;
 
 public class Operand
         implements TMessage<Operand>, Serializable, Parcelable {
@@ -186,7 +186,7 @@ public class Operand
                     case 3:
                         builder.setImaginary((Imaginary) source.readParcelable(Imaginary.class.getClassLoader()));
                         break;
-                    default: throw new IllegalArgumentException("Unknown field ID" + field);
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }
             }
 

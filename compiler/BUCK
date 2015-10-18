@@ -11,6 +11,19 @@ java_library(
   ],
 )
 
+java_test(
+  name = "test",
+  srcs = glob(["test/**/*.java"]),
+  deps = [
+    ":compiler",
+    "//core:core",
+    "//reflect:reflect",
+    "//reflect:model",
+    "//third-party/json:json",
+    "//third-party/junit:junit",
+  ],
+)
+
 java_binary(
   name = "thrift",
   deps = [

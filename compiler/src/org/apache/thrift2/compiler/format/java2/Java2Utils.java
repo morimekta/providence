@@ -34,7 +34,8 @@ import org.apache.thrift2.util.io.IndentedPrintWriter;
  * @since 07.09.15
  */
 public class Java2Utils {
-    private static final Pattern DEPRECATED = Pattern.compile("\\b[@]Deprecated\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DEPRECATED_RE = Pattern.compile("\\b[@]Deprecated\\b", Pattern.CASE_INSENSITIVE);
+    private static final String DEPRECATED = "@Deprecated";
 
     public static long generateSerialVersionUID(TStructDescriptor<?> type) {
         String string = type.getVariant().getName() + " " + type.getQualifiedName(null);
@@ -48,7 +49,7 @@ public class Java2Utils {
     }
 
     public static boolean hasDeprecatedAnnotation(String comment) {
-        return DEPRECATED.matcher(comment).find();
+        return DEPRECATED_RE.matcher(comment).find();
     }
 
     public static String getClassName(TDeclaredDescriptor<?> type) {

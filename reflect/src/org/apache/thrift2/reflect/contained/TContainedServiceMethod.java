@@ -62,7 +62,7 @@ public class TContainedServiceMethod
         final TContainedStructDescriptor paramsType = new TContainedStructDescriptor(
                 null,
                 packageContext,
-                serviceName + "_" + methodName + "_Params",
+                serviceName + "." + methodName + "_Params",
                 paramsList);
         return new TStructDescriptorProvider<TContainedStruct>() {
             @Override
@@ -84,7 +84,7 @@ public class TContainedServiceMethod
         final TContainedUnionDescriptor paramsType = new TContainedUnionDescriptor(
                 null,
                 packageContext,
-                serviceName + "_" + methodName + "_Exceptions",
+                serviceName + "." + methodName + "_Exceptions",
                 paramsList);
         return new TUnionDescriptorProvider<TContainedUnion>() {
             @Override

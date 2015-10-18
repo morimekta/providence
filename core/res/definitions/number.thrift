@@ -1,4 +1,4 @@
-namespace java org.apache.number
+namespace java org.apache.test.number
 
 
 typedef double real
