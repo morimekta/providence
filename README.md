@@ -43,30 +43,31 @@ If you find a better solution (using buck), send me a pull request!
 # Differences
 
 thrift-j2 is not *exactly* like thrift. The differences are mostly minute, but
-all feature changes are there for a reason.
+all feature changes are there for a reason. Differences are based on the IDL at
+[thrift.apache.org](https://thrift.apache.org/docs/idl).
 
-## No supported
+## Removed support
 
-`*_namespace` keywords are not supported. Use `namespace php [package]` or
-`namespace xsd [namespace]` instead.
+`*_namespace` keywords are not supported. Use `namespace php [package]` instead
+for php. XSD is AFAIK a facebook specific namespace, which is also not
+supported.
  
 None of the facebook specific modifiers are supported. They are also removed
-from keyword lists.
+from keyword lists (xsd_nullable, xsd_optional). So are any other language
+specific annotations not part of comments (like @java_annotation).
 
-Fields with conflicting but differing names are explicitly disallowed.
+Fields with conflicting but differing names are explicitly disallowed. E.g. 
+"my_field" and "myFiald" is considered conflicting because they would generate
+the same names when c_casing or camelCasing the name.
 
-Fields without explicit field IDs. This is true for all of:
-- struct, union, exception fields.
-- method params, method throws.
-
-## Extra features
+## Added support
 
 There are also extra features added that the original Apache Thrift format does
 not support, or is only supported on very limited cases.
 
 ### Circular containment
 
-Circular containment is explicitly supported as long as the entire sircle is
+Circular containment is explicitly supported as long as the entire circle is
 contained within the same thrift definition file. E.g.:
 
 - struct A contains struct B contains struct A. See
@@ -106,6 +107,23 @@ is generic to all messages.
 
 To annotate a struct as compact, add the `@compact` annotation to the struct
 comment.
+
+### Reserved words.
+
+Each format should make getters, setters and mutators, field names etc that are
+compatible with the language using prefixes, suffixes and name modifications.
+E.g. the field name 'public' should be allowed for all languages, oncluding
+java and C++ where it is a reserved word.
+
+In Java:
+- field names are prefixed with 'm'. E.g. 'my_field' becomes mMyField.
+- getters and setters are prefixed with 'set', 'addTo', 'get', 'clear', 'has' and 'num'.
+  respectively.
+  
+Or in C++ or python
+- field names are suffixed with '\_'. E.g. 'my_field' becomes 'my\_field\_'.
+- getters and setters are prefixed with 'set\_', 'get\_', 'mutable\_', 'clear\_' 'add\_to\_', 'has\_' and 'num\_'.
+- This breaks the convention that getters should not have any prefix or suffix.
 
 # Structure
 
