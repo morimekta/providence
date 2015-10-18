@@ -19,11 +19,17 @@
 
 package org.apache.thrift2;
 
+import org.apache.test.calculator.Operand;
+import org.apache.test.number.Imaginary;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+/**
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 18.10.15
+ */
 public class TMessageTest {
     @Test
     public void testToString() {

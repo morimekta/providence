@@ -19,6 +19,9 @@
 
 package org.apache.thrift2.descriptor;
 
+import org.apache.test.calculator.Operand;
+import org.apache.test.calculator.Operation;
+import org.apache.test.number.Imaginary;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +29,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * Created by morimekta on 10.09.15.
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 10.09.15.
  */
 public class TStructDescriptorTest {
     TStructDescriptor<?> valueType;

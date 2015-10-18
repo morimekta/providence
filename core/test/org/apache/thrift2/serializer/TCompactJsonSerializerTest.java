@@ -23,13 +23,25 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.test.calculator.Operand;
+import org.apache.test.calculator.Operation;
+import org.apache.test.calculator.Operator;
+import org.apache.test.compact.Category;
+import org.apache.test.number.Imaginary;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+/**
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 18.10.15
+ */
 public class TCompactJsonSerializerTest {
     private Operation mOperation;
+    private Category  mCategory1;
+    private Category  mCategory2;
     private String    mCompactIdJson;
     private String    mCompactNamedJson;
 
@@ -87,6 +99,16 @@ public class TCompactJsonSerializerTest {
                             "        }}" +
                             "    ]" +
                             "}";
+
+        mCategory1 = Category.builder()
+                             .setName("my_category")
+                             .setId(44)
+                             .build();
+        mCategory2 = Category.builder()
+                             .setName("my_category")
+                             .setId(44)
+                             .setLabel("My Category")
+                             .build();
     }
 
     @Test
@@ -131,5 +153,44 @@ public class TCompactJsonSerializerTest {
         Operation operation = serializer.deserialize(bais, Operation.DESCRIPTOR);
 
         assertEquals(mOperation, operation);
+    }
+
+    @Test
+    public void testSerialize_compactStruct() throws TSerializeException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+
+        String expectedOutput = "[\"my_category\",44]";
+        int expectedLength = serializer.serialize(baos, mCategory1);
+
+        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(18, expectedLength);
+
+        baos.reset();
+
+        expectedOutput = "[\"my_category\",44,\"My Category\"]";
+        expectedLength = serializer.serialize(baos, mCategory2);
+
+        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(32, expectedLength);
+    }
+
+    @Test
+    public void testDeserialize_compactStruct() throws TSerializeException {
+        ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(StandardCharsets.UTF_8));
+        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+
+        Category category = serializer.deserialize(bais, Category.DESCRIPTOR);
+
+        assertEquals("my_category", category.getName());
+        assertEquals(44, category.getId());
+        assertNull(category.getLabel());
+
+        bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(StandardCharsets.UTF_8));
+        category = serializer.deserialize(bais, Category.DESCRIPTOR);
+
+        assertEquals("my_category", category.getName());
+        assertEquals(44, category.getId());
+        assertEquals("My Category", category.getLabel());
     }
 }

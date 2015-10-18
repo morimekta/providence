@@ -26,6 +26,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
+/**
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 18.10.15
+ */
 public class TPrimitiveTest {
     @Test
     public void testGetName() {

@@ -23,12 +23,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.test.calculator.Operand;
+import org.apache.test.calculator.Operation;
+import org.apache.test.calculator.Operator;
+import org.apache.test.number.Imaginary;
 import org.apache.thrift2.util.TStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 18.10.15
+ */
 public class TCompactBinarySerializerTest {
     private Operation mOperation;
 

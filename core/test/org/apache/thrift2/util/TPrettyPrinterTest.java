@@ -19,14 +19,22 @@
 
 package org.apache.thrift2.util;
 
+import org.apache.test.calculator.Operand;
+import org.apache.test.calculator.Operation;
+import org.apache.test.calculator.Operator;
+import org.apache.test.number.Imaginary;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 18.10.15
+ */
 public class TPrettyPrinterTest {
     private Operation mOperation;
-    private String mFormatted;
+    private String    mFormatted;
 
     @Before
     public void setUp() {

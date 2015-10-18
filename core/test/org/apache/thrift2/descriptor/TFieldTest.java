@@ -26,7 +26,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * Created by morimekta on 10.09.15.
+ * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @since 20.09.15
  */
 public class TFieldTest {
     TField<?> fieldA;

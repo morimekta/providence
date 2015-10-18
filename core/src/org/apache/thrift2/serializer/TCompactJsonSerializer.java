@@ -162,8 +162,7 @@ public class TCompactJsonSerializer
             throws TSerializeException {
         try {
             JSONTokener tokenizer = new JSONTokener(new InputStreamReader(input));
-            JSONObject object = new JSONObject(tokenizer);
-            return parseTypedValue(object, type);
+            return parseTypedValue(tokenizer.nextValue(), type);
         } catch (JSONException e) {
             throw new TSerializeException(e, "Unable to parse JSON");
         }
@@ -197,6 +196,38 @@ public class TCompactJsonSerializer
                 builder.set(field.getKey(), value);
             } else if (mStrict) {
                 throw new TSerializeException("Unknown field " + key + " for type " + type.getQualifiedName(null));
+            }
+        }
+
+        if (mStrict && !builder.isValid()) {
+            throw new TSerializeException("Type " + type.getName() + " not properly populated");
+        }
+
+        return builder.build();
+    }
+
+    /**
+     * Parse JSON object as a message.
+     *
+     * @param object The object to parse.
+     * @param type The message type.
+     * @param <T> Message generic type.
+     * @return The parsed message.
+     * @throws JSONException
+     */
+    protected <T extends TMessage<T>> T parseCompactMessage(JSONArray object, TStructDescriptor<T> type) throws TSerializeException, JSONException {
+        TMessageBuilder<T> builder = type.factory().builder();
+
+        for (int i = 0; i < object.length(); ++i) {
+            TField<?> field = type.getField(i + 1);
+
+            if (field != null) {
+                Object value = parseTypedValue(object.get(i),
+                                               field.descriptor());
+                builder.set(i + 1, value);
+            } else if (mStrict) {
+                throw new TSerializeException("Compact Field ID " + (i + 1) + " outside field spectrum for type " +
+                                              type.getQualifiedName(null));
             }
         }
 
@@ -252,7 +283,18 @@ public class TCompactJsonSerializer
                     }
                     return cast(eb.build());
                 case MESSAGE:
-                    return cast((Object) parseMessage((JSONObject) item, (TStructDescriptor<?>) t));
+                    TStructDescriptor<?> st = (TStructDescriptor<?>) t;
+                    if (item instanceof JSONObject) {
+                        return cast((Object) parseMessage((JSONObject) item, st));
+                    } else if (item instanceof JSONArray) {
+                        if (st.isCompactible()) {
+                            return cast((Object) parseCompactMessage((JSONArray) item, st));
+                        } else {
+                            throw new TSerializeException(st.getName() + " is not compactable for array notation.");
+                        }
+                    } else {
+                        throw new TSerializeException(item.getClass().getSimpleName() + " not parsable message format.");
+                    }
                 case LIST:
                     TDescriptor type = ((TList<?>) t).itemDescriptor();
                     JSONArray array = (JSONArray) item;
@@ -343,25 +385,36 @@ public class TCompactJsonSerializer
         }
     }
 
-
     protected void appendMessage(JSONWriter writer, TMessage<?> message) throws TSerializeException, JSONException {
         TStructDescriptor<?> type = message.descriptor();
-        writer.object();
-        for (TField<?> field : type.getFields()) {
-            if (message.has(field.getKey())) {
-                Object value = message.get(field.getKey());
-                if (IdType.ID.equals(mIdType)) {
-                    String key = String.valueOf(field.getKey());
-                    writer.key(key);
-                    key.length();
+        if (message.compact()) {
+            writer.array();
+            for (TField<?> field : type.getFields()) {
+                if (message.has(field.getKey())) {
+                    appendTypedValue(writer, field.descriptor(), message.get(field.getKey()));
                 } else {
-                    writer.key(field.getName());
-                    field.getName().length();
+                    break;
                 }
-                appendTypedValue(writer, field.descriptor(), value);
             }
+            writer.endArray();
+        } else {
+            writer.object();
+            for (TField<?> field : type.getFields()) {
+                if (message.has(field.getKey())) {
+                    Object value = message.get(field.getKey());
+                    if (IdType.ID.equals(mIdType)) {
+                        String key = String.valueOf(field.getKey());
+                        writer.key(key);
+                        key.length();
+                    } else {
+                        writer.key(field.getName());
+                        field.getName().length();
+                    }
+                    appendTypedValue(writer, field.descriptor(), value);
+                }
+            }
+            writer.endObject();
         }
-        writer.endObject();
     }
 
     protected void appendTypedValue(JSONWriter writer, TDescriptor type, Object value)

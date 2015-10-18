@@ -186,6 +186,11 @@ public abstract class Calculator {
         }
 
         @Override
+        public boolean compact() {
+            return false;
+        }
+
+        @Override
         public Calculate_Params.Builder mutate() {
             return new Calculate_Params.Builder(this);
         }
@@ -226,7 +231,8 @@ public abstract class Calculator {
                                            "calculator",
                                            "Calculator_calculate_request",
                                            fieldList,
-                                           new _Factory());
+                                           new _Factory(),
+                                           false);
         }
 
         public static Builder builder() {
@@ -318,6 +324,11 @@ public abstract class Calculator {
                     return getCe();
             }
             return null;
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
         }
 
         @Override
