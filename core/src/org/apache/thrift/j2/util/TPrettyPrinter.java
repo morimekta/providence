@@ -19,20 +19,21 @@
 
 package org.apache.thrift.j2.util;
 
-import java.io.StringWriter;
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TMap;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TContainer;
 import org.apache.thrift.j2.descriptor.TDescriptor;
-import org.json.JSONObject;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TMap;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.util.io.IndentedPrintWriter;
+import org.apache.thrift.j2.util.json.JsonException;
+import org.apache.thrift.j2.util.json.JsonWriter;
+
+import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Pretty printer that can print message content for easily reading
@@ -172,7 +173,11 @@ public class TPrettyPrinter {
         if (o instanceof TEnumValue) {
             writer.print(o.toString());
         } else if (o instanceof String) {
-            writer.print(JSONObject.quote((String) o));
+            JsonWriter jw = new JsonWriter(writer, "");
+            try {
+                jw.value(o);
+                jw.flush();
+            } catch (JsonException e) {}
         } else if (o instanceof byte[]) {
             byte[] bytes = (byte[]) o;
             writer.format("b64(%s)", TBase64Utils.encode(bytes));

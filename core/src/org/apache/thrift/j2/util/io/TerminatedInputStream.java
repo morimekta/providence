@@ -104,7 +104,7 @@ public class TerminatedInputStream extends InputStream {
 
     @Override
     public int available() throws IOException {
-        return mIn.available();
+        return mTerminated ? 0 : mBufferLen + mIn.available();
     }
 
     @Override
