@@ -19,12 +19,6 @@
 
 package org.apache.thrift.j2.compiler.format.thrift;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TContainer;
@@ -39,9 +33,14 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import org.apache.thrift.j2.util.json.JsonException;
+import org.apache.thrift.j2.util.json.JsonWriter;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Pretty printer for types. Generates content as close to the real thrift files
@@ -84,12 +83,12 @@ public class ThriftFormatter {
             writer.flush();
         } catch (IOException e) {
             throw new IllegalStateException("Unable to write to stream", e);
-        } catch (JSONException e) {
+        } catch (JsonException e) {
             throw new IllegalStateException("Unable to write json constant", e);
         }
     }
 
-    private void appendDocument(IndentedPrintWriter builder, TContainedDocument document) throws IOException, JSONException {
+    private void appendDocument(IndentedPrintWriter builder, TContainedDocument document) throws IOException, JsonException {
         boolean first = true;
         if (document.getComment() != null) {
             appendBlockComment(builder, document.getComment(), first);
@@ -176,7 +175,7 @@ public class ThriftFormatter {
 
     // --- Declared Types
 
-    private void appendStruct(IndentedPrintWriter builder, TStructDescriptor<?> type) throws IOException, JSONException {
+    private void appendStruct(IndentedPrintWriter builder, TStructDescriptor<?> type) throws IOException, JsonException {
         if (type.getComment() != null) {
             appendBlockComment(builder, type.getComment(), false);
         }
@@ -300,12 +299,12 @@ public class ThriftFormatter {
      * @param value
      * @param type
      * @param packageContext
-     * @throws JSONException
+     * @throws JsonException
      */
     protected void appendTypedValue(IndentedPrintWriter writer,
                                     Object value,
                                     TDescriptor type,
-                                    String packageContext) throws IOException, JSONException {
+                                    String packageContext) throws IOException, JsonException {
         switch (type.getType()) {
             case ENUM:
                 writer.format("%s.%s", type.getQualifiedName(packageContext), value.toString());
@@ -354,7 +353,7 @@ public class ThriftFormatter {
                         writer.append(',');
                     }
                     writer.appendln("");
-                    appendQuotedPrimitive(writer, entry.getKey());
+                    appendMapKey(writer, entry.getKey());
                     writer.append(" : ");
                     appendTypedValue(writer,
                                      entry.getValue(),
@@ -373,56 +372,43 @@ public class ThriftFormatter {
         }
     }
 
-    private void appendQuotedPrimitive(IndentedPrintWriter writer, Object value) throws IOException, JSONException {
+    private void appendMapKey(IndentedPrintWriter writer, Object value) throws IOException, JsonException {
         if (value instanceof TEnumValue<?>) {
             TEnumValue<?> ev = (TEnumValue<?>) value;
-            // TODO(steineldar): Get the right way to do this.
-            writer.append(JSONObject.quote(Integer.toString(ev.getValue())));
-        } else if (value instanceof Boolean) {
-            writer.append(JSONObject.quote(((Boolean) value) ? TRUE : FALSE));
-        } else if (value instanceof Double) {
-            writer.append('\"');
-            JSONWriter json = new JSONWriter(writer);
-            json.value(((Number) value).doubleValue());
-            writer.append('\"');
-        } else if (value instanceof Integer ||
+            writer.append('\"')
+                  .append(ev.descriptor().getName()).append('.').append(ev.toString())
+                  .append('\"');
+        } else if (value instanceof String) {
+            JsonWriter json = new JsonWriter(writer, "");
+            json.value(value);
+            json.flush();
+        } else if (value instanceof Boolean ||
+                   value instanceof Double ||
                    value instanceof Byte ||
                    value instanceof Short ||
-                   value instanceof Long ||
-                   value instanceof String) {
-            writer.append(JSONObject.quote(value.toString()));
+                   value instanceof Long) {
+            writer.append('\"');
+            JsonWriter json = new JsonWriter(writer, "");
+            json.value(value);
+            json.flush();
+            writer.append('\"');
         } else if (value instanceof byte[]) {
-            throw new IllegalArgumentException("binary keys not supported in constants");
+            JsonWriter json = new JsonWriter(writer, "");
+            json.value(TBase64Utils.encode((byte[]) value));
+            json.flush();
         } else {
             throw new IllegalArgumentException("No such primitive value type: " +
                     value.getClass().getSimpleName());
         }
     }
 
-    private void appendPrimitive(IndentedPrintWriter writer, Object value) throws IOException, JSONException {
-        if (value instanceof Boolean) {
-            if ((Boolean) value) {
-                writer.append(TRUE);
-            } else {
-                writer.append(FALSE);
-            }
-        } else if (value instanceof Byte ||
-                   value instanceof Short ||
-                   value instanceof Integer ||
-                   value instanceof Long ||
-                   value instanceof Double) {
-            writer.append(value.toString());
-        } else if (value instanceof String) {
-            writer.append(JSONObject.quote(value.toString()));
-        } else if (value instanceof byte[]) {
-            writer.append(JSONObject.quote(TBase64Utils.encode((byte[]) value)));
-        } else {
-            throw new IllegalArgumentException("No such primitive value type: " +
-                                               value.getClass().getSimpleName());
-        }
+    private void appendPrimitive(IndentedPrintWriter writer, Object value) throws IOException, JsonException {
+        JsonWriter json = new JsonWriter(writer, "");
+        json.value(value);
+        json.flush();
     }
 
-    private void appendMessage(IndentedPrintWriter writer, TMessage<?> message, String packageContext) throws IOException, JSONException {
+    private void appendMessage(IndentedPrintWriter writer, TMessage<?> message, String packageContext) throws IOException, JsonException {
         boolean first = true;
 
         writer.append('{')

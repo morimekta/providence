@@ -19,13 +19,13 @@
 
 package org.apache.thrift.j2.util;
 
+import org.apache.thrift.j2.util.io.TerminatedInputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-
-import org.apache.thrift.j2.util.io.TerminatedInputStream;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
@@ -172,7 +172,7 @@ public class TStringUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(prefix);
 
-        String[] parts = name.split("[_]");
+        String[] parts = name.split("[-._]");
         for (String part : parts) {
             if (part.isEmpty()) continue;
             builder.append(capitalize(part));
@@ -193,7 +193,7 @@ public class TStringUtils {
      */
     public static String c_case(String prefix, String name) {
         // Assume we insert at most 4 '_' chars for a majority of names.
-        StringBuilder builder = new StringBuilder(prefix.length() + name.length() + 4);
+        StringBuilder builder = new StringBuilder(prefix.length() + name.length() + 5);
         builder.append(prefix);
         // This does the opposite of camelCase, and inserts a '_' before each
         // capital letter, and lower cases the whole string. But avoids adding

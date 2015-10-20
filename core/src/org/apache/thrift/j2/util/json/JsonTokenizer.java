@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
  * @since 19.10.15
  */
-public class JsonTokener {
+public class JsonTokenizer {
     private final static int MARK_LIMIT = 4096;
 
     private final BufferedInputStream mIn;
@@ -29,7 +29,7 @@ public class JsonTokener {
     private       StringBuilder     mLineBuilder;
     private       JsonToken            mNextToken;
 
-    public JsonTokener(InputStream in) throws IOException {
+    public JsonTokenizer(InputStream in) throws IOException {
         mIn = new BufferedInputStream(in);
         mIn.mark(MARK_LIMIT);
 
@@ -105,15 +105,18 @@ public class JsonTokener {
 
                     builder.append((char) b);
 
-                    if (mLiteralExcaped) {
+                    if (b == '\n') {
+                        throw newParseException("newline in string literal");
+                    } else if (b < 32 || (127 <= b && b < 160) || (8192 <= b && b < 8448)) {
+                        throw newParseException(String.format(
+                                "Illegal character in string literal '\\u%04x'", b));
+                    } else if (mLiteralExcaped) {
                         mLiteralExcaped = false;
                     } else if (b == JsonToken.CH.ESCAPE.c) {
                         mLiteralExcaped = true;
                     } else if (b == JsonToken.CH.QUOTE.c) {
                         mLiteral = false;
                         return mkToken(builder, startPos);
-                    } else if (b == '\n') {
-                        throw newParseException("newline in string literal");
                     }
                     continue;
                 }

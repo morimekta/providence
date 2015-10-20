@@ -30,7 +30,7 @@ public class JsonException extends Exception {
         mLen = len;
     }
 
-    public JsonException(String message, JsonTokener tokenizer, JsonToken token) throws IOException {
+    public JsonException(String message, JsonTokenizer tokenizer, JsonToken token) throws IOException {
         super(message);
 
         mLine = tokenizer.getLine(token.getLine());

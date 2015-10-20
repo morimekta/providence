@@ -58,8 +58,6 @@ public class JsonWriter {
     }
 
     public JsonWriter object() throws JsonException {
-        System.out.println("object");
-
         startValue();
 
         mStack.push(mState);
@@ -75,8 +73,6 @@ public class JsonWriter {
     }
 
     public JsonWriter array() throws JsonException {
-        System.out.println("array");
-
         startValue();
 
         mStack.push(mState);
@@ -92,8 +88,6 @@ public class JsonWriter {
     }
 
     public JsonWriter endObject() throws JsonException {
-        System.out.println("endObject");
-
         if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected end, not in object..");
         if (Expectation.VALUE.equals(mState.expect)) throw new JsonException("Expected map value but got end.");
         mWriter.end()
@@ -103,8 +97,6 @@ public class JsonWriter {
     }
 
     public JsonWriter endArray() throws JsonException {
-        System.out.println("endArray");
-
         if (!Mode.LIST.equals(mState.mode)) throw new JsonException("Unexpected end, not in list.");
         mWriter.end()
                .appendln(JsonToken.CH.LIST_END.c);
@@ -113,8 +105,6 @@ public class JsonWriter {
     }
 
     public JsonWriter key(String key) throws JsonException {
-        System.out.println("key");
-
         if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected map key outside map.");
         if (!Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value or end");
         if (key == null) throw new JsonException("Expected map key, got null");
@@ -133,8 +123,6 @@ public class JsonWriter {
     }
 
     public JsonWriter value(Object value) throws JsonException {
-        System.out.println("value");
-
         startValue();
 
         if (value == null) {
@@ -181,13 +169,11 @@ public class JsonWriter {
     // Copied from org.json JSONObject.quote and modified for local use.
     private void appendQuoted(String string) {
         if(string != null && string.length() != 0) {
-            char c = 0;
             int len = string.length();
             mWriter.append('\"');
 
             for(int i = 0; i < len; ++i) {
-                char b = c;
-                c = string.charAt(i);
+                char c = string.charAt(i);
                 switch(c) {
                     case '\b':
                         mWriter.append("\\b");
@@ -209,20 +195,12 @@ public class JsonWriter {
                         mWriter.append('\\');
                         mWriter.append(c);
                         continue;
-                    case '/':
-                        if(b == 60) {
-                            mWriter.append('\\');
-                        }
-
-                        mWriter.append(c);
-                        continue;
                 }
 
-                if(c >= 32 && (c < 128 || c >= 160) && (c < 8192 || c >= 8448)) {
+                if(c >= 32 && (c < 127 || c >= 160) && (c < 8192 || c >= 8448)) {
                     mWriter.append(c);
                 } else {
-                    String t = "000" + Integer.toHexString(c);
-                    mWriter.append("\\u" + t.substring(t.length() - 4));
+                    mWriter.format("\\u%04x", (int) c);
                 }
             }
 

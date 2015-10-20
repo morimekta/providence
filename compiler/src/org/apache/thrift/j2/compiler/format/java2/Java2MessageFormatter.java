@@ -19,8 +19,6 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
-import java.io.IOException;
-
 import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -29,6 +27,8 @@ import org.apache.thrift.j2.TMessageVariant;
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.descriptor.TContainer;
 import org.apache.thrift.j2.descriptor.TDefaultValueProvider;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TExceptionDescriptor;
 import org.apache.thrift.j2.descriptor.TExceptionDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TList;
@@ -41,9 +41,10 @@ import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
-import org.apache.thrift.j2.descriptor.TDescriptor;
-import org.apache.thrift.j2.descriptor.TExceptionDescriptor;
-import org.json.JSONObject;
+import org.apache.thrift.j2.util.json.JsonException;
+import org.apache.thrift.j2.util.json.JsonWriter;
+
+import java.io.IOException;
 
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
@@ -281,8 +282,10 @@ public class Java2MessageFormatter {
 
         String simpleClass = mTypeHelper.getSimpleClassName(type);
 
-        writer.formatln("public static final Parcelable.Creator<%s> CREATOR = new Parcelable.Creator<%s>() {",
-                        simpleClass, simpleClass)
+        writer.formatln(
+                "public static final Parcelable.Creator<%s> CREATOR = new Parcelable.Creator<%s>() {",
+                simpleClass,
+                simpleClass)
               .begin();
 
         writer.appendln("@Override")
@@ -1075,7 +1078,13 @@ public class Java2MessageFormatter {
                 writer.append(defaultValue.toString()).append("d");
                 break;
             case STRING:
-                writer.append(JSONObject.quote(defaultValue.toString()));
+                try {
+                    JsonWriter json = new JsonWriter(writer, "");
+                    json.value(defaultValue.toString());
+                    json.flush();
+                } catch (JsonException je) {
+                    throw new GeneratorException("Unable to format string value");
+                }
                 break;
             case ENUM:
                 writer.format("%s.%s", mTypeHelper.getSimpleClassName(type), defaultValue.toString());

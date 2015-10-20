@@ -2,7 +2,6 @@ package org.apache.thrift.j2.util.json;
 
 import org.apache.thrift.j2.util.TTypeUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
@@ -14,17 +13,13 @@ public class JsonToken {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
 
-    public String getToken() {
-        return mToken;
-    }
-
     public enum CH {
-        MAP_START('{'),
-        MAP_KV_SEP(':'),
-        MAP_END('}'),
         LIST_START('['),
         LIST_END(']'),
         LIST_SEP(','),
+        MAP_START('{'),
+        MAP_END('}'),
+        MAP_KV_SEP(':'),
         QUOTE('"'),
         ESCAPE('\\'),
         ;
@@ -50,11 +45,11 @@ public class JsonToken {
         }
     }
 
-    public static final Pattern RE_LITERAL = Pattern.compile("\".*\"");
-    public static final Pattern RE_BOOLEAN = Pattern.compile("(true|false)");
-    public static final Pattern RE_INTEGER = Pattern.compile("[0-9]+");
-    public static final Pattern RE_DOUBLE = Pattern.compile(
-            "([0-9]+[.]?([eE][+-]?[0-9]+)?|([0-9]+)?[.][0-9]+([eE][+-]?[0-9]+)?)");
+    private static final Pattern RE_LITERAL = Pattern.compile("\".*\"");
+    private static final Pattern RE_BOOLEAN = Pattern.compile("(true|false)");
+    private static final Pattern RE_INTEGER = Pattern.compile("-?[0-9]+");
+    private static final Pattern RE_DOUBLE = Pattern.compile(
+            "-?([0-9]+[.]?([eE][+-]?[0-9]+)?|-?([0-9]+)?[.][0-9]+([eE][+-]?[0-9]+)?)");
 
     private final String mToken;
     private final int mLine;
@@ -66,6 +61,10 @@ public class JsonToken {
         mLine = line;
         mPos = pos;
         mLen = len;
+    }
+
+    public String getToken() {
+        return mToken;
     }
 
     public int getLine() {
@@ -108,12 +107,66 @@ public class JsonToken {
         return CH.valueOf(mToken.charAt(0));
     }
 
-    public String literalValue() {
-        return new String(mToken.substring(1, mToken.length() - 1).getBytes(),
-                          StandardCharsets.UTF_8);
+    public String literalValue() throws JsonException {
+        if (!isLiteral()) {
+            throw new JsonException(mToken + " is not a string literal.");
+        }
+
+        String literal = mToken.substring(1, mToken.length() - 1);
+        StringBuilder builder = new StringBuilder();
+
+        boolean escape = false;
+        for (int i = 0; i < literal.length(); ++i) {
+            char c = literal.charAt(i);
+            if (escape) {
+                switch (c) {
+                    case 'b':
+                        builder.append('\b');
+                        break;
+                    case 't':
+                        builder.append('\t');
+                        break;
+                    case 'n':
+                        builder.append('\n');
+                        break;
+                    case 'f':
+                        builder.append('\f');
+                        break;
+                    case 'r':
+                        builder.append('\r');
+                        break;
+                    case '\"':
+                    case '\\':
+                        builder.append(c);
+                        break;
+                    case 'u':
+                        if (literal.length() < i + 5) {
+                            throw new JsonException("Incomplete unicode at end of literal", mToken, mLine, mPos, mLen);
+                        }
+                        String unicode = literal.substring(i + 1, i + 5);
+                        try {
+                            int cp = Integer.parseInt(unicode, 16);
+                            builder.append((char) cp);
+                        } catch (NumberFormatException nfe) {
+                            throw new JsonException("Unable to parse unicode value from " + unicode, nfe);
+                        }
+                        i += 4;  // skip 4 more characters.
+                        break;
+                    default:
+                        throw new JsonException("Unknown escape sequence: '\\" + c + "'");
+                }
+                escape = false;
+            } else if (c == '\\') {
+                escape = true;
+            } else {
+                builder.append(c);
+            }
+        }
+
+        return builder.toString();
     }
 
-    public boolean getBoolean() {
+    public boolean booleanValue() {
         return mToken.equals("true");
     }
 

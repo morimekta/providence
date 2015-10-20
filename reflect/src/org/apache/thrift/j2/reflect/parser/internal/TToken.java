@@ -19,11 +19,15 @@
 
 package org.apache.thrift.j2.reflect.parser.internal;
 
-import java.util.regex.Pattern;
-
 import org.apache.thrift.j2.reflect.parser.TParseException;
-import org.json.JSONException;
-import org.json.JSONTokener;
+import org.apache.thrift.j2.util.json.JsonException;
+import org.apache.thrift.j2.util.json.JsonToken;
+import org.apache.thrift.j2.util.json.JsonTokenizer;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
@@ -103,11 +107,15 @@ public class TToken {
     }
 
     public String getLiteral() throws TParseException {
-        JSONTokener tokener = new JSONTokener(mToken);
         try {
-            return (String) tokener.nextValue();
-        } catch (JSONException e) {
+            ByteArrayInputStream bais = new ByteArrayInputStream(mToken.getBytes(StandardCharsets.UTF_8));
+            JsonTokenizer tokenizer = new JsonTokenizer(bais);
+            JsonToken token = tokenizer.expect("parsing string literal.");
+            return token.literalValue();
+        } catch (JsonException e) {
             throw new TParseException("Unable to parse string literal: " + mToken);
+        } catch (IOException e) {
+            throw new TParseException("Unable to read string literal: " + mToken);
         }
     }
 
