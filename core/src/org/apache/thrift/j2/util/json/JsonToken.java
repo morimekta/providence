@@ -174,7 +174,7 @@ public class JsonToken {
     public byte byteValue() {
         if (mToken.startsWith("0x")) {
             return Byte.parseByte(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0")) {
+        } else if (mToken.startsWith("0") && mToken.length() > 1) {
             return Byte.parseByte(mToken.substring(1), 8);
         }
         return Byte.parseByte(mToken);
@@ -183,7 +183,7 @@ public class JsonToken {
     public short shortValue() {
         if (mToken.startsWith("0x")) {
             return Short.parseShort(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0")) {
+        } else if (mToken.startsWith("0") && mToken.length() > 1) {
             return Short.parseShort(mToken.substring(1), 8);
         }
         return Short.parseShort(mToken);
@@ -192,7 +192,7 @@ public class JsonToken {
     public int intValue() {
         if (mToken.startsWith("0x")) {
             return Integer.parseInt(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0")) {
+        } else if (mToken.startsWith("0") && mToken.length() > 1) {
             return Integer.parseInt(mToken.substring(1), 8);
         }
         return Integer.parseInt(mToken);
@@ -201,7 +201,7 @@ public class JsonToken {
     public long longValue() {
         if (mToken.startsWith("0x")) {
             return Long.parseLong(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0")) {
+        } else if (mToken.startsWith("0") && mToken.length() > 1) {
             return Long.parseLong(mToken.substring(1), 8);
         }
         return Long.parseLong(mToken);

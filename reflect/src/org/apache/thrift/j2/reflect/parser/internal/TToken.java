@@ -126,7 +126,7 @@ public class TToken {
     public int intValue() {
         if (mToken.startsWith("0x")) {
             return Integer.parseInt(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0")) {
+        } else if (mToken.startsWith("0") && mToken.length() > 1) {
             return Integer.parseInt(mToken.substring(1), 8);
         }
         return Integer.parseInt(mToken);
