@@ -144,7 +144,7 @@ public class TConstParser {
                                             tokenizer,
                                             token);
                 case DOUBLE:
-                    if (token.isInteger() || token.isDouble()) {
+                    if (token.isInteger() || token.isReal()) {
                         return token.doubleValue();
                     }
                     throw new JsonException(token.getToken() + " is not a valid double value.",

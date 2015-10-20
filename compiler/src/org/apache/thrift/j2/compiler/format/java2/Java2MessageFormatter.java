@@ -1057,8 +1057,6 @@ public class Java2MessageFormatter {
                                   TDescriptor type)
             throws GeneratorException {
         switch (type.getType()) {
-            case BINARY:
-                throw new GeneratorException("Binary cannot be default value (yet)");
             case BOOL:
                 writer.append(defaultValue.toString());
                 break;
@@ -1077,6 +1075,17 @@ public class Java2MessageFormatter {
             case DOUBLE:
                 writer.append(defaultValue.toString()).append("d");
                 break;
+            case BINARY:
+                writer.append("new byte[]{");
+                byte[] bytes = (byte[]) defaultValue;
+                boolean first = true;
+                for (byte b : bytes) {
+                    if (first) first = false;
+                    else writer.append(',');
+                    writer.format("0x%02x", b);
+                }
+                writer.append('}');
+                break;
             case STRING:
                 try {
                     JsonWriter json = new JsonWriter(writer, "");
@@ -1090,10 +1099,12 @@ public class Java2MessageFormatter {
                 writer.format("%s.%s", mTypeHelper.getSimpleClassName(type), defaultValue.toString());
                 break;
             case MESSAGE:
+                // writer.write("null");
                 throw new GeneratorException("Message structs cannot have default values");
             case MAP:
             case LIST:
             case SET:
+                // writer.write("null");
                 throw new GeneratorException("Collections cannot have default value.");
         }
     }

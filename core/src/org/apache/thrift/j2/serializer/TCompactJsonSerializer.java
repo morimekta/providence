@@ -365,7 +365,7 @@ public class TCompactJsonSerializer
                     }
                     throw new TSerializeException("Not a valid long value: " + token.getToken());
                 case DOUBLE:
-                    if (token.isInteger() || token.isDouble()) {
+                    if (token.isInteger() || token.isReal()) {
                         return cast(token.doubleValue());
                     }
                     throw new TSerializeException("Not a valid double value: " + token.getToken());
@@ -509,7 +509,7 @@ public class TCompactJsonSerializer
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes()));
                         JsonToken token = tokenizer.next();
-                        if (!token.isDouble() && !token.isInteger()) {
+                        if (!token.isReal() && !token.isInteger()) {
                             throw new TSerializeException(key + " is not a number");
                         }
                         return token.doubleValue();

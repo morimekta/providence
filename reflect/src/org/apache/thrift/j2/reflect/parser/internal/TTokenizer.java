@@ -134,10 +134,10 @@ public class TTokenizer {
 
                     builder.append((char) b);
 
-                    if (mLiteralExcaped) {
-                        mLiteralExcaped = false;
-                    } else if (b == '\n') {
+                    if (b == '\n') {
                         throw newParseException("Literal newline in string literal");
+                    } else if (mLiteralExcaped) {
+                        mLiteralExcaped = false;
                     } else if (b == TSymbol.LITERAL_ESCAPE.c) {
                         mLiteralExcaped = true;
                     } else if (b == TSymbol.LITERAL_QUOTE.c) {

@@ -10,21 +10,24 @@ import android.os.Parcelable;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.descriptor.TDefaultValueProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
-/** @compact */
 public class AllTypes
         implements TMessage<AllTypes>, Serializable, Parcelable {
-    private final static boolean kDefaultBl = false;
-    private final static byte kDefaultBt = (byte)0;
-    private final static short kDefaultSh = (short)0;
-    private final static int kDefaultI = 0;
-    private final static long kDefaultL = 0l;
-    private final static double kDefaultD = 0.0d;
+    private final static boolean kDefaultBl = true;
+    private final static byte kDefaultBt = (byte)-125;
+    private final static short kDefaultSh = (short)8117;
+    private final static int kDefaultI = 1234567890;
+    private final static long kDefaultL = 1234567890123456789l;
+    private final static double kDefaultD = 2.99792458E8d;
+    private final static String kDefaultS = "test\twith escapes\nand unicode.";
+    private final static byte[] kDefaultBn = new byte[]{0x74,0x65,0x73,0x74,0x20,0x20,0x20,0x20,0x77,0x69,0x74,0x68,0x20,0x65,0x73,0x63,0x61,0x70,0x65,0x73,0x0d,0x0a,0x61,0x6e,0x64,0x20,0x75,0x6e,0x69,0x63,0x6f,0x64,0x65,0x2e};
+    private final static Values kDefaultV = Values.SECOND;
 
     private final Boolean mBl;
     private final Byte mBt;
@@ -105,7 +108,7 @@ public class AllTypes
     }
 
     public String getS() {
-        return mS;
+        return hasS() ? mS : kDefaultS;
     }
 
     public boolean hasBn() {
@@ -113,7 +116,7 @@ public class AllTypes
     }
 
     public byte[] getBn() {
-        return mBn;
+        return hasBn() ? mBn : kDefaultBn;
     }
 
     public boolean hasV() {
@@ -121,7 +124,7 @@ public class AllTypes
     }
 
     public Values getV() {
-        return mV;
+        return hasV() ? mV : kDefaultV;
     }
 
     public boolean hasO() {
@@ -259,15 +262,15 @@ public class AllTypes
 
     private static TStructDescriptor<AllTypes> _createDescriptor() {
         List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, false, "bl", TPrimitive.BOOL.provider(), null));
-        fieldList.add(new TField<>(null, 2, false, "bt", TPrimitive.BYTE.provider(), null));
-        fieldList.add(new TField<>(null, 3, false, "sh", TPrimitive.I16.provider(), null));
-        fieldList.add(new TField<>(null, 4, false, "i", TPrimitive.I32.provider(), null));
-        fieldList.add(new TField<>(null, 5, false, "l", TPrimitive.I64.provider(), null));
-        fieldList.add(new TField<>(null, 6, false, "d", TPrimitive.DOUBLE.provider(), null));
-        fieldList.add(new TField<>(null, 7, false, "s", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 8, false, "bn", TPrimitive.BINARY.provider(), null));
-        fieldList.add(new TField<>(null, 9, false, "v", Values.provider(), null));
+        fieldList.add(new TField<>(null, 1, false, "bl", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultBl)));
+        fieldList.add(new TField<>(null, 2, false, "bt", TPrimitive.BYTE.provider(), new TDefaultValueProvider<>(kDefaultBt)));
+        fieldList.add(new TField<>(null, 3, false, "sh", TPrimitive.I16.provider(), new TDefaultValueProvider<>(kDefaultSh)));
+        fieldList.add(new TField<>(null, 4, false, "i", TPrimitive.I32.provider(), new TDefaultValueProvider<>(kDefaultI)));
+        fieldList.add(new TField<>(null, 5, false, "l", TPrimitive.I64.provider(), new TDefaultValueProvider<>(kDefaultL)));
+        fieldList.add(new TField<>(null, 6, false, "d", TPrimitive.DOUBLE.provider(), new TDefaultValueProvider<>(kDefaultD)));
+        fieldList.add(new TField<>(null, 7, false, "s", TPrimitive.STRING.provider(), new TDefaultValueProvider<>(kDefaultS)));
+        fieldList.add(new TField<>(null, 8, false, "bn", TPrimitive.BINARY.provider(), new TDefaultValueProvider<>(kDefaultBn)));
+        fieldList.add(new TField<>(null, 9, false, "v", Values.provider(), new TDefaultValueProvider<>(kDefaultV)));
         fieldList.add(new TField<>(null, 10, false, "o", Other.provider(), null));
         fieldList.add(new TField<>(null, 11, false, "self", AllTypes.provider(), null));
         return new TStructDescriptor<>(null, "alltypes", "AllTypes", fieldList, new _Factory(), false);

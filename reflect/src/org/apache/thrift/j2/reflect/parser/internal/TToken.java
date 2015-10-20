@@ -39,7 +39,7 @@ public class TToken {
     public static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
             "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
     public static final Pattern RE_INTEGER = Pattern.compile(
-            "[0-9]+");
+            "-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
 
     private final String mToken;
     private final int mLine;
@@ -106,7 +106,7 @@ public class TToken {
         return TSymbol.valueOf(mToken.charAt(0));
     }
 
-    public String getLiteral() throws TParseException {
+    public String literalValue() throws TParseException {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(mToken.getBytes(StandardCharsets.UTF_8));
             JsonTokenizer tokenizer = new JsonTokenizer(bais);
@@ -119,7 +119,16 @@ public class TToken {
         }
     }
 
-    public int getInteger() {
+    public int keyValue() {
+        return Integer.parseInt(mToken);
+    }
+
+    public int intValue() {
+        if (mToken.startsWith("0x")) {
+            return Integer.parseInt(mToken.substring(2), 16);
+        } else if (mToken.startsWith("0")) {
+            return Integer.parseInt(mToken.substring(1), 8);
+        }
         return Integer.parseInt(mToken);
     }
 

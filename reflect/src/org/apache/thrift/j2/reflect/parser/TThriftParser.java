@@ -307,7 +307,7 @@ public class TThriftParser implements TParser {
                 }
 
                 if (token.isInteger()) {
-                    field.setKey(token.getInteger());
+                    field.setKey(token.intValue());
                     tokenizer.expectSymbol(TSymbol.MAP_KEY_ENTRY_SEP, "reading method params (:)");
                     token = tokenizer.expect("reading method param type");
                 }
@@ -364,7 +364,7 @@ public class TThriftParser implements TParser {
                     }
 
                     if (token.isInteger()) {
-                        field.setKey(token.getInteger());
+                        field.setKey(token.intValue());
                         tokenizer.expectSymbol(TSymbol.MAP_KEY_ENTRY_SEP, "reading method exception (:)");
                         token = tokenizer.expect("reading method exception type");
                     }
@@ -426,7 +426,7 @@ public class TThriftParser implements TParser {
             throw new TParseException("Expected string literal for include",
                     tokenizer, include);
         }
-        includes.add(include.getLiteral());
+        includes.add(include.literalValue());
     }
 
     private void parseTypedef(TTokenizer tokenizer, String comment, List<Declaration> declarations)
@@ -494,10 +494,10 @@ public class TThriftParser implements TParser {
                     // [=]
                     TToken value = tokenizer.next();
                     if (!value.isInteger()) {
-                        throw new TParseException("Expected numeric enum value",
+                        throw new TParseException("Expected numeric enum value, got " + value.getToken(),
                                                   tokenizer, value);
                     }
-                    nextValue = value.getInteger();
+                    nextValue = value.intValue();
                 }
             } else if (token.isIdentifier()) {
                 if (nextName != null) {
@@ -558,7 +558,7 @@ public class TThriftParser implements TParser {
             comment = null;
 
             if (token.isInteger()) {
-                field.setKey(token.getInteger());
+                field.setKey(token.intValue());
                 tokenizer.expectSymbol(TSymbol.MAP_KEY_ENTRY_SEP, "parsing struct " + id.getToken());
                 token = tokenizer.expect("parsing struct " + id.getToken());
             } else {

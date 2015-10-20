@@ -47,7 +47,8 @@ public class JsonToken {
 
     private static final Pattern RE_LITERAL = Pattern.compile("\".*\"");
     private static final Pattern RE_BOOLEAN = Pattern.compile("(true|false)");
-    private static final Pattern RE_INTEGER = Pattern.compile("-?[0-9]+");
+    private static final Pattern RE_INTEGER = Pattern.compile(
+            "-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
     private static final Pattern RE_DOUBLE = Pattern.compile(
             "-?([0-9]+[.]?([eE][+-]?[0-9]+)?|-?([0-9]+)?[.][0-9]+([eE][+-]?[0-9]+)?)");
 
@@ -99,7 +100,7 @@ public class JsonToken {
         return RE_INTEGER.matcher(mToken).matches();
     }
 
-    public boolean isDouble() {
+    public boolean isReal() {
         return RE_DOUBLE.matcher(mToken).matches();
     }
 
@@ -167,27 +168,47 @@ public class JsonToken {
     }
 
     public boolean booleanValue() {
-        return mToken.equals("true");
+        return mToken.equals(TRUE);
     }
 
     public byte byteValue() {
-        return (byte) longValue();
+        if (mToken.startsWith("0x")) {
+            return Byte.parseByte(mToken.substring(2), 16);
+        } else if (mToken.startsWith("0")) {
+            return Byte.parseByte(mToken.substring(1), 8);
+        }
+        return Byte.parseByte(mToken);
     }
 
     public short shortValue() {
-        return (short) longValue();
+        if (mToken.startsWith("0x")) {
+            return Short.parseShort(mToken.substring(2), 16);
+        } else if (mToken.startsWith("0")) {
+            return Short.parseShort(mToken.substring(1), 8);
+        }
+        return Short.parseShort(mToken);
     }
 
     public int intValue() {
-        return (int) longValue();
+        if (mToken.startsWith("0x")) {
+            return Integer.parseInt(mToken.substring(2), 16);
+        } else if (mToken.startsWith("0")) {
+            return Integer.parseInt(mToken.substring(1), 8);
+        }
+        return Integer.parseInt(mToken);
     }
 
     public long longValue() {
+        if (mToken.startsWith("0x")) {
+            return Long.parseLong(mToken.substring(2), 16);
+        } else if (mToken.startsWith("0")) {
+            return Long.parseLong(mToken.substring(1), 8);
+        }
         return Long.parseLong(mToken);
     }
 
-    public float getFloat() {
-        return (float) doubleValue();
+    public float floatValue() {
+        return Float.parseFloat(mToken);
     }
 
     public double doubleValue() {
