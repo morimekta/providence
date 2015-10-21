@@ -20,7 +20,6 @@
 package org.apache.thrift.j2.reflect.contained;
 
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TFieldInfo;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 import org.junit.Before;
@@ -51,15 +50,15 @@ public class TContainedMessageTest {
         mRegistry = new TTypeRegistry();
 
         List<TField<?>> fields = new LinkedList<>();
-        fields.add(new TFieldInfo<>(null, 1, false, "field_bool", TPrimitive.BOOL.provider(), null));
-        fields.add(new TFieldInfo<>(null, 2, false, "field_8", TPrimitive.BYTE.provider(), null));
-        fields.add(new TFieldInfo<>(null, 65000, false, "field_16", TPrimitive.I16.provider(), null));
-        fields.add(new TFieldInfo<>(null, 4, false, "field_32", TPrimitive.I32.provider(), null));
-        fields.add(new TFieldInfo<>(null, 5, false, "field_64", TPrimitive.I64.provider(), null));
-        fields.add(new TFieldInfo<>(null, 6, false, "field_dbl", TPrimitive.DOUBLE.provider(), null));
-        fields.add(new TFieldInfo<>(null, 9998, false, "field_str", TPrimitive.STRING.provider(), null));
-        fields.add(new TFieldInfo<>(null, 9999, false, "field_bin", TPrimitive.BINARY.provider(), null));
-        fields.add(new TFieldInfo<>(null, 32000, false, "field_a", mRegistry.getProvider("TypeA", "test"), null));
+        fields.add(new TContainedField<>(null, 1, false, "field_bool", TPrimitive.BOOL.provider(), null));
+        fields.add(new TContainedField<>(null, 2, false, "field_8", TPrimitive.BYTE.provider(), null));
+        fields.add(new TContainedField<>(null, 65000, false, "field_16", TPrimitive.I16.provider(), null));
+        fields.add(new TContainedField<>(null, 4, false, "field_32", TPrimitive.I32.provider(), null));
+        fields.add(new TContainedField<>(null, 5, false, "field_64", TPrimitive.I64.provider(), null));
+        fields.add(new TContainedField<>(null, 6, false, "field_dbl", TPrimitive.DOUBLE.provider(), null));
+        fields.add(new TContainedField<>(null, 9998, false, "field_str", TPrimitive.STRING.provider(), null));
+        fields.add(new TContainedField<>(null, 9999, false, "field_bin", TPrimitive.BINARY.provider(), null));
+        fields.add(new TContainedField<>(null, 32000, false, "field_a", mRegistry.getProvider("TypeA", "test"), null));
 
         mStructType = new TContainedStructDescriptor(null, "test", "TypeA", fields);
         mUnionType = new TContainedUnionDescriptor(null, "test", "TypeA", fields);

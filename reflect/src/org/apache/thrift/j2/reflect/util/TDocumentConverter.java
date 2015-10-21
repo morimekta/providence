@@ -23,7 +23,7 @@ import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TFieldInfo;
+import org.apache.thrift.j2.reflect.contained.TContainedField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 import org.apache.thrift.j2.descriptor.TServiceMethod;
@@ -207,7 +207,7 @@ public class TDocumentConverter {
                                               field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        TField<?> made = new TFieldInfo<>(field.getComment(),
+        TField<?> made = new TContainedField<>(field.getComment(),
                                           field.getKey(),
                                           field.getIsRequired(),
                                           field.getName(),

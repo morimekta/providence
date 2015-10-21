@@ -19,19 +19,16 @@
 
 package org.apache.test.calculator;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.thrift.j2.TClient;
 import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TService;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TFieldInfo;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 import org.apache.thrift.j2.descriptor.TServiceMethod;
@@ -39,6 +36,12 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
@@ -201,7 +204,7 @@ public abstract class Calculator {
             return true;
         }
 
-        private final static class _Factory
+        private final static class Factory
                 extends TMessageBuilderFactory<Calculate_Params> {
             @Override
             public Calculate_Params.Builder builder() {
@@ -225,14 +228,88 @@ public abstract class Calculator {
 
         public static final TStructDescriptor<Calculate_Params> DESCRIPTOR = createDescriptor();
 
+        public enum Field implements TField {
+            OPERATION(1, false, "operation", Operation.provider(), null),
+            ;
+
+            private final int mKey;
+            private final boolean mRequired;
+            private final String mName;
+            private final TDescriptorProvider<?> mTypeProvider;
+            private final TValueProvider<?> mDefaultValue;
+
+            Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+                mKey = key;
+                mRequired = required;
+                mName = name;
+                mTypeProvider = typeProvider;
+                mDefaultValue = defaultValue;
+            }
+
+            @Override
+            public String getComment() { return null; }
+
+            @Override
+            public int getKey() { return mKey; }
+
+            @Override
+            public boolean getRequired() { return mRequired; }
+
+            @Override
+            public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+            @Override
+            public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+            @Override
+            public String getName() { return mName; }
+
+            @Override
+            public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+            @Override
+            public Object getDefaultValue() {
+                return hasDefaultValue() ? mDefaultValue.get() : null;
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder();
+                builder.append(Operand.class.getSimpleName())
+                       .append('{')
+                       .append(mKey)
+                       .append(": ");
+                if (mRequired) {
+                    builder.append("required ");
+                }
+                builder.append(descriptor().getQualifiedName(null))
+                       .append(' ')
+                       .append(mName)
+                       .append('}');
+                return builder.toString();
+            }
+
+            public static Field forKey(int key) {
+                for (Field field : values()) {
+                    if (field.mKey == key) return field;
+                }
+                return null;
+            }
+
+            public static Field forName(String name) {
+                for (Field field : values()) {
+                    if (field.mName.equals(name)) return field;
+                }
+                return null;
+            }
+        }
+
         private static TStructDescriptor<Calculate_Params> createDescriptor() {
-            List<TField<?>> fieldList = new LinkedList<>();
-            fieldList.add(new TFieldInfo<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
             return new TStructDescriptor<>(null,
                                            "calculator",
                                            "Calculator_calculate_request",
-                                           fieldList,
-                                           new _Factory(),
+                                           Calculate_Params.Field.values(),
+                                           new Factory(),
                                            false);
         }
 
@@ -342,6 +419,82 @@ public abstract class Calculator {
             return (mCe != null ? 1 : 0) == 1;
         }
 
+        public enum Field implements TField {
+            MESSAGE(1, false, "message", TPrimitive.STRING.provider(), null),
+            ;
+
+            private final int mKey;
+            private final boolean mRequired;
+            private final String mName;
+            private final TDescriptorProvider<?> mTypeProvider;
+            private final TValueProvider<?> mDefaultValue;
+
+            Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+                mKey = key;
+                mRequired = required;
+                mName = name;
+                mTypeProvider = typeProvider;
+                mDefaultValue = defaultValue;
+            }
+
+            @Override
+            public String getComment() { return null; }
+
+            @Override
+            public int getKey() { return mKey; }
+
+            @Override
+            public boolean getRequired() { return mRequired; }
+
+            @Override
+            public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+            @Override
+            public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+            @Override
+            public String getName() { return mName; }
+
+            @Override
+            public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+            @Override
+            public Object getDefaultValue() {
+                return hasDefaultValue() ? mDefaultValue.get() : null;
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder builder = new StringBuilder();
+                builder.append(Operand.class.getSimpleName())
+                       .append('{')
+                       .append(mKey)
+                       .append(": ");
+                if (mRequired) {
+                    builder.append("required ");
+                }
+                builder.append(descriptor().getQualifiedName(null))
+                       .append(' ')
+                       .append(mName)
+                       .append('}');
+                return builder.toString();
+            }
+
+            public static Field forKey(int key) {
+                for (Field field : values()) {
+                    if (field.mKey == key) return field;
+                }
+                return null;
+            }
+
+            public static Field forName(String name) {
+                for (Field field : values()) {
+                    if (field.mName.equals(name)) return field;
+                }
+                return null;
+            }
+        }
+
         private final static class _Factory
                 extends TMessageBuilderFactory<Calculate_Exception> {
             @Override
@@ -367,12 +520,10 @@ public abstract class Calculator {
         public static final TUnionDescriptor<Calculate_Exception> DESCRIPTOR = createDescriptor();
 
         private static TUnionDescriptor<Calculate_Exception> createDescriptor() {
-            List<TField<?>> fieldList = new LinkedList<>();
-            fieldList.add(new TFieldInfo<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
             return new TUnionDescriptor<>(null,
                                           "calculator",
                                           "Calculator_calculate_response",
-                                          fieldList,
+                                          Calculate_Exception.Field.values(),
                                           new _Factory());
         }
 

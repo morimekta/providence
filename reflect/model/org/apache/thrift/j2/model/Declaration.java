@@ -24,6 +24,8 @@ public class Declaration
     private final StructType mDeclStruct;
     private final ServiceType mDeclService;
     private final ThriftField mDeclConst;
+    private final Declaration.Field tUnionField;
+
 
     private Declaration(Builder builder) {
         mDeclEnum = builder.mDeclEnum;
@@ -31,6 +33,8 @@ public class Declaration
         mDeclStruct = builder.mDeclStruct;
         mDeclService = builder.mDeclService;
         mDeclConst = builder.mDeclConst;
+
+        tUnionField = builder.tUnionField;
     }
 
     public boolean hasDeclEnum() {
@@ -71,6 +75,10 @@ public class Declaration
 
     public ThriftField getDeclConst() {
         return mDeclConst;
+    }
+
+    public Declaration.Field unionField() {
+        return tUnionField;
     }
 
     @Override
@@ -273,6 +281,8 @@ public class Declaration
         private StructType mDeclStruct;
         private ServiceType mDeclService;
         private ThriftField mDeclConst;
+        private Declaration.Field tUnionField;
+
 
         public Builder() {
         }
@@ -285,54 +295,66 @@ public class Declaration
             mDeclStruct = base.mDeclStruct;
             mDeclService = base.mDeclService;
             mDeclConst = base.mDeclConst;
+
+            tUnionField = base.tUnionField;
         }
 
         public Builder setDeclEnum(EnumType value) {
+            tUnionField = Declaration.Field.DECL_ENUM;
             mDeclEnum = value;
             return this;
         }
 
         public Builder clearDeclEnum() {
+            if (mDeclEnum != null) tUnionField = null;
             mDeclEnum = null;
             return this;
         }
 
         public Builder setDeclTypedef(TypedefType value) {
+            tUnionField = Declaration.Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
         }
 
         public Builder clearDeclTypedef() {
+            if (mDeclTypedef != null) tUnionField = null;
             mDeclTypedef = null;
             return this;
         }
 
         public Builder setDeclStruct(StructType value) {
+            tUnionField = Declaration.Field.DECL_STRUCT;
             mDeclStruct = value;
             return this;
         }
 
         public Builder clearDeclStruct() {
+            if (mDeclStruct != null) tUnionField = null;
             mDeclStruct = null;
             return this;
         }
 
         public Builder setDeclService(ServiceType value) {
+            tUnionField = Declaration.Field.DECL_SERVICE;
             mDeclService = value;
             return this;
         }
 
         public Builder clearDeclService() {
+            if (mDeclService != null) tUnionField = null;
             mDeclService = null;
             return this;
         }
 
         public Builder setDeclConst(ThriftField value) {
+            tUnionField = Declaration.Field.DECL_CONST;
             mDeclConst = value;
             return this;
         }
 
         public Builder clearDeclConst() {
+            if (mDeclConst != null) tUnionField = null;
             mDeclConst = null;
             return this;
         }

@@ -476,6 +476,8 @@ public class Java2MessageFormatter {
     }
 
     private void appendBuilder(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+        boolean union = type.getVariant().equals(TMessageVariant.UNION);
+
         String simpleClass = mTypeHelper.getSimpleClassName(type);
         writer.appendln("@Override")
               .formatln("public %s.Builder mutate() {", simpleClass)
@@ -498,6 +500,9 @@ public class Java2MessageFormatter {
             writer.formatln("private %s %s;",
                             mTypeHelper.getFieldType(field.descriptor()),
                             camelCase("m", field.getName()));
+        }
+        if (union) {
+            writer.formatln("private %s.Field tUnionField;", simpleClass).newline();
         }
 
         writer.newline()
@@ -540,6 +545,11 @@ public class Java2MessageFormatter {
                     break;
             }
         }
+        if (union) {
+            writer.newline()
+                  .appendln("tUnionField = base.tUnionField;");
+        }
+
         // Builder - mutate constructor
         writer.end()
               .appendln('}')
@@ -547,6 +557,7 @@ public class Java2MessageFormatter {
 
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
+            String fEnumName = c_case("", field.getName()).toUpperCase();
             String vType = mTypeHelper.getValueType(field.descriptor());
             switch (field.descriptor().getType()) {
                 case MAP:
@@ -559,8 +570,11 @@ public class Java2MessageFormatter {
                     writer.formatln("public Builder %s(Map<%s,%s> value) {",
                                     camelCase("set", field.getName()),
                                     mkType, miType)
-                          .begin()
-                          .formatln("%s.clear();", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                    }
+                    writer.formatln("%s.clear();", fName)
                           .formatln("%s.putAll(value);", fName)
                           .appendln("return this;")
                           .end()
@@ -572,16 +586,23 @@ public class Java2MessageFormatter {
                     writer.formatln("public Builder %s(%s key, %s value) {",
                                     camelCase("addTo", field.getName()),
                                     mkType, miType)
-                          .begin()
-                          .formatln("%s.put(key, value);", fName)
+                          .begin();
+                    if(union) {
+                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                    }
+                    writer.formatln("%s.put(key, value);", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
                           .newline();
+
                     writer.formatln("public Builder %s() {",
                                     camelCase("clear", field.getName()))
-                          .begin()
-                          .formatln("%s.clear();", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("if (%s.size() > 0) tUnionField = null;", fName);
+                    }
+                    writer.formatln("%s.clear();", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
@@ -597,8 +618,11 @@ public class Java2MessageFormatter {
                     writer.formatln("public Builder %s(Collection<%s> value) {",
                                     camelCase("set", field.getName()),
                                     liType)
-                          .begin()
-                          .formatln("%s.clear();", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                    }
+                    writer.formatln("%s.clear();", fName)
                           .formatln("%s.addAll(value);", fName)
                           .appendln("return this;")
                           .end()
@@ -610,8 +634,11 @@ public class Java2MessageFormatter {
                     writer.formatln("public Builder %s(%s... values) {",
                                     camelCase("addTo", field.getName()),
                                     liType)
-                          .begin()
-                          .formatln("for (%s item : values) {", liType)
+                          .begin();
+                    if (union) {
+                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                    }
+                    writer.formatln("for (%s item : values) {", liType)
                           .begin()
                           .formatln("%s.add(item);", fName)
                           .end()
@@ -622,8 +649,11 @@ public class Java2MessageFormatter {
                           .newline();
                     writer.formatln("public Builder %s() {",
                                     camelCase("clear", field.getName()))
-                          .begin()
-                          .formatln("%s.clear();", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("if (%s.size() > 0) tUnionField = null;", fName);
+                    }
+                    writer.formatln("%s.clear();", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
@@ -635,16 +665,22 @@ public class Java2MessageFormatter {
                     }
                     writer.formatln("public Builder %s(%s value) {",
                                     camelCase("set", field.getName()), vType)
-                          .begin()
-                          .formatln("%s = value;", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                    }
+                    writer.formatln("%s = value;", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
                           .newline();
                     writer.formatln("public Builder %s() {",
                                     camelCase("clear", field.getName()))
-                          .begin()
-                          .formatln("%s = null;", fName)
+                          .begin();
+                    if (union) {
+                        writer.formatln("if (%s != null) tUnionField = null;", fName);
+                    }
+                    writer.formatln("%s = null;", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
@@ -1160,6 +1196,15 @@ public class Java2MessageFormatter {
                   .appendln('}')
                   .newline();
         }
+
+        if (type.getVariant().equals(TMessageVariant.UNION)) {
+            writer.formatln("public %s.Field unionField() {", camelCase("", type.getName()))
+                  .begin()
+                  .appendln("return tUnionField;")
+                  .end()
+                  .appendln('}')
+                  .newline();
+        }
     }
 
     private void appendTypedValue(IndentedPrintWriter writer,
@@ -1225,6 +1270,11 @@ public class Java2MessageFormatter {
                             mTypeHelper.getFieldType(field.descriptor()),
                             camelCase("m", field.getName()));
         }
+        if (type.getVariant().equals(TMessageVariant.UNION)) {
+            writer.formatln("private final %s.Field tUnionField;",
+                            camelCase("", type.getName()))
+                  .newline();
+        }
         writer.newline();
     }
 
@@ -1254,6 +1304,10 @@ public class Java2MessageFormatter {
                     writer.formatln("%s = builder.%s;", fName, fName);
                     break;
             }
+        }
+        if (type.getVariant().equals(TMessageVariant.UNION)) {
+            writer.newline()
+                  .appendln("tUnionField = builder.tUnionField;");
         }
         writer.end()
               .appendln('}')

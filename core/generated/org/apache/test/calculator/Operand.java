@@ -28,11 +28,15 @@ public class Operand
     private final Operation mOperation;
     private final Double mNumber;
     private final Imaginary mImaginary;
+    private final Operand.Field tUnionField;
+
 
     private Operand(Builder builder) {
         mOperation = builder.mOperation;
         mNumber = builder.mNumber;
         mImaginary = builder.mImaginary;
+
+        tUnionField = builder.tUnionField;
     }
 
     public boolean hasOperation() {
@@ -57,6 +61,10 @@ public class Operand
 
     public Imaginary getImaginary() {
         return mImaginary;
+    }
+
+    public Operand.Field unionField() {
+        return tUnionField;
     }
 
     @Override
@@ -295,6 +303,8 @@ public class Operand
         private Operation mOperation;
         private Double mNumber;
         private Imaginary mImaginary;
+        private Operand.Field tUnionField;
+
 
         public Builder() {
         }
@@ -305,34 +315,42 @@ public class Operand
             mOperation = base.mOperation;
             mNumber = base.mNumber;
             mImaginary = base.mImaginary;
+
+            tUnionField = base.tUnionField;
         }
 
         public Builder setOperation(Operation value) {
+            tUnionField = Operand.Field.OPERATION;
             mOperation = value;
             return this;
         }
 
         public Builder clearOperation() {
+            if (mOperation != null) tUnionField = null;
             mOperation = null;
             return this;
         }
 
         public Builder setNumber(double value) {
+            tUnionField = Operand.Field.NUMBER;
             mNumber = value;
             return this;
         }
 
         public Builder clearNumber() {
+            if (mNumber != null) tUnionField = null;
             mNumber = null;
             return this;
         }
 
         public Builder setImaginary(Imaginary value) {
+            tUnionField = Operand.Field.IMAGINARY;
             mImaginary = value;
             return this;
         }
 
         public Builder clearImaginary() {
+            if (mImaginary != null) tUnionField = null;
             mImaginary = null;
             return this;
         }
