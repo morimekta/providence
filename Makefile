@@ -1,23 +1,33 @@
 INSTALL_DIR="${HOME}/.apps/lib/jars"
 BIN_DIR="${HOME}/.apps/bin"
 
-libs:
-	mkdir -p ./libs
-	buck build //core:core //reflect:reflect
-	cp buck-out/gen/core/lib__core__output/core.jar libs/thrift-j2-core.jar
-	cp buck-out/gen/reflect/lib__reflect__output/reflect.jar libs/thrift-j2-reflect.jar
+thrift-j2-%.jar:
+	buck build //$*:$*
+	cp buck-out/gen/$*/lib__$*__output/$*.jar thrift-j2-$*.jar
 
-apps:
-	buck build //compiler:compile //converter:convert
+compile.jar:
+	buck build //compiler:compile
+	cp buck-out/gen/compiler/compile.jar .
 
-install: apps
+convert.jar:
+	buck build //converter:convert
+	cp buck-out/gen/converter/convert.jar .
+
+libs: thrift-j2-core.jar thrift-j2-reflect.jar thrift-j2-jax-rs.jar thrift-j2-protocol.jar thrift-j2-client.jar
+
+install: compile.jar convert.jar
 	mkdir -p ${INSTALL_DIR}
-	cp buck-out/gen/compiler/compile.jar ${INSTALL_DIR}
-	cp buck-out/gen/converter/convert.jar ${INSTALL_DIR}
+	cp compile.jar ${INSTALL_DIR}
+	cp convert.jar ${INSTALL_DIR}
 	echo '#!/bin/bash' > ${BIN_DIR}/tcompile
-	echo 'java -jar ${INSTALL_DIR}/compile.jar $@' >> ${BIN_DIR}/tcompile
+	echo 'java -jar ${INSTALL_DIR}/compile.jar $$@' >> ${BIN_DIR}/tcompile
 	chmod a+x ${BIN_DIR}/tcompile
 	echo '#!/bin/bash' > ${BIN_DIR}/tconv
-	echo 'java -jar ${INSTALL_DIR}/convert.jar $@' >> ${BIN_DIR}/tconv
+	echo 'java -jar ${INSTALL_DIR}/convert.jar $$@' >> ${BIN_DIR}/tconv
 	chmod a+x ${BIN_DIR}/tconv
 
+clean:
+	buck clean
+	rm -rf *.jar
+
+.PHONY: libs install clean

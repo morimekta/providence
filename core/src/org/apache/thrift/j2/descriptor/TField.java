@@ -36,17 +36,38 @@ public interface TField<V> {
      */
     String getComment();
 
+    /**
+     * @return The field numeric ID or key.
+     */
     int getKey();
 
+    /**
+     * @return Whether the field is required for validity.
+     */
     boolean getRequired();
 
+    /**
+     * @return The data type of the field.
+     */
     TType getType();
 
+    /**
+     * @return The type descriptor for the field data type.
+     */
     TDescriptor<V> descriptor();
 
+    /**
+     * @return The field name (original).
+     */
     String getName();
 
+    /**
+     * @return Whether the field has an explicit default value.
+     */
     boolean hasDefaultValue();
 
+    /**
+     * @return The default value or null if none.
+     */
     V getDefaultValue();
 }

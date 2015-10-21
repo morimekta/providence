@@ -61,15 +61,16 @@ public class TStructDescriptor<T extends TMessage<T>>
                              boolean compactible) {
         super(comment, packageName, name);
 
+        mFields = Collections.unmodifiableList(fields);
+
         Map<Integer, TField<?>> fieldIdMap = new LinkedHashMap<>();
         Map<String, TField<?>> fieldNameMap = new LinkedHashMap<>();
         for (TField<?> field : fields) {
             fieldIdMap.put(field.getKey(), field);
             fieldNameMap.put(field.getName(), field);
         }
-        mFields = Collections.unmodifiableList(fields);
-        mFieldIdMap = Collections.unmodifiableMap(fieldIdMap);
-        mFieldNameMap = Collections.unmodifiableMap(fieldNameMap);
+        mFieldIdMap = fieldIdMap;
+        mFieldNameMap = fieldNameMap;
 
         mProvider = provider;
         mCompactible = compactible;

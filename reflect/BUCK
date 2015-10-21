@@ -1,17 +1,10 @@
 java_library(
-  name = "model",
-  srcs = glob(["model/**/*.java"]),
-  deps = [
-    "//core:core",
-  ],
-  visibility = [ "PUBLIC" ],
-)
-
-java_library(
   name = "reflect",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob([
+    "src/**/*.java",
+    "model/**/*.java",
+  ]),
   deps = [
-    ":model",
     "//core:core",
   ],
   visibility = [ "PUBLIC" ],
@@ -21,7 +14,6 @@ java_test(
   name = "test",
   srcs = glob(["test/**/*.java"]),
   deps = [
-    ":model",
     ":reflect",
     "//core:core",
     "//third-party/junit:junit",

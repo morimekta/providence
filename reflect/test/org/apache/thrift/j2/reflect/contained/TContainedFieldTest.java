@@ -57,97 +57,97 @@ public class TContainedFieldTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("TField{4: i32 name}", fieldA.toString());
-        Assert.assertEquals("TField{4: i32 name}", fieldB.toString());
-        Assert.assertEquals("TField{4: i32 name}", fieldC.toString());
-        Assert.assertEquals("TField{6: i32 name}", fieldD.toString());
-        Assert.assertEquals("TField{4: required i32 name}", fieldE.toString());
-        Assert.assertEquals("TField{4: i32 eman}", fieldF.toString());
-        Assert.assertEquals("TField{4: i64 name}", fieldG.toString());
-        Assert.assertEquals("TField{4: i32 name}", fieldH.toString());
+        assertEquals("TField{4: i32 name}", fieldA.toString());
+        assertEquals("TField{4: i32 name}", fieldB.toString());
+        assertEquals("TField{4: i32 name}", fieldC.toString());
+        assertEquals("TField{6: i32 name}", fieldD.toString());
+        assertEquals("TField{4: required i32 name}", fieldE.toString());
+        assertEquals("TField{4: i32 eman}", fieldF.toString());
+        assertEquals("TField{4: i64 name}", fieldG.toString());
+        assertEquals("TField{4: i32 name}", fieldH.toString());
     }
 
     @Test
     public void testEquals() {
-        Assert.assertEquals(fieldA, fieldB);
-        Assert.assertEquals(fieldA, fieldC);
-        Assert.assertEquals(fieldB, fieldC);
+        assertEquals(fieldA, fieldB);
+        assertEquals(fieldA, fieldC);
+        assertEquals(fieldB, fieldC);
 
-        Assert.assertNotEquals(fieldA, fieldD);
-        Assert.assertNotEquals(fieldA, fieldE);
-        Assert.assertNotEquals(fieldA, fieldF);
-        Assert.assertNotEquals(fieldA, fieldG);
-        Assert.assertNotEquals(fieldA, fieldH);
+        assertNotEquals(fieldA, fieldD);
+        assertNotEquals(fieldA, fieldE);
+        assertNotEquals(fieldA, fieldF);
+        assertNotEquals(fieldA, fieldG);
+        assertNotEquals(fieldA, fieldH);
 
-        Assert.assertNotEquals(fieldB, fieldD);
-        Assert.assertNotEquals(fieldB, fieldE);
-        Assert.assertNotEquals(fieldB, fieldF);
-        Assert.assertNotEquals(fieldB, fieldG);
-        Assert.assertNotEquals(fieldB, fieldH);
+        assertNotEquals(fieldB, fieldD);
+        assertNotEquals(fieldB, fieldE);
+        assertNotEquals(fieldB, fieldF);
+        assertNotEquals(fieldB, fieldG);
+        assertNotEquals(fieldB, fieldH);
 
-        Assert.assertNotEquals(fieldC, fieldD);
-        Assert.assertNotEquals(fieldC, fieldE);
-        Assert.assertNotEquals(fieldC, fieldF);
-        Assert.assertNotEquals(fieldC, fieldG);
-        Assert.assertNotEquals(fieldC, fieldH);
+        assertNotEquals(fieldC, fieldD);
+        assertNotEquals(fieldC, fieldE);
+        assertNotEquals(fieldC, fieldF);
+        assertNotEquals(fieldC, fieldG);
+        assertNotEquals(fieldC, fieldH);
 
-        Assert.assertNotEquals(fieldD, fieldE);
-        Assert.assertNotEquals(fieldD, fieldF);
-        Assert.assertNotEquals(fieldD, fieldG);
-        Assert.assertNotEquals(fieldD, fieldH);
+        assertNotEquals(fieldD, fieldE);
+        assertNotEquals(fieldD, fieldF);
+        assertNotEquals(fieldD, fieldG);
+        assertNotEquals(fieldD, fieldH);
 
-        Assert.assertNotEquals(fieldE, fieldF);
-        Assert.assertNotEquals(fieldE, fieldG);
-        Assert.assertNotEquals(fieldE, fieldH);
+        assertNotEquals(fieldE, fieldF);
+        assertNotEquals(fieldE, fieldG);
+        assertNotEquals(fieldE, fieldH);
 
-        Assert.assertNotEquals(fieldF, fieldG);
-        Assert.assertNotEquals(fieldF, fieldH);
+        assertNotEquals(fieldF, fieldG);
+        assertNotEquals(fieldF, fieldH);
 
-        Assert.assertNotEquals(fieldG, fieldH);
+        assertNotEquals(fieldG, fieldH);
 
         fieldC = new TContainedField<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
         fieldH = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
 
-        Assert.assertEquals(fieldC, fieldA);
-        Assert.assertEquals(fieldC, fieldB);
+        assertEquals(fieldC, fieldA);
+        assertEquals(fieldC, fieldB);
 
-        Assert.assertNotEquals(fieldH, fieldA);
-        Assert.assertNotEquals(fieldH, fieldB);
-        Assert.assertNotEquals(fieldH, fieldC);
-        Assert.assertNotEquals(fieldH, fieldD);
-        Assert.assertNotEquals(fieldH, fieldE);
-        Assert.assertNotEquals(fieldH, fieldF);
-        Assert.assertNotEquals(fieldH, fieldG);
+        assertNotEquals(fieldH, fieldA);
+        assertNotEquals(fieldH, fieldB);
+        assertNotEquals(fieldH, fieldC);
+        assertNotEquals(fieldH, fieldD);
+        assertNotEquals(fieldH, fieldE);
+        assertNotEquals(fieldH, fieldF);
+        assertNotEquals(fieldH, fieldG);
     }
 
     @Test
     public void testHashCode() {
-        Assert.assertEquals(fieldA.hashCode(), fieldB.hashCode());
-        Assert.assertEquals(fieldA.hashCode(), fieldC.hashCode());
-        Assert.assertEquals(fieldB.hashCode(), fieldC.hashCode());
+        assertEquals(fieldA.hashCode(), fieldB.hashCode());
+        assertEquals(fieldA.hashCode(), fieldC.hashCode());
+        assertEquals(fieldB.hashCode(), fieldC.hashCode());
 
-        Assert.assertNotEquals(fieldA.hashCode(), fieldD.hashCode());
-        Assert.assertNotEquals(fieldA.hashCode(), fieldE.hashCode());
-        Assert.assertNotEquals(fieldA.hashCode(), fieldF.hashCode());
-        Assert.assertNotEquals(fieldA.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldA.hashCode(), fieldD.hashCode());
+        assertNotEquals(fieldA.hashCode(), fieldE.hashCode());
+        assertNotEquals(fieldA.hashCode(), fieldF.hashCode());
+        assertNotEquals(fieldA.hashCode(), fieldG.hashCode());
 
-        Assert.assertNotEquals(fieldB.hashCode(), fieldD.hashCode());
-        Assert.assertNotEquals(fieldB.hashCode(), fieldE.hashCode());
-        Assert.assertNotEquals(fieldB.hashCode(), fieldF.hashCode());
-        Assert.assertNotEquals(fieldB.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldB.hashCode(), fieldD.hashCode());
+        assertNotEquals(fieldB.hashCode(), fieldE.hashCode());
+        assertNotEquals(fieldB.hashCode(), fieldF.hashCode());
+        assertNotEquals(fieldB.hashCode(), fieldG.hashCode());
 
-        Assert.assertNotEquals(fieldC.hashCode(), fieldD.hashCode());
-        Assert.assertNotEquals(fieldC.hashCode(), fieldE.hashCode());
-        Assert.assertNotEquals(fieldC.hashCode(), fieldF.hashCode());
-        Assert.assertNotEquals(fieldC.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldC.hashCode(), fieldD.hashCode());
+        assertNotEquals(fieldC.hashCode(), fieldE.hashCode());
+        assertNotEquals(fieldC.hashCode(), fieldF.hashCode());
+        assertNotEquals(fieldC.hashCode(), fieldG.hashCode());
 
-        Assert.assertNotEquals(fieldD.hashCode(), fieldE.hashCode());
-        Assert.assertNotEquals(fieldD.hashCode(), fieldF.hashCode());
-        Assert.assertNotEquals(fieldD.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldD.hashCode(), fieldE.hashCode());
+        assertNotEquals(fieldD.hashCode(), fieldF.hashCode());
+        assertNotEquals(fieldD.hashCode(), fieldG.hashCode());
 
-        Assert.assertNotEquals(fieldE.hashCode(), fieldF.hashCode());
-        Assert.assertNotEquals(fieldE.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldE.hashCode(), fieldF.hashCode());
+        assertNotEquals(fieldE.hashCode(), fieldG.hashCode());
 
-        Assert.assertNotEquals(fieldF.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldF.hashCode(), fieldG.hashCode());
     }
 }
