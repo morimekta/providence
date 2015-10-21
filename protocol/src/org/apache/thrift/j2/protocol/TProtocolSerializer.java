@@ -18,20 +18,13 @@
  */
 package org.apache.thrift.j2.protocol;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.thrift.TException;
 import org.apache.thrift.j2.TEnumBuilder;
+import org.apache.thrift.j2.TEnumValue;
+import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TList;
@@ -49,9 +42,17 @@ import org.apache.thrift.protocol.TStruct;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.apache.thrift.j2.TEnumValue;
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.descriptor.TDescriptor;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
@@ -188,18 +189,13 @@ public class TProtocolSerializer extends TSerializer {
 
         TMessageBuilder<T> builder = descriptor.factory().builder();
 
-        TStruct struct = protocol.readStructBegin();  // ignored.
-        System.err.println(struct.name);
+        protocol.readStructBegin();  // ignored.
 
         while ((f = protocol.readFieldBegin()) != null) {
             TType type = TType.findById(f.type);
             if (type.equals(TType.STOP)) {
-                System.err.println(f.toString());
-                System.err.println("STOP");
                 break;
             }
-
-            System.err.println(f.toString());
 
             TField<?> field;
             if (f.id != 0) {
@@ -235,7 +231,8 @@ public class TProtocolSerializer extends TSerializer {
             throw new TSerializeException("Read invalid message from protocol");
         }
 
-        return builder.build();    }
+        return builder.build();
+    }
 
     protected <T> T readTypedValue(byte tType, TDescriptor<T> type, TProtocol protocol) throws TException, TSerializeException {
         switch (TType.findById(tType)) {
@@ -298,7 +295,7 @@ public class TProtocolSerializer extends TSerializer {
                 TSet<?> sDesc = (TSet<?>) type;
                 TDescriptor siDesc = sDesc.itemDescriptor();
 
-                List<Object> set = new LinkedList<>();
+                Set<Object> set = new LinkedHashSet<>();
                 for (int i = 0; i < setInfo.size; ++i) {
                     set.add(readTypedValue(setInfo.elemType, siDesc, protocol));
                 }
