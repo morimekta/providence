@@ -12,7 +12,7 @@ be listed here in alphabetical order.
 
 # CONTRIBUTORS
 
-Stein Eldar Johnsen @morimekta <steineldar@zedge.net> <mor...@gmail.com>
+- [@morimekta](http://github.com/morimekta) Stein Eldar Johnsen <steineldar@zedge.net> <mor...@gmail.com>
 
 # COPYRIGHT NOTICE
 
