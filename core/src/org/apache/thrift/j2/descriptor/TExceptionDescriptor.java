@@ -36,6 +36,15 @@ public class TExceptionDescriptor<T extends TMessage<T>>
     public TExceptionDescriptor(String comment,
                                 String packageName,
                                 String name,
+                                TField<?>[] fields,
+                                TMessageBuilderFactory<T> provider) {
+        this(comment, packageName, name, fieldList(fields), provider);
+    }
+
+
+    public TExceptionDescriptor(String comment,
+                                String packageName,
+                                String name,
                                 List<TField<?>> fields,
                                 TMessageBuilderFactory<T> provider) {
         super(comment, packageName, name, fields, provider, false);

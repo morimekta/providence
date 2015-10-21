@@ -10,10 +10,14 @@ import android.os.Parcelable;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** @compact */
@@ -134,14 +138,92 @@ public class Category
                mId != null;
     }
 
+    public enum Field implements TField {
+        NAME(1, true, "name", TPrimitive.STRING.provider(), null),
+        ID(2, true, "id", TPrimitive.I32.provider(), null),
+        LABEL(3, false, "label", TPrimitive.STRING.provider(), null),
+        ;
+
+        private final int mKey;
+        private final boolean mRequired;
+        private final String mName;
+        private final TDescriptorProvider<?> mTypeProvider;
+        private final TValueProvider<?> mDefaultValue;
+
+        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+            mKey = key;
+            mRequired = required;
+            mName = name;
+            mTypeProvider = typeProvider;
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public String getComment() { return null; }
+
+        @Override
+        public int getKey() { return mKey; }
+
+        @Override
+        public boolean getRequired() { return mRequired; }
+
+        @Override
+        public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+        @Override
+        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+        @Override
+        public String getName() { return mName; }
+
+        @Override
+        public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+        @Override
+        public Object getDefaultValue() {
+            return hasDefaultValue() ? mDefaultValue.get() : null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(Category.class.getSimpleName())
+                   .append('{')
+                   .append(mKey)
+                   .append(": ");
+            if (mRequired) {
+                builder.append("required ");
+            }
+            builder.append(descriptor().getQualifiedName(null))
+                   .append(' ')
+                   .append(mName)
+                   .append('}');
+            return builder.toString();
+        }
+
+        public static Field forKey(int key) {
+            for (Field field : values()) {
+                if (field.mKey == key) return field;
+            }
+            return null;
+        }
+
+        public static Field forName(String name) {
+            for (Field field : values()) {
+                if (field.mName.equals(name)) return field;
+            }
+            return null;
+        }
+    }
+
     @Override
     public TStructDescriptor<Category> descriptor() {
         return DESCRIPTOR;
     }
 
-    public static final TStructDescriptor<Category> DESCRIPTOR = _createDescriptor();
+    public static final TStructDescriptor<Category> DESCRIPTOR;
 
-    private final static class _Factory
+    private final static class Factory
             extends TMessageBuilderFactory<Category> {
         @Override
         public Category.Builder builder() {
@@ -149,12 +231,8 @@ public class Category
         }
     }
 
-    private static TStructDescriptor<Category> _createDescriptor() {
-        List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, true, "name", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 2, true, "id", TPrimitive.I32.provider(), null));
-        fieldList.add(new TField<>(null, 3, false, "label", TPrimitive.STRING.provider(), null));
-        return new TStructDescriptor<>(null, "compact", "Category", fieldList, new _Factory(), true);
+    static {
+        DESCRIPTOR = new TStructDescriptor<>(null, "compact", "Category", Category.Field.values(), new Factory(), true);
     }
 
     public static TStructDescriptorProvider<Category> provider() {

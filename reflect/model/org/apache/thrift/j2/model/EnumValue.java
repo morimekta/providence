@@ -7,10 +7,14 @@ import java.util.List;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** <name> (= <value>) */
@@ -114,14 +118,92 @@ public class EnumValue
         return mName != null;
     }
 
+    public enum Field implements TField {
+        COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
+        NAME(2, true, "name", TPrimitive.STRING.provider(), null),
+        VALUE(3, false, "value", TPrimitive.I32.provider(), null),
+        ;
+
+        private final int mKey;
+        private final boolean mRequired;
+        private final String mName;
+        private final TDescriptorProvider<?> mTypeProvider;
+        private final TValueProvider<?> mDefaultValue;
+
+        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+            mKey = key;
+            mRequired = required;
+            mName = name;
+            mTypeProvider = typeProvider;
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public String getComment() { return null; }
+
+        @Override
+        public int getKey() { return mKey; }
+
+        @Override
+        public boolean getRequired() { return mRequired; }
+
+        @Override
+        public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+        @Override
+        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+        @Override
+        public String getName() { return mName; }
+
+        @Override
+        public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+        @Override
+        public Object getDefaultValue() {
+            return hasDefaultValue() ? mDefaultValue.get() : null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(EnumValue.class.getSimpleName())
+                   .append('{')
+                   .append(mKey)
+                   .append(": ");
+            if (mRequired) {
+                builder.append("required ");
+            }
+            builder.append(descriptor().getQualifiedName(null))
+                   .append(' ')
+                   .append(mName)
+                   .append('}');
+            return builder.toString();
+        }
+
+        public static Field forKey(int key) {
+            for (Field field : values()) {
+                if (field.mKey == key) return field;
+            }
+            return null;
+        }
+
+        public static Field forName(String name) {
+            for (Field field : values()) {
+                if (field.mName.equals(name)) return field;
+            }
+            return null;
+        }
+    }
+
     @Override
     public TStructDescriptor<EnumValue> descriptor() {
         return DESCRIPTOR;
     }
 
-    public static final TStructDescriptor<EnumValue> DESCRIPTOR = _createDescriptor();
+    public static final TStructDescriptor<EnumValue> DESCRIPTOR;
 
-    private final static class _Factory
+    private final static class Factory
             extends TMessageBuilderFactory<EnumValue> {
         @Override
         public EnumValue.Builder builder() {
@@ -129,12 +211,8 @@ public class EnumValue
         }
     }
 
-    private static TStructDescriptor<EnumValue> _createDescriptor() {
-        List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, false, "comment", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 2, true, "name", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 3, false, "value", TPrimitive.I32.provider(), null));
-        return new TStructDescriptor<>(null, "model", "EnumValue", fieldList, new _Factory(), false);
+    static {
+        DESCRIPTOR = new TStructDescriptor<>(null, "model", "EnumValue", EnumValue.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<EnumValue> provider() {

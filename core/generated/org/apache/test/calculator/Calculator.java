@@ -31,6 +31,7 @@ import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TService;
 import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TFieldInfo;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 import org.apache.thrift.j2.descriptor.TServiceMethod;
@@ -226,7 +227,7 @@ public abstract class Calculator {
 
         private static TStructDescriptor<Calculate_Params> createDescriptor() {
             List<TField<?>> fieldList = new LinkedList<>();
-            fieldList.add(new TField<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
+            fieldList.add(new TFieldInfo<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
             return new TStructDescriptor<>(null,
                                            "calculator",
                                            "Calculator_calculate_request",
@@ -367,7 +368,7 @@ public abstract class Calculator {
 
         private static TUnionDescriptor<Calculate_Exception> createDescriptor() {
             List<TField<?>> fieldList = new LinkedList<>();
-            fieldList.add(new TField<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
+            fieldList.add(new TFieldInfo<>(null, 1, true, "message", TPrimitive.STRING.provider(), null));
             return new TUnionDescriptor<>(null,
                                           "calculator",
                                           "Calculator_calculate_response",

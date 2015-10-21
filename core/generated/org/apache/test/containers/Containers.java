@@ -18,6 +18,9 @@ import org.apache.test.primitives.Value;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
@@ -25,6 +28,7 @@ import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 public class Containers
@@ -535,14 +539,119 @@ public class Containers
         return true;
     }
 
+    public enum Field implements TField {
+        LBL(1, false, "lbl", TList.provider(TPrimitive.BOOL.provider()), null),
+        LBT(2, false, "lbt", TList.provider(TPrimitive.BYTE.provider()), null),
+        LSH(3, false, "lsh", TList.provider(TPrimitive.I16.provider()), null),
+        LI(4, false, "li", TList.provider(TPrimitive.I32.provider()), null),
+        LL(5, false, "ll", TList.provider(TPrimitive.I64.provider()), null),
+        LD(6, false, "ld", TList.provider(TPrimitive.DOUBLE.provider()), null),
+        LS(7, false, "ls", TList.provider(TPrimitive.STRING.provider()), null),
+        LBN(8, false, "lbn", TList.provider(TPrimitive.BINARY.provider()), null),
+        SBL(11, false, "sbl", TSet.provider(TPrimitive.BOOL.provider()), null),
+        SBT(12, false, "sbt", TSet.provider(TPrimitive.BYTE.provider()), null),
+        SSH(13, false, "ssh", TSet.provider(TPrimitive.I16.provider()), null),
+        SI(14, false, "si", TSet.provider(TPrimitive.I32.provider()), null),
+        SL(15, false, "sl", TSet.provider(TPrimitive.I64.provider()), null),
+        SD(16, false, "sd", TSet.provider(TPrimitive.DOUBLE.provider()), null),
+        SS(17, false, "ss", TSet.provider(TPrimitive.STRING.provider()), null),
+        SBN(18, false, "sbn", TSet.provider(TPrimitive.BINARY.provider()), null),
+        MBL(21, false, "mbl", TMap.provider(TPrimitive.BOOL.provider(),TPrimitive.BOOL.provider()), null),
+        MBT(22, false, "mbt", TMap.provider(TPrimitive.BYTE.provider(),TPrimitive.BYTE.provider()), null),
+        MSH(23, false, "msh", TMap.provider(TPrimitive.I16.provider(),TPrimitive.I16.provider()), null),
+        MI(24, false, "mi", TMap.provider(TPrimitive.I32.provider(),TPrimitive.I32.provider()), null),
+        ML(25, false, "ml", TMap.provider(TPrimitive.I64.provider(),TPrimitive.I64.provider()), null),
+        MD(26, false, "md", TMap.provider(TPrimitive.DOUBLE.provider(),TPrimitive.DOUBLE.provider()), null),
+        MS(27, false, "ms", TMap.provider(TPrimitive.STRING.provider(),TPrimitive.STRING.provider()), null),
+        MBN(28, false, "mbn", TMap.provider(TPrimitive.BINARY.provider(),TPrimitive.BINARY.provider()), null),
+        LV(31, false, "lv", TList.provider(Value.provider()), null),
+        SV(32, false, "sv", TSet.provider(Value.provider()), null),
+        MV(33, false, "mv", TMap.provider(Value.provider(),Value.provider()), null),
+        LP(41, false, "lp", TList.provider(Primitives.provider()), null),
+        SP(42, false, "sp", TSet.provider(Primitives.provider()), null),
+        MP(43, false, "mp", TMap.provider(TPrimitive.I32.provider(),Primitives.provider()), null),
+        ;
+
+        private final int mKey;
+        private final boolean mRequired;
+        private final String mName;
+        private final TDescriptorProvider<?> mTypeProvider;
+        private final TValueProvider<?> mDefaultValue;
+
+        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+            mKey = key;
+            mRequired = required;
+            mName = name;
+            mTypeProvider = typeProvider;
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public String getComment() { return null; }
+
+        @Override
+        public int getKey() { return mKey; }
+
+        @Override
+        public boolean getRequired() { return mRequired; }
+
+        @Override
+        public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+        @Override
+        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+        @Override
+        public String getName() { return mName; }
+
+        @Override
+        public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+        @Override
+        public Object getDefaultValue() {
+            return hasDefaultValue() ? mDefaultValue.get() : null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(Containers.class.getSimpleName())
+                   .append('{')
+                   .append(mKey)
+                   .append(": ");
+            if (mRequired) {
+                builder.append("required ");
+            }
+            builder.append(descriptor().getQualifiedName(null))
+                   .append(' ')
+                   .append(mName)
+                   .append('}');
+            return builder.toString();
+        }
+
+        public static Field forKey(int key) {
+            for (Field field : values()) {
+                if (field.mKey == key) return field;
+            }
+            return null;
+        }
+
+        public static Field forName(String name) {
+            for (Field field : values()) {
+                if (field.mName.equals(name)) return field;
+            }
+            return null;
+        }
+    }
+
     @Override
     public TStructDescriptor<Containers> descriptor() {
         return DESCRIPTOR;
     }
 
-    public static final TStructDescriptor<Containers> DESCRIPTOR = _createDescriptor();
+    public static final TStructDescriptor<Containers> DESCRIPTOR;
 
-    private final static class _Factory
+    private final static class Factory
             extends TMessageBuilderFactory<Containers> {
         @Override
         public Containers.Builder builder() {
@@ -550,39 +659,8 @@ public class Containers
         }
     }
 
-    private static TStructDescriptor<Containers> _createDescriptor() {
-        List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, false, "lbl", TList.provider(TPrimitive.BOOL.provider()), null));
-        fieldList.add(new TField<>(null, 2, false, "lbt", TList.provider(TPrimitive.BYTE.provider()), null));
-        fieldList.add(new TField<>(null, 3, false, "lsh", TList.provider(TPrimitive.I16.provider()), null));
-        fieldList.add(new TField<>(null, 4, false, "li", TList.provider(TPrimitive.I32.provider()), null));
-        fieldList.add(new TField<>(null, 5, false, "ll", TList.provider(TPrimitive.I64.provider()), null));
-        fieldList.add(new TField<>(null, 6, false, "ld", TList.provider(TPrimitive.DOUBLE.provider()), null));
-        fieldList.add(new TField<>(null, 7, false, "ls", TList.provider(TPrimitive.STRING.provider()), null));
-        fieldList.add(new TField<>(null, 8, false, "lbn", TList.provider(TPrimitive.BINARY.provider()), null));
-        fieldList.add(new TField<>(null, 11, false, "sbl", TSet.provider(TPrimitive.BOOL.provider()), null));
-        fieldList.add(new TField<>(null, 12, false, "sbt", TSet.provider(TPrimitive.BYTE.provider()), null));
-        fieldList.add(new TField<>(null, 13, false, "ssh", TSet.provider(TPrimitive.I16.provider()), null));
-        fieldList.add(new TField<>(null, 14, false, "si", TSet.provider(TPrimitive.I32.provider()), null));
-        fieldList.add(new TField<>(null, 15, false, "sl", TSet.provider(TPrimitive.I64.provider()), null));
-        fieldList.add(new TField<>(null, 16, false, "sd", TSet.provider(TPrimitive.DOUBLE.provider()), null));
-        fieldList.add(new TField<>(null, 17, false, "ss", TSet.provider(TPrimitive.STRING.provider()), null));
-        fieldList.add(new TField<>(null, 18, false, "sbn", TSet.provider(TPrimitive.BINARY.provider()), null));
-        fieldList.add(new TField<>(null, 21, false, "mbl", TMap.provider(TPrimitive.BOOL.provider(),TPrimitive.BOOL.provider()), null));
-        fieldList.add(new TField<>(null, 22, false, "mbt", TMap.provider(TPrimitive.BYTE.provider(),TPrimitive.BYTE.provider()), null));
-        fieldList.add(new TField<>(null, 23, false, "msh", TMap.provider(TPrimitive.I16.provider(),TPrimitive.I16.provider()), null));
-        fieldList.add(new TField<>(null, 24, false, "mi", TMap.provider(TPrimitive.I32.provider(),TPrimitive.I32.provider()), null));
-        fieldList.add(new TField<>(null, 25, false, "ml", TMap.provider(TPrimitive.I64.provider(),TPrimitive.I64.provider()), null));
-        fieldList.add(new TField<>(null, 26, false, "md", TMap.provider(TPrimitive.DOUBLE.provider(),TPrimitive.DOUBLE.provider()), null));
-        fieldList.add(new TField<>(null, 27, false, "ms", TMap.provider(TPrimitive.STRING.provider(),TPrimitive.STRING.provider()), null));
-        fieldList.add(new TField<>(null, 28, false, "mbn", TMap.provider(TPrimitive.BINARY.provider(),TPrimitive.BINARY.provider()), null));
-        fieldList.add(new TField<>(null, 31, false, "lv", TList.provider(Value.provider()), null));
-        fieldList.add(new TField<>(null, 32, false, "sv", TSet.provider(Value.provider()), null));
-        fieldList.add(new TField<>(null, 33, false, "mv", TMap.provider(Value.provider(),Value.provider()), null));
-        fieldList.add(new TField<>(null, 41, false, "lp", TList.provider(Primitives.provider()), null));
-        fieldList.add(new TField<>(null, 42, false, "sp", TSet.provider(Primitives.provider()), null));
-        fieldList.add(new TField<>(null, 43, false, "mp", TMap.provider(TPrimitive.I32.provider(),Primitives.provider()), null));
-        return new TStructDescriptor<>(null, "containers", "Containers", fieldList, new _Factory(), false);
+    static {
+        DESCRIPTOR = new TStructDescriptor<>(null, "containers", "Containers", Containers.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Containers> provider() {

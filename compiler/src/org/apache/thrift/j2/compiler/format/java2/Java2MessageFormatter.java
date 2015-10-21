@@ -24,10 +24,12 @@ import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
+import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.descriptor.TContainer;
 import org.apache.thrift.j2.descriptor.TDefaultValueProvider;
 import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TExceptionDescriptor;
 import org.apache.thrift.j2.descriptor.TExceptionDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
@@ -39,13 +41,16 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
 
 import java.io.IOException;
+import java.util.Locale;
 
+import static org.apache.thrift.j2.util.TStringUtils.c_case;
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
 /**
@@ -92,6 +97,7 @@ public class Java2MessageFormatter {
 
         appendIsValid(writer, type);
 
+        appendFieldEnum(writer, type);
         appendDescriptor(writer, type);
 
         if (mAndroid) {
@@ -724,6 +730,120 @@ public class Java2MessageFormatter {
               .appendln('}');
     }
 
+    private void appendFieldEnum(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+        writer.appendln("public enum Field implements TField {")
+              .begin();
+
+        for (TField<?> field : type.getFields()) {
+            String name = c_case("", field.getName()).toUpperCase(Locale.ENGLISH);
+            String provider = mTypeHelper.getProviderName(field.descriptor());
+            String defValue = "null";
+            if (field.hasDefaultValue()) {
+                defValue = String.format("new TDefaultValueProvider<>(%s)",
+                                         camelCase("kDefault", field.getName()));
+            }
+
+            writer.formatln("%s(%d, %s, \"%s\", %s, %s),",
+                            name,
+                            field.getKey(),
+                            field.getRequired() ? "true" : "false",
+                            field.getName(),
+                            provider,
+                            defValue);
+        }
+        writer.appendln(';')
+              .newline();
+
+        writer.appendln("private final int mKey;")
+              .appendln("private final boolean mRequired;")
+              .appendln("private final String mName;")
+              .appendln("private final TDescriptorProvider<?> mTypeProvider;")
+              .appendln("private final TValueProvider<?> mDefaultValue;")
+              .newline()
+              .appendln(
+                      "Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {")
+              .begin()
+              .appendln("mKey = key;")
+              .appendln("mRequired = required;")
+              .appendln("mName = name;")
+              .appendln("mTypeProvider = typeProvider;")
+              .appendln("mDefaultValue = defaultValue;")
+              .end()
+              .appendln('}')
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public String getComment() { return null; }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public int getKey() { return mKey; }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public boolean getRequired() { return mRequired; }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public TType getType() { return mTypeProvider.descriptor().getType(); }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public String getName() { return mName; }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public boolean hasDefaultValue() { return mDefaultValue != null; }")
+              .newline();
+        writer.appendln("@Override")
+              .appendln("public Object getDefaultValue() {")
+              .appendln("    return hasDefaultValue() ? mDefaultValue.get() : null;")
+              .appendln('}')
+              .newline();
+
+        String simpleClass = mTypeHelper.getSimpleClassName(type);
+
+        writer.appendln("@Override")
+              .appendln("public String toString() {")
+              .begin()
+              .appendln("StringBuilder builder = new StringBuilder();")
+              .formatln("builder.append(%s.class.getSimpleName())", simpleClass)
+              .appendln("       .append('{')")
+              .appendln("       .append(mKey)")
+              .appendln("       .append(\": \");")
+              .appendln("if (mRequired) {")
+              .appendln("    builder.append(\"required \");")
+              .appendln("}")
+              .appendln("builder.append(descriptor().getQualifiedName(null))")
+              .appendln("       .append(' ')")
+              .appendln("       .append(mName)")
+              .appendln("       .append('}');")
+              .appendln("return builder.toString();")
+              .end()
+              .appendln('}')
+              .newline();
+
+        writer.appendln("public static Field forKey(int key) {")
+              .begin()
+              .appendln("for (Field field : values()) {")
+              .appendln("    if (field.mKey == key) return field;")
+              .appendln('}')
+              .appendln("return null;")
+              .end()
+              .appendln('}')
+              .newline();
+
+        writer.appendln("public static Field forName(String name) {")
+              .begin()
+              .appendln("for (Field field : values()) {")
+              .appendln("    if (field.mName.equals(name)) return field;")
+              .appendln('}')
+              .appendln("return null;")
+              .end()
+              .appendln('}');
+
+        writer.end()
+              .appendln('}')
+              .newline();
+    }
+
     private void appendDescriptor(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
         String simpleClass = mTypeHelper.getSimpleClassName(type);
         String typeClass;
@@ -749,10 +869,10 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        writer.formatln("public static final %s<%s> DESCRIPTOR = _createDescriptor();", typeClass, simpleClass)
+        writer.formatln("public static final %s<%s> DESCRIPTOR;", typeClass, simpleClass)
               .newline();
 
-        writer.appendln("private final static class _Factory")
+        writer.appendln("private final static class Factory")
               .begin()
               .formatln("    extends TMessageBuilderFactory<%s> {", simpleClass)
               .appendln("@Override")
@@ -765,53 +885,43 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        writer.formatln("private static %s<%s> _createDescriptor() {", typeClass, simpleClass)
-              .begin()
-              .appendln("List<TField<?>> fieldList = new LinkedList<>();");
-        for (TField<?> field : type.getFields()) {
-            String provider = mTypeHelper.getProviderName(field.descriptor());
-            String defValue = "null";
-            if (field.hasDefaultValue()) {
-                defValue = String.format("new TDefaultValueProvider<>(%s)", camelCase("kDefault", field.getName()));
-            }
-            writer.formatln("fieldList.add(new TField<>(null, %d, %s, \"%s\", %s, %s));",
-                            field.getKey(),
-                            field.getRequired() ? "true" : "false",
-                            field.getName(),
-                            provider,
-                            defValue);
-        }
+        writer.formatln("static {", typeClass, simpleClass)
+              .begin();
         if (type.getVariant().equals(TMessageVariant.STRUCT)) {
-            writer.formatln("return new %s<>(null, \"%s\", \"%s\", fieldList, new _Factory(), %b);",
-                            typeClass,
-                            type.getPackageName(),
-                            type.getName(),
-                            type.isCompactible());
+            writer.formatln(
+                    "DESCRIPTOR = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory(), %b);",
+                    typeClass,
+                    type.getPackageName(),
+                    type.getName(),
+                    simpleClass,
+                    type.isCompactible());
         } else {
-            writer.formatln("return new %s<>(null, \"%s\", \"%s\", fieldList, new _Factory());",
-                            typeClass,
-                            type.getPackageName(),
-                            type.getName());
+            writer.formatln(
+                    "DESCRIPTOR = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory());",
+                    typeClass,
+                    type.getPackageName(),
+                    type.getName(),
+                    simpleClass);
         }
         writer.end()
               .appendln('}')
               .newline();
 
         writer.formatln("public static %sProvider<%s> provider() {", typeClass, simpleClass)
-                .begin()
-                .formatln("return new %sProvider<%s>() {", typeClass, simpleClass)
-                .begin()
-                .appendln("@Override")
-                .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
-                .begin()
-                .appendln("return DESCRIPTOR;")
-                .end()
-                .appendln('}')
-                .end()
-                .appendln("};")
-                .end()
-                .appendln('}')
-                .newline();
+              .begin()
+              .formatln("return new %sProvider<%s>() {", typeClass, simpleClass)
+              .begin()
+              .appendln("@Override")
+              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
+              .begin()
+              .appendln("return DESCRIPTOR;")
+              .end()
+              .appendln('}')
+              .end()
+              .appendln("};")
+              .end()
+              .appendln('}')
+              .newline();
     }
 
     private void appendIsValid(IndentedPrintWriter writer, TStructDescriptor<?> type) {
@@ -1233,6 +1343,10 @@ public class Java2MessageFormatter {
         header.include(TMessageBuilderFactory.class.getName());
         header.include(TField.class.getName());
         header.include(TTypeUtils.class.getName());
+        header.include(TType.class.getName());
+        header.include(TDescriptorProvider.class.getName());
+        header.include(TValueProvider.class.getName());
+        header.include(TDescriptor.class.getName());
         switch (type.getVariant()) {
             case STRUCT:
                 header.include(TStructDescriptor.class.getName());

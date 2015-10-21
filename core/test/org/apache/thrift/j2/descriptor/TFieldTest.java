@@ -41,14 +41,14 @@ public class TFieldTest {
 
     @Before
     public void setUp() {
-        fieldA = new TField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldB = new TField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldC = new TField<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldD = new TField<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldE = new TField<>("comment", 4, true,  "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldF = new TField<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldG = new TField<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4l));
-        fieldH = new TField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
+        fieldA = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldB = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldC = new TFieldInfo<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldD = new TFieldInfo<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldE = new TFieldInfo<>("comment", 4, true,  "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldF = new TFieldInfo<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldG = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4l));
+        fieldH = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class TFieldTest {
 
         assertNotEquals(fieldG, fieldH);
 
-        fieldC = new TField<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldH = new TField<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
+        fieldC = new TFieldInfo<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldH = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
 
         assertEquals(fieldC, fieldA);
         assertEquals(fieldC, fieldB);

@@ -19,13 +19,14 @@
 
 package org.apache.thrift.j2.descriptor;
 
-import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
 import org.apache.thrift.j2.TType;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,15 @@ public class TStructDescriptor<T extends TMessage<T>>
     private final Map<String, TField<?>>    mFieldNameMap;
     private final TMessageBuilderFactory<T> mProvider;
     private final boolean                   mCompactible;
+
+    public TStructDescriptor(String comment,
+                             String packageName,
+                             String name,
+                             TField<?>[] fields,
+                             TMessageBuilderFactory<T> provider,
+                             boolean compactible) {
+        this(comment, packageName, name, fieldList(fields), provider, compactible);
+    }
 
     public TStructDescriptor(String comment,
                              String packageName,
@@ -139,5 +149,14 @@ public class TStructDescriptor<T extends TMessage<T>>
      */
     public TField<?> getField(int key) {
         return mFieldIdMap.get(key);
+    }
+
+    // --- PRIVATE ---
+    protected static List<TField<?>> fieldList(TField<?>[] fields) {
+        List<TField<?>> list = new LinkedList<>();
+        for (TField<?> field : fields) {
+            list.add(field);
+        }
+        return list;
     }
 }

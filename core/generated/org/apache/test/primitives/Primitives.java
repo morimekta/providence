@@ -10,10 +10,14 @@ import android.os.Parcelable;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 public class Primitives
@@ -212,14 +216,98 @@ public class Primitives
         return true;
     }
 
+    public enum Field implements TField {
+        BL(1, false, "bl", TPrimitive.BOOL.provider(), null),
+        BT(2, false, "bt", TPrimitive.BYTE.provider(), null),
+        SH(3, false, "sh", TPrimitive.I16.provider(), null),
+        I(4, false, "i", TPrimitive.I32.provider(), null),
+        L(5, false, "l", TPrimitive.I64.provider(), null),
+        D(6, false, "d", TPrimitive.DOUBLE.provider(), null),
+        S(7, false, "s", TPrimitive.STRING.provider(), null),
+        BN(8, false, "bn", TPrimitive.BINARY.provider(), null),
+        V(9, false, "v", Value.provider(), null),
+        ;
+
+        private final int mKey;
+        private final boolean mRequired;
+        private final String mName;
+        private final TDescriptorProvider<?> mTypeProvider;
+        private final TValueProvider<?> mDefaultValue;
+
+        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+            mKey = key;
+            mRequired = required;
+            mName = name;
+            mTypeProvider = typeProvider;
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public String getComment() { return null; }
+
+        @Override
+        public int getKey() { return mKey; }
+
+        @Override
+        public boolean getRequired() { return mRequired; }
+
+        @Override
+        public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+        @Override
+        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+        @Override
+        public String getName() { return mName; }
+
+        @Override
+        public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+        @Override
+        public Object getDefaultValue() {
+            return hasDefaultValue() ? mDefaultValue.get() : null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(Primitives.class.getSimpleName())
+                   .append('{')
+                   .append(mKey)
+                   .append(": ");
+            if (mRequired) {
+                builder.append("required ");
+            }
+            builder.append(descriptor().getQualifiedName(null))
+                   .append(' ')
+                   .append(mName)
+                   .append('}');
+            return builder.toString();
+        }
+
+        public static Field forKey(int key) {
+            for (Field field : values()) {
+                if (field.mKey == key) return field;
+            }
+            return null;
+        }
+
+        public static Field forName(String name) {
+            for (Field field : values()) {
+                if (field.mName.equals(name)) return field;
+            }
+            return null;
+        }
+    }
+
     @Override
     public TStructDescriptor<Primitives> descriptor() {
         return DESCRIPTOR;
     }
 
-    public static final TStructDescriptor<Primitives> DESCRIPTOR = _createDescriptor();
+    public static final TStructDescriptor<Primitives> DESCRIPTOR;
 
-    private final static class _Factory
+    private final static class Factory
             extends TMessageBuilderFactory<Primitives> {
         @Override
         public Primitives.Builder builder() {
@@ -227,18 +315,8 @@ public class Primitives
         }
     }
 
-    private static TStructDescriptor<Primitives> _createDescriptor() {
-        List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, false, "bl", TPrimitive.BOOL.provider(), null));
-        fieldList.add(new TField<>(null, 2, false, "bt", TPrimitive.BYTE.provider(), null));
-        fieldList.add(new TField<>(null, 3, false, "sh", TPrimitive.I16.provider(), null));
-        fieldList.add(new TField<>(null, 4, false, "i", TPrimitive.I32.provider(), null));
-        fieldList.add(new TField<>(null, 5, false, "l", TPrimitive.I64.provider(), null));
-        fieldList.add(new TField<>(null, 6, false, "d", TPrimitive.DOUBLE.provider(), null));
-        fieldList.add(new TField<>(null, 7, false, "s", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 8, false, "bn", TPrimitive.BINARY.provider(), null));
-        fieldList.add(new TField<>(null, 9, false, "v", Value.provider(), null));
-        return new TStructDescriptor<>(null, "primitives", "Primitives", fieldList, new _Factory(), false);
+    static {
+        DESCRIPTOR = new TStructDescriptor<>(null, "primitives", "Primitives", Primitives.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Primitives> provider() {

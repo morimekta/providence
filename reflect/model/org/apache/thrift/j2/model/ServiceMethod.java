@@ -9,12 +9,16 @@ import java.util.List;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.descriptor.TDefaultValueProvider;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
@@ -163,14 +167,95 @@ public class ServiceMethod
         return mName != null;
     }
 
+    public enum Field implements TField {
+        COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
+        IS_ONEWAY(2, false, "is_oneway", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultIsOneway)),
+        RETURN_TYPE(3, false, "return_type", TPrimitive.STRING.provider(), null),
+        NAME(4, true, "name", TPrimitive.STRING.provider(), null),
+        PARAMS(5, false, "params", TList.provider(ThriftField.provider()), null),
+        EXCEPTIONS(6, false, "exceptions", TList.provider(ThriftField.provider()), null),
+        ;
+
+        private final int mKey;
+        private final boolean mRequired;
+        private final String mName;
+        private final TDescriptorProvider<?> mTypeProvider;
+        private final TValueProvider<?> mDefaultValue;
+
+        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+            mKey = key;
+            mRequired = required;
+            mName = name;
+            mTypeProvider = typeProvider;
+            mDefaultValue = defaultValue;
+        }
+
+        @Override
+        public String getComment() { return null; }
+
+        @Override
+        public int getKey() { return mKey; }
+
+        @Override
+        public boolean getRequired() { return mRequired; }
+
+        @Override
+        public TType getType() { return mTypeProvider.descriptor().getType(); }
+
+        @Override
+        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+
+        @Override
+        public String getName() { return mName; }
+
+        @Override
+        public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+        @Override
+        public Object getDefaultValue() {
+            return hasDefaultValue() ? mDefaultValue.get() : null;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(ServiceMethod.class.getSimpleName())
+                   .append('{')
+                   .append(mKey)
+                   .append(": ");
+            if (mRequired) {
+                builder.append("required ");
+            }
+            builder.append(descriptor().getQualifiedName(null))
+                   .append(' ')
+                   .append(mName)
+                   .append('}');
+            return builder.toString();
+        }
+
+        public static Field forKey(int key) {
+            for (Field field : values()) {
+                if (field.mKey == key) return field;
+            }
+            return null;
+        }
+
+        public static Field forName(String name) {
+            for (Field field : values()) {
+                if (field.mName.equals(name)) return field;
+            }
+            return null;
+        }
+    }
+
     @Override
     public TStructDescriptor<ServiceMethod> descriptor() {
         return DESCRIPTOR;
     }
 
-    public static final TStructDescriptor<ServiceMethod> DESCRIPTOR = _createDescriptor();
+    public static final TStructDescriptor<ServiceMethod> DESCRIPTOR;
 
-    private final static class _Factory
+    private final static class Factory
             extends TMessageBuilderFactory<ServiceMethod> {
         @Override
         public ServiceMethod.Builder builder() {
@@ -178,15 +263,8 @@ public class ServiceMethod
         }
     }
 
-    private static TStructDescriptor<ServiceMethod> _createDescriptor() {
-        List<TField<?>> fieldList = new LinkedList<>();
-        fieldList.add(new TField<>(null, 1, false, "comment", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 2, false, "is_oneway", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultIsOneway)));
-        fieldList.add(new TField<>(null, 3, false, "return_type", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 4, true, "name", TPrimitive.STRING.provider(), null));
-        fieldList.add(new TField<>(null, 5, false, "params", TList.provider(ThriftField.provider()), null));
-        fieldList.add(new TField<>(null, 6, false, "exceptions", TList.provider(ThriftField.provider()), null));
-        return new TStructDescriptor<>(null, "model", "ServiceMethod", fieldList, new _Factory(), false);
+    static {
+        DESCRIPTOR = new TStructDescriptor<>(null, "model", "ServiceMethod", ServiceMethod.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceMethod> provider() {
