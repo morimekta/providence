@@ -118,7 +118,7 @@ public class Declaration
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -145,7 +145,7 @@ public class Declaration
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class Declaration
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -215,7 +215,7 @@ public class Declaration
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -238,11 +238,15 @@ public class Declaration
     }
 
     @Override
-    public TUnionDescriptor<Declaration> descriptor() {
-        return DESCRIPTOR;
+    public TUnionDescriptor<Declaration> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TUnionDescriptor<Declaration> DESCRIPTOR;
+    public static TUnionDescriptor<Declaration> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TUnionDescriptor<Declaration> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Declaration> {
@@ -253,14 +257,14 @@ public class Declaration
     }
 
     static {
-        DESCRIPTOR = new TUnionDescriptor<>(null, "model", "Declaration", Declaration.Field.values(), new Factory());
+        sDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", Declaration.Field.values(), new Factory());
     }
 
     public static TUnionDescriptorProvider<Declaration> provider() {
         return new TUnionDescriptorProvider<Declaration>() {
             @Override
             public TUnionDescriptor<Declaration> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

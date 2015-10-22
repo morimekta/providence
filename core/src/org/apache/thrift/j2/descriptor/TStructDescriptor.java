@@ -115,7 +115,7 @@ public class TStructDescriptor<T extends TMessage<T>>
     }
 
     /**
-     * @return True iff the struct can be (de)serialized with compact message
+     * @return True iff the struct can be (de)serialized with isCompact message
      *         format.
      */
     public boolean isCompactible() {

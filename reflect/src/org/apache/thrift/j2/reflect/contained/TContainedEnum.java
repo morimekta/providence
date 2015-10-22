@@ -19,9 +19,9 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
-import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
+import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
@@ -30,11 +30,20 @@ import org.apache.thrift.j2.TEnumValue;
 public class TContainedEnum
         implements TEnumValue<TContainedEnum> {
     private final int                             mValue;
+    private final String                          mName;
     private final TEnumDescriptor<TContainedEnum> mType;
+    private final String                          mComment;
 
-    public TContainedEnum(int value, TEnumDescriptor<TContainedEnum> type) {
+    public TContainedEnum(String comment, int value, String name, TEnumDescriptor<TContainedEnum> type) {
+        mComment = comment;
         mValue = value;
+        mName = name;
         mType = type;
+    }
+
+    // @Override
+    public String getComment() {
+        return mComment;
     }
 
     @Override
@@ -43,7 +52,12 @@ public class TContainedEnum
     }
 
     @Override
-    public TEnumDescriptor<TContainedEnum> descriptor() {
+    public String getName() {
+        return mName;
+    }
+
+    @Override
+    public TEnumDescriptor<TContainedEnum> getDescriptor() {
         return mType;
     }
 
@@ -53,33 +67,34 @@ public class TContainedEnum
             return false;
         }
         TContainedEnum other = (TContainedEnum) o;
-        return other.descriptor().equals(mType) && other.getValue() == mValue;
+        return other.getDescriptor().getQualifiedName(null).equals(mType.getQualifiedName(null)) &&
+               other.getName().equals(mName) &&
+               other.getValue() == mValue;
     }
 
     @Override
     public String toString() {
-        for (TEnumDescriptor.Value value : mType.getValues()) {
-            if (value.getValue() == mValue) {
-                return value.getName();
-            }
-        }
-        return mType.getQualifiedName(null) + "(" + mValue + ")";
+        return mName.toUpperCase();
     }
 
     public static class Builder
             extends TEnumBuilder<TContainedEnum> {
-        private final TEnumDescriptor<TContainedEnum> mType;
+        private final TContainedEnumDescriptor mType;
 
         private int mValue = -1;  // Illegal enum value.
 
-        public Builder(TEnumDescriptor<TContainedEnum> type) {
+        public Builder(TContainedEnumDescriptor type) {
             mType = type;
         }
 
         @Override
         public TContainedEnum build() {
             if (isValid()) {
-                return new TContainedEnum(mValue, mType);
+                TEnumValue<?> value = mType.getValueById(mValue);
+                return new TContainedEnum(value.getComment(),
+                                          value.getValue(),
+                                          value.getName(),
+                                          mType);
             }
             // throw new IllegalArgumentException("no such enumeration " +
             // name);
@@ -88,7 +103,7 @@ public class TContainedEnum
 
         @Override
         public boolean isValid() {
-            for (TEnumDescriptor.Value value : mType.getValues()) {
+            for (TEnumValue<?> value : mType.getValues()) {
                 if (value.getValue() == mValue) {
                     return true;
                 }
@@ -104,7 +119,7 @@ public class TContainedEnum
 
         @Override
         public Builder setByName(String name) {
-            for (TEnumDescriptor.Value value : mType.getValues()) {
+            for (TEnumValue<?> value : mType.getValues()) {
                 if (value.getName().equals(name)) {
                     mValue = value.getValue();
                     return this;

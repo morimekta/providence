@@ -78,7 +78,7 @@ public class Imaginary
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -99,7 +99,7 @@ public class Imaginary
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class Imaginary
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -162,7 +162,7 @@ public class Imaginary
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -185,11 +185,15 @@ public class Imaginary
     }
 
     @Override
-    public TStructDescriptor<Imaginary> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Imaginary> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Imaginary> DESCRIPTOR;
+    public static TStructDescriptor<Imaginary> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Imaginary> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Imaginary> {
@@ -200,14 +204,14 @@ public class Imaginary
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "number", "Imaginary", Imaginary.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "number", "Imaginary", Imaginary.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Imaginary> provider() {
         return new TStructDescriptorProvider<Imaginary>() {
             @Override
             public TStructDescriptor<Imaginary> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

@@ -121,7 +121,7 @@ public class ThriftDocument
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -148,7 +148,7 @@ public class ThriftDocument
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ThriftDocument
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -214,7 +214,7 @@ public class ThriftDocument
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -237,11 +237,15 @@ public class ThriftDocument
     }
 
     @Override
-    public TStructDescriptor<ThriftDocument> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<ThriftDocument> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<ThriftDocument> DESCRIPTOR;
+    public static TStructDescriptor<ThriftDocument> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<ThriftDocument> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<ThriftDocument> {
@@ -252,14 +256,14 @@ public class ThriftDocument
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "ThriftDocument", ThriftDocument.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", ThriftDocument.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftDocument> provider() {
         return new TStructDescriptorProvider<ThriftDocument>() {
             @Override
             public TStructDescriptor<ThriftDocument> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

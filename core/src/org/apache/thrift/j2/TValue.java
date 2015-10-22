@@ -26,5 +26,5 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
  * @since 26.08.15
  */
 public interface TValue<T> {
-    TDescriptor descriptor();
+    TDescriptor getDescriptor();
 }

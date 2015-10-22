@@ -18,15 +18,22 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptorProvider;
  * EXCEPTION: No 'cause' field, 'message' field *must* be a string (java).
  */
 public enum StructVariant implements TEnumValue<StructVariant> {
-    STRUCT(1),
-    UNION(2),
-    EXCEPTION(3),
+    STRUCT(1, "STRUCT"),
+    UNION(2, "UNION"),
+    EXCEPTION(3, "EXCEPTION"),
     ;
 
     private final int mValue;
+    private final String mName;
 
-    StructVariant(int value) {
+    StructVariant(int value, String name) {
         mValue = value;
+        mName = name;
+    }
+
+    @Override
+    public String getComment() {
+        return null;
     }
 
     @Override
@@ -34,9 +41,21 @@ public enum StructVariant implements TEnumValue<StructVariant> {
         return mValue;
     }
 
-    public static StructVariant valueOf(int value) {
+    @Override
+    public String getName() {
+        return mName;
+    }
+
+    public static StructVariant forValue(int value) {
         for (StructVariant e : values()) {
             if (e.mValue == value) return e;
+        }
+        return null;
+    }
+
+    public static StructVariant forName(String name) {
+        for (StructVariant e : values()) {
+            if (e.mName.equals(name)) return e;
         }
         return null;
     }
@@ -46,13 +65,13 @@ public enum StructVariant implements TEnumValue<StructVariant> {
 
         @Override
         public Builder setByValue(int value) {
-            mValue = StructVariant.valueOf(value);
+            mValue = StructVariant.forValue(value);
             return this;
         }
 
         @Override
         public Builder setByName(String name) {
-            mValue = StructVariant.valueOf(name);
+            mValue = StructVariant.forName(name);
             return this;
         }
 
@@ -67,18 +86,22 @@ public enum StructVariant implements TEnumValue<StructVariant> {
         }
     }
 
-    public static final TEnumDescriptor<StructVariant> DESCRIPTOR = _createDescriptor();
+    private static final TEnumDescriptor<StructVariant> sDescriptor;
 
     @Override
-    public TEnumDescriptor<StructVariant> descriptor() {
-        return DESCRIPTOR;
+    public TEnumDescriptor<StructVariant> getDescriptor() {
+        return sDescriptor;
+    }
+
+    public static TEnumDescriptor<StructVariant> descriptor() {
+        return sDescriptor;
     }
 
     public static TEnumDescriptorProvider<StructVariant> provider() {
-        return new TEnumDescriptorProvider<StructVariant>(DESCRIPTOR);
+        return new TEnumDescriptorProvider<StructVariant>(sDescriptor);
     }
 
-    private static class _Factory
+    private static class Factory
             extends TEnumBuilderFactory<StructVariant> {
         @Override
         public StructVariant.Builder builder() {
@@ -86,11 +109,7 @@ public enum StructVariant implements TEnumValue<StructVariant> {
         }
     }
 
-    private static TEnumDescriptor<StructVariant> _createDescriptor() {
-        List<TEnumDescriptor.Value> enumValues = new LinkedList<>();
-        enumValues.add(new TEnumDescriptor.Value(null, "STRUCT", 1));
-        enumValues.add(new TEnumDescriptor.Value(null, "UNION", 2));
-        enumValues.add(new TEnumDescriptor.Value(null, "EXCEPTION", 3));
-        return new TEnumDescriptor<>(null, "model", "StructVariant", enumValues, new _Factory());
+    static {
+        sDescriptor = new TEnumDescriptor<>(null, "model", "StructVariant", StructVariant.values(), new Factory());
     }
 }

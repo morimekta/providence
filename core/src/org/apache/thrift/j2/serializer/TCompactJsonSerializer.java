@@ -52,7 +52,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Compact JSON serializer. This uses the most compact type-safe JSON format
+ * Compact JSON serializer. This uses the most isCompact type-safe JSON format
  * allowable. There are two optional variants switching the struct field ID
  * between numeric ID and field name.
  * <p/>
@@ -78,7 +78,7 @@ import java.util.Map;
  * But without formatting spaces. The formatted JSON can be read normally.
  * Binary fields are base64 encoded.
  *
- * This format supports 'compact' struct formatting. A compact struct is
+ * This format supports 'isCompact' struct formatting. A isCompact struct is
  * formatted as a list with fields in order from 1 to N. E.g.:
  *
  * <pre>
@@ -212,7 +212,7 @@ public class TCompactJsonSerializer
             if (field != null) {
                 Object value = parseTypedValue(tokenizer.expect("parsing map value."),
                                                tokenizer,
-                                               field.descriptor());
+                                               field.getDescriptor());
                 builder.set(field.getKey(), value);
             } else if (mStrict) {
                 throw new TSerializeException(
@@ -256,7 +256,7 @@ public class TCompactJsonSerializer
             if (field != null) {
                 Object value = parseTypedValue(token,
                                                tokenizer,
-                                               field.descriptor());
+                                               field.getDescriptor());
                 builder.set(field.getKey(), value);
             } else if (mStrict) {
                 throw new TSerializeException(
@@ -533,12 +533,12 @@ public class TCompactJsonSerializer
     }
 
     protected void appendMessage(JsonWriter writer, TMessage<?> message) throws TSerializeException, JsonException {
-        TStructDescriptor<?> type = message.descriptor();
-        if (message.compact()) {
+        TStructDescriptor<?> type = message.getDescriptor();
+        if (message.isCompact()) {
             writer.array();
             for (TField<?> field : type.getFields()) {
                 if (message.has(field.getKey())) {
-                    appendTypedValue(writer, field.descriptor(), message.get(field.getKey()));
+                    appendTypedValue(writer, field.getDescriptor(), message.get(field.getKey()));
                 } else {
                     break;
                 }
@@ -557,7 +557,7 @@ public class TCompactJsonSerializer
                         writer.key(field.getName());
                         field.getName().length();
                     }
-                    appendTypedValue(writer, field.descriptor(), value);
+                    appendTypedValue(writer, field.getDescriptor(), value);
                 }
             }
             writer.endObject();

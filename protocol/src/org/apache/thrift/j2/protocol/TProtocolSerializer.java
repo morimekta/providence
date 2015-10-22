@@ -164,17 +164,17 @@ public class TProtocolSerializer extends TSerializer {
 
     protected void write(TMessage<?> message, TProtocol protocol)
             throws TException, TSerializeException {
-        TStructDescriptor<?> type = message.descriptor();
+        TStructDescriptor<?> type = message.getDescriptor();
 
-        protocol.writeStructBegin(new TStruct(message.descriptor().getQualifiedName(null)));
+        protocol.writeStructBegin(new TStruct(message.getDescriptor().getQualifiedName(null)));
 
         for (TField<?> field : type.getFields()) {
             if (!message.has(field.getKey())) continue;
 
             protocol.writeFieldBegin(new org.apache.thrift.protocol.TField(
-                    field.getName(), getFieldType(field.descriptor()), (short) field.getKey()));
+                    field.getName(), getFieldType(field.getDescriptor()), (short) field.getKey()));
 
-            writeTypedValue(message.get(field.getKey()), field.descriptor(), protocol);
+            writeTypedValue(message.get(field.getKey()), field.getDescriptor(), protocol);
 
             protocol.writeFieldEnd();
         }
@@ -210,13 +210,13 @@ public class TProtocolSerializer extends TSerializer {
                 }
             }
 
-            if (f.type != getFieldType(field.descriptor())) {
+            if (f.type != getFieldType(field.getDescriptor())) {
                 throw new TSerializeException("Incompatible serialized type " + type +
                                               " for field " + field.getName() +
-                                              ", expected " + field.descriptor().getType());
+                                              ", expected " + field.getDescriptor().getType());
             }
 
-            Object value = readTypedValue(f.type, field.descriptor(), protocol);
+            Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
             if (value == null) {
                 throw new TSerializeException("Illegal null field value");
             }

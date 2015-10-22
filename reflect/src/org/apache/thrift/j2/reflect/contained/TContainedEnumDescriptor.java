@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumBuilderFactory;
+import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 
 /**
@@ -34,12 +35,22 @@ public class TContainedEnumDescriptor
     public TContainedEnumDescriptor(String comment,
                                     String packageName,
                                     String name,
-                                    List<TEnumDescriptor.Value> values) {
-        super(comment, packageName, name, values, new _Factory());
-        ((_Factory) factory()).setType(this);
+                                    List<TContainedEnum> values) {
+        super(comment, packageName, name, values, new Factory());
+        ((Factory) factory()).setType(this);
     }
 
-    private static class _Factory
+    @Override
+    public TContainedEnum getValueById(int id) {
+        return (TContainedEnum) super.getValueById(id);
+    }
+
+    @Override
+    public TContainedEnum getValueByName(String name) {
+        return (TContainedEnum) super.getValueByName(name);
+    }
+
+    private static class Factory
             extends TEnumBuilderFactory<TContainedEnum> {
         private TContainedEnumDescriptor mType;
 

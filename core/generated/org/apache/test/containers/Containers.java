@@ -454,7 +454,7 @@ public class Containers
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -531,7 +531,7 @@ public class Containers
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -599,7 +599,7 @@ public class Containers
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -622,7 +622,7 @@ public class Containers
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -645,11 +645,15 @@ public class Containers
     }
 
     @Override
-    public TStructDescriptor<Containers> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Containers> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Containers> DESCRIPTOR;
+    public static TStructDescriptor<Containers> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Containers> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Containers> {
@@ -660,14 +664,14 @@ public class Containers
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "containers", "Containers", Containers.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "containers", "Containers", Containers.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Containers> provider() {
         return new TStructDescriptorProvider<Containers>() {
             @Override
             public TStructDescriptor<Containers> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

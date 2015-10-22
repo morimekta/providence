@@ -80,7 +80,7 @@ public class CalculateException
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -101,7 +101,7 @@ public class CalculateException
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class CalculateException
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -164,7 +164,7 @@ public class CalculateException
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -187,11 +187,15 @@ public class CalculateException
     }
 
     @Override
-    public TExceptionDescriptor<CalculateException> descriptor() {
-        return DESCRIPTOR;
+    public TExceptionDescriptor<CalculateException> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TExceptionDescriptor<CalculateException> DESCRIPTOR;
+    public static TExceptionDescriptor<CalculateException> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TExceptionDescriptor<CalculateException> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<CalculateException> {
@@ -202,14 +206,14 @@ public class CalculateException
     }
 
     static {
-        DESCRIPTOR = new TExceptionDescriptor<>(null, "calculator", "CalculateException", CalculateException.Field.values(), new Factory());
+        sDescriptor = new TExceptionDescriptor<>(null, "calculator", "CalculateException", CalculateException.Field.values(), new Factory());
     }
 
     public static TExceptionDescriptorProvider<CalculateException> provider() {
         return new TExceptionDescriptorProvider<CalculateException>() {
             @Override
             public TExceptionDescriptor<CalculateException> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

@@ -77,7 +77,7 @@ public class TCompactBinarySerializerTest {
         assertEquals(length, out.length);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(out);
-        Operation operation = serializer.deserialize(bais, Operation.DESCRIPTOR);
+        Operation operation = serializer.deserialize(bais, Operation.descriptor());
 
         assertEquals(mOperation, operation);
     }

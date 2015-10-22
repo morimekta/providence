@@ -139,7 +139,7 @@ public class ThriftField
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -168,7 +168,7 @@ public class ThriftField
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -214,7 +214,7 @@ public class ThriftField
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -237,7 +237,7 @@ public class ThriftField
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -260,11 +260,15 @@ public class ThriftField
     }
 
     @Override
-    public TStructDescriptor<ThriftField> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<ThriftField> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<ThriftField> DESCRIPTOR;
+    public static TStructDescriptor<ThriftField> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<ThriftField> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<ThriftField> {
@@ -275,14 +279,14 @@ public class ThriftField
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "ThriftField", ThriftField.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", ThriftField.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftField> provider() {
         return new TStructDescriptorProvider<ThriftField>() {
             @Override
             public TStructDescriptor<ThriftField> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

@@ -173,7 +173,7 @@ public class Primitives
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -208,7 +208,7 @@ public class Primitives
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -255,7 +255,7 @@ public class Primitives
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -278,7 +278,7 @@ public class Primitives
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -301,11 +301,15 @@ public class Primitives
     }
 
     @Override
-    public TStructDescriptor<Primitives> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Primitives> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Primitives> DESCRIPTOR;
+    public static TStructDescriptor<Primitives> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Primitives> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Primitives> {
@@ -316,14 +320,14 @@ public class Primitives
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "primitives", "Primitives", Primitives.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "primitives", "Primitives", Primitives.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Primitives> provider() {
         return new TStructDescriptorProvider<Primitives>() {
             @Override
             public TStructDescriptor<Primitives> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }
@@ -412,7 +416,7 @@ public class Primitives
                         }
                         break;
                     case 9:
-                        builder.setV(Value.valueOf(source.readInt()));
+                        builder.setV(Value.forValue(source.readInt()));
                         break;
                     default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }

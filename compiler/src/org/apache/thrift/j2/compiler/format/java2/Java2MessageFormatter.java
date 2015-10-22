@@ -19,6 +19,9 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -46,9 +49,6 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
-
-import java.io.IOException;
-import java.util.Locale;
 
 import static org.apache.thrift.j2.util.TStringUtils.c_case;
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
@@ -114,7 +114,7 @@ public class Java2MessageFormatter {
     private void appendObjectCompact(IndentedPrintWriter writer, TStructDescriptor<?> type) {
         if (type.isCompactible()) {
             writer.appendln("@Override")
-                  .appendln("public boolean compact() {")
+                  .appendln("public boolean isCompact() {")
                   .begin()
                   .appendln("boolean missing = false;");
 
@@ -136,7 +136,7 @@ public class Java2MessageFormatter {
                   .newline();
         } else {
             writer.appendln("@Override")
-                  .appendln("public boolean compact() {")
+                  .appendln("public boolean isCompact() {")
                   .begin()
                   .appendln("return false;")
                   .end()
@@ -159,7 +159,7 @@ public class Java2MessageFormatter {
               .begin();
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                 case SET:
                 case MAP:
@@ -171,7 +171,7 @@ public class Java2MessageFormatter {
             }
             writer.begin()
                   .formatln("dest.writeInt(%d);", field.getKey());
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case BOOL:
                     writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
                     break;
@@ -203,7 +203,7 @@ public class Java2MessageFormatter {
                     break;
                 case SET:
                 case LIST:
-                    TContainer<?, ?> cType = (TContainer<?, ?>) field.descriptor();
+                    TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
                     String iTypeName = mTypeHelper.getSimpleClassName(cType.itemDescriptor());
                     switch (cType.itemDescriptor().getType()) {
                         case LIST:
@@ -227,7 +227,7 @@ public class Java2MessageFormatter {
                     }
                     break;
                 case MAP:
-                    TMap<?, ?> mType = (TMap<?, ?>) field.descriptor();
+                    TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
                     String kTypeName = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
                     iTypeName = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
                     writer.formatln("dest.writeInt(%s.size());", fName);
@@ -310,9 +310,9 @@ public class Java2MessageFormatter {
 
             String setF = camelCase("set", field.getName());
             String addToF = camelCase("addTo", field.getName());
-            String classF = mTypeHelper.getSimpleClassName(field.descriptor());
+            String classF = mTypeHelper.getSimpleClassName(field.getDescriptor());
 
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case BOOL:
                     writer.formatln("builder.%s(source.readByte() > 0);", setF);
                     break;
@@ -345,7 +345,7 @@ public class Java2MessageFormatter {
                           .appendln('}');
                     break;
                 case ENUM:
-                    writer.formatln("builder.%s(%s.valueOf(source.readInt()));",
+                    writer.formatln("builder.%s(%s.forValue(source.readInt()));",
                                     setF, classF);
                     break;
                 case MESSAGE:
@@ -354,7 +354,7 @@ public class Java2MessageFormatter {
                     break;
                 case LIST:
                 case SET:
-                    TContainer<?, ?> cType = (TContainer<?, ?>) field.descriptor();
+                    TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
                     String cItemClass = mTypeHelper.getSimpleClassName(cType.itemDescriptor());
                     switch (cType.itemDescriptor().getType()) {
                         case LIST:
@@ -391,7 +391,7 @@ public class Java2MessageFormatter {
                     writer.append(" {")
                           .begin()
                           .appendln("int len = source.readInt();");
-                    TMap<?, ?> mType = (TMap<?, ?>) field.descriptor();
+                    TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
                     String mkClass = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
                     String miClass = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
 
@@ -498,7 +498,7 @@ public class Java2MessageFormatter {
               .formatln("    extends TMessageBuilder<%s> {", simpleClass);
         for (TField<?> field : type.getFields()) {
             writer.formatln("private %s %s;",
-                            mTypeHelper.getFieldType(field.descriptor()),
+                            mTypeHelper.getFieldType(field.getDescriptor()),
                             camelCase("m", field.getName()));
         }
         if (union) {
@@ -509,13 +509,13 @@ public class Java2MessageFormatter {
               .appendln("public Builder() {")
               .begin();
         for (TField<?> field : type.getFields()) {
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case MAP:
                 case SET:
                 case LIST:
                     writer.formatln("%s = new %s<>();",
                                     camelCase("m", field.getName()),
-                                    mTypeHelper.getSimpleClassName(field.descriptor()));
+                                    mTypeHelper.getSimpleClassName(field.getDescriptor()));
                     break;
                 default:
                     break;
@@ -532,7 +532,7 @@ public class Java2MessageFormatter {
               .newline();
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                 case SET:
                     writer.formatln("%s.addAll(base.%s);", fName, fName);
@@ -558,10 +558,10 @@ public class Java2MessageFormatter {
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
             String fEnumName = c_case("", field.getName()).toUpperCase();
-            String vType = mTypeHelper.getValueType(field.descriptor());
-            switch (field.descriptor().getType()) {
+            String vType = mTypeHelper.getValueType(field.getDescriptor());
+            switch (field.getDescriptor().getType()) {
                 case MAP:
-                    TMap<?, ?> mType = (TMap<?, ?>) field.descriptor();
+                    TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
                     String mkType = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
                     String miType = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
                     if (field.getComment() != null) {
@@ -610,7 +610,7 @@ public class Java2MessageFormatter {
                     break;
                 case SET:
                 case LIST:
-                    TContainer<?, ?> lType = (TContainer<?, ?>) field.descriptor();
+                    TContainer<?, ?> lType = (TContainer<?, ?>) field.getDescriptor();
                     String liType = mTypeHelper.getSimpleClassName(lType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
@@ -698,7 +698,7 @@ public class Java2MessageFormatter {
             writer.formatln("case %d: %s((%s) value); break;",
                             field.getKey(),
                             camelCase("set", field.getName()),
-                            mTypeHelper.getValueType(field.descriptor()));
+                            mTypeHelper.getValueType(field.getDescriptor()));
         }
         writer.end()
               .appendln('}')
@@ -722,7 +722,7 @@ public class Java2MessageFormatter {
                       .appendln("if (first) first = false;")
                       .appendln("else builder.append(',');")
                       .formatln("builder.append(\"%s:\");", field.getName());
-                switch (field.descriptor().getType()) {
+                switch (field.getDescriptor().getType()) {
                     case LIST:
                     case SET:
                     case MAP:
@@ -772,7 +772,7 @@ public class Java2MessageFormatter {
 
         for (TField<?> field : type.getFields()) {
             String name = c_case("", field.getName()).toUpperCase(Locale.ENGLISH);
-            String provider = mTypeHelper.getProviderName(field.descriptor());
+            String provider = mTypeHelper.getProviderName(field.getDescriptor());
             String defValue = "null";
             if (field.hasDefaultValue()) {
                 defValue = String.format("new TDefaultValueProvider<>(%s)",
@@ -820,7 +820,7 @@ public class Java2MessageFormatter {
               .appendln("public TType getType() { return mTypeProvider.descriptor().getType(); }")
               .newline();
         writer.appendln("@Override")
-              .appendln("public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }")
+              .appendln("public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }")
               .newline();
         writer.appendln("@Override")
               .appendln("public String getName() { return mName; }")
@@ -847,7 +847,7 @@ public class Java2MessageFormatter {
               .appendln("if (mRequired) {")
               .appendln("    builder.append(\"required \");")
               .appendln("}")
-              .appendln("builder.append(descriptor().getQualifiedName(null))")
+              .appendln("builder.append(getDescriptor().getQualifiedName(null))")
               .appendln("       .append(' ')")
               .appendln("       .append(mName)")
               .appendln("       .append('}');")
@@ -898,14 +898,21 @@ public class Java2MessageFormatter {
         }
 
         writer.appendln("@Override")
-              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
+              .formatln("public %s<%s> getDescriptor() {", typeClass, simpleClass)
               .begin()
-              .appendln("return DESCRIPTOR;")
+              .appendln("return sDescriptor;")
               .end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public static final %s<%s> DESCRIPTOR;", typeClass, simpleClass)
+        writer.formatln("public static %s<%s> descriptor() {", typeClass, simpleClass)
+              .begin()
+              .appendln("return sDescriptor;")
+              .end()
+              .appendln('}')
+              .newline();
+
+        writer.formatln("public static final %s<%s> sDescriptor;", typeClass, simpleClass)
               .newline();
 
         writer.appendln("private final static class Factory")
@@ -925,7 +932,7 @@ public class Java2MessageFormatter {
               .begin();
         if (type.getVariant().equals(TMessageVariant.STRUCT)) {
             writer.formatln(
-                    "DESCRIPTOR = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory(), %b);",
+                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory(), %b);",
                     typeClass,
                     type.getPackageName(),
                     type.getName(),
@@ -933,7 +940,7 @@ public class Java2MessageFormatter {
                     type.isCompactible());
         } else {
             writer.formatln(
-                    "DESCRIPTOR = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory());",
+                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory());",
                     typeClass,
                     type.getPackageName(),
                     type.getName(),
@@ -950,7 +957,7 @@ public class Java2MessageFormatter {
               .appendln("@Override")
               .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
               .begin()
-              .appendln("return DESCRIPTOR;")
+              .appendln("return sDescriptor;")
               .end()
               .appendln('}')
               .end()
@@ -1000,7 +1007,7 @@ public class Java2MessageFormatter {
         writer.appendln("@Override")
               .appendln("public String toString() {")
               .begin()
-              .appendln("return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);")
+              .appendln("return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);")
               .end()
               .appendln("}")
               .newline();
@@ -1056,7 +1063,7 @@ public class Java2MessageFormatter {
               .begin();
 
         for (TField<?> field : type.getFields()) {
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                 case MAP:
                 case SET:
@@ -1088,7 +1095,7 @@ public class Java2MessageFormatter {
               .begin();
 
         for (TField<?> field : type.getFields()) {
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                 case MAP:
                 case SET:
@@ -1139,10 +1146,10 @@ public class Java2MessageFormatter {
             if (defaultValue != null) {
                 hasDefault = true;
                 writer.formatln("private final static %s %s = ",
-                                mTypeHelper.getValueType(field.descriptor()),
+                                mTypeHelper.getValueType(field.getDescriptor()),
                                 camelCase("kDefault", field.getName()))
                 .begin(DBL_INDENT);
-                appendTypedValue(writer, defaultValue, field.descriptor());
+                appendTypedValue(writer, defaultValue, field.getDescriptor());
                 writer.append(";")
                       .end();
             }
@@ -1154,7 +1161,7 @@ public class Java2MessageFormatter {
 
     private void appendFieldGetters(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
         for (TField<?> field : type.getFields()) {
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                 case SET:
                 case MAP:
@@ -1178,7 +1185,7 @@ public class Java2MessageFormatter {
                 Java2Utils.appendBlockComment(writer, field.getComment());
             }
             writer.formatln("public %s %s() {",
-                            mTypeHelper.getValueType(field.descriptor()),
+                            mTypeHelper.getValueType(field.getDescriptor()),
                             camelCase("get", field.getName()))
                   .begin();
 
@@ -1267,7 +1274,7 @@ public class Java2MessageFormatter {
     private void appendFieldDeclarations(IndentedPrintWriter writer, TStructDescriptor<?> type) {
         for (TField<?> field : type.getFields()) {
             writer.formatln("private final %s %s;",
-                            mTypeHelper.getFieldType(field.descriptor()),
+                            mTypeHelper.getFieldType(field.getDescriptor()),
                             camelCase("m", field.getName()));
         }
         if (type.getVariant().equals(TMessageVariant.UNION)) {
@@ -1287,18 +1294,18 @@ public class Java2MessageFormatter {
         }
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
-            switch (field.descriptor().getType()) {
+            switch (field.getDescriptor().getType()) {
                 case LIST:
                     writer.formatln("%s = Collections.unmodifiableList(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.descriptor()), fName);
+                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
                     break;
                 case SET:
                     writer.formatln("%s = Collections.unmodifiableSet(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.descriptor()), fName);
+                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
                     break;
                 case MAP:
                     writer.formatln("%s = Collections.unmodifiableMap(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.descriptor()), fName);
+                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
                     break;
                 default:
                     writer.formatln("%s = builder.%s;", fName, fName);
@@ -1417,7 +1424,7 @@ public class Java2MessageFormatter {
                 break;
         }
         for (TField<?> field : type.getFields()) {
-            addTypeImports(header, field.descriptor());
+            addTypeImports(header, field.getDescriptor());
             if (field.hasDefaultValue()) {
                 header.include(TDefaultValueProvider.class.getName());
             }

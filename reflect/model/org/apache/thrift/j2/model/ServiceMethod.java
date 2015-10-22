@@ -130,7 +130,7 @@ public class ServiceMethod
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -159,7 +159,7 @@ public class ServiceMethod
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -203,7 +203,7 @@ public class ServiceMethod
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -226,7 +226,7 @@ public class ServiceMethod
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -249,11 +249,15 @@ public class ServiceMethod
     }
 
     @Override
-    public TStructDescriptor<ServiceMethod> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<ServiceMethod> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<ServiceMethod> DESCRIPTOR;
+    public static TStructDescriptor<ServiceMethod> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<ServiceMethod> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<ServiceMethod> {
@@ -264,14 +268,14 @@ public class ServiceMethod
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "ServiceMethod", ServiceMethod.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceMethod", ServiceMethod.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceMethod> provider() {
         return new TStructDescriptorProvider<ServiceMethod>() {
             @Override
             public TStructDescriptor<ServiceMethod> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

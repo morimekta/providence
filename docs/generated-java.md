@@ -114,6 +114,14 @@ Or
 ### Descriptor
 
 ```java
+  public enum Field {
+    FIELD_NAME(...),
+    ;
+    
+    public static Field forKey(int key) {}
+    public static Field forName(String name) {}
+  }
+
   public static final TStructType<MyStruct> DESCRIPTOR = \_createDescriptor();
 
   public static TStructTypeProvider<MyStruct> provider() {
@@ -129,7 +137,7 @@ Or
     return DESCRIPTOR;
   }
 
-  private static class \_Factory implements TStructBuilderFactory<MyStruct> {
+  private static class Factory implements TStructBuilderFactory<MyStruct> {
     @Override
     public MyStruct.Builder create() {
       return new MyStruct.Builder();
@@ -137,25 +145,22 @@ Or
   }
 
   private static \_createDescriptor() {
-    List<TField> fields = new LinkedList<>();
-    <foreach field>
-    field.add(new TField(...));
-    </foreach>
-    return new TStructType<>(null, "package", "MyStruct", fields, new \_Factory());
+    return new TStructType<>(null, "package", "MyStruct", Field.values(), new Factory());
   }
 ```
 
 ### Android
 
 With the `--android` option set, android Parcellable handling is added. It adds
-the `Parcellable` interface with the `int describeContents()` and
-`writeToParcel(Parsel, int)` methods, and adds a static CREATOR to parse the
+the `Parcelable` interface with the `int describeContents()` and
+`writeToParcel(Parcel, int)` methods, and adds a static CREATOR to parse the
 parcel into a message. Note that the parcellable does NOT handle unknown
 fields, so is not forward compatible when fields are added.
 
 ```java
   @Override
   public int describeContents() { return 0; }
+  
   @Override
   public void writeToParcel(Parcel dest, int flags) {
     <foreach field>
@@ -163,7 +168,6 @@ fields, so is not forward compatible when fields are added.
       dest.writeInt(<id>);
       // type dependent.
       dest.write<CType>(mFieldName);
-      </if>
     }
     </foreach>
 
@@ -194,12 +198,21 @@ fields, so is not forward compatible when fields are added.
 
 ## Unions
 
+Unions also have the `Field unionField()` method which returns the last set
+field in the builder. Any valid union will have the matching field value set,
+and no other fields.
+
 ## Exceptions
+
+Exceptions inherit the `TException` class, which extends the
+`java.util.Exception` class. It will generate a message based on content
+(similar to `toString()`).
 
 ## Enums
 
 Enums are handled by real java enums. Which gives a number of benefits
-programming wise. E.g. switch statements, type validation etc.
+programming wise. E.g. switch statements, type validation etc. Enum value names
+are identical the the enum name in the thrift IDL.
 
 ```java
 enum MyEnum implements TEnumValue<MyEnum> {
@@ -208,7 +221,8 @@ enum MyEnum implements TEnumValue<MyEnum> {
   </foreach>
   ;
 
-  
+  public static MyEnum valueOf(int value) {}
+  public static MyEnum valueOf(String name) {}  // native method
 }
 ```
 

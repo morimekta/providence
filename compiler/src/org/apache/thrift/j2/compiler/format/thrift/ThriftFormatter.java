@@ -142,11 +142,11 @@ public class ThriftFormatter {
 
         for (TField<?> constant : document.getConstants()) {
             builder.formatln("const %s %s = ",
-                             constant.descriptor().getQualifiedName(document.getPackageName()),
+                             constant.getDescriptor().getQualifiedName(document.getPackageName()),
                              constant.getName());
             appendTypedValue(builder,
                              constant.getDefaultValue(),
-                             constant.descriptor(),
+                             constant.getDescriptor(),
                              document.getPackageName());
             // represent the actual value...
             builder.newline();
@@ -190,14 +190,14 @@ public class ThriftFormatter {
                 builder.format("%s ", REQUIRED);
             }
             builder.format("%s %s",
-                           field.descriptor().getQualifiedName(type.getPackageName()),
+                           field.getDescriptor().getQualifiedName(type.getPackageName()),
                            field.getName());
             if (field.getDefaultValue() != null) {
                 builder.append(" = ");
                 appendTypedValue(builder,
                                  field.getDefaultValue(),
-                                 field.descriptor(),
-                                 field.descriptor().getPackageName());
+                                 field.getDescriptor(),
+                                 field.getDescriptor().getPackageName());
             }
             builder.append(';');
         }
@@ -212,7 +212,7 @@ public class ThriftFormatter {
         builder.formatln("enum %s {", type.getName())
                .begin();
         int nextValue = mEnumValuePresence.equals(EnumValuePresence.FIRST) ? -1 : TEnumDescriptor.DEFAULT_FIRST_VALUE;
-        for (TEnumDescriptor.Value value : type.getValues()) {
+        for (TEnumValue<?> value : type.getValues()) {
             if (value.getComment() != null) {
                 appendBlockComment(builder, value.getComment(), false);
             }
@@ -263,7 +263,7 @@ public class ThriftFormatter {
                         writer.append(", ");
                     writer.format("%d: %s %s",
                                   field.getKey(),
-                                  field.descriptor().getQualifiedName(doc.getPackageName()),
+                                  field.getDescriptor().getQualifiedName(doc.getPackageName()),
                                   field.getName());
                 }
             }
@@ -278,7 +278,7 @@ public class ThriftFormatter {
                     else writer.append(", ");
                     writer.format("%d: %s %s",
                                   field.getKey(),
-                                  field.descriptor().getQualifiedName(doc.getPackageName()),
+                                  field.getDescriptor().getQualifiedName(doc.getPackageName()),
                                   field.getName());
                 }
                 writer.append(')');
@@ -376,7 +376,7 @@ public class ThriftFormatter {
         if (value instanceof TEnumValue<?>) {
             TEnumValue<?> ev = (TEnumValue<?>) value;
             writer.append('\"')
-                  .append(ev.descriptor().getName()).append('.').append(ev.toString())
+                  .append(ev.getDescriptor().getName()).append('.').append(ev.toString())
                   .append('\"');
         } else if (value instanceof String) {
             JsonWriter json = new JsonWriter(writer, "");
@@ -413,7 +413,7 @@ public class ThriftFormatter {
 
         writer.append('{')
               .begin();
-        for (TField<?> field : message.descriptor().getFields()) {
+        for (TField<?> field : message.getDescriptor().getFields()) {
             if (message.has(field.getKey())) {
                 if (first) first = false;
                 else writer.append(',');
@@ -421,7 +421,7 @@ public class ThriftFormatter {
                 writer.formatln("\"%s\": ", field.getName());
                 appendTypedValue(writer,
                                  message.get(field.getKey()),
-                                 field.descriptor(),
+                                 field.getDescriptor(),
                                  packageContext);
             }
         }

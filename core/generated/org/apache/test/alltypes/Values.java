@@ -10,17 +10,24 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptorProvider;
 
 public enum Values implements TEnumValue<Values> {
-    FIRST(5),
-    SECOND(3),
-    THIRD(4),
-    FOURTH(1),
-    FIFTH(2),
+    FIRST(5, "FIRST"),
+    SECOND(3, "SECOND"),
+    THIRD(4, "THIRD"),
+    FOURTH(1, "FOURTH"),
+    FIFTH(2, "FIFTH"),
     ;
 
     private final int mValue;
+    private final String mName;
 
-    Values(int value) {
+    Values(int value, String name) {
         mValue = value;
+        mName = name;
+    }
+
+    @Override
+    public String getComment() {
+        return null;
     }
 
     @Override
@@ -28,9 +35,21 @@ public enum Values implements TEnumValue<Values> {
         return mValue;
     }
 
-    public static Values valueOf(int value) {
+    @Override
+    public String getName() {
+        return mName;
+    }
+
+    public static Values forValue(int value) {
         for (Values e : values()) {
             if (e.mValue == value) return e;
+        }
+        return null;
+    }
+
+    public static Values forName(String name) {
+        for (Values e : values()) {
+            if (e.mName.equals(name)) return e;
         }
         return null;
     }
@@ -40,13 +59,13 @@ public enum Values implements TEnumValue<Values> {
 
         @Override
         public Builder setByValue(int value) {
-            mValue = Values.valueOf(value);
+            mValue = Values.forValue(value);
             return this;
         }
 
         @Override
         public Builder setByName(String name) {
-            mValue = Values.valueOf(name);
+            mValue = Values.forName(name);
             return this;
         }
 
@@ -61,18 +80,22 @@ public enum Values implements TEnumValue<Values> {
         }
     }
 
-    public static final TEnumDescriptor<Values> DESCRIPTOR = _createDescriptor();
+    private static final TEnumDescriptor<Values> sDescriptor;
 
     @Override
-    public TEnumDescriptor<Values> descriptor() {
-        return DESCRIPTOR;
+    public TEnumDescriptor<Values> getDescriptor() {
+        return sDescriptor;
+    }
+
+    public static TEnumDescriptor<Values> descriptor() {
+        return sDescriptor;
     }
 
     public static TEnumDescriptorProvider<Values> provider() {
-        return new TEnumDescriptorProvider<Values>(DESCRIPTOR);
+        return new TEnumDescriptorProvider<Values>(sDescriptor);
     }
 
-    private static class _Factory
+    private static class Factory
             extends TEnumBuilderFactory<Values> {
         @Override
         public Values.Builder builder() {
@@ -80,13 +103,7 @@ public enum Values implements TEnumValue<Values> {
         }
     }
 
-    private static TEnumDescriptor<Values> _createDescriptor() {
-        List<TEnumDescriptor.Value> enumValues = new LinkedList<>();
-        enumValues.add(new TEnumDescriptor.Value(null, "FIRST", 5));
-        enumValues.add(new TEnumDescriptor.Value(null, "SECOND", 3));
-        enumValues.add(new TEnumDescriptor.Value(null, "THIRD", 4));
-        enumValues.add(new TEnumDescriptor.Value(null, "FOURTH", 1));
-        enumValues.add(new TEnumDescriptor.Value(null, "FIFTH", 2));
-        return new TEnumDescriptor<>(null, "alltypes", "Values", enumValues, new _Factory());
+    static {
+        sDescriptor = new TEnumDescriptor<>(null, "alltypes", "Values", Values.values(), new Factory());
     }
 }

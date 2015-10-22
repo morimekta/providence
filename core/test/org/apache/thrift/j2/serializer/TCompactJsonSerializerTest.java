@@ -139,7 +139,7 @@ public class TCompactJsonSerializerTest {
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
-        Operation operation = serializer.deserialize(bais, Operation.DESCRIPTOR);
+        Operation operation = serializer.deserialize(bais, Operation.descriptor());
 
         assertEquals(mOperation, operation);
     }
@@ -150,7 +150,7 @@ public class TCompactJsonSerializerTest {
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         TCompactJsonSerializer serializer = new TCompactJsonSerializer();
-        Operation operation = serializer.deserialize(bais, Operation.DESCRIPTOR);
+        Operation operation = serializer.deserialize(bais, Operation.descriptor());
 
         assertEquals(mOperation, operation);
     }
@@ -180,14 +180,14 @@ public class TCompactJsonSerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(StandardCharsets.UTF_8));
         TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
 
-        Category category = serializer.deserialize(bais, Category.DESCRIPTOR);
+        Category category = serializer.deserialize(bais, Category.descriptor());
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());
         assertNull(category.getLabel());
 
         bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(StandardCharsets.UTF_8));
-        category = serializer.deserialize(bais, Category.DESCRIPTOR);
+        category = serializer.deserialize(bais, Category.descriptor());
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());

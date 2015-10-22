@@ -10,17 +10,24 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptorProvider;
 
 public enum Operator implements TEnumValue<Operator> {
-    IDENTITY(1),
-    ADD(2),
-    SUBTRACT(3),
-    MULTIPLY(4),
-    DIVIDE(5),
+    IDENTITY(1, "IDENTITY"),
+    ADD(2, "ADD"),
+    SUBTRACT(3, "SUBTRACT"),
+    MULTIPLY(4, "MULTIPLY"),
+    DIVIDE(5, "DIVIDE"),
     ;
 
     private final int mValue;
+    private final String mName;
 
-    Operator(int value) {
+    Operator(int value, String name) {
         mValue = value;
+        mName = name;
+    }
+
+    @Override
+    public String getComment() {
+        return null;
     }
 
     @Override
@@ -28,9 +35,21 @@ public enum Operator implements TEnumValue<Operator> {
         return mValue;
     }
 
-    public static Operator valueOf(int value) {
+    @Override
+    public String getName() {
+        return mName;
+    }
+
+    public static Operator forValue(int value) {
         for (Operator e : values()) {
             if (e.mValue == value) return e;
+        }
+        return null;
+    }
+
+    public static Operator forName(String name) {
+        for (Operator e : values()) {
+            if (e.mName.equals(name)) return e;
         }
         return null;
     }
@@ -40,13 +59,13 @@ public enum Operator implements TEnumValue<Operator> {
 
         @Override
         public Builder setByValue(int value) {
-            mValue = Operator.valueOf(value);
+            mValue = Operator.forValue(value);
             return this;
         }
 
         @Override
         public Builder setByName(String name) {
-            mValue = Operator.valueOf(name);
+            mValue = Operator.forName(name);
             return this;
         }
 
@@ -61,18 +80,22 @@ public enum Operator implements TEnumValue<Operator> {
         }
     }
 
-    public static final TEnumDescriptor<Operator> DESCRIPTOR = _createDescriptor();
+    private static final TEnumDescriptor<Operator> sDescriptor;
 
     @Override
-    public TEnumDescriptor<Operator> descriptor() {
-        return DESCRIPTOR;
+    public TEnumDescriptor<Operator> getDescriptor() {
+        return sDescriptor;
+    }
+
+    public static TEnumDescriptor<Operator> descriptor() {
+        return sDescriptor;
     }
 
     public static TEnumDescriptorProvider<Operator> provider() {
-        return new TEnumDescriptorProvider<Operator>(DESCRIPTOR);
+        return new TEnumDescriptorProvider<Operator>(sDescriptor);
     }
 
-    private static class _Factory
+    private static class Factory
             extends TEnumBuilderFactory<Operator> {
         @Override
         public Operator.Builder builder() {
@@ -80,13 +103,7 @@ public enum Operator implements TEnumValue<Operator> {
         }
     }
 
-    private static TEnumDescriptor<Operator> _createDescriptor() {
-        List<TEnumDescriptor.Value> enumValues = new LinkedList<>();
-        enumValues.add(new TEnumDescriptor.Value(null, "IDENTITY", 1));
-        enumValues.add(new TEnumDescriptor.Value(null, "ADD", 2));
-        enumValues.add(new TEnumDescriptor.Value(null, "SUBTRACT", 3));
-        enumValues.add(new TEnumDescriptor.Value(null, "MULTIPLY", 4));
-        enumValues.add(new TEnumDescriptor.Value(null, "DIVIDE", 5));
-        return new TEnumDescriptor<>(null, "calculator", "Operator", enumValues, new _Factory());
+    static {
+        sDescriptor = new TEnumDescriptor<>(null, "calculator", "Operator", Operator.values(), new Factory());
     }
 }

@@ -109,7 +109,7 @@ public class TServiceMethod<R,
                     first = true;
                 else
                     builder.append(',');
-                builder.append(field.descriptor().getName())
+                builder.append(field.getDescriptor().getName())
                        .append(' ')
                        .append(field.getName());
             }
@@ -123,7 +123,7 @@ public class TServiceMethod<R,
                     builder.append(" throws ");
                 } else
                     builder.append(',');
-                builder.append(field.descriptor().getName());
+                builder.append(field.getDescriptor().getName());
             }
         }
         builder.append('}');

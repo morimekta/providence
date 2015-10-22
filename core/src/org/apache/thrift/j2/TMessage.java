@@ -62,7 +62,7 @@ public interface TMessage<T extends TMessage<T>>
     /**
      * @return If the message is compact.
      */
-    boolean compact();
+    boolean isCompact();
 
-    @Override TStructDescriptor<T> descriptor();
+    @Override TStructDescriptor<T> getDescriptor();
 }

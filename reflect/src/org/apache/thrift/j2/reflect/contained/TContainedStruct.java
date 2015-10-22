@@ -60,7 +60,7 @@ public class TContainedStruct
     }
 
     @Override
-    public TStructDescriptor<TContainedStruct> descriptor() {
+    public TStructDescriptor<TContainedStruct> getDescriptor() {
         return mType;
     }
 

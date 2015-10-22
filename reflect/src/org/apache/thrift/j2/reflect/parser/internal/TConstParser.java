@@ -90,7 +90,7 @@ public class TConstParser {
             }
             tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "");
 
-            builder.set(field.getKey(), parseTypedValue(tokenizer.expect("parsing field value."), tokenizer, field.descriptor()));
+            builder.set(field.getKey(), parseTypedValue(tokenizer.expect("parsing field value."), tokenizer, field.getDescriptor()));
             token = tokenizer.expect("parsing message fields list sep");
             if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
                 break;

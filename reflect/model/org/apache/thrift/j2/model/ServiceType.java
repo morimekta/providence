@@ -105,7 +105,7 @@ public class ServiceType
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -130,7 +130,7 @@ public class ServiceType
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class ServiceType
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -195,7 +195,7 @@ public class ServiceType
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -218,11 +218,15 @@ public class ServiceType
     }
 
     @Override
-    public TStructDescriptor<ServiceType> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<ServiceType> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<ServiceType> DESCRIPTOR;
+    public static TStructDescriptor<ServiceType> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<ServiceType> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<ServiceType> {
@@ -233,14 +237,14 @@ public class ServiceType
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "ServiceType", ServiceType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", ServiceType.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceType> provider() {
         return new TStructDescriptorProvider<ServiceType>() {
             @Override
             public TStructDescriptor<ServiceType> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

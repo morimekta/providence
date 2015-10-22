@@ -19,10 +19,12 @@
 
 package org.apache.thrift.j2.reflect.util;
 
+import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.reflect.contained.TContainedEnum;
 import org.apache.thrift.j2.reflect.contained.TContainedField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
@@ -78,19 +80,21 @@ public class TDocumentConverter {
             if (decl.hasDeclEnum()) {
                 EnumType enumType = decl.getDeclEnum();
 
-                List<TEnumDescriptor.Value> values = new LinkedList<>();
+                List<TContainedEnum> values = new LinkedList<>();
                 int nextValue = TEnumDescriptor.DEFAULT_FIRST_VALUE;
+                TEnumDescriptor<TContainedEnum> type =
+                        new TContainedEnumDescriptor(enumType.getComment(),
+                                                     document.getPackage(),
+                                                     enumType.getName(),
+                                                     values);
                 for (EnumValue value : enumType.getValues()) {
                     int v = value.hasValue() ? value.getValue() : nextValue;
                     nextValue = v + 1;
-                    values.add(new TEnumDescriptor.Value(value.getComment(),
-                                                   value.getName(),
-                                                   v));
+                    values.add(new TContainedEnum(value.getComment(),
+                                                  value.getValue(),
+                                                  value.getName(),
+                                                  type));
                 }
-                TEnumDescriptor<?> type = new TContainedEnumDescriptor(enumType.getComment(),
-                                                           document.getPackage(),
-                                                           enumType.getName(),
-                                                           values);
                 declaredTypes.add(type);
                 mRegistry.putDeclaredType(type);
             }
@@ -131,7 +135,7 @@ public class TDocumentConverter {
             if (decl.hasDeclService()) {
                 ServiceType service = decl.getDeclService();
 
-                List<TServiceMethod<?,?,?>> methods = new LinkedList<>();
+                List<TServiceMethod<?, ?, ?>> methods = new LinkedList<>();
                 for (ServiceMethod method : service.getMethods()) {
                     TDescriptorProvider returnType = TPrimitive.VOID.provider();
                     if (method.hasReturnType()) {
@@ -158,9 +162,9 @@ public class TDocumentConverter {
                                                             exceptions));
                 }
                 services.add(new TContainedServiceDescriptor(service.getComment(),
-                                                       document.getPackage(),
-                                                       service.getName(),
-                                                       methods));
+                                                             document.getPackage(),
+                                                             service.getName(),
+                                                             methods));
             }
             if (decl.hasDeclConst()) {
                 ThriftField constant = decl.getDeclConst();
@@ -208,11 +212,11 @@ public class TDocumentConverter {
         }
         @SuppressWarnings("unchecked")
         TField<?> made = new TContainedField<>(field.getComment(),
-                                          field.getKey(),
-                                          field.getIsRequired(),
-                                          field.getName(),
-                                          type,
-                                          defaultValue);
+                                               field.getKey(),
+                                               field.getIsRequired(),
+                                               field.getName(),
+                                               type,
+                                               defaultValue);
         return made;
     }
 }

@@ -42,10 +42,10 @@ import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 
 /**
- * Compact binary serializer. This uses the most compact binary format
+ * Compact binary serializer. This uses the most isCompact binary format
  * allowable.
  * <p/>
- * See data definition file lib/java2/doc/compact-binary.md for format spec.
+ * See data definition file lib/java2/doc/isCompact-binary.md for format spec.
  *
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
  * @since 25.08.15
@@ -74,7 +74,7 @@ public class TCompactBinarySerializer
             throw new TSerializeException("Message not valid.");
         }
         int len = 0;
-        for (TField<?> field : message.descriptor().getFields()) {
+        for (TField<?> field : message.getDescriptor().getFields()) {
             if (message.has(field.getKey())) {
                 len += writeUnsigned(output, field.getKey(), 2);
                 len += writeFieldValue(output,
@@ -121,7 +121,7 @@ public class TCompactBinarySerializer
         while ((fieldInfo = readFieldInfo(input)) != null) {
             TField<?> field = descriptor.getField(fieldInfo.getId());
             if (field != null) {
-                Object value = readFieldValue(input, fieldInfo, field.descriptor());
+                Object value = readFieldValue(input, fieldInfo, field.getDescriptor());
                 builder.set(field.getKey(), value);
             } else {
                 if (mStrict) {

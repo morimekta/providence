@@ -87,7 +87,7 @@ public class EnumValue
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -110,7 +110,7 @@ public class EnumValue
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class EnumValue
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -174,7 +174,7 @@ public class EnumValue
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -197,11 +197,15 @@ public class EnumValue
     }
 
     @Override
-    public TStructDescriptor<EnumValue> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<EnumValue> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<EnumValue> DESCRIPTOR;
+    public static TStructDescriptor<EnumValue> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<EnumValue> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<EnumValue> {
@@ -212,14 +216,14 @@ public class EnumValue
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "EnumValue", EnumValue.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", EnumValue.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<EnumValue> provider() {
         return new TStructDescriptorProvider<EnumValue>() {
             @Override
             public TStructDescriptor<EnumValue> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

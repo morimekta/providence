@@ -26,7 +26,17 @@ package org.apache.thrift.j2;
 public interface TEnumValue<T>
         extends TValue<T> {
     /**
+     * @return The enum value comment.
+     */
+    String getComment();
+
+    /**
      * @return The numeric value for the enum.
      */
     int getValue();
+
+    /**
+     * @return The name of the enum value.
+     */
+    String getName();
 }

@@ -50,11 +50,11 @@ public class TContainedException
 
     @Override
     public boolean has(int key) {
-        TField<?> field = descriptor().getField(key);
+        TField<?> field = getDescriptor().getField(key);
         if (field == null) {
             return false;
         }
-        switch (field.descriptor().getType()) {
+        switch (field.getDescriptor().getType()) {
             case MAP:
             case LIST:
             case SET:
@@ -66,11 +66,11 @@ public class TContainedException
 
     @Override
     public int num(int key) {
-        TField<?> field = descriptor().getField(key);
+        TField<?> field = getDescriptor().getField(key);
         if (field == null) {
             return 0;
         }
-        switch (field.descriptor().getType()) {
+        switch (field.getDescriptor().getType()) {
             case MAP:
                 Map<?, ?> value = (Map<?, ?>) mFields.get(key);
                 return value == null ? 0 : value.size();
@@ -86,25 +86,25 @@ public class TContainedException
 
     @Override
     public Object get(int key) {
-        TField<?> field = descriptor().getField(key);
+        TField<?> field = getDescriptor().getField(key);
         if (field != null) {
             Object value = mFields.get(key);
             if (value != null) {
                 return value;
             } else if (field.hasDefaultValue()) {
                 return field.getDefaultValue();
-            } else if (field.descriptor() instanceof TPrimitive) {
-                return ((TPrimitive) field.descriptor()).getDefaultValue();
+            } else if (field.getDescriptor() instanceof TPrimitive) {
+                return ((TPrimitive) field.getDescriptor()).getDefaultValue();
             }
         }
         return null;
     }
 
     @Override
-    public boolean compact() {
-        if (!descriptor().isCompactible()) return false;
+    public boolean isCompact() {
+        if (!getDescriptor().isCompactible()) return false;
         boolean missing = false;
-        for (TField<?> field : descriptor().getFields()) {
+        for (TField<?> field : getDescriptor().getFields()) {
             if (has(field.getKey())) {
                 if (missing) return false;
             } else {
@@ -121,13 +121,13 @@ public class TContainedException
         }
 
         TContainedException other = (TContainedException) o;
-        TStructDescriptor<?> type = other.descriptor();
-        if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
-            !descriptor().getVariant().equals(type.getVariant())) {
+        TStructDescriptor<?> type = other.getDescriptor();
+        if (!getDescriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
+            !getDescriptor().getVariant().equals(type.getVariant())) {
             return false;
         }
 
-        for (TField<?> field : descriptor().getFields()) {
+        for (TField<?> field : getDescriptor().getFields()) {
             int id = field.getKey();
             if (has(id) != other.has(id)) return false;
             if (TTypeUtils.equals(get(id), other.get(id))) return false;
@@ -146,7 +146,7 @@ public class TContainedException
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) +
+        return getDescriptor().getQualifiedName(null) +
                new TPrettyPrinter("", "", "").format(this);
     }
 
@@ -161,7 +161,7 @@ public class TContainedException
     }
 
     @Override
-    public TContainedExceptionDescriptor descriptor() {
+    public TContainedExceptionDescriptor getDescriptor() {
         return mType;
     }
 

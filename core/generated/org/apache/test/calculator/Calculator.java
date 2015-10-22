@@ -190,7 +190,7 @@ public abstract class Calculator {
         }
 
         @Override
-        public boolean compact() {
+        public boolean isCompact() {
             return false;
         }
 
@@ -222,7 +222,7 @@ public abstract class Calculator {
         }
 
         @Override
-        public TStructDescriptor<Calculate_Params> descriptor() {
+        public TStructDescriptor<Calculate_Params> getDescriptor() {
             return DESCRIPTOR;
         }
 
@@ -259,7 +259,7 @@ public abstract class Calculator {
             public TType getType() { return mTypeProvider.descriptor().getType(); }
 
             @Override
-            public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+            public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
             @Override
             public String getName() { return mName; }
@@ -282,7 +282,7 @@ public abstract class Calculator {
                 if (mRequired) {
                     builder.append("required ");
                 }
-                builder.append(descriptor().getQualifiedName(null))
+                builder.append(getDescriptor().getQualifiedName(null))
                        .append(' ')
                        .append(mName)
                        .append('}');
@@ -405,7 +405,7 @@ public abstract class Calculator {
         }
 
         @Override
-        public boolean compact() {
+        public boolean isCompact() {
             return false;
         }
 
@@ -450,7 +450,7 @@ public abstract class Calculator {
             public TType getType() { return mTypeProvider.descriptor().getType(); }
 
             @Override
-            public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+            public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
             @Override
             public String getName() { return mName; }
@@ -473,7 +473,7 @@ public abstract class Calculator {
                 if (mRequired) {
                     builder.append("required ");
                 }
-                builder.append(descriptor().getQualifiedName(null))
+                builder.append(getDescriptor().getQualifiedName(null))
                        .append(' ')
                        .append(mName)
                        .append('}');
@@ -513,7 +513,7 @@ public abstract class Calculator {
         }
 
         @Override
-        public TStructDescriptor<Calculate_Exception> descriptor() {
+        public TStructDescriptor<Calculate_Exception> getDescriptor() {
             return DESCRIPTOR;
         }
 

@@ -90,7 +90,7 @@ public class Category
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         boolean missing = false;
         if (hasName()) {
             if (missing) return false;
@@ -129,7 +129,7 @@ public class Category
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class Category
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -194,7 +194,7 @@ public class Category
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -217,11 +217,15 @@ public class Category
     }
 
     @Override
-    public TStructDescriptor<Category> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Category> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Category> DESCRIPTOR;
+    public static TStructDescriptor<Category> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Category> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Category> {
@@ -232,14 +236,14 @@ public class Category
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "compact", "Category", Category.Field.values(), new Factory(), true);
+        sDescriptor = new TStructDescriptor<>(null, "compact", "Category", Category.Field.values(), new Factory(), true);
     }
 
     public static TStructDescriptorProvider<Category> provider() {
         return new TStructDescriptorProvider<Category>() {
             @Override
             public TStructDescriptor<Category> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

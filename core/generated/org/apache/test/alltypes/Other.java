@@ -60,7 +60,7 @@ public class Other
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -79,7 +79,7 @@ public class Other
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class Other
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -141,7 +141,7 @@ public class Other
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -164,11 +164,15 @@ public class Other
     }
 
     @Override
-    public TStructDescriptor<Other> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Other> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Other> DESCRIPTOR;
+    public static TStructDescriptor<Other> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Other> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Other> {
@@ -179,14 +183,14 @@ public class Other
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "alltypes", "Other", Other.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "alltypes", "Other", Other.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Other> provider() {
         return new TStructDescriptorProvider<Other>() {
             @Override
             public TStructDescriptor<Other> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }
@@ -214,7 +218,7 @@ public class Other
                 switch (field) {
                     case 0: break loop;
                     case 1:
-                        builder.setV(Values.valueOf(source.readInt()));
+                        builder.setV(Values.forValue(source.readInt()));
                         break;
                     default: throw new IllegalArgumentException("Unknown field ID: " + field);
                 }

@@ -76,7 +76,7 @@ public class Operation
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -97,7 +97,7 @@ public class Operation
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class Operation
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -160,7 +160,7 @@ public class Operation
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -183,11 +183,15 @@ public class Operation
     }
 
     @Override
-    public TStructDescriptor<Operation> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<Operation> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<Operation> DESCRIPTOR;
+    public static TStructDescriptor<Operation> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<Operation> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Operation> {
@@ -198,14 +202,14 @@ public class Operation
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "calculator", "Operation", Operation.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "calculator", "Operation", Operation.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<Operation> provider() {
         return new TStructDescriptorProvider<Operation>() {
             @Override
             public TStructDescriptor<Operation> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }
@@ -237,7 +241,7 @@ public class Operation
                 switch (field) {
                     case 0: break loop;
                     case 1:
-                        builder.setOperator(Operator.valueOf(source.readInt()));
+                        builder.setOperator(Operator.forValue(source.readInt()));
                         break;
                     case 2:
                         builder.addToOperands((Operand[]) source.readParcelableArray(Operand.class.getClassLoader()));

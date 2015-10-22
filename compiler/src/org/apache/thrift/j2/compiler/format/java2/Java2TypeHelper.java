@@ -233,8 +233,8 @@ public class Java2TypeHelper {
         if (field.hasDefaultValue()) {
             return field.getDefaultValue();
         }
-        if (field.descriptor() instanceof TPrimitive) {
-            return ((TPrimitive) field.descriptor()).getDefaultValue();
+        if (field.getDescriptor() instanceof TPrimitive) {
+            return ((TPrimitive) field.getDescriptor()).getDefaultValue();
         }
         return null;
     }

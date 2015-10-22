@@ -98,7 +98,7 @@ public class Operand
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -121,7 +121,7 @@ public class Operand
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class Operand
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -187,7 +187,7 @@ public class Operand
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -210,11 +210,15 @@ public class Operand
     }
 
     @Override
-    public TUnionDescriptor<Operand> descriptor() {
-        return DESCRIPTOR;
+    public TUnionDescriptor<Operand> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TUnionDescriptor<Operand> DESCRIPTOR;
+    public static TUnionDescriptor<Operand> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TUnionDescriptor<Operand> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<Operand> {
@@ -225,14 +229,14 @@ public class Operand
     }
 
     static {
-        DESCRIPTOR = new TUnionDescriptor<>(null, "calculator", "Operand", Operand.Field.values(), new Factory());
+        sDescriptor = new TUnionDescriptor<>(null, "calculator", "Operand", Operand.Field.values(), new Factory());
     }
 
     public static TUnionDescriptorProvider<Operand> provider() {
         return new TUnionDescriptorProvider<Operand>() {
             @Override
             public TUnionDescriptor<Operand> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

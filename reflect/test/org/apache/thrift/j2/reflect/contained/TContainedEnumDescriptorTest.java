@@ -19,48 +19,47 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
-import org.apache.thrift.j2.descriptor.TEnumDescriptor;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * Created by morimekta on 05.09.15.
  */
-public class TContainedEnumTypeTest {
+public class TContainedEnumDescriptorTest {
     TContainedEnumDescriptor mType;
 
     @Before
     public void setUp() {
-        List<TEnumDescriptor.Value> values = new LinkedList<>();
-        values.add(new TEnumDescriptor.Value(null, "ONE", 1));
-        values.add(new TEnumDescriptor.Value(null, "TWO", 2));
-        values.add(new TEnumDescriptor.Value(null, "THREE", 3));
-        values.add(new TEnumDescriptor.Value("Skipping stuff", "FIVE", 5));
-        values.add(new TEnumDescriptor.Value(null, "SIX", 6));
-        values.add(new TEnumDescriptor.Value("And more", "EIGHT", 8));
-
+        List<TContainedEnum> values = new LinkedList<>();
         mType = new TContainedEnumDescriptor("My comment",
                                              "package",
                                              "MyEnum",
                                              values);
+
+        values.add(new TContainedEnum(null, 1, "ONE", mType));
+        values.add(new TContainedEnum(null, 2, "TWO", mType));
+        values.add(new TContainedEnum(null, 3, "THREE", mType));
+        values.add(new TContainedEnum("Skipping stuff", 5, "FIVE", mType));
+        values.add(new TContainedEnum(null, 6, "SIX", mType));
+        values.add(new TContainedEnum("And more", 8, "EIGHT", mType));
     }
 
     @Test
     public void testEnum() {
         Assert.assertEquals(6, mType.getValues().size());
 
-        Assert.assertEquals("EnumValue{ONE,1}", mType.getValues().get(0).toString());
-        Assert.assertEquals("EnumValue{TWO,2}", mType.getValues().get(1).toString());
-        Assert.assertEquals("EnumValue{THREE,3}", mType.getValues().get(2).toString());
-        Assert.assertEquals("EnumValue{FIVE,5}", mType.getValues().get(3).toString());
-        Assert.assertEquals("EnumValue{SIX,6}", mType.getValues().get(4).toString());
-        Assert.assertEquals("EnumValue{EIGHT,8}", mType.getValues().get(5).toString());
+        Assert.assertEquals("ONE", mType.getValues().get(0).toString());
+        Assert.assertEquals("TWO", mType.getValues().get(1).toString());
+        Assert.assertEquals("THREE", mType.getValues().get(2).toString());
+        Assert.assertEquals("FIVE", mType.getValues().get(3).toString());
+        Assert.assertEquals("SIX", mType.getValues().get(4).toString());
+        Assert.assertEquals("EIGHT", mType.getValues().get(5).toString());
 
         Assert.assertEquals("ONE", mType.getValues().get(0).getName());
         Assert.assertEquals("TWO", mType.getValues().get(1).getName());

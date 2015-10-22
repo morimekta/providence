@@ -202,7 +202,7 @@ public class AllTypes
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -241,7 +241,7 @@ public class AllTypes
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -290,7 +290,7 @@ public class AllTypes
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -313,7 +313,7 @@ public class AllTypes
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -336,11 +336,15 @@ public class AllTypes
     }
 
     @Override
-    public TStructDescriptor<AllTypes> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<AllTypes> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<AllTypes> DESCRIPTOR;
+    public static TStructDescriptor<AllTypes> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<AllTypes> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<AllTypes> {
@@ -351,14 +355,14 @@ public class AllTypes
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "alltypes", "AllTypes", AllTypes.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "alltypes", "AllTypes", AllTypes.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<AllTypes> provider() {
         return new TStructDescriptorProvider<AllTypes>() {
             @Override
             public TStructDescriptor<AllTypes> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }
@@ -455,7 +459,7 @@ public class AllTypes
                         }
                         break;
                     case 9:
-                        builder.setV(Values.valueOf(source.readInt()));
+                        builder.setV(Values.forValue(source.readInt()));
                         break;
                     case 10:
                         builder.setO((Other) source.readParcelable(Other.class.getClassLoader()));

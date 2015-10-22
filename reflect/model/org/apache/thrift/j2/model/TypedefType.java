@@ -72,7 +72,7 @@ public class TypedefType
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -93,7 +93,7 @@ public class TypedefType
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class TypedefType
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -156,7 +156,7 @@ public class TypedefType
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -179,11 +179,15 @@ public class TypedefType
     }
 
     @Override
-    public TStructDescriptor<TypedefType> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<TypedefType> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<TypedefType> DESCRIPTOR;
+    public static TStructDescriptor<TypedefType> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<TypedefType> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<TypedefType> {
@@ -194,14 +198,14 @@ public class TypedefType
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "TypedefType", TypedefType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", TypedefType.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<TypedefType> provider() {
         return new TStructDescriptorProvider<TypedefType>() {
             @Override
             public TStructDescriptor<TypedefType> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

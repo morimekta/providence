@@ -39,6 +39,6 @@ public class TMessageParser implements TParser {
 
     @Override
     public ThriftDocument parse(InputStream in, String name) throws IOException, TSerializeException {
-        return mSerializer.deserialize(in, ThriftDocument.DESCRIPTOR);
+        return mSerializer.deserialize(in, ThriftDocument.descriptor());
     }
 }

@@ -108,7 +108,7 @@ public class StructType
     }
 
     @Override
-    public boolean compact() {
+    public boolean isCompact() {
         return false;
     }
 
@@ -133,7 +133,7 @@ public class StructType
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class StructType
         public TType getType() { return mTypeProvider.descriptor().getType(); }
 
         @Override
-        public TDescriptor<?> descriptor() { return mTypeProvider.descriptor(); }
+        public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -198,7 +198,7 @@ public class StructType
             if (mRequired) {
                 builder.append("required ");
             }
-            builder.append(descriptor().getQualifiedName(null))
+            builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
                    .append('}');
@@ -221,11 +221,15 @@ public class StructType
     }
 
     @Override
-    public TStructDescriptor<StructType> descriptor() {
-        return DESCRIPTOR;
+    public TStructDescriptor<StructType> getDescriptor() {
+        return sDescriptor;
     }
 
-    public static final TStructDescriptor<StructType> DESCRIPTOR;
+    public static TStructDescriptor<StructType> descriptor() {
+        return sDescriptor;
+    }
+
+    public static final TStructDescriptor<StructType> sDescriptor;
 
     private final static class Factory
             extends TMessageBuilderFactory<StructType> {
@@ -236,14 +240,14 @@ public class StructType
     }
 
     static {
-        DESCRIPTOR = new TStructDescriptor<>(null, "model", "StructType", StructType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "StructType", StructType.Field.values(), new Factory(), false);
     }
 
     public static TStructDescriptorProvider<StructType> provider() {
         return new TStructDescriptorProvider<StructType>() {
             @Override
             public TStructDescriptor<StructType> descriptor() {
-                return DESCRIPTOR;
+                return sDescriptor;
             }
         };
     }

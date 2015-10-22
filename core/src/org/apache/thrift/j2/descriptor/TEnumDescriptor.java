@@ -24,6 +24,7 @@ import org.apache.thrift.j2.TEnumBuilderFactory;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TType;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -37,52 +38,29 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
     // According to doc it's 1, but the current c++ compiler makes it 0...
     public static final int DEFAULT_FIRST_VALUE = 0;
 
-    public final static class Value {
-        private final String mComment;
-        private final String mName;
-        private final int    mValue;
-
-        public Value(String comment, String name, int value) {
-            mComment = comment;
-            mName = name;
-            mValue = value;
-        }
-
-        public String getComment() {
-            return mComment;
-        }
-
-        public String getName() {
-            return mName;
-        }
-
-        public int getValue() {
-            return mValue;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("EnumValue{%s,%d}", mName, mValue);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || !(o instanceof Value)) {
-                return false;
-            }
-            Value other = (Value) o;
-            return mValue == other.mValue &&
-                   mName.equals(other.mName);
-        }
-    }
-
-    private final List<Value>            mValues;
+    private final List<T>    mValues;
     private final TEnumBuilderFactory<T> mProvider;
+
+    private static <T> List<T> valuesList(T[] values) {
+        LinkedList<T> list = new LinkedList<>();
+        for (T value : values) {
+            list.add(value);
+        }
+        return list;
+    }
 
     public TEnumDescriptor(String comment,
                            String packageName,
                            String name,
-                           List<Value> values,
+                           T[] values,
+                           TEnumBuilderFactory<T> provider) {
+        this(comment, packageName, name, valuesList(values), provider);
+    }
+
+    public TEnumDescriptor(String comment,
+                           String packageName,
+                           String name,
+                           List<T> values,
                            TEnumBuilderFactory<T> provider) {
         super(comment, packageName, name);
         mValues = values;
@@ -94,12 +72,12 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
         return TType.ENUM;
     }
 
-    public List<Value> getValues() {
+    public List<T> getValues() {
         return mValues;
     }
 
-    public Value getValueById(int id) {
-        for (Value value : getValues()) {
+    public T getValueById(int id) {
+        for (T value : getValues()) {
             if (value.getValue() == id) {
                 return value;
             }
@@ -107,8 +85,8 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
         return null;
     }
 
-    public Value getValueByName(String name) {
-        for (Value value : getValues()) {
+    public T getValueByName(String name) {
+        for (T value : getValues()) {
             if (value.getName().equals(name)) {
                 return value;
             }
@@ -137,8 +115,8 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
             getValues().size() != other.getValues().size()) {
             return false;
         }
-        for (Value value : getValues()) {
-            Value ovI = other.getValueById(value.getValue());
+        for (TEnumValue<?> value : getValues()) {
+            TEnumValue<?> ovI = other.getValueById(value.getValue());
             if (!value.equals(ovI)) {
                 return false;
             }

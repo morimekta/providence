@@ -119,7 +119,7 @@ public class TProtocolClient
             } else if (reply.type == TMessageType.EXCEPTION) {
                 TMessage<?> ex = serializer.read(protocol, method.getExceptionDescriptor());
                 protocol.readMessageEnd();
-                for (TField<?> field : ex.descriptor().getFields()) {
+                for (TField<?> field : ex.getDescriptor().getFields()) {
                     if (ex.has(field.getKey())) {
                         throw (TException) ex.get(field.getKey());
                     }

@@ -54,7 +54,7 @@ public interface TField<V> {
     /**
      * @return The type descriptor for the field data type.
      */
-    TDescriptor<V> descriptor();
+    TDescriptor<V> getDescriptor();
 
     /**
      * @return The field name (original).

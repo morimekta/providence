@@ -38,22 +38,22 @@ public class TStructDescriptorTest {
 
     @Before
     public void setUp() {
-        valueType = Operand.DESCRIPTOR;
+        valueType = Operand.descriptor();
     }
 
     @Test
     public void testToString() {
         // Even though it's a union, it inherits from TStructDescriptor.
-        Assert.assertEquals("calculator.Operand", Operand.DESCRIPTOR.toString());
-        Assert.assertEquals("number.Imaginary", Imaginary.DESCRIPTOR.toString());
-        Assert.assertEquals("calculator.Operation", Operation.DESCRIPTOR.toString());
+        Assert.assertEquals("calculator.Operand", Operand.descriptor().toString());
+        Assert.assertEquals("number.Imaginary", Imaginary.descriptor().toString());
+        Assert.assertEquals("calculator.Operation", Operation.descriptor().toString());
     }
 
     @Test
     public void testEquals() {
-        Assert.assertEquals(Imaginary.DESCRIPTOR, Imaginary.provider().descriptor());
-        Assert.assertEquals(Operation.DESCRIPTOR, Operation.provider().descriptor());
+        Assert.assertEquals(Imaginary.descriptor(), Imaginary.provider().descriptor());
+        Assert.assertEquals(Operation.descriptor(), Operation.provider().descriptor());
 
-        Assert.assertNotEquals(Operation.DESCRIPTOR, Imaginary.DESCRIPTOR);
+        Assert.assertNotEquals(Operation.descriptor(), Imaginary.descriptor());
     }
 }

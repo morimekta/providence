@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
+import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,18 +44,19 @@ public class TContainedEnumTest {
 
     @Before
     public void setUp() {
-        List<TEnumDescriptor.Value> values = new LinkedList<>();
-        values.add(new TEnumDescriptor.Value(null, "ONE", 1));
-        values.add(new TEnumDescriptor.Value(null, "TWO", 2));
-        values.add(new TEnumDescriptor.Value(null, "THREE", 3));
-        values.add(new TEnumDescriptor.Value("Skipping stuff", "FIVE", 5));
-        values.add(new TEnumDescriptor.Value(null, "SIX", 6));
-        values.add(new TEnumDescriptor.Value("And more", "EIGHT", 8));
-
+        List<TContainedEnum> values = new LinkedList<>();
         mType = new TContainedEnumDescriptor("My comment",
                                              "package",
                                              "MyEnum",
                                              values);
+
+        values.add(new TContainedEnum(null, 1, "ONE", mType));
+        values.add(new TContainedEnum(null, 2, "TWO", mType));
+        values.add(new TContainedEnum(null, 3, "THREE", mType));
+        values.add(new TContainedEnum("Skipping stuff", 5, "FIVE", mType));
+        values.add(new TContainedEnum(null, 6, "SIX", mType));
+        values.add(new TContainedEnum("And more", 8, "EIGHT", mType));
+
 
         mValue3 = mType.factory()
                        .builder()
@@ -79,7 +81,7 @@ public class TContainedEnumTest {
 
     @Test
     public void testGetDescriptor() {
-        assertSame(mType, mValue3.descriptor());
+        assertSame(mType, mValue3.getDescriptor());
     }
 
     @Test

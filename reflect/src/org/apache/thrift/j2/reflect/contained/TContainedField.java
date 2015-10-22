@@ -75,7 +75,7 @@ public class TContainedField<T> implements TField<T> {
     }
 
     @Override
-    public TDescriptor<T> descriptor() {
+    public TDescriptor<T> getDescriptor() {
         return mTypeProvider.descriptor();
     }
 
@@ -104,7 +104,7 @@ public class TContainedField<T> implements TField<T> {
         if (mRequired) {
             builder.append("required ");
         }
-        builder.append(descriptor().getQualifiedName(null))
+        builder.append(getDescriptor().getQualifiedName(null))
                .append(" ")
                .append(mName)
                .append("}");
@@ -122,7 +122,7 @@ public class TContainedField<T> implements TField<T> {
                mRequired == other.mRequired &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
-               equalsQualifiedName(descriptor(), other.descriptor()) &&
+               equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
                mName.equals(other.mName) &&
                TTypeUtils.equals(mDefaultValue, other.mDefaultValue);
     }
@@ -130,7 +130,7 @@ public class TContainedField<T> implements TField<T> {
     @Override
     public int hashCode() {
         return TContainedField.class.hashCode() +
-               descriptor().hashCode() +
+               getDescriptor().hashCode() +
                TTypeUtils.hashCode(mKey) +
                TTypeUtils.hashCode(mRequired) +
                TTypeUtils.hashCode(mName) +
