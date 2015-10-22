@@ -1,8 +1,5 @@
 package org.apache.test.primitives;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumBuilderFactory;
 import org.apache.thrift.j2.TEnumValue;
@@ -53,17 +50,17 @@ public enum Value implements TEnumValue<Value> {
         }
     }
 
-    public static class Builder extends TEnumBuilder<Value> {
+    public static class _Builder extends TEnumBuilder<Value> {
         Value mValue;
 
         @Override
-        public Builder setByValue(int value) {
+        public _Builder setByValue(int value) {
             mValue = Value.forValue(value);
             return this;
         }
 
         @Override
-        public Builder setByName(String name) {
+        public _Builder setByName(String name) {
             mValue = Value.forName(name);
             return this;
         }
@@ -94,15 +91,15 @@ public enum Value implements TEnumValue<Value> {
         return new TEnumDescriptorProvider<Value>(sDescriptor);
     }
 
-    private static class Factory
+    private static class _Factory
             extends TEnumBuilderFactory<Value> {
         @Override
-        public Value.Builder builder() {
-            return new Value.Builder();
+        public Value._Builder builder() {
+            return new Value._Builder();
         }
     }
 
     static {
-        sDescriptor = new TEnumDescriptor<>(null, "primitives", "Value", Value.values(), new Factory());
+        sDescriptor = new TEnumDescriptor<>(null, "primitives", "Value", Value.values(), new _Factory());
     }
 }

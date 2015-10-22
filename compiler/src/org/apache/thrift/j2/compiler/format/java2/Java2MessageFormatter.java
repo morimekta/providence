@@ -19,9 +19,6 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -50,6 +47,9 @@ import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import static org.apache.thrift.j2.util.TStringUtils.c_case;
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
@@ -69,6 +69,14 @@ public class Java2MessageFormatter {
                                  boolean android) {
         mTypeHelper = helper;
         mAndroid = android;
+    }
+
+    private String simple(TDescriptor<?> type) {
+        return mTypeHelper.getSimpleClassName(type);
+    }
+
+    private String qualified(TStructDescriptor<?> type) throws GeneratorException {
+        return mTypeHelper.getQualifiedClassName(type);
     }
 
     public void format(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
@@ -109,7 +117,7 @@ public class Java2MessageFormatter {
 
         appendBuilder(writer, type);
         //  - mutate
-        //  - Builder class
+        //  - _Builder class
 
         appendClassDefinitionEnd(writer);
     }
@@ -300,7 +308,7 @@ public class Java2MessageFormatter {
         writer.appendln("@Override")
               .formatln("public %s createFromParcel(Parcel source) {", simpleClass)
               .begin()
-              .formatln("%s.Builder builder = new %s.Builder();", simpleClass, simpleClass)
+              .appendln("_Builder builder = new _Builder();")
               .appendln("loop: while (source.dataAvail() > 0) {")
               .begin()
               .appendln("int field = source.readInt();")
@@ -483,20 +491,20 @@ public class Java2MessageFormatter {
 
         String simpleClass = mTypeHelper.getSimpleClassName(type);
         writer.appendln("@Override")
-              .formatln("public %s.Builder mutate() {", simpleClass)
+              .appendln("public _Builder mutate() {")
               .begin()
-              .formatln("return new %s.Builder(this);", simpleClass)
+              .appendln("return new _Builder(this);")
               .end()
               .appendln('}')
               .newline();
-        writer.formatln("public static %s.Builder builder() {", simpleClass)
+        writer.formatln("public static _Builder builder() {")
               .begin()
-              .formatln("return new %s.Builder();", simpleClass)
+              .appendln("return new _Builder();")
               .end()
               .appendln('}')
               .newline();
 
-        writer.appendln("public static class Builder")
+        writer.appendln("public static class _Builder")
               .begin()
               .formatln("    extends TMessageBuilder<%s> {", simpleClass);
         for (TField<?> field : type.getFields()) {
@@ -505,11 +513,11 @@ public class Java2MessageFormatter {
                             camelCase("m", field.getName()));
         }
         if (union) {
-            writer.formatln("private %s.Field tUnionField;", simpleClass).newline();
+            writer.appendln("private _Field tUnionField;").newline();
         }
 
         writer.newline()
-              .appendln("public Builder() {")
+              .appendln("public _Builder() {")
               .begin();
         for (TField<?> field : type.getFields()) {
             switch (field.getDescriptor().getType()) {
@@ -524,12 +532,12 @@ public class Java2MessageFormatter {
                     break;
             }
         }
-        // Builder - default constructor
+        // _Builder - default constructor
         writer.end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public Builder(%s base) {", simpleClass)
+        writer.formatln("public _Builder(%s base) {", simpleClass)
               .begin()
               .appendln("this();")
               .newline();
@@ -553,7 +561,7 @@ public class Java2MessageFormatter {
                   .appendln("tUnionField = base.tUnionField;");
         }
 
-        // Builder - mutate constructor
+        // _Builder - mutate constructor
         writer.end()
               .appendln('}')
               .newline();
@@ -570,12 +578,12 @@ public class Java2MessageFormatter {
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                     }
-                    writer.formatln("public Builder %s(Map<%s,%s> value) {",
+                    writer.formatln("public _Builder %s(Map<%s,%s> value) {",
                                     camelCase("set", field.getName()),
                                     mkType, miType)
                           .begin();
                     if (union) {
-                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("%s.clear();", fName)
                           .formatln("%s.putAll(value);", fName)
@@ -586,12 +594,12 @@ public class Java2MessageFormatter {
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                     }
-                    writer.formatln("public Builder %s(%s key, %s value) {",
+                    writer.formatln("public _Builder %s(%s key, %s value) {",
                                     camelCase("addTo", field.getName()),
                                     mkType, miType)
                           .begin();
                     if(union) {
-                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("%s.put(key, value);", fName)
                           .appendln("return this;")
@@ -599,7 +607,7 @@ public class Java2MessageFormatter {
                           .appendln('}')
                           .newline();
 
-                    writer.formatln("public Builder %s() {",
+                    writer.formatln("public _Builder %s() {",
                                     camelCase("clear", field.getName()))
                           .begin();
                     if (union) {
@@ -618,12 +626,12 @@ public class Java2MessageFormatter {
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                     }
-                    writer.formatln("public Builder %s(Collection<%s> value) {",
+                    writer.formatln("public _Builder %s(Collection<%s> value) {",
                                     camelCase("set", field.getName()),
                                     liType)
                           .begin();
                     if (union) {
-                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("%s.clear();", fName)
                           .formatln("%s.addAll(value);", fName)
@@ -634,12 +642,12 @@ public class Java2MessageFormatter {
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                     }
-                    writer.formatln("public Builder %s(%s... values) {",
+                    writer.formatln("public _Builder %s(%s... values) {",
                                     camelCase("addTo", field.getName()),
                                     liType)
                           .begin();
                     if (union) {
-                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("for (%s item : values) {", liType)
                           .begin()
@@ -650,7 +658,7 @@ public class Java2MessageFormatter {
                           .end()
                           .appendln('}')
                           .newline();
-                    writer.formatln("public Builder %s() {",
+                    writer.formatln("public _Builder %s() {",
                                     camelCase("clear", field.getName()))
                           .begin();
                     if (union) {
@@ -666,18 +674,18 @@ public class Java2MessageFormatter {
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                     }
-                    writer.formatln("public Builder %s(%s value) {",
+                    writer.formatln("public _Builder %s(%s value) {",
                                     camelCase("set", field.getName()), vType)
                           .begin();
                     if (union) {
-                        writer.formatln("tUnionField = %s.Field.%s;", simpleClass, fEnumName);
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("%s = value;", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
                           .newline();
-                    writer.formatln("public Builder %s() {",
+                    writer.formatln("public _Builder %s() {",
                                     camelCase("clear", field.getName()))
                           .begin();
                     if (union) {
@@ -693,7 +701,7 @@ public class Java2MessageFormatter {
         }
 
         writer.appendln("@Override")
-              .appendln("public Builder set(int key, Object value) {")
+              .appendln("public _Builder set(int key, Object value) {")
               .begin()
               .appendln("switch (key) {")
               .begin();
@@ -770,7 +778,7 @@ public class Java2MessageFormatter {
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, TStructDescriptor<?> type) {
-        writer.appendln("public enum Field implements TField {")
+        writer.appendln("public enum _Field implements TField {")
               .begin();
 
         for (TField<?> field : type.getFields()) {
@@ -800,7 +808,7 @@ public class Java2MessageFormatter {
               .appendln("private final TValueProvider<?> mDefaultValue;")
               .newline()
               .appendln(
-                      "Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {")
+                      "_Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {")
               .begin()
               .appendln("mKey = key;")
               .appendln("mRequired = required;")
@@ -859,13 +867,13 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("public static Field forKey(int key) {")
+        writer.appendln("public static _Field forKey(int key) {")
               .begin()
               .appendln("switch (key) {")
               .begin();
         for (TField<?> field : type.getFields()) {
-            writer.formatln("case %d: return %s.Field.%s;",
-                            field.getKey(), simpleClass, c_case("", field.getName()).toUpperCase());
+            writer.formatln("case %d: return _Field.%s;",
+                            field.getKey(), c_case("", field.getName()).toUpperCase());
         }
         writer.appendln("default: return null;")
               .end()
@@ -874,13 +882,13 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("public static Field forName(String name) {")
+        writer.appendln("public static _Field forName(String name) {")
               .begin()
               .appendln("switch (name) {")
               .begin();
         for (TField<?> field : type.getFields()) {
-            writer.formatln("case \"%s\": return %s.Field.%s;",
-                            field.getName(), simpleClass, c_case("", field.getName()).toUpperCase());
+            writer.formatln("case \"%s\": return _Field.%s;",
+                            field.getName(), c_case("", field.getName()).toUpperCase());
         }
         writer.end()
               .appendln('}')
@@ -928,13 +936,13 @@ public class Java2MessageFormatter {
         writer.formatln("public static final %s<%s> sDescriptor;", typeClass, simpleClass)
               .newline();
 
-        writer.appendln("private final static class Factory")
+        writer.appendln("private final static class _Factory")
               .begin()
               .formatln("    extends TMessageBuilderFactory<%s> {", simpleClass)
               .appendln("@Override")
-              .formatln("public %s.Builder builder() {", simpleClass)
+              .appendln("public _Builder builder() {")
               .begin()
-              .formatln("return new %s.Builder();", simpleClass)
+              .appendln("return new _Builder();")
               .end()
               .appendln('}')
               .end()
@@ -945,19 +953,17 @@ public class Java2MessageFormatter {
               .begin();
         if (type.getVariant().equals(TMessageVariant.STRUCT)) {
             writer.formatln(
-                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory(), %b);",
+                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b);",
                     typeClass,
                     type.getPackageName(),
                     type.getName(),
-                    simpleClass,
                     type.isCompactible());
         } else {
             writer.formatln(
-                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", %s.Field.values(), new Factory());",
+                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory());",
                     typeClass,
                     type.getPackageName(),
-                    type.getName(),
-                    simpleClass);
+                    type.getName());
         }
         writer.end()
               .appendln('}')
@@ -1218,7 +1224,7 @@ public class Java2MessageFormatter {
         }
 
         if (type.getVariant().equals(TMessageVariant.UNION)) {
-            writer.formatln("public %s.Field unionField() {", camelCase("", type.getName()))
+            writer.appendln("public _Field unionField() {")
                   .begin()
                   .appendln("return tUnionField;")
                   .end()
@@ -1291,15 +1297,14 @@ public class Java2MessageFormatter {
                             camelCase("m", field.getName()));
         }
         if (type.getVariant().equals(TMessageVariant.UNION)) {
-            writer.formatln("private final %s.Field tUnionField;",
-                            camelCase("", type.getName()))
+            writer.appendln("private final _Field tUnionField;")
                   .newline();
         }
         writer.newline();
     }
 
     private void appendConstructor(IndentedPrintWriter writer, TStructDescriptor<?> type) {
-        writer.formatln("private %s(Builder builder) {", mTypeHelper.getSimpleClassName(type))
+        writer.formatln("private %s(_Builder builder) {", mTypeHelper.getSimpleClassName(type))
               .begin();
         if (type.getVariant().equals(TMessageVariant.EXCEPTION)) {
             writer.appendln("super(builder.createMessage());")
@@ -1410,8 +1415,6 @@ public class Java2MessageFormatter {
     private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
         header.include(java.io.Serializable.class.getName());
-        header.include(java.util.LinkedList.class.getName());
-        header.include(java.util.List.class.getName());
         header.include(TMessage.class.getName());
         header.include(TMessageBuilder.class.getName());
         header.include(TMessageBuilderFactory.class.getName());

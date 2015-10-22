@@ -1,8 +1,6 @@
 package org.apache.test.primitives;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -39,7 +37,7 @@ public class Primitives
     private final byte[] mBn;
     private final Value mV;
 
-    private Primitives(Builder builder) {
+    private Primitives(_Builder builder) {
         mBl = builder.mBl;
         mBt = builder.mBt;
         mSh = builder.mSh;
@@ -216,7 +214,7 @@ public class Primitives
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         BL(1, false, "bl", TPrimitive.BOOL.provider(), null),
         BT(2, false, "bt", TPrimitive.BYTE.provider(), null),
         SH(3, false, "sh", TPrimitive.I16.provider(), null),
@@ -234,7 +232,7 @@ public class Primitives
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -285,32 +283,32 @@ public class Primitives
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Primitives.Field.BL;
-                case 2: return Primitives.Field.BT;
-                case 3: return Primitives.Field.SH;
-                case 4: return Primitives.Field.I;
-                case 5: return Primitives.Field.L;
-                case 6: return Primitives.Field.D;
-                case 7: return Primitives.Field.S;
-                case 8: return Primitives.Field.BN;
-                case 9: return Primitives.Field.V;
+                case 1: return _Field.BL;
+                case 2: return _Field.BT;
+                case 3: return _Field.SH;
+                case 4: return _Field.I;
+                case 5: return _Field.L;
+                case 6: return _Field.D;
+                case 7: return _Field.S;
+                case 8: return _Field.BN;
+                case 9: return _Field.V;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "bl": return Primitives.Field.BL;
-                case "bt": return Primitives.Field.BT;
-                case "sh": return Primitives.Field.SH;
-                case "i": return Primitives.Field.I;
-                case "l": return Primitives.Field.L;
-                case "d": return Primitives.Field.D;
-                case "s": return Primitives.Field.S;
-                case "bn": return Primitives.Field.BN;
-                case "v": return Primitives.Field.V;
+                case "bl": return _Field.BL;
+                case "bt": return _Field.BT;
+                case "sh": return _Field.SH;
+                case "i": return _Field.I;
+                case "l": return _Field.L;
+                case "d": return _Field.D;
+                case "s": return _Field.S;
+                case "bn": return _Field.BN;
+                case "v": return _Field.V;
             }
             return null;
         }
@@ -327,16 +325,16 @@ public class Primitives
 
     public static final TStructDescriptor<Primitives> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Primitives> {
         @Override
-        public Primitives.Builder builder() {
-            return new Primitives.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "primitives", "Primitives", Primitives.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "primitives", "Primitives", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Primitives> provider() {
@@ -398,7 +396,7 @@ public class Primitives
     public static final Parcelable.Creator<Primitives> CREATOR = new Parcelable.Creator<Primitives>() {
         @Override
         public Primitives createFromParcel(Parcel source) {
-            Primitives.Builder builder = new Primitives.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -448,15 +446,15 @@ public class Primitives
     };
 
     @Override
-    public Primitives.Builder mutate() {
-        return new Primitives.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Primitives.Builder builder() {
-        return new Primitives.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Primitives> {
         private Boolean mBl;
         private Byte mBt;
@@ -468,10 +466,10 @@ public class Primitives
         private byte[] mBn;
         private Value mV;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(Primitives base) {
+        public _Builder(Primitives base) {
             this();
 
             mBl = base.mBl;
@@ -485,99 +483,99 @@ public class Primitives
             mV = base.mV;
         }
 
-        public Builder setBl(boolean value) {
+        public _Builder setBl(boolean value) {
             mBl = value;
             return this;
         }
 
-        public Builder clearBl() {
+        public _Builder clearBl() {
             mBl = null;
             return this;
         }
 
-        public Builder setBt(byte value) {
+        public _Builder setBt(byte value) {
             mBt = value;
             return this;
         }
 
-        public Builder clearBt() {
+        public _Builder clearBt() {
             mBt = null;
             return this;
         }
 
-        public Builder setSh(short value) {
+        public _Builder setSh(short value) {
             mSh = value;
             return this;
         }
 
-        public Builder clearSh() {
+        public _Builder clearSh() {
             mSh = null;
             return this;
         }
 
-        public Builder setI(int value) {
+        public _Builder setI(int value) {
             mI = value;
             return this;
         }
 
-        public Builder clearI() {
+        public _Builder clearI() {
             mI = null;
             return this;
         }
 
-        public Builder setL(long value) {
+        public _Builder setL(long value) {
             mL = value;
             return this;
         }
 
-        public Builder clearL() {
+        public _Builder clearL() {
             mL = null;
             return this;
         }
 
-        public Builder setD(double value) {
+        public _Builder setD(double value) {
             mD = value;
             return this;
         }
 
-        public Builder clearD() {
+        public _Builder clearD() {
             mD = null;
             return this;
         }
 
-        public Builder setS(String value) {
+        public _Builder setS(String value) {
             mS = value;
             return this;
         }
 
-        public Builder clearS() {
+        public _Builder clearS() {
             mS = null;
             return this;
         }
 
-        public Builder setBn(byte[] value) {
+        public _Builder setBn(byte[] value) {
             mBn = value;
             return this;
         }
 
-        public Builder clearBn() {
+        public _Builder clearBn() {
             mBn = null;
             return this;
         }
 
         /** Enums are stored as primitive values. */
-        public Builder setV(Value value) {
+        public _Builder setV(Value value) {
             mV = value;
             return this;
         }
 
-        public Builder clearV() {
+        public _Builder clearV() {
             mV = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setBl((boolean) value); break;
                 case 2: setBt((byte) value); break;

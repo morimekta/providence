@@ -31,7 +31,7 @@ public class EnumType
     private final String mName;
     private final List<EnumValue> mValues;
 
-    private EnumType(Builder builder) {
+    private EnumType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mValues = Collections.unmodifiableList(new LinkedList<>(builder.mValues));
@@ -123,7 +123,7 @@ public class EnumType
         return mName != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         NAME(2, true, "name", TPrimitive.STRING.provider(), null),
         VALUES(3, false, "values", TList.provider(EnumValue.provider()), null),
@@ -135,7 +135,7 @@ public class EnumType
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -186,16 +186,20 @@ public class EnumType
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.NAME;
+                case 3: return _Field.VALUES;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "name": return _Field.NAME;
+                case "values": return _Field.VALUES;
             }
             return null;
         }
@@ -212,16 +216,16 @@ public class EnumType
 
     public static final TStructDescriptor<EnumType> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<EnumType> {
         @Override
-        public EnumType.Builder builder() {
-            return new EnumType.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "EnumType", EnumType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<EnumType> provider() {
@@ -234,25 +238,25 @@ public class EnumType
     }
 
     @Override
-    public EnumType.Builder mutate() {
-        return new EnumType.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static EnumType.Builder builder() {
-        return new EnumType.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<EnumType> {
         private String mComment;
         private String mName;
         private List<EnumValue> mValues;
 
-        public Builder() {
+        public _Builder() {
             mValues = new LinkedList<>();
         }
 
-        public Builder(EnumType base) {
+        public _Builder(EnumType base) {
             this();
 
             mComment = base.mComment;
@@ -260,46 +264,46 @@ public class EnumType
             mValues.addAll(base.mValues);
         }
 
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setValues(Collection<EnumValue> value) {
+        public _Builder setValues(Collection<EnumValue> value) {
             mValues.clear();
             mValues.addAll(value);
             return this;
         }
 
-        public Builder addToValues(EnumValue... values) {
+        public _Builder addToValues(EnumValue... values) {
             for (EnumValue item : values) {
                 mValues.add(item);
             }
             return this;
         }
 
-        public Builder clearValues() {
+        public _Builder clearValues() {
             mValues.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;

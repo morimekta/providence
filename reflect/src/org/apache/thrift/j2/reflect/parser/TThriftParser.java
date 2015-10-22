@@ -53,7 +53,7 @@ public class TThriftParser implements TParser {
 
     @Override
     public ThriftDocument parse(InputStream in, String name) throws IOException, TParseException {
-        ThriftDocument.Builder doc = ThriftDocument.builder();
+        ThriftDocument._Builder doc = ThriftDocument.builder();
 
         doc.setPackage(name.replaceAll(".*/", "").replace(".thrift", ""));
         List<String> includes = new LinkedList<>();
@@ -239,7 +239,7 @@ public class TThriftParser implements TParser {
     }
 
     private ServiceType parseService(TTokenizer tokenizer, String comment) throws IOException, TParseException {
-        ServiceType.Builder service = ServiceType.builder();
+        ServiceType._Builder service = ServiceType.builder();
 
         if (comment != null) {
             service.setComment(comment);
@@ -264,7 +264,7 @@ public class TThriftParser implements TParser {
                 continue;
             }
 
-            ServiceMethod.Builder method = ServiceMethod.builder();
+            ServiceMethod._Builder method = ServiceMethod.builder();
             if (comment != null) {
                 method.setComment(comment);
                 comment = null;
@@ -300,7 +300,7 @@ public class TThriftParser implements TParser {
                     continue;
                 }
 
-                ThriftField.Builder field = ThriftField.builder();
+                ThriftField._Builder field = ThriftField.builder();
                 if (comment != null) {
                     field.setComment(comment);
                     comment = null;
@@ -357,7 +357,7 @@ public class TThriftParser implements TParser {
                         continue;
                     }
 
-                    ThriftField.Builder field = ThriftField.builder();
+                    ThriftField._Builder field = ThriftField.builder();
                     if (comment != null) {
                         field.setComment(comment);
                         comment = null;
@@ -447,7 +447,7 @@ public class TThriftParser implements TParser {
     public EnumType parseEnum(TTokenizer tokenizer, String comment) throws IOException, TParseException {
         TToken id = tokenizer.expectIdentifier("parsing enum identifier");
 
-        EnumType.Builder et = EnumType.builder();
+        EnumType._Builder et = EnumType.builder();
         if (comment != null) {
             et.setComment(comment);
             comment = null;
@@ -520,7 +520,7 @@ public class TThriftParser implements TParser {
     }
 
     private StructType parseStruct(TTokenizer tokenizer, String type, String comment) throws IOException, TParseException {
-        StructType.Builder struct = StructType.builder();
+        StructType._Builder struct = StructType.builder();
         if (comment != null) {
             struct.setComment(comment);
             comment = null;
@@ -540,7 +540,7 @@ public class TThriftParser implements TParser {
 
         tokenizer.expectSymbol(TSymbol.MAP_START, "parsing struct " + id.getToken());
 
-        ThriftField.Builder field = ThriftField.builder();
+        ThriftField._Builder field = ThriftField.builder();
         while (true) {
             TToken token = tokenizer.expect("parsing struct " + id.getToken());
             if (token.startsLineComment()) {

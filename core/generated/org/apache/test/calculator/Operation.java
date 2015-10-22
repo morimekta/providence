@@ -27,7 +27,7 @@ public class Operation
     private final Operator mOperator;
     private final List<Operand> mOperands;
 
-    private Operation(Builder builder) {
+    private Operation(_Builder builder) {
         mOperator = builder.mOperator;
         mOperands = Collections.unmodifiableList(new LinkedList<>(builder.mOperands));
     }
@@ -105,7 +105,7 @@ public class Operation
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         OPERATOR(1, false, "operator", Operator.provider(), null),
         OPERANDS(2, false, "operands", TList.provider(Operand.provider()), null),
         ;
@@ -116,7 +116,7 @@ public class Operation
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -167,18 +167,18 @@ public class Operation
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Operation.Field.OPERATOR;
-                case 2: return Operation.Field.OPERANDS;
+                case 1: return _Field.OPERATOR;
+                case 2: return _Field.OPERANDS;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "operator": return Operation.Field.OPERATOR;
-                case "operands": return Operation.Field.OPERANDS;
+                case "operator": return _Field.OPERATOR;
+                case "operands": return _Field.OPERANDS;
             }
             return null;
         }
@@ -195,16 +195,16 @@ public class Operation
 
     public static final TStructDescriptor<Operation> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Operation> {
         @Override
-        public Operation.Builder builder() {
-            return new Operation.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "calculator", "Operation", Operation.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "calculator", "Operation", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Operation> provider() {
@@ -237,7 +237,7 @@ public class Operation
     public static final Parcelable.Creator<Operation> CREATOR = new Parcelable.Creator<Operation>() {
         @Override
         public Operation createFromParcel(Parcel source) {
-            Operation.Builder builder = new Operation.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -262,60 +262,60 @@ public class Operation
     };
 
     @Override
-    public Operation.Builder mutate() {
-        return new Operation.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Operation.Builder builder() {
-        return new Operation.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Operation> {
         private Operator mOperator;
         private List<Operand> mOperands;
 
-        public Builder() {
+        public _Builder() {
             mOperands = new LinkedList<>();
         }
 
-        public Builder(Operation base) {
+        public _Builder(Operation base) {
             this();
 
             mOperator = base.mOperator;
             mOperands.addAll(base.mOperands);
         }
 
-        public Builder setOperator(Operator value) {
+        public _Builder setOperator(Operator value) {
             mOperator = value;
             return this;
         }
 
-        public Builder clearOperator() {
+        public _Builder clearOperator() {
             mOperator = null;
             return this;
         }
 
-        public Builder setOperands(Collection<Operand> value) {
+        public _Builder setOperands(Collection<Operand> value) {
             mOperands.clear();
             mOperands.addAll(value);
             return this;
         }
 
-        public Builder addToOperands(Operand... values) {
+        public _Builder addToOperands(Operand... values) {
             for (Operand item : values) {
                 mOperands.add(item);
             }
             return this;
         }
 
-        public Builder clearOperands() {
+        public _Builder clearOperands() {
             mOperands.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setOperator((Operator) value); break;
                 case 2: setOperands((List<Operand>) value); break;

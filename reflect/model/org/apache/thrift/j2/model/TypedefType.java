@@ -1,8 +1,6 @@
 package org.apache.thrift.j2.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -23,7 +21,7 @@ public class TypedefType
     private final String mType;
     private final String mName;
 
-    private TypedefType(Builder builder) {
+    private TypedefType(_Builder builder) {
         mType = builder.mType;
         mName = builder.mName;
     }
@@ -101,7 +99,7 @@ public class TypedefType
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         TYPE(1, false, "type", TPrimitive.STRING.provider(), null),
         NAME(2, false, "name", TPrimitive.STRING.provider(), null),
         ;
@@ -112,7 +110,7 @@ public class TypedefType
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -163,16 +161,18 @@ public class TypedefType
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.TYPE;
+                case 2: return _Field.NAME;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "type": return _Field.TYPE;
+                case "name": return _Field.NAME;
             }
             return null;
         }
@@ -189,16 +189,16 @@ public class TypedefType
 
     public static final TStructDescriptor<TypedefType> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<TypedefType> {
         @Override
-        public TypedefType.Builder builder() {
-            return new TypedefType.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", TypedefType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<TypedefType> provider() {
@@ -211,51 +211,51 @@ public class TypedefType
     }
 
     @Override
-    public TypedefType.Builder mutate() {
-        return new TypedefType.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static TypedefType.Builder builder() {
-        return new TypedefType.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<TypedefType> {
         private String mType;
         private String mName;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(TypedefType base) {
+        public _Builder(TypedefType base) {
             this();
 
             mType = base.mType;
             mName = base.mName;
         }
 
-        public Builder setType(String value) {
+        public _Builder setType(String value) {
             mType = value;
             return this;
         }
 
-        public Builder clearType() {
+        public _Builder clearType() {
             mType = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setType((String) value); break;
                 case 2: setName((String) value); break;

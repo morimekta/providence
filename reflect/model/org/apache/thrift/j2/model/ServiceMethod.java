@@ -33,7 +33,7 @@ public class ServiceMethod
     private final List<ThriftField> mParams;
     private final List<ThriftField> mExceptions;
 
-    private ServiceMethod(Builder builder) {
+    private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
         mIsOneway = builder.mIsOneway;
         mReturnType = builder.mReturnType;
@@ -167,7 +167,7 @@ public class ServiceMethod
         return mName != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         IS_ONEWAY(2, false, "is_oneway", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultIsOneway)),
         RETURN_TYPE(3, false, "return_type", TPrimitive.STRING.provider(), null),
@@ -182,7 +182,7 @@ public class ServiceMethod
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -233,16 +233,26 @@ public class ServiceMethod
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.IS_ONEWAY;
+                case 3: return _Field.RETURN_TYPE;
+                case 4: return _Field.NAME;
+                case 5: return _Field.PARAMS;
+                case 6: return _Field.EXCEPTIONS;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "is_oneway": return _Field.IS_ONEWAY;
+                case "return_type": return _Field.RETURN_TYPE;
+                case "name": return _Field.NAME;
+                case "params": return _Field.PARAMS;
+                case "exceptions": return _Field.EXCEPTIONS;
             }
             return null;
         }
@@ -259,16 +269,16 @@ public class ServiceMethod
 
     public static final TStructDescriptor<ServiceMethod> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<ServiceMethod> {
         @Override
-        public ServiceMethod.Builder builder() {
-            return new ServiceMethod.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceMethod", ServiceMethod.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceMethod", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceMethod> provider() {
@@ -281,15 +291,15 @@ public class ServiceMethod
     }
 
     @Override
-    public ServiceMethod.Builder mutate() {
-        return new ServiceMethod.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static ServiceMethod.Builder builder() {
-        return new ServiceMethod.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<ServiceMethod> {
         private String mComment;
         private Boolean mIsOneway;
@@ -298,12 +308,12 @@ public class ServiceMethod
         private List<ThriftField> mParams;
         private List<ThriftField> mExceptions;
 
-        public Builder() {
+        public _Builder() {
             mParams = new LinkedList<>();
             mExceptions = new LinkedList<>();
         }
 
-        public Builder(ServiceMethod base) {
+        public _Builder(ServiceMethod base) {
             this();
 
             mComment = base.mComment;
@@ -314,84 +324,84 @@ public class ServiceMethod
             mExceptions.addAll(base.mExceptions);
         }
 
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
-        public Builder setIsOneway(boolean value) {
+        public _Builder setIsOneway(boolean value) {
             mIsOneway = value;
             return this;
         }
 
-        public Builder clearIsOneway() {
+        public _Builder clearIsOneway() {
             mIsOneway = null;
             return this;
         }
 
-        public Builder setReturnType(String value) {
+        public _Builder setReturnType(String value) {
             mReturnType = value;
             return this;
         }
 
-        public Builder clearReturnType() {
+        public _Builder clearReturnType() {
             mReturnType = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setParams(Collection<ThriftField> value) {
+        public _Builder setParams(Collection<ThriftField> value) {
             mParams.clear();
             mParams.addAll(value);
             return this;
         }
 
-        public Builder addToParams(ThriftField... values) {
+        public _Builder addToParams(ThriftField... values) {
             for (ThriftField item : values) {
                 mParams.add(item);
             }
             return this;
         }
 
-        public Builder clearParams() {
+        public _Builder clearParams() {
             mParams.clear();
             return this;
         }
 
-        public Builder setExceptions(Collection<ThriftField> value) {
+        public _Builder setExceptions(Collection<ThriftField> value) {
             mExceptions.clear();
             mExceptions.addAll(value);
             return this;
         }
 
-        public Builder addToExceptions(ThriftField... values) {
+        public _Builder addToExceptions(ThriftField... values) {
             for (ThriftField item : values) {
                 mExceptions.add(item);
             }
             return this;
         }
 
-        public Builder clearExceptions() {
+        public _Builder clearExceptions() {
             mExceptions.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setIsOneway((boolean) value); break;

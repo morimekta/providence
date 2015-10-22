@@ -32,7 +32,7 @@ public class ThriftDocument
     private final Map<String,String> mNamespaces;
     private final List<Declaration> mDecl;
 
-    private ThriftDocument(Builder builder) {
+    private ThriftDocument(_Builder builder) {
         mComment = builder.mComment;
         mPackage = builder.mPackage;
         mIncludes = Collections.unmodifiableList(new LinkedList<>(builder.mIncludes));
@@ -156,7 +156,7 @@ public class ThriftDocument
         return mPackage != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         PACKAGE(2, true, "package", TPrimitive.STRING.provider(), null),
         INCLUDES(3, false, "includes", TList.provider(TPrimitive.STRING.provider()), null),
@@ -170,7 +170,7 @@ public class ThriftDocument
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -221,16 +221,24 @@ public class ThriftDocument
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.PACKAGE;
+                case 3: return _Field.INCLUDES;
+                case 4: return _Field.NAMESPACES;
+                case 5: return _Field.DECL;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "package": return _Field.PACKAGE;
+                case "includes": return _Field.INCLUDES;
+                case "namespaces": return _Field.NAMESPACES;
+                case "decl": return _Field.DECL;
             }
             return null;
         }
@@ -247,16 +255,16 @@ public class ThriftDocument
 
     public static final TStructDescriptor<ThriftDocument> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<ThriftDocument> {
         @Override
-        public ThriftDocument.Builder builder() {
-            return new ThriftDocument.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", ThriftDocument.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftDocument> provider() {
@@ -269,15 +277,15 @@ public class ThriftDocument
     }
 
     @Override
-    public ThriftDocument.Builder mutate() {
-        return new ThriftDocument.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static ThriftDocument.Builder builder() {
-        return new ThriftDocument.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<ThriftDocument> {
         private String mComment;
         private String mPackage;
@@ -285,13 +293,13 @@ public class ThriftDocument
         private Map<String,String> mNamespaces;
         private List<Declaration> mDecl;
 
-        public Builder() {
+        public _Builder() {
             mIncludes = new LinkedList<>();
             mNamespaces = new LinkedHashMap<>();
             mDecl = new LinkedList<>();
         }
 
-        public Builder(ThriftDocument base) {
+        public _Builder(ThriftDocument base) {
             this();
 
             mComment = base.mComment;
@@ -302,85 +310,85 @@ public class ThriftDocument
         }
 
         /** Must come before the first statement of the header. */
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
         /** Deducted from filename in .thrift IDL files. */
-        public Builder setPackage(String value) {
+        public _Builder setPackage(String value) {
             mPackage = value;
             return this;
         }
 
-        public Builder clearPackage() {
+        public _Builder clearPackage() {
             mPackage = null;
             return this;
         }
 
         /** include "<package>.thrift" */
-        public Builder setIncludes(Collection<String> value) {
+        public _Builder setIncludes(Collection<String> value) {
             mIncludes.clear();
             mIncludes.addAll(value);
             return this;
         }
 
         /** include "<package>.thrift" */
-        public Builder addToIncludes(String... values) {
+        public _Builder addToIncludes(String... values) {
             for (String item : values) {
                 mIncludes.add(item);
             }
             return this;
         }
 
-        public Builder clearIncludes() {
+        public _Builder clearIncludes() {
             mIncludes.clear();
             return this;
         }
 
         /** namespace <key> <value> */
-        public Builder setNamespaces(Map<String,String> value) {
+        public _Builder setNamespaces(Map<String,String> value) {
             mNamespaces.clear();
             mNamespaces.putAll(value);
             return this;
         }
 
         /** namespace <key> <value> */
-        public Builder addToNamespaces(String key, String value) {
+        public _Builder addToNamespaces(String key, String value) {
             mNamespaces.put(key, value);
             return this;
         }
 
-        public Builder clearNamespaces() {
+        public _Builder clearNamespaces() {
             mNamespaces.clear();
             return this;
         }
 
-        public Builder setDecl(Collection<Declaration> value) {
+        public _Builder setDecl(Collection<Declaration> value) {
             mDecl.clear();
             mDecl.addAll(value);
             return this;
         }
 
-        public Builder addToDecl(Declaration... values) {
+        public _Builder addToDecl(Declaration... values) {
             for (Declaration item : values) {
                 mDecl.add(item);
             }
             return this;
         }
 
-        public Builder clearDecl() {
+        public _Builder clearDecl() {
             mDecl.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setPackage((String) value); break;

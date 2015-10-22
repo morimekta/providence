@@ -32,7 +32,7 @@ public class ServiceType
     private final String mExtend;
     private final List<ServiceMethod> mMethods;
 
-    private ServiceType(Builder builder) {
+    private ServiceType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mExtend = builder.mExtend;
@@ -138,7 +138,7 @@ public class ServiceType
         return mName != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         NAME(2, true, "name", TPrimitive.STRING.provider(), null),
         EXTEND(3, false, "extend", TPrimitive.STRING.provider(), null),
@@ -151,7 +151,7 @@ public class ServiceType
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -202,16 +202,22 @@ public class ServiceType
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.NAME;
+                case 3: return _Field.EXTEND;
+                case 4: return _Field.METHODS;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "name": return _Field.NAME;
+                case "extend": return _Field.EXTEND;
+                case "methods": return _Field.METHODS;
             }
             return null;
         }
@@ -228,16 +234,16 @@ public class ServiceType
 
     public static final TStructDescriptor<ServiceType> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<ServiceType> {
         @Override
-        public ServiceType.Builder builder() {
-            return new ServiceType.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", ServiceType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ServiceType> provider() {
@@ -250,26 +256,26 @@ public class ServiceType
     }
 
     @Override
-    public ServiceType.Builder mutate() {
-        return new ServiceType.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static ServiceType.Builder builder() {
-        return new ServiceType.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<ServiceType> {
         private String mComment;
         private String mName;
         private String mExtend;
         private List<ServiceMethod> mMethods;
 
-        public Builder() {
+        public _Builder() {
             mMethods = new LinkedList<>();
         }
 
-        public Builder(ServiceType base) {
+        public _Builder(ServiceType base) {
             this();
 
             mComment = base.mComment;
@@ -278,56 +284,56 @@ public class ServiceType
             mMethods.addAll(base.mMethods);
         }
 
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setExtend(String value) {
+        public _Builder setExtend(String value) {
             mExtend = value;
             return this;
         }
 
-        public Builder clearExtend() {
+        public _Builder clearExtend() {
             mExtend = null;
             return this;
         }
 
-        public Builder setMethods(Collection<ServiceMethod> value) {
+        public _Builder setMethods(Collection<ServiceMethod> value) {
             mMethods.clear();
             mMethods.addAll(value);
             return this;
         }
 
-        public Builder addToMethods(ServiceMethod... values) {
+        public _Builder addToMethods(ServiceMethod... values) {
             for (ServiceMethod item : values) {
                 mMethods.add(item);
             }
             return this;
         }
 
-        public Builder clearMethods() {
+        public _Builder clearMethods() {
             mMethods.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;

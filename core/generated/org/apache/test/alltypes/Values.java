@@ -1,8 +1,5 @@
 package org.apache.test.alltypes;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumBuilderFactory;
 import org.apache.thrift.j2.TEnumValue;
@@ -62,17 +59,17 @@ public enum Values implements TEnumValue<Values> {
         }
     }
 
-    public static class Builder extends TEnumBuilder<Values> {
+    public static class _Builder extends TEnumBuilder<Values> {
         Values mValue;
 
         @Override
-        public Builder setByValue(int value) {
+        public _Builder setByValue(int value) {
             mValue = Values.forValue(value);
             return this;
         }
 
         @Override
-        public Builder setByName(String name) {
+        public _Builder setByName(String name) {
             mValue = Values.forName(name);
             return this;
         }
@@ -103,15 +100,15 @@ public enum Values implements TEnumValue<Values> {
         return new TEnumDescriptorProvider<Values>(sDescriptor);
     }
 
-    private static class Factory
+    private static class _Factory
             extends TEnumBuilderFactory<Values> {
         @Override
-        public Values.Builder builder() {
-            return new Values.Builder();
+        public Values._Builder builder() {
+            return new Values._Builder();
         }
     }
 
     static {
-        sDescriptor = new TEnumDescriptor<>(null, "alltypes", "Values", Values.values(), new Factory());
+        sDescriptor = new TEnumDescriptor<>(null, "alltypes", "Values", Values.values(), new _Factory());
     }
 }

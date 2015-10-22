@@ -1,8 +1,5 @@
 package org.apache.test.calculator;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumBuilderFactory;
 import org.apache.thrift.j2.TEnumValue;
@@ -62,17 +59,17 @@ public enum Operator implements TEnumValue<Operator> {
         }
     }
 
-    public static class Builder extends TEnumBuilder<Operator> {
+    public static class _Builder extends TEnumBuilder<Operator> {
         Operator mValue;
 
         @Override
-        public Builder setByValue(int value) {
+        public _Builder setByValue(int value) {
             mValue = Operator.forValue(value);
             return this;
         }
 
         @Override
-        public Builder setByName(String name) {
+        public _Builder setByName(String name) {
             mValue = Operator.forName(name);
             return this;
         }
@@ -103,15 +100,15 @@ public enum Operator implements TEnumValue<Operator> {
         return new TEnumDescriptorProvider<Operator>(sDescriptor);
     }
 
-    private static class Factory
+    private static class _Factory
             extends TEnumBuilderFactory<Operator> {
         @Override
-        public Operator.Builder builder() {
-            return new Operator.Builder();
+        public Operator._Builder builder() {
+            return new Operator._Builder();
         }
     }
 
     static {
-        sDescriptor = new TEnumDescriptor<>(null, "calculator", "Operator", Operator.values(), new Factory());
+        sDescriptor = new TEnumDescriptor<>(null, "calculator", "Operator", Operator.values(), new _Factory());
     }
 }

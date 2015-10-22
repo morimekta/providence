@@ -1,8 +1,6 @@
 package org.apache.test.alltypes;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -23,7 +21,7 @@ public class Other
         implements TMessage<Other>, Serializable, Parcelable {
     private final Values mV;
 
-    private Other(Builder builder) {
+    private Other(_Builder builder) {
         mV = builder.mV;
     }
 
@@ -87,7 +85,7 @@ public class Other
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         V(1, false, "v", Values.provider(), null),
         ;
 
@@ -97,7 +95,7 @@ public class Other
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -148,16 +146,16 @@ public class Other
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Other.Field.V;
+                case 1: return _Field.V;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "v": return Other.Field.V;
+                case "v": return _Field.V;
             }
             return null;
         }
@@ -174,16 +172,16 @@ public class Other
 
     public static final TStructDescriptor<Other> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Other> {
         @Override
-        public Other.Builder builder() {
-            return new Other.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "alltypes", "Other", Other.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "alltypes", "Other", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Other> provider() {
@@ -212,7 +210,7 @@ public class Other
     public static final Parcelable.Creator<Other> CREATOR = new Parcelable.Creator<Other>() {
         @Override
         public Other createFromParcel(Parcel source) {
-            Other.Builder builder = new Other.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -234,39 +232,39 @@ public class Other
     };
 
     @Override
-    public Other.Builder mutate() {
-        return new Other.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Other.Builder builder() {
-        return new Other.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Other> {
         private Values mV;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(Other base) {
+        public _Builder(Other base) {
             this();
 
             mV = base.mV;
         }
 
-        public Builder setV(Values value) {
+        public _Builder setV(Values value) {
             mV = value;
             return this;
         }
 
-        public Builder clearV() {
+        public _Builder clearV() {
             mV = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setV((Values) value); break;
             }

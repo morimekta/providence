@@ -1,8 +1,6 @@
 package org.apache.thrift.j2.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -24,10 +22,10 @@ public class Declaration
     private final StructType mDeclStruct;
     private final ServiceType mDeclService;
     private final ThriftField mDeclConst;
-    private final Declaration.Field tUnionField;
+    private final _Field tUnionField;
 
 
-    private Declaration(Builder builder) {
+    private Declaration(_Builder builder) {
         mDeclEnum = builder.mDeclEnum;
         mDeclTypedef = builder.mDeclTypedef;
         mDeclStruct = builder.mDeclStruct;
@@ -77,7 +75,7 @@ public class Declaration
         return mDeclConst;
     }
 
-    public Declaration.Field unionField() {
+    public _Field unionField() {
         return tUnionField;
     }
 
@@ -157,7 +155,7 @@ public class Declaration
                (mDeclConst != null ? 1 : 0) == 1;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         DECL_ENUM(1, false, "decl_enum", EnumType.provider(), null),
         DECL_TYPEDEF(2, false, "decl_typedef", TypedefType.provider(), null),
         DECL_STRUCT(3, false, "decl_struct", StructType.provider(), null),
@@ -171,7 +169,7 @@ public class Declaration
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -222,16 +220,24 @@ public class Declaration
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.DECL_ENUM;
+                case 2: return _Field.DECL_TYPEDEF;
+                case 3: return _Field.DECL_STRUCT;
+                case 4: return _Field.DECL_SERVICE;
+                case 5: return _Field.DECL_CONST;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "decl_enum": return _Field.DECL_ENUM;
+                case "decl_typedef": return _Field.DECL_TYPEDEF;
+                case "decl_struct": return _Field.DECL_STRUCT;
+                case "decl_service": return _Field.DECL_SERVICE;
+                case "decl_const": return _Field.DECL_CONST;
             }
             return null;
         }
@@ -248,16 +254,16 @@ public class Declaration
 
     public static final TUnionDescriptor<Declaration> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Declaration> {
         @Override
-        public Declaration.Builder builder() {
-            return new Declaration.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", Declaration.Field.values(), new Factory());
+        sDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory());
     }
 
     public static TUnionDescriptorProvider<Declaration> provider() {
@@ -270,28 +276,28 @@ public class Declaration
     }
 
     @Override
-    public Declaration.Builder mutate() {
-        return new Declaration.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Declaration.Builder builder() {
-        return new Declaration.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Declaration> {
         private EnumType mDeclEnum;
         private TypedefType mDeclTypedef;
         private StructType mDeclStruct;
         private ServiceType mDeclService;
         private ThriftField mDeclConst;
-        private Declaration.Field tUnionField;
+        private _Field tUnionField;
 
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(Declaration base) {
+        public _Builder(Declaration base) {
             this();
 
             mDeclEnum = base.mDeclEnum;
@@ -303,68 +309,68 @@ public class Declaration
             tUnionField = base.tUnionField;
         }
 
-        public Builder setDeclEnum(EnumType value) {
-            tUnionField = Declaration.Field.DECL_ENUM;
+        public _Builder setDeclEnum(EnumType value) {
+            tUnionField = _Field.DECL_ENUM;
             mDeclEnum = value;
             return this;
         }
 
-        public Builder clearDeclEnum() {
+        public _Builder clearDeclEnum() {
             if (mDeclEnum != null) tUnionField = null;
             mDeclEnum = null;
             return this;
         }
 
-        public Builder setDeclTypedef(TypedefType value) {
-            tUnionField = Declaration.Field.DECL_TYPEDEF;
+        public _Builder setDeclTypedef(TypedefType value) {
+            tUnionField = _Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
         }
 
-        public Builder clearDeclTypedef() {
+        public _Builder clearDeclTypedef() {
             if (mDeclTypedef != null) tUnionField = null;
             mDeclTypedef = null;
             return this;
         }
 
-        public Builder setDeclStruct(StructType value) {
-            tUnionField = Declaration.Field.DECL_STRUCT;
+        public _Builder setDeclStruct(StructType value) {
+            tUnionField = _Field.DECL_STRUCT;
             mDeclStruct = value;
             return this;
         }
 
-        public Builder clearDeclStruct() {
+        public _Builder clearDeclStruct() {
             if (mDeclStruct != null) tUnionField = null;
             mDeclStruct = null;
             return this;
         }
 
-        public Builder setDeclService(ServiceType value) {
-            tUnionField = Declaration.Field.DECL_SERVICE;
+        public _Builder setDeclService(ServiceType value) {
+            tUnionField = _Field.DECL_SERVICE;
             mDeclService = value;
             return this;
         }
 
-        public Builder clearDeclService() {
+        public _Builder clearDeclService() {
             if (mDeclService != null) tUnionField = null;
             mDeclService = null;
             return this;
         }
 
-        public Builder setDeclConst(ThriftField value) {
-            tUnionField = Declaration.Field.DECL_CONST;
+        public _Builder setDeclConst(ThriftField value) {
+            tUnionField = _Field.DECL_CONST;
             mDeclConst = value;
             return this;
         }
 
-        public Builder clearDeclConst() {
+        public _Builder clearDeclConst() {
             if (mDeclConst != null) tUnionField = null;
             mDeclConst = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setDeclEnum((EnumType) value); break;
                 case 2: setDeclTypedef((TypedefType) value); break;

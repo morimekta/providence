@@ -64,7 +64,7 @@ public class Containers
     private final Set<Primitives> mSp;
     private final Map<Integer,Primitives> mMp;
 
-    private Containers(Builder builder) {
+    private Containers(_Builder builder) {
         mLbl = Collections.unmodifiableList(new LinkedList<>(builder.mLbl));
         mLbt = Collections.unmodifiableList(new LinkedList<>(builder.mLbt));
         mLsh = Collections.unmodifiableList(new LinkedList<>(builder.mLsh));
@@ -539,7 +539,7 @@ public class Containers
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         LBL(1, false, "lbl", TList.provider(TPrimitive.BOOL.provider()), null),
         LBT(2, false, "lbt", TList.provider(TPrimitive.BYTE.provider()), null),
         LSH(3, false, "lsh", TList.provider(TPrimitive.I16.provider()), null),
@@ -578,7 +578,7 @@ public class Containers
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -629,74 +629,74 @@ public class Containers
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Containers.Field.LBL;
-                case 2: return Containers.Field.LBT;
-                case 3: return Containers.Field.LSH;
-                case 4: return Containers.Field.LI;
-                case 5: return Containers.Field.LL;
-                case 6: return Containers.Field.LD;
-                case 7: return Containers.Field.LS;
-                case 8: return Containers.Field.LBN;
-                case 11: return Containers.Field.SBL;
-                case 12: return Containers.Field.SBT;
-                case 13: return Containers.Field.SSH;
-                case 14: return Containers.Field.SI;
-                case 15: return Containers.Field.SL;
-                case 16: return Containers.Field.SD;
-                case 17: return Containers.Field.SS;
-                case 18: return Containers.Field.SBN;
-                case 21: return Containers.Field.MBL;
-                case 22: return Containers.Field.MBT;
-                case 23: return Containers.Field.MSH;
-                case 24: return Containers.Field.MI;
-                case 25: return Containers.Field.ML;
-                case 26: return Containers.Field.MD;
-                case 27: return Containers.Field.MS;
-                case 28: return Containers.Field.MBN;
-                case 31: return Containers.Field.LV;
-                case 32: return Containers.Field.SV;
-                case 33: return Containers.Field.MV;
-                case 41: return Containers.Field.LP;
-                case 42: return Containers.Field.SP;
-                case 43: return Containers.Field.MP;
+                case 1: return _Field.LBL;
+                case 2: return _Field.LBT;
+                case 3: return _Field.LSH;
+                case 4: return _Field.LI;
+                case 5: return _Field.LL;
+                case 6: return _Field.LD;
+                case 7: return _Field.LS;
+                case 8: return _Field.LBN;
+                case 11: return _Field.SBL;
+                case 12: return _Field.SBT;
+                case 13: return _Field.SSH;
+                case 14: return _Field.SI;
+                case 15: return _Field.SL;
+                case 16: return _Field.SD;
+                case 17: return _Field.SS;
+                case 18: return _Field.SBN;
+                case 21: return _Field.MBL;
+                case 22: return _Field.MBT;
+                case 23: return _Field.MSH;
+                case 24: return _Field.MI;
+                case 25: return _Field.ML;
+                case 26: return _Field.MD;
+                case 27: return _Field.MS;
+                case 28: return _Field.MBN;
+                case 31: return _Field.LV;
+                case 32: return _Field.SV;
+                case 33: return _Field.MV;
+                case 41: return _Field.LP;
+                case 42: return _Field.SP;
+                case 43: return _Field.MP;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "lbl": return Containers.Field.LBL;
-                case "lbt": return Containers.Field.LBT;
-                case "lsh": return Containers.Field.LSH;
-                case "li": return Containers.Field.LI;
-                case "ll": return Containers.Field.LL;
-                case "ld": return Containers.Field.LD;
-                case "ls": return Containers.Field.LS;
-                case "lbn": return Containers.Field.LBN;
-                case "sbl": return Containers.Field.SBL;
-                case "sbt": return Containers.Field.SBT;
-                case "ssh": return Containers.Field.SSH;
-                case "si": return Containers.Field.SI;
-                case "sl": return Containers.Field.SL;
-                case "sd": return Containers.Field.SD;
-                case "ss": return Containers.Field.SS;
-                case "sbn": return Containers.Field.SBN;
-                case "mbl": return Containers.Field.MBL;
-                case "mbt": return Containers.Field.MBT;
-                case "msh": return Containers.Field.MSH;
-                case "mi": return Containers.Field.MI;
-                case "ml": return Containers.Field.ML;
-                case "md": return Containers.Field.MD;
-                case "ms": return Containers.Field.MS;
-                case "mbn": return Containers.Field.MBN;
-                case "lv": return Containers.Field.LV;
-                case "sv": return Containers.Field.SV;
-                case "mv": return Containers.Field.MV;
-                case "lp": return Containers.Field.LP;
-                case "sp": return Containers.Field.SP;
-                case "mp": return Containers.Field.MP;
+                case "lbl": return _Field.LBL;
+                case "lbt": return _Field.LBT;
+                case "lsh": return _Field.LSH;
+                case "li": return _Field.LI;
+                case "ll": return _Field.LL;
+                case "ld": return _Field.LD;
+                case "ls": return _Field.LS;
+                case "lbn": return _Field.LBN;
+                case "sbl": return _Field.SBL;
+                case "sbt": return _Field.SBT;
+                case "ssh": return _Field.SSH;
+                case "si": return _Field.SI;
+                case "sl": return _Field.SL;
+                case "sd": return _Field.SD;
+                case "ss": return _Field.SS;
+                case "sbn": return _Field.SBN;
+                case "mbl": return _Field.MBL;
+                case "mbt": return _Field.MBT;
+                case "msh": return _Field.MSH;
+                case "mi": return _Field.MI;
+                case "ml": return _Field.ML;
+                case "md": return _Field.MD;
+                case "ms": return _Field.MS;
+                case "mbn": return _Field.MBN;
+                case "lv": return _Field.LV;
+                case "sv": return _Field.SV;
+                case "mv": return _Field.MV;
+                case "lp": return _Field.LP;
+                case "sp": return _Field.SP;
+                case "mp": return _Field.MP;
             }
             return null;
         }
@@ -713,16 +713,16 @@ public class Containers
 
     public static final TStructDescriptor<Containers> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Containers> {
         @Override
-        public Containers.Builder builder() {
-            return new Containers.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "containers", "Containers", Containers.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "containers", "Containers", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Containers> provider() {
@@ -904,7 +904,7 @@ public class Containers
     public static final Parcelable.Creator<Containers> CREATOR = new Parcelable.Creator<Containers>() {
         @Override
         public Containers createFromParcel(Parcel source) {
-            Containers.Builder builder = new Containers.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -1095,15 +1095,15 @@ public class Containers
     };
 
     @Override
-    public Containers.Builder mutate() {
-        return new Containers.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Containers.Builder builder() {
-        return new Containers.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Containers> {
         private List<Boolean> mLbl;
         private List<Byte> mLbt;
@@ -1136,7 +1136,7 @@ public class Containers
         private Set<Primitives> mSp;
         private Map<Integer,Primitives> mMp;
 
-        public Builder() {
+        public _Builder() {
             mLbl = new LinkedList<>();
             mLbt = new LinkedList<>();
             mLsh = new LinkedList<>();
@@ -1169,7 +1169,7 @@ public class Containers
             mMp = new LinkedHashMap<>();
         }
 
-        public Builder(Containers base) {
+        public _Builder(Containers base) {
             this();
 
             mLbl.addAll(base.mLbl);
@@ -1205,537 +1205,537 @@ public class Containers
         }
 
         /** all types as list<x>. */
-        public Builder setLbl(Collection<Boolean> value) {
+        public _Builder setLbl(Collection<Boolean> value) {
             mLbl.clear();
             mLbl.addAll(value);
             return this;
         }
 
         /** all types as list<x>. */
-        public Builder addToLbl(Boolean... values) {
+        public _Builder addToLbl(Boolean... values) {
             for (Boolean item : values) {
                 mLbl.add(item);
             }
             return this;
         }
 
-        public Builder clearLbl() {
+        public _Builder clearLbl() {
             mLbl.clear();
             return this;
         }
 
-        public Builder setLbt(Collection<Byte> value) {
+        public _Builder setLbt(Collection<Byte> value) {
             mLbt.clear();
             mLbt.addAll(value);
             return this;
         }
 
-        public Builder addToLbt(Byte... values) {
+        public _Builder addToLbt(Byte... values) {
             for (Byte item : values) {
                 mLbt.add(item);
             }
             return this;
         }
 
-        public Builder clearLbt() {
+        public _Builder clearLbt() {
             mLbt.clear();
             return this;
         }
 
-        public Builder setLsh(Collection<Short> value) {
+        public _Builder setLsh(Collection<Short> value) {
             mLsh.clear();
             mLsh.addAll(value);
             return this;
         }
 
-        public Builder addToLsh(Short... values) {
+        public _Builder addToLsh(Short... values) {
             for (Short item : values) {
                 mLsh.add(item);
             }
             return this;
         }
 
-        public Builder clearLsh() {
+        public _Builder clearLsh() {
             mLsh.clear();
             return this;
         }
 
-        public Builder setLi(Collection<Integer> value) {
+        public _Builder setLi(Collection<Integer> value) {
             mLi.clear();
             mLi.addAll(value);
             return this;
         }
 
-        public Builder addToLi(Integer... values) {
+        public _Builder addToLi(Integer... values) {
             for (Integer item : values) {
                 mLi.add(item);
             }
             return this;
         }
 
-        public Builder clearLi() {
+        public _Builder clearLi() {
             mLi.clear();
             return this;
         }
 
-        public Builder setLl(Collection<Long> value) {
+        public _Builder setLl(Collection<Long> value) {
             mLl.clear();
             mLl.addAll(value);
             return this;
         }
 
-        public Builder addToLl(Long... values) {
+        public _Builder addToLl(Long... values) {
             for (Long item : values) {
                 mLl.add(item);
             }
             return this;
         }
 
-        public Builder clearLl() {
+        public _Builder clearLl() {
             mLl.clear();
             return this;
         }
 
-        public Builder setLd(Collection<Double> value) {
+        public _Builder setLd(Collection<Double> value) {
             mLd.clear();
             mLd.addAll(value);
             return this;
         }
 
-        public Builder addToLd(Double... values) {
+        public _Builder addToLd(Double... values) {
             for (Double item : values) {
                 mLd.add(item);
             }
             return this;
         }
 
-        public Builder clearLd() {
+        public _Builder clearLd() {
             mLd.clear();
             return this;
         }
 
-        public Builder setLs(Collection<String> value) {
+        public _Builder setLs(Collection<String> value) {
             mLs.clear();
             mLs.addAll(value);
             return this;
         }
 
-        public Builder addToLs(String... values) {
+        public _Builder addToLs(String... values) {
             for (String item : values) {
                 mLs.add(item);
             }
             return this;
         }
 
-        public Builder clearLs() {
+        public _Builder clearLs() {
             mLs.clear();
             return this;
         }
 
-        public Builder setLbn(Collection<byte[]> value) {
+        public _Builder setLbn(Collection<byte[]> value) {
             mLbn.clear();
             mLbn.addAll(value);
             return this;
         }
 
-        public Builder addToLbn(byte[]... values) {
+        public _Builder addToLbn(byte[]... values) {
             for (byte[] item : values) {
                 mLbn.add(item);
             }
             return this;
         }
 
-        public Builder clearLbn() {
+        public _Builder clearLbn() {
             mLbn.clear();
             return this;
         }
 
         /** all types as set<x>. */
-        public Builder setSbl(Collection<Boolean> value) {
+        public _Builder setSbl(Collection<Boolean> value) {
             mSbl.clear();
             mSbl.addAll(value);
             return this;
         }
 
         /** all types as set<x>. */
-        public Builder addToSbl(Boolean... values) {
+        public _Builder addToSbl(Boolean... values) {
             for (Boolean item : values) {
                 mSbl.add(item);
             }
             return this;
         }
 
-        public Builder clearSbl() {
+        public _Builder clearSbl() {
             mSbl.clear();
             return this;
         }
 
-        public Builder setSbt(Collection<Byte> value) {
+        public _Builder setSbt(Collection<Byte> value) {
             mSbt.clear();
             mSbt.addAll(value);
             return this;
         }
 
-        public Builder addToSbt(Byte... values) {
+        public _Builder addToSbt(Byte... values) {
             for (Byte item : values) {
                 mSbt.add(item);
             }
             return this;
         }
 
-        public Builder clearSbt() {
+        public _Builder clearSbt() {
             mSbt.clear();
             return this;
         }
 
-        public Builder setSsh(Collection<Short> value) {
+        public _Builder setSsh(Collection<Short> value) {
             mSsh.clear();
             mSsh.addAll(value);
             return this;
         }
 
-        public Builder addToSsh(Short... values) {
+        public _Builder addToSsh(Short... values) {
             for (Short item : values) {
                 mSsh.add(item);
             }
             return this;
         }
 
-        public Builder clearSsh() {
+        public _Builder clearSsh() {
             mSsh.clear();
             return this;
         }
 
-        public Builder setSi(Collection<Integer> value) {
+        public _Builder setSi(Collection<Integer> value) {
             mSi.clear();
             mSi.addAll(value);
             return this;
         }
 
-        public Builder addToSi(Integer... values) {
+        public _Builder addToSi(Integer... values) {
             for (Integer item : values) {
                 mSi.add(item);
             }
             return this;
         }
 
-        public Builder clearSi() {
+        public _Builder clearSi() {
             mSi.clear();
             return this;
         }
 
-        public Builder setSl(Collection<Long> value) {
+        public _Builder setSl(Collection<Long> value) {
             mSl.clear();
             mSl.addAll(value);
             return this;
         }
 
-        public Builder addToSl(Long... values) {
+        public _Builder addToSl(Long... values) {
             for (Long item : values) {
                 mSl.add(item);
             }
             return this;
         }
 
-        public Builder clearSl() {
+        public _Builder clearSl() {
             mSl.clear();
             return this;
         }
 
-        public Builder setSd(Collection<Double> value) {
+        public _Builder setSd(Collection<Double> value) {
             mSd.clear();
             mSd.addAll(value);
             return this;
         }
 
-        public Builder addToSd(Double... values) {
+        public _Builder addToSd(Double... values) {
             for (Double item : values) {
                 mSd.add(item);
             }
             return this;
         }
 
-        public Builder clearSd() {
+        public _Builder clearSd() {
             mSd.clear();
             return this;
         }
 
-        public Builder setSs(Collection<String> value) {
+        public _Builder setSs(Collection<String> value) {
             mSs.clear();
             mSs.addAll(value);
             return this;
         }
 
-        public Builder addToSs(String... values) {
+        public _Builder addToSs(String... values) {
             for (String item : values) {
                 mSs.add(item);
             }
             return this;
         }
 
-        public Builder clearSs() {
+        public _Builder clearSs() {
             mSs.clear();
             return this;
         }
 
-        public Builder setSbn(Collection<byte[]> value) {
+        public _Builder setSbn(Collection<byte[]> value) {
             mSbn.clear();
             mSbn.addAll(value);
             return this;
         }
 
-        public Builder addToSbn(byte[]... values) {
+        public _Builder addToSbn(byte[]... values) {
             for (byte[] item : values) {
                 mSbn.add(item);
             }
             return this;
         }
 
-        public Builder clearSbn() {
+        public _Builder clearSbn() {
             mSbn.clear();
             return this;
         }
 
         /** all types as map<x,x>. */
-        public Builder setMbl(Map<Boolean,Boolean> value) {
+        public _Builder setMbl(Map<Boolean,Boolean> value) {
             mMbl.clear();
             mMbl.putAll(value);
             return this;
         }
 
         /** all types as map<x,x>. */
-        public Builder addToMbl(Boolean key, Boolean value) {
+        public _Builder addToMbl(Boolean key, Boolean value) {
             mMbl.put(key, value);
             return this;
         }
 
-        public Builder clearMbl() {
+        public _Builder clearMbl() {
             mMbl.clear();
             return this;
         }
 
-        public Builder setMbt(Map<Byte,Byte> value) {
+        public _Builder setMbt(Map<Byte,Byte> value) {
             mMbt.clear();
             mMbt.putAll(value);
             return this;
         }
 
-        public Builder addToMbt(Byte key, Byte value) {
+        public _Builder addToMbt(Byte key, Byte value) {
             mMbt.put(key, value);
             return this;
         }
 
-        public Builder clearMbt() {
+        public _Builder clearMbt() {
             mMbt.clear();
             return this;
         }
 
-        public Builder setMsh(Map<Short,Short> value) {
+        public _Builder setMsh(Map<Short,Short> value) {
             mMsh.clear();
             mMsh.putAll(value);
             return this;
         }
 
-        public Builder addToMsh(Short key, Short value) {
+        public _Builder addToMsh(Short key, Short value) {
             mMsh.put(key, value);
             return this;
         }
 
-        public Builder clearMsh() {
+        public _Builder clearMsh() {
             mMsh.clear();
             return this;
         }
 
-        public Builder setMi(Map<Integer,Integer> value) {
+        public _Builder setMi(Map<Integer,Integer> value) {
             mMi.clear();
             mMi.putAll(value);
             return this;
         }
 
-        public Builder addToMi(Integer key, Integer value) {
+        public _Builder addToMi(Integer key, Integer value) {
             mMi.put(key, value);
             return this;
         }
 
-        public Builder clearMi() {
+        public _Builder clearMi() {
             mMi.clear();
             return this;
         }
 
-        public Builder setMl(Map<Long,Long> value) {
+        public _Builder setMl(Map<Long,Long> value) {
             mMl.clear();
             mMl.putAll(value);
             return this;
         }
 
-        public Builder addToMl(Long key, Long value) {
+        public _Builder addToMl(Long key, Long value) {
             mMl.put(key, value);
             return this;
         }
 
-        public Builder clearMl() {
+        public _Builder clearMl() {
             mMl.clear();
             return this;
         }
 
-        public Builder setMd(Map<Double,Double> value) {
+        public _Builder setMd(Map<Double,Double> value) {
             mMd.clear();
             mMd.putAll(value);
             return this;
         }
 
-        public Builder addToMd(Double key, Double value) {
+        public _Builder addToMd(Double key, Double value) {
             mMd.put(key, value);
             return this;
         }
 
-        public Builder clearMd() {
+        public _Builder clearMd() {
             mMd.clear();
             return this;
         }
 
-        public Builder setMs(Map<String,String> value) {
+        public _Builder setMs(Map<String,String> value) {
             mMs.clear();
             mMs.putAll(value);
             return this;
         }
 
-        public Builder addToMs(String key, String value) {
+        public _Builder addToMs(String key, String value) {
             mMs.put(key, value);
             return this;
         }
 
-        public Builder clearMs() {
+        public _Builder clearMs() {
             mMs.clear();
             return this;
         }
 
-        public Builder setMbn(Map<byte[],byte[]> value) {
+        public _Builder setMbn(Map<byte[],byte[]> value) {
             mMbn.clear();
             mMbn.putAll(value);
             return this;
         }
 
-        public Builder addToMbn(byte[] key, byte[] value) {
+        public _Builder addToMbn(byte[] key, byte[] value) {
             mMbn.put(key, value);
             return this;
         }
 
-        public Builder clearMbn() {
+        public _Builder clearMbn() {
             mMbn.clear();
             return this;
         }
 
         /** Using enum as key and value in containers. */
-        public Builder setLv(Collection<Value> value) {
+        public _Builder setLv(Collection<Value> value) {
             mLv.clear();
             mLv.addAll(value);
             return this;
         }
 
         /** Using enum as key and value in containers. */
-        public Builder addToLv(Value... values) {
+        public _Builder addToLv(Value... values) {
             for (Value item : values) {
                 mLv.add(item);
             }
             return this;
         }
 
-        public Builder clearLv() {
+        public _Builder clearLv() {
             mLv.clear();
             return this;
         }
 
-        public Builder setSv(Collection<Value> value) {
+        public _Builder setSv(Collection<Value> value) {
             mSv.clear();
             mSv.addAll(value);
             return this;
         }
 
-        public Builder addToSv(Value... values) {
+        public _Builder addToSv(Value... values) {
             for (Value item : values) {
                 mSv.add(item);
             }
             return this;
         }
 
-        public Builder clearSv() {
+        public _Builder clearSv() {
             mSv.clear();
             return this;
         }
 
-        public Builder setMv(Map<Value,Value> value) {
+        public _Builder setMv(Map<Value,Value> value) {
             mMv.clear();
             mMv.putAll(value);
             return this;
         }
 
-        public Builder addToMv(Value key, Value value) {
+        public _Builder addToMv(Value key, Value value) {
             mMv.put(key, value);
             return this;
         }
 
-        public Builder clearMv() {
+        public _Builder clearMv() {
             mMv.clear();
             return this;
         }
 
         /** Using struct as value in containers. */
-        public Builder setLp(Collection<Primitives> value) {
+        public _Builder setLp(Collection<Primitives> value) {
             mLp.clear();
             mLp.addAll(value);
             return this;
         }
 
         /** Using struct as value in containers. */
-        public Builder addToLp(Primitives... values) {
+        public _Builder addToLp(Primitives... values) {
             for (Primitives item : values) {
                 mLp.add(item);
             }
             return this;
         }
 
-        public Builder clearLp() {
+        public _Builder clearLp() {
             mLp.clear();
             return this;
         }
 
-        public Builder setSp(Collection<Primitives> value) {
+        public _Builder setSp(Collection<Primitives> value) {
             mSp.clear();
             mSp.addAll(value);
             return this;
         }
 
-        public Builder addToSp(Primitives... values) {
+        public _Builder addToSp(Primitives... values) {
             for (Primitives item : values) {
                 mSp.add(item);
             }
             return this;
         }
 
-        public Builder clearSp() {
+        public _Builder clearSp() {
             mSp.clear();
             return this;
         }
 
-        public Builder setMp(Map<Integer,Primitives> value) {
+        public _Builder setMp(Map<Integer,Primitives> value) {
             mMp.clear();
             mMp.putAll(value);
             return this;
         }
 
-        public Builder addToMp(Integer key, Primitives value) {
+        public _Builder addToMp(Integer key, Primitives value) {
             mMp.put(key, value);
             return this;
         }
 
-        public Builder clearMp() {
+        public _Builder clearMp() {
             mMp.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setLbl((List<Boolean>) value); break;
                 case 2: setLbt((List<Byte>) value); break;

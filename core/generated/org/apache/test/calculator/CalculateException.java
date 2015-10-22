@@ -1,8 +1,6 @@
 package org.apache.test.calculator;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,7 +27,7 @@ public class CalculateException
     private final String mMessage;
     private final Operation mOperation;
 
-    private CalculateException(Builder builder) {
+    private CalculateException(_Builder builder) {
         super(builder.createMessage());
 
         mMessage = builder.mMessage;
@@ -109,7 +107,7 @@ public class CalculateException
         return mMessage != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         MESSAGE(1, true, "message", TPrimitive.STRING.provider(), null),
         OPERATION(2, false, "operation", Operation.provider(), null),
         ;
@@ -120,7 +118,7 @@ public class CalculateException
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -171,18 +169,18 @@ public class CalculateException
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return CalculateException.Field.MESSAGE;
-                case 2: return CalculateException.Field.OPERATION;
+                case 1: return _Field.MESSAGE;
+                case 2: return _Field.OPERATION;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "message": return CalculateException.Field.MESSAGE;
-                case "operation": return CalculateException.Field.OPERATION;
+                case "message": return _Field.MESSAGE;
+                case "operation": return _Field.OPERATION;
             }
             return null;
         }
@@ -199,16 +197,16 @@ public class CalculateException
 
     public static final TExceptionDescriptor<CalculateException> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<CalculateException> {
         @Override
-        public CalculateException.Builder builder() {
-            return new CalculateException.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TExceptionDescriptor<>(null, "calculator", "CalculateException", CalculateException.Field.values(), new Factory());
+        sDescriptor = new TExceptionDescriptor<>(null, "calculator", "CalculateException", _Field.values(), new _Factory());
     }
 
     public static TExceptionDescriptorProvider<CalculateException> provider() {
@@ -241,7 +239,7 @@ public class CalculateException
     public static final Parcelable.Creator<CalculateException> CREATOR = new Parcelable.Creator<CalculateException>() {
         @Override
         public CalculateException createFromParcel(Parcel source) {
-            CalculateException.Builder builder = new CalculateException.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -266,51 +264,51 @@ public class CalculateException
     };
 
     @Override
-    public CalculateException.Builder mutate() {
-        return new CalculateException.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static CalculateException.Builder builder() {
-        return new CalculateException.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<CalculateException> {
         private String mMessage;
         private Operation mOperation;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(CalculateException base) {
+        public _Builder(CalculateException base) {
             this();
 
             mMessage = base.mMessage;
             mOperation = base.mOperation;
         }
 
-        public Builder setMessage(String value) {
+        public _Builder setMessage(String value) {
             mMessage = value;
             return this;
         }
 
-        public Builder clearMessage() {
+        public _Builder clearMessage() {
             mMessage = null;
             return this;
         }
 
-        public Builder setOperation(Operation value) {
+        public _Builder setOperation(Operation value) {
             mOperation = value;
             return this;
         }
 
-        public Builder clearOperation() {
+        public _Builder clearOperation() {
             mOperation = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setMessage((String) value); break;
                 case 2: setOperation((Operation) value); break;

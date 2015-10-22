@@ -1,8 +1,6 @@
 package org.apache.test.compact;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,7 +27,7 @@ public class Category
     private final Integer mId;
     private final String mLabel;
 
-    private Category(Builder builder) {
+    private Category(_Builder builder) {
         mName = builder.mName;
         mId = builder.mId;
         mLabel = builder.mLabel;
@@ -138,7 +136,7 @@ public class Category
                mId != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         NAME(1, true, "name", TPrimitive.STRING.provider(), null),
         ID(2, true, "id", TPrimitive.I32.provider(), null),
         LABEL(3, false, "label", TPrimitive.STRING.provider(), null),
@@ -150,7 +148,7 @@ public class Category
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -201,20 +199,20 @@ public class Category
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Category.Field.NAME;
-                case 2: return Category.Field.ID;
-                case 3: return Category.Field.LABEL;
+                case 1: return _Field.NAME;
+                case 2: return _Field.ID;
+                case 3: return _Field.LABEL;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "name": return Category.Field.NAME;
-                case "id": return Category.Field.ID;
-                case "label": return Category.Field.LABEL;
+                case "name": return _Field.NAME;
+                case "id": return _Field.ID;
+                case "label": return _Field.LABEL;
             }
             return null;
         }
@@ -231,16 +229,16 @@ public class Category
 
     public static final TStructDescriptor<Category> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Category> {
         @Override
-        public Category.Builder builder() {
-            return new Category.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "compact", "Category", Category.Field.values(), new Factory(), true);
+        sDescriptor = new TStructDescriptor<>(null, "compact", "Category", _Field.values(), new _Factory(), true);
     }
 
     public static TStructDescriptorProvider<Category> provider() {
@@ -277,7 +275,7 @@ public class Category
     public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
         @Override
         public Category createFromParcel(Parcel source) {
-            Category.Builder builder = new Category.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -305,24 +303,24 @@ public class Category
     };
 
     @Override
-    public Category.Builder mutate() {
-        return new Category.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Category.Builder builder() {
-        return new Category.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Category> {
         private String mName;
         private Integer mId;
         private String mLabel;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(Category base) {
+        public _Builder(Category base) {
             this();
 
             mName = base.mName;
@@ -330,38 +328,38 @@ public class Category
             mLabel = base.mLabel;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setId(int value) {
+        public _Builder setId(int value) {
             mId = value;
             return this;
         }
 
-        public Builder clearId() {
+        public _Builder clearId() {
             mId = null;
             return this;
         }
 
-        public Builder setLabel(String value) {
+        public _Builder setLabel(String value) {
             mLabel = value;
             return this;
         }
 
-        public Builder clearLabel() {
+        public _Builder clearLabel() {
             mLabel = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setName((String) value); break;
                 case 2: setId((int) value); break;

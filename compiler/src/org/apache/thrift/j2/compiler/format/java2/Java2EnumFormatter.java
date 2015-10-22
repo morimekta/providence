@@ -47,9 +47,6 @@ public class Java2EnumFormatter {
         header.include(TEnumDescriptor.class.getName());
         header.include(TEnumDescriptorProvider.class.getName());
 
-        header.include(java.util.LinkedList.class.getName());
-        header.include(java.util.List.class.getName());
-
         header.format(writer);
 
         String simpleClass = mTypeHelper.getSimpleClassName(type);
@@ -171,13 +168,13 @@ public class Java2EnumFormatter {
               .appendln('}')
               .newline();
 
-        writer.appendln("private static class Factory")
+        writer.appendln("private static class _Factory")
               .begin()
               .formatln("    extends TEnumBuilderFactory<%s> {", simpleClass)
               .appendln("@Override")
-              .formatln("public %s.Builder builder() {", simpleClass)
+              .formatln("public %s._Builder builder() {", simpleClass)
               .begin()
-              .formatln("return new %s.Builder();", simpleClass)
+              .formatln("return new %s._Builder();", simpleClass)
               .end()
               .appendln('}')
               .end()
@@ -186,7 +183,7 @@ public class Java2EnumFormatter {
 
         writer.formatln("static {", simpleClass)
               .begin();
-        writer.formatln("sDescriptor = new TEnumDescriptor<>(null, \"%s\", \"%s\", %s.values(), new Factory());",
+        writer.formatln("sDescriptor = new TEnumDescriptor<>(null, \"%s\", \"%s\", %s.values(), new _Factory());",
                         type.getPackageName(), type.getName(), simpleClass)
               .end()
               .appendln('}');
@@ -194,13 +191,13 @@ public class Java2EnumFormatter {
 
     protected void appendBuilder(IndentedPrintWriter writer, TEnumDescriptor<?> type) {
         String simpleClass = mTypeHelper.getSimpleClassName(type);
-        writer.formatln("public static class Builder extends TEnumBuilder<%s> {", simpleClass)
+        writer.formatln("public static class _Builder extends TEnumBuilder<%s> {", simpleClass)
               .begin()
               .formatln("%s mValue;", simpleClass)
               .newline();
 
         writer.appendln("@Override")
-              .appendln("public Builder setByValue(int value) {")
+              .appendln("public _Builder setByValue(int value) {")
               .begin()
               .formatln("mValue = %s.forValue(value);", simpleClass)
               .appendln("return this;")
@@ -209,7 +206,7 @@ public class Java2EnumFormatter {
               .newline();
 
         writer.appendln("@Override")
-              .appendln("public Builder setByName(String name) {")
+              .appendln("public _Builder setByName(String name) {")
               .begin()
               .formatln("mValue = %s.forName(name);", simpleClass)
               .appendln("return this;")

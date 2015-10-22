@@ -35,7 +35,7 @@ public class StructType
     private final String mName;
     private final List<ThriftField> mFields;
 
-    private StructType(Builder builder) {
+    private StructType(_Builder builder) {
         mComment = builder.mComment;
         mVariant = builder.mVariant;
         mName = builder.mName;
@@ -141,7 +141,7 @@ public class StructType
         return mName != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         VARIANT(2, false, "variant", StructVariant.provider(), new TDefaultValueProvider<>(kDefaultVariant)),
         NAME(3, true, "name", TPrimitive.STRING.provider(), null),
@@ -154,7 +154,7 @@ public class StructType
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -205,16 +205,22 @@ public class StructType
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.VARIANT;
+                case 3: return _Field.NAME;
+                case 4: return _Field.FIELDS;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "variant": return _Field.VARIANT;
+                case "name": return _Field.NAME;
+                case "fields": return _Field.FIELDS;
             }
             return null;
         }
@@ -231,16 +237,16 @@ public class StructType
 
     public static final TStructDescriptor<StructType> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<StructType> {
         @Override
-        public StructType.Builder builder() {
-            return new StructType.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "StructType", StructType.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "StructType", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<StructType> provider() {
@@ -253,26 +259,26 @@ public class StructType
     }
 
     @Override
-    public StructType.Builder mutate() {
-        return new StructType.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static StructType.Builder builder() {
-        return new StructType.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<StructType> {
         private String mComment;
         private StructVariant mVariant;
         private String mName;
         private List<ThriftField> mFields;
 
-        public Builder() {
+        public _Builder() {
             mFields = new LinkedList<>();
         }
 
-        public Builder(StructType base) {
+        public _Builder(StructType base) {
             this();
 
             mComment = base.mComment;
@@ -281,56 +287,56 @@ public class StructType
             mFields.addAll(base.mFields);
         }
 
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
-        public Builder setVariant(StructVariant value) {
+        public _Builder setVariant(StructVariant value) {
             mVariant = value;
             return this;
         }
 
-        public Builder clearVariant() {
+        public _Builder clearVariant() {
             mVariant = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setFields(Collection<ThriftField> value) {
+        public _Builder setFields(Collection<ThriftField> value) {
             mFields.clear();
             mFields.addAll(value);
             return this;
         }
 
-        public Builder addToFields(ThriftField... values) {
+        public _Builder addToFields(ThriftField... values) {
             for (ThriftField item : values) {
                 mFields.add(item);
             }
             return this;
         }
 
-        public Builder clearFields() {
+        public _Builder clearFields() {
             mFields.clear();
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setVariant((StructVariant) value); break;

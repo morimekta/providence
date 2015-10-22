@@ -1,8 +1,6 @@
 package org.apache.test.number;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,7 +27,7 @@ public class Imaginary
     private final Double mV;
     private final Double mI;
 
-    private Imaginary(Builder builder) {
+    private Imaginary(_Builder builder) {
         mV = builder.mV;
         mI = builder.mI;
     }
@@ -107,7 +105,7 @@ public class Imaginary
         return mV != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         V(1, true, "v", TPrimitive.DOUBLE.provider(), null),
         I(2, false, "i", TPrimitive.DOUBLE.provider(), new TDefaultValueProvider<>(kDefaultI)),
         ;
@@ -118,7 +116,7 @@ public class Imaginary
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -169,18 +167,18 @@ public class Imaginary
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return Imaginary.Field.V;
-                case 2: return Imaginary.Field.I;
+                case 1: return _Field.V;
+                case 2: return _Field.I;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "v": return Imaginary.Field.V;
-                case "i": return Imaginary.Field.I;
+                case "v": return _Field.V;
+                case "i": return _Field.I;
             }
             return null;
         }
@@ -197,16 +195,16 @@ public class Imaginary
 
     public static final TStructDescriptor<Imaginary> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<Imaginary> {
         @Override
-        public Imaginary.Builder builder() {
-            return new Imaginary.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "number", "Imaginary", Imaginary.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "number", "Imaginary", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<Imaginary> provider() {
@@ -239,7 +237,7 @@ public class Imaginary
     public static final Parcelable.Creator<Imaginary> CREATOR = new Parcelable.Creator<Imaginary>() {
         @Override
         public Imaginary createFromParcel(Parcel source) {
-            Imaginary.Builder builder = new Imaginary.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -264,51 +262,51 @@ public class Imaginary
     };
 
     @Override
-    public Imaginary.Builder mutate() {
-        return new Imaginary.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static Imaginary.Builder builder() {
-        return new Imaginary.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<Imaginary> {
         private Double mV;
         private Double mI;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(Imaginary base) {
+        public _Builder(Imaginary base) {
             this();
 
             mV = base.mV;
             mI = base.mI;
         }
 
-        public Builder setV(double value) {
+        public _Builder setV(double value) {
             mV = value;
             return this;
         }
 
-        public Builder clearV() {
+        public _Builder clearV() {
             mV = null;
             return this;
         }
 
-        public Builder setI(double value) {
+        public _Builder setI(double value) {
             mI = value;
             return this;
         }
 
-        public Builder clearI() {
+        public _Builder clearI() {
             mI = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setV((double) value); break;
                 case 2: setI((double) value); break;

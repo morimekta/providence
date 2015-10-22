@@ -18,7 +18,7 @@ The main java struct interface:
 class MyStruct implements TMessage<MyStruct> {
   private final ObjectType mFieldName;
 
-  private MyStruct(Builder builder) {
+  private MyStruct(_Builder builder) {
     <if collection>
     mFieldName = Collections.unmodifiable<Ctype>(builder.mFieldName);
     <else>
@@ -46,11 +46,11 @@ class MyStruct implements TMessage<MyStruct> {
 
 ```java
   @Override
-  public Builder mutate() {
-    return new MyStruct.Builder(this);
+  public MyStruct._Builder mutate() {
+    return new MyStruct._Builder(this);
   }
 
-  public static class Builder extends TStructBuilder<MyStruct> {
+  public static class MyStruct._Builder extends TStructBuilder<MyStruct> {
     private ClassName mFieldName;
 
     public void setFieldName(TypeName value) {
@@ -122,29 +122,33 @@ Or
     public static Field forName(String name) {}
   }
 
-  public static final TStructType<MyStruct> DESCRIPTOR = \_createDescriptor();
+  private static final TStructType<MyStruct> sDescriptor = \_createDescriptor();
 
   public static TStructTypeProvider<MyStruct> provider() {
     return new TStructTypeProvider<MyStruct>() {
       @Override
       public TStructType<MyStruct> descriptor() {
-        return DESCRIPTOR;
+        return sDescriptor;
       }
     }
   }
 
-  public TStructType<MyStruct> descriptor() {
-    return DESCRIPTOR;
+  public TStructType<MyStruct> getDescriptor() {
+    return sDescriptor;
+  }
+  
+  public static TStructType<MyStruct> descriptor() {
+    return sDescriptor;
   }
 
-  private static class Factory implements TStructBuilderFactory<MyStruct> {
+  private static class \_Factory implements TStructBuilderFactory<MyStruct> {
     @Override
-    public MyStruct.Builder create() {
-      return new MyStruct.Builder();
+    public MyStruct._Builder create() {
+      return new MyStruct._Builder();
     }
   }
 
-  private static \_createDescriptor() {
+  static {
     return new TStructType<>(null, "package", "MyStruct", Field.values(), new Factory());
   }
 ```
@@ -176,7 +180,7 @@ fields, so is not forward compatible when fields are added.
   public static final Parcelable.Creator<ClassName> CREATOR = new Parcelable.Creator<>() {
     @Override
     public ClassName createFromParcel(Parcel source) {
-      Builder builder = new Builder();
+      \_Builder builder = new \_Builder();
       loop: while (source.dataAvail() > 0) {
         int field = source.readInt();
         switch (field) {
@@ -198,7 +202,7 @@ fields, so is not forward compatible when fields are added.
 
 ## Unions
 
-Unions also have the `Field unionField()` method which returns the last set
+Unions also have the `_Field unionField()` method which returns the last set
 field in the builder. Any valid union will have the matching field value set,
 and no other fields.
 
@@ -221,8 +225,8 @@ enum MyEnum implements TEnumValue<MyEnum> {
   </foreach>
   ;
 
-  public static MyEnum valueOf(int value) {}
-  public static MyEnum valueOf(String name) {}  // native method
+  public static MyEnum forValue(int value) {}
+  public static MyEnum forName(String name) {}
 }
 ```
 

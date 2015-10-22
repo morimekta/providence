@@ -1,8 +1,6 @@
 package org.apache.thrift.j2.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -42,7 +40,7 @@ public class ThriftField
     private final String mName;
     private final String mDefaultValue;
 
-    private ThriftField(Builder builder) {
+    private ThriftField(_Builder builder) {
         mComment = builder.mComment;
         mKey = builder.mKey;
         mIsRequired = builder.mIsRequired;
@@ -178,7 +176,7 @@ public class ThriftField
                mName != null;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
         KEY(2, true, "key", TPrimitive.I32.provider(), null),
         IS_REQUIRED(3, false, "is_required", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultIsRequired)),
@@ -193,7 +191,7 @@ public class ThriftField
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -244,16 +242,26 @@ public class ThriftField
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+        public static _Field forKey(int key) {
+            switch (key) {
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.KEY;
+                case 3: return _Field.IS_REQUIRED;
+                case 4: return _Field.TYPE;
+                case 5: return _Field.NAME;
+                case 6: return _Field.DEFAULT_VALUE;
+                default: return null;
             }
-            return null;
         }
 
-        public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+        public static _Field forName(String name) {
+            switch (name) {
+                case "comment": return _Field.COMMENT;
+                case "key": return _Field.KEY;
+                case "is_required": return _Field.IS_REQUIRED;
+                case "type": return _Field.TYPE;
+                case "name": return _Field.NAME;
+                case "default_value": return _Field.DEFAULT_VALUE;
             }
             return null;
         }
@@ -270,16 +278,16 @@ public class ThriftField
 
     public static final TStructDescriptor<ThriftField> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<ThriftField> {
         @Override
-        public ThriftField.Builder builder() {
-            return new ThriftField.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", ThriftField.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<ThriftField> provider() {
@@ -292,15 +300,15 @@ public class ThriftField
     }
 
     @Override
-    public ThriftField.Builder mutate() {
-        return new ThriftField.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static ThriftField.Builder builder() {
-        return new ThriftField.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<ThriftField> {
         private String mComment;
         private Integer mKey;
@@ -309,10 +317,10 @@ public class ThriftField
         private String mName;
         private String mDefaultValue;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(ThriftField base) {
+        public _Builder(ThriftField base) {
             this();
 
             mComment = base.mComment;
@@ -323,68 +331,68 @@ public class ThriftField
             mDefaultValue = base.mDefaultValue;
         }
 
-        public Builder setComment(String value) {
+        public _Builder setComment(String value) {
             mComment = value;
             return this;
         }
 
-        public Builder clearComment() {
+        public _Builder clearComment() {
             mComment = null;
             return this;
         }
 
-        public Builder setKey(int value) {
+        public _Builder setKey(int value) {
             mKey = value;
             return this;
         }
 
-        public Builder clearKey() {
+        public _Builder clearKey() {
             mKey = null;
             return this;
         }
 
-        public Builder setIsRequired(boolean value) {
+        public _Builder setIsRequired(boolean value) {
             mIsRequired = value;
             return this;
         }
 
-        public Builder clearIsRequired() {
+        public _Builder clearIsRequired() {
             mIsRequired = null;
             return this;
         }
 
-        public Builder setType(String value) {
+        public _Builder setType(String value) {
             mType = value;
             return this;
         }
 
-        public Builder clearType() {
+        public _Builder clearType() {
             mType = null;
             return this;
         }
 
-        public Builder setName(String value) {
+        public _Builder setName(String value) {
             mName = value;
             return this;
         }
 
-        public Builder clearName() {
+        public _Builder clearName() {
             mName = null;
             return this;
         }
 
-        public Builder setDefaultValue(String value) {
+        public _Builder setDefaultValue(String value) {
             mDefaultValue = value;
             return this;
         }
 
-        public Builder clearDefaultValue() {
+        public _Builder clearDefaultValue() {
             mDefaultValue = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setKey((int) value); break;

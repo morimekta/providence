@@ -1,6 +1,9 @@
-package org.apache.thrift.j2.model;
+package org.apache.test.naming;
 
 import java.io.Serializable;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -9,57 +12,39 @@ import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TUnionDescriptor;
+import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
-/** <name> (= <value>) */
-public class EnumValue
-        implements TMessage<EnumValue>, Serializable {
-    private final static int kDefaultValue = 0;
+public class Factory
+        implements TMessage<Factory>, Serializable, Parcelable {
+    private final Provider mFactory;
+    private final _Field tUnionField;
 
-    private final String mComment;
-    private final String mName;
-    private final Integer mValue;
 
-    private EnumValue(_Builder builder) {
-        mComment = builder.mComment;
-        mName = builder.mName;
-        mValue = builder.mValue;
+    private Factory(_Builder builder) {
+        mFactory = builder.mFactory;
+
+        tUnionField = builder.tUnionField;
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasFactory() {
+        return mFactory != null;
     }
 
-    public String getComment() {
-        return mComment;
+    public Provider getFactory() {
+        return mFactory;
     }
 
-    public boolean hasName() {
-        return mName != null;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public boolean hasValue() {
-        return mValue != null;
-    }
-
-    public int getValue() {
-        return hasValue() ? mValue : kDefaultValue;
+    public _Field unionField() {
+        return tUnionField;
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return hasValue();
+            case 1: return hasFactory();
             default: return false;
         }
     }
@@ -67,9 +52,7 @@ public class EnumValue
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return hasValue() ? 1 : 0;
+            case 1: return hasFactory() ? 1 : 0;
             default: return 0;
         }
     }
@@ -77,9 +60,7 @@ public class EnumValue
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getValue();
+            case 1: return getFactory();
             default: return null;
         }
     }
@@ -91,19 +72,15 @@ public class EnumValue
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof EnumValue)) return false;
-        EnumValue other = (EnumValue) o;
-        return TTypeUtils.equals(mComment, other.mComment) &&
-               TTypeUtils.equals(mName, other.mName) &&
-               TTypeUtils.equals(mValue, other.mValue);
+        if (o == null || !(o instanceof Factory)) return false;
+        Factory other = (Factory) o;
+        return TTypeUtils.equals(mFactory, other.mFactory);
     }
 
     @Override
     public int hashCode() {
-        return EnumValue.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mValue);
+        return Factory.class.hashCode() +
+               TTypeUtils.hashCode(mFactory);
     }
 
     @Override
@@ -113,13 +90,11 @@ public class EnumValue
 
     @Override
     public boolean isValid() {
-        return mName != null;
+        return (mFactory != null ? 1 : 0) == 1;
     }
 
     public enum _Field implements TField {
-        COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
-        NAME(2, true, "name", TPrimitive.STRING.provider(), null),
-        VALUE(3, false, "value", TPrimitive.I32.provider(), null),
+        FACTORY(1, false, "Factory", Provider.provider(), null),
         ;
 
         private final int mKey;
@@ -165,7 +140,7 @@ public class EnumValue
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(EnumValue.class.getSimpleName())
+            builder.append(Factory.class.getSimpleName())
                    .append('{')
                    .append(mKey)
                    .append(": ");
@@ -181,36 +156,32 @@ public class EnumValue
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
-                case 2: return _Field.NAME;
-                case 3: return _Field.VALUE;
+                case 1: return _Field.FACTORY;
                 default: return null;
             }
         }
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
-                case "name": return _Field.NAME;
-                case "value": return _Field.VALUE;
+                case "Factory": return _Field.FACTORY;
             }
             return null;
         }
     }
 
     @Override
-    public TStructDescriptor<EnumValue> getDescriptor() {
+    public TUnionDescriptor<Factory> getDescriptor() {
         return sDescriptor;
     }
 
-    public static TStructDescriptor<EnumValue> descriptor() {
+    public static TUnionDescriptor<Factory> descriptor() {
         return sDescriptor;
     }
 
-    public static final TStructDescriptor<EnumValue> sDescriptor;
+    public static final TUnionDescriptor<Factory> sDescriptor;
 
     private final static class _Factory
-            extends TMessageBuilderFactory<EnumValue> {
+            extends TMessageBuilderFactory<Factory> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -218,17 +189,55 @@ public class EnumValue
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), false);
+        sDescriptor = new TUnionDescriptor<>(null, "naming", "Factory", _Field.values(), new _Factory());
     }
 
-    public static TStructDescriptorProvider<EnumValue> provider() {
-        return new TStructDescriptorProvider<EnumValue>() {
+    public static TUnionDescriptorProvider<Factory> provider() {
+        return new TUnionDescriptorProvider<Factory>() {
             @Override
-            public TStructDescriptor<EnumValue> descriptor() {
+            public TUnionDescriptor<Factory> descriptor() {
                 return sDescriptor;
             }
         };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (hasFactory()) {
+            dest.writeInt(1);
+            dest.writeParcelable(mFactory, 0);
+        }
+        dest.writeInt(0);
+    }
+
+    public static final Parcelable.Creator<Factory> CREATOR = new Parcelable.Creator<Factory>() {
+        @Override
+        public Factory createFromParcel(Parcel source) {
+            _Builder builder = new _Builder();
+            loop: while (source.dataAvail() > 0) {
+                int field = source.readInt();
+                switch (field) {
+                    case 0: break loop;
+                    case 1:
+                        builder.setFactory((Provider) source.readParcelable(Provider.class.getClassLoader()));
+                        break;
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
+                }
+            }
+
+            return builder.build();
+        }
+
+        @Override
+        public Factory[] newArray(int size) {
+            return new Factory[size];
+        }
+    };
 
     @Override
     public _Builder mutate() {
@@ -240,70 +249,50 @@ public class EnumValue
     }
 
     public static class _Builder
-            extends TMessageBuilder<EnumValue> {
-        private String mComment;
-        private String mName;
-        private Integer mValue;
+            extends TMessageBuilder<Factory> {
+        private Provider mFactory;
+        private _Field tUnionField;
+
 
         public _Builder() {
         }
 
-        public _Builder(EnumValue base) {
+        public _Builder(Factory base) {
             this();
 
-            mComment = base.mComment;
-            mName = base.mName;
-            mValue = base.mValue;
+            mFactory = base.mFactory;
+
+            tUnionField = base.tUnionField;
         }
 
-        public _Builder setComment(String value) {
-            mComment = value;
+        public _Builder setFactory(Provider value) {
+            tUnionField = _Field.FACTORY;
+            mFactory = value;
             return this;
         }
 
-        public _Builder clearComment() {
-            mComment = null;
-            return this;
-        }
-
-        public _Builder setName(String value) {
-            mName = value;
-            return this;
-        }
-
-        public _Builder clearName() {
-            mName = null;
-            return this;
-        }
-
-        public _Builder setValue(int value) {
-            mValue = value;
-            return this;
-        }
-
-        public _Builder clearValue() {
-            mValue = null;
+        public _Builder clearFactory() {
+            if (mFactory != null) tUnionField = null;
+            mFactory = null;
             return this;
         }
 
         @Override
         public _Builder set(int key, Object value) {
             switch (key) {
-                case 1: setComment((String) value); break;
-                case 2: setName((String) value); break;
-                case 3: setValue((int) value); break;
+                case 1: setFactory((Provider) value); break;
             }
             return this;
         }
 
         @Override
         public boolean isValid() {
-            return mName != null;
+            return (mFactory != null ? 1 : 0) == 1;
         }
 
         @Override
-        public EnumValue build() {
-            return new EnumValue(this);
+        public Factory build() {
+            return new Factory(this);
         }
     }
 }

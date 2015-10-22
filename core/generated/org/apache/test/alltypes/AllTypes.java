@@ -1,8 +1,6 @@
 package org.apache.test.alltypes;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -45,7 +43,7 @@ public class AllTypes
     private final Other mO;
     private final AllTypes mSelf;
 
-    private AllTypes(Builder builder) {
+    private AllTypes(_Builder builder) {
         mBl = builder.mBl;
         mBt = builder.mBt;
         mSh = builder.mSh;
@@ -249,7 +247,7 @@ public class AllTypes
         return true;
     }
 
-    public enum Field implements TField {
+    public enum _Field implements TField {
         BL(1, false, "bl", TPrimitive.BOOL.provider(), new TDefaultValueProvider<>(kDefaultBl)),
         BT(2, false, "bt", TPrimitive.BYTE.provider(), new TDefaultValueProvider<>(kDefaultBt)),
         SH(3, false, "sh", TPrimitive.I16.provider(), new TDefaultValueProvider<>(kDefaultSh)),
@@ -269,7 +267,7 @@ public class AllTypes
         private final TDescriptorProvider<?> mTypeProvider;
         private final TValueProvider<?> mDefaultValue;
 
-        Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
+        _Field(int key, boolean required, String name, TDescriptorProvider<?> typeProvider, TValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -320,36 +318,36 @@ public class AllTypes
             return builder.toString();
         }
 
-        public static Field forKey(int key) {
+        public static _Field forKey(int key) {
             switch (key) {
-                case 1: return AllTypes.Field.BL;
-                case 2: return AllTypes.Field.BT;
-                case 3: return AllTypes.Field.SH;
-                case 4: return AllTypes.Field.I;
-                case 5: return AllTypes.Field.L;
-                case 6: return AllTypes.Field.D;
-                case 7: return AllTypes.Field.S;
-                case 8: return AllTypes.Field.BN;
-                case 9: return AllTypes.Field.V;
-                case 10: return AllTypes.Field.O;
-                case 11: return AllTypes.Field.SELF;
+                case 1: return _Field.BL;
+                case 2: return _Field.BT;
+                case 3: return _Field.SH;
+                case 4: return _Field.I;
+                case 5: return _Field.L;
+                case 6: return _Field.D;
+                case 7: return _Field.S;
+                case 8: return _Field.BN;
+                case 9: return _Field.V;
+                case 10: return _Field.O;
+                case 11: return _Field.SELF;
                 default: return null;
             }
         }
 
-        public static Field forName(String name) {
+        public static _Field forName(String name) {
             switch (name) {
-                case "bl": return AllTypes.Field.BL;
-                case "bt": return AllTypes.Field.BT;
-                case "sh": return AllTypes.Field.SH;
-                case "i": return AllTypes.Field.I;
-                case "l": return AllTypes.Field.L;
-                case "d": return AllTypes.Field.D;
-                case "s": return AllTypes.Field.S;
-                case "bn": return AllTypes.Field.BN;
-                case "v": return AllTypes.Field.V;
-                case "o": return AllTypes.Field.O;
-                case "self": return AllTypes.Field.SELF;
+                case "bl": return _Field.BL;
+                case "bt": return _Field.BT;
+                case "sh": return _Field.SH;
+                case "i": return _Field.I;
+                case "l": return _Field.L;
+                case "d": return _Field.D;
+                case "s": return _Field.S;
+                case "bn": return _Field.BN;
+                case "v": return _Field.V;
+                case "o": return _Field.O;
+                case "self": return _Field.SELF;
             }
             return null;
         }
@@ -366,16 +364,16 @@ public class AllTypes
 
     public static final TStructDescriptor<AllTypes> sDescriptor;
 
-    private final static class Factory
+    private final static class _Factory
             extends TMessageBuilderFactory<AllTypes> {
         @Override
-        public AllTypes.Builder builder() {
-            return new AllTypes.Builder();
+        public _Builder builder() {
+            return new _Builder();
         }
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "alltypes", "AllTypes", AllTypes.Field.values(), new Factory(), false);
+        sDescriptor = new TStructDescriptor<>(null, "alltypes", "AllTypes", _Field.values(), new _Factory(), false);
     }
 
     public static TStructDescriptorProvider<AllTypes> provider() {
@@ -445,7 +443,7 @@ public class AllTypes
     public static final Parcelable.Creator<AllTypes> CREATOR = new Parcelable.Creator<AllTypes>() {
         @Override
         public AllTypes createFromParcel(Parcel source) {
-            AllTypes.Builder builder = new AllTypes.Builder();
+            _Builder builder = new _Builder();
             loop: while (source.dataAvail() > 0) {
                 int field = source.readInt();
                 switch (field) {
@@ -501,15 +499,15 @@ public class AllTypes
     };
 
     @Override
-    public AllTypes.Builder mutate() {
-        return new AllTypes.Builder(this);
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
-    public static AllTypes.Builder builder() {
-        return new AllTypes.Builder();
+    public static _Builder builder() {
+        return new _Builder();
     }
 
-    public static class Builder
+    public static class _Builder
             extends TMessageBuilder<AllTypes> {
         private Boolean mBl;
         private Byte mBt;
@@ -523,10 +521,10 @@ public class AllTypes
         private Other mO;
         private AllTypes mSelf;
 
-        public Builder() {
+        public _Builder() {
         }
 
-        public Builder(AllTypes base) {
+        public _Builder(AllTypes base) {
             this();
 
             mBl = base.mBl;
@@ -542,118 +540,118 @@ public class AllTypes
             mSelf = base.mSelf;
         }
 
-        public Builder setBl(boolean value) {
+        public _Builder setBl(boolean value) {
             mBl = value;
             return this;
         }
 
-        public Builder clearBl() {
+        public _Builder clearBl() {
             mBl = null;
             return this;
         }
 
-        public Builder setBt(byte value) {
+        public _Builder setBt(byte value) {
             mBt = value;
             return this;
         }
 
-        public Builder clearBt() {
+        public _Builder clearBt() {
             mBt = null;
             return this;
         }
 
-        public Builder setSh(short value) {
+        public _Builder setSh(short value) {
             mSh = value;
             return this;
         }
 
-        public Builder clearSh() {
+        public _Builder clearSh() {
             mSh = null;
             return this;
         }
 
-        public Builder setI(int value) {
+        public _Builder setI(int value) {
             mI = value;
             return this;
         }
 
-        public Builder clearI() {
+        public _Builder clearI() {
             mI = null;
             return this;
         }
 
-        public Builder setL(long value) {
+        public _Builder setL(long value) {
             mL = value;
             return this;
         }
 
-        public Builder clearL() {
+        public _Builder clearL() {
             mL = null;
             return this;
         }
 
-        public Builder setD(double value) {
+        public _Builder setD(double value) {
             mD = value;
             return this;
         }
 
-        public Builder clearD() {
+        public _Builder clearD() {
             mD = null;
             return this;
         }
 
-        public Builder setS(String value) {
+        public _Builder setS(String value) {
             mS = value;
             return this;
         }
 
-        public Builder clearS() {
+        public _Builder clearS() {
             mS = null;
             return this;
         }
 
-        public Builder setBn(byte[] value) {
+        public _Builder setBn(byte[] value) {
             mBn = value;
             return this;
         }
 
-        public Builder clearBn() {
+        public _Builder clearBn() {
             mBn = null;
             return this;
         }
 
-        public Builder setV(Values value) {
+        public _Builder setV(Values value) {
             mV = value;
             return this;
         }
 
-        public Builder clearV() {
+        public _Builder clearV() {
             mV = null;
             return this;
         }
 
-        public Builder setO(Other value) {
+        public _Builder setO(Other value) {
             mO = value;
             return this;
         }
 
-        public Builder clearO() {
+        public _Builder clearO() {
             mO = null;
             return this;
         }
 
-        public Builder setSelf(AllTypes value) {
+        public _Builder setSelf(AllTypes value) {
             mSelf = value;
             return this;
         }
 
-        public Builder clearSelf() {
+        public _Builder clearSelf() {
             mSelf = null;
             return this;
         }
 
         @Override
-        public Builder set(int key, Object value) {
+        public _Builder set(int key, Object value) {
             switch (key) {
                 case 1: setBl((boolean) value); break;
                 case 2: setBt((byte) value); break;

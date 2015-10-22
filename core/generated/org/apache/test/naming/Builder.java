@@ -1,65 +1,48 @@
-package org.apache.thrift.j2.model;
+package org.apache.test.naming;
 
 import java.io.Serializable;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TExceptionDescriptor;
+import org.apache.thrift.j2.descriptor.TExceptionDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
-/** <name> (= <value>) */
-public class EnumValue
-        implements TMessage<EnumValue>, Serializable {
-    private final static int kDefaultValue = 0;
+public class Builder
+        extends TException
+        implements TMessage<Builder>, Serializable, Parcelable {
+    private final static long serialVersionUID = 642363033467540783L;
 
-    private final String mComment;
-    private final String mName;
-    private final Integer mValue;
+    private final Builder mBuilder;
 
-    private EnumValue(_Builder builder) {
-        mComment = builder.mComment;
-        mName = builder.mName;
-        mValue = builder.mValue;
+    private Builder(_Builder builder) {
+        super(builder.createMessage());
+
+        mBuilder = builder.mBuilder;
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasBuilder() {
+        return mBuilder != null;
     }
 
-    public String getComment() {
-        return mComment;
-    }
-
-    public boolean hasName() {
-        return mName != null;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public boolean hasValue() {
-        return mValue != null;
-    }
-
-    public int getValue() {
-        return hasValue() ? mValue : kDefaultValue;
+    public Builder getBuilder() {
+        return mBuilder;
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return hasValue();
+            case 1: return hasBuilder();
             default: return false;
         }
     }
@@ -67,9 +50,7 @@ public class EnumValue
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return hasValue() ? 1 : 0;
+            case 1: return hasBuilder() ? 1 : 0;
             default: return 0;
         }
     }
@@ -77,9 +58,7 @@ public class EnumValue
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getValue();
+            case 1: return getBuilder();
             default: return null;
         }
     }
@@ -91,19 +70,15 @@ public class EnumValue
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof EnumValue)) return false;
-        EnumValue other = (EnumValue) o;
-        return TTypeUtils.equals(mComment, other.mComment) &&
-               TTypeUtils.equals(mName, other.mName) &&
-               TTypeUtils.equals(mValue, other.mValue);
+        if (o == null || !(o instanceof Builder)) return false;
+        Builder other = (Builder) o;
+        return TTypeUtils.equals(mBuilder, other.mBuilder);
     }
 
     @Override
     public int hashCode() {
-        return EnumValue.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mValue);
+        return Builder.class.hashCode() +
+               TTypeUtils.hashCode(mBuilder);
     }
 
     @Override
@@ -113,13 +88,11 @@ public class EnumValue
 
     @Override
     public boolean isValid() {
-        return mName != null;
+        return true;
     }
 
     public enum _Field implements TField {
-        COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
-        NAME(2, true, "name", TPrimitive.STRING.provider(), null),
-        VALUE(3, false, "value", TPrimitive.I32.provider(), null),
+        BUILDER(1, false, "Builder", Builder.provider(), null),
         ;
 
         private final int mKey;
@@ -165,7 +138,7 @@ public class EnumValue
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(EnumValue.class.getSimpleName())
+            builder.append(Builder.class.getSimpleName())
                    .append('{')
                    .append(mKey)
                    .append(": ");
@@ -181,36 +154,32 @@ public class EnumValue
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
-                case 2: return _Field.NAME;
-                case 3: return _Field.VALUE;
+                case 1: return _Field.BUILDER;
                 default: return null;
             }
         }
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
-                case "name": return _Field.NAME;
-                case "value": return _Field.VALUE;
+                case "Builder": return _Field.BUILDER;
             }
             return null;
         }
     }
 
     @Override
-    public TStructDescriptor<EnumValue> getDescriptor() {
+    public TExceptionDescriptor<Builder> getDescriptor() {
         return sDescriptor;
     }
 
-    public static TStructDescriptor<EnumValue> descriptor() {
+    public static TExceptionDescriptor<Builder> descriptor() {
         return sDescriptor;
     }
 
-    public static final TStructDescriptor<EnumValue> sDescriptor;
+    public static final TExceptionDescriptor<Builder> sDescriptor;
 
     private final static class _Factory
-            extends TMessageBuilderFactory<EnumValue> {
+            extends TMessageBuilderFactory<Builder> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -218,17 +187,55 @@ public class EnumValue
     }
 
     static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), false);
+        sDescriptor = new TExceptionDescriptor<>(null, "naming", "Builder", _Field.values(), new _Factory());
     }
 
-    public static TStructDescriptorProvider<EnumValue> provider() {
-        return new TStructDescriptorProvider<EnumValue>() {
+    public static TExceptionDescriptorProvider<Builder> provider() {
+        return new TExceptionDescriptorProvider<Builder>() {
             @Override
-            public TStructDescriptor<EnumValue> descriptor() {
+            public TExceptionDescriptor<Builder> descriptor() {
                 return sDescriptor;
             }
         };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (hasBuilder()) {
+            dest.writeInt(1);
+            dest.writeParcelable(mBuilder, 0);
+        }
+        dest.writeInt(0);
+    }
+
+    public static final Parcelable.Creator<Builder> CREATOR = new Parcelable.Creator<Builder>() {
+        @Override
+        public Builder createFromParcel(Parcel source) {
+            _Builder builder = new _Builder();
+            loop: while (source.dataAvail() > 0) {
+                int field = source.readInt();
+                switch (field) {
+                    case 0: break loop;
+                    case 1:
+                        builder.setBuilder((Builder) source.readParcelable(Builder.class.getClassLoader()));
+                        break;
+                    default: throw new IllegalArgumentException("Unknown field ID: " + field);
+                }
+            }
+
+            return builder.build();
+        }
+
+        @Override
+        public Builder[] newArray(int size) {
+            return new Builder[size];
+        }
+    };
 
     @Override
     public _Builder mutate() {
@@ -240,70 +247,58 @@ public class EnumValue
     }
 
     public static class _Builder
-            extends TMessageBuilder<EnumValue> {
-        private String mComment;
-        private String mName;
-        private Integer mValue;
+            extends TMessageBuilder<Builder> {
+        private Builder mBuilder;
 
         public _Builder() {
         }
 
-        public _Builder(EnumValue base) {
+        public _Builder(Builder base) {
             this();
 
-            mComment = base.mComment;
-            mName = base.mName;
-            mValue = base.mValue;
+            mBuilder = base.mBuilder;
         }
 
-        public _Builder setComment(String value) {
-            mComment = value;
+        public _Builder setBuilder(Builder value) {
+            mBuilder = value;
             return this;
         }
 
-        public _Builder clearComment() {
-            mComment = null;
-            return this;
-        }
-
-        public _Builder setName(String value) {
-            mName = value;
-            return this;
-        }
-
-        public _Builder clearName() {
-            mName = null;
-            return this;
-        }
-
-        public _Builder setValue(int value) {
-            mValue = value;
-            return this;
-        }
-
-        public _Builder clearValue() {
-            mValue = null;
+        public _Builder clearBuilder() {
+            mBuilder = null;
             return this;
         }
 
         @Override
         public _Builder set(int key, Object value) {
             switch (key) {
-                case 1: setComment((String) value); break;
-                case 2: setName((String) value); break;
-                case 3: setValue((int) value); break;
+                case 1: setBuilder((Builder) value); break;
             }
             return this;
         }
 
         @Override
         public boolean isValid() {
-            return mName != null;
+            return true;
+        }
+
+        protected String createMessage() {
+            StringBuilder builder = new StringBuilder();
+            builder.append('{');
+            boolean first = true;
+            if (mBuilder != null) {
+                if (first) first = false;
+                else builder.append(',');
+                builder.append("Builder:");
+                builder.append(TTypeUtils.toString(mBuilder));
+            }
+            builder.append('}');
+            return builder.toString();
         }
 
         @Override
-        public EnumValue build() {
-            return new EnumValue(this);
+        public Builder build() {
+            return new Builder(this);
         }
     }
 }
