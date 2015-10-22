@@ -77,6 +77,9 @@ public class Java2MessageFormatter {
         if (type.getComment() != null) {
             Java2Utils.appendBlockComment(writer, type.getComment());
         }
+        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+            writer.appendln(Java2Utils.DEPRECATED);
+        }
 
         appendClassDefinitionStart(writer, type);
 

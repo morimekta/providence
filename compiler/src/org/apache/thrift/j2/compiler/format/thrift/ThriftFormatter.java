@@ -50,10 +50,6 @@ import java.util.Map.Entry;
  * @since 04.09.15
  */
 public class ThriftFormatter {
-    private static final String TRUE  = "true";
-    private static final String FALSE = "false";
-    private static final char   QUOTE = '\"';
-
     private static final String BLOCK_COMMENT_START = "/**";
     private static final String BLOCK_COMMENT_LINE  = " * ";
     private static final String BLOCK_COMMENT_END   = " */";
@@ -314,10 +310,6 @@ public class ThriftFormatter {
                 TContainer<?, ?> cType = (TContainer<?, ?>) type;
                 @SuppressWarnings("unchecked")
                 Collection<Object> collection = (Collection<Object>) value;
-                if (collection.isEmpty()) {
-                    writer.append("[]");
-                    break;
-                }
                 writer.append('[')
                       .begin();
                 boolean first = true;
@@ -340,10 +332,6 @@ public class ThriftFormatter {
                 TMap<?, ?> mType = (TMap<?, ?>) type;
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) value;
-                if (map.isEmpty()) {
-                    writer.append("{}");
-                    break;
-                }
                 writer.append('{').begin();
                 first = true;
                 for (Entry<Object, Object> entry : map.entrySet()) {

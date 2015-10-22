@@ -19,23 +19,23 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
-import java.io.File;
-import java.util.regex.Pattern;
-
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
-import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.TStringUtils;
+import org.apache.thrift.j2.util.io.IndentedPrintWriter;
+
+import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * @author Stein Eldar Johnsen <steineldar@zedge.net>
  * @since 07.09.15
  */
 public class Java2Utils {
-    private static final Pattern DEPRECATED_RE = Pattern.compile("\\b[@]Deprecated\\b", Pattern.CASE_INSENSITIVE);
-    private static final String DEPRECATED = "@Deprecated";
+    private static final Pattern DEPRECATED_RE = Pattern.compile("[@][Dd]eprecated\\b", Pattern.MULTILINE);
+    protected static final String DEPRECATED = "@Deprecated";
 
     public static long generateSerialVersionUID(TStructDescriptor<?> type) {
         String string = type.getVariant().getName() + " " + type.getQualifiedName(null);
