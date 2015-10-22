@@ -90,8 +90,8 @@ public class TerminatedInputStream extends InputStream {
             int out = mBuffer[0] % 0x100;
             int read = mIn.read();
             if (read < 0) {
-                --mBufferLen;
                 shiftBuffer((byte) 0);
+                --mBufferLen;
             } else {
                 shiftBuffer((byte) read);
             }

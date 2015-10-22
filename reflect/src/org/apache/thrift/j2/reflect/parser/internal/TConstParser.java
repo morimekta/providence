@@ -22,6 +22,7 @@ package org.apache.thrift.j2.reflect.parser.internal;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
+import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
@@ -229,12 +230,16 @@ public class TConstParser {
                     }
                     token = tokenizer.expect("parsing map key.");
                     while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
-                        if (!token.isLiteral()) {
-                            throw new JsonException("Unexpected map key format " + token,
-                                                    tokenizer,
-                                                    token);
+                        Object key;
+                        if (token.isLiteral()) {
+                            key = parsePrimitiveKey(token.literalValue(), keyType);
+                        } else {
+                            if (keyType.getType().equals(TType.STRING) || keyType.getType().equals(TType.BINARY)) {
+                                throw new JsonException("Expected string literal for string key", tokenizer, token);
+                            }
+                            key = parsePrimitiveKey(token.getToken(), keyType);
                         }
-                        Object key = parsePrimitiveKey(token.literalValue(), keyType);
+
                         tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "parsing map (kv)");
                         map.put(key,
                                 parseTypedValue(tokenizer.expect("parsing map value."),
