@@ -202,15 +202,19 @@ public class Category
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Category.Field.NAME;
+                case 2: return Category.Field.ID;
+                case 3: return Category.Field.LABEL;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "name": return Category.Field.NAME;
+                case "id": return Category.Field.ID;
+                case "label": return Category.Field.LABEL;
             }
             return null;
         }

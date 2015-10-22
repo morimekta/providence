@@ -41,17 +41,25 @@ public enum Operator implements TEnumValue<Operator> {
     }
 
     public static Operator forValue(int value) {
-        for (Operator e : values()) {
-            if (e.mValue == value) return e;
+        switch (value) {
+            case 1: return Operator.IDENTITY;
+            case 2: return Operator.ADD;
+            case 3: return Operator.SUBTRACT;
+            case 4: return Operator.MULTIPLY;
+            case 5: return Operator.DIVIDE;
+            default: return null;
         }
-        return null;
     }
 
     public static Operator forName(String name) {
-        for (Operator e : values()) {
-            if (e.mName.equals(name)) return e;
+        switch (name) {
+            case "IDENTITY": return Operator.IDENTITY;
+            case "ADD": return Operator.ADD;
+            case "SUBTRACT": return Operator.SUBTRACT;
+            case "MULTIPLY": return Operator.MULTIPLY;
+            case "DIVIDE": return Operator.DIVIDE;
+            default: return null;
         }
-        return null;
     }
 
     public static class Builder extends TEnumBuilder<Operator> {

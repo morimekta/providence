@@ -286,15 +286,31 @@ public class Primitives
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Primitives.Field.BL;
+                case 2: return Primitives.Field.BT;
+                case 3: return Primitives.Field.SH;
+                case 4: return Primitives.Field.I;
+                case 5: return Primitives.Field.L;
+                case 6: return Primitives.Field.D;
+                case 7: return Primitives.Field.S;
+                case 8: return Primitives.Field.BN;
+                case 9: return Primitives.Field.V;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "bl": return Primitives.Field.BL;
+                case "bt": return Primitives.Field.BT;
+                case "sh": return Primitives.Field.SH;
+                case "i": return Primitives.Field.I;
+                case "l": return Primitives.Field.L;
+                case "d": return Primitives.Field.D;
+                case "s": return Primitives.Field.S;
+                case "bn": return Primitives.Field.BN;
+                case "v": return Primitives.Field.V;
             }
             return null;
         }

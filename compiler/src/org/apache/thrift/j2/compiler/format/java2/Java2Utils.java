@@ -49,6 +49,7 @@ public class Java2Utils {
     }
 
     public static boolean hasDeprecatedAnnotation(String comment) {
+        if (comment == null) return false;
         return DEPRECATED_RE.matcher(comment).find();
     }
 

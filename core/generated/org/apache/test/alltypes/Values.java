@@ -41,17 +41,25 @@ public enum Values implements TEnumValue<Values> {
     }
 
     public static Values forValue(int value) {
-        for (Values e : values()) {
-            if (e.mValue == value) return e;
+        switch (value) {
+            case 5: return Values.FIRST;
+            case 3: return Values.SECOND;
+            case 4: return Values.THIRD;
+            case 1: return Values.FOURTH;
+            case 2: return Values.FIFTH;
+            default: return null;
         }
-        return null;
     }
 
     public static Values forName(String name) {
-        for (Values e : values()) {
-            if (e.mName.equals(name)) return e;
+        switch (name) {
+            case "FIRST": return Values.FIRST;
+            case "SECOND": return Values.SECOND;
+            case "THIRD": return Values.THIRD;
+            case "FOURTH": return Values.FOURTH;
+            case "FIFTH": return Values.FIFTH;
+            default: return null;
         }
-        return null;
     }
 
     public static class Builder extends TEnumBuilder<Values> {

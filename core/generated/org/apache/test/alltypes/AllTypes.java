@@ -321,15 +321,35 @@ public class AllTypes
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return AllTypes.Field.BL;
+                case 2: return AllTypes.Field.BT;
+                case 3: return AllTypes.Field.SH;
+                case 4: return AllTypes.Field.I;
+                case 5: return AllTypes.Field.L;
+                case 6: return AllTypes.Field.D;
+                case 7: return AllTypes.Field.S;
+                case 8: return AllTypes.Field.BN;
+                case 9: return AllTypes.Field.V;
+                case 10: return AllTypes.Field.O;
+                case 11: return AllTypes.Field.SELF;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "bl": return AllTypes.Field.BL;
+                case "bt": return AllTypes.Field.BT;
+                case "sh": return AllTypes.Field.SH;
+                case "i": return AllTypes.Field.I;
+                case "l": return AllTypes.Field.L;
+                case "d": return AllTypes.Field.D;
+                case "s": return AllTypes.Field.S;
+                case "bn": return AllTypes.Field.BN;
+                case "v": return AllTypes.Field.V;
+                case "o": return AllTypes.Field.O;
+                case "self": return AllTypes.Field.SELF;
             }
             return null;
         }

@@ -195,15 +195,19 @@ public class Operand
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Operand.Field.OPERATION;
+                case 2: return Operand.Field.NUMBER;
+                case 3: return Operand.Field.IMAGINARY;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "operation": return Operand.Field.OPERATION;
+                case "number": return Operand.Field.NUMBER;
+                case "imaginary": return Operand.Field.IMAGINARY;
             }
             return null;
         }

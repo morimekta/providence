@@ -172,15 +172,17 @@ public class CalculateException
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return CalculateException.Field.MESSAGE;
+                case 2: return CalculateException.Field.OPERATION;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "message": return CalculateException.Field.MESSAGE;
+                case "operation": return CalculateException.Field.OPERATION;
             }
             return null;
         }

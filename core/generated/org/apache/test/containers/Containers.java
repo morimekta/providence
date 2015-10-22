@@ -630,15 +630,73 @@ public class Containers
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Containers.Field.LBL;
+                case 2: return Containers.Field.LBT;
+                case 3: return Containers.Field.LSH;
+                case 4: return Containers.Field.LI;
+                case 5: return Containers.Field.LL;
+                case 6: return Containers.Field.LD;
+                case 7: return Containers.Field.LS;
+                case 8: return Containers.Field.LBN;
+                case 11: return Containers.Field.SBL;
+                case 12: return Containers.Field.SBT;
+                case 13: return Containers.Field.SSH;
+                case 14: return Containers.Field.SI;
+                case 15: return Containers.Field.SL;
+                case 16: return Containers.Field.SD;
+                case 17: return Containers.Field.SS;
+                case 18: return Containers.Field.SBN;
+                case 21: return Containers.Field.MBL;
+                case 22: return Containers.Field.MBT;
+                case 23: return Containers.Field.MSH;
+                case 24: return Containers.Field.MI;
+                case 25: return Containers.Field.ML;
+                case 26: return Containers.Field.MD;
+                case 27: return Containers.Field.MS;
+                case 28: return Containers.Field.MBN;
+                case 31: return Containers.Field.LV;
+                case 32: return Containers.Field.SV;
+                case 33: return Containers.Field.MV;
+                case 41: return Containers.Field.LP;
+                case 42: return Containers.Field.SP;
+                case 43: return Containers.Field.MP;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "lbl": return Containers.Field.LBL;
+                case "lbt": return Containers.Field.LBT;
+                case "lsh": return Containers.Field.LSH;
+                case "li": return Containers.Field.LI;
+                case "ll": return Containers.Field.LL;
+                case "ld": return Containers.Field.LD;
+                case "ls": return Containers.Field.LS;
+                case "lbn": return Containers.Field.LBN;
+                case "sbl": return Containers.Field.SBL;
+                case "sbt": return Containers.Field.SBT;
+                case "ssh": return Containers.Field.SSH;
+                case "si": return Containers.Field.SI;
+                case "sl": return Containers.Field.SL;
+                case "sd": return Containers.Field.SD;
+                case "ss": return Containers.Field.SS;
+                case "sbn": return Containers.Field.SBN;
+                case "mbl": return Containers.Field.MBL;
+                case "mbt": return Containers.Field.MBT;
+                case "msh": return Containers.Field.MSH;
+                case "mi": return Containers.Field.MI;
+                case "ml": return Containers.Field.ML;
+                case "md": return Containers.Field.MD;
+                case "ms": return Containers.Field.MS;
+                case "mbn": return Containers.Field.MBN;
+                case "lv": return Containers.Field.LV;
+                case "sv": return Containers.Field.SV;
+                case "mv": return Containers.Field.MV;
+                case "lp": return Containers.Field.LP;
+                case "sp": return Containers.Field.SP;
+                case "mp": return Containers.Field.MP;
             }
             return null;
         }

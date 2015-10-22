@@ -106,24 +106,30 @@ public class Java2EnumFormatter {
 
         writer.formatln("public static %s forValue(int value) {", simpleClass)
               .begin()
-              .formatln("for (%s e : values()) {", simpleClass)
-              .begin()
-              .appendln("if (e.mValue == value) return e;")
+              .appendln("switch (value) {")
+              .begin();
+        for (TEnumValue<?> value : type.getValues()) {
+            writer.formatln("case %d: return %s.%s;",
+                            value.getValue(), simpleClass, value.getName().toUpperCase());
+        }
+        writer.appendln("default: return null;")
               .end()
               .appendln('}')
-              .appendln("return null;")
               .end()
               .appendln('}')
               .newline();
 
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()
-              .formatln("for (%s e : values()) {", simpleClass)
-              .begin()
-              .appendln("if (e.mName.equals(name)) return e;")
+              .appendln("switch (name) {")
+              .begin();
+        for (TEnumValue<?> value : type.getValues()) {
+            writer.formatln("case \"%s\": return %s.%s;",
+                            value.getName(), simpleClass, value.getName().toUpperCase());
+        }
+        writer.appendln("default: return null;")
               .end()
               .appendln('}')
-              .appendln("return null;")
               .end()
               .appendln('}')
               .newline();

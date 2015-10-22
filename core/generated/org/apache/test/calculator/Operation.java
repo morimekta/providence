@@ -168,15 +168,17 @@ public class Operation
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Operation.Field.OPERATOR;
+                case 2: return Operation.Field.OPERANDS;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "operator": return Operation.Field.OPERATOR;
+                case "operands": return Operation.Field.OPERANDS;
             }
             return null;
         }

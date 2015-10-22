@@ -170,15 +170,17 @@ public class Imaginary
         }
 
         public static Field forKey(int key) {
-            for (Field field : values()) {
-                if (field.mKey == key) return field;
+            switch (key) {
+                case 1: return Imaginary.Field.V;
+                case 2: return Imaginary.Field.I;
+                default: return null;
             }
-            return null;
         }
 
         public static Field forName(String name) {
-            for (Field field : values()) {
-                if (field.mName.equals(name)) return field;
+            switch (name) {
+                case "v": return Imaginary.Field.V;
+                case "i": return Imaginary.Field.I;
             }
             return null;
         }

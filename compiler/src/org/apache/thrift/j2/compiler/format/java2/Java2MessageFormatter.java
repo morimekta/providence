@@ -861,18 +861,28 @@ public class Java2MessageFormatter {
 
         writer.appendln("public static Field forKey(int key) {")
               .begin()
-              .appendln("for (Field field : values()) {")
-              .appendln("    if (field.mKey == key) return field;")
+              .appendln("switch (key) {")
+              .begin();
+        for (TField<?> field : type.getFields()) {
+            writer.formatln("case %d: return %s.Field.%s;",
+                            field.getKey(), simpleClass, c_case("", field.getName()).toUpperCase());
+        }
+        writer.appendln("default: return null;")
+              .end()
               .appendln('}')
-              .appendln("return null;")
               .end()
               .appendln('}')
               .newline();
 
         writer.appendln("public static Field forName(String name) {")
               .begin()
-              .appendln("for (Field field : values()) {")
-              .appendln("    if (field.mName.equals(name)) return field;")
+              .appendln("switch (name) {")
+              .begin();
+        for (TField<?> field : type.getFields()) {
+            writer.formatln("case \"%s\": return %s.Field.%s;",
+                            field.getName(), simpleClass, c_case("", field.getName()).toUpperCase());
+        }
+        writer.end()
               .appendln('}')
               .appendln("return null;")
               .end()
