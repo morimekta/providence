@@ -13,6 +13,7 @@ java_library(
     ":core",
     "//third-party/android:android-sdk",
   ],
+  visibility = ["PUBLIC"],
 )
 
 java_test(

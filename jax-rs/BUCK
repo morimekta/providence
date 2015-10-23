@@ -7,3 +7,15 @@ java_library(
   ],
   visibility = [ "PUBLIC" ],
 )
+
+java_test(
+  name = "test",
+  srcs = glob(["test/**/*.java"]),
+  deps = [
+    ":jax-rs",
+    "//core:core",
+    "//core:generated",
+    "//third-party/junit:junit",
+    "//third-party/javax-ws-rs:javax-ws-rs-api"
+  ],
+)
