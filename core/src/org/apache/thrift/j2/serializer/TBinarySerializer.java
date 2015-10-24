@@ -394,7 +394,7 @@ public class TBinarySerializer
                     case 2: return Short.MIN_VALUE;
                     case 4: return Integer.MIN_VALUE;
                     case 8: return Long.MIN_VALUE;
-                    default: return - (1l << (numBytes * 8));
+                    default: return - (1L << (numBytes * 8));
                 }
             }
             shift += 8;
@@ -525,14 +525,14 @@ public class TBinarySerializer
         for (int i = 0; i < bytes; ++i) {
             int write;
             if (i == (bytes -1)) {
-                write = (int) (number & 0x7fl);
+                write = (int) (number & 0x7fL);
                 if (negative)
                     write |= 0x80;
             } else {
-                write = (int) (number & 0xffl);
+                write = (int) (number & 0xffL);
             }
             out.write(write);
-            number = number & 0xffffffffffffff00l;
+            number = number & 0xffffffffffffff00L;
             number = number >> 8;
         }
         if (number > 0) {
@@ -551,7 +551,7 @@ public class TBinarySerializer
     protected int writeUnsigned(OutputStream out, long number, final int bytes) throws IOException {
         for (int i = 0; i < bytes; ++i) {
             out.write((int) number & 0xff);
-            number = number & 0xffffffffffffff00l;
+            number = number & 0xffffffffffffff00L;
             number = number >> 8;
         }
         return bytes;
