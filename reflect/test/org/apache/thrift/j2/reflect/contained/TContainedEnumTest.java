@@ -19,13 +19,11 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
-import org.apache.thrift.j2.TEnumValue;
-import org.apache.thrift.j2.descriptor.TEnumDescriptor;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,7 +32,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by morimekta on 05.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 05.09.15
  */
 public class TContainedEnumTest {
     private TContainedEnumDescriptor mType;

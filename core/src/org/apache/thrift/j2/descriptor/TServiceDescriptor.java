@@ -29,7 +29,7 @@ import org.apache.thrift.j2.TMessage;
 /**
  * The definition of a thrift structure.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 13.09.15
  */
 public class TServiceDescriptor {

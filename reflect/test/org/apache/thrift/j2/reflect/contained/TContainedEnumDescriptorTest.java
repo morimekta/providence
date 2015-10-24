@@ -29,7 +29,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by morimekta on 05.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 05.09.15
  */
 public class TContainedEnumDescriptorTest {
     TContainedEnumDescriptor mType;

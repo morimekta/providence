@@ -32,7 +32,7 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
  * messages (deserializes). Since the serializer is state-less it should also be
  * inherently thread safe (including not needing any synchronized methods.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public abstract class TSerializer {

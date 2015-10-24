@@ -22,7 +22,7 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TMessage;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
 public abstract class TExceptionDescriptorProvider<V extends TMessage<V>>

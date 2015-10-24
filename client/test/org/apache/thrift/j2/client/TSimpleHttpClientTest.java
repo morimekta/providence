@@ -22,7 +22,7 @@ package org.apache.thrift.j2.client;
 import org.junit.Test;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 14.09.15
  */
 public class TSimpleHttpClientTest {

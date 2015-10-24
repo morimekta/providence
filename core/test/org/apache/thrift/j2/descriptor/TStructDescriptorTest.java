@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 10.09.15.
  */
 public class TStructDescriptorTest {

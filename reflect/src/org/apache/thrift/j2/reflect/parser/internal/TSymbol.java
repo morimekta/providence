@@ -20,7 +20,7 @@
 package org.apache.thrift.j2.reflect.parser.internal;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 01.10.15
  */
 public enum TSymbol {

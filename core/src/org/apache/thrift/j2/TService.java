@@ -22,7 +22,7 @@ package org.apache.thrift.j2;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 12.09.15
  */
 public interface TService extends TClient {

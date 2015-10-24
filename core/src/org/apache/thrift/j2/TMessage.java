@@ -24,7 +24,7 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 /**
  * Base class for all messages.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public interface TMessage<T extends TMessage<T>>

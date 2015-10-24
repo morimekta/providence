@@ -53,7 +53,7 @@ import java.util.Map;
 
 /**
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 07.09.15
  *
  */

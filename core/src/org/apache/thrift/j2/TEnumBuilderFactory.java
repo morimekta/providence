@@ -20,7 +20,7 @@
 package org.apache.thrift.j2;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public abstract class TEnumBuilderFactory<T extends TEnumValue<T>>

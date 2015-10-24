@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.09.15
  */
 public abstract class TMessageBodyReader<T extends TMessage<T>> implements MessageBodyReader<T> {

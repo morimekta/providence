@@ -44,7 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public abstract class Calculator {

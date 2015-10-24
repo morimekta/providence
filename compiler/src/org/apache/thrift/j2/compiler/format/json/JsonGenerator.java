@@ -32,7 +32,7 @@ import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 22.09.15
  */
 public class JsonGenerator extends Generator {

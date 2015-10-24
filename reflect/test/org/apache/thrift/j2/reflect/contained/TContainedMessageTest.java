@@ -38,7 +38,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by morimekta on 05.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 05.09.15
  */
 public class TContainedMessageTest {
     TTypeRegistry              mRegistry;

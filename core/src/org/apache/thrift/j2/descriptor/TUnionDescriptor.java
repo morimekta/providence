@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * The definition of a thrift structure.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TUnionDescriptor<T extends TMessage<T>>

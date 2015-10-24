@@ -63,7 +63,7 @@ import org.apache.thrift.j2.descriptor.TServiceMethod;
  * HTTP 1.1 sessions etc will be handled by the provided HttpTransport
  * instance.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 14.09.15
  */
 public class TProtocolClient

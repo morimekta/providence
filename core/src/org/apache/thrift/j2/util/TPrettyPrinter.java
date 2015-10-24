@@ -40,7 +40,7 @@ import java.util.Map;
  * and debugging. This is a write only format used in stringifying
  * messages.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TPrettyPrinter {

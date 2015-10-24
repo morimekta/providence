@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 18.09.15
  */
 public class TStringUtils {

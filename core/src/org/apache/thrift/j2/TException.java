@@ -20,7 +20,7 @@
 package org.apache.thrift.j2;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 13.09.15
  */
 public abstract class TException extends Exception {

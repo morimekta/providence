@@ -25,7 +25,7 @@ import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import java.io.IOException;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public abstract class Generator {

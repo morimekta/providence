@@ -22,7 +22,7 @@ package org.apache.thrift.j2;
 /**
  * The definition of a thrift structure.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public enum TMessageVariant {

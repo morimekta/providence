@@ -22,7 +22,8 @@ package org.apache.thrift.j2.compiler;
 import org.junit.Test;
 
 /**
- * Created by morimekta on 15.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 15.09.15
  */
 public class CompilerTest {
     @Test

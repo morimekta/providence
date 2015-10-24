@@ -47,7 +47,7 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
  * <p/>
  * See data definition file lib/java2/doc/isCompact-binary.md for format spec.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TCompactBinarySerializer

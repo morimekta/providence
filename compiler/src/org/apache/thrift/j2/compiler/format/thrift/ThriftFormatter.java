@@ -46,7 +46,7 @@ import java.util.Map.Entry;
  * Pretty printer for types. Generates content as close to the real thrift files
  * as possible.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 04.09.15
  */
 public class ThriftFormatter {

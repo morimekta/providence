@@ -27,7 +27,7 @@ import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public class TContainedUnionDescriptor

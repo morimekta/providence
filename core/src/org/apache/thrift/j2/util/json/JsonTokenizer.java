@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
 public class JsonTokenizer {

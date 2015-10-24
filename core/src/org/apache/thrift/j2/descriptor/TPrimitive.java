@@ -24,7 +24,7 @@ import org.apache.thrift.j2.TType;
 /**
  * Static descriptors for primitive types.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TPrimitive<T> implements TDescriptor<T> {

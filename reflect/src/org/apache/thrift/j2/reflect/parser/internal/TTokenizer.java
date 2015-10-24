@@ -28,7 +28,7 @@ import org.apache.thrift.j2.reflect.parser.TParseException;
 import org.apache.thrift.j2.util.TStringUtils;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 24.09.15
  */
 public class TTokenizer {

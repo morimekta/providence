@@ -38,7 +38,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 /**
- * Created by morimekta on 27.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 27.09.15
  */
 public class Convert {
     private final ConvertOptions mOpts;

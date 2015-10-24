@@ -31,7 +31,7 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
 /**
  * Thrift type utilities.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TTypeUtils {

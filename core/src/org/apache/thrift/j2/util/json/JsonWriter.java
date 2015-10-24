@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.Stack;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
 public class JsonWriter {

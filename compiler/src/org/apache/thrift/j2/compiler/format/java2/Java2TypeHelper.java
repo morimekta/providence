@@ -40,7 +40,7 @@ import org.apache.thrift.j2.descriptor.TSet;
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
 public class Java2TypeHelper {

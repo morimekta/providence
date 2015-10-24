@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public class TContainedUnion

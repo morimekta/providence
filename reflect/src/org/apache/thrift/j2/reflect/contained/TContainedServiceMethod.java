@@ -29,7 +29,7 @@ import org.apache.thrift.j2.descriptor.TServiceMethod;
 import java.util.List;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 18.09.15
  */
 public class TContainedServiceMethod

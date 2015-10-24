@@ -5,7 +5,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import java.util.regex.Pattern;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
 public class JsonToken {

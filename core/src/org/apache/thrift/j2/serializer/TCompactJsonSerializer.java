@@ -91,7 +91,7 @@ import java.util.Map;
  * {"1":"tag","2":5,"3":6.45}
  * </pre>
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TCompactJsonSerializer

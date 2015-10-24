@@ -23,7 +23,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.TMessage;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 13.09.15
  */
 public class TServiceMethod<R,

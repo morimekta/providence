@@ -25,7 +25,7 @@ import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
 import javax.ws.rs.Produces;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.09.15
  */
 @Produces("application/json")

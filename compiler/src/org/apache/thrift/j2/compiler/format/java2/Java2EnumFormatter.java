@@ -28,7 +28,7 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptorProvider;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
 public class Java2EnumFormatter {

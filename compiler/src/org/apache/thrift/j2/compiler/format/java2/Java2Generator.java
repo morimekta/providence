@@ -33,7 +33,7 @@ import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
 public class Java2Generator

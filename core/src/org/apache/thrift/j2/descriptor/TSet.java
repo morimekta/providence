@@ -24,7 +24,7 @@ import java.util.Set;
 import org.apache.thrift.j2.TType;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TSet<I>

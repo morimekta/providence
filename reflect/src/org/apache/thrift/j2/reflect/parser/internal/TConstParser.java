@@ -50,7 +50,7 @@ import java.util.LinkedList;
  * expected to be 'EnumName.VALUE' (quotes or no quotes), and map keys are not
  * expected to be string literals.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TConstParser {

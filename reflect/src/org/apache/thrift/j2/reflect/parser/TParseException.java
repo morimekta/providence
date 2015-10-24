@@ -25,7 +25,7 @@ import org.apache.thrift.j2.reflect.parser.internal.TToken;
 import org.apache.thrift.j2.reflect.parser.internal.TTokenizer;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 24.09.15
  */
 public class TParseException extends Exception {

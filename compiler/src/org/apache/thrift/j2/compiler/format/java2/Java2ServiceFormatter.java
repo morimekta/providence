@@ -20,7 +20,7 @@
 package org.apache.thrift.j2.compiler.format.java2;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
 public class Java2ServiceFormatter {

@@ -29,7 +29,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import static org.apache.thrift.j2.util.TTypeUtils.equalsQualifiedName;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public class TContainedField<T> implements TField<T> {

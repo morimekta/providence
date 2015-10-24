@@ -28,7 +28,7 @@ import java.util.Arrays;
  * sequence. The termination sequence is not included in the outputted read
  * bytes, but is read from the passed input stream.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 13.09.15
  */
 public class TerminatedInputStream extends InputStream {

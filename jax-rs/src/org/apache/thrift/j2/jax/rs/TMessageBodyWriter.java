@@ -34,7 +34,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.09.15
  */
 public abstract class TMessageBodyWriter<T extends TMessage<T>> implements MessageBodyWriter<T> {

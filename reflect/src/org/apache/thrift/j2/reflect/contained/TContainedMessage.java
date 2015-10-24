@@ -30,7 +30,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.TMessage;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public abstract class TContainedMessage<T extends TMessage<T>>

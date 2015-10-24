@@ -32,7 +32,7 @@ import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TSet;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public class TTypeRegistry {

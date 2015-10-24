@@ -54,7 +54,8 @@ import org.kohsuke.args4j.spi.EnumOptionHandler;
 import org.kohsuke.args4j.spi.Setter;
 
 /**
- * Created by morimekta on 27.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 27.09.15
  */
 public class ConvertOptions {
     public static class FormatOptionHandler extends EnumOptionHandler<Format> {

@@ -27,7 +27,7 @@ import org.apache.thrift.j2.compiler.util.FileManager;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
 public class ThriftGenerator

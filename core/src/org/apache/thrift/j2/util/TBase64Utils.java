@@ -22,7 +22,7 @@ package org.apache.thrift.j2.util;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.09.15
  */
 public class TBase64Utils {

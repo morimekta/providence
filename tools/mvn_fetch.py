@@ -1,6 +1,7 @@
 #!/usr/bin/python
-__author__ = 'steineldar@zedge.net'
-
+__author__ = '@morimekta'
+# Copyright 2015 Stein Eldar Johnsen
+#
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements. See the NOTICE file
 # distributed with this work for additional information

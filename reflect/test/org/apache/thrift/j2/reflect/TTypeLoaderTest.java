@@ -22,7 +22,8 @@ package org.apache.thrift.j2.reflect;
 import org.junit.Test;
 
 /**
- * Created by morimekta on 12.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 12.09.15
  */
 public class TTypeLoaderTest {
     @Test

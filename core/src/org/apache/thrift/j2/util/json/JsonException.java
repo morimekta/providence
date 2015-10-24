@@ -3,7 +3,7 @@ package org.apache.thrift.j2.util.json;
 import java.io.IOException;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
 public class JsonException extends Exception {

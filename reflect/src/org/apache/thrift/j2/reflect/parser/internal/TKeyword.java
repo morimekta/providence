@@ -22,7 +22,7 @@ package org.apache.thrift.j2.reflect.parser.internal;
 /**
  * Enum with reserved words (tokens) for easy reference.
  *
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 21.09.15
  */
 public enum TKeyword {

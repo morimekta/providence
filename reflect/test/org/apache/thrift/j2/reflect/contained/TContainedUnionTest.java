@@ -22,7 +22,8 @@ package org.apache.thrift.j2.reflect.contained;
 import org.junit.Test;
 
 /**
- * Created by morimekta on 05.09.15.
+ * @author Stein Eldar Johnsen
+ * @since 05.09.15
  */
 public class TContainedUnionTest {
     @Test

@@ -22,7 +22,7 @@ package org.apache.thrift.j2;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
+ * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public interface TValue<T> {

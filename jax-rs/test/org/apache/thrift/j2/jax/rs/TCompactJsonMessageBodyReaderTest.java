@@ -8,7 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by morimekta on 23.10.15.
+ * @author Stein Eldar Johnsen
+ * @since 23.10.15
  */
 public class TCompactJsonMessageBodyReaderTest {
     @Test
