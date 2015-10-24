@@ -15,6 +15,9 @@ struct Other {
     1: Values v;
 }
 
+struct Empty {
+}
+
 struct AllTypes {
     1: bool bl = true;
     2: byte bt = -125,

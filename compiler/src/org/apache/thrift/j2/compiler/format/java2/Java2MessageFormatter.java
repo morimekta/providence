@@ -19,6 +19,9 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import org.apache.thrift.j2.TException;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
@@ -46,9 +49,6 @@ import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
-
-import java.io.IOException;
-import java.util.Locale;
 
 import static org.apache.thrift.j2.util.TStringUtils.c_case;
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
@@ -1037,21 +1037,26 @@ public class Java2MessageFormatter {
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
               .begin()
-              .formatln("if (o == null || !(o instanceof %s)) return false;", typeName)
-              .formatln("%s other = (%s) o;", typeName, typeName)
-              .appendln("return ");
-        boolean first = true;
-        for (TField<?> field : type.getFields()) {
-            if (first) first = false;
-            else {
-                writer.append(" &&")
-                      .appendln("       ");
+              .formatln("if (o == null || !(o instanceof %s)) return false;", typeName);
+        if (type.getFields().size() > 0) {
+            boolean first = true;
+            writer.formatln("%s other = (%s) o;", typeName, typeName)
+                  .appendln("return ");
+            for (TField<?> field : type.getFields()) {
+                if (first)
+                    first = false;
+                else {
+                    writer.append(" &&")
+                          .appendln("       ");
+                }
+                String fName = camelCase("m", field.getName());
+                writer.format("TTypeUtils.equals(%s, other.%s)", fName, fName);
             }
-            String fName = camelCase("m", field.getName());
-            writer.format("TTypeUtils.equals(%s, other.%s)", fName, fName);
+            writer.append(';');
+        } else {
+            writer.appendln("return true;");
         }
-        writer.append(";")
-              .end()
+        writer.end()
               .appendln("}")
               .newline();
     }
