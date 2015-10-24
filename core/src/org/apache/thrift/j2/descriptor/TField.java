@@ -20,6 +20,7 @@
 package org.apache.thrift.j2.descriptor;
 
 import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
 
 /**
  * @author Stein Eldar Johnsen

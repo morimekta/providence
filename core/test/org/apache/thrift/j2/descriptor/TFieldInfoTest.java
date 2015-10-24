@@ -17,12 +17,8 @@
  * under the License.
  */
 
-package org.apache.thrift.j2.reflect.contained;
+package org.apache.thrift.j2.descriptor;
 
-import org.apache.thrift.j2.descriptor.TDefaultValueProvider;
-import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +29,7 @@ import static org.junit.Assert.assertNotEquals;
  * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
-public class TContainedFieldTest {
+public class TFieldInfoTest {
     TField<?> fieldA;
     TField<?> fieldB;
     TField<?> fieldC;
@@ -45,14 +41,14 @@ public class TContainedFieldTest {
 
     @Before
     public void setUp() {
-        fieldA = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldB = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldC = new TContainedField<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldD = new TContainedField<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldE = new TContainedField<>("comment", 4, true,  "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldF = new TContainedField<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldG = new TContainedField<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4l));
-        fieldH = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
+        fieldA = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldB = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldC = new TFieldInfo<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldD = new TFieldInfo<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldE = new TFieldInfo<>("comment", 4, true,  "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldF = new TFieldInfo<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldG = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4l));
+        fieldH = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
     }
 
     @Test
@@ -105,8 +101,8 @@ public class TContainedFieldTest {
 
         assertNotEquals(fieldG, fieldH);
 
-        fieldC = new TContainedField<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldH = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
+        fieldC = new TFieldInfo<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldH = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
 
         assertEquals(fieldC, fieldA);
         assertEquals(fieldC, fieldB);

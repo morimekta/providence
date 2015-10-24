@@ -19,13 +19,16 @@
 
 package org.apache.thrift.j2.reflect.util;
 
-import org.apache.thrift.j2.TEnumValue;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.reflect.contained.TContainedEnum;
-import org.apache.thrift.j2.reflect.contained.TContainedField;
+import org.apache.thrift.j2.descriptor.TFieldInfo;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 import org.apache.thrift.j2.descriptor.TServiceMethod;
@@ -39,17 +42,13 @@ import org.apache.thrift.j2.model.StructType;
 import org.apache.thrift.j2.model.ThriftDocument;
 import org.apache.thrift.j2.model.ThriftField;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TContainedEnum;
 import org.apache.thrift.j2.reflect.contained.TContainedEnumDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedExceptionDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedServiceDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedServiceMethod;
 import org.apache.thrift.j2.reflect.contained.TContainedStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedUnionDescriptor;
-
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -211,12 +210,12 @@ public class TDocumentConverter {
                                               field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        TField<?> made = new TContainedField<>(field.getComment(),
-                                               field.getKey(),
-                                               field.getIsRequired(),
-                                               field.getName(),
-                                               type,
-                                               defaultValue);
+        TField<?> made = new TFieldInfo<>(field.getComment(),
+                                          field.getKey(),
+                                          field.getIsRequired(),
+                                          field.getName(),
+                                          type,
+                                          defaultValue);
         return made;
     }
 }
