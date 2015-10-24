@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNull;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class TCompactJsonSerializerTest {
+public class TJsonSerializerTest {
     private Operation mOperation;
     private Category  mCategory1;
     private Category  mCategory2;
@@ -114,7 +114,7 @@ public class TCompactJsonSerializerTest {
     @Test
     public void testSerialize_compactIdJson() throws TSerializeException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer();
+        TJsonSerializer serializer = new TJsonSerializer();
 
         String expectedOutput = mCompactIdJson.replaceAll(" ", "");
         int expectedLength = serializer.serialize(baos, mOperation);
@@ -125,7 +125,7 @@ public class TCompactJsonSerializerTest {
     @Test
     public void testSerialize_compactNamedJson() throws TSerializeException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+        TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
 
         String expectedOutput = mCompactNamedJson.replaceAll(" ", "");
         int expectedLength = serializer.serialize(baos, mOperation);
@@ -138,7 +138,7 @@ public class TCompactJsonSerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(mCompactIdJson.getBytes());
         // Deserializing can deserialize both formats regardless of serializer
         // type.
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+        TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
         Operation operation = serializer.deserialize(bais, Operation.descriptor());
 
         assertEquals(mOperation, operation);
@@ -149,7 +149,7 @@ public class TCompactJsonSerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(mCompactNamedJson.getBytes());
         // Deserializing can deserialize both formats regardless of serializer
         // type.
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer();
+        TJsonSerializer serializer = new TJsonSerializer();
         Operation operation = serializer.deserialize(bais, Operation.descriptor());
 
         assertEquals(mOperation, operation);
@@ -158,7 +158,7 @@ public class TCompactJsonSerializerTest {
     @Test
     public void testSerialize_compactStruct() throws TSerializeException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+        TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
 
         String expectedOutput = "[\"my_category\",44]";
         int expectedLength = serializer.serialize(baos, mCategory1);
@@ -178,7 +178,7 @@ public class TCompactJsonSerializerTest {
     @Test
     public void testDeserialize_compactStruct() throws TSerializeException {
         ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(StandardCharsets.UTF_8));
-        TCompactJsonSerializer serializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
+        TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
 
         Category category = serializer.deserialize(bais, Category.descriptor());
 

@@ -47,7 +47,6 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.serializer.TSerializer;
 import org.apache.thrift.j2.util.io.CountingOutputStream;
-import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TStruct;
@@ -59,12 +58,8 @@ import org.apache.thrift.transport.TTransportException;
  * @author Stein Eldar Johnsen
  * @since 23.09.15
  */
-public class TProtocolSerializer extends TSerializer {
+class TProtocolSerializer extends TSerializer {
     private final TProtocolFactory mProtocolFactory;
-
-    public TProtocolSerializer() {
-        this(new TBinaryProtocol.Factory());
-    }
 
     public TProtocolSerializer(TProtocolFactory protocolFactory) {
         mProtocolFactory = protocolFactory;

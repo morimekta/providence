@@ -20,7 +20,7 @@
 package org.apache.thrift.j2.jax.rs;
 
 import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
+import org.apache.thrift.j2.serializer.TJsonSerializer;
 
 import javax.ws.rs.Produces;
 
@@ -31,10 +31,10 @@ import javax.ws.rs.Produces;
 @Produces("application/json")
 public class TCompactJsonMessageBodyWriter<T extends TMessage<T>> extends TMessageBodyWriter<T> {
     public TCompactJsonMessageBodyWriter() {
-        this(new TCompactJsonSerializer(true, TCompactJsonSerializer.IdType.NAME));
+        this(new TJsonSerializer(true, TJsonSerializer.IdType.NAME));
     }
 
-    public TCompactJsonMessageBodyWriter(TCompactJsonSerializer serializer) {
+    public TCompactJsonMessageBodyWriter(TJsonSerializer serializer) {
         super(serializer);
     }
 }

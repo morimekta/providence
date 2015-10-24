@@ -33,7 +33,7 @@ import org.apache.thrift.j2.reflect.parser.TParser;
 import org.apache.thrift.j2.reflect.parser.TThriftParser;
 import org.apache.thrift.j2.reflect.TTypeLoader;
 import org.apache.thrift.j2.reflect.parser.TMessageParser;
-import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
+import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.utils.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -151,7 +151,7 @@ public class CompilerOptions {
             case thrift:
                 return new TThriftParser();
             case json:
-                return new TMessageParser(new TCompactJsonSerializer());
+                return new TMessageParser(new TJsonSerializer());
             default:
                 throw new CmdLineException(cli, new FormatString("Unknown SLI syntax %s."), mSyntax.name());
         }

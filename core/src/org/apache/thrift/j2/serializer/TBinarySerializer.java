@@ -50,21 +50,21 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class TCompactBinarySerializer
+public class TBinarySerializer
         extends TSerializer {
     private final boolean mStrict;
 
     /**
      * Construct a serializer instance.
      */
-    public TCompactBinarySerializer() {
+    public TBinarySerializer() {
         this(false);
     }
 
     /**
      * Construct a serializer instance.
      */
-    public TCompactBinarySerializer(boolean strict) {
+    public TBinarySerializer(boolean strict) {
         mStrict = strict;
     }
 

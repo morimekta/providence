@@ -21,7 +21,7 @@ package org.apache.thrift.j2.jax.rs;
 
 import javax.ws.rs.Consumes;
 
-import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
+import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.TMessage;
 
 /**
@@ -31,10 +31,10 @@ import org.apache.thrift.j2.TMessage;
 @Consumes("application/json")
 public class TCompactJsonMessageBodyReader<T extends TMessage<T>> extends TMessageBodyReader<T> {
     public TCompactJsonMessageBodyReader() {
-        this(new TCompactJsonSerializer(false, TCompactJsonSerializer.IdType.NAME));
+        this(new TJsonSerializer(false, TJsonSerializer.IdType.NAME));
     }
 
-    public TCompactJsonMessageBodyReader(TCompactJsonSerializer serializer) {
+    public TCompactJsonMessageBodyReader(TJsonSerializer serializer) {
         super(serializer);
     }
 }

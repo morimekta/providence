@@ -28,7 +28,7 @@ import org.apache.thrift.j2.model.ThriftDocument;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.reflect.TTypeLoader;
-import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
+import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
 
 /**
@@ -36,13 +36,13 @@ import org.apache.thrift.j2.serializer.TSerializeException;
  * @since 22.09.15
  */
 public class JsonGenerator extends Generator {
-    private final TTypeLoader                 mLoader;
-    private final TCompactJsonSerializer mSerializer;
+    private final TTypeLoader     mLoader;
+    private final TJsonSerializer mSerializer;
 
     public JsonGenerator(FileManager fileManager, TTypeLoader loader) {
         super(fileManager);
         mLoader = loader;
-        mSerializer = new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME, TCompactJsonSerializer.IdType.NAME);
+        mSerializer = new TJsonSerializer(TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME);
     }
 
     @Override

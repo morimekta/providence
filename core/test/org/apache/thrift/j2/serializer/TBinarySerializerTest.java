@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class TCompactBinarySerializerTest {
+public class TBinarySerializerTest {
     private Operation mOperation;
 
     @Before
@@ -67,7 +67,7 @@ public class TCompactBinarySerializerTest {
     @Test
     public void testSerialize() throws IOException, TSerializeException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
 
         int length = serializer.serialize(baos, mOperation);
 
@@ -85,7 +85,7 @@ public class TCompactBinarySerializerTest {
     @Test
     public void testWriteDouble() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(9, serializer.writeDouble(baos, 1234567890.0));
         assertEquals("30000080b48065d241", TStringUtils.toHexString(baos.toByteArray()));
@@ -108,7 +108,7 @@ public class TCompactBinarySerializerTest {
 
     @Test
     public void testReadDouble() throws IOException, TSerializeException {
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
         bais = new ByteArrayInputStream(TStringUtils.fromHexString("000080b48065d241"));
@@ -127,7 +127,7 @@ public class TCompactBinarySerializerTest {
     @Test
     public void testWriteUnsigned() throws IOException {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(1, serializer.writeUnsigned(baos, 1, 1));
         assertEquals("01", TStringUtils.toHexString(baos.toByteArray()));
@@ -155,7 +155,7 @@ public class TCompactBinarySerializerTest {
 
     @Test
     public void testReadUnsigned() throws IOException, TSerializeException {
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
         bais = new ByteArrayInputStream(TStringUtils.fromHexString("01"));
@@ -180,7 +180,7 @@ public class TCompactBinarySerializerTest {
     @Test
     public void testWriteSigned() throws IOException, TSerializeException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(1, serializer.writeSigned(baos, 1, 1));
         assertEquals("01", TStringUtils.toHexString(baos.toByteArray()));
@@ -218,7 +218,7 @@ public class TCompactBinarySerializerTest {
 
     @Test
     public void testReadSigned() throws IOException, TSerializeException {
-        TCompactBinarySerializer serializer = new TCompactBinarySerializer();
+        TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
         bais = new ByteArrayInputStream(TStringUtils.fromHexString("01"));

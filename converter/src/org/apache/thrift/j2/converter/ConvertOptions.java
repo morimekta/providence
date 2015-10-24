@@ -27,23 +27,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.thrift.j2.util.TPrettyPrinter;
-import org.apache.thrift.j2.util.io.CountingOutputStream;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.protocol.TJSONProtocol;
-import org.apache.thrift.protocol.TSimpleJSONProtocol;
-import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDescriptor;
-import org.apache.thrift.j2.protocol.TProtocolSerializer;
+import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
+import org.apache.thrift.j2.protocol.TCompactProtocolSerializer;
+import org.apache.thrift.j2.protocol.TJsonProtocolSerializer;
+import org.apache.thrift.j2.protocol.TSimpleJsonProtocolSerializer;
+import org.apache.thrift.j2.protocol.TTupleProtocolSerializer;
 import org.apache.thrift.j2.reflect.parser.TMessageParser;
 import org.apache.thrift.j2.reflect.parser.TParser;
 import org.apache.thrift.j2.reflect.parser.TThriftParser;
-import org.apache.thrift.j2.serializer.TCompactBinarySerializer;
-import org.apache.thrift.j2.serializer.TCompactJsonSerializer;
+import org.apache.thrift.j2.serializer.TBinarySerializer;
+import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.serializer.TSerializer;
+import org.apache.thrift.j2.util.TPrettyPrinter;
+import org.apache.thrift.j2.util.io.CountingOutputStream;
 import org.apache.utils.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -73,20 +72,20 @@ public class ConvertOptions {
 
     protected enum Format {
         // TSerializer
-        compact_json("Compact JSON with IDs."),
-        compact_json_named("Compact JSON with names."),
-        compact_binary("Compact binary serialization."),
+        json("Compact JSON with IDs."),
+        named("Compact JSON with names."),
+        binary("Compact binary_protocol serialization."),
         // TProtocolSerializer
-        json("TJsonProtocol"),
-        binary("TBinaryProtocol"),
-        compact("TCompactProtocol"),
-        tuple("TTupleProtocol"),
+        json_protocol("TJsonProtocol"),
+        binary_protocol("TBinaryProtocol"),
+        compact_protocol("TCompactProtocol"),
+        tuple_protocol("TTupleProtocol"),
         // Pseudo (out only)
-        simple_json("TSimpleJSONProtocol (output only)"),
-        pretty("Pretty-Printer (output only)"),
-        ;
+        simple_json_protocol("TSimpleJSONProtocol (output only)"),
+        pretty("Pretty-Printer (output only)"),;
 
         public String desc;
+
         Format(String desc) {
             this.desc = desc;
         }
@@ -132,7 +131,7 @@ public class ConvertOptions {
     protected Format mOutFormat;
 
     @Option(name = "--help",
-            aliases = {"-h", "-?"},
+            aliases = { "-h", "-?" },
             help = true,
             usage = "This help listing.")
     protected boolean mHelp;
@@ -144,22 +143,22 @@ public class ConvertOptions {
 
     protected TSerializer getSerializer(CmdLineParser cli, Format format) throws CmdLineException {
         switch (format) {
-            case compact_binary:
-                return new TCompactBinarySerializer();
-            case compact_json:
-                return new TCompactJsonSerializer(TCompactJsonSerializer.IdType.ID);
-            case compact_json_named:
-                return new TCompactJsonSerializer(TCompactJsonSerializer.IdType.NAME);
             case binary:
-                return new TProtocolSerializer(new TBinaryProtocol.Factory());
+                return new TBinarySerializer();
             case json:
-                return new TProtocolSerializer(new TJSONProtocol.Factory());
-            case simple_json:
-                return new TProtocolSerializer(new TSimpleJSONProtocol.Factory());
-            case compact:
-                return new TProtocolSerializer(new TCompactProtocol.Factory());
-            case tuple:
-                return new TProtocolSerializer(new TTupleProtocol.Factory());
+                return new TJsonSerializer(TJsonSerializer.IdType.ID);
+            case named:
+                return new TJsonSerializer(TJsonSerializer.IdType.NAME);
+            case binary_protocol:
+                return new TBinaryProtocolSerializer();
+            case json_protocol:
+                return new TJsonProtocolSerializer();
+            case simple_json_protocol:
+                return new TSimpleJsonProtocolSerializer();
+            case compact_protocol:
+                return new TCompactProtocolSerializer();
+            case tuple_protocol:
+                return new TTupleProtocolSerializer();
             case pretty:
                 return new TSerializer() {
                     @Override
@@ -227,7 +226,7 @@ public class ConvertOptions {
             case thrift:
                 return new TThriftParser();
             case json:
-                return new TMessageParser(new TCompactJsonSerializer());
+                return new TMessageParser(new TJsonSerializer());
             default:
                 throw new CmdLineException(cli, new FormatString("Unknown SLI syntax %s."), mSyntax.name());
         }

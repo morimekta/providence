@@ -94,7 +94,7 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class TCompactJsonSerializer
+public class TJsonSerializer
         extends TSerializer {
     public enum IdType {
         // print field and enums as numeric IDs and values.
@@ -107,27 +107,27 @@ public class TCompactJsonSerializer
     private final IdType mIdType;
     private final IdType mEnumType;
 
-    public TCompactJsonSerializer() {
+    public TJsonSerializer() {
         this(false, IdType.ID, IdType.ID);
     }
 
-    public TCompactJsonSerializer(boolean strict) {
+    public TJsonSerializer(boolean strict) {
         this(strict, IdType.ID, IdType.ID);
     }
 
-    public TCompactJsonSerializer(IdType idType) {
+    public TJsonSerializer(IdType idType) {
         this(false, idType, idType);
     }
 
-    public TCompactJsonSerializer(boolean strict, IdType idType) {
+    public TJsonSerializer(boolean strict, IdType idType) {
         this(strict, idType, idType);
     }
 
-    public TCompactJsonSerializer(IdType idType, IdType enumType) {
+    public TJsonSerializer(IdType idType, IdType enumType) {
         this(false, idType, enumType);
     }
 
-    public TCompactJsonSerializer(boolean strict, IdType idType, IdType enumType) {
+    public TJsonSerializer(boolean strict, IdType idType, IdType enumType) {
         mStrict = strict;
         mIdType = idType;
         mEnumType = enumType;

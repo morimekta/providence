@@ -19,7 +19,7 @@
 
 package org.apache.thrift.j2.jax.rs;
 
-import org.apache.thrift.j2.serializer.TCompactBinarySerializer;
+import org.apache.thrift.j2.serializer.TBinarySerializer;
 import org.apache.thrift.j2.TMessage;
 
 import java.io.IOException;
@@ -39,10 +39,10 @@ import javax.ws.rs.core.MultivaluedMap;
 @Consumes("application/vnd.thrift")
 public class TCompactBinaryMessageBodyReader<T extends TMessage<T>> extends TMessageBodyReader<T> {
     public TCompactBinaryMessageBodyReader() {
-        this(new TCompactBinarySerializer(false));
+        this(new TBinarySerializer(false));
     }
 
-    public TCompactBinaryMessageBodyReader(TCompactBinarySerializer serializer) {
+    public TCompactBinaryMessageBodyReader(TBinarySerializer serializer) {
         super(serializer);
     }
 
