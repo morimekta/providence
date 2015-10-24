@@ -42,14 +42,14 @@ public class TContainedServiceMethod
                                    String methodName,
                                    String packageContext,
                                    TDescriptorProvider<TDescriptor> returnTypeProvider,
-                                   List<TField<?>> paramsList,
+                                   List<TField<?>> paramList,
                                    List<TField<?>> exceptionList) {
         super(comment,
               oneway,
               methodName,
               returnTypeProvider,
-              paramsProvider(serviceName, methodName, packageContext, paramsList),
-              exceptionProvider(serviceName, methodName, packageContext, exceptionList));
+              paramsProvider(serviceName, methodName, packageContext, paramList),
+              exceptionsProvider(serviceName, methodName, packageContext, exceptionList));
     }
 
     protected static TStructDescriptorProvider<TContainedStruct> paramsProvider(
@@ -72,7 +72,7 @@ public class TContainedServiceMethod
         };
     }
 
-    protected static TUnionDescriptorProvider<TContainedUnion> exceptionProvider(
+    protected static TUnionDescriptorProvider<TContainedUnion> exceptionsProvider(
             String serviceName,
             String methodName,
             String packageContext,
