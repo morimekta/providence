@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="client:jar">
+    <output-path>$PROJECT_DIR$/out/</output-path>
+    <root id="archive" name="thrift2-client.jar">
+      <element id="module-output" name="client" />
+    </root>
+  </artifact>
+</component>
