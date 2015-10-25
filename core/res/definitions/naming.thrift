@@ -8,7 +8,9 @@ enum Fields {
   Field
 }
 
+/** @deprecated */
 exception Builder {
+    /** @deprecated */
     1: Builder Builder;
 }
 

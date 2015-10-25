@@ -18,6 +18,8 @@ import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
+/** @deprecated */
+@Deprecated
 public class Builder
         extends TException
         implements TMessage<Builder>, Serializable, Parcelable {
@@ -35,6 +37,8 @@ public class Builder
         return mBuilder != null;
     }
 
+    /** @deprecated */
+    @Deprecated
     public Builder getBuilder() {
         return mBuilder;
     }
@@ -259,6 +263,8 @@ public class Builder
             mBuilder = base.mBuilder;
         }
 
+        /** @deprecated */
+        @Deprecated
         public _Builder setBuilder(Builder value) {
             mBuilder = value;
             return this;
