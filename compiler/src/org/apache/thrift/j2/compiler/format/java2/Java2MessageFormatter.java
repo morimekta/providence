@@ -1256,7 +1256,7 @@ public class Java2MessageFormatter {
                 writer.append(defaultValue.toString());
                 break;
             case I64:
-                writer.append(defaultValue.toString()).append("l");
+                writer.append(defaultValue.toString()).append("L");
                 break;
             case DOUBLE:
                 writer.append(defaultValue.toString()).append("d");

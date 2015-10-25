@@ -24,7 +24,7 @@ public class Primitives
     private final static byte kDefaultBt = (byte)0;
     private final static short kDefaultSh = (short)0;
     private final static int kDefaultI = 0;
-    private final static long kDefaultL = 0l;
+    private final static long kDefaultL = 0L;
     private final static double kDefaultD = 0.0d;
 
     private final Boolean mBl;

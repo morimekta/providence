@@ -47,7 +47,7 @@ public class TFieldInfoTest {
         fieldD = new TFieldInfo<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
         fieldE = new TFieldInfo<>("comment", 4, true,  "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
         fieldF = new TFieldInfo<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldG = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4l));
+        fieldG = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4L));
         fieldH = new TFieldInfo<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
     }
 

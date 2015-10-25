@@ -359,7 +359,7 @@ public abstract class Calculator {
     private static class Calculate_Exception
             extends TException
             implements TMessage<Calculate_Exception> {
-        private final static long serialVersionUID = 1l;
+        private final static long serialVersionUID = 1L;
         // Union containing the response or thrown exception.
         // 1: CalculateException ce;
         private final CalculateException mCe;

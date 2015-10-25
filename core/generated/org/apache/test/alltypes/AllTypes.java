@@ -25,7 +25,7 @@ public class AllTypes
     private final static byte kDefaultBt = (byte)-125;
     private final static short kDefaultSh = (short)8117;
     private final static int kDefaultI = 1234567890;
-    private final static long kDefaultL = 1234567890123456789l;
+    private final static long kDefaultL = 1234567890123456789L;
     private final static double kDefaultD = 2.99792458E8d;
     private final static String kDefaultS = "test\twith escapes\nand unicode.";
     private final static byte[] kDefaultBn = new byte[]{0x74,0x65,0x73,0x74,0x20,0x20,0x20,0x20,0x77,0x69,0x74,0x68,0x20,0x65,0x73,0x63,0x61,0x70,0x65,0x73,0x0d,0x0a,0x61,0x6e,0x64,0x20,0x75,0x6e,0x69,0x63,0x6f,0x64,0x65,0x2e};
