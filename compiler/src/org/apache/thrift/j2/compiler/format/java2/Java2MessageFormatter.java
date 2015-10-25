@@ -71,22 +71,14 @@ public class Java2MessageFormatter {
         mAndroid = android;
     }
 
-    private String simple(TDescriptor<?> type) {
-        return mTypeHelper.getSimpleClassName(type);
-    }
-
-    private String qualified(TStructDescriptor<?> type) throws GeneratorException {
-        return mTypeHelper.getQualifiedClassName(type);
-    }
-
     public void format(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
         appendFileHeader(writer, type);
 
         if (type.getComment() != null) {
             Java2Utils.appendBlockComment(writer, type.getComment());
-        }
-        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
-            writer.appendln(Java2Utils.DEPRECATED);
+            if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                writer.appendln(Java2Utils.DEPRECATED);
+            }
         }
 
         appendClassDefinitionStart(writer, type);
@@ -577,6 +569,9 @@ public class Java2MessageFormatter {
                     String miType = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
                     }
                     writer.formatln("public _Builder %s(Map<%s,%s> value) {",
                                     camelCase("set", field.getName()),
@@ -593,6 +588,9 @@ public class Java2MessageFormatter {
                           .newline();
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
                     }
                     writer.formatln("public _Builder %s(%s key, %s value) {",
                                     camelCase("addTo", field.getName()),
@@ -625,6 +623,9 @@ public class Java2MessageFormatter {
                     String liType = mTypeHelper.getSimpleClassName(lType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
                     }
                     writer.formatln("public _Builder %s(Collection<%s> value) {",
                                     camelCase("set", field.getName()),
@@ -641,6 +642,9 @@ public class Java2MessageFormatter {
                           .newline();
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
                     }
                     writer.formatln("public _Builder %s(%s... values) {",
                                     camelCase("addTo", field.getName()),
@@ -673,6 +677,9 @@ public class Java2MessageFormatter {
                 default:
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
                     }
                     writer.formatln("public _Builder %s(%s value) {",
                                     camelCase("set", field.getName()), vType)
@@ -1207,6 +1214,9 @@ public class Java2MessageFormatter {
             }
             if (field.getComment() != null) {
                 Java2Utils.appendBlockComment(writer, field.getComment());
+                if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                    writer.appendln(Java2Utils.DEPRECATED);
+                }
             }
             writer.formatln("public %s %s() {",
                             mTypeHelper.getValueType(field.getDescriptor()),
