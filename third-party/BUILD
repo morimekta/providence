@@ -52,7 +52,7 @@ java_library(
 java_library(
   name = 'libthrift',
   exports = [
-    '@libthrift//jar',
+    '@org.apache.thrift_libthrift//jar',
     '@org.slf4j_slf4j-api//jar',
     '@org.slf4j_slf4j-simple//jar',
     '@org.apache.httpcomponents_httpcore//jar',
