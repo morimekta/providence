@@ -1,9 +1,7 @@
 java_library(
   name = "core",
   srcs = glob(["src/**/*.java"]),
-  visibility = [
-    "PUBLIC"
-  ],
+  visibility = ['//visibility:public'],
 )
 
 java_library(
@@ -11,18 +9,17 @@ java_library(
   srcs = glob(["generated/**/*.java"]),
   deps = [
     ":core",
-    "//third-party/android:android-sdk",
+    "//third-party:android",
   ],
-  visibility = ["PUBLIC"],
+  visibility = ['//visibility:public'],
 )
 
 java_test(
   name = "test",
   srcs = glob(["test/**/*.java"]),
   deps = [
+    "//third-party:junit",
     ":core",
     ":generated",
-    "//third-party/junit:junit",
-    "//third-party/android:android-sdk",
   ],
 )

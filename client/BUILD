@@ -3,6 +3,7 @@ java_library(
   srcs = glob(["src/**/*.java"]),
   deps = [
     "//core:core",
-    "//third-party/google-http:google-http-client",
+    "//third-party:google-http-client",
   ],
+  visibility = ['//visibility:public'],
 )

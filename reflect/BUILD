@@ -7,15 +7,16 @@ java_library(
   deps = [
     "//core:core",
   ],
-  visibility = [ "PUBLIC" ],
+  visibility = ['//visibility:public'],
 )
 
 java_test(
   name = "test",
+  size = "small",
   srcs = glob(["test/**/*.java"]),
   deps = [
     ":reflect",
     "//core:core",
-    "//third-party/junit:junit",
+    "//third-party:junit",
   ],
 )

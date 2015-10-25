@@ -3,9 +3,9 @@ java_library(
   srcs = glob(["src/**/*.java"]),
   deps = [
     "//core:core",
-    "//third-party/javax-ws-rs:javax-ws-rs-api"
+    "//third-party:jax-rs",
   ],
-  visibility = [ "PUBLIC" ],
+  visibility = ['//visibility:public'],
 )
 
 java_test(
@@ -15,7 +15,7 @@ java_test(
     ":jax-rs",
     "//core:core",
     "//core:generated",
-    "//third-party/junit:junit",
-    "//third-party/javax-ws-rs:javax-ws-rs-api"
+    "//third-party:junit",
+    "//third-party:jax-rs",
   ],
 )

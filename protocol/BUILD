@@ -3,7 +3,7 @@ java_library(
   srcs = glob(["src/**/*.java"]),
   deps = [
     "//core:core",
-    "//third-party/thrift:libthrift",
+    "//third-party:libthrift",
   ],
-  visibility = [ "PUBLIC" ],
+  visibility = ['//visibility:public'],
 )

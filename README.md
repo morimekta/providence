@@ -9,13 +9,12 @@ the standard thrift protocols to serialize and serialize messages.
 
 In order to compile thrift-j2, you need:
 
-- `buck` Found at [buckbuild.com](https://buckbuild.com/) is used as build system.
-- `mvn` Found at [maven.org](http://maven.org) is used for dependency resolution.
+- `bazel` Found at [bazel.io](https://bazel.io/) is used as build system.
 - `android-sdk` Found at
   [developer.android.com](https://developer.android.com/sdk/installing/index.html?pkg=tools)
-  is used for testing of android builds.
+  is used for binding of android builds.
 
-Buck was chosen as build tool for it's good support for multiple binaries and
+Bazel was chosen as build tool for it's good support for multiple binaries and
 projects within the same codebase. This project has at least 2 binaries
 (compiler and converter), and lots of JAR libraries to generate.
 
@@ -26,19 +25,13 @@ be installed from source. The location does not matter, as long as it's
 available in the PATH, and android SDK it located at the `ANDROID_HOME`
 location (you may have to set up the env variable yourself).
 
-Make sure to install android API 15 / 4.0.3 (ICE_CREAM_SANDWICH_MR1).
+Make sure to install android API 16 / 4.4 (JELLYBEAN).
 
 ```
-# sudo apt-get install mvn
 # git clone git@github.com:morimekta/thrift-j2.git thrift-j2
 # cd thrift-j2
-# buck build //...
+# bazel build //...
 ```
-
-The first build may take some time, as `mvn` has to download a plugin with lots
-of dependencies in order to download dependencies (yes, you read it right).
-
-If you find a better solution (using buck), send me a pull request!
 
 # Differences
 
@@ -46,18 +39,15 @@ thrift-j2 is not *exactly* like thrift. The differences are mostly minute, but
 all feature changes are there for a reason. Differences are based on the IDL at
 [thrift.apache.org](https://thrift.apache.org/docs/idl).
 
-## Removed support
+## Alterations to thrift IDL
 
-`*_namespace` keywords are not supported. Use `namespace php [package]` instead
-for php. XSD is AFAIK a facebook specific namespace, which is also not
-supported.
- 
-None of the facebook specific modifiers are supported. They are also removed
-from keyword lists (xsd_nullable, xsd_optional). So are any other language
-specific annotations not part of comments (like @java_annotation).
+Constant data syntax has to follow JSON syntax. So ',' are mandatory in list
+item separation, '"' is only string literal char. Exception is that map keys
+can be the actual value. Enum values cannot be used as a generic "number"
+reference in constants, only to set the enum value itself.
 
 Fields with conflicting but differing names are explicitly disallowed. E.g. 
-"my_field" and "myFiald" is considered conflicting because they would generate
+"my_field" and "myField" is considered conflicting because they would generate
 the same names when c_casing or camelCasing the name.
 
 ## Added support
@@ -124,6 +114,16 @@ Or in C++ or python
 - field names are suffixed with '\_'. E.g. 'my_field' becomes 'my\_field\_'.
 - getters and setters are prefixed with 'set\_', 'get\_', 'mutable\_', 'clear\_' 'add\_to\_', 'has\_' and 'num\_'.
 - This breaks the convention that getters should not have any prefix or suffix.
+
+## Removed support
+
+`*_namespace` keywords are not supported. Use `namespace php [package]` instead
+for php. XSD is AFAIK a facebook specific namespace, which is also not
+supported.
+ 
+None of the facebook specific modifiers are supported. They are also removed
+from keyword lists (xsd_nullable, xsd_optional). Any extra annotations has to
+be part of the comments.
 
 # Structure
 

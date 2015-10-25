@@ -1,0 +1,47 @@
+java_import(
+    name = "sdk-15",
+    jars = [
+      'platforms/android-15/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "sdk-16",
+    jars = [
+      'platforms/android-16/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "sdk-19",
+    jars = [
+      'platforms/android-19/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "sdk-21",
+    jars = [
+      'platforms/android-21/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "sdk-22",
+    jars = [
+      'platforms/android-22/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "sdk-23",
+    jars = [
+      'platforms/android-23/android.jar'
+    ],
+    visibility = ["//visibility:public"],
+)

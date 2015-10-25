@@ -2,9 +2,7 @@ java_library(
   name = "utils",
   srcs = glob(["src/**/*.java"]),
   deps = [
-    "//third-party/args4j:args4j",
+    "//third-party:args4j",
   ],
-  visibility = [
-    "PUBLIC"
-  ],
+  visibility = ['//visibility:public'],
 )

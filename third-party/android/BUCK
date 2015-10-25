@@ -1,8 +1,0 @@
-include_defs("//defs/local.defs")
-
-local_jar(
-  name = "android-sdk",
-  binary_jar = "${ANDROID_HOME}/platforms/android-15/android.jar",
-  license = "Apache-2.0",
-  visibility = [ "PUBLIC" ],
-)

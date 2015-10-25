@@ -1,7 +1,0 @@
-include_defs("//defs/maven.defs")
-
-maven_jar(
-  name = "javax-ws-rs-api",
-  id = "javax.ws.rs:javax.ws.rs-api:2.0",
-  license = "CCDL-GPL-1.1",
-)

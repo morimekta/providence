@@ -4,8 +4,11 @@ java_library(
   deps = [
     "//core:core",
     "//reflect:reflect",
-    "//third-party/args4j:args4j",
+    "//third-party:args4j",
     "//utils:utils",
+  ],
+  visibility = [
+    "//visibility:public"
   ],
 )
 
@@ -16,7 +19,7 @@ java_test(
     ":compiler",
     "//core:core",
     "//reflect:reflect",
-    "//third-party/junit:junit",
+    "//third-party:junit",
   ],
 )
 
@@ -27,6 +30,6 @@ java_binary(
   ],
   main_class = "org.apache.thrift.j2.compiler.Compiler",
   visibility = [
-    "PUBLIC"
+    "//visibility:public"
   ],
 )

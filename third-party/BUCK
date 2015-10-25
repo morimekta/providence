@@ -1,5 +1,0 @@
-include_defs("//defs/local.defs")
-
-define_license("Apache-2.0")
-define_license("CCDL-GPL-1.1")
-define_license("MIT")
