@@ -1,6 +1,8 @@
 java_library(
   name = "compiler",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob(
+    ["src/**/*.java"],
+    exclude = ['src/org/apache/thrift/j2/compiler/Compiler.java']),
   deps = [
     "//core:core",
     "//reflect:reflect",
@@ -25,8 +27,14 @@ java_test(
 
 java_binary(
   name = "compile",
+  srcs = [
+    'src/org/apache/thrift/j2/compiler/Compiler.java',
+  ],
   deps = [
     ":compiler",
+    "//core:core",
+    "//reflect:reflect",
+    "//third-party:args4j",
   ],
   main_class = "org.apache.thrift.j2.compiler.Compiler",
   visibility = [
