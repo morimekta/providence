@@ -569,7 +569,7 @@ public class Java2MessageFormatter {
                     String miType = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
-                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                             writer.appendln(Java2Utils.DEPRECATED);
                         }
                     }
@@ -588,7 +588,7 @@ public class Java2MessageFormatter {
                           .newline();
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
-                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                             writer.appendln(Java2Utils.DEPRECATED);
                         }
                     }
@@ -623,7 +623,7 @@ public class Java2MessageFormatter {
                     String liType = mTypeHelper.getSimpleClassName(lType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
-                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                             writer.appendln(Java2Utils.DEPRECATED);
                         }
                     }
@@ -642,7 +642,7 @@ public class Java2MessageFormatter {
                           .newline();
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
-                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                             writer.appendln(Java2Utils.DEPRECATED);
                         }
                     }
@@ -677,7 +677,7 @@ public class Java2MessageFormatter {
                 default:
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
-                        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                             writer.appendln(Java2Utils.DEPRECATED);
                         }
                     }
@@ -1214,7 +1214,7 @@ public class Java2MessageFormatter {
             }
             if (field.getComment() != null) {
                 Java2Utils.appendBlockComment(writer, field.getComment());
-                if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
+                if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
                     writer.appendln(Java2Utils.DEPRECATED);
                 }
             }

@@ -8,6 +8,7 @@
 *.war
 *.ear
 
+.idea/workspace.xml
 bazel-bin
 bazel-genfiles
 bazel-out
