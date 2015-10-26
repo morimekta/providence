@@ -1,33 +1,12 @@
 INSTALL_DIR="${HOME}/.apps/lib/jars"
 BIN_DIR="${HOME}/.apps/bin"
 
-thrift-j2-%.jar:
-	buck build //$*:$*
-	cp buck-out/gen/$*/lib__$*__output/$*.jar thrift-j2-$*.jar
+model:
+	rm -rf ${PWD}/reflect/model/net
+	bazel run //compiler:compile -- --gen java2 --out ${PWD}/reflect/model ${PWD}/reflect/model/*.thrift
 
-compile.jar:
-	buck build //compiler:compile
-	cp buck-out/gen/compiler/compile.jar .
+resources:
+	rm -rf ${PWD}/core/generated/net
+	bazel run //compiler:compile -- --gen java2 --out ${PWD}/core/generated --android ${PWD}/core/res/definitions/*.thrift
 
-convert.jar:
-	buck build //converter:convert
-	cp buck-out/gen/converter/convert.jar .
-
-libs: thrift-j2-core.jar thrift-j2-reflect.jar thrift-j2-jax-rs.jar thrift-j2-protocol.jar thrift-j2-client.jar
-
-install: compile.jar convert.jar
-	mkdir -p ${INSTALL_DIR}
-	cp compile.jar ${INSTALL_DIR}
-	cp convert.jar ${INSTALL_DIR}
-	echo '#!/bin/bash' > ${BIN_DIR}/tcompile
-	echo 'java -jar ${INSTALL_DIR}/compile.jar $$@' >> ${BIN_DIR}/tcompile
-	chmod a+x ${BIN_DIR}/tcompile
-	echo '#!/bin/bash' > ${BIN_DIR}/tconv
-	echo 'java -jar ${INSTALL_DIR}/convert.jar $$@' >> ${BIN_DIR}/tconv
-	chmod a+x ${BIN_DIR}/tconv
-
-clean:
-	buck clean
-	rm -rf *.jar
-
-.PHONY: libs install clean
+.PHONY: model resources
