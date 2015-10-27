@@ -1,12 +1,21 @@
+load('/thrift', 'gen_thrift')
+
 java_library(
   name = "core",
   srcs = glob(["src/**/*.java"]),
   visibility = ['//visibility:public'],
 )
 
+gen_thrift(
+  name = 'generated-thrift',
+  gen = 'java2',
+  flags = ['--android'],
+  srcs = glob(['res/definitions/*.thrift']),
+)
+
 java_library(
   name = "generated",
-  srcs = glob(["generated/**/*.java"]),
+  srcs = [':generated-thrift'],
   deps = [
     ":core",
     "//third-party:android",
