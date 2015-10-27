@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="generated-resources">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bazel-bin/core/libgenerated.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

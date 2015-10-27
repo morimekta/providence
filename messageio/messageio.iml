@@ -4,13 +4,9 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/res" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="junit-4.12" level="application" />
-    <orderEntry type="library" scope="TEST" name="android-23" level="application" />
-    <orderEntry type="library" name="generated-resources" level="project" />
+    <orderEntry type="module" module-name="core" />
   </component>
 </module>

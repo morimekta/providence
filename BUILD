@@ -1,14 +1,16 @@
 load('release', 'release_jar')
 
-release_jar('core', '//core:core')
-release_jar('reflect', '//reflect:reflect')
-release_jar('jax-rs', '//jax-rs:jax-rs')
+release_jar('core', '//core')
+release_jar('reflect', '//reflect')
+release_jar('jax-rs', '//messageio')
+release_jar('messageio', '//messageio')
 
 filegroup(
     name = 'thrift-j2',
     srcs = [
         ':core',
-        ':reflect',
         ':jax-rs',
+        ':messageio',
+        ':reflect',
     ]
 )

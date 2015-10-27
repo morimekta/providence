@@ -19,6 +19,18 @@
 
 package org.apache.thrift.j2.serializer;
 
+import org.apache.thrift.j2.TEnumBuilder;
+import org.apache.thrift.j2.TEnumValue;
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.TMessageBuilder;
+import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TContainer;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TEnumDescriptor;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TMap;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,18 +40,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.apache.thrift.j2.TType;
-import org.apache.thrift.j2.descriptor.TContainer;
-import org.apache.thrift.j2.descriptor.TEnumDescriptor;
-import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TMap;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.TEnumBuilder;
-import org.apache.thrift.j2.TEnumValue;
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.TMessageBuilder;
-import org.apache.thrift.j2.descriptor.TDescriptor;
 
 /**
  * Compact binary serializer. This uses the most isCompact binary format
@@ -97,14 +97,13 @@ public class TBinarySerializer
         }
     }
 
-
     @Override
     public <T> T deserialize(InputStream input, TDescriptor<T> descriptor)
             throws TSerializeException, IOException {
         // Assume it consists of a single field.
         switch (descriptor.getType()) {
             case MESSAGE:
-                return cast((Object) readMessage(input, (TStructDescriptor<?>) descriptor));
+                return cast((Object) readMessage(input, (TStructDescriptor<?>) descriptor, true));
             default:
                 FieldInfo info = readFieldInfo(input);
                 if (info == null) {
@@ -114,11 +113,14 @@ public class TBinarySerializer
         }
     }
 
-    private <T extends TMessage<T>> T readMessage(InputStream input, TStructDescriptor<T> descriptor)
+    private <T extends TMessage<T>> T readMessage(InputStream input, TStructDescriptor<T> descriptor, boolean nullable)
             throws TSerializeException, IOException {
         TMessageBuilder<T> builder = descriptor.factory().builder();
-        FieldInfo fieldInfo;
-        while ((fieldInfo = readFieldInfo(input)) != null) {
+        FieldInfo fieldInfo = readFieldInfo(input);
+        if (nullable && fieldInfo == null) {
+            return null;
+        }
+        while (fieldInfo != null) {
             TField<?> field = descriptor.getField(fieldInfo.getId());
             if (field != null) {
                 Object value = readFieldValue(input, fieldInfo, field.getDescriptor());
@@ -130,6 +132,8 @@ public class TBinarySerializer
                 }
                 readFieldValue(input, fieldInfo, null);
             }
+
+            fieldInfo = readFieldInfo(input);
         }
         return builder.build();
     }
@@ -271,7 +275,7 @@ public class TBinarySerializer
                     if (!type.getType().equals(TType.MESSAGE)) {
                         throw new TSerializeException("Invalid type for message encoding.");
                     }
-                    return cast((Object) readMessage(in, (TStructDescriptor<?>) type));
+                    return cast((Object) readMessage(in, (TStructDescriptor<?>) type, false));
                 } else {
                     // consume message.
                     consumeMessage(in);

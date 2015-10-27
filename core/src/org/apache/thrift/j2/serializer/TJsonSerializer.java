@@ -171,6 +171,9 @@ public class TJsonSerializer
             throws TSerializeException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
+            if (!tokenizer.hasNext()) {
+                return null;
+            }
             return parseTypedValue(tokenizer.expect("Missing value."), tokenizer, type);
         } catch (JsonException e) {
             throw new TSerializeException(e, "Unable to parse JSON");

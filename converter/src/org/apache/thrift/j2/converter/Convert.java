@@ -19,16 +19,11 @@
 
 package org.apache.thrift.j2.converter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-
+import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.reflect.parser.TParseException;
-import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.reflect.TTypeLoader;
+import org.apache.thrift.j2.reflect.parser.TParseException;
 import org.apache.thrift.j2.reflect.parser.TParser;
 import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.serializer.TSerializer;
@@ -36,6 +31,11 @@ import org.apache.thrift.j2.util.TStringUtils;
 import org.apache.utils.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Stein Eldar Johnsen
@@ -73,7 +73,7 @@ public class Convert {
 
             loader.load(definition);
 
-            TDeclaredDescriptor<?> tmpDesc = loader.getRegistry().getDescriptor(mOpts.mType, null);
+            TDeclaredDescriptor tmpDesc = loader.getRegistry().getDescriptor(mOpts.mType, null);
             if (tmpDesc == null) {
                 throw new CmdLineException(cli, new FormatString("Unknown type: %s"), mOpts.mType);
             }
