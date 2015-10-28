@@ -10,11 +10,11 @@ be listed here in alphabetical order.
 - <email@example.com> Email address, may be anonymized with '...' to stop
   mail sniffers.
 
-# CONTRIBUTORS
+## CONTRIBUTORS
 
 - [@morimekta](http://github.com/morimekta) Stein Eldar Johnsen
 
-# COPYRIGHT NOTICE
+## COPYRIGHT NOTICE
 
 All files in the project that does not have a copyright notice implicitly
 has this notice. This includes config files, code files, scripts etc.
@@ -37,3 +37,11 @@ KIND, either express or implied. See the License for the
 specific language governing permissions and limitations
 under the License.
 ```
+
+### Other licenses
+
+The different libraries may use the same or other licenses.
+
+- `Apache-2.0` license can be found [here](http://www.apache.org/licenses/LICENSE-2.0).
+- `CDDL+GPL-1.1` license can be found [here](https://glassfish.java.net/public/CDDL+GPL_1_1.html).
+- `MIT` license can be found [here](https://opensource.org/licenses/MIT).
