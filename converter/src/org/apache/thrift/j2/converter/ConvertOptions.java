@@ -270,6 +270,16 @@ public class ConvertOptions {
             final FileOutputStream out = new FileOutputStream(file);
             return new TMessageWriter<T>() {
                 @Override
+                public void flush() throws IOException {
+                    out.flush();
+                }
+
+                @Override
+                public void close() throws IOException {
+                    out.close();
+                }
+
+                @Override
                 public void write(TMessage message) throws IOException {
                     try {
                         serializer.serialize(out, message);
@@ -280,6 +290,17 @@ public class ConvertOptions {
             };
         } else {
             return new TMessageWriter<T>() {
+                @Override
+                public void flush() throws IOException {
+                    System.out.flush();
+                }
+
+                @Override
+                public void close() throws IOException {
+                    System.out.println();
+                    System.out.flush();
+                }
+
                 @Override
                 public void write(TMessage message) throws IOException {
                     try {

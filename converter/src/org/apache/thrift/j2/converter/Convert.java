@@ -85,10 +85,11 @@ public class Convert {
             TMessageWriter output = mOpts.getOutput(cli);
 
             input.each(output);
+            output.flush();
 
-            System.out.flush();
-            System.out.println();
-            System.out.flush();
+            input.close();
+            output.close();
+
             System.exit(0);
             return;
         } catch (CmdLineException e) {

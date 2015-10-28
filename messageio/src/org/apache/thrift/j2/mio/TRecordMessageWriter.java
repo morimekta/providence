@@ -38,6 +38,7 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
     private static final int MAX_FILE_SIZE = 1_000_000_000;  // bytes.
 
     private final TSerializer mSerializer;
+    private final int mMaxFileSize;
 
     private Sequence mSequence;
     private File mCurrent;
@@ -45,8 +46,13 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
     private int mCurrentSize;
 
     public TRecordMessageWriter(Sequence sequence, TSerializer serializer) {
+        this(sequence, serializer, MAX_FILE_SIZE);
+    }
+
+    public TRecordMessageWriter(Sequence sequence, TSerializer serializer, int maxFileSize) {
         mSequence = sequence;
         mSerializer = serializer;
+        mMaxFileSize = maxFileSize;
 
         mCurrent = null;
         mCurrentSize = 0;
@@ -60,7 +66,7 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
             if (mSequence == null) return;
 
             try {
-                if (mOutputStream == null || mCurrentSize > MAX_FILE_SIZE) {
+                if (mOutputStream == null || mCurrentSize > mMaxFileSize) {
                     mCurrent = mSequence.next();
                     mOutputStream = new FileOutputStream(mCurrent);
                     mCurrentSize = 0;
@@ -86,11 +92,16 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
         }
     }
 
-    /**
-     * Close the doHandle stream. It cannot be written to again after this call.
-     *
-     * @throws IOException
-     */
+    @Override
+    public void flush() throws IOException {
+        synchronized (this) {
+            if (mOutputStream != null) {
+                mOutputStream.flush();
+            }
+        }
+    }
+
+    @Override
     public void close() throws IOException {
         synchronized (this) {
             mSequence = null;

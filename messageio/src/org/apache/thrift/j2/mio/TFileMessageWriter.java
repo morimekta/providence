@@ -77,11 +77,16 @@ public class TFileMessageWriter<M extends TMessage<M>> implements TMessageWriter
         }
     }
 
-    /**
-     * Close the doHandle stream. It cannot be written to again after this call.
-     *
-     * @throws IOException
-     */
+    @Override
+    public void flush() throws IOException {
+        synchronized (this) {
+            if (mOutputStream != null) {
+                mOutputStream.flush();
+            }
+        }
+    }
+
+    @Override
     public void close() throws IOException {
         synchronized (this) {
             mFile = null;
