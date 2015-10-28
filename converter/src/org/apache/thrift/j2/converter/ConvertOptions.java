@@ -19,16 +19,17 @@
 
 package org.apache.thrift.j2.converter;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.mio.TFileMessageReader;
+import org.apache.thrift.j2.mio.TMessageReader;
+import org.apache.thrift.j2.mio.TMessageWriter;
+import org.apache.thrift.j2.mio.TRecordMessageWriter;
+import org.apache.thrift.j2.mio.TShardMessageReader;
+import org.apache.thrift.j2.mio.utils.Sequence;
+import org.apache.thrift.j2.mio.utils.Shard;
+import org.apache.thrift.j2.mio.utils.ShardUtil;
 import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
 import org.apache.thrift.j2.protocol.TCompactProtocolSerializer;
 import org.apache.thrift.j2.protocol.TJsonProtocolSerializer;
@@ -51,6 +52,15 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.EnumOptionHandler;
 import org.kohsuke.args4j.spi.Setter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Stein Eldar Johnsen
@@ -130,16 +140,26 @@ public class ConvertOptions {
             handler = FormatOptionHandler.class)
     protected Format mOutFormat;
 
-    @Option(name = "--help",
-            aliases = { "-h", "-?" },
-            help = true,
-            usage = "This help listing.")
-    protected boolean mHelp;
+    @Option(name = "--shard",
+            aliases = {"-s"},
+            usage = "Output shard")
+    protected int mShard;
+
+    @Option(name = "--out",
+            aliases = {"-o"},
+            usage = "Output file pattern to write to.")
+    protected String mOut;
 
     @Argument(metaVar = "file",
             required = true,
             usage = "Source file to read")
     protected String mFile;
+
+    @Option(name = "--help",
+            aliases = { "-h", "-?" },
+            help = true,
+            usage = "This help listing.")
+    protected boolean mHelp;
 
     protected TSerializer getSerializer(CmdLineParser cli, Format format) throws CmdLineException {
         switch (format) {
@@ -232,22 +252,55 @@ public class ConvertOptions {
         }
     }
 
-    public TSerializer getInputFormat(CmdLineParser cli) throws CmdLineException {
-        return getSerializer(cli, mInFormat);
+    public <T extends TMessage<T>> TMessageWriter<T> getOutput(CmdLineParser cli) throws CmdLineException, IOException {
+        final TSerializer serializer = getSerializer(cli, mOutFormat);
+        if (mOut != null) {
+            if (ShardUtil.shardedName(mOut)) {
+                Shard shard = new Shard(mOut);
+                Sequence sequence = new Sequence(String.format("%s-%04d", shard.name, mShard));
+                return new TRecordMessageWriter<>(sequence, serializer);
+            }
+            File file = new File(mOut);
+            if (!file.exists()) {
+                throw new CmdLineException(cli, new FormatString("No such input file %s"), mOut);
+            }
+            if (!file.isFile()) {
+                throw new CmdLineException(cli, new FormatString("%s is not a file."), mOut);
+            }
+            final FileOutputStream out = new FileOutputStream(file);
+            return new TMessageWriter<T>() {
+                @Override
+                public void write(TMessage message) throws IOException {
+                    try {
+                        serializer.serialize(out, message);
+                    } catch (TSerializeException tse) {
+                        throw new IOException("Unable to serialize output.", tse);
+                    }
+                }
+            };
+        } else {
+            return new TMessageWriter<T>() {
+                @Override
+                public void write(TMessage message) throws IOException {
+                    try {
+                        serializer.serialize(System.out, message);
+                    } catch (TSerializeException tse) {
+                        throw new IOException("Unable to serialize output.", tse);
+                    }
+                }
+            };
+        }
     }
 
-    public TSerializer getOutputFormat(CmdLineParser cli) throws CmdLineException {
-        return getSerializer(cli, mOutFormat);
-    }
+    public TMessageReader<?> getInput(CmdLineParser cli, TStructDescriptor<?> descriptor) throws CmdLineException {
+        TSerializer serializer = getSerializer(cli, mInFormat);
 
-    public File getInputFile(CmdLineParser cli) throws CmdLineException {
-        File file = new File(mFile);
-        if (!file.exists()) {
-            throw new CmdLineException(cli, new FormatString("No such input file %s"), mFile);
+        if (ShardUtil.shardedName(mFile)) {
+            return new TShardMessageReader<>(mFile, serializer, descriptor);
+        } else if (ShardUtil.sequencedName(mFile)) {
+            return new TShardMessageReader<>(ShardUtil.sequencePrefix(mFile), serializer, descriptor);
+        } else {
+            return new TFileMessageReader<>(new File(mFile), serializer, descriptor);
         }
-        if (!file.isFile()) {
-            throw new CmdLineException(cli, new FormatString("%s is not a file."), mFile);
-        }
-        return file;
     }
 }

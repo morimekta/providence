@@ -19,21 +19,20 @@
 
 package org.apache.thrift.j2.converter;
 
-import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.mio.TMessageReader;
+import org.apache.thrift.j2.mio.TMessageWriter;
 import org.apache.thrift.j2.reflect.TTypeLoader;
 import org.apache.thrift.j2.reflect.parser.TParseException;
 import org.apache.thrift.j2.reflect.parser.TParser;
 import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
 import org.apache.thrift.j2.util.TStringUtils;
 import org.apache.utils.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,6 +47,7 @@ public class Convert {
         mOpts = new ConvertOptions();
     }
 
+    @SuppressWarnings("unchecked")
     public void run(String... args) {
         CmdLineParser cli = new CmdLineParser(mOpts);
         try {
@@ -67,7 +67,6 @@ public class Convert {
             TParser parser = mOpts.getParser(cli);
             List<File> includes = mOpts.getIncludes(cli);
             File definition = mOpts.getDefinition(cli);
-            FileInputStream inStream = new FileInputStream(mOpts.getInputFile(cli));
 
             TTypeLoader loader = new TTypeLoader(includes, parser);
 
@@ -82,13 +81,11 @@ public class Convert {
             }
 
             TStructDescriptor<?> desc = (TStructDescriptor<?>) tmpDesc;
+            TMessageReader input = mOpts.getInput(cli, desc);
+            TMessageWriter output = mOpts.getOutput(cli);
 
-            TSerializer in = mOpts.getInputFormat(cli);
-            TSerializer out = mOpts.getOutputFormat(cli);
+            input.each(output);
 
-            TMessage<?> tmp = in.deserialize(inStream, desc);
-
-            out.serialize(System.out, tmp);
             System.out.flush();
             System.out.println();
             System.out.flush();
