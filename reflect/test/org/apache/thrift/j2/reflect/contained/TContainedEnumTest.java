@@ -80,7 +80,7 @@ public class TContainedEnumTest {
 
     @Test
     public void testGetDescriptor() {
-        assertSame(mType, mValue3.getDescriptor());
+        assertSame(mType, mValue3.descriptor());
     }
 
     @Test

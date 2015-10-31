@@ -20,6 +20,7 @@
 package org.apache.thrift.j2.compiler.format.java2;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.thrift.j2.TException;
@@ -207,7 +208,7 @@ public class Java2MessageFormatter {
                 case SET:
                 case LIST:
                     TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
-                    String iTypeName = mTypeHelper.getSimpleClassName(cType.itemDescriptor());
+                    String iTypeName = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
                     switch (cType.itemDescriptor().getType()) {
                         case LIST:
                         case SET:
@@ -231,8 +232,8 @@ public class Java2MessageFormatter {
                     break;
                 case MAP:
                     TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
-                    String kTypeName = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
-                    iTypeName = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
+                    String kTypeName = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                    iTypeName = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
                     writer.formatln("dest.writeInt(%s.size());", fName);
                     switch (mType.keyDescriptor().getType()) {
                         case LIST:
@@ -289,7 +290,7 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
 
         writer.formatln(
                 "public static final Parcelable.Creator<%s> CREATOR = new Parcelable.Creator<%s>() {",
@@ -313,7 +314,7 @@ public class Java2MessageFormatter {
 
             String setF = camelCase("set", field.getName());
             String addToF = camelCase("addTo", field.getName());
-            String classF = mTypeHelper.getSimpleClassName(field.getDescriptor());
+            String classF = mTypeHelper.getInstanceClassName(field.getDescriptor());
 
             switch (field.getDescriptor().getType()) {
                 case BOOL:
@@ -358,7 +359,7 @@ public class Java2MessageFormatter {
                 case LIST:
                 case SET:
                     TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
-                    String cItemClass = mTypeHelper.getSimpleClassName(cType.itemDescriptor());
+                    String cItemClass = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
                     switch (cType.itemDescriptor().getType()) {
                         case LIST:
                         case SET:
@@ -395,8 +396,8 @@ public class Java2MessageFormatter {
                           .begin()
                           .appendln("int len = source.readInt();");
                     TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
-                    String mkClass = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
-                    String miClass = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
+                    String mkClass = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                    String miClass = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
 
                     switch (mType.keyDescriptor().getType()) {
                         case MAP:
@@ -434,8 +435,11 @@ public class Java2MessageFormatter {
                                   .appendln('}');
                             break;
                         case MESSAGE:
-                            writer.formatln("%s[] values = (%s[]) source.readParcelableArray(%s.class.getClassLoader());",
-                                            miClass, miClass, miClass);
+                            writer.formatln(
+                                    "%s[] values = (%s[]) source.readParcelableArray(%s.class.getClassLoader());",
+                                    miClass,
+                                    miClass,
+                                    miClass);
                             break;
                         default:
                             writer.formatln("%s[] values = (%s[]) source.readArray(%s.class.getClassLoader());",
@@ -467,11 +471,11 @@ public class Java2MessageFormatter {
               .newline();
 
         writer.appendln("@Override")
-                .formatln("public %s[] newArray(int size) {", simpleClass)
-                .begin()
-                .formatln("return new %s[size];", simpleClass)
-                .end()
-                .appendln('}');
+              .formatln("public %s[] newArray(int size) {", simpleClass)
+              .begin()
+              .formatln("return new %s[size];", simpleClass)
+              .end()
+              .appendln('}');
 
         writer.end()
               .appendln("};")
@@ -481,7 +485,7 @@ public class Java2MessageFormatter {
     private void appendBuilder(IndentedPrintWriter writer, TStructDescriptor<?> type) {
         boolean union = type.getVariant().equals(TMessageVariant.UNION);
 
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
         writer.appendln("@Override")
               .appendln("public _Builder mutate() {")
               .begin()
@@ -518,7 +522,7 @@ public class Java2MessageFormatter {
                 case LIST:
                     writer.formatln("%s = new %s<>();",
                                     camelCase("m", field.getName()),
-                                    mTypeHelper.getSimpleClassName(field.getDescriptor()));
+                                    mTypeHelper.getInstanceClassName(field.getDescriptor()));
                     break;
                 default:
                     break;
@@ -565,8 +569,8 @@ public class Java2MessageFormatter {
             switch (field.getDescriptor().getType()) {
                 case MAP:
                     TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
-                    String mkType = mTypeHelper.getSimpleClassName(mType.keyDescriptor());
-                    String miType = mTypeHelper.getSimpleClassName(mType.itemDescriptor());
+                    String mkType = mTypeHelper.getFieldType(mType.keyDescriptor());
+                    String miType = mTypeHelper.getFieldType(mType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                         if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
@@ -596,7 +600,7 @@ public class Java2MessageFormatter {
                                     camelCase("addTo", field.getName()),
                                     mkType, miType)
                           .begin();
-                    if(union) {
+                    if (union) {
                         writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
                     writer.formatln("%s.put(key, value);", fName)
@@ -620,7 +624,7 @@ public class Java2MessageFormatter {
                 case SET:
                 case LIST:
                     TContainer<?, ?> lType = (TContainer<?, ?>) field.getDescriptor();
-                    String liType = mTypeHelper.getSimpleClassName(lType.itemDescriptor());
+                    String liType = mTypeHelper.getFieldType(lType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                         if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
@@ -669,6 +673,36 @@ public class Java2MessageFormatter {
                         writer.formatln("if (%s.size() > 0) tUnionField = null;", fName);
                     }
                     writer.formatln("%s.clear();", fName)
+                          .appendln("return this;")
+                          .end()
+                          .appendln('}')
+                          .newline();
+                    break;
+                case BINARY:
+                    if (field.getComment() != null) {
+                        Java2Utils.appendBlockComment(writer, field.getComment());
+                        if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
+                            writer.appendln(Java2Utils.DEPRECATED);
+                        }
+                    }
+                    writer.formatln("public _Builder %s(%s value) {",
+                                    camelCase("set", field.getName()), vType)
+                          .begin();
+                    if (union) {
+                        writer.formatln("tUnionField = _Field.%s;", fEnumName);
+                    }
+                    writer.formatln("%s = Arrays.copyOf(value,value.length);", fName)
+                          .appendln("return this;")
+                          .end()
+                          .appendln('}')
+                          .newline();
+                    writer.formatln("public _Builder %s() {",
+                                    camelCase("clear", field.getName()))
+                          .begin();
+                    if (union) {
+                        writer.formatln("if (%s != null) tUnionField = null;", fName);
+                    }
+                    writer.formatln("%s = null;", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
@@ -852,7 +886,7 @@ public class Java2MessageFormatter {
               .appendln('}')
               .newline();
 
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
 
         writer.appendln("@Override")
               .appendln("public String toString() {")
@@ -909,7 +943,7 @@ public class Java2MessageFormatter {
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
         String typeClass;
         switch (type.getVariant()) {
             case STRUCT:
@@ -925,22 +959,54 @@ public class Java2MessageFormatter {
                 throw new GeneratorException("Unable to determine type class for " + type.getVariant());
         }
 
+        writer.formatln("public static %sProvider<%s> provider() {", typeClass, simpleClass)
+              .begin()
+              .formatln("return new _Provider();")
+              .end()
+              .appendln('}')
+              .newline();
+
         writer.appendln("@Override")
-              .formatln("public %s<%s> getDescriptor() {", typeClass, simpleClass)
+              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
               .begin()
-              .appendln("return sDescriptor;")
+              .appendln("return kDescriptor;")
               .end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public static %s<%s> descriptor() {", typeClass, simpleClass)
-              .begin()
-              .appendln("return sDescriptor;")
-              .end()
+        writer.formatln("public static final %s<%s> kDescriptor;", typeClass, simpleClass)
+              .newline();
+
+        writer.formatln("static {", typeClass, simpleClass)
+              .begin();
+        if (type.getVariant().equals(TMessageVariant.STRUCT)) {
+            writer.formatln(
+                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b);",
+                    typeClass,
+                    type.getPackageName(),
+                    type.getName(),
+                    type.isCompactible());
+        } else {
+            writer.formatln(
+                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory());",
+                    typeClass,
+                    type.getPackageName(),
+                    type.getName());
+        }
+        writer.end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public static final %s<%s> sDescriptor;", typeClass, simpleClass)
+        writer.formatln("private final static class _Provider extends %sProvider<%s> {", typeClass, simpleClass)
+              .begin()
+              .appendln("@Override")
+              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
+              .begin()
+              .appendln("return kDescriptor;")
+              .end()
+              .appendln('}')
+              .end()
+              .appendln("}")
               .newline();
 
         writer.appendln("private final static class _Factory")
@@ -955,42 +1021,6 @@ public class Java2MessageFormatter {
               .end()
               .appendln('}')
               .newline();
-
-        writer.formatln("static {", typeClass, simpleClass)
-              .begin();
-        if (type.getVariant().equals(TMessageVariant.STRUCT)) {
-            writer.formatln(
-                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b);",
-                    typeClass,
-                    type.getPackageName(),
-                    type.getName(),
-                    type.isCompactible());
-        } else {
-            writer.formatln(
-                    "sDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory());",
-                    typeClass,
-                    type.getPackageName(),
-                    type.getName());
-        }
-        writer.end()
-              .appendln('}')
-              .newline();
-
-        writer.formatln("public static %sProvider<%s> provider() {", typeClass, simpleClass)
-              .begin()
-              .formatln("return new %sProvider<%s>() {", typeClass, simpleClass)
-              .begin()
-              .appendln("@Override")
-              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
-              .begin()
-              .appendln("return sDescriptor;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln("};")
-              .end()
-              .appendln('}')
-              .newline();
     }
 
     private void appendIsValid(IndentedPrintWriter writer, TStructDescriptor<?> type) {
@@ -1002,8 +1032,10 @@ public class Java2MessageFormatter {
         if (type.getVariant().equals(TMessageVariant.UNION)) {
             boolean first = true;
             for (TField<?> field : type.getFields()) {
-                if (first) first = false;
-                else writer.append(" +").appendln("");
+                if (first)
+                    first = false;
+                else
+                    writer.append(" +").appendln("");
                 writer.format("(%s != null ? 1 : 0)", camelCase("m", field.getName()));
             }
             writer.append(" == 1");
@@ -1023,24 +1055,24 @@ public class Java2MessageFormatter {
             }
         }
         writer.end()  // alignment indent
-              .append(';')
-              .end()
-              .appendln('}')
-              .newline();
+                .append(';')
+                .end()
+                .appendln('}')
+                .newline();
     }
 
     private void appendObjectToString(IndentedPrintWriter writer) {
         writer.appendln("@Override")
               .appendln("public String toString() {")
               .begin()
-              .appendln("return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);")
+              .appendln("return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);")
               .end()
               .appendln("}")
               .newline();
     }
 
     private void appendObjectEquals(IndentedPrintWriter writer, TStructDescriptor<?> type) {
-        String typeName = mTypeHelper.getSimpleClassName(type);
+        String typeName = mTypeHelper.getInstanceClassName(type);
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
               .begin()
@@ -1072,12 +1104,13 @@ public class Java2MessageFormatter {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
-              .formatln("return %s.class.hashCode()", mTypeHelper.getSimpleClassName(type))
+              .formatln("return %s.class.hashCode()", mTypeHelper.getInstanceClassName(type))
               .begin("       ");
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
+            String fEnum = c_case("", field.getName()).toUpperCase();
             writer.append(" +")
-                  .formatln("TTypeUtils.hashCode(%s)", fName);
+                  .formatln("TTypeUtils.hashCode(_Field.%s,%s)", fEnum, fName);
         }
         writer.end()
               .append(";")
@@ -1170,7 +1203,8 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendFieldDefaultConstants(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
+    private void appendFieldDefaultConstants(IndentedPrintWriter writer, TStructDescriptor<?> type)
+            throws GeneratorException {
         boolean hasDefault = false;
         for (TField<?> field : type.getFields()) {
             Object defaultValue = mTypeHelper.getDefaultValue(field);
@@ -1179,7 +1213,7 @@ public class Java2MessageFormatter {
                 writer.formatln("private final static %s %s = ",
                                 mTypeHelper.getValueType(field.getDescriptor()),
                                 camelCase("kDefault", field.getName()))
-                .begin(DBL_INDENT);
+                      .begin(DBL_INDENT);
                 appendTypedValue(writer, defaultValue, field.getDescriptor());
                 writer.append(";")
                       .end();
@@ -1192,13 +1226,15 @@ public class Java2MessageFormatter {
 
     private void appendFieldGetters(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
         for (TField<?> field : type.getFields()) {
+            String fName = camelCase("m", field.getName());
+
             switch (field.getDescriptor().getType()) {
                 case LIST:
                 case SET:
                 case MAP:
                     writer.formatln("public int %s() {", camelCase("num", field.getName()))
                           .begin()
-                          .formatln("return %s.size();", camelCase("m", field.getName()))
+                          .formatln("return %s.size();", fName)
                           .end()
                           .appendln('}')
                           .newline();
@@ -1206,7 +1242,7 @@ public class Java2MessageFormatter {
                 default:
                     writer.formatln("public boolean %s() {", camelCase("has", field.getName()))
                           .begin()
-                          .formatln("return %s != null;", camelCase("m", field.getName()))
+                          .formatln("return %s != null;", fName)
                           .end()
                           .appendln('}')
                           .newline();
@@ -1224,14 +1260,22 @@ public class Java2MessageFormatter {
                   .begin();
 
             Object defaultValue = mTypeHelper.getDefaultValue(field);
-            if (defaultValue != null) {
-                writer.formatln("return %s() ? %s : %s;",
+            if (field.getDescriptor().getType().equals(TType.BINARY)) {
+                String defaultRef = defaultValue == null ? "null" : camelCase("kDefault", field.getName());
+                writer.formatln("return %s() ? Arrays.copyOf(%s,%s.length) : %s;",
                                 camelCase("has", field.getName()),
-                                camelCase("m", field.getName()),
-                                camelCase("kDefault", field.getName()));
+                                fName, fName,
+                                defaultRef);
             } else {
-                writer.formatln("return %s;",
-                                camelCase("m", field.getName()));
+                if (defaultValue != null) {
+                    writer.formatln("return %s() ? %s : %s;",
+                                    camelCase("has", field.getName()),
+                                    fName,
+                                    camelCase("kDefault", field.getName()));
+                } else {
+                    writer.formatln("return %s;",
+                                    camelCase("m", field.getName()));
+                }
             }
             writer.end()
                   .appendln('}')
@@ -1276,8 +1320,10 @@ public class Java2MessageFormatter {
                 byte[] bytes = (byte[]) defaultValue;
                 boolean first = true;
                 for (byte b : bytes) {
-                    if (first) first = false;
-                    else writer.append(',');
+                    if (first)
+                        first = false;
+                    else
+                        writer.append(',');
                     writer.format("0x%02x", b);
                 }
                 writer.append('}');
@@ -1292,7 +1338,7 @@ public class Java2MessageFormatter {
                 }
                 break;
             case ENUM:
-                writer.format("%s.%s", mTypeHelper.getSimpleClassName(type), defaultValue.toString());
+                writer.format("%s.%s", mTypeHelper.getInstanceClassName(type), defaultValue.toString());
                 break;
             case MESSAGE:
                 // writer.write("null");
@@ -1319,7 +1365,7 @@ public class Java2MessageFormatter {
     }
 
     private void appendConstructor(IndentedPrintWriter writer, TStructDescriptor<?> type) {
-        writer.formatln("private %s(_Builder builder) {", mTypeHelper.getSimpleClassName(type))
+        writer.formatln("private %s(_Builder builder) {", mTypeHelper.getInstanceClassName(type))
               .begin();
         if (type.getVariant().equals(TMessageVariant.EXCEPTION)) {
             writer.appendln("super(builder.createMessage());")
@@ -1330,15 +1376,15 @@ public class Java2MessageFormatter {
             switch (field.getDescriptor().getType()) {
                 case LIST:
                     writer.formatln("%s = Collections.unmodifiableList(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
+                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
                     break;
                 case SET:
                     writer.formatln("%s = Collections.unmodifiableSet(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
+                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
                     break;
                 case MAP:
                     writer.formatln("%s = Collections.unmodifiableMap(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getSimpleClassName(field.getDescriptor()), fName);
+                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
                     break;
                 default:
                     writer.formatln("%s = builder.%s;", fName, fName);
@@ -1355,18 +1401,19 @@ public class Java2MessageFormatter {
     }
 
     private void appendClassDefinitionStart(IndentedPrintWriter writer, TStructDescriptor<?> type) {
-        writer.formatln("public class %s", mTypeHelper.getSimpleClassName(type))
+        writer.appendln("@SuppressWarnings(\"unused\")")
+              .formatln("public class %s", mTypeHelper.getInstanceClassName(type))
               .begin(DBL_INDENT);
         if (type.getVariant().equals(TMessageVariant.EXCEPTION)) {
             writer.appendln("extends TException");
         }
-        writer.formatln("implements TMessage<%s>, Serializable", mTypeHelper.getSimpleClassName(type));
+        writer.formatln("implements TMessage<%s>, Serializable", mTypeHelper.getInstanceClassName(type));
         if (mAndroid) {
             writer.format(", Parcelable");
         }
         writer.append(" {")
-              .end()  // double indent.
-              .begin();
+                .end()  // double indent.
+                .begin();
 
         if (type.getVariant().equals(TMessageVariant.EXCEPTION)) {
             writer.formatln("private final static long serialVersionUID = %dL;",
@@ -1387,17 +1434,15 @@ public class Java2MessageFormatter {
             case MESSAGE:
                 // Avoid never-ending recursion (with circular contained
                 // structs) by stopping on already included structs and enums.
-                String className = mTypeHelper.getQualifiedClassName(descriptor);
-                if (!header.hasIncluded(className)) {
-                    header.include(className);
-                }
+                header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
                 break;
             case LIST:
                 TContainer<?, ?> lType = (TContainer<?, ?>) descriptor;
                 header.include(java.util.Collection.class.getName());
                 header.include(java.util.Collections.class.getName());
                 header.include(TList.class.getName());
-                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
                 header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
                 addTypeImports(header, lType.itemDescriptor());
                 break;
@@ -1406,20 +1451,24 @@ public class Java2MessageFormatter {
                 header.include(java.util.Collection.class.getName());
                 header.include(java.util.Collections.class.getName());
                 header.include(TSet.class.getName());
-                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
                 header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
                 addTypeImports(header, sType.itemDescriptor());
                 break;
             case MAP:
-                TMap<?,?> mType = (TMap<?,?>) descriptor;
+                TMap<?, ?> mType = (TMap<?, ?>) descriptor;
                 header.include(java.util.Collections.class.getName());
                 header.include(TMap.class.getName());
-                header.include(mTypeHelper.getQualifiedClassName(descriptor));
+                header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
                 header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
-                header.include(mTypeHelper.getQualifiedClassName(mType.itemDescriptor()));
-                header.include(mTypeHelper.getQualifiedClassName(mType.keyDescriptor()));
+                header.include(mTypeHelper.getQualifiedInstanceClassName(mType.itemDescriptor()));
+                header.include(mTypeHelper.getQualifiedInstanceClassName(mType.keyDescriptor()));
                 addTypeImports(header, mType.keyDescriptor());
                 addTypeImports(header, mType.itemDescriptor());
+                break;
+            case BINARY:
+                header.include(Arrays.class.getName());
+                header.include(TPrimitive.class.getName());
                 break;
             default:
                 header.include(TPrimitive.class.getName());
@@ -1427,7 +1476,8 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
+    private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?> type)
+            throws GeneratorException, IOException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
         header.include(java.io.Serializable.class.getName());
         header.include(TMessage.class.getName());

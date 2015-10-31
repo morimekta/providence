@@ -24,6 +24,7 @@ import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** <namespace>* <include>* <declataion>* */
+@SuppressWarnings("unused")
 public class ThriftDocument
         implements TMessage<ThriftDocument>, Serializable {
     private final String mComment;
@@ -139,16 +140,16 @@ public class ThriftDocument
     @Override
     public int hashCode() {
         return ThriftDocument.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mPackage) +
-               TTypeUtils.hashCode(mIncludes) +
-               TTypeUtils.hashCode(mNamespaces) +
-               TTypeUtils.hashCode(mDecl);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.PACKAGE,mPackage) +
+               TTypeUtils.hashCode(_Field.INCLUDES,mIncludes) +
+               TTypeUtils.hashCode(_Field.NAMESPACES,mNamespaces) +
+               TTypeUtils.hashCode(_Field.DECL,mDecl);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -244,16 +245,27 @@ public class ThriftDocument
         }
     }
 
+    public static TStructDescriptorProvider<ThriftDocument> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<ThriftDocument> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<ThriftDocument> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<ThriftDocument> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<ThriftDocument> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<ThriftDocument> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<ThriftDocument> {
+        @Override
+        public TStructDescriptor<ThriftDocument> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<ThriftDocument> {
@@ -261,19 +273,6 @@ public class ThriftDocument
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<ThriftDocument> provider() {
-        return new TStructDescriptorProvider<ThriftDocument>() {
-            @Override
-            public TStructDescriptor<ThriftDocument> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

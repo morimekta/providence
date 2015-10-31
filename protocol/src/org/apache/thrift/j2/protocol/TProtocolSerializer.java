@@ -182,9 +182,9 @@ class TProtocolSerializer extends TSerializer {
 
     protected void write(TMessage<?> message, TProtocol protocol)
             throws TException, TSerializeException {
-        TStructDescriptor<?> type = message.getDescriptor();
+        TStructDescriptor<?> type = message.descriptor();
 
-        protocol.writeStructBegin(new TStruct(message.getDescriptor().getQualifiedName(null)));
+        protocol.writeStructBegin(new TStruct(message.descriptor().getQualifiedName(null)));
 
         for (TField<?> field : type.getFields()) {
             if (!message.has(field.getKey())) continue;

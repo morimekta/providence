@@ -57,7 +57,7 @@ public class TContainedEnum
     }
 
     @Override
-    public TEnumDescriptor<TContainedEnum> getDescriptor() {
+    public TEnumDescriptor<TContainedEnum> descriptor() {
         return mType;
     }
 
@@ -67,7 +67,7 @@ public class TContainedEnum
             return false;
         }
         TContainedEnum other = (TContainedEnum) o;
-        return other.getDescriptor().getQualifiedName(null).equals(mType.getQualifiedName(null)) &&
+        return other.descriptor().getQualifiedName(null).equals(mType.getQualifiedName(null)) &&
                other.getName().equals(mName) &&
                other.getValue() == mValue;
     }

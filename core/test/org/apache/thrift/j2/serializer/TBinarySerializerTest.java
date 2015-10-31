@@ -77,7 +77,7 @@ public class TBinarySerializerTest {
         assertEquals(length, out.length);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(out);
-        Operation operation = serializer.deserialize(bais, Operation.descriptor());
+        Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
         assertEquals(mOperation, operation);
     }

@@ -38,8 +38,21 @@ struct Containers {
     32: set<primitives.Value> sv;
     33: map<primitives.Value,primitives.Value> mv;
 
-    // Using struct as value in containers.
+    // Using struct as key and value in containers.
     41: list<primitives.Primitives> lp;
     42: set<primitives.Primitives> sp;
-    43: map<i32,primitives.Primitives> mp;
+    43: map<primitives.Primitives,primitives.Primitives> mp;
+
+    // Using containers as values: list, set, map.
+    51: list<list<primitives.Primitives>> llp;
+    54: list<set<primitives.Primitives>> lsp;
+    57: list<map<primitives.Primitives,primitives.Primitives>> lmp;
+
+    52: set<list<primitives.Primitives>> slp;
+    55: set<set<primitives.Primitives>> ssp;
+    58: set<map<primitives.Primitives,primitives.Primitives>> smp;
+
+    53: map<primitives.Primitives,list<primitives.Primitives>> mlp;
+    56: map<primitives.Primitives,set<primitives.Primitives>> msp;
+    59: map<primitives.Primitives,map<primitives.Primitives,primitives.Primitives>> mmp;
 }

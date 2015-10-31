@@ -87,19 +87,15 @@ public enum StructVariant implements TEnumValue<StructVariant> {
         }
     }
 
-    private static final TEnumDescriptor<StructVariant> sDescriptor;
+    public static final TEnumDescriptor<StructVariant> kDescriptor;
 
     @Override
-    public TEnumDescriptor<StructVariant> getDescriptor() {
-        return sDescriptor;
-    }
-
-    public static TEnumDescriptor<StructVariant> descriptor() {
-        return sDescriptor;
+    public TEnumDescriptor<StructVariant> descriptor() {
+        return kDescriptor;
     }
 
     public static TEnumDescriptorProvider<StructVariant> provider() {
-        return new TEnumDescriptorProvider<StructVariant>(sDescriptor);
+        return new TEnumDescriptorProvider<StructVariant>(kDescriptor);
     }
 
     private static class _Factory
@@ -111,6 +107,6 @@ public enum StructVariant implements TEnumValue<StructVariant> {
     }
 
     static {
-        sDescriptor = new TEnumDescriptor<>(null, "model", "StructVariant", StructVariant.values(), new _Factory());
+        kDescriptor = new TEnumDescriptor<>(null, "model", "StructVariant", StructVariant.values(), new _Factory());
     }
 }

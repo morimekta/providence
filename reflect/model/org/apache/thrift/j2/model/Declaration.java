@@ -15,6 +15,7 @@ import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
+@SuppressWarnings("unused")
 public class Declaration
         implements TMessage<Declaration>, Serializable {
     private final EnumType mDeclEnum;
@@ -134,16 +135,16 @@ public class Declaration
     @Override
     public int hashCode() {
         return Declaration.class.hashCode() +
-               TTypeUtils.hashCode(mDeclEnum) +
-               TTypeUtils.hashCode(mDeclTypedef) +
-               TTypeUtils.hashCode(mDeclStruct) +
-               TTypeUtils.hashCode(mDeclService) +
-               TTypeUtils.hashCode(mDeclConst);
+               TTypeUtils.hashCode(_Field.DECL_ENUM,mDeclEnum) +
+               TTypeUtils.hashCode(_Field.DECL_TYPEDEF,mDeclTypedef) +
+               TTypeUtils.hashCode(_Field.DECL_STRUCT,mDeclStruct) +
+               TTypeUtils.hashCode(_Field.DECL_SERVICE,mDeclService) +
+               TTypeUtils.hashCode(_Field.DECL_CONST,mDeclConst);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -243,16 +244,27 @@ public class Declaration
         }
     }
 
+    public static TUnionDescriptorProvider<Declaration> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TUnionDescriptor<Declaration> getDescriptor() {
-        return sDescriptor;
+    public TUnionDescriptor<Declaration> descriptor() {
+        return kDescriptor;
     }
 
-    public static TUnionDescriptor<Declaration> descriptor() {
-        return sDescriptor;
+    public static final TUnionDescriptor<Declaration> kDescriptor;
+
+    static {
+        kDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory());
     }
 
-    public static final TUnionDescriptor<Declaration> sDescriptor;
+    private final static class _Provider extends TUnionDescriptorProvider<Declaration> {
+        @Override
+        public TUnionDescriptor<Declaration> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<Declaration> {
@@ -260,19 +272,6 @@ public class Declaration
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory());
-    }
-
-    public static TUnionDescriptorProvider<Declaration> provider() {
-        return new TUnionDescriptorProvider<Declaration>() {
-            @Override
-            public TUnionDescriptor<Declaration> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

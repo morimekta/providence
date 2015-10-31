@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.util;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TField;
 
 /**
  * Thrift type utilities.
@@ -145,9 +147,13 @@ public class TTypeUtils {
         }
     }
 
+    public static int hashCode(TField<?> field, Object object) {
+        return hashCode(field) * hashCode(object);
+    }
+
     public static int hashCode(Object object) {
         if (object == null) {
-            return 0;
+            return 1;
         }
         if (object instanceof List) {
             return hashCodeList((List<?>) object);

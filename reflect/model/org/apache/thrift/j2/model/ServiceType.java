@@ -25,6 +25,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
  *   (<method> [;,]?)*
  * }
  */
+@SuppressWarnings("unused")
 public class ServiceType
         implements TMessage<ServiceType>, Serializable {
     private final String mComment;
@@ -122,15 +123,15 @@ public class ServiceType
     @Override
     public int hashCode() {
         return ServiceType.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mExtend) +
-               TTypeUtils.hashCode(mMethods);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.NAME,mName) +
+               TTypeUtils.hashCode(_Field.EXTEND,mExtend) +
+               TTypeUtils.hashCode(_Field.METHODS,mMethods);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -223,16 +224,27 @@ public class ServiceType
         }
     }
 
+    public static TStructDescriptorProvider<ServiceType> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<ServiceType> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<ServiceType> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<ServiceType> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<ServiceType> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<ServiceType> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<ServiceType> {
+        @Override
+        public TStructDescriptor<ServiceType> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<ServiceType> {
@@ -240,19 +252,6 @@ public class ServiceType
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<ServiceType> provider() {
-        return new TStructDescriptorProvider<ServiceType>() {
-            @Override
-            public TStructDescriptor<ServiceType> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

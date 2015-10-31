@@ -19,3 +19,9 @@ def gen_thrift(name,
         local=1,
         visibility=visibility,
     )
+    native.genrule(
+        name='%s-src.jar' % name,
+        srcs=[name],
+        outs=['%s-src.jar' % name],
+        cmd='cp $< $@'
+    )

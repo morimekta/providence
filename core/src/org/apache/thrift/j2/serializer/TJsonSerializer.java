@@ -536,7 +536,7 @@ public class TJsonSerializer
     }
 
     protected void appendMessage(JsonWriter writer, TMessage<?> message) throws TSerializeException, JsonException {
-        TStructDescriptor<?> type = message.getDescriptor();
+        TStructDescriptor<?> type = message.descriptor();
         if (message.isCompact()) {
             writer.array();
             for (TField<?> field : type.getFields()) {

@@ -364,7 +364,7 @@ public class ThriftFormatter {
         if (value instanceof TEnumValue<?>) {
             TEnumValue<?> ev = (TEnumValue<?>) value;
             writer.append('\"')
-                  .append(ev.getDescriptor().getName()).append('.').append(ev.toString())
+                  .append(ev.descriptor().getName()).append('.').append(ev.toString())
                   .append('\"');
         } else if (value instanceof String) {
             JsonWriter json = new JsonWriter(writer, "");
@@ -401,7 +401,7 @@ public class ThriftFormatter {
 
         writer.append('{')
               .begin();
-        for (TField<?> field : message.getDescriptor().getFields()) {
+        for (TField<?> field : message.descriptor().getFields()) {
             if (message.has(field.getKey())) {
                 if (first) first = false;
                 else writer.append(',');

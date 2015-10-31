@@ -26,6 +26,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
  *   (<field> ([,;])?)*
  * }
  */
+@SuppressWarnings("unused")
 public class StructType
         implements TMessage<StructType>, Serializable {
     private final static StructVariant kDefaultVariant = StructVariant.STRUCT;
@@ -125,15 +126,15 @@ public class StructType
     @Override
     public int hashCode() {
         return StructType.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mVariant) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mFields);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.VARIANT,mVariant) +
+               TTypeUtils.hashCode(_Field.NAME,mName) +
+               TTypeUtils.hashCode(_Field.FIELDS,mFields);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -226,16 +227,27 @@ public class StructType
         }
     }
 
+    public static TStructDescriptorProvider<StructType> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<StructType> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<StructType> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<StructType> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<StructType> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "StructType", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<StructType> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<StructType> {
+        @Override
+        public TStructDescriptor<StructType> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<StructType> {
@@ -243,19 +255,6 @@ public class StructType
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "StructType", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<StructType> provider() {
-        return new TStructDescriptorProvider<StructType>() {
-            @Override
-            public TStructDescriptor<StructType> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

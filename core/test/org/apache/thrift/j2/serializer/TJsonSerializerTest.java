@@ -139,7 +139,7 @@ public class TJsonSerializerTest {
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
-        Operation operation = serializer.deserialize(bais, Operation.descriptor());
+        Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
         assertEquals(mOperation, operation);
     }
@@ -150,7 +150,7 @@ public class TJsonSerializerTest {
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         TJsonSerializer serializer = new TJsonSerializer();
-        Operation operation = serializer.deserialize(bais, Operation.descriptor());
+        Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
         assertEquals(mOperation, operation);
     }
@@ -180,14 +180,14 @@ public class TJsonSerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(StandardCharsets.UTF_8));
         TJsonSerializer serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
 
-        Category category = serializer.deserialize(bais, Category.descriptor());
+        Category category = serializer.deserialize(bais, Category.kDescriptor);
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());
         assertNull(category.getLabel());
 
         bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(StandardCharsets.UTF_8));
-        category = serializer.deserialize(bais, Category.descriptor());
+        category = serializer.deserialize(bais, Category.kDescriptor);
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());

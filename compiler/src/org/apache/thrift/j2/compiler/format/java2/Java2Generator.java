@@ -64,7 +64,7 @@ public class Java2Generator
         String path = Java2Utils.getPackageClassPath(javaPackage);
 
         for (TDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
-            String file = mTypeHelper.getSimpleClassName(type) + ".java";
+            String file = mTypeHelper.getInstanceClassName(type) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);

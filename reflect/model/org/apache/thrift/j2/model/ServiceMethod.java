@@ -22,6 +22,7 @@ import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
+@SuppressWarnings("unused")
 public class ServiceMethod
         implements TMessage<ServiceMethod>, Serializable {
     private final static boolean kDefaultIsOneway = false;
@@ -149,17 +150,17 @@ public class ServiceMethod
     @Override
     public int hashCode() {
         return ServiceMethod.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mIsOneway) +
-               TTypeUtils.hashCode(mReturnType) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mParams) +
-               TTypeUtils.hashCode(mExceptions);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.IS_ONEWAY,mIsOneway) +
+               TTypeUtils.hashCode(_Field.RETURN_TYPE,mReturnType) +
+               TTypeUtils.hashCode(_Field.NAME,mName) +
+               TTypeUtils.hashCode(_Field.PARAMS,mParams) +
+               TTypeUtils.hashCode(_Field.EXCEPTIONS,mExceptions);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -258,16 +259,27 @@ public class ServiceMethod
         }
     }
 
+    public static TStructDescriptorProvider<ServiceMethod> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<ServiceMethod> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<ServiceMethod> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<ServiceMethod> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<ServiceMethod> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "ServiceMethod", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<ServiceMethod> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<ServiceMethod> {
+        @Override
+        public TStructDescriptor<ServiceMethod> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<ServiceMethod> {
@@ -275,19 +287,6 @@ public class ServiceMethod
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "ServiceMethod", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<ServiceMethod> provider() {
-        return new TStructDescriptorProvider<ServiceMethod>() {
-            @Override
-            public TStructDescriptor<ServiceMethod> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

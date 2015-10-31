@@ -1,3 +1,10 @@
+load('/thrift', 'gen_thrift')
+
+filegroup(
+  name = 'failure-thrift',
+  srcs = glob(['res/failure/*.thrift']),
+)
+
 java_library(
   name = "reflect",
   srcs = glob([

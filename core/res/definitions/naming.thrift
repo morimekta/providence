@@ -23,4 +23,7 @@ struct Provider {
     2: Factory Factory;
     3: Builder Builder;
     4: Fields Fields;
+
+    5: i32 descriptor;
+    6: i32 kDescriptor;
 }

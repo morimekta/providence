@@ -25,6 +25,7 @@ import org.apache.thrift.j2.util.TTypeUtils;
  *   (<value> ([;,])?)*
  * }
  */
+@SuppressWarnings("unused")
 public class EnumType
         implements TMessage<EnumType>, Serializable {
     private final String mComment;
@@ -108,14 +109,14 @@ public class EnumType
     @Override
     public int hashCode() {
         return EnumType.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mValues);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.NAME,mName) +
+               TTypeUtils.hashCode(_Field.VALUES,mValues);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -205,16 +206,27 @@ public class EnumType
         }
     }
 
+    public static TStructDescriptorProvider<EnumType> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<EnumType> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<EnumType> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<EnumType> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<EnumType> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<EnumType> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<EnumType> {
+        @Override
+        public TStructDescriptor<EnumType> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<EnumType> {
@@ -222,19 +234,6 @@ public class EnumType
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<EnumType> provider() {
-        return new TStructDescriptorProvider<EnumType>() {
-            @Override
-            public TStructDescriptor<EnumType> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

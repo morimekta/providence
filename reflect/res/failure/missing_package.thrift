@@ -1,3 +1,5 @@
+namespace java org.apache.test.failure
+
 include "valid_reference.thrift"
 
 struct U {

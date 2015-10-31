@@ -16,6 +16,7 @@ import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** <name> (= <value>) */
+@SuppressWarnings("unused")
 public class EnumValue
         implements TMessage<EnumValue>, Serializable {
     private final static int kDefaultValue = 0;
@@ -101,14 +102,14 @@ public class EnumValue
     @Override
     public int hashCode() {
         return EnumValue.class.hashCode() +
-               TTypeUtils.hashCode(mComment) +
-               TTypeUtils.hashCode(mName) +
-               TTypeUtils.hashCode(mValue);
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
+               TTypeUtils.hashCode(_Field.NAME,mName) +
+               TTypeUtils.hashCode(_Field.VALUE,mValue);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -198,16 +199,27 @@ public class EnumValue
         }
     }
 
+    public static TStructDescriptorProvider<EnumValue> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<EnumValue> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<EnumValue> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<EnumValue> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<EnumValue> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<EnumValue> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<EnumValue> {
+        @Override
+        public TStructDescriptor<EnumValue> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<EnumValue> {
@@ -215,19 +227,6 @@ public class EnumValue
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<EnumValue> provider() {
-        return new TStructDescriptorProvider<EnumValue>() {
-            @Override
-            public TStructDescriptor<EnumValue> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

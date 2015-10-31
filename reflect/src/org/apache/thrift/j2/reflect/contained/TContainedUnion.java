@@ -51,7 +51,7 @@ public class TContainedUnion
     }
 
     @Override
-    public TContainedUnionDescriptor getDescriptor() {
+    public TContainedUnionDescriptor descriptor() {
         return mType;
     }
 

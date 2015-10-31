@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -28,14 +29,14 @@ import java.util.Set;
 
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
-import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
-import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
+import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
+import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
@@ -59,7 +60,7 @@ public class Java2TypeHelper {
         return Java2Utils.getJavaPackage(document);
     }
 
-    public String getQualifiedClassName(TDescriptor type) throws GeneratorException {
+    public String getQualifiedInstanceClassName(TDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.class.getName();
@@ -76,7 +77,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getName();
             case BINARY:
-                return byte[].class.getCanonicalName();
+                return "byte[]";
             case MAP:
                 return LinkedHashMap.class.getName();
             case SET:
@@ -91,11 +92,11 @@ public class Java2TypeHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getQualifiedClassName(TContainedDocument document) throws GeneratorException {
+    public String getQualifiedInstanceClassName(TContainedDocument document) throws GeneratorException {
         return Java2Utils.getJavaPackage(document) + "." + camelCase("", document.getPackageName());
     }
 
-    public String getSimpleClassName(TDescriptor type) {
+    public String getInstanceClassName(TDescriptor type) {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.class.getSimpleName();
@@ -164,7 +165,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return byte[].class.getSimpleName();
+                return "byte[]";
             case MAP:
                 TMap<?, ?> mType = (TMap<?, ?>) type;
                 return String.format("%s<%s,%s>",
@@ -205,7 +206,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return byte[].class.getSimpleName();
+                return "byte[]";
             case MAP:
                 TMap<?, ?> mType = (TMap<?, ?>) type;
                 return String.format("%s<%s,%s>",
@@ -243,7 +244,7 @@ public class Java2TypeHelper {
         switch (type.getType()) {
             case ENUM:
             case MESSAGE:
-                return String.format("%s.provider()", getSimpleClassName(type));
+                return String.format("%s.provider()", getInstanceClassName(type));
             case LIST:
                 TList<?> lType = (TList<?>) type;
                 return String.format("TList.provider(%s)", getProviderName(lType.itemDescriptor()));

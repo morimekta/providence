@@ -16,6 +16,7 @@ import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 /** typedef <type> <name> */
+@SuppressWarnings("unused")
 public class TypedefType
         implements TMessage<TypedefType>, Serializable {
     private final String mType;
@@ -85,13 +86,13 @@ public class TypedefType
     @Override
     public int hashCode() {
         return TypedefType.class.hashCode() +
-               TTypeUtils.hashCode(mType) +
-               TTypeUtils.hashCode(mName);
+               TTypeUtils.hashCode(_Field.TYPE,mType) +
+               TTypeUtils.hashCode(_Field.NAME,mName);
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) + TTypeUtils.toString(this);
+        return descriptor().getQualifiedName(null) + TTypeUtils.toString(this);
     }
 
     @Override
@@ -178,16 +179,27 @@ public class TypedefType
         }
     }
 
+    public static TStructDescriptorProvider<TypedefType> provider() {
+        return new _Provider();
+    }
+
     @Override
-    public TStructDescriptor<TypedefType> getDescriptor() {
-        return sDescriptor;
+    public TStructDescriptor<TypedefType> descriptor() {
+        return kDescriptor;
     }
 
-    public static TStructDescriptor<TypedefType> descriptor() {
-        return sDescriptor;
+    public static final TStructDescriptor<TypedefType> kDescriptor;
+
+    static {
+        kDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), false);
     }
 
-    public static final TStructDescriptor<TypedefType> sDescriptor;
+    private final static class _Provider extends TStructDescriptorProvider<TypedefType> {
+        @Override
+        public TStructDescriptor<TypedefType> descriptor() {
+            return kDescriptor;
+        }
+    }
 
     private final static class _Factory
             extends TMessageBuilderFactory<TypedefType> {
@@ -195,19 +207,6 @@ public class TypedefType
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    static {
-        sDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), false);
-    }
-
-    public static TStructDescriptorProvider<TypedefType> provider() {
-        return new TStructDescriptorProvider<TypedefType>() {
-            @Override
-            public TStructDescriptor<TypedefType> descriptor() {
-                return sDescriptor;
-            }
-        };
     }
 
     @Override

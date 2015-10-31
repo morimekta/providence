@@ -23,13 +23,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
+import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
+import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 
 /**
  * @author Stein Eldar Johnsen
@@ -135,7 +135,7 @@ public class TTypeRegistry {
 
         // Collection types are a bit complex, so handle it here.
         if (typeName.startsWith("map<") && typeName.endsWith(">")) {
-            String[] parts = typeName.substring(4, typeName.length() - 1).split(",");
+            String[] parts = typeName.substring(4, typeName.length() - 1).split(",", 2);
             if (parts.length != 2) {
                 throw new IllegalArgumentException(typeName + " is not a valid map descriptor, wrong number of types.");
             }

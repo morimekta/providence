@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/bazel-bin/core/libgenerated.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/bazel-genfiles/core/generated-thrift-src.jar!/" />
+    </SOURCES>
   </library>
 </component>

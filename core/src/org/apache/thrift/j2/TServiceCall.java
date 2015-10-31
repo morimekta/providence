@@ -118,7 +118,7 @@ public class TServiceCall<MSG> implements TMessage<TServiceCall<MSG>> {
     }
 
     @Override
-    public TStructDescriptor<TServiceCall<MSG>> getDescriptor() {
+    public TStructDescriptor<TServiceCall<MSG>> descriptor() {
         return null;
     }
 

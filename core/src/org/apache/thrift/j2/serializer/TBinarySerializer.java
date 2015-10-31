@@ -74,7 +74,7 @@ public class TBinarySerializer
             throw new TSerializeException("Message not valid.");
         }
         int len = 0;
-        for (TField<?> field : message.getDescriptor().getFields()) {
+        for (TField<?> field : message.descriptor().getFields()) {
             if (message.has(field.getKey())) {
                 len += writeUnsigned(output, field.getKey(), 2);
                 len += writeFieldValue(output,

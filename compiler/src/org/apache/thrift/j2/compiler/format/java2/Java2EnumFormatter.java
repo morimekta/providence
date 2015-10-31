@@ -49,7 +49,7 @@ public class Java2EnumFormatter {
 
         header.format(writer);
 
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
 
         if (type.getComment() != null) {
             Java2Utils.appendBlockComment(writer, type.getComment());
@@ -141,29 +141,22 @@ public class Java2EnumFormatter {
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, TEnumDescriptor<?> type) {
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
 
-        writer.formatln("private static final TEnumDescriptor<%s> sDescriptor;", simpleClass)
+        writer.formatln("public static final TEnumDescriptor<%s> kDescriptor;", simpleClass)
               .newline();
 
         writer.appendln("@Override")
-              .formatln("public TEnumDescriptor<%s> getDescriptor() {", simpleClass)
+              .formatln("public TEnumDescriptor<%s> descriptor() {", simpleClass)
               .begin()
-              .appendln("return sDescriptor;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.formatln("public static TEnumDescriptor<%s> descriptor() {", simpleClass)
-              .begin()
-              .appendln("return sDescriptor;")
+              .appendln("return kDescriptor;")
               .end()
               .appendln('}')
               .newline();
 
         writer.formatln("public static TEnumDescriptorProvider<%s> provider() {", simpleClass)
               .begin()
-              .formatln("return new TEnumDescriptorProvider<%s>(sDescriptor);", simpleClass)
+              .formatln("return new TEnumDescriptorProvider<%s>(kDescriptor);", simpleClass)
               .end()
               .appendln('}')
               .newline();
@@ -183,14 +176,14 @@ public class Java2EnumFormatter {
 
         writer.formatln("static {", simpleClass)
               .begin();
-        writer.formatln("sDescriptor = new TEnumDescriptor<>(null, \"%s\", \"%s\", %s.values(), new _Factory());",
+        writer.formatln("kDescriptor = new TEnumDescriptor<>(null, \"%s\", \"%s\", %s.values(), new _Factory());",
                         type.getPackageName(), type.getName(), simpleClass)
               .end()
               .appendln('}');
     }
 
     protected void appendBuilder(IndentedPrintWriter writer, TEnumDescriptor<?> type) {
-        String simpleClass = mTypeHelper.getSimpleClassName(type);
+        String simpleClass = mTypeHelper.getInstanceClassName(type);
         writer.formatln("public static class _Builder extends TEnumBuilder<%s> {", simpleClass)
               .begin()
               .formatln("%s mValue;", simpleClass)

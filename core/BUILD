@@ -9,7 +9,6 @@ java_library(
 gen_thrift(
   name = 'generated-thrift',
   gen = 'java2',
-  flags = ['--android'],
   srcs = glob(['res/definitions/*.thrift']),
 )
 
@@ -18,7 +17,6 @@ java_library(
   srcs = [':generated-thrift'],
   deps = [
     ":core",
-    "//third-party:android",
   ],
   visibility = ['//visibility:public'],
 )

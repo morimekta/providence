@@ -43,7 +43,7 @@ public abstract class TContainedMessage<T extends TMessage<T>>
 
     @Override
     public boolean has(int key) {
-        TField<?> field = getDescriptor().getField(key);
+        TField<?> field = descriptor().getField(key);
         if (field == null) {
             return false;
         }
@@ -59,7 +59,7 @@ public abstract class TContainedMessage<T extends TMessage<T>>
 
     @Override
     public int num(int key) {
-        TField<?> field = getDescriptor().getField(key);
+        TField<?> field = descriptor().getField(key);
         if (field == null) {
             return 0;
         }
@@ -79,7 +79,7 @@ public abstract class TContainedMessage<T extends TMessage<T>>
 
     @Override
     public Object get(int key) {
-        TField<?> field = getDescriptor().getField(key);
+        TField<?> field = descriptor().getField(key);
         if (field != null) {
             Object value = mFields.get(key);
             if (value != null) {
@@ -95,9 +95,9 @@ public abstract class TContainedMessage<T extends TMessage<T>>
 
     @Override
     public boolean isCompact() {
-        if (!getDescriptor().isCompactible()) return false;
+        if (!descriptor().isCompactible()) return false;
         boolean missing = false;
-        for (TField<?> field : getDescriptor().getFields()) {
+        for (TField<?> field : descriptor().getFields()) {
             if (has(field.getKey())) {
                 if (missing) return false;
             } else {
@@ -114,13 +114,13 @@ public abstract class TContainedMessage<T extends TMessage<T>>
         }
 
         TContainedMessage other = (TContainedMessage) o;
-        TStructDescriptor<?> type = other.getDescriptor();
-        if (!getDescriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
-            !getDescriptor().getVariant().equals(type.getVariant())) {
+        TStructDescriptor<?> type = other.descriptor();
+        if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
+            !descriptor().getVariant().equals(type.getVariant())) {
             return false;
         }
 
-        for (TField<?> field : getDescriptor().getFields()) {
+        for (TField<?> field : descriptor().getFields()) {
             int id = field.getKey();
             if (has(id) != other.has(id)) return false;
             if (!TTypeUtils.equals(get(id), other.get(id))) return false;
@@ -131,15 +131,16 @@ public abstract class TContainedMessage<T extends TMessage<T>>
     @Override
     public int hashCode() {
         int hash = getClass().hashCode();
-        for (Object o : mFields.values()) {
-            hash += TTypeUtils.hashCode(o);
+        for (Map.Entry<Integer, Object> entry : mFields.entrySet()) {
+            TField<?> field = descriptor().getField(entry.getKey());
+            hash += TTypeUtils.hashCode(field, entry.getValue());
         }
         return hash;
     }
 
     @Override
     public String toString() {
-        return getDescriptor().getQualifiedName(null) +
+        return descriptor().getQualifiedName(null) +
                new TPrettyPrinter("", "", "").format(this);
     }
 }
