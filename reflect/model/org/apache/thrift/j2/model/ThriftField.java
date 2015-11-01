@@ -143,6 +143,11 @@ public class ThriftField
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftField)) return false;
         ThriftField other = (ThriftField) o;
@@ -210,7 +215,7 @@ public class ThriftField
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -280,7 +285,7 @@ public class ThriftField
     public static final TStructDescriptor<ThriftField> kDescriptor;
 
     static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", _Field.values(), new _Factory(), false);
+        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", _Field.values(), new _Factory(), true, false);
     }
 
     private final static class _Provider extends TStructDescriptorProvider<ThriftField> {

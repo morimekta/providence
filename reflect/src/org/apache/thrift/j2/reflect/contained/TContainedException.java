@@ -115,6 +115,11 @@ public class TContainedException
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TContainedException)) {
             return false;

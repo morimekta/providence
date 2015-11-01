@@ -98,6 +98,11 @@ public class EnumType
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumType)) return false;
         EnumType other = (EnumType) o;
@@ -154,7 +159,7 @@ public class EnumType
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -218,7 +223,7 @@ public class EnumType
     public static final TStructDescriptor<EnumType> kDescriptor;
 
     static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false);
+        kDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false, false);
     }
 
     private final static class _Provider extends TStructDescriptorProvider<EnumType> {

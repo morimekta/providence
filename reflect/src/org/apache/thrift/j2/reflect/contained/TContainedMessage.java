@@ -22,12 +22,12 @@ package org.apache.thrift.j2.reflect.contained;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.util.TPrettyPrinter;
 import org.apache.thrift.j2.util.TTypeUtils;
-import org.apache.thrift.j2.TMessage;
 
 /**
  * @author Stein Eldar Johnsen
@@ -105,6 +105,11 @@ public abstract class TContainedMessage<T extends TMessage<T>>
             }
         }
         return true;
+    }
+
+    // @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
     }
 
     @Override

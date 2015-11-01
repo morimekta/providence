@@ -21,9 +21,9 @@ package org.apache.thrift.j2.reflect.contained;
 
 import java.util.List;
 
+import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 
 /**
@@ -37,9 +37,27 @@ public class TContainedUnionDescriptor
                                      String packageName,
                                      String name,
                                      List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory());
-        // TODO Auto-generated constructor stub
+        super(comment, packageName, name, fields, new _Factory(),
+              // overrides isSimple instead to avoid having to check fields
+              // types before it's converted.
+              false);
         ((_Factory) factory()).setType(this);
+    }
+
+    @Override
+    public boolean isSimple() {
+        for (TField<?> field : getFields()) {
+            switch (field.getType()) {
+                case MAP:
+                case SET:
+                case LIST:
+                case MESSAGE:
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 
     private static class _Factory

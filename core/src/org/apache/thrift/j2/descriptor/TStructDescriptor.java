@@ -19,16 +19,16 @@
 
 package org.apache.thrift.j2.descriptor;
 
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.TMessageBuilderFactory;
-import org.apache.thrift.j2.TMessageVariant;
-import org.apache.thrift.j2.TType;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.TMessageBuilderFactory;
+import org.apache.thrift.j2.TMessageVariant;
+import org.apache.thrift.j2.TType;
 
 /**
  * The definition of a thrift structure.
@@ -43,14 +43,16 @@ public class TStructDescriptor<T extends TMessage<T>>
     private final Map<String, TField<?>>    mFieldNameMap;
     private final TMessageBuilderFactory<T> mProvider;
     private final boolean                   mCompactible;
+    private final boolean                   mSimple;
 
     public TStructDescriptor(String comment,
                              String packageName,
                              String name,
                              TField<?>[] fields,
                              TMessageBuilderFactory<T> provider,
+                             boolean simple,
                              boolean compactible) {
-        this(comment, packageName, name, fieldList(fields), provider, compactible);
+        this(comment, packageName, name, fieldList(fields), provider, simple, compactible);
     }
 
     public TStructDescriptor(String comment,
@@ -58,6 +60,7 @@ public class TStructDescriptor<T extends TMessage<T>>
                              String name,
                              List<TField<?>> fields,
                              TMessageBuilderFactory<T> provider,
+                             boolean simple,
                              boolean compactible) {
         super(comment, packageName, name);
 
@@ -73,6 +76,7 @@ public class TStructDescriptor<T extends TMessage<T>>
         mFieldNameMap = fieldNameMap;
 
         mProvider = provider;
+        mSimple = simple;
         mCompactible = compactible;
     }
 
@@ -120,6 +124,10 @@ public class TStructDescriptor<T extends TMessage<T>>
      */
     public boolean isCompactible() {
         return mCompactible;
+    }
+
+    public boolean isSimple() {
+        return mSimple;
     }
 
     /**

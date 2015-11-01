@@ -84,7 +84,7 @@ public class TTypeRegistry {
             return (T) mDeclaredTypes.get(declaredTypeName);
         }
 
-        throw new IllegalArgumentException("No such type " + name + " for package " + packageContext);
+        throw new IllegalArgumentException("No such type \"" + name + "\" for package \"" + packageContext + "\"");
     }
 
     /**

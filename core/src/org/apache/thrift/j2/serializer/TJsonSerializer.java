@@ -19,6 +19,18 @@
 
 package org.apache.thrift.j2.serializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
+
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
@@ -38,18 +50,6 @@ import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonToken;
 import org.apache.thrift.j2.util.json.JsonTokenizer;
 import org.apache.thrift.j2.util.json.JsonWriter;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * Compact JSON serializer. This uses the most isCompact type-safe JSON format
@@ -517,16 +517,31 @@ public class TJsonSerializer
                         }
                         return token.doubleValue();
                     } catch (JsonException e) {
-                        throw new TSerializeException(e,
-                                                      "Unable to parse double from key \"" + key + "\"");
+                        throw new TSerializeException(
+                                e, "Unable to parse double from key \"" + key + "\"");
                     } catch (IOException e) {
-                        throw new TSerializeException(e,
-                                                      "Unable to parse double from key \"" + key + " (IO)\"");
+                        throw new TSerializeException(
+                                e, "Unable to parse double from key \"" + key + "\" (IO)");
                     }
                 case STRING:
                     return key;
                 case BINARY:
                     return parseBinary(key);
+                case MESSAGE:
+                    TStructDescriptor<?> st = (TStructDescriptor<?>) keyType;
+                    if (!st.isSimple()) {
+                        throw new TSerializeException("Only simple structs can be used as map key. " +
+                                                      st.getQualifiedName(null) + " is not.");
+                    }
+                    ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
+                    try {
+                        JsonTokenizer tokenizer = new JsonTokenizer(input);
+                        return cast(parseMessage(tokenizer, st));
+                    } catch (IOException e) {
+                        throw new TSerializeException(e, "Unable to tokenize map key: " + key);
+                    } catch (JsonException e) {
+                        throw new TSerializeException(e, "Unable to parse map key: " + key);
+                    }
                 default:
                     throw new TSerializeException("Illegal key type: " + keyType.getType());
             }
@@ -644,6 +659,17 @@ public class TJsonSerializer
             return (String) primitive;
         } else if (primitive instanceof byte[]) {
             return formatBinary((byte[]) primitive);
+        } else if (primitive instanceof TMessage) {
+            TMessage<?> message = (TMessage<?>) primitive;
+            if (!message.isSimple()) {
+                throw new TSerializeException("Only simple messages can be used as map keys. " +
+                                              message.descriptor().getQualifiedName(null) + " is not.");
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JsonWriter writer = new JsonWriter(baos);
+            appendMessage(writer, message);
+            writer.flush();
+            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } else {
             throw new TSerializeException("illegal simple type class " + primitive.getClass()
                                                                                   .getSimpleName());
@@ -675,8 +701,8 @@ public class TJsonSerializer
         } else if (primitive instanceof byte[]) {
             writer.value(formatBinary((byte[]) primitive));
         } else {
-            throw new TSerializeException("illegal primitive type class " + primitive.getClass()
-                                                                                     .getSimpleName());
+            throw new TSerializeException("illegal primitive type class " +
+                                          primitive.getClass().getSimpleName());
         }
     }
 

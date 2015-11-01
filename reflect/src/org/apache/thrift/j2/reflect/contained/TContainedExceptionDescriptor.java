@@ -38,9 +38,27 @@ public class TContainedExceptionDescriptor
                                          String packageName,
                                          String name,
                                          List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory(), false);
-        // TODO Auto-generated constructor stub
+        super(comment, packageName, name, fields, new _Factory(),
+              // overrides isSimple instead to avoid having to check fields
+              // types before it's converted.
+              false, false);
         ((_Factory) factory()).setType(this);
+    }
+
+    @Override
+    public boolean isSimple() {
+        for (TField<?> field : getFields()) {
+            switch (field.getType()) {
+                case MAP:
+                case SET:
+                case LIST:
+                case MESSAGE:
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 
     @Override

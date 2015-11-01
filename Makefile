@@ -9,4 +9,7 @@ resources:
 	rm -rf ${PWD}/core/generated/net
 	bazel run //compiler:compile -- --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
 
-.PHONY: model resources
+test:
+	bazel test //core:test //reflect:test //compiler:test //jax-rs:test
+
+.PHONY: model resources test

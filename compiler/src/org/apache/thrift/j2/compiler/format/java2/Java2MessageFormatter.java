@@ -147,6 +147,13 @@ public class Java2MessageFormatter {
                   .appendln('}')
                   .newline();
         }
+        writer.appendln("@Override")
+                .appendln("public boolean isSimple() {")
+                .begin()
+                .appendln("return descriptor().isSimple();")
+                .end()
+                .appendln('}')
+                .newline();
     }
 
     private void appendParcelable(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
@@ -869,7 +876,7 @@ public class Java2MessageFormatter {
               .appendln("public boolean getRequired() { return mRequired; }")
               .newline();
         writer.appendln("@Override")
-              .appendln("public TType getType() { return mTypeProvider.descriptor().getType(); }")
+              .appendln("public TType getType() { return getDescriptor().getType(); }")
               .newline();
         writer.appendln("@Override")
               .appendln("public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }")
@@ -981,17 +988,19 @@ public class Java2MessageFormatter {
               .begin();
         if (type.getVariant().equals(TMessageVariant.STRUCT)) {
             writer.formatln(
-                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b);",
+                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b, %b);",
                     typeClass,
                     type.getPackageName(),
                     type.getName(),
+                    type.isSimple(),
                     type.isCompactible());
         } else {
             writer.formatln(
-                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory());",
+                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %s);",
                     typeClass,
                     type.getPackageName(),
-                    type.getName());
+                    type.getName(),
+                    type.isSimple());
         }
         writer.end()
               .appendln('}')

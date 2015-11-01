@@ -64,5 +64,10 @@ public interface TMessage<T extends TMessage<T>>
      */
     boolean isCompact();
 
+    /**
+     * @return If the message structure is simple.
+     */
+    boolean isSimple();
+
     @Override TStructDescriptor<T> descriptor();
 }

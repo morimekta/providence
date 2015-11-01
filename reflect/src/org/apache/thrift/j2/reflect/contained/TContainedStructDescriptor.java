@@ -41,9 +41,25 @@ public class TContainedStructDescriptor
                                       String name,
                                       List<TField<?>> fields) {
         super(comment, packageName, name, fields, new _Factory(),
+              false,  // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(comment, fields));
-        // TODO Auto-generated constructor stub
         ((_Factory) factory()).setType(this);
+    }
+
+    @Override
+    public boolean isSimple() {
+        for (TField<?> field : getFields()) {
+            switch (field.getType()) {
+                case MAP:
+                case SET:
+                case LIST:
+                case MESSAGE:
+                    return false;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 
     private static class _Factory

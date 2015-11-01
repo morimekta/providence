@@ -28,10 +28,10 @@ public class TSerializeException extends Exception {
     private final static long serialVersionUID = 1442914425369642982L;
     
     public TSerializeException(String format, Object... args) {
-        super(String.format(format, args));
+        super(args.length == 0 ? format : String.format(format, args));
     }
 
     public TSerializeException(Throwable cause, String format, Object... args) {
-        super(String.format(format, args), cause);
+        super(args.length == 0 ? format : String.format(format, args), cause);
     }
 }

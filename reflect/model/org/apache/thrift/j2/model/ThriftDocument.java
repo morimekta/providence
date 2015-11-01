@@ -127,6 +127,11 @@ public class ThriftDocument
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftDocument)) return false;
         ThriftDocument other = (ThriftDocument) o;
@@ -189,7 +194,7 @@ public class ThriftDocument
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -257,7 +262,7 @@ public class ThriftDocument
     public static final TStructDescriptor<ThriftDocument> kDescriptor;
 
     static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", _Field.values(), new _Factory(), false);
+        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftDocument", _Field.values(), new _Factory(), false, false);
     }
 
     private final static class _Provider extends TStructDescriptorProvider<ThriftDocument> {

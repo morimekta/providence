@@ -91,6 +91,11 @@ public class EnumValue
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumValue)) return false;
         EnumValue other = (EnumValue) o;
@@ -147,7 +152,7 @@ public class EnumValue
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -211,7 +216,7 @@ public class EnumValue
     public static final TStructDescriptor<EnumValue> kDescriptor;
 
     static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), false);
+        kDescriptor = new TStructDescriptor<>(null, "model", "EnumValue", _Field.values(), new _Factory(), true, false);
     }
 
     private final static class _Provider extends TStructDescriptorProvider<EnumValue> {

@@ -76,6 +76,11 @@ public class TypedefType
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
@@ -129,7 +134,7 @@ public class TypedefType
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -191,7 +196,7 @@ public class TypedefType
     public static final TStructDescriptor<TypedefType> kDescriptor;
 
     static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), false);
+        kDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), true, false);
     }
 
     private final static class _Provider extends TStructDescriptorProvider<TypedefType> {

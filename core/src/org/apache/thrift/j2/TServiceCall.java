@@ -118,6 +118,11 @@ public class TServiceCall<MSG> implements TMessage<TServiceCall<MSG>> {
     }
 
     @Override
+    public boolean isSimple() {
+        return false;
+    }
+
+    @Override
     public TStructDescriptor<TServiceCall<MSG>> descriptor() {
         return null;
     }
@@ -229,6 +234,7 @@ public class TServiceCall<MSG> implements TMessage<TServiceCall<MSG>> {
                                        service.getServiceType().getName() + '.' + method.getName(),
                                        makeFieldSpec(method.getParamsDescriptor()),
                                        builderFactory(method.getParamsDescriptor()),
+                                       false,
                                        true);
     }
 
@@ -241,6 +247,7 @@ public class TServiceCall<MSG> implements TMessage<TServiceCall<MSG>> {
                                        service.getServiceType().getName() + '.' + method.getName(),
                                        makeFieldSpec(method.getReturnType()),
                                        builderFactory(method.getReturnType()),
+                                       false,
                                        true);
     }
 
@@ -253,6 +260,7 @@ public class TServiceCall<MSG> implements TMessage<TServiceCall<MSG>> {
                                        service.getServiceType().getName() + '.' + method.getName(),
                                        makeFieldSpec(method.getExceptionDescriptor()),
                                        builderFactory(method.getExceptionDescriptor()),
+                                       false,
                                        true);
     }
 

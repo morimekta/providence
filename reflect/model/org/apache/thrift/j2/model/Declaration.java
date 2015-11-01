@@ -122,6 +122,11 @@ public class Declaration
     }
 
     @Override
+    public boolean isSimple() {
+        return descriptor().isSimple();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Declaration)) return false;
         Declaration other = (Declaration) o;
@@ -188,7 +193,7 @@ public class Declaration
         public boolean getRequired() { return mRequired; }
 
         @Override
-        public TType getType() { return mTypeProvider.descriptor().getType(); }
+        public TType getType() { return getDescriptor().getType(); }
 
         @Override
         public TDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
@@ -256,7 +261,7 @@ public class Declaration
     public static final TUnionDescriptor<Declaration> kDescriptor;
 
     static {
-        kDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory());
+        kDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory(), false);
     }
 
     private final static class _Provider extends TUnionDescriptorProvider<Declaration> {

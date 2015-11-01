@@ -37,16 +37,18 @@ public class TUnionDescriptor<T extends TMessage<T>>
                             String packageName,
                             String name,
                             TField<?>[] fields,
-                            TMessageBuilderFactory<T> provider) {
-        this(comment, packageName, name, fieldList(fields), provider);
+                            TMessageBuilderFactory<T> provider,
+                            boolean simple) {
+        this(comment, packageName, name, fieldList(fields), provider, simple);
     }
 
     public TUnionDescriptor(String comment,
                             String packageName,
                             String name,
                             List<TField<?>> fields,
-                            TMessageBuilderFactory<T> provider) {
-        super(comment, packageName, name, fields, provider, false);
+                            TMessageBuilderFactory<T> provider,
+                            boolean simple) {
+        super(comment, packageName, name, fields, provider, simple, false);
     }
 
     @Override
