@@ -1,4 +1,4 @@
-load('/thrift', 'gen_thrift')
+load('/thrift', 'java_thrift')
 
 java_library(
   name = "core",
@@ -6,18 +6,9 @@ java_library(
   visibility = ['//visibility:public'],
 )
 
-gen_thrift(
-  name = 'generated-thrift',
-  gen = 'java2',
+java_thrift(
+  name = 'generated',
   srcs = glob(['res/definitions/*.thrift']),
-)
-
-java_library(
-  name = "generated",
-  srcs = [':generated-thrift'],
-  deps = [
-    ":core",
-  ],
   visibility = ['//visibility:public'],
 )
 

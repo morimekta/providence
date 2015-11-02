@@ -14,3 +14,13 @@ filegroup(
         ':reflect',
     ]
 )
+
+test_suite(
+    name = 'tests',
+    tests = [
+        '//compiler:test',
+        '//core:test',
+        '//jax-rs:test',
+        '//reflect:test',
+    ],
+)

@@ -10,16 +10,6 @@ java_library(
 )
 
 java_library(
-  name = 'android',
-  exports = [
-    '@android-sdk//:sdk-16',
-  ],
-  visibility = ['//visibility:public'],
-  resources = ['LICENSE-Apache-2.0'],
-  licenses = ['notice'],
-)
-
-java_library(
   name = 'args4j',
   exports = [
     '@args4j_args4j//jar',
@@ -72,7 +62,7 @@ java_library(
   ],
   visibility = ['//visibility:public'],
   resources = [
-    'LICENSE-CCDL-GPL-1.1',
+    'LICENSE-CDDL-GPL-1.1',
   ],
   licenses = ['restricted_if_statically_linked'],
 )

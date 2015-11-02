@@ -20,8 +20,29 @@ def gen_thrift(name,
         visibility=visibility,
     )
     native.genrule(
-        name='%s-src.jar' % name,
+        name='%s-src' % name,
         srcs=[name],
         outs=['%s-src.jar' % name],
         cmd='cp $< $@'
+    )
+    native.filegroup(
+        name='__%s_srcs' % name,
+        srcs=srcs,
+    )
+
+def java_thrift(name,
+                srcs,
+                flags=[],
+                visibility=[]):
+    gen_thrift(
+        name='__gen_%s' % name,
+        gen='java2',
+        srcs=srcs,
+        flags=flags,
+    )
+    native.java_library(
+        name=name,
+        srcs=['__gen_%s' % name],
+        deps=['//core:core'],
+        visibility=visibility,
     )

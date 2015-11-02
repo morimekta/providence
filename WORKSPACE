@@ -1,11 +1,5 @@
 # android            = @android-sdk//:sdk-16
 
-new_local_repository(
-  name = "android-sdk",
-  path = "/home/morimekta/.apps/lib/android-sdk-linux",
-  build_file = "BUILD.android",
-)
-
 ## ----------- DEPS
 # libthrift          = org.apache.thrift:libthrift:0.9.2                : Apache-2.0
 # junit              = junit:junit:4.12                                 : Apache-2.0
