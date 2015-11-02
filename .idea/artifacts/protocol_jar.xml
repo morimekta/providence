@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="protocol:jar">
-    <output-path>$PROJECT_DIR$/out</output-path>
-    <root id="archive" name="thrift2-protocol.jar">
-      <element id="module-output" name="protocol" />
-    </root>
-  </artifact>
-</component>

@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="jax-rs:jar">
-    <output-path>$PROJECT_DIR$/out/</output-path>
-    <root id="archive" name="thirft2-jax-rs.jar">
-      <element id="module-output" name="jax-rs" />
-    </root>
-  </artifact>
-</component>
