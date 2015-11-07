@@ -14,7 +14,7 @@ public interface TMessageWriter<M extends TMessage<M>> {
      *
      * @param message The message to handle.
      */
-    void write(M message) throws IOException;
+    int write(M message) throws IOException;
 
     void flush() throws IOException;
 

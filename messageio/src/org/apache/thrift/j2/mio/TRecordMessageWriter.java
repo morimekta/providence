@@ -19,60 +19,90 @@
 
 package org.apache.thrift.j2.mio;
 
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.mio.utils.Sequence;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.serializer.TSerializeException;
+import org.apache.thrift.j2.serializer.TSerializer;
 
 /**
- * An output stream that counts the number of bytes written.
+ * Write messages to a file in the format:
+ *
+ * [file-magic-start]
+ * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
  *
  * @author Stein Eldar Johnsen
  * @since 06.09.15
  */
 public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWriter<M> {
-    private static final int MAX_FILE_SIZE = 1_000_000_000;  // bytes.
+    protected static final byte[] kMagicFileStart    = new byte[] {
+            (byte) 0x74,
+            (byte) 0x21,
+            (byte) 0xF7,
+            (byte) 0x12
+    };
+    protected static final byte[] kMagicMessageStart = new byte[] {
+            (byte) 0x9A,
+            (byte) 0x33,
+            (byte) 0xA1,
+            (byte) 0x70
+    };
+    protected static final byte[] kMagicMessageEnd   = new byte[] {
+            (byte) 0x02,
+            (byte) 0x9A,
+            (byte) 0x51,
+            (byte) 0x5D
+    };
 
     private final TSerializer mSerializer;
-    private final int mMaxFileSize;
 
-    private Sequence mSequence;
-    private File mCurrent;
+    private File mFile;
     private FileOutputStream mOutputStream;
-    private int mCurrentSize;
 
-    public TRecordMessageWriter(Sequence sequence, TSerializer serializer) {
-        this(sequence, serializer, MAX_FILE_SIZE);
-    }
-
-    public TRecordMessageWriter(Sequence sequence, TSerializer serializer, int maxFileSize) {
-        mSequence = sequence;
+    public TRecordMessageWriter(File file, TSerializer serializer) {
         mSerializer = serializer;
-        mMaxFileSize = maxFileSize;
 
-        mCurrent = null;
-        mCurrentSize = 0;
+        mFile = file;
         mOutputStream = null;
     }
 
     @Override
-    public void write(M message) throws IOException {
+    public int write(M message) throws IOException {
         synchronized (this) {
             // Close check.
-            if (mSequence == null) return;
-
+            if (mFile == null) {
+                throw new IOException("Writer is closed.");
+            }
             try {
-                if (mOutputStream == null || mCurrentSize > mMaxFileSize) {
-                    mCurrent = mSequence.next();
-                    mOutputStream = new FileOutputStream(mCurrent);
-                    mCurrentSize = 0;
+                int written = 0;
+                if (mOutputStream == null) {
+                    mOutputStream = new FileOutputStream(mFile);
+                    mOutputStream.write(kMagicFileStart);
+                    written += kMagicFileStart.length;
                 }
-                mCurrentSize += mSerializer.serialize(mOutputStream, message);
-            } catch (IOException | TSerializeException e) {
+                mOutputStream.write(kMagicMessageStart);
+                written += kMagicMessageStart.length;
+                DigestOutputStream digestOutputStream = new DigestOutputStream(
+                        mOutputStream, MessageDigest.getInstance("sha-1"));
+                written += mSerializer.serialize(digestOutputStream, message);
+                digestOutputStream.flush();
+
+                mOutputStream.write(kMagicMessageEnd);
+                written += kMagicMessageEnd.length;
+
+                byte[] digest = digestOutputStream.getMessageDigest().digest();
+                mOutputStream.write(digest);
+                written += digest.length;
+
+                mOutputStream.flush();
+
+                return written;
+            } catch (IOException | TSerializeException | NoSuchAlgorithmException e) {
                 // e.printStackTrace();
 
                 // As the stream is not properly completed, close it so we can try
@@ -86,8 +116,9 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
                     // e2.printStackTrace();
                 } finally {
                     mOutputStream = null;
+                    mFile = null;
                 }
-                throw new IOException("Failed to doHandle output stream.", e);
+                throw new IOException("Failed to write to output stream.", e);
             }
         }
     }
@@ -104,7 +135,7 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
     @Override
     public void close() throws IOException {
         synchronized (this) {
-            mSequence = null;
+            mFile = null;
             try {
                 if (mOutputStream != null) {
                     mOutputStream.close();

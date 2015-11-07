@@ -19,37 +19,42 @@
 
 package org.apache.thrift.j2.mio;
 
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.mio.utils.Sequence;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.serializer.TSerializeException;
+import org.apache.thrift.j2.serializer.TSerializer;
+import org.apache.thrift.j2.util.TStringUtils;
 
 /**
- * Read messages (in global order) from a set of files in the format:
+ * Read messages from a file in the format:
  *
- * {name}-{shard}-{seq}
+ * [file-magic-start]
+ * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
  *
  * @author Stein Eldar Johnsen
  * @since 06.09.15
  */
 public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
-    private final TSerializer mSerializer;
+    private final TSerializer          mSerializer;
     private final TStructDescriptor<T> mDescriptor;
 
-    private Sequence mSequence;
-    private File mCurrent;
+    private File        mFile;
     private InputStream mInputStream;
 
-    public TRecordMessageReader(Sequence sequence, TSerializer serializer, TStructDescriptor<T> descriptor) {
+    public TRecordMessageReader(File file, TSerializer serializer, TStructDescriptor<T> descriptor) {
         mSerializer = serializer;
         mDescriptor = descriptor;
-        mSequence = sequence;
+        mFile = file;
     }
 
     /**
@@ -58,28 +63,52 @@ public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<
     public T read() throws IOException {
         try {
             synchronized (this) {
-                while (true) {
-                    if (mInputStream == null) {
-                        if (mSequence == null) return null;
-                        if (!mSequence.hasNext()) {
-                            mSequence = null;
-                            return null;
-                        }
-                        if (mInputStream != null) {
-                            mInputStream.close();
-                            mInputStream = null;
-                        }
-                        mCurrent = mSequence.next();
-                        mInputStream = new FileInputStream(mCurrent);
-                    }
-                    T message = mSerializer.deserialize(mInputStream, mDescriptor);
-                    if (message != null) {
-                        return message;
+                if (mInputStream == null) {
+                    if (mFile == null)
+                        return null;
+                    mInputStream = new FileInputStream(mFile);
+                    if (!readMagic(TRecordMessageWriter.kMagicFileStart)) {
+                        String file = mFile.getName();
+                        close();
+                        throw new IOException(String.format(
+                                "%s is not a messageio formatted file.",
+                                file));
                     }
                 }
+                // Verify message start magic.
+                if (!readMagic(TRecordMessageWriter.kMagicMessageStart)) {
+                    close();
+                    return null;
+                }
+                DigestInputStream digestInputStream = new DigestInputStream(mInputStream,
+                                                                            MessageDigest.getInstance("sha-1"));
+                T message = mSerializer.deserialize(digestInputStream, mDescriptor);
+                if (message == null) {
+                    close();
+                    throw new IOException("No message to read");
+                }
+                if (!readMagic(TRecordMessageWriter.kMagicMessageEnd)) {
+                    close();
+                    throw new IOException("Missing message end magic.");
+                }
+                byte[] digest = digestInputStream.getMessageDigest().digest();
+                if (!readMagic(digest)) {
+                    close();
+                    throw new IOException(String.format(
+                            "Message digest mismatch, message sha-1 \"%s\" not matching that on file.",
+                            TStringUtils.toHexString(digest)));
+                }
+                return message;
             }
+        } catch (IOException e) {
+            try { close(); } catch (IOException e2) {}
+            throw new IOException("Unable to read messageio file.", e);
         } catch (TSerializeException tse) {
+            try { close(); } catch (IOException e2) {}
             throw new IOException("Unable to deserialize message from file.", tse);
+        } catch (NoSuchAlgorithmException e) {
+            try { close(); } catch (IOException e2) {}
+            throw new IOException("Unable to verify message consistency.", e);
         }
     }
 
@@ -91,11 +120,56 @@ public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<
      */
     public void close() throws IOException {
         synchronized (this) {
-            mSequence = null;
-            if (mInputStream != null) {
-                mInputStream.close();
+            mFile = null;
+            try {
+                if (mInputStream != null) {
+                    mInputStream.close();
+                }
+            } finally {
+                mInputStream = null;
             }
-            mInputStream = null;
+        }
+    }
+
+    private boolean readMagic(byte[] magic) throws IOException {
+        byte[] buffer = new byte[magic.length];
+        int read = 0;
+        while (read < buffer.length) {
+            int tmp = mInputStream.read(buffer, read, buffer.length - read);
+            if (tmp < 0) return false;
+            read += tmp;
+        }
+        return Arrays.equals(buffer, magic);
+    }
+
+    /**
+     * Checks if a given file has the 'messageio record file magic prefix'.
+     *
+     * @param file File to check.
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static boolean hasFileMagic(File file) throws FileNotFoundException {
+        if (file == null || !file.exists()) return false;
+
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            byte[] buffer = new byte[TRecordMessageWriter.kMagicFileStart.length];
+            int read = 0;
+            while (read < buffer.length) {
+                int tmp = fis.read(buffer, read, buffer.length - read);
+                if (tmp < 0) return false;
+                read += tmp;
+            }
+            return Arrays.equals(buffer, TRecordMessageWriter.kMagicFileStart);
+        } catch (IOException e) {
+            return false;
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException e) {
+                // ignore.
+            }
         }
     }
 }

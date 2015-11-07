@@ -19,14 +19,26 @@
 
 package org.apache.thrift.j2.converter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.mio.TFileMessageReader;
+import org.apache.thrift.j2.mio.TFileMessageWriter;
 import org.apache.thrift.j2.mio.TMessageReader;
 import org.apache.thrift.j2.mio.TMessageWriter;
-import org.apache.thrift.j2.mio.TRecordMessageWriter;
-import org.apache.thrift.j2.mio.TShardMessageReader;
+import org.apache.thrift.j2.mio.TRecordMessageReader;
+import org.apache.thrift.j2.mio.TSequenceMessageReader;
+import org.apache.thrift.j2.mio.TSequenceMessageWriter;
+import org.apache.thrift.j2.mio.TShardedMessageReader;
 import org.apache.thrift.j2.mio.utils.Sequence;
 import org.apache.thrift.j2.mio.utils.Shard;
 import org.apache.thrift.j2.mio.utils.ShardUtil;
@@ -53,15 +65,6 @@ import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.EnumOptionHandler;
 import org.kohsuke.args4j.spi.Setter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author Stein Eldar Johnsen
  * @since 27.09.15
@@ -82,8 +85,9 @@ public class ConvertOptions {
 
     protected enum Format {
         // TSerializer
-        json("Compact JSON with IDs."),
-        named("Compact JSON with names."),
+        json("Readable JSON with ID enums."),
+        simple("Compact JSON with all named entities."),
+        compact("Compact JSON with all ID identities."),
         binary("Compact binary_protocol serialization."),
         // TProtocolSerializer
         json_protocol("TJsonProtocol"),
@@ -141,12 +145,12 @@ public class ConvertOptions {
     protected Format mOutFormat;
 
     @Option(name = "--shard",
-            aliases = {"-s"},
+            aliases = { "-s" },
             usage = "Output shard")
     protected int mShard;
 
     @Option(name = "--out",
-            aliases = {"-o"},
+            aliases = { "-o" },
             usage = "Output file pattern to write to.")
     protected String mOut;
 
@@ -166,8 +170,10 @@ public class ConvertOptions {
             case binary:
                 return new TBinarySerializer();
             case json:
+                return new TJsonSerializer(TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.ID);
+            case compact:
                 return new TJsonSerializer(TJsonSerializer.IdType.ID);
-            case named:
+            case simple:
                 return new TJsonSerializer(TJsonSerializer.IdType.NAME);
             case binary_protocol:
                 return new TBinaryProtocolSerializer();
@@ -186,6 +192,7 @@ public class ConvertOptions {
                             throws IOException, TSerializeException {
                         CountingOutputStream out = new CountingOutputStream(output);
                         out.write(new TPrettyPrinter().format(message).getBytes(StandardCharsets.UTF_8));
+                        out.write('\n');
                         out.flush();
                         return out.getByteCount();
                     }
@@ -257,9 +264,13 @@ public class ConvertOptions {
         if (mOut != null) {
             if (ShardUtil.shardedName(mOut)) {
                 Shard shard = new Shard(mOut);
-                Sequence sequence = new Sequence(String.format("%s-%04d", shard.name, mShard));
-                return new TRecordMessageWriter<>(sequence, serializer);
+                return new TSequenceMessageWriter<>(shard.sequence(mShard), serializer);
             }
+            if (ShardUtil.sequencedName(mOut)) {
+                Sequence sequence = new Sequence(ShardUtil.sequencePrefix(mOut));
+                return new TSequenceMessageWriter<>(sequence, serializer);
+            }
+
             File file = new File(mOut);
             if (!file.exists()) {
                 throw new CmdLineException(cli, new FormatString("No such input file %s"), mOut);
@@ -267,27 +278,22 @@ public class ConvertOptions {
             if (!file.isFile()) {
                 throw new CmdLineException(cli, new FormatString("%s is not a file."), mOut);
             }
-            final FileOutputStream out = new FileOutputStream(file);
-            return new TMessageWriter<T>() {
-                @Override
-                public void flush() throws IOException {
-                    out.flush();
-                }
-
-                @Override
-                public void close() throws IOException {
-                    out.close();
-                }
-
-                @Override
-                public void write(TMessage message) throws IOException {
-                    try {
-                        serializer.serialize(out, message);
-                    } catch (TSerializeException tse) {
-                        throw new IOException("Unable to serialize output.", tse);
-                    }
-                }
-            };
+            byte[] sep = null;
+            switch (mOutFormat) {
+                case json:
+                case simple:
+                case compact:
+                case pretty:
+                    // out own JSON serializers.
+                    sep = new byte[]{'\n'};
+                    break;
+                case json_protocol:
+                case simple_json_protocol:
+                    // and the original thrift JSON protocols.
+                    sep = new byte[]{'\n'};
+                    break;
+            }
+            return new TFileMessageWriter<>(file, serializer, sep);
         } else {
             return new TMessageWriter<T>() {
                 @Override
@@ -302,9 +308,9 @@ public class ConvertOptions {
                 }
 
                 @Override
-                public void write(TMessage message) throws IOException {
+                public int write(TMessage message) throws IOException {
                     try {
-                        serializer.serialize(System.out, message);
+                        return serializer.serialize(System.out, message);
                     } catch (TSerializeException tse) {
                         throw new IOException("Unable to serialize output.", tse);
                     }
@@ -315,13 +321,20 @@ public class ConvertOptions {
 
     public TMessageReader<?> getInput(CmdLineParser cli, TStructDescriptor<?> descriptor) throws CmdLineException {
         TSerializer serializer = getSerializer(cli, mInFormat);
+        try {
 
-        if (ShardUtil.shardedName(mFile)) {
-            return new TShardMessageReader<>(mFile, serializer, descriptor);
-        } else if (ShardUtil.sequencedName(mFile)) {
-            return new TShardMessageReader<>(ShardUtil.sequencePrefix(mFile), serializer, descriptor);
-        } else {
-            return new TFileMessageReader<>(new File(mFile), serializer, descriptor);
+            if (ShardUtil.shardedName(mFile)) {
+                return new TShardedMessageReader<>(mFile, serializer, descriptor);
+            } else if (ShardUtil.sequencedName(mFile)) {
+                Sequence sequence = new Sequence(ShardUtil.sequencePrefix(mFile));
+                return new TSequenceMessageReader<>(sequence, serializer, descriptor);
+            } else if (TRecordMessageReader.hasFileMagic(new File(mFile))) {
+                return new TRecordMessageReader<>(new File(mFile), serializer, descriptor);
+            } else {
+                return new TFileMessageReader<>(new File(mFile), serializer, descriptor);
+            }
+        } catch (FileNotFoundException e) {
+            throw new CmdLineException(cli, new FormatString("Unable to stat file magic on " + mFile));
         }
     }
 }

@@ -19,19 +19,16 @@
 
 package org.apache.thrift.j2.mio;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.mio.utils.Sequence;
 import org.apache.thrift.j2.mio.utils.ShardUtil;
-import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.serializer.TSerializer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Read messages (in global order) from a set of files in the format:
@@ -41,16 +38,16 @@ import java.util.Queue;
  * @author Stein Eldar Johnsen
  * @since 06.09.15
  */
-public class TShardMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
-    private final TSerializer mSerializer;
+public class TShardedMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
+    private final TSerializer          mSerializer;
     private final TStructDescriptor<T> mDescriptor;
-    private final Queue<Sequence> mQueue;
+    private final Queue<Sequence>      mQueue;
 
-    private Sequence mCurrentSequence;
-    private File mCurrent;
-    private InputStream mInputStream;
+    private Sequence          mCurrentSequence;
+    private File              mCurrent;
+    private TMessageReader<T> mReader;
 
-    public TShardMessageReader(String pattern, TSerializer serializer, TStructDescriptor<T> descriptor) {
+    public TShardedMessageReader(String pattern, TSerializer serializer, TStructDescriptor<T> descriptor) {
         mSerializer = serializer;
         mDescriptor = descriptor;
         mQueue = new LinkedList<>();
@@ -63,32 +60,26 @@ public class TShardMessageReader<T extends TMessage<T>> extends TMessageReader<T
      * Read the next available message from the files. If no file is available to read
      */
     public T read() throws IOException {
-        try {
-            synchronized (this) {
-                while (true) {
-                    if (mInputStream == null) {
-                        if (mCurrentSequence == null || !mCurrentSequence.hasNext()) {
-                            if (mInputStream != null) {
-                                mInputStream.close();
-                                mInputStream = null;
-                            }
-
-                            mCurrentSequence = mQueue.poll();
-                            if (mCurrentSequence == null || !mCurrentSequence.hasNext()) {
-                                return null;
-                            }
-                        }
-                        mCurrent = mCurrentSequence.next();
-                        mInputStream = new FileInputStream(mCurrent);
+        synchronized (this) {
+            while (true) {
+                if (mReader == null) {
+                    while (mCurrentSequence != null && !mCurrentSequence.hasNext()) {
+                        mCurrentSequence = mQueue.poll();
                     }
-                    T message = mSerializer.deserialize(mInputStream, mDescriptor);
-                    if (message != null) {
-                        return message;
+                    if (mCurrentSequence == null || !mCurrentSequence.hasNext()) {
+                        return null;
                     }
+                    mCurrent = mCurrentSequence.next();
+                    mReader = new TRecordMessageReader<>(mCurrent, mSerializer, mDescriptor);
+                }
+                T message = mReader.read();
+                if (message != null) {
+                    return message;
+                } else {
+                    mReader.close();
+                    mReader = null;
                 }
             }
-        } catch (TSerializeException tse) {
-            throw new IOException("Inable to deserialize message from file.", tse);
         }
     }
 
@@ -100,11 +91,16 @@ public class TShardMessageReader<T extends TMessage<T>> extends TMessageReader<T
      */
     public void close() throws IOException {
         synchronized (this) {
-            mQueue.clear();
-            if (mInputStream != null) {
-                mInputStream.close();
+            try {
+                mQueue.clear();
+                if (mReader != null) {
+                    mReader.close();
+                }
+            } finally {
+                mCurrentSequence = null;
+                mCurrent = null;
+                mReader = null;
             }
-            mInputStream = null;
         }
     }
 }
