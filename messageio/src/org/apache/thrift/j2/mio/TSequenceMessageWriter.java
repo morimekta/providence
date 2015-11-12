@@ -20,12 +20,10 @@
 package org.apache.thrift.j2.mio;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.serializer.TSerializeException;
+import org.apache.thrift.j2.mio.utils.Sequence;
 import org.apache.thrift.j2.serializer.TSerializer;
 
 /**
@@ -34,53 +32,63 @@ import org.apache.thrift.j2.serializer.TSerializer;
  * @author Stein Eldar Johnsen
  * @since 06.09.15
  */
-public class TFileMessageWriter<M extends TMessage<M>> implements TMessageWriter<M> {
+public class TSequenceMessageWriter<M extends TMessage<M>> implements TMessageWriter<M> {
+    private static final int DEFAULT_CUTOFF_SIZE = 1_000_000_000;  // <1 gigabyte.
+
     private final TSerializer mSerializer;
-    private final byte[]      mSeparator;
+    private final int         mFileCutoffSize;
 
-    private File             mFile;
-    private FileOutputStream mOutputStream;
+    private Sequence          mSequence;
+    private File              mCurrent;
+    private TMessageWriter<M> mWriter;
+    private int               mCurrentSize;
 
-    public TFileMessageWriter(File file, TSerializer serializer) throws FileNotFoundException {
-        this(file, serializer, null);
+    public TSequenceMessageWriter(Sequence sequence, TSerializer serializer) {
+        this(sequence, serializer, DEFAULT_CUTOFF_SIZE);
     }
 
-    public TFileMessageWriter(File file, TSerializer serializer, byte[] separator) throws FileNotFoundException {
+    public TSequenceMessageWriter(Sequence sequence, TSerializer serializer, int cutoffSize) {
+        mSequence = sequence;
         mSerializer = serializer;
-        mSeparator = separator;
+        mFileCutoffSize = cutoffSize;
 
-        mFile = file;
-        mOutputStream = new FileOutputStream(mFile);
+        mCurrent = null;
+        mCurrentSize = 0;
+        mWriter = null;
     }
 
     @Override
     public int write(M message) throws IOException {
         synchronized (this) {
             // Close check.
-            if (mOutputStream == null) {
-                throw new IOException("File stream already closed.");
+            if (mSequence == null) {
+                throw new IOException("Writer already closed");
             }
+
             try {
-                int written = mSerializer.serialize(mOutputStream, message);
-                if (mSeparator != null && mSeparator.length > 0) {
-                    mOutputStream.write(mSeparator);
-                    written += mSeparator.length;
+                if (mWriter == null || mCurrentSize > mFileCutoffSize) {
+                    mCurrent = mSequence.next();
+                    mWriter = new TRecordMessageWriter<>(mCurrent, mSerializer);
+                    mCurrentSize = 0;
                 }
+                int written = mWriter.write(message);
+                mCurrentSize += written;
+
                 return written;
-            } catch (IOException | TSerializeException e) {
+            } catch (IOException e) {
                 // e.printStackTrace();
 
                 // As the stream is not properly completed, close it so we can try
-                // to start a new file. We cannot doHandle another entry to the
+                // to start a new file. We cannot handle another entry to the
                 // messageio file.
                 try {
-                    if (mOutputStream != null) {
-                        mOutputStream.close();
+                    if (mWriter != null) {
+                        mWriter.close();
                     }
                 } catch (IOException e2) {
                     // e2.printStackTrace();
                 } finally {
-                    mOutputStream = null;
+                    mWriter = null;
                 }
                 throw new IOException("Failed to doHandle output stream.", e);
             }
@@ -90,8 +98,8 @@ public class TFileMessageWriter<M extends TMessage<M>> implements TMessageWriter
     @Override
     public void flush() throws IOException {
         synchronized (this) {
-            if (mOutputStream != null) {
-                mOutputStream.flush();
+            if (mWriter != null) {
+                mWriter.flush();
             }
         }
     }
@@ -99,12 +107,13 @@ public class TFileMessageWriter<M extends TMessage<M>> implements TMessageWriter
     @Override
     public void close() throws IOException {
         synchronized (this) {
+            mSequence = null;
             try {
-                if (mOutputStream != null) {
-                    mOutputStream.close();
+                if (mWriter != null) {
+                    mWriter.close();
                 }
             } finally {
-                mOutputStream = null;
+                mWriter = null;
             }
         }
     }

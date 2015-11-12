@@ -19,4 +19,16 @@ public class Shard {
             throw new IllegalArgumentException("Illegal shard count " + num);
         }
     }
+
+    /**
+     * Generate a sequence for given shard number.
+     * @param shard Shard number to get file sequence for.
+     * @return The sequence iterator.
+     */
+    public Sequence sequence(int shard) {
+        if (shard < 0 || shard >= num) {
+            throw new IllegalArgumentException("Shard ID outside range [0.." + (num - 1));
+        }
+        return new Sequence(String.format("%s-%04d", name, shard));
+    }
 }
