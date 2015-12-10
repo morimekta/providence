@@ -93,9 +93,6 @@ public class Compiler {
             }
         } catch (GeneratorException e) {
             e.printStackTrace();
-        } catch (TSerializeException e) {
-            System.err.print("Deserialization error: ");
-            e.printStackTrace();
         } catch (IOException e) {
             System.err.print("I/O error: ");
             e.printStackTrace();

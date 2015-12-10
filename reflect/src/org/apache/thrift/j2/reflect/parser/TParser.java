@@ -36,7 +36,6 @@ public interface TParser {
      * @param in The stream to parse.
      * @return The declared document model.
      * @throws IOException When the stream was unreadable.
-     * @throws TSerializeException When the parsing failed.
      */
-    ThriftDocument parse(InputStream in, String name) throws IOException, TSerializeException, TParseException;
+    ThriftDocument parse(InputStream in, String name) throws IOException, TParseException;
 }

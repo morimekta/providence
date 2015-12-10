@@ -115,7 +115,7 @@ public class TTypeLoader {
      * @param file
      * @throws IOException
      */
-    public TContainedDocument load(File file) throws IOException, TSerializeException, TParseException {
+    public TContainedDocument load(File file) throws IOException, TParseException {
         file = file.getCanonicalFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());

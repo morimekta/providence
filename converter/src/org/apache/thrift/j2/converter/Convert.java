@@ -113,11 +113,6 @@ public class Convert {
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
-        } catch (TSerializeException e) {
-            System.out.flush();
-            System.err.println();
-            System.err.print("Serialization error: ");
-            e.printStackTrace();
         } catch (IOException e) {
             System.out.flush();
             System.err.println();

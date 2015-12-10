@@ -14,7 +14,7 @@ def gen_thrift(name,
         srcs=srcs,
         outs=['%s.%s' % (name, extension)],
         tools=[
-            '//compiler:compile',
+            '//compiler:thrift-j2c',
             '//tools/jdk:jar',
         ],
         local=1,

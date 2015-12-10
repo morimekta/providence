@@ -38,7 +38,11 @@ public class TMessageParser implements TParser {
     }
 
     @Override
-    public ThriftDocument parse(InputStream in, String name) throws IOException, TSerializeException {
-        return mSerializer.deserialize(in, ThriftDocument.kDescriptor);
+    public ThriftDocument parse(InputStream in, String name) throws IOException, TParseException {
+        try {
+            return mSerializer.deserialize(in, ThriftDocument.kDescriptor);
+        } catch (TSerializeException tse) {
+            throw new TParseException("Failed to deserialize definition file.", tse);
+        }
     }
 }
