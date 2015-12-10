@@ -28,6 +28,6 @@ install: thrift-j2 thrift-j2c
 	cp -f bazel-bin/converter/thrift-j2_deploy.jar ${HOME}/.local/lib
 	cp -f scripts/thrift-j2 scripts/thrift-j2c ${HOME}/.local/bin
 	chmod a+x ${HOME}/.local/bin/thrift-j2 ${HOME}/.local/bin/thrift-j2c
-	@echo '[INFO]: Remember to have $$PATH pointing to' ${HOME} '.'
+	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
 
 .PHONY: model resources test
