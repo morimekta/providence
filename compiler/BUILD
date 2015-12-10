@@ -26,7 +26,7 @@ java_test(
 )
 
 java_binary(
-  name = "compile",
+  name = "thrift-j2c",
   srcs = [
     'src/org/apache/thrift/j2/compiler/Compiler.java',
   ],

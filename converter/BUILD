@@ -1,5 +1,5 @@
 java_binary(
-  name = "convert",
+  name = "thrift-j2",
   srcs = glob(["src/**/*.java"]),
   deps = [
     "//core",

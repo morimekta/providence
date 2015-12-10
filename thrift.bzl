@@ -1,5 +1,6 @@
 def gen_thrift(name,
                gen,
+               extension,
                flags=[],
                deps=[],
                srcs=[],
@@ -7,11 +8,11 @@ def gen_thrift(name,
     native.genrule(
         name=name,
         cmd='TMP=$$(mktemp -d);' +
-            '$(location //compiler:compile) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
+            '$(location //compiler:thrift-j2c) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
             '$(location //tools/jdk:jar) cf $@ -C $$TMP .;' +
             'rm -rf $$TMP',
         srcs=srcs,
-        outs=['%s.srcjar' % name],
+        outs=['%s.%s' % (name, extension)],
         tools=[
             '//compiler:compile',
             '//tools/jdk:jar',
@@ -37,6 +38,7 @@ def java_thrift(name,
     gen_thrift(
         name='__gen_%s' % name,
         gen='java2',
+        extension='srcjar',
         srcs=srcs,
         flags=flags,
     )
