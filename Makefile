@@ -30,4 +30,4 @@ install: thrift-j2 thrift-j2c
 	chmod a+x ${HOME}/.local/bin/thrift-j2 ${HOME}/.local/bin/thrift-j2c
 	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
 
-.PHONY: model resources test
+.PHONY: model resources test install thrift-j2 thrift-j2c
