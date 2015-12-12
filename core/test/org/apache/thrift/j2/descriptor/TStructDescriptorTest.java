@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotEquals;
  * @since 10.09.15.
  */
 public class TStructDescriptorTest {
-    TStructDescriptor<?> valueType;
+    TStructDescriptor<?,?> valueType;
 
     @Before
     public void setUp() {

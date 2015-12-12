@@ -46,8 +46,7 @@ public class TContainedEnumTest {
         List<TContainedEnum> values = new LinkedList<>();
         mType = new TContainedEnumDescriptor("My comment",
                                              "package",
-                                             "MyEnum",
-                                             values);
+                                             "MyEnum");
 
         values.add(new TContainedEnum(null, 1, "ONE", mType));
         values.add(new TContainedEnum(null, 2, "TWO", mType));
@@ -56,6 +55,7 @@ public class TContainedEnumTest {
         values.add(new TContainedEnum(null, 6, "SIX", mType));
         values.add(new TContainedEnum("And more", 8, "EIGHT", mType));
 
+        mType.setValues(values);
 
         mValue3 = mType.factory()
                        .builder()

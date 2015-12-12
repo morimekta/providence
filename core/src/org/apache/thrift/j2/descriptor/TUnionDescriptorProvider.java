@@ -25,8 +25,8 @@ import org.apache.thrift.j2.TMessage;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public abstract class TUnionDescriptorProvider<V extends TMessage<V>>
-        extends TStructDescriptorProvider<V> {
+public abstract class TUnionDescriptorProvider<V extends TMessage<V>, F extends TField>
+        extends TStructDescriptorProvider<V, F> {
     @Override
-    public abstract TUnionDescriptor<V> descriptor();
+    public abstract TUnionDescriptor<V, F> descriptor();
 }

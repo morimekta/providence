@@ -106,7 +106,29 @@ public enum StructVariant implements TEnumValue<StructVariant> {
         }
     }
 
+    private static class _Descriptor
+            extends TEnumDescriptor<StructVariant> {
+        public _Descriptor() {
+            super(null, "model", "StructVariant", new _Factory());
+        }
+
+        @Override
+        public StructVariant[] getValues() {
+            return StructVariant.values();
+        }
+
+        @Override
+        public StructVariant getValueById(int id) {
+            return StructVariant.forValue(id);
+        }
+
+        @Override
+        public StructVariant getValueByName(String name) {
+            return StructVariant.forName(name);
+        }
+    }
+
     static {
-        kDescriptor = new TEnumDescriptor<>(null, "model", "StructVariant", StructVariant.values(), new _Factory());
+        kDescriptor = new _Descriptor();
     }
 }

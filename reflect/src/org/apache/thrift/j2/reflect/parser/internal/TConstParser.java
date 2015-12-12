@@ -75,12 +75,12 @@ public class TConstParser {
      * @param <T> Message generic type.
      * @return The parsed message.
      */
-    private <T extends TMessage<T>> T parseMessage(JsonTokenizer tokenizer, TStructDescriptor<T> type) throws IOException, JsonException {
+    private <T extends TMessage<T>, F extends TField> T parseMessage(JsonTokenizer tokenizer, TStructDescriptor<T,F> type) throws IOException, JsonException {
         TMessageBuilder<T> builder = type.factory().builder();
 
         JsonToken token = tokenizer.expect("parsing message field id");
         while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
-            TField<?> field;
+            F field;
             if (token.isLiteral()) {
                 field = type.getField(token.literalValue());
             } else {
@@ -167,10 +167,14 @@ public class TConstParser {
                     if (name.startsWith(valueType.getName())) {
                         name = name.substring(valueType.getName().length() + 1);
                     }
-                    return eb.setByName(name).build();
+                    Object ev = eb.setByName(name).build();
+                    if (ev == null) {
+                        throw new JsonException("No such " + valueType.getQualifiedName(null) + " enum value.", tokenizer, token);
+                    }
+                    return ev;
                 case MESSAGE:
                     if (JsonToken.CH.MAP_START.equals(token.getSymbol())) {
-                        return parseMessage(tokenizer, (TStructDescriptor<?>) valueType);
+                        return parseMessage(tokenizer, (TStructDescriptor<?,?>) valueType);
                     }
                     throw new JsonException("Not a valid message start.", tokenizer, token);
                 case LIST:

@@ -37,7 +37,7 @@ public class Java2Utils {
     private static final Pattern DEPRECATED_RE = Pattern.compile("[@][Dd]eprecated\\b", Pattern.MULTILINE);
     protected static final String DEPRECATED = "@Deprecated";
 
-    public static long generateSerialVersionUID(TStructDescriptor<?> type) {
+    public static long generateSerialVersionUID(TStructDescriptor<?,?> type) {
         String string = type.getVariant().getName() + " " + type.getQualifiedName(null);
 
         long hash = 1125899906842597L; // prime

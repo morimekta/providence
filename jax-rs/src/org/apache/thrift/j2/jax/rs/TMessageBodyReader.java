@@ -49,12 +49,12 @@ public abstract class TMessageBodyReader<T extends TMessage<T>> implements Messa
     }
 
     @SuppressWarnings("unchecked")
-    private TStructDescriptor<T> getDescriptor(Class<?> type) {
+    private TStructDescriptor<T,?> getDescriptor(Class<?> type) {
         try {
             if (!TMessage.class.isAssignableFrom(type))
                 return null;
             Method method = type.getMethod("provider");
-            TStructDescriptorProvider<T> provider = (TStructDescriptorProvider<T>) method.invoke(null);
+            TStructDescriptorProvider<T,?> provider = (TStructDescriptorProvider<T,?>) method.invoke(null);
             return provider.descriptor();
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
@@ -65,7 +65,7 @@ public abstract class TMessageBodyReader<T extends TMessage<T>> implements Messa
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         if (type != null) {
-            TStructDescriptor<?> descriptor = getDescriptor(type);
+            TStructDescriptor<?,?> descriptor = getDescriptor(type);
             return descriptor != null;
         }
         return false;
@@ -80,7 +80,7 @@ public abstract class TMessageBodyReader<T extends TMessage<T>> implements Messa
                       InputStream entityStream) throws IOException, WebApplicationException {
         // We need to get the "DESCRIPTOR" static field form the type class.
         try {
-            TStructDescriptor<T> descriptor = getDescriptor(type);
+            TStructDescriptor<T,?> descriptor = getDescriptor(type);
             return mSerializer.deserialize(entityStream, descriptor);
         } catch (TSerializeException e) {
             throw new ProcessingException("", e);

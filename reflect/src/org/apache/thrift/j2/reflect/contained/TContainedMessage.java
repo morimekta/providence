@@ -119,7 +119,7 @@ public abstract class TContainedMessage<T extends TMessage<T>>
         }
 
         TContainedMessage other = (TContainedMessage) o;
-        TStructDescriptor<?> type = other.descriptor();
+        TStructDescriptor<?,?> type = other.descriptor();
         if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
             !descriptor().getVariant().equals(type.getVariant())) {
             return false;

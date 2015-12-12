@@ -273,24 +273,46 @@ public class ThriftField
         }
     }
 
-    public static TStructDescriptorProvider<ThriftField> provider() {
+    public static TStructDescriptorProvider<ThriftField,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TStructDescriptor<ThriftField> descriptor() {
+    public TStructDescriptor<ThriftField,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TStructDescriptor<ThriftField> kDescriptor;
+    public static final TStructDescriptor<ThriftField,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "ThriftField", _Field.values(), new _Factory(), true, false);
+    private static class _Descriptor
+            extends TStructDescriptor<ThriftField,_Field> {
+        public _Descriptor() {
+            super(null, "model", "ThriftField", new _Factory(), true, false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TStructDescriptorProvider<ThriftField> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TStructDescriptorProvider<ThriftField,_Field> {
         @Override
-        public TStructDescriptor<ThriftField> descriptor() {
+        public TStructDescriptor<ThriftField,_Field> descriptor() {
             return kDescriptor;
         }
     }

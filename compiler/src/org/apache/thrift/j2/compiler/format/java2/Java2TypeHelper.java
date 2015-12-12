@@ -19,7 +19,6 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
-import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;

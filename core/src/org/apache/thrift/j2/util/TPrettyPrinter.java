@@ -87,7 +87,7 @@ public class TPrettyPrinter {
     }
 
     private void appendMessage(IndentedPrintWriter builder, TMessage<?> message) {
-        TStructDescriptor<?> type = message.descriptor();
+        TStructDescriptor<?,?> type = message.descriptor();
 
         builder.append("{")
                .begin();

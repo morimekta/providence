@@ -25,8 +25,8 @@ import org.apache.thrift.j2.TMessage;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public abstract class TStructDescriptorProvider<V extends TMessage<V>>
+public abstract class TStructDescriptorProvider<V extends TMessage<V>, F extends TField>
         implements TDescriptorProvider<V> {
     @Override
-    public abstract TStructDescriptor<V> descriptor();
+    public abstract TStructDescriptor<V, F> descriptor();
 }

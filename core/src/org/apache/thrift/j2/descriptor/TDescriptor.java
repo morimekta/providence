@@ -22,9 +22,12 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TType;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Descriptor interface for value type V.
+ *
+ * Note that V is specified by type even though the TDescriptor interface has
+ * no methods requiring that type.
  */
+@SuppressWarnings("unused")
 public interface TDescriptor<V> {
     /**
      * The package name is derived form the .thrift file name that is

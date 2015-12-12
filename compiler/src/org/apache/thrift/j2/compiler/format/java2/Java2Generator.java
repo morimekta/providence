@@ -70,7 +70,7 @@ public class Java2Generator
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 switch (type.getType()) {
                     case MESSAGE:
-                        messageFormatter.format(writer, (TStructDescriptor<?>) type);
+                        messageFormatter.format(writer, (TStructDescriptor<?,?>) type);
                         break;
                     case ENUM:
                         enumFormatter.format(writer, (TEnumDescriptor<?>) type);

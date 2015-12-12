@@ -28,16 +28,10 @@ import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TFieldInfo;
-import org.apache.thrift.j2.descriptor.TPrimitive;
-import org.apache.thrift.j2.descriptor.TServiceDescriptor;
-import org.apache.thrift.j2.descriptor.TServiceMethod;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.model.Declaration;
 import org.apache.thrift.j2.model.EnumType;
 import org.apache.thrift.j2.model.EnumValue;
-import org.apache.thrift.j2.model.ServiceMethod;
-import org.apache.thrift.j2.model.ServiceType;
 import org.apache.thrift.j2.model.StructType;
 import org.apache.thrift.j2.model.ThriftDocument;
 import org.apache.thrift.j2.model.ThriftField;
@@ -45,8 +39,7 @@ import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import org.apache.thrift.j2.reflect.contained.TContainedEnum;
 import org.apache.thrift.j2.reflect.contained.TContainedEnumDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedExceptionDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedServiceDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedServiceMethod;
+import org.apache.thrift.j2.reflect.contained.TContainedField;
 import org.apache.thrift.j2.reflect.contained.TContainedStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedUnionDescriptor;
 
@@ -71,7 +64,6 @@ public class TDocumentConverter {
      */
     public TContainedDocument convert(ThriftDocument document) {
         List<TDeclaredDescriptor<?>> declaredTypes = new LinkedList<>();
-        List<TServiceDescriptor> services = new LinkedList<>();
         List<TField<?>> constants = new LinkedList<>();
         Map<String, String> typedefs = new LinkedHashMap<>();
 
@@ -79,13 +71,12 @@ public class TDocumentConverter {
             if (decl.hasDeclEnum()) {
                 EnumType enumType = decl.getDeclEnum();
 
-                List<TContainedEnum> values = new LinkedList<>();
                 int nextValue = TEnumDescriptor.DEFAULT_FIRST_VALUE;
-                TEnumDescriptor<TContainedEnum> type =
+                TContainedEnumDescriptor type =
                         new TContainedEnumDescriptor(enumType.getComment(),
                                                      document.getPackage(),
-                                                     enumType.getName(),
-                                                     values);
+                                                     enumType.getName());
+                List<TContainedEnum> values = new LinkedList<>();
                 for (EnumValue value : enumType.getValues()) {
                     int v = value.hasValue() ? value.getValue() : nextValue;
                     nextValue = v + 1;
@@ -94,17 +85,18 @@ public class TDocumentConverter {
                                                   value.getName(),
                                                   type));
                 }
+                type.setValues(values);
                 declaredTypes.add(type);
                 mRegistry.putDeclaredType(type);
             }
             if (decl.hasDeclStruct()) {
                 StructType structType = decl.getDeclStruct();
 
-                List<TField<?>> fields = new LinkedList<>();
+                List<TContainedField> fields = new LinkedList<>();
                 for (ThriftField field : structType.getFields()) {
                     fields.add(makeField(document.getPackage(), field));
                 }
-                TStructDescriptor<?> type;
+                TStructDescriptor<?,?> type;
                 switch (structType.getVariant()) {
                     case STRUCT:
                         type = new TContainedStructDescriptor(structType.getComment(),
@@ -131,40 +123,7 @@ public class TDocumentConverter {
                 declaredTypes.add(type);
                 mRegistry.putDeclaredType(type);
             }
-            if (decl.hasDeclService()) {
-                ServiceType service = decl.getDeclService();
 
-                List<TServiceMethod<?, ?, ?>> methods = new LinkedList<>();
-                for (ServiceMethod method : service.getMethods()) {
-                    TDescriptorProvider returnType = TPrimitive.VOID.provider();
-                    if (method.hasReturnType()) {
-                        returnType = mRegistry.getProvider(method.getReturnType(),
-                                                           document.getPackage());
-                    }
-                    List<TField<?>> params = new LinkedList<>();
-                    for (ThriftField field : method.getParams()) {
-                        params.add(makeField(document.getPackage(), field));
-                    }
-
-                    List<TField<?>> exceptions = new LinkedList<>();
-                    for (ThriftField field : method.getExceptions()) {
-                        exceptions.add(makeField(document.getPackage(), field));
-                    }
-
-                    methods.add(new TContainedServiceMethod(method.getComment(),
-                                                            method.getIsOneway(),
-                                                            service.getName(),
-                                                            method.getName(),
-                                                            document.getPackage(),
-                                                            returnType,
-                                                            params,
-                                                            exceptions));
-                }
-                services.add(new TContainedServiceDescriptor(service.getComment(),
-                                                             document.getPackage(),
-                                                             service.getName(),
-                                                             methods));
-            }
             if (decl.hasDeclConst()) {
                 ThriftField constant = decl.getDeclConst();
 
@@ -184,7 +143,6 @@ public class TDocumentConverter {
                                       getIncludes(document),
                                       typedefs,
                                       declaredTypes,
-                                      services,
                                       constants);
     }
 
@@ -200,7 +158,7 @@ public class TDocumentConverter {
         return out;
     }
 
-    private TField<?> makeField(String pkg, ThriftField field) {
+    private TContainedField makeField(String pkg, ThriftField field) {
         TDescriptorProvider type = mRegistry.getProvider(field.getType(), pkg);
         TConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
@@ -210,12 +168,13 @@ public class TDocumentConverter {
                                               field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        TField<?> made = new TFieldInfo<>(field.getComment(),
-                                          field.getKey(),
-                                          field.getIsRequired(),
-                                          field.getName(),
-                                          type,
-                                          defaultValue);
+        TContainedField made = new TContainedField<>(
+                field.getComment(),
+                field.getKey(),
+                field.getIsRequired(),
+                field.getName(),
+                type,
+                defaultValue);
         return made;
     }
 }

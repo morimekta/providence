@@ -19,12 +19,22 @@ import org.apache.thrift.j2.util.TTypeUtils;
 @SuppressWarnings("unused")
 public class TypedefType
         implements TMessage<TypedefType>, Serializable {
+    private final String mComment;
     private final String mType;
     private final String mName;
 
     private TypedefType(_Builder builder) {
+        mComment = builder.mComment;
         mType = builder.mType;
         mName = builder.mName;
+    }
+
+    public boolean hasComment() {
+        return mComment != null;
+    }
+
+    public String getComment() {
+        return mComment;
     }
 
     public boolean hasType() {
@@ -46,8 +56,9 @@ public class TypedefType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasType();
-            case 2: return hasName();
+            case 1: return hasComment();
+            case 2: return hasType();
+            case 3: return hasName();
             default: return false;
         }
     }
@@ -55,8 +66,9 @@ public class TypedefType
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasType() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasType() ? 1 : 0;
+            case 3: return hasName() ? 1 : 0;
             default: return 0;
         }
     }
@@ -64,8 +76,9 @@ public class TypedefType
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getType();
-            case 2: return getName();
+            case 1: return getComment();
+            case 2: return getType();
+            case 3: return getName();
             default: return null;
         }
     }
@@ -84,13 +97,15 @@ public class TypedefType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
-        return TTypeUtils.equals(mType, other.mType) &&
+        return TTypeUtils.equals(mComment, other.mComment) &&
+               TTypeUtils.equals(mType, other.mType) &&
                TTypeUtils.equals(mName, other.mName);
     }
 
     @Override
     public int hashCode() {
         return TypedefType.class.hashCode() +
+               TTypeUtils.hashCode(_Field.COMMENT,mComment) +
                TTypeUtils.hashCode(_Field.TYPE,mType) +
                TTypeUtils.hashCode(_Field.NAME,mName);
     }
@@ -106,8 +121,9 @@ public class TypedefType
     }
 
     public enum _Field implements TField {
-        TYPE(1, false, "type", TPrimitive.STRING.provider(), null),
-        NAME(2, false, "name", TPrimitive.STRING.provider(), null),
+        COMMENT(1, false, "comment", TPrimitive.STRING.provider(), null),
+        TYPE(2, false, "type", TPrimitive.STRING.provider(), null),
+        NAME(3, false, "name", TPrimitive.STRING.provider(), null),
         ;
 
         private final int mKey;
@@ -169,14 +185,16 @@ public class TypedefType
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.TYPE;
-                case 2: return _Field.NAME;
+                case 1: return _Field.COMMENT;
+                case 2: return _Field.TYPE;
+                case 3: return _Field.NAME;
                 default: return null;
             }
         }
 
         public static _Field forName(String name) {
             switch (name) {
+                case "comment": return _Field.COMMENT;
                 case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
             }
@@ -184,24 +202,46 @@ public class TypedefType
         }
     }
 
-    public static TStructDescriptorProvider<TypedefType> provider() {
+    public static TStructDescriptorProvider<TypedefType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TStructDescriptor<TypedefType> descriptor() {
+    public TStructDescriptor<TypedefType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TStructDescriptor<TypedefType> kDescriptor;
+    public static final TStructDescriptor<TypedefType,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "TypedefType", _Field.values(), new _Factory(), true, false);
+    private static class _Descriptor
+            extends TStructDescriptor<TypedefType,_Field> {
+        public _Descriptor() {
+            super(null, "model", "TypedefType", new _Factory(), true, false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TStructDescriptorProvider<TypedefType> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TStructDescriptorProvider<TypedefType,_Field> {
         @Override
-        public TStructDescriptor<TypedefType> descriptor() {
+        public TStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
         }
     }
@@ -225,6 +265,7 @@ public class TypedefType
 
     public static class _Builder
             extends TMessageBuilder<TypedefType> {
+        private String mComment;
         private String mType;
         private String mName;
 
@@ -234,8 +275,19 @@ public class TypedefType
         public _Builder(TypedefType base) {
             this();
 
+            mComment = base.mComment;
             mType = base.mType;
             mName = base.mName;
+        }
+
+        public _Builder setComment(String value) {
+            mComment = value;
+            return this;
+        }
+
+        public _Builder clearComment() {
+            mComment = null;
+            return this;
         }
 
         public _Builder setType(String value) {
@@ -261,8 +313,9 @@ public class TypedefType
         @Override
         public _Builder set(int key, Object value) {
             switch (key) {
-                case 1: setType((String) value); break;
-                case 2: setName((String) value); break;
+                case 1: setComment((String) value); break;
+                case 2: setType((String) value); break;
+                case 3: setName((String) value); break;
             }
             return this;
         }

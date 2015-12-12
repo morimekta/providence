@@ -49,8 +49,9 @@ struct EnumType {
  * typedef <type> <name>
  */
 struct TypedefType {
-    1: string type;
-    2: string name;
+    1: string comment;
+    2: string type;
+    3: string name;
 }
 
 /**

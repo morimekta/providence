@@ -72,7 +72,7 @@ public class Java2MessageFormatter {
         mAndroid = android;
     }
 
-    public void format(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException, IOException {
+    public void format(IndentedPrintWriter writer, TStructDescriptor<?,?> type) throws GeneratorException, IOException {
         appendFileHeader(writer, type);
 
         if (type.getComment() != null) {
@@ -115,7 +115,7 @@ public class Java2MessageFormatter {
         appendClassDefinitionEnd(writer);
     }
 
-    private void appendObjectCompact(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendObjectCompact(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         if (type.isCompactible()) {
             writer.appendln("@Override")
                   .appendln("public boolean isCompact() {")
@@ -156,7 +156,7 @@ public class Java2MessageFormatter {
                 .newline();
     }
 
-    private void appendParcelable(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
+    private void appendParcelable(IndentedPrintWriter writer, TStructDescriptor<?,?> type) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public int describeContents() {")
               .begin()
@@ -489,7 +489,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendBuilder(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendBuilder(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         boolean union = type.getVariant().equals(TMessageVariant.UNION);
 
         String simpleClass = mTypeHelper.getInstanceClassName(type);
@@ -825,7 +825,7 @@ public class Java2MessageFormatter {
               .appendln('}');
     }
 
-    private void appendFieldEnum(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendFieldEnum(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("public enum _Field implements TField {")
               .begin();
 
@@ -949,7 +949,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendDescriptor(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
+    private void appendDescriptor(IndentedPrintWriter writer, TStructDescriptor<?,?> type) throws GeneratorException {
         String simpleClass = mTypeHelper.getInstanceClassName(type);
         String typeClass;
         switch (type.getVariant()) {
@@ -966,7 +966,7 @@ public class Java2MessageFormatter {
                 throw new GeneratorException("Unable to determine type class for " + type.getVariant());
         }
 
-        writer.formatln("public static %sProvider<%s> provider() {", typeClass, simpleClass)
+        writer.formatln("public static %sProvider<%s,_Field> provider() {", typeClass, simpleClass)
               .begin()
               .formatln("return new _Provider();")
               .end()
@@ -974,42 +974,71 @@ public class Java2MessageFormatter {
               .newline();
 
         writer.appendln("@Override")
-              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
+              .formatln("public %s<%s,_Field> descriptor() {", typeClass, simpleClass)
               .begin()
               .appendln("return kDescriptor;")
               .end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public static final %s<%s> kDescriptor;", typeClass, simpleClass)
+        writer.formatln("public static final %s<%s,_Field> kDescriptor;", typeClass, simpleClass)
               .newline();
 
-        writer.formatln("static {", typeClass, simpleClass)
+        writer.formatln("private static class _Descriptor")
+              .formatln("        extends %s<%s,_Field> {", typeClass, simpleClass)
+              .begin()
+              .appendln("public _Descriptor() {")
               .begin();
         if (type.getVariant().equals(TMessageVariant.STRUCT)) {
-            writer.formatln(
-                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %b, %b);",
-                    typeClass,
-                    type.getPackageName(),
-                    type.getName(),
-                    type.isSimple(),
-                    type.isCompactible());
+            writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %b, %b);",
+                            type.getPackageName(),
+                            type.getName(),
+                            type.isSimple(),
+                            type.isCompactible());
         } else {
-            writer.formatln(
-                    "kDescriptor = new %s<>(null, \"%s\", \"%s\", _Field.values(), new _Factory(), %s);",
-                    typeClass,
-                    type.getPackageName(),
-                    type.getName(),
-                    type.isSimple());
+            writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %s);",
+                            type.getPackageName(),
+                            type.getName(),
+                            type.isSimple());
         }
         writer.end()
               .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .appendln("public _Field[] getFields() {")
+              .begin()
+              .appendln("return _Field.values();")
+              .end()
+              .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .appendln("public _Field getField(String name) {")
+              .begin()
+              .appendln("return _Field.forName(name);")
+              .end()
+              .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .appendln("public _Field getField(int key) {")
+              .begin()
+              .appendln("return _Field.forKey(key);")
+              .end()
+              .appendln('}')
+              .end()
+              .appendln('}')
               .newline();
 
-        writer.formatln("private final static class _Provider extends %sProvider<%s> {", typeClass, simpleClass)
+        writer.formatln("static {", typeClass, simpleClass)
+              .begin()
+              .appendln("kDescriptor = new _Descriptor();")
+              .end()
+              .appendln('}')
+              .newline();
+
+        writer.formatln("private final static class _Provider extends %sProvider<%s,_Field> {", typeClass, simpleClass)
               .begin()
               .appendln("@Override")
-              .formatln("public %s<%s> descriptor() {", typeClass, simpleClass)
+              .formatln("public %s<%s,_Field> descriptor() {", typeClass, simpleClass)
               .begin()
               .appendln("return kDescriptor;")
               .end()
@@ -1032,7 +1061,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendIsValid(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendIsValid(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@Override")
               .appendln("public boolean isValid() {")
               .begin()
@@ -1080,13 +1109,13 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendObjectEquals(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendObjectEquals(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         String typeName = mTypeHelper.getInstanceClassName(type);
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
               .begin()
               .formatln("if (o == null || !(o instanceof %s)) return false;", typeName);
-        if (type.getFields().size() > 0) {
+        if (type.getFields().length > 0) {
             boolean first = true;
             writer.formatln("%s other = (%s) o;", typeName, typeName)
                   .appendln("return ");
@@ -1109,7 +1138,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendObjectHashCode(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendObjectHashCode(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
@@ -1128,7 +1157,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_has(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendInheritedGetter_has(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@Override")
               .appendln("public boolean has(int key) {")
               .begin()
@@ -1160,7 +1189,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_num(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendInheritedGetter_num(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@Override")
               .appendln("public int num(int key) {")
               .begin()
@@ -1192,7 +1221,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_get(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendInheritedGetter_get(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@Override")
               .appendln("public Object get(int key) {")
               .begin()
@@ -1212,7 +1241,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendFieldDefaultConstants(IndentedPrintWriter writer, TStructDescriptor<?> type)
+    private void appendFieldDefaultConstants(IndentedPrintWriter writer, TStructDescriptor<?,?> type)
             throws GeneratorException {
         boolean hasDefault = false;
         for (TField<?> field : type.getFields()) {
@@ -1233,7 +1262,7 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFieldGetters(IndentedPrintWriter writer, TStructDescriptor<?> type) throws GeneratorException {
+    private void appendFieldGetters(IndentedPrintWriter writer, TStructDescriptor<?,?> type) throws GeneratorException {
         for (TField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
 
@@ -1360,7 +1389,7 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFieldDeclarations(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendFieldDeclarations(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         for (TField<?> field : type.getFields()) {
             writer.formatln("private final %s %s;",
                             mTypeHelper.getFieldType(field.getDescriptor()),
@@ -1373,7 +1402,7 @@ public class Java2MessageFormatter {
         writer.newline();
     }
 
-    private void appendConstructor(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendConstructor(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.formatln("private %s(_Builder builder) {", mTypeHelper.getInstanceClassName(type))
               .begin();
         if (type.getVariant().equals(TMessageVariant.EXCEPTION)) {
@@ -1409,7 +1438,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendClassDefinitionStart(IndentedPrintWriter writer, TStructDescriptor<?> type) {
+    private void appendClassDefinitionStart(IndentedPrintWriter writer, TStructDescriptor<?,?> type) {
         writer.appendln("@SuppressWarnings(\"unused\")")
               .formatln("public class %s", mTypeHelper.getInstanceClassName(type))
               .begin(DBL_INDENT);
@@ -1485,7 +1514,7 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?> type)
+    private void appendFileHeader(IndentedPrintWriter writer, TStructDescriptor<?,?> type)
             throws GeneratorException, IOException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
         header.include(java.io.Serializable.class.getName());

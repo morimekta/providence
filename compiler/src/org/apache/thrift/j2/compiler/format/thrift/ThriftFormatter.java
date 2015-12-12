@@ -19,6 +19,12 @@
 
 package org.apache.thrift.j2.compiler.format.thrift;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TContainer;
@@ -27,20 +33,12 @@ import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TMap;
-import org.apache.thrift.j2.descriptor.TServiceDescriptor;
-import org.apache.thrift.j2.descriptor.TServiceMethod;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Pretty printer for types. Generates content as close to the real thrift files
@@ -121,7 +119,7 @@ public class ThriftFormatter {
                     appendEnum(builder, (TEnumDescriptor<?>) type);
                     break;
                 case MESSAGE:
-                    appendStruct(builder, (TStructDescriptor<?>) type);
+                    appendStruct(builder, (TStructDescriptor<?,?>) type);
                     break;
                 default:
                     throw new IllegalStateException("Document " +
@@ -130,10 +128,6 @@ public class ThriftFormatter {
                                                     type.getName());
             }
             builder.newline();
-        }
-
-        for (TServiceDescriptor service : document.getServices()) {
-            appendService(builder, document, service);
         }
 
         for (TField<?> constant : document.getConstants()) {
@@ -171,7 +165,7 @@ public class ThriftFormatter {
 
     // --- Declared Types
 
-    private void appendStruct(IndentedPrintWriter builder, TStructDescriptor<?> type) throws IOException, JsonException {
+    private void appendStruct(IndentedPrintWriter builder, TStructDescriptor<?,?> type) throws IOException, JsonException {
         if (type.getComment() != null) {
             appendBlockComment(builder, type.getComment(), false);
         }
@@ -223,68 +217,6 @@ public class ThriftFormatter {
         }
         builder.end()
                .appendln('}');
-    }
-
-    // --- Services
-
-    private void appendService(IndentedPrintWriter writer, TContainedDocument doc, TServiceDescriptor service) throws IOException {
-        writer.formatln("service %s {", service.getName())
-              .begin();
-
-        boolean firstMethod = true;
-        for (TServiceMethod<?,?,?> method : service.getMethods()) {
-            if (firstMethod) firstMethod = false;
-            else writer.newline();
-
-            if (method.getComment() != null) {
-                appendBlockComment(writer, service.getComment(), false);
-            }
-            writer.appendln("");
-            if (method.isOneway()) {
-                writer.append("oneway ");
-            }
-            if (method.getReturnType() != null) {
-                writer.append(method.getReturnType().getQualifiedName(doc.getPackageName()));
-            } else {
-                writer.append("void");
-            }
-            writer.format(" %s(", method.getName());
-            TStructDescriptor<?> params = method.getParamsDescriptor();
-            if (params != null) {
-                boolean first = true;
-                for (TField<?> field : params.getFields()) {
-                    if (first)
-                        first = false;
-                    else
-                        writer.append(", ");
-                    writer.format("%d: %s %s",
-                                  field.getKey(),
-                                  field.getDescriptor().getQualifiedName(doc.getPackageName()),
-                                  field.getName());
-                }
-            }
-            writer.append(')');
-
-            TStructDescriptor<?> exceptions = method.getExceptionDescriptor();
-            if (exceptions != null) {
-                writer.append(" throws (");
-                boolean first = true;
-                for (TField<?> field : exceptions.getFields()) {
-                    if (first) first = false;
-                    else writer.append(", ");
-                    writer.format("%d: %s %s",
-                                  field.getKey(),
-                                  field.getDescriptor().getQualifiedName(doc.getPackageName()),
-                                  field.getName());
-                }
-                writer.append(')');
-            }
-            writer.append(';');
-        }
-
-        writer.end()
-              .appendln("}")
-              .newline();
     }
 
     // --- Constant values.

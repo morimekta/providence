@@ -22,11 +22,10 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TMessage;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 20.09.15
+ * Provider for exception descriptor.
  */
-public abstract class TExceptionDescriptorProvider<V extends TMessage<V>>
-        extends TStructDescriptorProvider<V> {
+public abstract class TExceptionDescriptorProvider<V extends TMessage<V>, F extends TField>
+        extends TStructDescriptorProvider<V, F> {
     @Override
-    public abstract TExceptionDescriptor<V> descriptor();
+    public abstract TExceptionDescriptor<V, F> descriptor();
 }

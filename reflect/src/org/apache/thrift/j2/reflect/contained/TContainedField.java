@@ -17,9 +17,13 @@
  * under the License.
  */
 
-package org.apache.thrift.j2.descriptor;
+package org.apache.thrift.j2.reflect.contained;
 
 import org.apache.thrift.j2.TType;
+import org.apache.thrift.j2.descriptor.TDescriptor;
+import org.apache.thrift.j2.descriptor.TDescriptorProvider;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TValueProvider;
 import org.apache.thrift.j2.util.TTypeUtils;
 
 import static org.apache.thrift.j2.util.TTypeUtils.equalsQualifiedName;
@@ -28,7 +32,7 @@ import static org.apache.thrift.j2.util.TTypeUtils.equalsQualifiedName;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class TFieldInfo<T> implements TField<T> {
+public class TContainedField<T> implements TField<T> {
     private final String                 mComment;
     private final int                    mKey;
     private final boolean                mRequired;
@@ -36,12 +40,12 @@ public class TFieldInfo<T> implements TField<T> {
     private final String                 mName;
     private final TValueProvider<T>      mDefaultValue;
 
-    public TFieldInfo(String comment,
-                      int key,
-                      boolean required,
-                      String name,
-                      TDescriptorProvider<T> typeProvider,
-                      TValueProvider<T> defaultValue) {
+    public TContainedField(String comment,
+                           int key,
+                           boolean required,
+                           String name,
+                           TDescriptorProvider<T> typeProvider,
+                           TValueProvider<T> defaultValue) {
         mComment = comment;
         mKey = key;
         mRequired = required;
@@ -110,10 +114,10 @@ public class TFieldInfo<T> implements TField<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof TFieldInfo)) {
+        if (o == null || !(o instanceof TContainedField)) {
             return false;
         }
-        TFieldInfo<?> other = (TFieldInfo<?>) o;
+        TContainedField<?> other = (TContainedField<?>) o;
         return mKey == other.mKey &&
                mRequired == other.mRequired &&
                // We cannot test that the types are deep-equals as it may have circular
@@ -125,7 +129,7 @@ public class TFieldInfo<T> implements TField<T> {
 
     @Override
     public int hashCode() {
-        return TFieldInfo.class.hashCode() +
+        return TContainedField.class.hashCode() +
                getDescriptor().hashCode() +
                TTypeUtils.hashCode(mKey) +
                TTypeUtils.hashCode(mRequired) +

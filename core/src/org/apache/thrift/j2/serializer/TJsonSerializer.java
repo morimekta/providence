@@ -192,7 +192,7 @@ public class TJsonSerializer
      * @throws JsonException
      */
     protected <T extends TMessage<T>> T parseMessage(JsonTokenizer tokenizer,
-                                                     TStructDescriptor<T> type)
+                                                     TStructDescriptor<T,?> type)
             throws TSerializeException, JsonException, IOException {
         TMessageBuilder<T> builder = type.factory().builder();
 
@@ -248,7 +248,7 @@ public class TJsonSerializer
      * @param <T>     Message generic type.
      * @return The parsed message.
      */
-    protected <T extends TMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, TStructDescriptor<T> type) throws TSerializeException, IOException, JsonException {
+    protected <T extends TMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, TStructDescriptor<T,?> type) throws TSerializeException, IOException, JsonException {
         TMessageBuilder<T> builder = type.factory().builder();
 
         int i = 0;
@@ -397,7 +397,7 @@ public class TJsonSerializer
                     }
                     return cast(eb.build());
                 case MESSAGE:
-                    TStructDescriptor<?> st = (TStructDescriptor<?>) t;
+                    TStructDescriptor<?,?> st = (TStructDescriptor<?,?>) t;
                     if (token.isSymbol()) {
                         if (token.getSymbol().equals(JsonToken.CH.MAP_START)) {
                             return cast((Object) parseMessage(tokenizer, st));
@@ -528,7 +528,7 @@ public class TJsonSerializer
                 case BINARY:
                     return parseBinary(key);
                 case MESSAGE:
-                    TStructDescriptor<?> st = (TStructDescriptor<?>) keyType;
+                    TStructDescriptor<?,?> st = (TStructDescriptor<?,?>) keyType;
                     if (!st.isSimple()) {
                         throw new TSerializeException("Only simple structs can be used as map key. " +
                                                       st.getQualifiedName(null) + " is not.");
@@ -551,7 +551,7 @@ public class TJsonSerializer
     }
 
     protected void appendMessage(JsonWriter writer, TMessage<?> message) throws TSerializeException, JsonException {
-        TStructDescriptor<?> type = message.descriptor();
+        TStructDescriptor<?,?> type = message.descriptor();
         if (message.isCompact()) {
             writer.array();
             for (TField<?> field : type.getFields()) {
@@ -570,10 +570,8 @@ public class TJsonSerializer
                     if (IdType.ID.equals(mIdType)) {
                         String key = String.valueOf(field.getKey());
                         writer.key(key);
-                        key.length();
                     } else {
                         writer.key(field.getName());
-                        field.getName().length();
                     }
                     appendTypedValue(writer, field.getDescriptor(), value);
                 }
@@ -624,17 +622,16 @@ public class TJsonSerializer
     }
 
     /**
-     * @param writer
-     * @param primitive
-     * @return
+     * @param writer The writer to add primitive key to.
+     * @param primitive Primitive object to get map key value of.
      */
     protected void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, TSerializeException {
         writer.key(getPrimitiveKey(primitive));
     }
 
     /**
-     * @param primitive
-     * @return
+     * @param primitive Primitive object to get map key value of.
+     * @return The map key.
      */
     protected String getPrimitiveKey(Object primitive) throws TSerializeException, JsonException {
         if (primitive instanceof TEnumValue) {
@@ -690,7 +687,7 @@ public class TJsonSerializer
                 writer.value(primitive.toString());
             }
         } else if (primitive instanceof Boolean) {
-            writer.value(((Boolean) primitive).booleanValue());
+            writer.value(primitive);
         } else if (primitive instanceof Byte || primitive instanceof Short || primitive instanceof Integer ||
                 primitive instanceof Long) {
             writer.value(((Number) primitive).longValue());

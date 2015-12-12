@@ -20,19 +20,21 @@
 package org.apache.thrift.j2.descriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Generic descriptor for a container type.
+ *
+ * See {@link TList}, {@link TSet} and {@link TMap} which specializes for each
+ * type of container.
  */
 public abstract class TContainer<I, C>
         implements TDescriptor<C> {
-    private final TDescriptorProvider<I> mItemDescriptor;
+    private final TDescriptorProvider<I> itemDescriptorProvider;
 
-    protected TContainer(TDescriptorProvider<I> itemDesc) {
-        mItemDescriptor = itemDesc;
+    protected TContainer(TDescriptorProvider<I> provider) {
+        itemDescriptorProvider = provider;
     }
 
     public TDescriptor<I> itemDescriptor() {
-        return mItemDescriptor.descriptor();
+        return itemDescriptorProvider.descriptor();
     }
 
     @Override

@@ -103,7 +103,7 @@ public class TBinarySerializer
         // Assume it consists of a single field.
         switch (descriptor.getType()) {
             case MESSAGE:
-                return cast((Object) readMessage(input, (TStructDescriptor<?>) descriptor, true));
+                return cast((Object) readMessage(input, (TStructDescriptor<?,?>) descriptor, true));
             default:
                 FieldInfo info = readFieldInfo(input);
                 if (info == null) {
@@ -113,7 +113,7 @@ public class TBinarySerializer
         }
     }
 
-    private <T extends TMessage<T>> T readMessage(InputStream input, TStructDescriptor<T> descriptor, boolean nullable)
+    private <T extends TMessage<T>> T readMessage(InputStream input, TStructDescriptor<T,?> descriptor, boolean nullable)
             throws TSerializeException, IOException {
         TMessageBuilder<T> builder = descriptor.factory().builder();
         FieldInfo fieldInfo = readFieldInfo(input);
@@ -275,7 +275,7 @@ public class TBinarySerializer
                     if (!type.getType().equals(TType.MESSAGE)) {
                         throw new TSerializeException("Invalid type for message encoding.");
                     }
-                    return cast((Object) readMessage(in, (TStructDescriptor<?>) type, false));
+                    return cast((Object) readMessage(in, (TStructDescriptor<?,?>) type, false));
                 } else {
                     // consume message.
                     consumeMessage(in);

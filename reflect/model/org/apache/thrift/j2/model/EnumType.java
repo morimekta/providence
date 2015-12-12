@@ -211,24 +211,46 @@ public class EnumType
         }
     }
 
-    public static TStructDescriptorProvider<EnumType> provider() {
+    public static TStructDescriptorProvider<EnumType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TStructDescriptor<EnumType> descriptor() {
+    public TStructDescriptor<EnumType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TStructDescriptor<EnumType> kDescriptor;
+    public static final TStructDescriptor<EnumType,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "EnumType", _Field.values(), new _Factory(), false, false);
+    private static class _Descriptor
+            extends TStructDescriptor<EnumType,_Field> {
+        public _Descriptor() {
+            super(null, "model", "EnumType", new _Factory(), false, false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TStructDescriptorProvider<EnumType> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TStructDescriptorProvider<EnumType,_Field> {
         @Override
-        public TStructDescriptor<EnumType> descriptor() {
+        public TStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
         }
     }

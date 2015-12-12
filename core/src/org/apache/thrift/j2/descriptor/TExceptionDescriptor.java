@@ -19,37 +19,21 @@
 
 package org.apache.thrift.j2.descriptor;
 
-import java.util.List;
-
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
 
 /**
- * The definition of a thrift structure.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * The definition of a thrift exception.
  */
-public class TExceptionDescriptor<T extends TMessage<T>>
-        extends TStructDescriptor<T> {
+public abstract class TExceptionDescriptor<T extends TMessage<T>, F extends TField>
+        extends TStructDescriptor<T, F> {
     public TExceptionDescriptor(String comment,
                                 String packageName,
                                 String name,
-                                TField<?>[] fields,
                                 TMessageBuilderFactory<T> provider,
                                 boolean simple) {
-        this(comment, packageName, name, fieldList(fields), provider, simple);
-    }
-
-
-    public TExceptionDescriptor(String comment,
-                                String packageName,
-                                String name,
-                                List<TField<?>> fields,
-                                TMessageBuilderFactory<T> provider,
-                                boolean simple) {
-        super(comment, packageName, name, fields, provider, simple, false);
+        super(comment, packageName, name, provider, simple, false);
     }
 
     @Override

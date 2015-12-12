@@ -34,7 +34,6 @@ import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilder;
-import org.apache.thrift.j2.TServiceCall;
 import org.apache.thrift.j2.TType;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;

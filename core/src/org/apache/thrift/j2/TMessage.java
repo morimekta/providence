@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2;
 
+import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 
 /**
@@ -69,5 +70,6 @@ public interface TMessage<T extends TMessage<T>>
      */
     boolean isSimple();
 
-    @Override TStructDescriptor<T> descriptor();
+    @Override
+    TStructDescriptor<T,?> descriptor();
 }

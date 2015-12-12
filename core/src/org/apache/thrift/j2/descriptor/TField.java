@@ -20,11 +20,11 @@
 package org.apache.thrift.j2.descriptor;
 
 import org.apache.thrift.j2.TType;
-import org.apache.thrift.j2.descriptor.TDescriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 21.10.15
+ * Field descriptor. All struct variants contains a set of fields. This
+ * interface describes the properties each field has. It is an interface
+ * so the fields themselves may be implemented as an enum.
  */
 public interface TField<V> {
     /**
@@ -68,7 +68,9 @@ public interface TField<V> {
     boolean hasDefaultValue();
 
     /**
-     * @return The default value or null if none.
+     * @return The default value or null if none. This should return value also
+     *         where the field has an <b>implicit</b> default value, e.g.
+     *         numerical types.
      */
     V getDefaultValue();
 }

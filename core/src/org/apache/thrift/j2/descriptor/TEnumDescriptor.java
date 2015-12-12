@@ -19,51 +19,26 @@
 
 package org.apache.thrift.j2.descriptor;
 
-import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.TEnumBuilderFactory;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TType;
-
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.thrift.j2.util.TTypeUtils;
 
 /**
  * The definition of a thrift enum.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
-public class TEnumDescriptor<T extends TEnumValue<T>>
+public abstract class TEnumDescriptor<T extends TEnumValue<T>>
         extends TDeclaredDescriptor<T> {
     // According to doc it's 1, but the current c++ compiler makes it 0...
     public static final int DEFAULT_FIRST_VALUE = 0;
 
-    private final List<T>    mValues;
     private final TEnumBuilderFactory<T> mProvider;
 
-    private static <T> List<T> valuesList(T[] values) {
-        LinkedList<T> list = new LinkedList<>();
-        for (T value : values) {
-            list.add(value);
-        }
-        return list;
-    }
-
     public TEnumDescriptor(String comment,
                            String packageName,
                            String name,
-                           T[] values,
-                           TEnumBuilderFactory<T> provider) {
-        this(comment, packageName, name, valuesList(values), provider);
-    }
-
-    public TEnumDescriptor(String comment,
-                           String packageName,
-                           String name,
-                           List<T> values,
                            TEnumBuilderFactory<T> provider) {
         super(comment, packageName, name);
-        mValues = values;
         mProvider = provider;
     }
 
@@ -72,27 +47,22 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
         return TType.ENUM;
     }
 
-    public List<T> getValues() {
-        return mValues;
-    }
+    /**
+     * @return The array of enum instances.
+     */
+    public abstract T[] getValues();
 
-    public T getValueById(int id) {
-        for (T value : getValues()) {
-            if (value.getValue() == id) {
-                return value;
-            }
-        }
-        return null;
-    }
+    /**
+     * @param id Value to look up enum from.
+     * @return Enum if found, null otherwise.
+     */
+    public abstract T getValueById(int id);
 
-    public T getValueByName(String name) {
-        for (T value : getValues()) {
-            if (value.getName().equals(name)) {
-                return value;
-            }
-        }
-        return null;
-    }
+    /**
+     * @param name Name to look up enum from.
+     * @return Enum if found, null otherwise.
+     */
+    public abstract T getValueByName(String name);
 
     @Override
     public TEnumBuilderFactory<T> factory() {
@@ -112,7 +82,7 @@ public class TEnumDescriptor<T extends TEnumValue<T>>
         TEnumDescriptor<?> other = (TEnumDescriptor<?>) o;
         if (!TTypeUtils.equals(getComment(), other.getComment()) ||
             !getQualifiedName(null).equals(other.getQualifiedName(null)) ||
-            getValues().size() != other.getValues().size()) {
+            getValues().length != other.getValues().length) {
             return false;
         }
         for (TEnumValue<?> value : getValues()) {

@@ -174,10 +174,43 @@ public class Java2EnumFormatter {
               .appendln('}')
               .newline();
 
+        writer.appendln("private static class _Descriptor")
+              .formatln("        extends TEnumDescriptor<%s> {", simpleClass)
+              .begin()
+              .appendln("public _Descriptor() {")
+              .begin()
+              .formatln("super(null, \"%s\", \"%s\", new _Factory());",
+                        type.getPackageName(), type.getName(), simpleClass)
+              .end()
+              .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .formatln("public %s[] getValues() {", simpleClass)
+              .begin()
+              .formatln("return %s.values();", simpleClass)
+              .end()
+              .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .formatln("public %s getValueById(int id) {", simpleClass)
+              .begin()
+              .formatln("return %s.forValue(id);", simpleClass)
+              .end()
+              .appendln('}')
+              .newline()
+              .appendln("@Override")
+              .formatln("public %s getValueByName(String name) {", simpleClass)
+              .begin()
+              .formatln("return %s.forName(name);", simpleClass)
+              .end()
+              .appendln('}')
+              .end()
+              .appendln('}')
+              .newline();
+
         writer.formatln("static {", simpleClass)
               .begin();
-        writer.formatln("kDescriptor = new TEnumDescriptor<>(null, \"%s\", \"%s\", %s.values(), new _Factory());",
-                        type.getPackageName(), type.getName(), simpleClass)
+        writer.appendln("kDescriptor = new _Descriptor();")
               .end()
               .appendln('}');
     }

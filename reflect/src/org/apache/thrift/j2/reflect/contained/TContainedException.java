@@ -126,7 +126,7 @@ public class TContainedException
         }
 
         TContainedException other = (TContainedException) o;
-        TStructDescriptor<?> type = other.descriptor();
+        TStructDescriptor<?,?> type = other.descriptor();
         if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
             !descriptor().getVariant().equals(type.getVariant())) {
             return false;

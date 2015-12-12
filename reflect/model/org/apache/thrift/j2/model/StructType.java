@@ -232,24 +232,46 @@ public class StructType
         }
     }
 
-    public static TStructDescriptorProvider<StructType> provider() {
+    public static TStructDescriptorProvider<StructType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TStructDescriptor<StructType> descriptor() {
+    public TStructDescriptor<StructType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TStructDescriptor<StructType> kDescriptor;
+    public static final TStructDescriptor<StructType,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "StructType", _Field.values(), new _Factory(), false, false);
+    private static class _Descriptor
+            extends TStructDescriptor<StructType,_Field> {
+        public _Descriptor() {
+            super(null, "model", "StructType", new _Factory(), false, false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TStructDescriptorProvider<StructType> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TStructDescriptorProvider<StructType,_Field> {
         @Override
-        public TStructDescriptor<StructType> descriptor() {
+        public TStructDescriptor<StructType,_Field> descriptor() {
             return kDescriptor;
         }
     }

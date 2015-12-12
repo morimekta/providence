@@ -24,8 +24,8 @@ import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * Contained enum value. This emulates enum values to used in thrift
+ * reflection.
  */
 public class TContainedEnum
         implements TEnumValue<TContainedEnum> {
@@ -41,7 +41,7 @@ public class TContainedEnum
         mType = type;
     }
 
-    // @Override
+    @Override
     public String getComment() {
         return mComment;
     }
@@ -81,7 +81,7 @@ public class TContainedEnum
             extends TEnumBuilder<TContainedEnum> {
         private final TContainedEnumDescriptor mType;
 
-        private int mValue = -1;  // Illegal enum value.
+        private TContainedEnum mValue = null;
 
         public Builder(TContainedEnumDescriptor type) {
             mType = type;
@@ -89,46 +89,30 @@ public class TContainedEnum
 
         @Override
         public TContainedEnum build() {
-            if (isValid()) {
-                TEnumValue<?> value = mType.getValueById(mValue);
-                return new TContainedEnum(value.getComment(),
-                                          value.getValue(),
-                                          value.getName(),
-                                          mType);
-            }
-            // throw new IllegalArgumentException("no such enumeration " +
-            // name);
-            return null;
+            return mValue;
         }
 
         @Override
         public boolean isValid() {
-            for (TEnumValue<?> value : mType.getValues()) {
-                if (value.getValue() == mValue) {
-                    return true;
-                }
-            }
-            return false;
+            return mValue != null;
         }
 
         @Override
-        public Builder setByValue(int value) {
-            mValue = value;
+        public Builder setByValue(int id) {
+            mValue = mType.getValueById(id);
+            if (mValue == null) {
+                throw new IllegalArgumentException("No value for id " + id);
+            }
             return this;
         }
 
         @Override
         public Builder setByName(String name) {
-            for (TEnumValue<?> value : mType.getValues()) {
-                if (value.getName().equals(name)) {
-                    mValue = value.getValue();
-                    return this;
-                }
+            mValue = mType.getValueByName(name);
+            if (mValue == null) {
+                throw new IllegalArgumentException("No value for name " + name);
             }
-            // throw new IllegalArgumentException("no such enumeration " +
-            // name);
             return this;
         }
-
     }
 }

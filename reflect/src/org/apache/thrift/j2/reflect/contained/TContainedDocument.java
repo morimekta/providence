@@ -25,11 +25,10 @@ import java.util.Map;
 
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.descriptor.TServiceDescriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Contained document. It contains everything that is parsed out of a single
+ * thrift file.
  */
 @SuppressWarnings("unused")
 public class TContainedDocument {
@@ -39,7 +38,6 @@ public class TContainedDocument {
     private final Map<String, String>          mNamespaces;
     private final Map<String, String>          mTypedefs;
     private final List<TDeclaredDescriptor<?>> mDeclaredTypes;
-    private final List<TServiceDescriptor>     mServices;
     private final List<TField<?>>              mConstants;
 
     public TContainedDocument(String comment,
@@ -48,7 +46,6 @@ public class TContainedDocument {
                               List<String> includes,
                               Map<String, String> typedefs,
                               List<TDeclaredDescriptor<?>> declaredTypes,
-                              List<TServiceDescriptor> services,
                               List<TField<?>> constants) {
         mComment = comment;
         mPackageName = packageName;
@@ -56,7 +53,6 @@ public class TContainedDocument {
         mIncludes = Collections.unmodifiableList(includes);
         mTypedefs = Collections.unmodifiableMap(typedefs);
         mDeclaredTypes = Collections.unmodifiableList(declaredTypes);
-        mServices = Collections.unmodifiableList(services);
         mConstants = Collections.unmodifiableList(constants);
     }
 
@@ -82,10 +78,6 @@ public class TContainedDocument {
 
     public List<TDeclaredDescriptor<?>> getDeclaredTypes() {
         return mDeclaredTypes;
-    }
-
-    public List<TServiceDescriptor> getServices() {
-        return mServices;
     }
 
     public List<TField<?>> getConstants() {

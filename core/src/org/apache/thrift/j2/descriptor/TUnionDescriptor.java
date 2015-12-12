@@ -19,36 +19,21 @@
 
 package org.apache.thrift.j2.descriptor;
 
+import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
-import org.apache.thrift.j2.TMessage;
-
-import java.util.List;
 
 /**
- * The definition of a thrift structure.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * The definition of a thrift union.
  */
-public class TUnionDescriptor<T extends TMessage<T>>
-        extends TStructDescriptor<T> {
+public abstract class TUnionDescriptor<T extends TMessage<T>, F extends TField>
+        extends TStructDescriptor<T, F> {
     public TUnionDescriptor(String comment,
                             String packageName,
                             String name,
-                            TField<?>[] fields,
                             TMessageBuilderFactory<T> provider,
                             boolean simple) {
-        this(comment, packageName, name, fieldList(fields), provider, simple);
-    }
-
-    public TUnionDescriptor(String comment,
-                            String packageName,
-                            String name,
-                            List<TField<?>> fields,
-                            TMessageBuilderFactory<T> provider,
-                            boolean simple) {
-        super(comment, packageName, name, fields, provider, simple, false);
+        super(comment, packageName, name, provider, simple, false);
     }
 
     @Override

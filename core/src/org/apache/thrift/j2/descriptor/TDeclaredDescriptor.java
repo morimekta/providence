@@ -22,21 +22,21 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TBuilderFactory;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Descriptor for a declared type. A declared type is a value type that is
+ * derived from a thrift definition.
  */
 public abstract class TDeclaredDescriptor<T>
         implements TDescriptor<T> {
-    private final String   mComment;
-    private final String   mPackageName;
-    private final String   mName;
+    private final String comment;
+    private final String packageName;
+    private final String name;
 
     protected TDeclaredDescriptor(String comment,
                                   String packageName,
                                   String name) {
-        mComment = comment;
-        mPackageName = packageName;
-        mName = name;
+        this.comment = comment;
+        this.packageName = packageName;
+        this.name = name;
     }
 
     /**
@@ -48,22 +48,22 @@ public abstract class TDeclaredDescriptor<T>
      *         including the comment delimiter and the leading space.
      */
     public final String getComment() {
-        return mComment;
+        return comment;
     }
 
     @Override
     public final String getPackageName() {
-        return mPackageName;
+        return packageName;
     }
 
     @Override
     public final String getName() {
-        return mName;
+        return name;
     }
 
     @Override
     public final String getQualifiedName(String packageName) {
-        if (!mPackageName.equals(packageName)) {
+        if (!this.packageName.equals(packageName)) {
             return getPackageName() + "." + getName();
         }
         return getName();

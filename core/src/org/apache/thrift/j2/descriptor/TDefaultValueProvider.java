@@ -20,18 +20,19 @@
 package org.apache.thrift.j2.descriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Provider for default value. This provider assumes the value is already an
+ * instance object.
  */
 public class TDefaultValueProvider<V> implements TValueProvider<V> {
-    private final V mValue;
+    private final V value;
 
     public TDefaultValueProvider(V value) {
-        mValue = value;
+        this.value = value;
     }
 
+    @Override
     public V get() {
-        return mValue;
+        return value;
     }
 
     @Override
@@ -40,11 +41,11 @@ public class TDefaultValueProvider<V> implements TValueProvider<V> {
             return false;
         }
         TValueProvider<?> other = (TValueProvider<?>) o;
-        return mValue.equals(other.get());
+        return value.equals(other.get());
     }
 
     @Override
     public int hashCode() {
-        return mValue.hashCode();
+        return value.hashCode();
     }
 }

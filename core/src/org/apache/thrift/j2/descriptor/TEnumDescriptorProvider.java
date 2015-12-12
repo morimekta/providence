@@ -22,8 +22,7 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TEnumValue;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Provider for enum type descriptor.
  */
 public class TEnumDescriptorProvider<E extends TEnumValue<E>>
         implements TDescriptorProvider<E> {

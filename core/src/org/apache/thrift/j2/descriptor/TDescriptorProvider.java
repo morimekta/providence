@@ -20,9 +20,14 @@
 package org.apache.thrift.j2.descriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Base descriptor provider interface. Descriptor providers are used to enable
+ * types to reference each other in a circular fashion. The providers lets the
+ * types initialize itself without requiring descriptor instances for the other
+ * type be present yet.
  */
 public interface TDescriptorProvider<T> {
+    /**
+     * @return The descriptor for the given type.
+     */
     TDescriptor<T> descriptor();
 }

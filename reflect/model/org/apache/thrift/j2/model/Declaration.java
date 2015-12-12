@@ -249,24 +249,46 @@ public class Declaration
         }
     }
 
-    public static TUnionDescriptorProvider<Declaration> provider() {
+    public static TUnionDescriptorProvider<Declaration,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TUnionDescriptor<Declaration> descriptor() {
+    public TUnionDescriptor<Declaration,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TUnionDescriptor<Declaration> kDescriptor;
+    public static final TUnionDescriptor<Declaration,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TUnionDescriptor<>(null, "model", "Declaration", _Field.values(), new _Factory(), false);
+    private static class _Descriptor
+            extends TUnionDescriptor<Declaration,_Field> {
+        public _Descriptor() {
+            super(null, "model", "Declaration", new _Factory(), false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TUnionDescriptorProvider<Declaration> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TUnionDescriptorProvider<Declaration,_Field> {
         @Override
-        public TUnionDescriptor<Declaration> descriptor() {
+        public TUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;
         }
     }

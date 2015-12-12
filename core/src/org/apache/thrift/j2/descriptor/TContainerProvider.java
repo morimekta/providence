@@ -20,19 +20,18 @@
 package org.apache.thrift.j2.descriptor;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Provider for a container type. See {@link TContainer}.
  */
 public class TContainerProvider<I, C, T extends TContainer<I, C>>
         implements TDescriptorProvider<C> {
-    private final T mType;
+    private final T type;
 
     protected TContainerProvider(T type) {
-        mType = type;
+        this.type = type;
     }
 
     @Override
     public T descriptor() {
-        return mType;
+        return type;
     }
 }

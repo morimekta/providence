@@ -19,30 +19,61 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 
-import java.util.List;
-
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
 public class TContainedExceptionDescriptor
-        extends TStructDescriptor<TContainedException> {
+        extends TStructDescriptor<TContainedException, TContainedField> {
+    private final TContainedField[]             mFields;
+    private final Map<Integer, TContainedField> mFieldIdMap;
+    private final Map<String, TContainedField>  mFieldNameMap;
 
     public TContainedExceptionDescriptor(String comment,
                                          String packageName,
                                          String name,
-                                         List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory(),
+                                         List<TContainedField> fields) {
+        super(comment, packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false, false);
         ((_Factory) factory()).setType(this);
+
+        mFields = fields.toArray(new TContainedField[fields.size()]);
+
+        Map<Integer, TContainedField> fieldIdMap = new LinkedHashMap<>();
+        Map<String, TContainedField> fieldNameMap = new LinkedHashMap<>();
+        for (TContainedField field : fields) {
+            fieldIdMap.put(field.getKey(), field);
+            fieldNameMap.put(field.getName(), field);
+        }
+        mFieldIdMap = fieldIdMap;
+        mFieldNameMap = fieldNameMap;
+    }
+
+    @Override
+    public TContainedField[] getFields() {
+        return mFields;
+    }
+
+    @Override
+    public TContainedField getField(String name) {
+        return mFieldNameMap.get(name);
+    }
+
+    @Override
+    public TContainedField getField(int key) {
+        return mFieldIdMap.get(key);
     }
 
     @Override

@@ -229,24 +229,46 @@ public class ServiceType
         }
     }
 
-    public static TStructDescriptorProvider<ServiceType> provider() {
+    public static TStructDescriptorProvider<ServiceType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public TStructDescriptor<ServiceType> descriptor() {
+    public TStructDescriptor<ServiceType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final TStructDescriptor<ServiceType> kDescriptor;
+    public static final TStructDescriptor<ServiceType,_Field> kDescriptor;
 
-    static {
-        kDescriptor = new TStructDescriptor<>(null, "model", "ServiceType", _Field.values(), new _Factory(), false, false);
+    private static class _Descriptor
+            extends TStructDescriptor<ServiceType,_Field> {
+        public _Descriptor() {
+            super(null, "model", "ServiceType", new _Factory(), false, false);
+        }
+
+        @Override
+        public _Field[] getFields() {
+            return _Field.values();
+        }
+
+        @Override
+        public _Field getField(String name) {
+            return _Field.forName(name);
+        }
+
+        @Override
+        public _Field getField(int key) {
+            return _Field.forKey(key);
+        }
     }
 
-    private final static class _Provider extends TStructDescriptorProvider<ServiceType> {
+    static {
+        kDescriptor = new _Descriptor();
+    }
+
+    private final static class _Provider extends TStructDescriptorProvider<ServiceType,_Field> {
         @Override
-        public TStructDescriptor<ServiceType> descriptor() {
+        public TStructDescriptor<ServiceType,_Field> descriptor() {
             return kDescriptor;
         }
     }

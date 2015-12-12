@@ -41,8 +41,8 @@ import org.apache.thrift.j2.model.ThriftField;
 import org.apache.thrift.j2.model.TypedefType;
 import org.apache.thrift.j2.reflect.parser.internal.TKeyword;
 import org.apache.thrift.j2.reflect.parser.internal.TSymbol;
-import org.apache.thrift.j2.reflect.parser.internal.TTokenizer;
 import org.apache.thrift.j2.reflect.parser.internal.TToken;
+import org.apache.thrift.j2.reflect.parser.internal.TTokenizer;
 
 /**
  * @author Stein Eldar Johnsen
@@ -436,6 +436,7 @@ public class TThriftParser implements TParser {
         TToken id = tokenizer.expectIdentifier("parsing typedef identifier.");
 
         TypedefType typedef = TypedefType.builder()
+                                         .setComment(comment)
                                          .setType(type)
                                          .setName(id.getToken())
                                          .build();

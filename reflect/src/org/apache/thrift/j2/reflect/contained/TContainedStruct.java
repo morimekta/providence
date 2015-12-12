@@ -34,7 +34,7 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
  */
 public class TContainedStruct
         extends TContainedMessage<TContainedStruct> {
-    TStructDescriptor<TContainedStruct> mType;
+    TStructDescriptor<TContainedStruct,TContainedField> mType;
 
     protected TContainedStruct(Builder builder) {
         super(Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields)));
@@ -60,16 +60,16 @@ public class TContainedStruct
     }
 
     @Override
-    public TStructDescriptor<TContainedStruct> descriptor() {
+    public TStructDescriptor<TContainedStruct,TContainedField> descriptor() {
         return mType;
     }
 
     public static class Builder
             extends TMessageBuilder<TContainedStruct> {
-        private final TStructDescriptor<TContainedStruct> mType;
+        private final TStructDescriptor<TContainedStruct,TContainedField> mType;
         private final Map<Integer, Object>                mFields;
 
-        public Builder(TStructDescriptor<TContainedStruct> type) {
+        public Builder(TStructDescriptor<TContainedStruct,TContainedField> type) {
             mType = type;
             mFields = new TreeMap<>();
         }

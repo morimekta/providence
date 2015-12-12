@@ -19,7 +19,9 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.thrift.j2.TMessageBuilder;
@@ -32,23 +34,53 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
  * @since 07.09.15
  */
 public class TContainedStructDescriptor
-        extends TStructDescriptor<TContainedStruct> {
+        extends TStructDescriptor<TContainedStruct, TContainedField> {
     public static final Pattern COMPACT_RE = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
     public static final int MAX_COMPACT_FIELDS = 5;
+
+    private final TContainedField[]             mFields;
+    private final Map<Integer, TContainedField> mFieldIdMap;
+    private final Map<String, TContainedField>  mFieldNameMap;
 
     public TContainedStructDescriptor(String comment,
                                       String packageName,
                                       String name,
-                                      List<TField<?>> fields) {
-        super(comment, packageName, name, fields, new _Factory(),
+                                      List<TContainedField> fields) {
+        super(comment, packageName, name, new _Factory(),
               false,  // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(comment, fields));
         ((_Factory) factory()).setType(this);
+
+        mFields = fields.toArray(new TContainedField[fields.size()]);
+
+        Map<Integer, TContainedField> fieldIdMap = new LinkedHashMap<>();
+        Map<String, TContainedField> fieldNameMap = new LinkedHashMap<>();
+        for (TContainedField field : fields) {
+            fieldIdMap.put(field.getKey(), field);
+            fieldNameMap.put(field.getName(), field);
+        }
+        mFieldIdMap = fieldIdMap;
+        mFieldNameMap = fieldNameMap;
+    }
+
+    @Override
+    public TContainedField[] getFields() {
+        return mFields;
+    }
+
+    @Override
+    public TContainedField getField(String name) {
+        return mFieldNameMap.get(name);
+    }
+
+    @Override
+    public TContainedField getField(int key) {
+        return mFieldIdMap.get(key);
     }
 
     @Override
     public boolean isSimple() {
-        for (TField<?> field : getFields()) {
+        for (TContainedField field : getFields()) {
             switch (field.getType()) {
                 case MAP:
                 case SET:
@@ -77,7 +109,7 @@ public class TContainedStructDescriptor
         }
     }
 
-    private static boolean isCompactCompatible(String comment, List<TField<?>> fields) {
+    private static boolean isCompactCompatible(String comment, List<TContainedField> fields) {
         if (comment == null)
             return false;
         if (!COMPACT_RE.matcher(comment).find()) {
@@ -88,7 +120,7 @@ public class TContainedStructDescriptor
         }
         int next = 1;
         boolean hasOptional = false;
-        for (TField<?> field : fields) {
+        for (TContainedField field : fields) {
             if (field.getKey() != next) {
                 return false;
             }

@@ -19,12 +19,6 @@
 
 package org.apache.thrift.j2.descriptor;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.TMessageBuilderFactory;
 import org.apache.thrift.j2.TMessageVariant;
@@ -32,15 +26,9 @@ import org.apache.thrift.j2.TType;
 
 /**
  * The definition of a thrift structure.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
-public class TStructDescriptor<T extends TMessage<T>>
+public abstract class TStructDescriptor<T extends TMessage<T>, F extends TField>
         extends TDeclaredDescriptor<T> {
-    private final List<TField<?>>           mFields;
-    private final Map<Integer, TField<?>>   mFieldIdMap;
-    private final Map<String, TField<?>>    mFieldNameMap;
     private final TMessageBuilderFactory<T> mProvider;
     private final boolean                   mCompactible;
     private final boolean                   mSimple;
@@ -48,36 +36,53 @@ public class TStructDescriptor<T extends TMessage<T>>
     public TStructDescriptor(String comment,
                              String packageName,
                              String name,
-                             TField<?>[] fields,
-                             TMessageBuilderFactory<T> provider,
-                             boolean simple,
-                             boolean compactible) {
-        this(comment, packageName, name, fieldList(fields), provider, simple, compactible);
-    }
-
-    public TStructDescriptor(String comment,
-                             String packageName,
-                             String name,
-                             List<TField<?>> fields,
                              TMessageBuilderFactory<T> provider,
                              boolean simple,
                              boolean compactible) {
         super(comment, packageName, name);
 
-        mFields = Collections.unmodifiableList(fields);
-
-        Map<Integer, TField<?>> fieldIdMap = new LinkedHashMap<>();
-        Map<String, TField<?>> fieldNameMap = new LinkedHashMap<>();
-        for (TField<?> field : fields) {
-            fieldIdMap.put(field.getKey(), field);
-            fieldNameMap.put(field.getName(), field);
-        }
-        mFieldIdMap = fieldIdMap;
-        mFieldNameMap = fieldNameMap;
-
         mProvider = provider;
         mSimple = simple;
         mCompactible = compactible;
+    }
+
+    /**
+     * @return An unmodifiable list of fields that the struct holds.
+     */
+    public abstract F[] getFields();
+
+    /**
+     * @param name Name of field to get.
+     * @return The field if present.
+     */
+    public abstract F getField(String name);
+
+    /**
+     * @param key The ID of the field to get.
+     * @return The field if present.
+     */
+    public abstract F getField(int key);
+
+    /**
+     * @return True iff the struct can be (de)serialized with isCompact message
+     *         format.
+     */
+    public boolean isCompactible() {
+        return mCompactible;
+    }
+
+    /**
+     * @return True iff the struct is simple. A simple struct contains no containers, and no
+     */
+    public boolean isSimple() {
+        return mSimple;
+    }
+
+    /**
+     * @return The struct variant.
+     */
+    public TMessageVariant getVariant() {
+        return TMessageVariant.STRUCT;
     }
 
     @Override
@@ -95,13 +100,13 @@ public class TStructDescriptor<T extends TMessage<T>>
         if (o == null || !(o instanceof TStructDescriptor)) {
             return false;
         }
-        TStructDescriptor<?> other = (TStructDescriptor<?>) o;
+        TStructDescriptor<?,?> other = (TStructDescriptor<?,?>) o;
         if (!getQualifiedName(null).equals(other.getQualifiedName(null)) ||
             !getVariant().equals(other.getVariant()) ||
-            mFields.size() != other.getFields().size()) {
+            getFields().length != other.getFields().length) {
             return false;
         }
-        for (TField<?> field : mFields) {
+        for (TField<?> field : getFields()) {
             if (!field.equals(other.getField(field.getKey()))) return false;
         }
         return true;
@@ -116,56 +121,5 @@ public class TStructDescriptor<T extends TMessage<T>>
             hash += field.hashCode();
         }
         return hash;
-    }
-
-    /**
-     * @return True iff the struct can be (de)serialized with isCompact message
-     *         format.
-     */
-    public boolean isCompactible() {
-        return mCompactible;
-    }
-
-    public boolean isSimple() {
-        return mSimple;
-    }
-
-    /**
-     * @return The struct variant.
-     */
-    public TMessageVariant getVariant() {
-        return TMessageVariant.STRUCT;
-    }
-
-    /**
-     * @return An unmodifiable list of fields that the struct holds.
-     */
-    public List<TField<?>> getFields() {
-        return mFields;
-    }
-
-    /**
-     * @param name Name of field to get.
-     * @return The field if present.
-     */
-    public TField<?> getField(String name) {
-        return mFieldNameMap.get(name);
-    }
-
-    /**
-     * @param key The ID of the field to get.
-     * @return The field if present.
-     */
-    public TField<?> getField(int key) {
-        return mFieldIdMap.get(key);
-    }
-
-    // --- PRIVATE ---
-    protected static List<TField<?>> fieldList(TField<?>[] fields) {
-        List<TField<?>> list = new LinkedList<>();
-        for (TField<?> field : fields) {
-            list.add(field);
-        }
-        return list;
     }
 }

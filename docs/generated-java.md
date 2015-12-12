@@ -19,22 +19,22 @@ class MyStruct implements TMessage<MyStruct> {
   private final ObjectType mFieldName;
 
   private MyStruct(_Builder builder) {
-    <if collection>
-    mFieldName = Collections.unmodifiable<Ctype>(builder.mFieldName);
-    <else>
+    // <if collection>
+    mFieldName = Collections.unmodifiable<Type>(builder.mFieldName);
+    // <else>
     mFieldName = builder.mFieldName;
-    </if>
+    // </if>
   }
 
-  <if collection>
+  // <if collection>
   public int numFieldName() {
     return mFieldName.size();
   }
-  <else>
+  // <else>
   public boolean hasFieldName() {
     return mFieldName != null;
   }
-  </if>
+  // </if>
 
   public <ValueType> getFieldName() {
     return mFieldName;
@@ -82,14 +82,14 @@ Or
   public boolean has(int id) {
     switch (id) {
       case <field-id>: return hasFieldName();
-      <or>
+      // <or>
       case <field-id>: return numFieldName() > 0;
     }
   }
   public int num(int id) {
     switch (id) {
       case <field-id>: return numFieldName();
-      <or>
+      // <or>
       case <field-id>: return hasFieldName() ? 1 : 0;
     }
   }
@@ -101,7 +101,7 @@ Or
   }
 
   public static class Builder {
-    <...>
+    // <...>
 
     public void set(int id, Object value) {
       switch (id) {
@@ -114,15 +114,15 @@ Or
 ### Descriptor
 
 ```java
-  public enum Field {
+  public enum _Field {
     FIELD_NAME(...),
     ;
     
-    public static Field forKey(int key) {}
-    public static Field forName(String name) {}
+    public static _Field forKey(int key) {}
+    public static _Field forName(String name) {}
   }
 
-  private static final TStructType<MyStruct> sDescriptor = \_createDescriptor();
+  private static final TStructType<MyStruct> sDescriptor = _createDescriptor();
 
   public static TStructTypeProvider<MyStruct> provider() {
     return new TStructTypeProvider<MyStruct>() {
@@ -141,7 +141,7 @@ Or
     return sDescriptor;
   }
 
-  private static class \_Factory implements TStructBuilderFactory<MyStruct> {
+  private static class _Factory implements TStructBuilderFactory<MyStruct> {
     @Override
     public MyStruct._Builder create() {
       return new MyStruct._Builder();
@@ -167,28 +167,28 @@ fields, so is not forward compatible when fields are added.
   
   @Override
   public void writeToParcel(Parcel dest, int flags) {
-    <foreach field>
+    // <foreach field>
     if (hasFieldName()) {
       dest.writeInt(<id>);
       // type dependent.
       dest.write<CType>(mFieldName);
     }
-    </foreach>
+    // </foreach>
 
     dest.writeInt(0);
   }
   public static final Parcelable.Creator<ClassName> CREATOR = new Parcelable.Creator<>() {
     @Override
     public ClassName createFromParcel(Parcel source) {
-      \_Builder builder = new \_Builder();
+      _Builder builder = new _Builder();
       loop: while (source.dataAvail() > 0) {
         int field = source.readInt();
         switch (field) {
           case 0: break loop;
-        <foreach field>
+          // <foreach field>
           // type dependent.
           case <id>: builder.setFieldName(source.read<Type>());
-        </fireach>
+          // </foreach>
         }
       }
       return builder.build();
@@ -220,9 +220,9 @@ are identical the the enum name in the thrift IDL.
 
 ```java
 enum MyEnum implements TEnumValue<MyEnum> {
-  <foreach value>
-  VALUE(<value>),
-  </foreach>
+  // <foreach value>
+  VALUE(value),
+  // </foreach>
   ;
 
   public static MyEnum forValue(int value) {}
