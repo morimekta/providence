@@ -1,5 +1,16 @@
 # android            = @android-sdk//:sdk-16
 
+bind(
+    name = 'android-util',
+    actual = '@android-util-git//src:src'
+)
+
+git_repository(
+  name = 'android-util-git',
+  remote = 'https://github.com/morimekta/android-util.git',
+  commit = 'fa7dc844',
+)
+
 ## ----------- DEPS
 # libthrift          = org.apache.thrift:libthrift:0.9.2                : Apache-2.0
 # junit              = junit:junit:4.12                                 : Apache-2.0

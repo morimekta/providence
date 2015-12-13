@@ -48,9 +48,7 @@ struct Containers {
     54: list<set<primitives.Primitives>> lsp;
     57: list<map<primitives.Primitives,primitives.Primitives>> lmp;
 
-    52: set<list<primitives.Primitives>> slp;
-    55: set<set<primitives.Primitives>> ssp;
-    58: set<map<primitives.Primitives,primitives.Primitives>> smp;
+    // Sets cannot contain containers, as they are not hash indexable, not sortable.
 
     53: map<primitives.Primitives,list<primitives.Primitives>> mlp;
     56: map<primitives.Primitives,set<primitives.Primitives>> msp;

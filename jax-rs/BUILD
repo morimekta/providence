@@ -18,4 +18,5 @@ java_test(
     "//third-party:junit",
     "//third-party:jax-rs",
   ],
+  size = 'small',
 )

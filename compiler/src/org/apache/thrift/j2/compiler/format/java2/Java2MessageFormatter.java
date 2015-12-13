@@ -156,6 +156,427 @@ public class Java2MessageFormatter {
                 .newline();
     }
 
+    private void appendParcelableArrayConverter(IndentedPrintWriter writer, String srcType, String srcName, String destType, String itemConvert) {
+        writer.formatln("%s[] arr = new %s[%s.size()];", destType, destType, srcName)
+              .appendln("int pos = 0;")
+              .formatln("for (%s item : %s) {", srcType, srcName)
+              .begin()
+              .formatln("arr[pos++] = %s;", itemConvert)
+              .end()
+              .appendln('}');
+    }
+
+    private void appendParcelableWriter(IndentedPrintWriter writer, String fName, TDescriptor<?> desc) throws GeneratorException {
+        switch (desc.getType()) {
+            case BOOL:
+                writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
+                break;
+            case BYTE:
+                writer.formatln("dest.writeByte(%s);", fName);
+                break;
+            case I16:
+            case I32:
+                writer.formatln("dest.writeInt(%s);", fName);
+                break;
+            case I64:
+                writer.formatln("dest.writeLong(%s);", fName);
+                break;
+            case DOUBLE:
+                writer.formatln("dest.writeDouble(%s);", fName);
+                break;
+            case STRING:
+                writer.formatln("dest.writeString(%s);", fName);
+                break;
+            case BINARY:
+                writer.formatln("dest.writeByteArray(%s);", fName);
+                break;
+            case ENUM:
+                writer.formatln("dest.writeInt(%s.getValue());", fName);
+                break;
+            case MESSAGE:
+                writer.formatln("dest.writeParcelable(%s, 0);", fName);
+                break;
+            case LIST:
+            case SET:
+                TContainer<?, ?> cType = (TContainer<?, ?>) desc;
+                String iTypeName = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
+                switch (cType.itemDescriptor().getType()) {
+                    case BOOL:
+                        appendParcelableArrayConverter(writer, "Boolean", fName, "boolean", "item");
+                        writer.appendln("dest.writeBooleanArray(arr);");
+                        break;
+                    case BYTE:
+                        appendParcelableArrayConverter(writer, "Byte", fName, "byte", "item");
+                        writer.appendln("dest.writeByteArray(arr);");
+                        break;
+                    case I16:
+                        appendParcelableArrayConverter(writer, "Short", fName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I32:
+                        appendParcelableArrayConverter(writer, "Integer", fName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I64:
+                        appendParcelableArrayConverter(writer, "Long", fName, "long", "item");
+                        writer.appendln("dest.writeLongArray(arr);");
+                        break;
+                    case DOUBLE:
+                        appendParcelableArrayConverter(writer, "Double", fName, "double", "item");
+                        writer.appendln("dest.writeDoubleArray(arr);");
+                        break;
+                    case STRING:
+                        writer.formatln("dest.writeStringArray(%s.toArray(new String[%s.size()]));", fName, fName);
+                        break;
+                    case BINARY:
+                        writer.formatln("dest.writeInt(%s.size());", fName)
+                              .formatln("for (byte[] item : %s) {", fName)
+                              .begin()
+                              .appendln("dest.writeByteArray(item);")
+                              .end()
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
+                                        fName, iTypeName, fName);
+                        break;
+                    case ENUM:
+                        appendParcelableArrayConverter(writer, iTypeName, fName, "int", "item.getValue()");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.formatln("// %s is too complex to parse.", mTypeHelper.getFieldType(cType));
+                        break;
+                }
+                break;
+            case MAP:
+                TMap<?,?> mType = (TMap<?, ?>) desc;
+                switch (mType.itemDescriptor().getType()) {
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.formatln("// %s is to complext to parse.", mTypeHelper.getFieldType(mType));
+                        return;
+                }
+                writer.appendln('{')
+                      .begin();
+                iTypeName = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                String kName = fName + ".keySet()";
+                switch (mType.keyDescriptor().getType()) {
+                    case BOOL:
+                        appendParcelableArrayConverter(writer, "Boolean", kName, "boolean", "item");
+                        writer.appendln("dest.writeBooleanArray(arr);");
+                        break;
+                    case BYTE:
+                        appendParcelableArrayConverter(writer, "Byte", kName, "byte", "item");
+                        writer.appendln("dest.writeByteArray(arr);");
+                        break;
+                    case I16:
+                        appendParcelableArrayConverter(writer, "Short", kName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I32:
+                        appendParcelableArrayConverter(writer, "Integer", kName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I64:
+                        appendParcelableArrayConverter(writer, "Long", kName, "long", "item");
+                        writer.appendln("dest.writeLongArray(arr);");
+                        break;
+                    case DOUBLE:
+                        appendParcelableArrayConverter(writer, "Double", kName, "double", "item");
+                        writer.appendln("dest.writeDoubleArray(arr);");
+                        break;
+                    case STRING:
+                        writer.formatln("dest.writeStringArray(%s.toArray(new String[%s.size()]));", kName, kName);
+                        break;
+                    case BINARY:
+                        writer.formatln("dest.writeInt(%s.size());", kName)
+                              .formatln("for (byte[] item : %s) {", kName)
+                              .begin()
+                              .appendln("dest.writeByteArray(item);")
+                              .end()
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
+                                        kName, iTypeName, kName);
+                        break;
+                    case ENUM:
+                        appendParcelableArrayConverter(writer, iTypeName, kName, "int", "item.getValue()");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    default:
+                        throw new GeneratorException("Map keys cannot contain containers.");
+                }
+                writer.end()
+                      .appendln('}');
+                String vName = fName + ".values()";
+                switch (mType.itemDescriptor().getType()) {
+                    case BOOL:
+                        appendParcelableArrayConverter(writer, "Boolean", vName, "boolean", "item");
+                        writer.appendln("dest.writeBooleanArray(arr);");
+                        break;
+                    case BYTE:
+                        appendParcelableArrayConverter(writer, "Byte", vName, "byte", "item");
+                        writer.appendln("dest.writeByteArray(arr);");
+                        break;
+                    case I16:
+                        appendParcelableArrayConverter(writer, "Short", vName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I32:
+                        appendParcelableArrayConverter(writer, "Integer", vName, "int", "item");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    case I64:
+                        appendParcelableArrayConverter(writer, "Long", vName, "long", "item");
+                        writer.appendln("dest.writeLongArray(arr);");
+                        break;
+                    case DOUBLE:
+                        appendParcelableArrayConverter(writer, "Double", vName, "double", "item");
+                        writer.appendln("dest.writeDoubleArray(arr);");
+                        break;
+                    case STRING:
+                        writer.formatln("dest.writeStringArray(%s.toArray(new String[%s.size()]));", vName, vName);
+                        break;
+                    case BINARY:
+                        writer.formatln("dest.writeInt(%s.size());", vName)
+                              .formatln("for (byte[] item : %s) {", vName)
+                              .begin()
+                              .appendln("dest.writeByteArray(item);")
+                              .end()
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
+                                        vName, iTypeName, vName);
+                        break;
+                    case ENUM:
+                        appendParcelableArrayConverter(writer, iTypeName, vName, "int", "item.getValue()");
+                        writer.appendln("dest.writeIntArray(arr);");
+                        break;
+                    default:
+                        throw new GeneratorException("Unknown map value type: " + mType.getName());
+                }
+                break;
+        }
+    }
+
+    private void appendParcelableArrayReader(IndentedPrintWriter writer, String creator, String typeName, String addToF, String cast) {
+        writer.formatln("%s[] tmp = source.%s();", typeName, creator)
+              .appendln("for (int i = 0; i < tmp.length; ++i) {")
+              .formatln("    builder.%s(%stmp[i]);", addToF, cast)
+              .appendln('}');
+
+    }
+
+    private void appendParcelableReader(IndentedPrintWriter writer, String setF, String addToF, TDescriptor<?> desc) throws GeneratorException {
+        String classF = mTypeHelper.getInstanceClassName(desc);
+
+        switch (desc.getType()) {
+            case BOOL:
+                writer.formatln("builder.%s(source.readByte() > 0);", setF);
+                break;
+            case BYTE:
+                writer.formatln("builder.%s(source.readByte());", setF);
+                break;
+            case I16:
+                writer.formatln("builder.%s((short)source.readInt());", setF);
+                break;
+            case I32:
+                writer.formatln("builder.%s(source.readInt());", setF);
+                break;
+            case I64:
+                writer.formatln("builder.%s(source.readLong());", setF);
+                break;
+            case DOUBLE:
+                writer.formatln("builder.%s(source.readDouble());", setF);
+                break;
+            case STRING:
+                writer.formatln("builder.%s(source.readString());", setF);
+                break;
+            case BINARY:
+                writer.formatln("builder.%s(source.createByteArray());", setF);
+                break;
+            case ENUM:
+                writer.formatln("builder.%s(%s.forValue(source.readInt()));",
+                                setF, classF);
+                break;
+            case MESSAGE:
+                writer.formatln("builder.%s((%s) source.readParcelable(%s.class.getClassLoader()));",
+                                setF, classF, classF);
+                break;
+            case LIST:
+            case SET:
+                TContainer<?, ?> cType = (TContainer<?, ?>) desc;
+                String cItemClass = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
+                switch (cType.itemDescriptor().getType()) {
+                    case BOOL:
+                        writer.formatln("builder.%s(source.createBooleanArray());", addToF);
+                        break;
+                    case BYTE:
+                        writer.formatln("builder.%s(source.createByteArray());", addToF);
+                        break;
+                    case I16:
+                        appendParcelableArrayReader(writer, "createIntArray", "int", addToF, "(short)");
+                        break;
+                    case I32:
+                        writer.formatln("builder.%s(source.createIntArray());", addToF);
+                        break;
+                    case I64:
+                        writer.formatln("builder.%s(source.createLongArray());", addToF);
+                        break;
+                    case DOUBLE:
+                        writer.formatln("builder.%s(source.createDoubleArray());", addToF);
+                        break;
+                    case STRING:
+                        writer.formatln("builder.%s(source.createStringArray());", addToF);
+                        break;
+                    case BINARY:
+                        writer.formatln("final int len = source.readInt();")
+                              .appendln("for (int i = 0; i < len; ++i) {")
+                              .begin()
+                              .formatln("builder.%s(source.createByteArray());", addToF)
+                              .end()
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln(
+                                "builder.%s(source.createTypedArray(%s.CREATOR));",
+                                addToF, cItemClass, cItemClass);
+                        break;
+                    case ENUM:
+                        writer.appendln("int[] tmp = source.createIntArray();")
+                              .formatln("%s[] values = new %s[tmp.length];", cItemClass, cItemClass)
+                              .appendln("for (int i = 0; i < tmp.length; ++i) {")
+                              .formatln("    values[i] = %s.forValue(tmp[i]);", cItemClass)
+                              .appendln('}')
+                              .formatln("builder.%s(values);", addToF);
+                        break;
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.formatln("// %s is too complex to parse.", mTypeHelper.getFieldType(cType));
+                        break;
+                }
+                break;
+            case MAP:
+                TMap<?, ?> mType = (TMap<?, ?>) desc;
+                String mkClass = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                switch (mType.itemDescriptor().getType()) {
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        writer.formatln("// %s is to complext to parse.", mTypeHelper.getFieldType(mType));
+                        return;
+                }
+
+                switch (mType.keyDescriptor().getType()) {
+                    case BOOL:
+                        writer.appendln("boolean[] keys = source.createBooleanArray();");
+                        break;
+                    case BYTE:
+                        writer.appendln("byte[] keys = source.createByteArray();");
+                        break;
+                    case I16:
+                        writer.appendln("int[] key_tmp = source.createIntArray();")
+                              .appendln("short[] keys = new short[key_tmp.length];")
+                              .appendln("for (int i = 0; i < key_tmp.length; ++i) {")
+                              .appendln("    keys[i] = (short) key_tmp[i];")
+                              .appendln("}");
+                        break;
+                    case I32:
+                        writer.appendln("int[] keys = source.createIntArray();");
+                        break;
+                    case I64:
+                        writer.appendln("long[] keys = source.createLongArray();");
+                        break;
+                    case DOUBLE:
+                        writer.appendln("double[] keys = source.createDoubleArray();");
+                        break;
+                    case STRING:
+                        writer.appendln("String[] keys = source.createStringArray();");
+                        break;
+                    case BINARY:
+                        writer.appendln("final int len = source.readInt();")
+                              .appendln("byte[][] keys = new byte[len][];")
+                              .appendln("for (int i = 0; i < len; ++i) {")
+                              .formatln("    keys[i] = source.createByteArray();")
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln("%s[] keys = source.createTypedArray(%s.CREATOR);", mkClass, mkClass);
+                        break;
+                    case ENUM:
+                        writer.appendln("int[] key_tmp = source.createIntArray();")
+                              .formatln("%s[] keys = new %s[key_tmp.length];", mkClass, mkClass)
+                              .appendln("for (int i = 0; i < key_tmp.length; ++i) {")
+                              .formatln("    keys[i] = %s.forValue(key_tmp[i]);", mkClass)
+                              .appendln('}');
+                        break;
+                    default:
+                        throw new GeneratorException("Containers not allowed in map key.");
+                }
+                switch (mType.itemDescriptor().getType()) {
+                    case BOOL:
+                        writer.appendln("boolean[] values = source.createBooleanArray();");
+                        break;
+                    case BYTE:
+                        writer.appendln("byte[] values = source.createByteArray();");
+                        break;
+                    case I16:
+                        writer.appendln("int[] val_tmp = source.createIntArray();")
+                              .appendln("short[] values = new short[val_tmp.length];")
+                              .appendln("for (int i = 0; i < val_tmp.length; ++i) {")
+                              .appendln("    values[i] = (short) val_tmp[i];")
+                              .appendln("}");
+                        break;
+                    case I32:
+                        writer.appendln("int[] values = source.createIntArray();");
+                        break;
+                    case I64:
+                        writer.appendln("long[] values = source.createLongArray();");
+                        break;
+                    case DOUBLE:
+                        writer.appendln("double[] values = source.createDoubleArray();");
+                        break;
+                    case STRING:
+                        writer.appendln("String[] values = source.createStringArray();");
+                        break;
+                    case BINARY:
+                        writer.appendln("byte[][] values = new byte[keys.length][];")
+                              .appendln("for (int i = 0; i < keys.length; ++i) {")
+                              .formatln("    values[i] = source.createByteArray();")
+                              .appendln('}');
+                        break;
+                    case MESSAGE:
+                        writer.formatln("%s[] values = source.createTypedArray(%s.CREATOR);", mkClass, mkClass);
+                        break;
+                    case ENUM:
+                        writer.appendln("int[] val_tmp = source.createIntArray();")
+                              .formatln("%s[] values = new %s[val_tmp.length];", mkClass, mkClass)
+                              .appendln("for (int i = 0; i < val_tmp.length; ++i) {")
+                              .formatln("    values[i] = %s.forValue(val_tmp[i]);", mkClass)
+                              .appendln('}');
+                        break;
+                    case LIST:
+                    case SET:
+                    case MAP:
+                        // ... Handled.
+                        break;
+                }
+                writer.formatln("for (int i = 0; i < keys.length; ++i) {")
+                      .begin()
+                      .formatln("builder.%s(keys[i], values[i]);", addToF)
+                      .end()
+                      .appendln('}');
+                break;
+        }
+    }
+
     private void appendParcelable(IndentedPrintWriter writer, TStructDescriptor<?,?> type) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public int describeContents() {")
@@ -182,113 +603,7 @@ public class Java2MessageFormatter {
             }
             writer.begin()
                   .formatln("dest.writeInt(%d);", field.getKey());
-            switch (field.getDescriptor().getType()) {
-                case BOOL:
-                    writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
-                    break;
-                case BYTE:
-                    writer.formatln("dest.writeByte(%s);", fName);
-                    break;
-                case I16:
-                case I32:
-                    writer.formatln("dest.writeInt(%s);", fName);
-                    break;
-                case I64:
-                    writer.formatln("dest.writeLong(%s);", fName);
-                    break;
-                case DOUBLE:
-                    writer.formatln("dest.writeDouble(%s);", fName);
-                    break;
-                case STRING:
-                    writer.formatln("dest.writeString(%s);", fName);
-                    break;
-                case BINARY:
-                    writer.formatln("dest.writeInt(%s.length);", fName);
-                    writer.formatln("dest.writeByteArray(%s);", fName);
-                    break;
-                case ENUM:
-                    writer.formatln("dest.writeInt(%s.getValue());", fName);
-                    break;
-                case MESSAGE:
-                    writer.formatln("dest.writeParcelable(%s, 0);", fName);
-                    break;
-                case SET:
-                case LIST:
-                    TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
-                    String iTypeName = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
-                    switch (cType.itemDescriptor().getType()) {
-                        case LIST:
-                        case SET:
-                        case MAP:
-                            throw new GeneratorException("Nested containers not allowed with --android");
-                        case MESSAGE:
-                            writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), %s.size());",
-                                            fName, iTypeName, fName, fName);
-                            break;
-                        case BINARY:
-                            writer.formatln("dest.writeInt(%s.size());", fName)
-                                  .formatln("for (byte[] item : %s) {", fName)
-                                  .begin()
-                                  .formatln("dest.writeInt(item.length);", fName)
-                                  .formatln("dest.writeByteArray(item);", fName)
-                                  .end()
-                                  .appendln('}');
-                        default:
-                            writer.formatln("dest.writeArray(%s.toArray());", fName);
-                    }
-                    break;
-                case MAP:
-                    TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
-                    String kTypeName = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
-                    iTypeName = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
-                    writer.formatln("dest.writeInt(%s.size());", fName);
-                    switch (mType.keyDescriptor().getType()) {
-                        case LIST:
-                        case SET:
-                        case MAP:
-                            throw new GeneratorException("Containers not allowed in map key.");
-                        case MESSAGE:
-                            throw new GeneratorException("Messages not allowed for map key.");
-                        case BINARY:
-                            writer.formatln("for (byte[] item : %s.keySet()) {", fName)
-                                  .begin()
-                                  .appendln("dest.writeInt(item.length);")
-                                  .appendln("dest.writeByteArray(item);")
-                                  .end()
-                                  .appendln('}');
-                            break;
-                        default:
-                            writer.formatln("dest.writeArray(%s.keySet().toArray(new %s[%s.size()]));",
-                                            fName, kTypeName, fName);
-                            break;
-
-                    }
-                    switch (mType.itemDescriptor().getType()) {
-                        case LIST:
-                        case SET:
-                        case MAP:
-                            throw new GeneratorException("Nested containers not allowed with --android");
-                        case MESSAGE:
-                            writer.formatln("%s[] values = %s.values().toArray(new %s[%s.size()]);",
-                                            iTypeName, fName, iTypeName, fName);
-                            writer.appendln(
-                                    "dest.writeParcelableArray(values, values.length);");
-                            break;
-                        case BINARY:
-                            writer.formatln("for (byte[] item : %s.values()) {", fName)
-                                  .begin()
-                                  .appendln("dest.writeInt(item.length);")
-                                  .appendln("dest.writeByteArray(item);")
-                                  .end()
-                                  .appendln('}');
-                            break;
-                        default:
-                            writer.formatln("dest.writeArray(%s.values().toArray(new %s[%s.size()]));",
-                                            fName, iTypeName, fName);
-                            break;
-                    }
-                    break;
-            }
+            appendParcelableWriter(writer, fName, field.getDescriptor());
             writer.end()
                   .appendln('}');
         }
@@ -317,153 +632,16 @@ public class Java2MessageFormatter {
               .appendln("case 0: break loop;");
 
         for (TField<?> field : type.getFields()) {
-            writer.formatln("case %d:", field.getKey()).begin();
+            writer.formatln("case %d: {", field.getKey()).begin();
 
             String setF = camelCase("set", field.getName());
             String addToF = camelCase("addTo", field.getName());
-            String classF = mTypeHelper.getInstanceClassName(field.getDescriptor());
 
-            switch (field.getDescriptor().getType()) {
-                case BOOL:
-                    writer.formatln("builder.%s(source.readByte() > 0);", setF);
-                    break;
-                case BYTE:
-                    writer.formatln("builder.%s(source.readByte());", setF);
-                    break;
-                case I16:
-                    writer.formatln("builder.%s((short)source.readInt());", setF);
-                    break;
-                case I32:
-                    writer.formatln("builder.%s(source.readInt());", setF);
-                    break;
-                case I64:
-                    writer.formatln("builder.%s(source.readLong());", setF);
-                    break;
-                case DOUBLE:
-                    writer.formatln("builder.%s(source.readDouble());", setF);
-                    break;
-                case STRING:
-                    writer.formatln("builder.%s(source.readString());", setF);
-                    break;
-                case BINARY:
-                    writer.append(" {")
-                          .begin()
-                          .appendln("int len = source.readInt();")
-                          .appendln("byte[] bytes = new byte[len];")
-                          .formatln("source.readByteArray(bytes);")
-                          .formatln("builder.%s(bytes);", setF)
-                          .end()
-                          .appendln('}');
-                    break;
-                case ENUM:
-                    writer.formatln("builder.%s(%s.forValue(source.readInt()));",
-                                    setF, classF);
-                    break;
-                case MESSAGE:
-                    writer.formatln("builder.%s((%s) source.readParcelable(%s.class.getClassLoader()));",
-                                    setF, classF, classF);
-                    break;
-                case LIST:
-                case SET:
-                    TContainer<?, ?> cType = (TContainer<?, ?>) field.getDescriptor();
-                    String cItemClass = mTypeHelper.getInstanceClassName(cType.itemDescriptor());
-                    switch (cType.itemDescriptor().getType()) {
-                        case LIST:
-                        case SET:
-                        case MAP:
-                            throw new GeneratorException("Nested containers not allowed with --android");
-                        case BINARY:
-                            writer.append(" {")
-                                  .begin()
-                                  .formatln("int len = source.readInt();")
-                                  .appendln("for (int i = 0; i < len; ++i) {")
-                                  .begin()
-                                  .appendln("int bl = source.readInt();")
-                                  .appendln("byte[] bytes = new byte[bl];")
-                                  .formatln("source.readByteArray(bytes);")
-                                  .formatln("builder.%s(bytes);", addToF)
-                                  .end()
-                                  .appendln('}')
-                                  .end()
-                                  .appendln('}');
-                            break;
-                        case MESSAGE:
-                            writer.formatln(
-                                    "builder.%s((%s[]) source.readParcelableArray(%s.class.getClassLoader()));",
-                                    addToF, cItemClass, cItemClass);
-                            break;
-                        default:
-                            writer.formatln("builder.%s((%s[]) source.readArray(%s.class.getClassLoader()));",
-                                            addToF, cItemClass, cItemClass);
-                            break;
-                    }
-                    break;
-                case MAP:
-                    writer.append(" {")
-                          .begin()
-                          .appendln("int len = source.readInt();");
-                    TMap<?, ?> mType = (TMap<?, ?>) field.getDescriptor();
-                    String mkClass = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
-                    String miClass = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
+            appendParcelableReader(writer, setF, addToF, field.getDescriptor());
 
-                    switch (mType.keyDescriptor().getType()) {
-                        case MAP:
-                        case SET:
-                        case LIST:
-                            throw new GeneratorException("Containers not allowed in map key.");
-                        case MESSAGE:
-                            throw new GeneratorException("Messages not allowed for map key.");
-                        case BINARY:
-                            writer.appendln("byte[][] keys = new byte[len][];")
-                                  .appendln("for (int i = 0; i < len; ++i) {")
-                                  .begin()
-                                  .appendln("keys[i] = new byte[source.readInt()];")
-                                  .formatln("source.readByteArray(keys[i]);")
-                                  .end()
-                                  .appendln('}');
-                            break;
-                        default:
-                            writer.formatln("%s[] keys = (%s[]) source.readArray(%s.class.getClassLoader());",
-                                            mkClass, mkClass, mkClass);
-                            break;
-                    }
-                    switch (mType.itemDescriptor().getType()) {
-                        case MAP:
-                        case SET:
-                        case LIST:
-                            throw new GeneratorException("Nested containers not allowed with --android");
-                        case BINARY:
-                            writer.appendln("byte[][] values = new byte[len][];")
-                                  .appendln("for (int i = 0; i < len; ++i) {")
-                                  .begin()
-                                  .appendln("values[i] = new byte[source.readInt()];")
-                                  .formatln("source.readByteArray(values[i]);")
-                                  .end()
-                                  .appendln('}');
-                            break;
-                        case MESSAGE:
-                            writer.formatln(
-                                    "%s[] values = (%s[]) source.readParcelableArray(%s.class.getClassLoader());",
-                                    miClass,
-                                    miClass,
-                                    miClass);
-                            break;
-                        default:
-                            writer.formatln("%s[] values = (%s[]) source.readArray(%s.class.getClassLoader());",
-                                            miClass, miClass, miClass);
-                            break;
-                    }
-                    writer.formatln("for (int i = 0; i < len; ++i) {")
-                          .begin()
-                          .formatln("builder.%s(keys[i], values[i]);", addToF)
-                          .end()
-                          .appendln('}')
-                          .end()
-                          .appendln('}');
-                    break;
-            }
-
-            writer.appendln("break;").end();
+            writer.appendln("break;")
+                  .end()
+                  .appendln('}');
         }
 
         writer.appendln("default: throw new IllegalArgumentException(\"Unknown field ID: \" + field);")
@@ -632,6 +810,7 @@ public class Java2MessageFormatter {
                 case LIST:
                     TContainer<?, ?> lType = (TContainer<?, ?>) field.getDescriptor();
                     String liType = mTypeHelper.getFieldType(lType.itemDescriptor());
+                    String liValueType = mTypeHelper.getValueType(lType.itemDescriptor());
                     if (field.getComment() != null) {
                         Java2Utils.appendBlockComment(writer, field.getComment());
                         if (Java2Utils.hasDeprecatedAnnotation(field.getComment())) {
@@ -659,7 +838,7 @@ public class Java2MessageFormatter {
                     }
                     writer.formatln("public _Builder %s(%s... values) {",
                                     camelCase("addTo", field.getName()),
-                                    liType)
+                                    liValueType)
                           .begin();
                     if (union) {
                         writer.formatln("tUnionField = _Field.%s;", fEnumName);

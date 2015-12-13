@@ -9,6 +9,7 @@ resources:
 	mkdir -p ${PWD}/core/generated
 	rm -rf ${PWD}/core/generated/net
 	bazel run //compiler:thrift-j2c -- --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
+	# bazel run //compiler:thrift-j2c -- --android --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
 
 release:
 	bazel build //:thrift-j2

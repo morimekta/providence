@@ -23,6 +23,7 @@ java_test(
     "//reflect:reflect",
     "//third-party:junit",
   ],
+  size = 'small',
 )
 
 java_binary(

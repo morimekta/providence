@@ -42,9 +42,12 @@ def java_thrift(name,
         srcs=srcs,
         flags=flags,
     )
+    deps = ['//core:core']
+    if '--android' in flags:
+      deps = deps + ['//external:android-util']
     native.java_library(
         name=name,
         srcs=['__gen_%s' % name],
-        deps=['//core:core'],
+        deps=deps,
         visibility=visibility,
     )
