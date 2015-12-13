@@ -35,25 +35,25 @@ import static org.junit.Assert.assertTrue;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class TContainedEnumTest {
-    private TContainedEnumDescriptor mType;
-    private TContainedEnum           mValue3;
-    private TContainedEnum           mValue3_other;
-    private TContainedEnum           mValue5;
+public class TCEnumTest {
+    private TCEnumDescriptor mType;
+    private TCEnum           mValue3;
+    private TCEnum           mValue3_other;
+    private TCEnum           mValue5;
 
     @Before
     public void setUp() {
-        List<TContainedEnum> values = new LinkedList<>();
-        mType = new TContainedEnumDescriptor("My comment",
-                                             "package",
-                                             "MyEnum");
+        List<TCEnum> values = new LinkedList<>();
+        mType = new TCEnumDescriptor("My comment",
+                                     "package",
+                                     "MyEnum");
 
-        values.add(new TContainedEnum(null, 1, "ONE", mType));
-        values.add(new TContainedEnum(null, 2, "TWO", mType));
-        values.add(new TContainedEnum(null, 3, "THREE", mType));
-        values.add(new TContainedEnum("Skipping stuff", 5, "FIVE", mType));
-        values.add(new TContainedEnum(null, 6, "SIX", mType));
-        values.add(new TContainedEnum("And more", 8, "EIGHT", mType));
+        values.add(new TCEnum(null, 1, "ONE", mType));
+        values.add(new TCEnum(null, 2, "TWO", mType));
+        values.add(new TCEnum(null, 3, "THREE", mType));
+        values.add(new TCEnum("Skipping stuff", 5, "FIVE", mType));
+        values.add(new TCEnum(null, 6, "SIX", mType));
+        values.add(new TCEnum("And more", 8, "EIGHT", mType));
 
         mType.setValues(values);
 
@@ -99,15 +99,15 @@ public class TContainedEnumTest {
 
     @Test
     public void testBuilder() {
-        assertFalse(new TContainedEnum.Builder(mType).isValid());
-        assertTrue(new TContainedEnum.Builder(mType).setByValue(3).isValid());
-        assertFalse(new TContainedEnum.Builder(mType).setByValue(7).isValid());
+        assertFalse(new TCEnum.Builder(mType).isValid());
+        assertTrue(new TCEnum.Builder(mType).setByValue(3).isValid());
+        assertFalse(new TCEnum.Builder(mType).setByValue(7).isValid());
 
-        TContainedEnum.Builder threeBuilder = new TContainedEnum.Builder(mType).setByName("THREE");
+        TCEnum.Builder threeBuilder = new TCEnum.Builder(mType).setByName("THREE");
         assertTrue(threeBuilder.isValid());
         assertEquals(mValue3, threeBuilder.build());
 
-        TContainedEnum.Builder fourBuilder = new TContainedEnum.Builder(mType).setByName("FOUR");
+        TCEnum.Builder fourBuilder = new TCEnum.Builder(mType).setByName("FOUR");
         assertFalse(fourBuilder.isValid());
         assertNull(fourBuilder.build());
     }

@@ -24,7 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.compiler.util.FileManager;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 
 /**
  * @author Stein Eldar Johnsen
@@ -37,7 +37,7 @@ public class ThriftGenerator
     }
 
     @Override
-    public void generate(TContainedDocument document) throws IOException {
+    public void generate(TCDocument document) throws IOException {
         ThriftFormatter formatter = new ThriftFormatter();
         OutputStream outputFile = getFileManager().create(
                 "", document.getPackageName() + ".thrift");

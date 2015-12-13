@@ -26,36 +26,35 @@ import java.util.regex.Pattern;
 
 import org.apache.thrift.j2.TMessageBuilder;
 import org.apache.thrift.j2.TMessageBuilderFactory;
-import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class TContainedStructDescriptor
-        extends TStructDescriptor<TContainedStruct, TContainedField> {
+public class TCStructDescriptor
+        extends TStructDescriptor<TCStruct, TCField> {
     public static final Pattern COMPACT_RE = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
     public static final int MAX_COMPACT_FIELDS = 5;
 
-    private final TContainedField[]             mFields;
-    private final Map<Integer, TContainedField> mFieldIdMap;
-    private final Map<String, TContainedField>  mFieldNameMap;
+    private final TCField[]             mFields;
+    private final Map<Integer, TCField> mFieldIdMap;
+    private final Map<String, TCField>  mFieldNameMap;
 
-    public TContainedStructDescriptor(String comment,
-                                      String packageName,
-                                      String name,
-                                      List<TContainedField> fields) {
+    public TCStructDescriptor(String comment,
+                              String packageName,
+                              String name,
+                              List<TCField> fields) {
         super(comment, packageName, name, new _Factory(),
               false,  // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(comment, fields));
         ((_Factory) factory()).setType(this);
 
-        mFields = fields.toArray(new TContainedField[fields.size()]);
+        mFields = fields.toArray(new TCField[fields.size()]);
 
-        Map<Integer, TContainedField> fieldIdMap = new LinkedHashMap<>();
-        Map<String, TContainedField> fieldNameMap = new LinkedHashMap<>();
-        for (TContainedField field : fields) {
+        Map<Integer, TCField> fieldIdMap = new LinkedHashMap<>();
+        Map<String, TCField> fieldNameMap = new LinkedHashMap<>();
+        for (TCField field : fields) {
             fieldIdMap.put(field.getKey(), field);
             fieldNameMap.put(field.getName(), field);
         }
@@ -64,23 +63,23 @@ public class TContainedStructDescriptor
     }
 
     @Override
-    public TContainedField[] getFields() {
+    public TCField[] getFields() {
         return mFields;
     }
 
     @Override
-    public TContainedField getField(String name) {
+    public TCField getField(String name) {
         return mFieldNameMap.get(name);
     }
 
     @Override
-    public TContainedField getField(int key) {
+    public TCField getField(int key) {
         return mFieldIdMap.get(key);
     }
 
     @Override
     public boolean isSimple() {
-        for (TContainedField field : getFields()) {
+        for (TCField field : getFields()) {
             switch (field.getType()) {
                 case MAP:
                 case SET:
@@ -95,21 +94,21 @@ public class TContainedStructDescriptor
     }
 
     private static class _Factory
-            extends TMessageBuilderFactory<TContainedStruct> {
-        private TContainedStructDescriptor mType;
+            extends TMessageBuilderFactory<TCStruct> {
+        private TCStructDescriptor mType;
 
-        public void setType(TContainedStructDescriptor type) {
+        public void setType(TCStructDescriptor type) {
             mType = type;
         }
 
         @Override
-        public TMessageBuilder<TContainedStruct> builder() {
+        public TMessageBuilder<TCStruct> builder() {
             // TODO Auto-generated method stub
-            return new TContainedStruct.Builder(mType);
+            return new TCStruct.Builder(mType);
         }
     }
 
-    private static boolean isCompactCompatible(String comment, List<TContainedField> fields) {
+    private static boolean isCompactCompatible(String comment, List<TCField> fields) {
         if (comment == null)
             return false;
         if (!COMPACT_RE.matcher(comment).find()) {
@@ -120,7 +119,7 @@ public class TContainedStructDescriptor
         }
         int next = 1;
         boolean hasOptional = false;
-        for (TContainedField field : fields) {
+        for (TCField field : fields) {
             if (field.getKey() != next) {
                 return false;
             }

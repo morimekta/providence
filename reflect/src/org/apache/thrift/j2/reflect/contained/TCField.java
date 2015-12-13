@@ -32,7 +32,7 @@ import static org.apache.thrift.j2.util.TTypeUtils.equalsQualifiedName;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class TContainedField<T> implements TField<T> {
+public class TCField<T> implements TField<T> {
     private final String                 mComment;
     private final int                    mKey;
     private final boolean                mRequired;
@@ -40,12 +40,12 @@ public class TContainedField<T> implements TField<T> {
     private final String                 mName;
     private final TValueProvider<T>      mDefaultValue;
 
-    public TContainedField(String comment,
-                           int key,
-                           boolean required,
-                           String name,
-                           TDescriptorProvider<T> typeProvider,
-                           TValueProvider<T> defaultValue) {
+    public TCField(String comment,
+                   int key,
+                   boolean required,
+                   String name,
+                   TDescriptorProvider<T> typeProvider,
+                   TValueProvider<T> defaultValue) {
         mComment = comment;
         mKey = key;
         mRequired = required;
@@ -114,10 +114,10 @@ public class TContainedField<T> implements TField<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof TContainedField)) {
+        if (o == null || !(o instanceof TCField)) {
             return false;
         }
-        TContainedField<?> other = (TContainedField<?>) o;
+        TCField<?> other = (TCField<?>) o;
         return mKey == other.mKey &&
                mRequired == other.mRequired &&
                // We cannot test that the types are deep-equals as it may have circular
@@ -129,7 +129,7 @@ public class TContainedField<T> implements TField<T> {
 
     @Override
     public int hashCode() {
-        return TContainedField.class.hashCode() +
+        return TCField.class.hashCode() +
                getDescriptor().hashCode() +
                TTypeUtils.hashCode(mKey) +
                TTypeUtils.hashCode(mRequired) +

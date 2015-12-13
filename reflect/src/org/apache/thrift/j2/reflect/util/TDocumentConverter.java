@@ -35,19 +35,17 @@ import org.apache.thrift.j2.model.EnumValue;
 import org.apache.thrift.j2.model.StructType;
 import org.apache.thrift.j2.model.ThriftDocument;
 import org.apache.thrift.j2.model.ThriftField;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
-import org.apache.thrift.j2.reflect.contained.TContainedEnum;
-import org.apache.thrift.j2.reflect.contained.TContainedEnumDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedExceptionDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedField;
-import org.apache.thrift.j2.reflect.contained.TContainedStructDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedUnionDescriptor;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
+import org.apache.thrift.j2.reflect.contained.TCEnum;
+import org.apache.thrift.j2.reflect.contained.TCEnumDescriptor;
+import org.apache.thrift.j2.reflect.contained.TCExceptionDescriptor;
+import org.apache.thrift.j2.reflect.contained.TCField;
+import org.apache.thrift.j2.reflect.contained.TCStructDescriptor;
+import org.apache.thrift.j2.reflect.contained.TCUnionDescriptor;
 
 /**
- *
  * @author Stein Eldar Johnsen
  * @since 07.09.15
- *
  */
 public class TDocumentConverter {
     private final TTypeRegistry mRegistry;
@@ -62,7 +60,7 @@ public class TDocumentConverter {
      * @param document Document model to convert.
      * @return The declared thrift document.
      */
-    public TContainedDocument convert(ThriftDocument document) {
+    public TCDocument convert(ThriftDocument document) {
         List<TDeclaredDescriptor<?>> declaredTypes = new LinkedList<>();
         List<TField<?>> constants = new LinkedList<>();
         Map<String, String> typedefs = new LinkedHashMap<>();
@@ -72,18 +70,18 @@ public class TDocumentConverter {
                 EnumType enumType = decl.getDeclEnum();
 
                 int nextValue = TEnumDescriptor.DEFAULT_FIRST_VALUE;
-                TContainedEnumDescriptor type =
-                        new TContainedEnumDescriptor(enumType.getComment(),
-                                                     document.getPackage(),
-                                                     enumType.getName());
-                List<TContainedEnum> values = new LinkedList<>();
+                TCEnumDescriptor type =
+                        new TCEnumDescriptor(enumType.getComment(),
+                                             document.getPackage(),
+                                             enumType.getName());
+                List<TCEnum> values = new LinkedList<>();
                 for (EnumValue value : enumType.getValues()) {
                     int v = value.hasValue() ? value.getValue() : nextValue;
                     nextValue = v + 1;
-                    values.add(new TContainedEnum(value.getComment(),
-                                                  value.getValue(),
-                                                  value.getName(),
-                                                  type));
+                    values.add(new TCEnum(value.getComment(),
+                                          value.getValue(),
+                                          value.getName(),
+                                          type));
                 }
                 type.setValues(values);
                 declaredTypes.add(type);
@@ -92,29 +90,29 @@ public class TDocumentConverter {
             if (decl.hasDeclStruct()) {
                 StructType structType = decl.getDeclStruct();
 
-                List<TContainedField> fields = new LinkedList<>();
+                List<TCField> fields = new LinkedList<>();
                 for (ThriftField field : structType.getFields()) {
                     fields.add(makeField(document.getPackage(), field));
                 }
-                TStructDescriptor<?,?> type;
+                TStructDescriptor<?, ?> type;
                 switch (structType.getVariant()) {
                     case STRUCT:
-                        type = new TContainedStructDescriptor(structType.getComment(),
-                                                              document.getPackage(),
-                                                              structType.getName(),
-                                                              fields);
+                        type = new TCStructDescriptor(structType.getComment(),
+                                                      document.getPackage(),
+                                                      structType.getName(),
+                                                      fields);
                         break;
                     case UNION:
-                        type = new TContainedUnionDescriptor(structType.getComment(),
-                                                             document.getPackage(),
-                                                             structType.getName(),
-                                                             fields);
+                        type = new TCUnionDescriptor(structType.getComment(),
+                                                     document.getPackage(),
+                                                     structType.getName(),
+                                                     fields);
                         break;
                     case EXCEPTION:
-                        type = new TContainedExceptionDescriptor(structType.getComment(),
-                                                                 document.getPackage(),
-                                                                 structType.getName(),
-                                                                 fields);
+                        type = new TCExceptionDescriptor(structType.getComment(),
+                                                         document.getPackage(),
+                                                         structType.getName(),
+                                                         fields);
                         break;
                     default:
                         throw new IllegalArgumentException("Unhandled struct type " +
@@ -137,13 +135,13 @@ public class TDocumentConverter {
             }
         }
 
-        return new TContainedDocument(document.getComment(),
-                                      document.getPackage(),
-                                      document.getNamespaces(),
-                                      getIncludes(document),
-                                      typedefs,
-                                      declaredTypes,
-                                      constants);
+        return new TCDocument(document.getComment(),
+                              document.getPackage(),
+                              document.getNamespaces(),
+                              getIncludes(document),
+                              typedefs,
+                              declaredTypes,
+                              constants);
     }
 
     private List<String> getIncludes(ThriftDocument document) {
@@ -158,7 +156,7 @@ public class TDocumentConverter {
         return out;
     }
 
-    private TContainedField makeField(String pkg, ThriftField field) {
+    private TCField makeField(String pkg, ThriftField field) {
         TDescriptorProvider type = mRegistry.getProvider(field.getType(), pkg);
         TConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
@@ -168,7 +166,7 @@ public class TDocumentConverter {
                                               field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        TContainedField made = new TContainedField<>(
+        TCField made = new TCField<>(
                 field.getComment(),
                 field.getKey(),
                 field.getIsRequired(),

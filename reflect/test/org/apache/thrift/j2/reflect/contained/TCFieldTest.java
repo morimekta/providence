@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotEquals;
  * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
-public class TContainedFieldTest {
+public class TCFieldTest {
     TField<?> fieldA;
     TField<?> fieldB;
     TField<?> fieldC;
@@ -44,14 +44,14 @@ public class TContainedFieldTest {
 
     @Before
     public void setUp() {
-        fieldA = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldB = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldC = new TContainedField<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldD = new TContainedField<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldE = new TContainedField<>("comment", 4, true, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldF = new TContainedField<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldG = new TContainedField<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4L));
-        fieldH = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
+        fieldA = new TCField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldB = new TCField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldC = new TCField<>("tnemmoc", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldD = new TCField<>("comment", 6, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldE = new TCField<>("comment", 4, true, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldF = new TCField<>("comment", 4, false, "eman", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldG = new TCField<>("comment", 4, false, "name", TPrimitive.I64.provider(), new TDefaultValueProvider<>(4L));
+        fieldH = new TCField<>("comment", 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(6));
     }
 
     @Test
@@ -104,8 +104,8 @@ public class TContainedFieldTest {
 
         assertNotEquals(fieldG, fieldH);
 
-        fieldC = new TContainedField<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
-        fieldH = new TContainedField<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
+        fieldC = new TCField<>(null, 4, false, "name", TPrimitive.I32.provider(), new TDefaultValueProvider<>(4));
+        fieldH = new TCField<>("comment", 4, false, "name", TPrimitive.I32.provider(), null);
 
         assertEquals(fieldC, fieldA);
         assertEquals(fieldC, fieldB);

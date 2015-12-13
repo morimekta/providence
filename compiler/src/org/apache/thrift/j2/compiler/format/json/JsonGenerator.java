@@ -22,12 +22,12 @@ package org.apache.thrift.j2.compiler.format.json;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.compiler.util.FileManager;
 import org.apache.thrift.j2.model.ThriftDocument;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
-import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.reflect.TTypeLoader;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
 
@@ -46,10 +46,10 @@ public class JsonGenerator extends Generator {
     }
 
     @Override
-    public void generate(TContainedDocument document) throws IOException, GeneratorException {
+    public void generate(TCDocument document) throws IOException, GeneratorException {
         for (ThriftDocument doc : mLoader.loadedDocuments()) {
             if (doc.getPackage().equals(document.getPackageName())) {
-                OutputStream out = getFileManager().create("", doc.getPackage() + ".json");
+                OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
                 try {
                     mSerializer.serialize(out, doc);
                 } catch (TSerializeException e) {

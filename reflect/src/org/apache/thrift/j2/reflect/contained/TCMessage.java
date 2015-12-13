@@ -33,11 +33,11 @@ import org.apache.thrift.j2.util.TTypeUtils;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class TContainedMessage<T extends TMessage<T>>
+public abstract class TCMessage<T extends TMessage<T>>
         implements TMessage<T> {
     protected final Map<Integer, Object> mFields;
 
-    protected TContainedMessage(Map<Integer, Object> fields) {
+    protected TCMessage(Map<Integer, Object> fields) {
         mFields = fields;
     }
 
@@ -114,11 +114,11 @@ public abstract class TContainedMessage<T extends TMessage<T>>
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof TContainedMessage)) {
+        if (o == null || !(o instanceof TCMessage)) {
             return false;
         }
 
-        TContainedMessage other = (TContainedMessage) o;
+        TCMessage other = (TCMessage) o;
         TStructDescriptor<?,?> type = other.descriptor();
         if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
             !descriptor().getVariant().equals(type.getVariant())) {

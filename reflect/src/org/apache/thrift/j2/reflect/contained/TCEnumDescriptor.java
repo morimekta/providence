@@ -29,36 +29,36 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 /**
  * Contained enum descriptor type.
  *
- * Also see {@link TContainedEnum}.
+ * Also see {@link TCEnum}.
  */
-public class TContainedEnumDescriptor
-        extends TEnumDescriptor<TContainedEnum> {
-    private TContainedEnum[] values;
+public class TCEnumDescriptor
+        extends TEnumDescriptor<TCEnum> {
+    private TCEnum[] values;
 
-    public TContainedEnumDescriptor(String comment,
-                                    String packageName,
-                                    String name) {
+    public TCEnumDescriptor(String comment,
+                            String packageName,
+                            String name) {
         super(comment, packageName, name, new _Factory());
-        values = new TContainedEnum[0];
+        values = new TCEnum[0];
         ((_Factory) factory()).setType(this);
     }
 
-    public void setValues(List<TContainedEnum> values) {
-        this.values = new TContainedEnum[values.size()];
-        Iterator<TContainedEnum> iter = values.iterator();
+    public void setValues(List<TCEnum> values) {
+        this.values = new TCEnum[values.size()];
+        Iterator<TCEnum> iter = values.iterator();
         for (int i = 0; i < this.values.length; ++i) {
             this.values[i] = iter.next();
         }
     }
 
     @Override
-    public TContainedEnum[] getValues() {
+    public TCEnum[] getValues() {
         return values;
     }
 
     @Override
-    public TContainedEnum getValueById(int id)  {
-        for (TContainedEnum value : getValues()) {
+    public TCEnum getValueById(int id)  {
+        for (TCEnum value : getValues()) {
             if (value.getValue() == id) {
                 return value;
             }
@@ -67,8 +67,8 @@ public class TContainedEnumDescriptor
     }
 
     @Override
-    public TContainedEnum getValueByName(String name) {
-        for (TContainedEnum value : getValues()) {
+    public TCEnum getValueByName(String name) {
+        for (TCEnum value : getValues()) {
             if (value.getName().equalsIgnoreCase(name)) {
                 return value;
             }
@@ -77,17 +77,17 @@ public class TContainedEnumDescriptor
     }
 
     private static class _Factory
-            extends TEnumBuilderFactory<TContainedEnum> {
-        private TContainedEnumDescriptor mType;
+            extends TEnumBuilderFactory<TCEnum> {
+        private TCEnumDescriptor mType;
 
-        public void setType(TContainedEnumDescriptor type) {
+        public void setType(TCEnumDescriptor type) {
             mType = type;
         }
 
         @Override
-        public TEnumBuilder<TContainedEnum> builder() {
+        public TEnumBuilder<TCEnum> builder() {
             // TODO Auto-generated method stub
-            return new TContainedEnum.Builder(mType);
+            return new TCEnum.Builder(mType);
         }
     }
 }

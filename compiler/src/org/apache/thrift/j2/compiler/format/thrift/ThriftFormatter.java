@@ -34,7 +34,7 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
@@ -70,7 +70,7 @@ public class ThriftFormatter {
         mEnumValuePresence = presence;
     }
 
-    public void format(OutputStream out, TContainedDocument document) {
+    public void format(OutputStream out, TCDocument document) {
         IndentedPrintWriter writer = new IndentedPrintWriter(out);
         try {
             appendDocument(writer, document);
@@ -82,7 +82,7 @@ public class ThriftFormatter {
         }
     }
 
-    private void appendDocument(IndentedPrintWriter builder, TContainedDocument document) throws IOException, JsonException {
+    private void appendDocument(IndentedPrintWriter builder, TCDocument document) throws IOException, JsonException {
         boolean first = true;
         if (document.getComment() != null) {
             appendBlockComment(builder, document.getComment(), first);

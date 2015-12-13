@@ -19,60 +19,77 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
-import org.apache.thrift.j2.descriptor.TField;
-import org.apache.thrift.j2.TMessageBuilder;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.thrift.j2.TMessageBuilder;
+import org.apache.thrift.j2.descriptor.TField;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+
 /**
  * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * @since 26.08.15
  */
-public class TContainedUnion
-        extends TContainedMessage<TContainedUnion> {
-    private final TContainedUnionDescriptor mType;
+public class TCStruct
+        extends TCMessage<TCStruct> {
+    TStructDescriptor<TCStruct,TCField> mType;
 
-    protected TContainedUnion(Builder builder) {
+    protected TCStruct(Builder builder) {
         super(Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields)));
         mType = builder.mType;
     }
 
     @Override
-    public TMessageBuilder<TContainedUnion> mutate() {
+    public TMessageBuilder<TCStruct> mutate() {
         return new Builder(mType);
     }
 
     @Override
     public boolean isValid() {
-        return mFields.size() == 1;
+        for (TField<?> field : mType.getFields()) {
+            if (field.getRequired()) {
+                if (!mFields.containsKey(field.getKey())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
-    public TContainedUnionDescriptor descriptor() {
+    public TStructDescriptor<TCStruct,TCField> descriptor() {
         return mType;
     }
 
     public static class Builder
-            extends TMessageBuilder<TContainedUnion> {
-        private final TContainedUnionDescriptor mType;
-        private final Map<Integer, Object>      mFields;
+            extends TMessageBuilder<TCStruct> {
+        private final TStructDescriptor<TCStruct,TCField> mType;
+        private final Map<Integer, Object>                mFields;
 
-        public Builder(TContainedUnionDescriptor type) {
+        public Builder(TStructDescriptor<TCStruct,TCField> type) {
             mType = type;
             mFields = new TreeMap<>();
         }
 
         @Override
-        public TContainedUnion build() {
-            return new TContainedUnion(this);
+        public TCStruct build() {
+            return new TCStruct(this);
         }
 
         @Override
         public boolean isValid() {
-            return mFields.size() == 1;
+            for (TField<?> field : mType.getFields()) {
+                if (field.getRequired()) {
+                    if (!mFields.containsKey(field.getKey())) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         @Override
@@ -81,7 +98,6 @@ public class TContainedUnion
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            mFields.clear();
             if (value != null) {
                 mFields.put(field.getKey(), value);
             }

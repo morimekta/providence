@@ -31,7 +31,7 @@ import org.apache.thrift.j2.descriptor.TField;
  * thrift file.
  */
 @SuppressWarnings("unused")
-public class TContainedDocument {
+public class TCDocument {
     private final String                       mComment;
     private final String                       mPackageName;
     private final List<String>                 mIncludes;
@@ -40,13 +40,13 @@ public class TContainedDocument {
     private final List<TDeclaredDescriptor<?>> mDeclaredTypes;
     private final List<TField<?>>              mConstants;
 
-    public TContainedDocument(String comment,
-                              String packageName,
-                              Map<String, String> namespaces,
-                              List<String> includes,
-                              Map<String, String> typedefs,
-                              List<TDeclaredDescriptor<?>> declaredTypes,
-                              List<TField<?>> constants) {
+    public TCDocument(String comment,
+                      String packageName,
+                      Map<String, String> namespaces,
+                      List<String> includes,
+                      Map<String, String> typedefs,
+                      List<TDeclaredDescriptor<?>> declaredTypes,
+                      List<TField<?>> constants) {
         mComment = comment;
         mPackageName = packageName;
         mNamespaces = Collections.unmodifiableMap(namespaces);

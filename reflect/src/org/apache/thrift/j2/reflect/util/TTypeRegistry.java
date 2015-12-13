@@ -29,7 +29,7 @@ import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 
 /**
  * @author Stein Eldar Johnsen
@@ -38,7 +38,7 @@ import org.apache.thrift.j2.reflect.contained.TContainedDocument;
 public class TTypeRegistry {
     private final Map<String, TDeclaredDescriptor<?>> mDeclaredTypes;
     private final Map<String, String>                 mTypedefs;
-    private final Map<String, TContainedDocument>     mDocuments;
+    private final Map<String, TCDocument>             mDocuments;
 
     public TTypeRegistry() {
         mDeclaredTypes = new LinkedHashMap<>();
@@ -46,7 +46,7 @@ public class TTypeRegistry {
         mDocuments = new LinkedHashMap<>();
     }
 
-    public boolean putDocument(String path, TContainedDocument doc) {
+    public boolean putDocument(String path, TCDocument doc) {
         if (!mDocuments.containsKey(path)) {
             mDocuments.put(path, doc);
             return true;
@@ -54,12 +54,12 @@ public class TTypeRegistry {
         return false;
     }
 
-    public TContainedDocument getDocument(String path) {
+    public TCDocument getDocument(String path) {
         return mDocuments.get(path);
     }
 
-    public TContainedDocument getDocumentForPackage(String packageContext) {
-        for (TContainedDocument document : mDocuments.values()) {
+    public TCDocument getDocumentForPackage(String packageContext) {
+        for (TCDocument document : mDocuments.values()) {
             if (document.getPackageName().equals(packageContext)) {
                 return document;
             }
@@ -70,7 +70,7 @@ public class TTypeRegistry {
     /**
      * Get the declared type with the name and package context.
      *
-     * @param name Name of type, without any spaces.
+     * @param name           Name of type, without any spaces.
      * @param packageContext The package context of the type.
      * @return The type provider.
      */
@@ -101,7 +101,6 @@ public class TTypeRegistry {
     }
 
     /**
-     *
      * @param typeName
      * @param identifier
      */
@@ -116,7 +115,7 @@ public class TTypeRegistry {
      * Given a type name and a package context, fetches the type provider for
      * the given type.
      *
-     * @param typeName Name of type, without any spaces.
+     * @param typeName       Name of type, without any spaces.
      * @param packageContext The package context of the type.
      * @return The type provider.
      */

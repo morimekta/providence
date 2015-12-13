@@ -26,10 +26,9 @@ import java.util.List;
 
 import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.reflect.parser.TParseException;
 import org.apache.thrift.j2.reflect.parser.TParser;
-import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.reflect.TTypeLoader;
 import org.apache.thrift.j2.util.TStringUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -64,12 +63,12 @@ public class Compiler {
             TTypeLoader loader = new TTypeLoader(includes, parser);
             Generator generator = mOpts.getGenerator(cli, loader);
 
-            List<TContainedDocument> docs = new LinkedList<>();
+            List<TCDocument> docs = new LinkedList<>();
             for (File f : input) {
                 docs.add(loader.load(f));
             }
 
-            for (TContainedDocument doc : docs) {
+            for (TCDocument doc : docs) {
                 generator.generate(doc);
             }
 

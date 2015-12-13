@@ -32,27 +32,27 @@ import org.apache.thrift.j2.descriptor.TUnionDescriptor;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class TContainedUnionDescriptor
-        extends TUnionDescriptor<TContainedUnion, TContainedField> {
-    private final TContainedField[]             mFields;
-    private final Map<Integer, TContainedField> mFieldIdMap;
-    private final Map<String, TContainedField>  mFieldNameMap;
+public class TCUnionDescriptor
+        extends TUnionDescriptor<TCUnion, TCField> {
+    private final TCField[]             mFields;
+    private final Map<Integer, TCField> mFieldIdMap;
+    private final Map<String, TCField>  mFieldNameMap;
 
-    public TContainedUnionDescriptor(String comment,
-                                     String packageName,
-                                     String name,
-                                     List<TContainedField> fields) {
+    public TCUnionDescriptor(String comment,
+                             String packageName,
+                             String name,
+                             List<TCField> fields) {
         super(comment, packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
         ((_Factory) factory()).setType(this);
 
-        mFields = fields.toArray(new TContainedField[fields.size()]);
+        mFields = fields.toArray(new TCField[fields.size()]);
 
-        Map<Integer, TContainedField> fieldIdMap = new LinkedHashMap<>();
-        Map<String, TContainedField> fieldNameMap = new LinkedHashMap<>();
-        for (TContainedField field : fields) {
+        Map<Integer, TCField> fieldIdMap = new LinkedHashMap<>();
+        Map<String, TCField> fieldNameMap = new LinkedHashMap<>();
+        for (TCField field : fields) {
             fieldIdMap.put(field.getKey(), field);
             fieldNameMap.put(field.getName(), field);
         }
@@ -61,17 +61,17 @@ public class TContainedUnionDescriptor
     }
 
     @Override
-    public TContainedField[] getFields() {
+    public TCField[] getFields() {
         return mFields;
     }
 
     @Override
-    public TContainedField getField(String name) {
+    public TCField getField(String name) {
         return mFieldNameMap.get(name);
     }
 
     @Override
-    public TContainedField getField(int key) {
+    public TCField getField(int key) {
         return mFieldIdMap.get(key);
     }
 
@@ -92,17 +92,17 @@ public class TContainedUnionDescriptor
     }
 
     private static class _Factory
-            extends TMessageBuilderFactory<TContainedUnion> {
-        private TContainedUnionDescriptor mType;
+            extends TMessageBuilderFactory<TCUnion> {
+        private TCUnionDescriptor mType;
 
-        public void setType(TContainedUnionDescriptor type) {
+        public void setType(TCUnionDescriptor type) {
             mType = type;
         }
 
         @Override
-        public TMessageBuilder<TContainedUnion> builder() {
+        public TMessageBuilder<TCUnion> builder() {
             // TODO Auto-generated method stub
-            return new TContainedUnion.Builder(mType);
+            return new TCUnion.Builder(mType);
         }
     }
 }

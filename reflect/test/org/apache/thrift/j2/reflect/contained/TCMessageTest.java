@@ -40,51 +40,51 @@ import static org.junit.Assert.assertTrue;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class TContainedMessageTest {
-    TTypeRegistry              mRegistry;
-    TContainedStructDescriptor mStructType;
-    TContainedUnionDescriptor  mUnionType;
+public class TCMessageTest {
+    TTypeRegistry      mRegistry;
+    TCStructDescriptor mStructType;
+    TCUnionDescriptor  mUnionType;
 
     @Before
     public void setUp() {
         mRegistry = new TTypeRegistry();
 
-        List<TContainedField> fields = new LinkedList<>();
-        fields.add(new TContainedField<>(null, 1, false, "field_bool", TPrimitive.BOOL.provider(), null));
-        fields.add(new TContainedField<>(null, 2, false, "field_8", TPrimitive.BYTE.provider(), null));
-        fields.add(new TContainedField<>(null, 65000, false, "field_16", TPrimitive.I16.provider(), null));
-        fields.add(new TContainedField<>(null, 4, false, "field_32", TPrimitive.I32.provider(), null));
-        fields.add(new TContainedField<>(null, 5, false, "field_64", TPrimitive.I64.provider(), null));
-        fields.add(new TContainedField<>(null, 6, false, "field_dbl", TPrimitive.DOUBLE.provider(), null));
-        fields.add(new TContainedField<>(null, 9998, false, "field_str", TPrimitive.STRING.provider(), null));
-        fields.add(new TContainedField<>(null, 9999, false, "field_bin", TPrimitive.BINARY.provider(), null));
-        fields.add(new TContainedField<>(null, 32000, false, "field_a", mRegistry.getProvider("TypeA", "test"), null));
+        List<TCField> fields = new LinkedList<>();
+        fields.add(new TCField<>(null, 1, false, "field_bool", TPrimitive.BOOL.provider(), null));
+        fields.add(new TCField<>(null, 2, false, "field_8", TPrimitive.BYTE.provider(), null));
+        fields.add(new TCField<>(null, 65000, false, "field_16", TPrimitive.I16.provider(), null));
+        fields.add(new TCField<>(null, 4, false, "field_32", TPrimitive.I32.provider(), null));
+        fields.add(new TCField<>(null, 5, false, "field_64", TPrimitive.I64.provider(), null));
+        fields.add(new TCField<>(null, 6, false, "field_dbl", TPrimitive.DOUBLE.provider(), null));
+        fields.add(new TCField<>(null, 9998, false, "field_str", TPrimitive.STRING.provider(), null));
+        fields.add(new TCField<>(null, 9999, false, "field_bin", TPrimitive.BINARY.provider(), null));
+        fields.add(new TCField<>(null, 32000, false, "field_a", mRegistry.getProvider("TypeA", "test"), null));
 
-        mStructType = new TContainedStructDescriptor(null, "test", "TypeA", fields);
-        mUnionType = new TContainedUnionDescriptor(null, "test", "TypeA", fields);
+        mStructType = new TCStructDescriptor(null, "test", "TypeA", fields);
+        mUnionType = new TCUnionDescriptor(null, "test", "TypeA", fields);
     }
 
     @Test
     public void testStruct() {
         mRegistry.putDeclaredType(mStructType);
 
-        TContainedStruct inner = mStructType.factory()
-                                            .builder()
-                                            .set(1, Boolean.TRUE)
-                                            .set(2, (byte) 8)
-                                            .set(65000, (short) 16)
-                                            .set(4, 32)
-                                            .set(5, Long.MAX_VALUE)
-                                            .set(6, 1234567890.09876)
-                                            .set(9998, "string")
-                                            .set(9999, new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 })
-                                            .build();
-        TContainedStruct outer = mStructType.factory()
-                                            .builder()
-                                            .set(32000, inner)
-                                            .build();
+        TCStruct inner = mStructType.factory()
+                                    .builder()
+                                    .set(1, Boolean.TRUE)
+                                    .set(2, (byte) 8)
+                                    .set(65000, (short) 16)
+                                    .set(4, 32)
+                                    .set(5, Long.MAX_VALUE)
+                                    .set(6, 1234567890.09876)
+                                    .set(9998, "string")
+                                    .set(9999, new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 })
+                                    .build();
+        TCStruct outer = mStructType.factory()
+                                    .builder()
+                                    .set(32000, inner)
+                                    .build();
 
-        TContainedStruct struct = (TContainedStruct) outer.get(32000);
+        TCStruct struct = (TCStruct) outer.get(32000);
 
         assertTrue(struct.has(1));
         assertTrue(struct.has(2));

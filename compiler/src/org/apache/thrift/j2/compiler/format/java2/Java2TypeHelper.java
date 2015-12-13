@@ -34,7 +34,7 @@ import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
@@ -55,7 +55,7 @@ public class Java2TypeHelper {
 
     public String getJavaPackage(TDeclaredDescriptor<?> type) throws GeneratorException {
         String packageContext = type.getPackageName();
-        TContainedDocument document = mRegistry.getDocumentForPackage(packageContext);
+        TCDocument document = mRegistry.getDocumentForPackage(packageContext);
         return Java2Utils.getJavaPackage(document);
     }
 
@@ -91,7 +91,7 @@ public class Java2TypeHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getQualifiedInstanceClassName(TContainedDocument document) throws GeneratorException {
+    public String getQualifiedInstanceClassName(TCDocument document) throws GeneratorException {
         return Java2Utils.getJavaPackage(document) + "." + camelCase("", document.getPackageName());
     }
 
@@ -126,7 +126,7 @@ public class Java2TypeHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getConstantsClassName(TContainedDocument document) {
+    public String getConstantsClassName(TCDocument document) {
         return camelCase("", document.getPackageName()) + "_Constants";
     }
 

@@ -37,13 +37,13 @@ import org.apache.thrift.j2.util.TTypeUtils;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class TContainedException
+public class TCException
         extends Throwable
-        implements TMessage<TContainedException> {
-    private final TContainedExceptionDescriptor mType;
-    private final Map<Integer, Object>          mFields;
+        implements TMessage<TCException> {
+    private final TCExceptionDescriptor mType;
+    private final Map<Integer, Object>  mFields;
 
-    protected TContainedException(Builder builder) {
+    protected TCException(Builder builder) {
         mFields = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields));
         mType = builder.mType;
     }
@@ -121,11 +121,11 @@ public class TContainedException
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof TContainedException)) {
+        if (o == null || !(o instanceof TCException)) {
             return false;
         }
 
-        TContainedException other = (TContainedException) o;
+        TCException other = (TCException) o;
         TStructDescriptor<?,?> type = other.descriptor();
         if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
             !descriptor().getVariant().equals(type.getVariant())) {
@@ -157,7 +157,7 @@ public class TContainedException
     }
 
     @Override
-    public TMessageBuilder<TContainedException> mutate() {
+    public TMessageBuilder<TCException> mutate() {
         return new Builder(mType);
     }
 
@@ -167,23 +167,23 @@ public class TContainedException
     }
 
     @Override
-    public TContainedExceptionDescriptor descriptor() {
+    public TCExceptionDescriptor descriptor() {
         return mType;
     }
 
     public static class Builder
-            extends TMessageBuilder<TContainedException> {
-        private final TContainedExceptionDescriptor mType;
-        private final Map<Integer, Object>          mFields;
+            extends TMessageBuilder<TCException> {
+        private final TCExceptionDescriptor mType;
+        private final Map<Integer, Object>  mFields;
 
-        public Builder(TContainedExceptionDescriptor type) {
+        public Builder(TCExceptionDescriptor type) {
             mType = type;
             mFields = new TreeMap<>();
         }
 
         @Override
-        public TContainedException build() {
-            return new TContainedException(this);
+        public TCException build() {
+            return new TCException(this);
         }
 
         @Override

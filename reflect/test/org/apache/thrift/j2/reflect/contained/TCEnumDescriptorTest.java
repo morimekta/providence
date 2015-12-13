@@ -32,22 +32,22 @@ import static org.junit.Assert.assertEquals;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class TContainedEnumDescriptorTest {
-    TContainedEnumDescriptor mType;
+public class TCEnumDescriptorTest {
+    TCEnumDescriptor mType;
 
     @Before
     public void setUp() {
-        List<TContainedEnum> values = new LinkedList<>();
-        mType = new TContainedEnumDescriptor("My comment",
-                                             "package",
-                                             "MyEnum");
+        List<TCEnum> values = new LinkedList<>();
+        mType = new TCEnumDescriptor("My comment",
+                                     "package",
+                                     "MyEnum");
 
-        values.add(new TContainedEnum(null, 1, "ONE", mType));
-        values.add(new TContainedEnum(null, 2, "TWO", mType));
-        values.add(new TContainedEnum(null, 3, "THREE", mType));
-        values.add(new TContainedEnum("Skipping stuff", 5, "FIVE", mType));
-        values.add(new TContainedEnum(null, 6, "SIX", mType));
-        values.add(new TContainedEnum("And more", 8, "EIGHT", mType));
+        values.add(new TCEnum(null, 1, "ONE", mType));
+        values.add(new TCEnum(null, 2, "TWO", mType));
+        values.add(new TCEnum(null, 3, "THREE", mType));
+        values.add(new TCEnum("Skipping stuff", 5, "FIVE", mType));
+        values.add(new TCEnum(null, 6, "SIX", mType));
+        values.add(new TCEnum("And more", 8, "EIGHT", mType));
 
         mType.setValues(values);
     }
@@ -84,7 +84,7 @@ public class TContainedEnumDescriptorTest {
 
     @Test
     public void testProvider() {
-        assertEquals(TContainedEnum.class,
+        assertEquals(TCEnum.class,
                      mType.factory()
                           .builder()
                           .setByValue(1)

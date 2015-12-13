@@ -22,7 +22,7 @@ package org.apache.thrift.j2.compiler.format.java2;
 import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.util.TStringUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 
@@ -57,7 +57,7 @@ public class Java2Utils {
         return TStringUtils.camelCase("", type.getName());
     }
 
-    public static String getJavaPackage(TContainedDocument document) throws GeneratorException {
+    public static String getJavaPackage(TCDocument document) throws GeneratorException {
         String javaPackage = document.getNamespaceForLanguage("java2");
         if (javaPackage == null) {
             javaPackage = document.getNamespaceForLanguage("java");

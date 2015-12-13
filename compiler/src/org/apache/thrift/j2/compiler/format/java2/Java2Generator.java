@@ -26,7 +26,7 @@ import org.apache.thrift.j2.compiler.generator.GeneratorException;
 import org.apache.thrift.j2.compiler.util.FileManager;
 import org.apache.thrift.j2.descriptor.TDeclaredDescriptor;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 import org.apache.thrift.j2.compiler.generator.Generator;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
@@ -54,7 +54,7 @@ public class Java2Generator
 
     @Override
     @SuppressWarnings("resource")
-    public void generate(TContainedDocument document) throws IOException, GeneratorException {
+    public void generate(TCDocument document) throws IOException, GeneratorException {
         String javaPackage = Java2Utils.getJavaPackage(document);
         Java2MessageFormatter messageFormatter =
                 new Java2MessageFormatter(mTypeHelper, mAndroid);

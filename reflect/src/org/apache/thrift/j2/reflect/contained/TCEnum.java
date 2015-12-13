@@ -27,14 +27,14 @@ import org.apache.thrift.j2.descriptor.TEnumDescriptor;
  * Contained enum value. This emulates enum values to used in thrift
  * reflection.
  */
-public class TContainedEnum
-        implements TEnumValue<TContainedEnum> {
-    private final int                             mValue;
-    private final String                          mName;
-    private final TEnumDescriptor<TContainedEnum> mType;
-    private final String                          mComment;
+public class TCEnum
+        implements TEnumValue<TCEnum> {
+    private final int                     mValue;
+    private final String                  mName;
+    private final TEnumDescriptor<TCEnum> mType;
+    private final String                  mComment;
 
-    public TContainedEnum(String comment, int value, String name, TEnumDescriptor<TContainedEnum> type) {
+    public TCEnum(String comment, int value, String name, TEnumDescriptor<TCEnum> type) {
         mComment = comment;
         mValue = value;
         mName = name;
@@ -57,16 +57,16 @@ public class TContainedEnum
     }
 
     @Override
-    public TEnumDescriptor<TContainedEnum> descriptor() {
+    public TEnumDescriptor<TCEnum> descriptor() {
         return mType;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof TContainedEnum)) {
+        if (o == null || !(o instanceof TCEnum)) {
             return false;
         }
-        TContainedEnum other = (TContainedEnum) o;
+        TCEnum other = (TCEnum) o;
         return other.descriptor().getQualifiedName(null).equals(mType.getQualifiedName(null)) &&
                other.getName().equals(mName) &&
                other.getValue() == mValue;
@@ -78,17 +78,17 @@ public class TContainedEnum
     }
 
     public static class Builder
-            extends TEnumBuilder<TContainedEnum> {
-        private final TContainedEnumDescriptor mType;
+            extends TEnumBuilder<TCEnum> {
+        private final TCEnumDescriptor mType;
 
-        private TContainedEnum mValue = null;
+        private TCEnum mValue = null;
 
-        public Builder(TContainedEnumDescriptor type) {
+        public Builder(TCEnumDescriptor type) {
             mType = type;
         }
 
         @Override
-        public TContainedEnum build() {
+        public TCEnum build() {
             return mValue;
         }
 

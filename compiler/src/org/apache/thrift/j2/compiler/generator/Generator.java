@@ -20,7 +20,7 @@
 package org.apache.thrift.j2.compiler.generator;
 
 import org.apache.thrift.j2.compiler.util.FileManager;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 
 import java.io.IOException;
 
@@ -44,5 +44,5 @@ public abstract class Generator {
      *
      * @param document
      */
-    public abstract void generate(TContainedDocument document) throws IOException, GeneratorException;
+    public abstract void generate(TCDocument document) throws IOException, GeneratorException;
 }

@@ -30,12 +30,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.thrift.j2.model.ThriftDocument;
-import org.apache.thrift.j2.reflect.contained.TContainedDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.reflect.parser.TParseException;
 import org.apache.thrift.j2.reflect.parser.TParser;
 import org.apache.thrift.j2.reflect.util.TDocumentConverter;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
-import org.apache.thrift.j2.serializer.TSerializeException;
 
 /**
  * @author Stein Eldar Johnsen
@@ -44,20 +43,19 @@ import org.apache.thrift.j2.serializer.TSerializeException;
 public class TTypeLoader {
     private final TTypeRegistry mRegistry;
 
-    private final TDocumentConverter              mConverter;
-    private final TParser                         mParser;
-    private final Map<String, ThriftDocument>     mLoadedDocuments;
-    private final Map<String, TContainedDocument> mParsedDocuments;
-    private final Collection<File>                mIncludes;
+    private final TDocumentConverter          mConverter;
+    private final TParser                     mParser;
+    private final Map<String, ThriftDocument> mLoadedDocuments;
+    private final Collection<File>            mIncludes;
 
     /**
      * Construct a type loader for file types matches with the given parser.
      *
      * @param includes List of files with include path roots. For includes search these in order.
-     * @param parser The thrift file parser.
+     * @param parser   The thrift file parser.
      */
     public TTypeLoader(Collection<File> includes,
-                       TParser parser) throws IOException {
+                       TParser parser) {
         this(includes,
              parser,
              new TTypeRegistry());
@@ -67,9 +65,8 @@ public class TTypeLoader {
      * Intermediate constructor.
      *
      * @param includes List of files with include path roots. For includes search these in order.
-     * @param parser The thrift file parser.
+     * @param parser   The thrift file parser.
      * @param registry Type registry to keep parsed types in.
-     * @throws IOException
      */
     private TTypeLoader(Collection<File> includes,
                         TParser parser,
@@ -83,11 +80,10 @@ public class TTypeLoader {
     /**
      * Constructor with injected functionality.
      *
-     * @param includes List of files with include path roots. For includes search these in order.
-     * @param parser The thrift file parser.
-     * @param registry The type registry.
+     * @param includes  List of files with include path roots. For includes search these in order.
+     * @param parser    The thrift file parser.
+     * @param registry  The type registry.
      * @param converter The document converter
-     * @throws IOException
      */
     protected TTypeLoader(Collection<File> includes,
                           TParser parser,
@@ -99,7 +95,6 @@ public class TTypeLoader {
         mConverter = converter;
 
         mLoadedDocuments = new LinkedHashMap<>();
-        mParsedDocuments = new LinkedHashMap<>();
     }
 
     /**
@@ -115,7 +110,7 @@ public class TTypeLoader {
      * @param file
      * @throws IOException
      */
-    public TContainedDocument load(File file) throws IOException, TParseException {
+    public TCDocument load(File file) throws IOException, TParseException {
         file = file.getCanonicalFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
@@ -125,7 +120,7 @@ public class TTypeLoader {
                                                file.getCanonicalPath());
         }
 
-        TContainedDocument cdoc = mRegistry.getDocument(file.getCanonicalPath());
+        TCDocument cdoc = mRegistry.getDocument(file.getCanonicalPath());
         if (cdoc != null) {
             return cdoc;
         }
