@@ -29,21 +29,19 @@ import org.apache.thrift.j2.serializer.TSerializer;
 
 /**
  * Read messages (in global order) from a set of files in the format:
- *
+ * <p/>
  * {name}-{shard}-{seq}
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
-public class TSequenceMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
-    private final TSerializer          mSerializer;
-    private final TStructDescriptor<T> mDescriptor;
+public class TSequenceMessageReader<T extends TMessage<T>>
+        extends TMessageReader<T> {
+    private final TSerializer             mSerializer;
+    private final TStructDescriptor<T, ?> mDescriptor;
 
     private Sequence          mSequence;
     private File              mCurrent;
     private TMessageReader<T> mReader;
 
-    public TSequenceMessageReader(Sequence sequence, TSerializer serializer, TStructDescriptor<T> descriptor) {
+    public TSequenceMessageReader(Sequence sequence, TSerializer serializer, TStructDescriptor<T, ?> descriptor) {
         mSerializer = serializer;
         mDescriptor = descriptor;
         mSequence = sequence;

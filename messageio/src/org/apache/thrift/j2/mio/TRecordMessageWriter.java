@@ -32,14 +32,12 @@ import org.apache.thrift.j2.serializer.TSerializer;
 
 /**
  * Write messages to a file in the format:
- *
+ * <p/>
  * [file-magic-start]
  * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
-public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWriter<M> {
+public class TRecordMessageWriter<M extends TMessage<M>>
+        implements TMessageWriter<M> {
     protected static final byte[] kMagicFileStart    = new byte[] {
             (byte) 0x74,
             (byte) 0x21,
@@ -61,7 +59,7 @@ public class TRecordMessageWriter<M extends TMessage<M>> implements TMessageWrit
 
     private final TSerializer mSerializer;
 
-    private File mFile;
+    private File             mFile;
     private FileOutputStream mOutputStream;
 
     public TRecordMessageWriter(File file, TSerializer serializer) {

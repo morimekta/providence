@@ -19,17 +19,14 @@
 
 package org.apache.thrift.j2.mio;
 
-import org.apache.thrift.j2.TMessage;
-
 import java.io.IOException;
+
+import org.apache.thrift.j2.TMessage;
 
 /**
  * Read messages (in global order) from a set of files in the format:
- *
+ * <p/>
  * {name}-{shard}-{seq}
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
 public abstract class TMessageReader<T extends TMessage<T>> {
     /**

@@ -1,12 +1,11 @@
 package org.apache.thrift.j2.mio;
 
-import org.apache.thrift.j2.TMessage;
-
 import java.io.IOException;
 
+import org.apache.thrift.j2.TMessage;
+
 /**
- * @author Stein Eldar Johnsen <steineldar@zedge.net>
- * @since 28.10.15
+ * Message writer interface.
  */
 public interface TMessageWriter<M extends TMessage<M>> {
     /**

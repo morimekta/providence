@@ -19,32 +19,30 @@
 
 package org.apache.thrift.j2.mio;
 
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.serializer.TSerializeException;
+import org.apache.thrift.j2.serializer.TSerializer;
+
 /**
  * Read messages (in global order) from a set of files in the format:
- *
+ * <p/>
  * {name}-{shard}-{seq}
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
-public class TFileMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
-    private final TSerializer mSerializer;
-    private final TStructDescriptor<T> mDescriptor;
+public class TFileMessageReader<T extends TMessage<T>>
+        extends TMessageReader<T> {
+    private final TSerializer             mSerializer;
+    private final TStructDescriptor<T, ?> mDescriptor;
 
-    private File mFile;
+    private File        mFile;
     private InputStream mInputStream;
 
-    public TFileMessageReader(File file, TSerializer serializer, TStructDescriptor<T> descriptor) {
+    public TFileMessageReader(File file, TSerializer serializer, TStructDescriptor<T, ?> descriptor) {
         mSerializer = serializer;
         mDescriptor = descriptor;
         mFile = file;
@@ -57,7 +55,8 @@ public class TFileMessageReader<T extends TMessage<T>> extends TMessageReader<T>
         try {
             synchronized (this) {
                 if (mInputStream == null) {
-                    if (mFile == null) return null;
+                    if (mFile == null)
+                        return null;
                     mInputStream = new FileInputStream(mFile);
                 }
                 T message = mSerializer.deserialize(mInputStream, mDescriptor);

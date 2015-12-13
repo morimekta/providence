@@ -28,11 +28,9 @@ import org.apache.thrift.j2.serializer.TSerializer;
 
 /**
  * An output stream that counts the number of bytes written.
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
-public class TSequenceMessageWriter<M extends TMessage<M>> implements TMessageWriter<M> {
+public class TSequenceMessageWriter<M extends TMessage<M>>
+        implements TMessageWriter<M> {
     private static final int DEFAULT_CUTOFF_SIZE = 1_000_000_000;  // <1 gigabyte.
 
     private final TSerializer mSerializer;

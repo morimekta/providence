@@ -37,21 +37,19 @@ import org.apache.thrift.j2.util.TStringUtils;
 
 /**
  * Read messages from a file in the format:
- *
+ * <p/>
  * [file-magic-start]
  * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
- *
- * @author Stein Eldar Johnsen
- * @since 06.09.15
  */
-public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<T> {
-    private final TSerializer          mSerializer;
-    private final TStructDescriptor<T> mDescriptor;
+public class TRecordMessageReader<T extends TMessage<T>>
+        extends TMessageReader<T> {
+    private final TSerializer             mSerializer;
+    private final TStructDescriptor<T, ?> mDescriptor;
 
     private File        mFile;
     private InputStream mInputStream;
 
-    public TRecordMessageReader(File file, TSerializer serializer, TStructDescriptor<T> descriptor) {
+    public TRecordMessageReader(File file, TSerializer serializer, TStructDescriptor<T, ?> descriptor) {
         mSerializer = serializer;
         mDescriptor = descriptor;
         mFile = file;
@@ -136,7 +134,8 @@ public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<
         int read = 0;
         while (read < buffer.length) {
             int tmp = mInputStream.read(buffer, read, buffer.length - read);
-            if (tmp < 0) return false;
+            if (tmp < 0)
+                return false;
             read += tmp;
         }
         return Arrays.equals(buffer, magic);
@@ -150,7 +149,8 @@ public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<
      * @throws FileNotFoundException
      */
     public static boolean hasFileMagic(File file) throws FileNotFoundException {
-        if (file == null || !file.exists()) return false;
+        if (file == null || !file.exists())
+            return false;
 
         FileInputStream fis = new FileInputStream(file);
         try {
@@ -158,7 +158,8 @@ public class TRecordMessageReader<T extends TMessage<T>> extends TMessageReader<
             int read = 0;
             while (read < buffer.length) {
                 int tmp = fis.read(buffer, read, buffer.length - read);
-                if (tmp < 0) return false;
+                if (tmp < 0)
+                    return false;
                 read += tmp;
             }
             return Arrays.equals(buffer, TRecordMessageWriter.kMagicFileStart);
