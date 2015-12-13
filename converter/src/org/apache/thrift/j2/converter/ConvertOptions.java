@@ -319,7 +319,7 @@ public class ConvertOptions {
         }
     }
 
-    public TMessageReader<?> getInput(CmdLineParser cli, TStructDescriptor<?> descriptor) throws CmdLineException {
+    public TMessageReader<?> getInput(CmdLineParser cli, TStructDescriptor<?,?> descriptor) throws CmdLineException {
         TSerializer serializer = getSerializer(cli, mInFormat);
         try {
 

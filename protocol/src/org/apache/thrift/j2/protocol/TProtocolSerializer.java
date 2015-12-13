@@ -75,18 +75,7 @@ class TProtocolSerializer extends TSerializer {
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
             TProtocol protocol = mProtocolFactory.getProtocol(transport);
-            if (message instanceof TServiceCall) {
-                TServiceCall<?> call = (TServiceCall<?>) message;
-                org.apache.thrift.protocol.TMessage msg = new org.apache.thrift.protocol.TMessage(
-                        call.getName(),
-                        call.getType(),
-                        call.getSeqNo());
-                protocol.writeMessageBegin(msg);
-                writeTypedValue(call.getMessage(), call.getMessageDescriptor(), protocol);
-                protocol.writeMessageEnd();
-            } else {
-                write(message, protocol);
-            }
+            write(message, protocol);
             transport.flush();
             wrapper.flush();
             return wrapper.getByteCount();
@@ -107,18 +96,7 @@ class TProtocolSerializer extends TSerializer {
             TProtocol protocol = mProtocolFactory.getProtocol(transport);
             switch (descriptor.getType()) {
                 case MESSAGE:
-                    if (value instanceof TServiceCall) {
-                        TServiceCall<?> call = (TServiceCall<?>) value;
-                        org.apache.thrift.protocol.TMessage msg = new org.apache.thrift.protocol.TMessage(
-                                call.getName(),
-                                call.getType(),
-                                call.getSeqNo());
-                        protocol.writeMessageBegin(msg);
-                        writeTypedValue(call.getMessage(), call.getMessageDescriptor(), protocol);
-                        protocol.writeMessageEnd();
-                    } else {
-                        write((TMessage<?>) value, protocol);
-                    }
+                    write((TMessage<?>) value, protocol);
                     break;
                 default:
                     protocol.writeStructBegin(new TStruct("msg"));
@@ -163,7 +141,7 @@ class TProtocolSerializer extends TSerializer {
             throws TException, TSerializeException {
         switch (descriptor.getType()) {
             case MESSAGE:
-                T ret = cast((Object) readMessage(protocol, (TStructDescriptor<?>) descriptor));
+                T ret = cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) descriptor));
                 return ret;
             default:
                 protocol.readStructBegin();
@@ -181,7 +159,7 @@ class TProtocolSerializer extends TSerializer {
 
     protected void write(TMessage<?> message, TProtocol protocol)
             throws TException, TSerializeException {
-        TStructDescriptor<?> type = message.descriptor();
+        TStructDescriptor<?,?> type = message.descriptor();
 
         protocol.writeStructBegin(new TStruct(message.descriptor().getQualifiedName(null)));
 
@@ -200,66 +178,47 @@ class TProtocolSerializer extends TSerializer {
         protocol.writeStructEnd();
     }
 
-    protected <MSG> void readServiceCall(TProtocol protocol, TServiceCall._Builder<MSG> builder)
-            throws TException, TSerializeException {
-        org.apache.thrift.protocol.TMessage msg = protocol.readMessageBegin();
-
-        MSG message = readTypedValue(builder.getMessageDescriptor().getType().id,
-                                     builder.getMessageDescriptor(),
-                                     protocol);
-        builder.setName(msg.name);
-        builder.setType(msg.type);
-        builder.setSeqNo(msg.seqid);
-        builder.setMessage(message);
-
-        protocol.readMessageEnd();
-    }
-
-    protected <T extends TMessage<T>> T readMessage(TProtocol protocol, TStructDescriptor<T> descriptor)
+    protected <T extends TMessage<T>> T readMessage(TProtocol protocol, TStructDescriptor<T,?> descriptor)
             throws TSerializeException, TException {
         org.apache.thrift.protocol.TField f;
 
         TMessageBuilder<T> builder = descriptor.factory().builder();
-        if (builder instanceof TServiceCall._Builder) {
-            TServiceCall._Builder<?> scBuilder = (TServiceCall._Builder<?>) (TMessageBuilder<?>) builder;
-            readServiceCall(protocol, scBuilder);
-        } else {
-            protocol.readStructBegin();  // ignored.
-            while ((f = protocol.readFieldBegin()) != null) {
-                TType type = TType.findById(f.type);
-                if (type.equals(TType.STOP)) {
-                    break;
-                }
-
-                TField<?> field;
-                if (f.id != 0) {
-                    field = descriptor.getField(f.id);
-                    if (field == null) {
-                        throw new TSerializeException("No such field " + f.id + " in " + descriptor.getQualifiedName(null));
-                    }
-                } else {
-                    field = descriptor.getField(f.name);
-                    if (field == null) {
-                        throw new TSerializeException("No such field " + f.name + " in " + descriptor.getQualifiedName(null));
-                    }
-                }
-
-                if (f.type != getFieldType(field.getDescriptor())) {
-                    throw new TSerializeException("Incompatible serialized type " + type +
-                                                  " for field " + field.getName() +
-                                                  ", expected " + field.getDescriptor().getType());
-                }
-
-                Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
-                if (value == null) {
-                    throw new TSerializeException("Illegal null field value");
-                }
-                builder.set(field.getKey(), value);
-
-                protocol.readFieldEnd();
+        protocol.readStructBegin();  // ignored.
+        while ((f = protocol.readFieldBegin()) != null) {
+            TType type = TType.findById(f.type);
+            if (type.equals(TType.STOP)) {
+                break;
             }
-            protocol.readStructEnd();
+
+            TField<?> field;
+            if (f.id != 0) {
+                field = descriptor.getField(f.id);
+                if (field == null) {
+                    throw new TSerializeException("No such field " + f.id + " in " + descriptor.getQualifiedName(null));
+                }
+            } else {
+                field = descriptor.getField(f.name);
+                if (field == null) {
+                    throw new TSerializeException(
+                            "No such field " + f.name + " in " + descriptor.getQualifiedName(null));
+                }
+            }
+
+            if (f.type != getFieldType(field.getDescriptor())) {
+                throw new TSerializeException("Incompatible serialized type " + type +
+                                              " for field " + field.getName() +
+                                              ", expected " + field.getDescriptor().getType());
+            }
+
+            Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
+            if (value == null) {
+                throw new TSerializeException("Illegal null field value");
+            }
+            builder.set(field.getKey(), value);
+
+            protocol.readFieldEnd();
         }
+        protocol.readStructEnd();
 
         if (!builder.isValid()) {
             throw new TSerializeException("Read invalid message from protocol");
@@ -301,7 +260,7 @@ class TProtocolSerializer extends TSerializer {
                 }
                 return cast(protocol.readString());
             case MESSAGE:
-                return cast((Object) readMessage(protocol, (TStructDescriptor<?>) type));
+                return cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) type));
             case ENUM:
                 TEnumDescriptor<?> ed = (TEnumDescriptor<?>) type;
                 TEnumBuilder<?> eb = ed.factory().builder();

@@ -80,7 +80,7 @@ public class Convert {
                 throw new CmdLineException(cli, new FormatString("Not a message type: "), mOpts.mType);
             }
 
-            TStructDescriptor<?> desc = (TStructDescriptor<?>) tmpDesc;
+            TStructDescriptor<?,?> desc = (TStructDescriptor<?,?>) tmpDesc;
             TMessageReader input = mOpts.getInput(cli, desc);
             TMessageWriter output = mOpts.getOutput(cli);
 
