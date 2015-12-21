@@ -100,18 +100,12 @@ public class TCEnum
         @Override
         public Builder setByValue(int id) {
             mValue = mType.getValueById(id);
-            if (mValue == null) {
-                throw new IllegalArgumentException("No value for id " + id);
-            }
             return this;
         }
 
         @Override
         public Builder setByName(String name) {
             mValue = mType.getValueByName(name);
-            if (mValue == null) {
-                throw new IllegalArgumentException("No value for name " + name);
-            }
             return this;
         }
     }

@@ -1,6 +1,6 @@
 java_library(
   name = "utils",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob(["java/**/*.java"]),
   deps = [
     "//third-party:args4j",
   ],

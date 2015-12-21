@@ -1,6 +1,6 @@
 java_library(
   name = "protocol",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob(["java/**/*.java"]),
   deps = [
     "//core:core",
     "//third-party:libthrift",

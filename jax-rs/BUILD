@@ -1,6 +1,6 @@
 java_library(
   name = "jax-rs",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob(["java/**/*.java"]),
   deps = [
     "//core:core",
     "//third-party:jax-rs",
@@ -10,7 +10,7 @@ java_library(
 
 java_test(
   name = "test",
-  srcs = glob(["test/**/*.java"]),
+  srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":jax-rs",
     "//core:core",

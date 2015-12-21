@@ -1,8 +1,8 @@
 java_library(
   name = "compiler",
   srcs = glob(
-    ["src/**/*.java"],
-    exclude = ['src/org/apache/thrift/j2/compiler/Compiler.java']),
+    ["java/**/*.java"],
+    exclude = ['java/org/apache/thrift/j2/compiler/Compiler.java']),
   deps = [
     "//core:core",
     "//reflect:reflect",
@@ -16,7 +16,7 @@ java_library(
 
 java_test(
   name = "test",
-  srcs = glob(["test/**/*.java"]),
+  srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":compiler",
     "//core:core",
@@ -29,7 +29,7 @@ java_test(
 java_binary(
   name = "thrift-j2c",
   srcs = [
-    'src/org/apache/thrift/j2/compiler/Compiler.java',
+    'java/org/apache/thrift/j2/compiler/Compiler.java',
   ],
   deps = [
     ":compiler",

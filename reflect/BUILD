@@ -8,7 +8,7 @@ filegroup(
 java_library(
   name = "reflect",
   srcs = glob([
-    "src/**/*.java",
+    "java/**/*.java",
     "model/**/*.java",
   ]),
   deps = [
@@ -20,7 +20,7 @@ java_library(
 java_test(
   name = "test",
   size = "small",
-  srcs = glob(["test/**/*.java"]),
+  srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":reflect",
     "//core:core",

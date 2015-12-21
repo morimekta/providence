@@ -1,6 +1,6 @@
 java_binary(
   name = "thrift-j2",
-  srcs = glob(["src/**/*.java"]),
+  srcs = glob(["java/**/*.java"]),
   deps = [
     "//core",
     "//messageio",
