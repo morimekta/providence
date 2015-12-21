@@ -17,10 +17,14 @@ java_test(
   name = "test",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
-    "//external:android-util",
+    "//third-party:android-util",
     "//third-party:junit",
     ":core",
     ":generated",
+  ],
+  resources = [
+    "//third-party:LICENSE-Apache-2.0",
+    "//third-party:LICENSE-MIT",
   ],
   size = 'small',
 )

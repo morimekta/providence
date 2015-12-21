@@ -1,68 +1,69 @@
 java_library(
-  name = 'junit',
-  exports = [
-    '@junit_junit//jar',
-    '@org.hamcrest_hamcrest-core//jar'
-  ],
-  visibility = ['//visibility:public'],
-  resources = ['LICENSE-Apache-2.0'],
-  licenses = ['notice'],
+    name = 'android-util',
+    exports = [
+        '@android-util-git//java',
+    ],
+    visibility = ['//visibility:public'],
 )
 
-java_library(
-  name = 'args4j',
-  exports = [
-    '@args4j_args4j//jar',
-  ],
-  visibility = ['//visibility:public'],
-  resources = ['LICENSE-MIT'],
-  licenses = ['notice'],
+exports_files(
+    glob(['LICENSE-*']),
+    visibility = ['//visibility:public'],
 )
 
-java_library(
-  name = 'google-http-client',
-  exports = [
-    '@com.google.http-client_google-http-client//jar',
-    '@org.apache.httpcomponents_httpclient//jar',
-    '@org.apache.httpcomponents_httpcore//jar',
-    '@com.google.code.findbugs_jsr305//jar',
-    '@commons-codec_commons-codec//jar',
-    '@commons-logging_commons-logging//jar',
-    '@avalon-framework_avalon-framework//jar',
-    '@logkit_logkit//jar',
-    '@log4j_log4j//jar',
-  ],
-  visibility = ['//visibility:public'],
-  resources = [
-    'LICENSE-Apache-2.0',
-  ],
-  licenses = ['notice'],
-)
+# --- AUTO_UPDATED AFTER THIS LINE ---
+
+# The following dependencies were calculated from:
+# /home/steineldar/src/thrift-j2/./compiler/pom.xml
+# /home/steineldar/src/thrift-j2/./utils/pom.xml
+# /home/steineldar/src/thrift-j2/./messageio/pom.xml
+# /home/steineldar/src/thrift-j2/./reflect/pom.xml
+# /home/steineldar/src/thrift-j2/./jax-rs/pom.xml
+# /home/steineldar/src/thrift-j2/./core/pom.xml
+# /home/steineldar/src/thrift-j2/./protocol/pom.xml
+# /home/steineldar/src/thrift-j2/./converter/pom.xml
+
 
 java_library(
-  name = 'libthrift',
-  exports = [
-    '@org.apache.thrift_libthrift//jar',
-    '@org.slf4j_slf4j-api//jar',
-    '@org.slf4j_slf4j-simple//jar',
-    '@org.apache.httpcomponents_httpcore//jar',
-  ],
-  visibility = ['//visibility:public'],
-  resources = [
-    'LICENSE-Apache-2.0',  # thrift, httpclient
-    'LICENSE-MIT',         # slf4j
-  ],
-  licenses = ['notice'],
+    name = "args4j",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@args4j_args4j//jar",
+    ],
 )
-
 java_library(
-  name = 'jax-rs',
-  exports = [
-    '@javax.ws.rs_javax.ws.rs-api//jar',
-  ],
-  visibility = ['//visibility:public'],
-  resources = [
-    'LICENSE-CDDL-GPL-1.1',
-  ],
-  licenses = ['restricted_if_statically_linked'],
+    name = "javax.ws.rs-api",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@javax.ws.rs_javax.ws.rs-api//jar",
+    ],
+)
+java_library(
+    name = "junit",
+    visibility = ["//visibility:public"],
+    testonly = 1,
+    exports = [
+        "@junit_junit//jar",
+        "@org.hamcrest_hamcrest-core//jar",
+    ],
+)
+java_library(
+    name = "libthrift",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@org.apache.thrift_libthrift//jar",
+        "@commons-codec_commons-codec//jar",
+        "@commons-logging_commons-logging//jar",
+        "@org.apache.httpcomponents_httpclient//jar",
+        "@org.apache.httpcomponents_httpcore//jar",
+        "@org.slf4j_slf4j-api//jar",
+    ],
+)
+java_library(
+    name = "slf4j-simple",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@org.slf4j_slf4j-simple//jar",
+        "@org.slf4j_slf4j-api//jar",
+    ],
 )

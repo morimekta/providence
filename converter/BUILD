@@ -7,6 +7,7 @@ java_binary(
     "//protocol",
     "//reflect",
     "//third-party:args4j",
+    "//third-party:slf4j-simple",
     "//utils",
   ],
   main_class = "org.apache.thrift.j2.converter.Convert",
