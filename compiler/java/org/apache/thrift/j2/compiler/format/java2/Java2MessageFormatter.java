@@ -20,6 +20,7 @@
 package org.apache.thrift.j2.compiler.format.java2;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -194,7 +195,7 @@ public class Java2MessageFormatter {
                 writer.formatln("dest.writeInt(%s.getValue());", fName);
                 break;
             case MESSAGE:
-                writer.formatln("dest.writeParcelable(%s, 0);", fName);
+                writer.formatln("dest.writeTypedObject(%s, 0);", fName);
                 break;
             case LIST:
             case SET:
@@ -237,8 +238,13 @@ public class Java2MessageFormatter {
                               .appendln('}');
                         break;
                     case MESSAGE:
-                        writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
-                                        fName, iTypeName, fName);
+                        if (desc.getType().equals(TType.SET)) {
+                            writer.formatln("dest.writeTypedList(new ArrayList<>(%s));",
+                                            fName, iTypeName, fName);
+                        } else {
+                            writer.formatln("dest.writeTypedList(%s);",
+                                            fName, iTypeName, fName);
+                        }
                         break;
                     case ENUM:
                         appendParcelableArrayConverter(writer, iTypeName, fName, "int", "item.getValue()");
@@ -406,7 +412,7 @@ public class Java2MessageFormatter {
                                 setF, classF);
                 break;
             case MESSAGE:
-                writer.formatln("builder.%s((%s) source.readParcelable(%s.class.getClassLoader()));",
+                writer.formatln("builder.%s((%s) source.readTypedObject(%s.CREATOR));",
                                 setF, classF, classF);
                 break;
             case LIST:
@@ -445,8 +451,8 @@ public class Java2MessageFormatter {
                         break;
                     case MESSAGE:
                         writer.formatln(
-                                "builder.%s(source.createTypedArray(%s.CREATOR));",
-                                addToF, cItemClass, cItemClass);
+                                "builder.%s(source.createTypedArrayList(%s.CREATOR));",
+                                setF, cItemClass, cItemClass);
                         break;
                     case ENUM:
                         writer.appendln("int[] tmp = source.createIntArray();")
@@ -1670,6 +1676,9 @@ public class Java2MessageFormatter {
                 header.include(TSet.class.getName());
                 header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
                 header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
+                if (mAndroid) {
+                    header.include(ArrayList.class.getName());
+                }
                 addTypeImports(header, sType.itemDescriptor());
                 break;
             case MAP:

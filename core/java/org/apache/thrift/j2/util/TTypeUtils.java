@@ -19,7 +19,6 @@
 
 package org.apache.thrift.j2.util;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -96,10 +95,9 @@ public class TTypeUtils {
     }
 
     public static boolean equals(Object v1, Object v2) {
+        if (v1 == v2) return true;
         if ((v1 == null) != (v2 == null)) {
             return false; // only one is null
-        } else if (v1 == null) {
-            return true;
         } else if (v1 instanceof byte[] && v2 instanceof byte[]) {
             return Arrays.equals((byte[]) v1, (byte[]) v2);
         } else if (v1 instanceof List && v2 instanceof List) {
@@ -175,10 +173,9 @@ public class TTypeUtils {
 
     private static <T> int hashCodeList(List<T> list) {
         int hash = List.class.hashCode();
-        int i = 0;
+        int i = 31;
         for (T t : list) {
-            hash += Integer.valueOf(i++).hashCode();
-            hash += (t.getClass().hashCode() * t.hashCode());
+            hash ^= (++i * t.getClass().hashCode() * hashCode(t));
         }
         return hash;
     }
@@ -186,7 +183,7 @@ public class TTypeUtils {
     private static <T> int hashCodeSet(Set<T> list) {
         int hash = Set.class.hashCode();
         for (T t : list) {
-            hash += (t.getClass().hashCode() * t.hashCode());
+            hash ^= t.getClass().hashCode() * hashCode(t);
         }
         return hash;
     }
@@ -194,7 +191,7 @@ public class TTypeUtils {
     private static <K, V> int hashCodeMap(Map<K, V> map) {
         int hash = Map.class.hashCode();
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            hash += hashCode(entry.getKey()) * hashCode(entry.getValue());
+            hash ^= hashCode(entry.getKey()) * hashCode(entry.getValue());
         }
         return hash;
     }
