@@ -16,11 +16,12 @@ filegroup(
 )
 
 test_suite(
-    name = 'tests',
+    name = 'all_tests',
     tests = [
         '//compiler:test',
         '//core:test',
         '//jax-rs:test',
+        '//messageio:test',
         '//reflect:test',
     ],
 )

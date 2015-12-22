@@ -2,13 +2,13 @@
 
 bind(
     name = 'android-util',
-    actual = '@android-util-git//src:src'
+    actual = '@android-util-git//java'
 )
 
 git_repository(
   name = 'android-util-git',
   remote = 'https://github.com/morimekta/android-util.git',
-  commit = 'fa7dc844',
+  commit = '97e14a2',
 )
 
 ## ----------- DEPS

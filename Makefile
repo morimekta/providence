@@ -8,14 +8,7 @@ model:
 resources:
 	mkdir -p ${PWD}/core/generated
 	rm -rf ${PWD}/core/generated/net
-	# bazel run //compiler:thrift-j2c -- --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
 	bazel run //compiler:thrift-j2c -- --android --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
-
-release:
-	bazel build //:thrift-j2
-
-test:
-	bazel test :tests
 
 thrift-j2:
 	bazel build //converter:thrift-j2_deploy.jar
@@ -31,4 +24,4 @@ install: thrift-j2 thrift-j2c
 	chmod a+x ${HOME}/.local/bin/thrift-j2 ${HOME}/.local/bin/thrift-j2c
 	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
 
-.PHONY: model resources test install thrift-j2 thrift-j2c
+.PHONY: model resources install thrift-j2 thrift-j2c
