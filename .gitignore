@@ -17,10 +17,15 @@ bazel-out
 bazel-testlogs
 bazel-thrift-j2
 
-core/generated/
+generated*/
+generated*
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+lib/
+lib
 out/
-buck-out/
+out
+target/
+target
