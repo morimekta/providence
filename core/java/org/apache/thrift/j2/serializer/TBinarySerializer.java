@@ -35,7 +35,6 @@ import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -93,7 +92,11 @@ public class TBinarySerializer
     public <T> int serialize(OutputStream output, TDescriptor<T> descriptor, T value)
             throws IOException, TSerializeException {
         try {
-            return writeFieldValue(output, value);
+            if (descriptor.getType().equals(TType.MESSAGE)) {
+                return serialize(output, (TMessage<?>) value);
+            } else {
+                return writeFieldValue(output, value);
+            }
         } catch (IOException e) {
             throw new TSerializeException(e, "Unable to write to stream");
         }
@@ -171,27 +174,23 @@ public class TBinarySerializer
         int type_and_flag = in.read();
         if (type_and_flag == -1) {
             throw new TSerializeException("unable to read field info. End of stream.");
-        } else if (type_and_flag == 0) {
-            return null;
+        } else if (type_and_flag < 0x10) {
+            throw new TSerializeException(String.format("No type on field", id));
         }
 
-        int flag = (type_and_flag & 0x0f);
-
-        return new FieldInfo(id, DataType.findById(type_and_flag), (byte) flag);
+        return new FieldInfo(id, type_and_flag);
     }
 
     protected FieldInfo readEntryFieldInfo(InputStream in, int fieldId) throws IOException, TSerializeException {
         int type_and_flag = in.read();
 
-        if (type_and_flag == 0) {
-            return null;
-        } else if (type_and_flag == -1) {
+        if (type_and_flag == -1) {
             throw new TSerializeException("unable to read field info.");
+        } else if (type_and_flag < 0x10) {
+            throw new TSerializeException("No type on entry.");
         }
 
-        int flag = (type_and_flag & 0x0f);
-
-        return new FieldInfo(fieldId, DataType.findById(type_and_flag), (byte) flag);
+        return new FieldInfo(fieldId, type_and_flag);
     }
 
     /**
@@ -206,7 +205,7 @@ public class TBinarySerializer
     protected <T> T readFieldValue(InputStream in, FieldInfo fieldInfo, TDescriptor<T> type)
             throws IOException, TSerializeException {
         switch (fieldInfo.getType()) {
-            case BOOLEAN:
+            case DataType.BOOLEAN:
                 if (type != null) {
                     switch (type.getType()) {
                         case BOOL:
@@ -226,12 +225,10 @@ public class TBinarySerializer
                     }
                 }
                 return null;
-            case INTEGER:
+            case DataType.INTEGER:
                 Long number = readSigned(in, fieldInfo.getNumericBytes());
                 if (type != null) {
                     switch (type.getType()) {
-                        case BOOL:
-                            return cast(number.intValue() != 0);
                         case BYTE:
                             return cast(number.byteValue());
                         case I16:
@@ -253,9 +250,9 @@ public class TBinarySerializer
                     }
                 }
                 return null;
-            case DOUBLE:
+            case DataType.DOUBLE:
                 return cast(readDouble(in));
-            case BINARY:
+            case DataType.BINARY:
                 int bytes = fieldInfo.getArrayLengthBytes();
                 int length = (int) readUnsigned(in, bytes);
                 byte[] binary = readBinary(in, length);
@@ -264,13 +261,13 @@ public class TBinarySerializer
                         case BINARY:
                             return cast(TBinary.wrap(binary));
                         case STRING:
-                            return cast(new String(binary, fieldInfo.getStringEncoding()));
+                            return cast(new String(binary, StandardCharsets.UTF_8));
                         default:
                             throw new TSerializeException("Illegal type for binary encoding: " + type);
                     }
                 }
                 return null;
-            case MESSAGE:
+            case DataType.MESSAGE:
                 if (type != null) {
                     if (!type.getType().equals(TType.MESSAGE)) {
                         throw new TSerializeException("Invalid type for message encoding: " + type);
@@ -281,7 +278,7 @@ public class TBinarySerializer
                     consumeMessage(in);
                     return null;
                 }
-            case MAP: {
+            case DataType.MAP: {
                 TDescriptor keyType = null;
                 TDescriptor valueType = null;
                 if (type != null) {
@@ -317,7 +314,7 @@ public class TBinarySerializer
                 }
                 return cast(out);
             }
-            case COLLECTION: {
+            case DataType.COLLECTION: {
                 TDescriptor entryType = null;
                 if (type != null) {
                     if (!type.getType().equals(TType.LIST) &&
@@ -349,7 +346,7 @@ public class TBinarySerializer
                 return cast(out);
             }
             default:
-                throw new TSerializeException("unknown data type.");
+                throw new TSerializeException("unknown data type: " + fieldInfo.getType());
         }
     }
 
@@ -377,9 +374,10 @@ public class TBinarySerializer
         int shift = 0;
         for (int i = 0; i < numBytes; ++i) {
             long read = (long) in.read();
-            if (read == -1)
+            if (read < 0) {
                 throw new TSerializeException("Unexpected end of stream");
-            out = out ^ (read << shift);
+            }
+            out = out | (read << shift);
             shift += 8;
         }
         return out;
@@ -454,28 +452,24 @@ public class TBinarySerializer
     @SuppressWarnings("unchecked")
     protected int writeFieldValue(OutputStream out, Object value) throws IOException, TSerializeException {
         if (value instanceof TMessage) {
-            int type = DataType.MESSAGE.id;
-            int flags = 0;
-            out.write(type | flags);
+            int flags = DataType.MESSAGE;
+            out.write(flags);
             return 1 + serialize(out, (TMessage<?>) value);
         } else if (value instanceof Boolean) {
-            int type = DataType.BOOLEAN.id;
-            int flags = (Boolean) value ? FieldInfo.TRUE : FieldInfo.FALSE;
-            out.write(type | flags);
+            int flags = DataType.BOOLEAN | ((Boolean) value ? FieldInfo.TRUE : FieldInfo.FALSE);
+            out.write(flags);
             return 1;
         } else if (value instanceof TBinary) {
-            return writeBinary(out, FieldInfo.ENCODING_ISO_8859_1, ((TBinary) value).get());
+            return writeBinary(out, (TBinary) value);
         } else if (value instanceof String) {
-            byte[] bytes = ((String) value).getBytes(StandardCharsets.UTF_8);
-            return writeBinary(out, FieldInfo.ENCODING_UTF_8, bytes);
+            return writeBinary(out, TBinary.wrap(((String) value).getBytes(StandardCharsets.UTF_8)));
         } else if (value instanceof Double) {
             return writeDouble(out, (Double) value);
         } else if (value instanceof Map) {
             Map<Object,Object> map = (Map<Object,Object>) value;
-            final int type = DataType.MAP.id;
-            final int lengthBytes = getBinaryLengthBytes(map.size());
-            final int flags = lengthBytes - 1;
-            out.write(type | flags);
+            final int lengthBytes = getArrayLengthBytes(map.size());
+            final int flags = DataType.MAP | (lengthBytes - 1);
+            out.write(flags);
             int len = 1 + writeUnsigned(out, map.size(), lengthBytes);
             for (Map.Entry<Object, Object> entry : map.entrySet()) {
                 len += writeFieldValue(out, entry.getKey());
@@ -484,10 +478,9 @@ public class TBinarySerializer
             return len;
         } else if (value instanceof Collection) {
             Collection<Object> coll = (Collection<Object>) value;
-            final int type = DataType.COLLECTION.id;
-            final int lengthBytes = getBinaryLengthBytes(coll.size());
-            final int flags = lengthBytes - 1;
-            out.write(type | flags);
+            final int lengthBytes = getArrayLengthBytes(coll.size());
+            final int flags = DataType.COLLECTION | (lengthBytes - 1);
+            out.write(flags);
             int len = 1 + writeUnsigned(out, coll.size(), lengthBytes);
             for (Object item : ((Collection<Object>) value)) {
                 len += writeFieldValue(out, item);
@@ -501,15 +494,8 @@ public class TBinarySerializer
             } else {
                 number = ((Number) value).longValue();
             }
-            if (number == 0) {
-                int type = DataType.BOOLEAN.id;
-                int flags = FieldInfo.FALSE;
-                out.write(type | flags);
-                return 1;
-            }
-            int flags = getNumericByteLengthFlag(number);
-            int type = DataType.INTEGER.id;
-            out.write(type | flags);
+            int flags = DataType.INTEGER | getNumericByteLengthFlag(number);
+            out.write(flags);
 
             int numBytes = getNumericByteLength(number);
             return 1 + writeSigned(out, number, numBytes);
@@ -525,8 +511,8 @@ public class TBinarySerializer
      * @throws IOException
      */
     protected int writeDouble(OutputStream out, double value) throws IOException {
-        int type = DataType.DOUBLE.id;
-        out.write(type);
+        int flags = DataType.DOUBLE;
+        out.write(flags);
         long number = Double.doubleToLongBits(value);
         return 1 + writeUnsigned(out, number, 8);
     }
@@ -570,9 +556,8 @@ public class TBinarySerializer
      */
     protected int writeUnsigned(OutputStream out, long number, final int bytes) throws IOException {
         for (int i = 0; i < bytes; ++i) {
-            out.write((int) number & 0xff);
-            number = number & 0xffffffffffffff00L;
-            number = number >> 8;
+            out.write((int) (number & 0x00000000000000ffL));
+            number = (number & 0xffffffffffffff00L) >> 8;
         }
         return bytes;
     }
@@ -580,20 +565,18 @@ public class TBinarySerializer
     /**
      *
      * @param out
-     * @param flags
      * @param bytes
      * @return
      * @throws IOException
      */
-    protected int writeBinary(OutputStream out, int flags, byte[] bytes) throws IOException {
-        int type = DataType.BINARY.id;
-        int lengthBytes = getBinaryLengthBytes(bytes.length);
-        flags |= (lengthBytes - 1);
-        out.write(type | flags);
-        writeUnsigned(out, bytes.length, lengthBytes);
-        out.write(bytes, 0, bytes.length);
+    protected int writeBinary(OutputStream out, TBinary bytes) throws IOException {
+        int lengthBytes = getArrayLengthBytes(bytes.length());
+        int flags = DataType.BINARY | ((lengthBytes - 1) & 0x03);
+        out.write(flags);
+        writeUnsigned(out, bytes.length(), lengthBytes);
+        bytes.write(out);
 
-        return 1 + lengthBytes + bytes.length;
+        return 1 + lengthBytes + bytes.length();
     }
 
     // --- HELPER METHODS ---
@@ -602,12 +585,12 @@ public class TBinarySerializer
      * @param length
      * @return
      */
-    protected int getBinaryLengthBytes(int length) {
-        if (length > ((1 << 24) - 1))
+    protected int getArrayLengthBytes(int length) {
+        if (length >= ((1 << 24) - 1))
             return 4;
-        if (length > ((1 << 16) - 1))
+        if (length >= ((1 << 16) - 1))
             return 3;
-        if (length > ((1 << 8) - 1))
+        if (length >= ((1 << 8) - 1))
             return 2;
         return 1;
     }
@@ -662,73 +645,57 @@ public class TBinarySerializer
     /**
      * DataType. Available values 1..7 (3-bit)
      */
-    protected enum DataType {
-        BOOLEAN(0x10),    // boolean / small int value in flags.
-        INTEGER(0x20),    // -> byte, i16, i32, i64, little endian, signed.
-        DOUBLE(0x30),     // -> 64 bit double
-        BINARY(0x40),     // -> binary, string with encoding.
-        MESSAGE(0x50),    // -> messages, terminated with field-ID 0.
-        MAP(0x60),        // -> map.
-        COLLECTION(0x70); // -> list, set.
-
-        public int id;
-
-        DataType(int id) {
-            this.id = id;
-        }
-
-        /**
-         * Find data type by type ID.
-         * @param id The ID number.
-         * @return The DataType.
-         */
-        public static DataType findById(int id) throws TSerializeException {
-            final int t = id & 0xf0;
-            for (DataType type : values()) {
-                if (t == type.id) {
-                    return type;
-                }
-            }
-            throw new TSerializeException("No such data type: " + id);
-        }
+    protected interface DataType {
+        int BOOLEAN    = 0x10;  // boolean / small int value in flags.
+        int INTEGER    = 0x20;  // -> byte, i16, i32, i64, little endian, signed.
+        int DOUBLE     = 0x30;  // -> 64 bit double
+        int BINARY     = 0x40;  // -> binary, string with encoding.
+        int MESSAGE    = 0x50;  // -> messages, terminated with field-ID 0.
+        int COLLECTION = 0x60;  // -> list, set.
+        int MAP        = 0x70;  // -> map.
     }
 
     /**
      * Field info data holder with convenience methods.
      */
     protected static class FieldInfo {
-        private final int      mId;
-        private final DataType mType;
-        private final byte     mFlags;
+        private final int id;
+        private final int type;
+        private final int flag;
 
-        public FieldInfo(int id, DataType type, byte flags) {
-            mId = id;
-            mType = type;
-            mFlags = flags;
+        public FieldInfo(int id, int flags) {
+            this.id = id;
+            this.type = flags & 0xf0;
+            this.flag = flags & 0x0f;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("field(%d: %1x, %1x)", id, type >> 4, flag);
         }
 
         public int getId() {
-            return mId;
+            return id;
         }
 
-        public DataType getType() {
-            return mType;
+        public int getType() {
+            return type;
         }
 
         public boolean getBooleanValue() {
-            return (mFlags & 0x01) != 0;
+            return (flag & TRUE) != 0;
         }
 
         public int getIntegerValue() {
-            return mFlags;
+            return flag;
         }
 
         public int getArrayLengthBytes() {
-            return (mFlags & 0x03) + 1;
+            return (flag & 0x03) + 1;
         }
 
         public int getNumericBytes() throws TSerializeException {
-            switch (mFlags & 0x03) {
+            switch (flag & 0x03) {
                 case FIXED_8:
                     return Byte.BYTES;
                 case FIXED_16:
@@ -741,17 +708,6 @@ public class TBinarySerializer
                     throw new TSerializeException("OOPS");
             }
         }
-
-        public Charset getStringEncoding() {
-            if ((mFlags & ENCODING_UTF_8) != 0) {
-                return StandardCharsets.UTF_8;
-            } else {
-                return StandardCharsets.ISO_8859_1;
-            }
-        }
-
-        public static final int ENCODING_ISO_8859_1 = 0x00;
-        public static final int ENCODING_UTF_8      = 0x04;
 
         public static final int FIXED_8  = 0x00;
         public static final int FIXED_16 = 0x01;
