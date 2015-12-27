@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
@@ -43,7 +44,6 @@ import org.apache.thrift.j2.descriptor.TList;
 import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TSet;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.thrift.j2.util.TStringUtils;
 import org.apache.thrift.j2.util.io.CountingOutputStream;
 import org.apache.thrift.j2.util.json.JsonException;
@@ -379,7 +379,7 @@ public class TJsonSerializer
                     throw new TSerializeException("Not a valid string value: " + token.getToken());
                 case BINARY:
                     if (token.isLiteral()) {
-                        return cast(parseBinary(token.literalValue()));
+                        return cast(TBinary.fromBase64(token.literalValue()));
                     }
                     throw new TSerializeException("Not a valid binary value: " + token.getToken());
                 case ENUM:
@@ -526,7 +526,7 @@ public class TJsonSerializer
                 case STRING:
                     return key;
                 case BINARY:
-                    return parseBinary(key);
+                    return TBinary.fromBase64(key);
                 case MESSAGE:
                     TStructDescriptor<?,?> st = (TStructDescriptor<?,?>) keyType;
                     if (!st.isSimple()) {
@@ -654,8 +654,8 @@ public class TJsonSerializer
             return new String(out.toByteArray(), StandardCharsets.UTF_8);
         } else if (primitive instanceof String) {
             return (String) primitive;
-        } else if (primitive instanceof byte[]) {
-            return formatBinary((byte[]) primitive);
+        } else if (primitive instanceof TBinary) {
+            return ((TBinary) primitive).toBase64();
         } else if (primitive instanceof TMessage) {
             TMessage<?> message = (TMessage<?>) primitive;
             if (!message.isSimple()) {
@@ -695,31 +695,11 @@ public class TJsonSerializer
             writer.value(((Number) primitive).doubleValue());
         } else if (primitive instanceof String) {
             writer.value(primitive);
-        } else if (primitive instanceof byte[]) {
-            writer.value(formatBinary((byte[]) primitive));
+        } else if (primitive instanceof TBinary) {
+            writer.value(((TBinary) primitive).toBase64());
         } else {
             throw new TSerializeException("illegal primitive type class " +
                                           primitive.getClass().getSimpleName());
         }
-    }
-
-    /**
-     * Formats binary data into string for putting into JSON format.
-     *
-     * @param binary The byte array to format.
-     * @return The encoded string.
-     */
-    protected String formatBinary(byte[] binary) {
-        return TBase64Utils.encode(binary);
-    }
-
-    /**
-     * Parse a string into binary format using the same rules as above.
-     *
-     * @param value The string to decode.
-     * @return The decoded byte array.
-     */
-    protected byte[] parseBinary(String value) {
-        return TBase64Utils.decode(value);
     }
 }

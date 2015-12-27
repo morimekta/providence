@@ -19,15 +19,15 @@
 
 package org.apache.thrift.j2.reflect.contained;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -77,7 +77,7 @@ public class TCMessageTest {
                                     .set(5, Long.MAX_VALUE)
                                     .set(6, 1234567890.09876)
                                     .set(9998, "string")
-                                    .set(9999, new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 })
+                                    .set(9999, TBinary.wrap(new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 }))
                                     .build();
         TCStruct outer = mStructType.factory()
                                     .builder()
@@ -105,8 +105,8 @@ public class TCMessageTest {
         assertEquals(Long.MAX_VALUE, struct.get(5));
         assertEquals(1234567890.09876, struct.get(6));
         assertEquals("string", struct.get(9998));
-        assertArrayEquals(new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 },
-                          (byte[]) struct.get(9999));
+        assertEquals(TBinary.wrap(new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 }),
+                     struct.get(9999));
 
         assertNull(struct.get(1234));
 

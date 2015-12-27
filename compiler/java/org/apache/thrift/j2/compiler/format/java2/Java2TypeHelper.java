@@ -36,6 +36,7 @@ import org.apache.thrift.j2.descriptor.TPrimitive;
 import org.apache.thrift.j2.descriptor.TSet;
 import org.apache.thrift.j2.reflect.contained.TCDocument;
 import org.apache.thrift.j2.reflect.util.TTypeRegistry;
+import org.apache.thrift.j2.TBinary;
 
 import static org.apache.thrift.j2.util.TStringUtils.camelCase;
 
@@ -76,7 +77,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getName();
             case BINARY:
-                return "byte[]";
+                return TBinary.class.getName();
             case MAP:
                 return LinkedHashMap.class.getName();
             case SET:
@@ -112,7 +113,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return "byte[]";
+                return TBinary.class.getSimpleName();
             case MAP:
                 return LinkedHashMap.class.getSimpleName();
             case SET:
@@ -164,7 +165,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return "byte[]";
+                return TBinary.class.getSimpleName();
             case MAP:
                 TMap<?, ?> mType = (TMap<?, ?>) type;
                 return String.format("%s<%s,%s>",
@@ -205,7 +206,7 @@ public class Java2TypeHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return "byte[]";
+                return TBinary.class.getSimpleName();
             case MAP:
                 TMap<?, ?> mType = (TMap<?, ?>) type;
                 return String.format("%s<%s,%s>",

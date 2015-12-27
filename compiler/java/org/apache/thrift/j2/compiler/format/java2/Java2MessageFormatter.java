@@ -47,6 +47,7 @@ import org.apache.thrift.j2.descriptor.TStructDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TUnionDescriptor;
 import org.apache.thrift.j2.descriptor.TUnionDescriptorProvider;
 import org.apache.thrift.j2.descriptor.TValueProvider;
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.util.TTypeUtils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
@@ -189,7 +190,7 @@ public class Java2MessageFormatter {
                 writer.formatln("dest.writeString(%s);", fName);
                 break;
             case BINARY:
-                writer.formatln("dest.writeByteArray(%s);", fName);
+                writer.formatln("dest.writeByteArray(%s.get());", fName);
                 break;
             case ENUM:
                 writer.formatln("dest.writeInt(%s.getValue());", fName);
@@ -231,9 +232,9 @@ public class Java2MessageFormatter {
                         break;
                     case BINARY:
                         writer.formatln("dest.writeInt(%s.size());", fName)
-                              .formatln("for (byte[] item : %s) {", fName)
+                              .formatln("for (TBinary item : %s) {", fName)
                               .begin()
-                              .appendln("dest.writeByteArray(item);")
+                              .appendln("dest.writeByteArray(item.get());")
                               .end()
                               .appendln('}');
                         break;
@@ -268,7 +269,8 @@ public class Java2MessageFormatter {
                 }
                 writer.appendln('{')
                       .begin();
-                iTypeName = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                String kTypeName = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                iTypeName = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
                 String kName = fName + ".keySet()";
                 switch (mType.keyDescriptor().getType()) {
                     case BOOL:
@@ -300,18 +302,18 @@ public class Java2MessageFormatter {
                         break;
                     case BINARY:
                         writer.formatln("dest.writeInt(%s.size());", kName)
-                              .formatln("for (byte[] item : %s) {", kName)
+                              .formatln("for (TBinary item : %s) {", kName)
                               .begin()
-                              .appendln("dest.writeByteArray(item);")
+                              .appendln("dest.writeByteArray(item.get());")
                               .end()
                               .appendln('}');
                         break;
                     case MESSAGE:
                         writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
-                                        kName, iTypeName, kName);
+                                        kName, kTypeName, kName);
                         break;
                     case ENUM:
-                        appendParcelableArrayConverter(writer, iTypeName, kName, "int", "item.getValue()");
+                        appendParcelableArrayConverter(writer, kTypeName, kName, "int", "item.getValue()");
                         writer.appendln("dest.writeIntArray(arr);");
                         break;
                     default:
@@ -350,9 +352,9 @@ public class Java2MessageFormatter {
                         break;
                     case BINARY:
                         writer.formatln("dest.writeInt(%s.size());", vName)
-                              .formatln("for (byte[] item : %s) {", vName)
+                              .formatln("for (TBinary item : %s) {", vName)
                               .begin()
-                              .appendln("dest.writeByteArray(item);")
+                              .appendln("dest.writeByteArray(item.get());")
                               .end()
                               .appendln('}');
                         break;
@@ -405,7 +407,7 @@ public class Java2MessageFormatter {
                 writer.formatln("builder.%s(source.readString());", setF);
                 break;
             case BINARY:
-                writer.formatln("builder.%s(source.createByteArray());", setF);
+                writer.formatln("builder.%s(TBinary.wrap(source.createByteArray()));", setF);
                 break;
             case ENUM:
                 writer.formatln("builder.%s(%s.forValue(source.readInt()));",
@@ -445,7 +447,7 @@ public class Java2MessageFormatter {
                         writer.formatln("final int len = source.readInt();")
                               .appendln("for (int i = 0; i < len; ++i) {")
                               .begin()
-                              .formatln("builder.%s(source.createByteArray());", addToF)
+                              .formatln("builder.%s(TBinary.wrap(source.createByteArray()));", addToF)
                               .end()
                               .appendln('}');
                         break;
@@ -471,7 +473,6 @@ public class Java2MessageFormatter {
                 break;
             case MAP:
                 TMap<?, ?> mType = (TMap<?, ?>) desc;
-                String mkClass = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
                 switch (mType.itemDescriptor().getType()) {
                     case LIST:
                     case SET:
@@ -479,6 +480,8 @@ public class Java2MessageFormatter {
                         writer.formatln("// %s is to complext to parse.", mTypeHelper.getFieldType(mType));
                         return;
                 }
+                String mkClass = mTypeHelper.getInstanceClassName(mType.keyDescriptor());
+                String miClass = mTypeHelper.getInstanceClassName(mType.itemDescriptor());
 
                 switch (mType.keyDescriptor().getType()) {
                     case BOOL:
@@ -508,9 +511,9 @@ public class Java2MessageFormatter {
                         break;
                     case BINARY:
                         writer.appendln("final int len = source.readInt();")
-                              .appendln("byte[][] keys = new byte[len][];")
+                              .appendln("TBinary[] keys = new TBinary[len];")
                               .appendln("for (int i = 0; i < len; ++i) {")
-                              .formatln("    keys[i] = source.createByteArray();")
+                              .formatln("    keys[i] = TBinary.wrap(source.createByteArray());")
                               .appendln('}');
                         break;
                     case MESSAGE:
@@ -553,19 +556,19 @@ public class Java2MessageFormatter {
                         writer.appendln("String[] values = source.createStringArray();");
                         break;
                     case BINARY:
-                        writer.appendln("byte[][] values = new byte[keys.length][];")
+                        writer.appendln("TBinary[] values = new TBinary[keys.length];")
                               .appendln("for (int i = 0; i < keys.length; ++i) {")
-                              .formatln("    values[i] = source.createByteArray();")
+                              .formatln("    values[i] = TBinary.wrap(source.createByteArray());")
                               .appendln('}');
                         break;
                     case MESSAGE:
-                        writer.formatln("%s[] values = source.createTypedArray(%s.CREATOR);", mkClass, mkClass);
+                        writer.formatln("%s[] values = source.createTypedArray(%s.CREATOR);", miClass, miClass);
                         break;
                     case ENUM:
                         writer.appendln("int[] val_tmp = source.createIntArray();")
-                              .formatln("%s[] values = new %s[val_tmp.length];", mkClass, mkClass)
+                              .formatln("%s[] values = new %s[val_tmp.length];", miClass, miClass)
                               .appendln("for (int i = 0; i < val_tmp.length; ++i) {")
-                              .formatln("    values[i] = %s.forValue(val_tmp[i]);", mkClass)
+                              .formatln("    values[i] = %s.forValue(val_tmp[i]);", miClass)
                               .appendln('}');
                         break;
                     case LIST:
@@ -883,7 +886,7 @@ public class Java2MessageFormatter {
                     if (union) {
                         writer.formatln("tUnionField = _Field.%s;", fEnumName);
                     }
-                    writer.formatln("%s = Arrays.copyOf(value,value.length);", fName)
+                    writer.formatln("%s = value;", fName)
                           .appendln("return this;")
                           .end()
                           .appendln('}')
@@ -1483,22 +1486,14 @@ public class Java2MessageFormatter {
                   .begin();
 
             Object defaultValue = mTypeHelper.getDefaultValue(field);
-            if (field.getDescriptor().getType().equals(TType.BINARY)) {
-                String defaultRef = defaultValue == null ? "null" : camelCase("kDefault", field.getName());
-                writer.formatln("return %s() ? Arrays.copyOf(%s,%s.length) : %s;",
-                                camelCase("has", field.getName()),
-                                fName, fName,
-                                defaultRef);
+            if (defaultValue != null) {
+                writer.formatln("return %s() ? %s : %s;",
+                        camelCase("has", field.getName()),
+                        fName,
+                        camelCase("kDefault", field.getName()));
             } else {
-                if (defaultValue != null) {
-                    writer.formatln("return %s() ? %s : %s;",
-                                    camelCase("has", field.getName()),
-                                    fName,
-                                    camelCase("kDefault", field.getName()));
-                } else {
-                    writer.formatln("return %s;",
-                                    camelCase("m", field.getName()));
-                }
+                writer.formatln("return %s;",
+                        camelCase("m", field.getName()));
             }
             writer.end()
                   .appendln('}')
@@ -1539,7 +1534,7 @@ public class Java2MessageFormatter {
                 writer.append(defaultValue.toString()).append("d");
                 break;
             case BINARY:
-                writer.append("new byte[]{");
+                writer.append("TBinary.wrap(new byte[]{");
                 byte[] bytes = (byte[]) defaultValue;
                 boolean first = true;
                 for (byte b : bytes) {
@@ -1549,7 +1544,7 @@ public class Java2MessageFormatter {
                         writer.append(',');
                     writer.format("0x%02x", b);
                 }
-                writer.append('}');
+                writer.append("})");
                 break;
             case STRING:
                 try {
@@ -1695,6 +1690,7 @@ public class Java2MessageFormatter {
             case BINARY:
                 header.include(Arrays.class.getName());
                 header.include(TPrimitive.class.getName());
+                header.include(TBinary.class.getName());
                 break;
             default:
                 header.include(TPrimitive.class.getName());

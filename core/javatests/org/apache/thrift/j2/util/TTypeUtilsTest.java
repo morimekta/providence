@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.util;
 
+import org.apache.thrift.j2.TBinary;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,10 +51,10 @@ public class TTypeUtilsTest {
     Double  mDouble;
     Double  mDouble_eq;
     Double  mDouble_ne;
-    byte[]  mArray;
-    byte[]  mArray_eq;
-    byte[]  mArray_ne_content;
-    byte[]  mArray_ne_length;
+    TBinary mArray;
+    TBinary mArray_eq;
+    TBinary mArray_ne_content;
+    TBinary mArray_ne_length;
     String  mArray_string;
 
     @Before
@@ -68,10 +69,10 @@ public class TTypeUtilsTest {
         mDouble_ne = 1.2;
         mDouble_eq = 1.0;
 
-        mArray = new byte[] { '1', '2', '3' };
-        mArray_eq = new byte[] { '1', '2', '3' };
-        mArray_ne_content = new byte[] { '1', '2', '4' };
-        mArray_ne_length = new byte[] { '1', '2', '3', '4' };
+        mArray = TBinary.wrap(new byte[] { '1', '2', '3' });
+        mArray_eq = TBinary.wrap(new byte[] { '1', '2', '3' });
+        mArray_ne_content = TBinary.wrap(new byte[] { '1', '2', '4' });
+        mArray_ne_length = TBinary.wrap(new byte[] { '1', '2', '3', '4' });
         // Same content, but different type than the byte[].
         mArray_string = "123";
     }

@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.descriptor;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TType;
 
 /**
@@ -36,7 +37,7 @@ public class TPrimitive<T> implements TDescriptor<T> {
     public static final TPrimitive<Long>    I64    = new TPrimitive<>(TType.I64, (long) 0);
     public static final TPrimitive<Double>  DOUBLE = new TPrimitive<>(TType.DOUBLE, 0.0);
     public static final TPrimitive<String>  STRING = new TPrimitive<>(TType.STRING, null);
-    public static final TPrimitive<byte[]>  BINARY = new TPrimitive<>(TType.BINARY, null);
+    public static final TPrimitive<TBinary> BINARY = new TPrimitive<>(TType.BINARY, null);
 
     private final TPrimitiveProvider<T> mProvider;
     private final TType                 mType;

@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.util;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TContainer;
@@ -178,9 +179,8 @@ public class TPrettyPrinter {
                 jw.value(o);
                 jw.flush();
             } catch (JsonException e) {}
-        } else if (o instanceof byte[]) {
-            byte[] bytes = (byte[]) o;
-            writer.format("b64(%s)", TBase64Utils.encode(bytes));
+        } else if (o instanceof TBinary) {
+            writer.format("b64(%s)", ((TBinary) o).toBase64());
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {

@@ -10,6 +10,7 @@ import org.apache.test.calculator.Operand;
 import org.apache.test.calculator.Operation;
 import org.apache.test.calculator.Operator;
 import org.apache.test.number.Imaginary;
+import org.apache.thrift.j2.TBinary;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class ParcelableTest {
 
         AllTypes original = AllTypes.builder()
                                     .setBl(true)
-                                    .setBn(new byte[]{0, 1, 2, 3, 4, 5})
+                                    .setBn(TBinary.wrap(new byte[]{0, 1, 2, 3, 4, 5}))
                                     .setBt((byte) 6)
                                     .setD(7.8d)
                                     .setI(9)

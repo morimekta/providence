@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TContainer;
@@ -35,7 +36,6 @@ import org.apache.thrift.j2.descriptor.TField;
 import org.apache.thrift.j2.descriptor.TMap;
 import org.apache.thrift.j2.descriptor.TStructDescriptor;
 import org.apache.thrift.j2.reflect.contained.TCDocument;
-import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.thrift.j2.util.io.IndentedPrintWriter;
 import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonWriter;
@@ -312,9 +312,9 @@ public class ThriftFormatter {
             json.value(value);
             json.flush();
             writer.append('\"');
-        } else if (value instanceof byte[]) {
+        } else if (value instanceof TBinary) {
             JsonWriter json = new JsonWriter(writer, "");
-            json.value(TBase64Utils.encode((byte[]) value));
+            json.value(((TBinary) value).toBase64());
             json.flush();
         } else {
             throw new IllegalArgumentException("No such primitive value type: " +

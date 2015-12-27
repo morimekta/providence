@@ -19,12 +19,12 @@
 
 package org.apache.thrift.j2.util;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TMessage;
 import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.descriptor.TField;
@@ -36,11 +36,13 @@ import org.apache.thrift.j2.descriptor.TField;
  * @since 25.08.15
  */
 public class TTypeUtils {
-    public static String toString(byte[] bytes) {
-        return TBase64Utils.encode(bytes);
+    public static String toString(TBinary bytes) {
+        if (bytes == null) return NULL;
+        return bytes.toBase64();
     }
 
     public static String toString(Collection<?> collection) {
+        if (collection == null) return NULL;
         StringBuilder builder = new StringBuilder();
         builder.append('[');
         boolean first = true;
@@ -54,6 +56,7 @@ public class TTypeUtils {
     }
 
     public static String toString(Map<?,?> map) {
+        if (map == null) return NULL;
         StringBuilder builder = new StringBuilder();
         builder.append('{');
         boolean first = true;
@@ -75,18 +78,19 @@ public class TTypeUtils {
      * @return
      */
     public static String toString(TMessage<?> message) {
+        if (message == null) return NULL;
         return new TPrettyPrinter("", "", "").format(message);
     }
 
     public static String toString(Object o) {
         if (o == null) {
-            return "null";
+            return NULL;
         } else if (o instanceof Map) {
             return toString((Map<?,?>) o);
         } else if (o instanceof Collection) {
             return toString((Collection<?>) o);
-        } else if (o instanceof byte[]) {
-            return toString((byte[]) o);
+        } else if (o instanceof TBinary) {
+            return toString((TBinary) o);
         } else if (o instanceof TMessage) {
             return toString((TMessage<?>) o);
         } else {
@@ -98,8 +102,6 @@ public class TTypeUtils {
         if (v1 == v2) return true;
         if ((v1 == null) != (v2 == null)) {
             return false; // only one is null
-        } else if (v1 instanceof byte[] && v2 instanceof byte[]) {
-            return Arrays.equals((byte[]) v1, (byte[]) v2);
         } else if (v1 instanceof List && v2 instanceof List) {
             List<?> l1 = (List<?>) v1;
             List<?> l2 = (List<?>) v2;
@@ -179,6 +181,8 @@ public class TTypeUtils {
         }
         return hash;
     }
+    
+    private static final String NULL = "null";
 
     private static <T> int hashCodeSet(Set<T> list) {
         int hash = Set.class.hashCode();

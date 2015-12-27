@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
@@ -340,8 +341,7 @@ class TProtocolSerializer extends TSerializer {
                 protocol.writeString((String) item);
                 break;
             case BINARY:
-                ByteBuffer buffer = ByteBuffer.wrap((byte[]) item);
-                protocol.writeBinary(buffer);
+                protocol.writeBinary(((TBinary) item).getByteBuffer());
                 break;
             case ENUM:
                 TEnumValue<?> value = (TEnumValue<?>) item;

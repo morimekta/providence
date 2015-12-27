@@ -22,8 +22,10 @@ package org.apache.thrift.j2.util;
 import org.apache.thrift.j2.util.io.TerminatedInputStream;
 
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
@@ -81,38 +83,6 @@ public class TStringUtils {
     }
 
     /**
-     * Make a hex string from a byte array.
-     *
-     * @param bytes The bytes to hexify.
-     * @return The hex string.
-     */
-    public static String toHexString(final byte[] bytes) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            builder.append(String.format("%02x", bytes[i]));
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Parse a hex string as bytes.
-     *
-     * @param hex The hex string.
-     * @return The corresponding bytes.
-     */
-    public static byte[] fromHexString(String hex) {
-        if (hex.length() % 2 != 0) throw new AssertionError("Wrong hex string length");
-        int len = hex.length() / 2;
-        byte[] out = new byte[len];
-        for (int i = 0; i < len; ++i) {
-            int pos = i * 2;
-            String part = hex.substring(pos, pos + 2);
-            out[i] = (byte) Integer.parseInt(part, 16);
-        }
-        return out;
-    }
-
-    /**
      * Read next string from input stream.
      *
      * @param is The input stream to read.
@@ -143,6 +113,40 @@ public class TStringUtils {
         }
         baos.flush();
         return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Read next string from input stream. The terminator is read but not
+     * included in the resulting string.
+     *
+     * @param is The input stream to read.
+     * @return The string up until, but not including the terminator.
+     * @throws IOException
+     */
+    public static String readString(Reader is) throws IOException {
+        return readString(is, '\n');
+    }
+
+    /**
+     * Read next string from input stream.
+     *
+     * @param is The reader to read characters from.
+     * @param term Terminator character.
+     * @return The string up until, but not including the terminator.
+     * @throws IOException
+     */
+    public static String readString(Reader is, char term) throws IOException {
+        CharArrayWriter baos = new CharArrayWriter();
+
+        int ch_int;
+        while ((ch_int = is.read()) >= 0) {
+            final char ch = (char) ch_int;
+            if (ch == term) break;
+            baos.write(ch);
+        }
+        baos.flush();
+
+        return baos.toString();
     }
 
     /**

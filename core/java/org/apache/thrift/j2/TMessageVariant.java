@@ -33,4 +33,13 @@ public enum TMessageVariant {
     public String getName() {
         return name().toLowerCase();
     }
+
+    public static TMessageVariant fromName(String name) {
+        switch (name) {
+            case "struct": return STRUCT;
+            case "union": return UNION;
+            case "exception": return EXCEPTION;
+        }
+        return null;
+    }
 }

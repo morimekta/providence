@@ -19,6 +19,12 @@
 
 package org.apache.thrift.j2.mio;
 
+import org.apache.thrift.j2.TBinary;
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.descriptor.TStructDescriptor;
+import org.apache.thrift.j2.serializer.TSerializeException;
+import org.apache.thrift.j2.serializer.TSerializer;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,12 +34,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.descriptor.TStructDescriptor;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-import org.apache.thrift.j2.util.TStringUtils;
 
 /**
  * Read messages from a file in the format:
@@ -94,7 +94,7 @@ public class TRecordMessageReader<T extends TMessage<T>>
                     close();
                     throw new IOException(String.format(
                             "Message digest mismatch, message sha-1 \"%s\" not matching that on file.",
-                            TStringUtils.toHexString(digest)));
+                            TBinary.wrap(digest).toHexString()));
                 }
                 return message;
             }

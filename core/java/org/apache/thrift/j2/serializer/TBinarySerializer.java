@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.serializer;
 
+import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
 import org.apache.thrift.j2.TMessage;
@@ -153,7 +154,7 @@ public class TBinarySerializer
     }
 
     /**
-     * Read field infd from stream. If this is the last field (field ID 0)
+     * Read field info from stream. If this is the last field (field ID 0)
      * return null.
      *
      * @param in The stream to consume.
@@ -262,7 +263,7 @@ public class TBinarySerializer
                 if (type != null) {
                     switch (type.getType()) {
                         case BINARY:
-                            return cast(binary);
+                            return cast(TBinary.wrap(binary));
                         case STRING:
                             return cast(new String(binary, fieldInfo.getStringEncoding()));
                         default:
@@ -449,9 +450,8 @@ public class TBinarySerializer
             int flags = (Boolean) value ? FieldInfo.TRUE : FieldInfo.FALSE;
             out.write(type | flags);
             return 1;
-        } else if (value instanceof byte[]) {
-            byte[] bytes = (byte[]) value;
-            return writeBinary(out, FieldInfo.ENCODING_ISO_8859_1, bytes);
+        } else if (value instanceof TBinary) {
+            return writeBinary(out, FieldInfo.ENCODING_ISO_8859_1, ((TBinary) value).get());
         } else if (value instanceof String) {
             byte[] bytes = ((String) value).getBytes(StandardCharsets.UTF_8);
             return writeBinary(out, FieldInfo.ENCODING_UTF_8, bytes);
@@ -637,7 +637,7 @@ public class TBinarySerializer
         if (value < Short.MIN_VALUE)
             return FieldInfo.FIXED_32;
         if (value < Byte.MIN_VALUE)
-            return Byte.MAX_VALUE;
+            return FieldInfo.FIXED_16;
         return FieldInfo.FIXED_8;
     }
 

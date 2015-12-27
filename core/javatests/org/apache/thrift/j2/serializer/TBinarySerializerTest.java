@@ -27,7 +27,7 @@ import org.apache.test.calculator.Operand;
 import org.apache.test.calculator.Operation;
 import org.apache.test.calculator.Operator;
 import org.apache.test.number.Imaginary;
-import org.apache.thrift.j2.util.TStringUtils;
+import org.apache.thrift.j2.TBinary;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,22 +88,22 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(9, serializer.writeDouble(baos, 1234567890.0));
-        assertEquals("30000080b48065d241", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("30000080b48065d241", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(9, serializer.writeDouble(baos, 1.2345678900));
-        assertEquals("301bde8342cac0f33f", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("301bde8342cac0f33f", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(9, serializer.writeDouble(baos, -1234567890.0));
-        assertEquals("30000080b48065d2c1", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("30000080b48065d2c1", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(9, serializer.writeDouble(baos, -1.2345678900));
-        assertEquals("301bde8342cac0f3bf", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("301bde8342cac0f3bf", TBinary.wrap(baos.toByteArray()).toHexString());
     }
 
     @Test
@@ -111,16 +111,16 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("000080b48065d241"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("000080b48065d241").get());
         assertEquals(1234567890.0d, serializer.readDouble(bais), 0.0);
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("1bde8342cac0f33f"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("1bde8342cac0f33f").get());
         assertEquals(1.2345678900d, serializer.readDouble(bais), 0.0);
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("000080b48065d2c1"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("000080b48065d2c1").get());
         assertEquals(-1234567890.0d, serializer.readDouble(bais), 0.0);
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("1bde8342cac0f3bf"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("1bde8342cac0f3bf").get());
         assertEquals(-1.2345678900d, serializer.readDouble(bais), 0.0);
     }
 
@@ -130,27 +130,27 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(1, serializer.writeUnsigned(baos, 1, 1));
-        assertEquals("01", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("01", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(1, serializer.writeUnsigned(baos, 255, 1));
-        assertEquals("ff", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("ff", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeUnsigned(baos, Long.MAX_VALUE, 8));
-        assertEquals("ffffffffffffff7f", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("ffffffffffffff7f", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeUnsigned(baos, Long.MIN_VALUE, 8));
-        assertEquals("0000000000000080", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("0000000000000080", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeUnsigned(baos, -1, 8));
-        assertEquals("ffffffffffffffff", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("ffffffffffffffff", TBinary.wrap(baos.toByteArray()).toHexString());
     }
 
     @Test
@@ -158,22 +158,22 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("01"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("01").get());
         assertEquals(1, serializer.readUnsigned(bais, 1));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("ff"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("ff").get());
         assertEquals(255, serializer.readUnsigned(bais, 1));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("0100000000000000"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("0100000000000000").get());
         assertEquals(1, serializer.readUnsigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("ffffffffffffffff"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("ffffffffffffffff").get());
         assertEquals(-1, serializer.readUnsigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("ffffffffffffff7f"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("ffffffffffffff7f").get());
         assertEquals(Long.MAX_VALUE, serializer.readUnsigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("0000000000000080"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("0000000000000080").get());
         assertEquals(Long.MIN_VALUE, serializer.readUnsigned(bais, 8));
     }
 
@@ -183,37 +183,37 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
 
         assertEquals(1, serializer.writeSigned(baos, 1, 1));
-        assertEquals("01", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("01", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(1, serializer.writeSigned(baos, -1, 1));
-        assertEquals("81", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("81", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeSigned(baos, 1, 8));
-        assertEquals("0100000000000000", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("0100000000000000", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeSigned(baos, -1, 8));
-        assertEquals("0100000000000080", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("0100000000000080", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeSigned(baos, Long.MAX_VALUE, 8));
-        assertEquals("ffffffffffffff7f", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("ffffffffffffff7f", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeSigned(baos, Long.MIN_VALUE + 1, 8));
-        assertEquals("ffffffffffffffff", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("ffffffffffffffff", TBinary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
         assertEquals(8, serializer.writeSigned(baos, Long.MIN_VALUE, 8));
-        assertEquals("0000000000000080", TStringUtils.toHexString(baos.toByteArray()));
+        assertEquals("0000000000000080", TBinary.wrap(baos.toByteArray()).toHexString());
     }
 
     @Test
@@ -221,25 +221,25 @@ public class TBinarySerializerTest {
         TBinarySerializer serializer = new TBinarySerializer();
         ByteArrayInputStream bais;
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("01"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("01").get());
         assertEquals(1, serializer.readSigned(bais, 1));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("81"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("81").get());
         assertEquals(-1, serializer.readSigned(bais, 1));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("0100000000000000"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("0100000000000000").get());
         assertEquals(1, serializer.readSigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("0100000000000080"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("0100000000000080").get());
         assertEquals(-1, serializer.readSigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("ffffffffffffff7f"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("ffffffffffffff7f").get());
         assertEquals(Long.MAX_VALUE, serializer.readSigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("ffffffffffffffff"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("ffffffffffffffff").get());
         assertEquals(Long.MIN_VALUE  + 1, serializer.readSigned(bais, 8));
 
-        bais = new ByteArrayInputStream(TStringUtils.fromHexString("0000000000000080"));
+        bais = new ByteArrayInputStream(TBinary.fromHexString("0000000000000080").get());
         assertEquals(Long.MIN_VALUE, serializer.readSigned(bais, 8));
     }
 

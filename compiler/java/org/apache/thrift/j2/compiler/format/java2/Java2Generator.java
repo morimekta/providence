@@ -19,6 +19,7 @@
 
 package org.apache.thrift.j2.compiler.format.java2;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -81,7 +82,7 @@ public class Java2Generator
                 }
                 writer.flush();
             } finally {
-                System.out.println(path + "/" + file + " OK");
+                System.out.println(path + File.separatorChar + file + " OK");
                 getFileManager().finalize(out);
             }
         }
