@@ -111,7 +111,7 @@ public class TToken {
             ByteArrayInputStream bais = new ByteArrayInputStream(mToken.getBytes(StandardCharsets.UTF_8));
             JsonTokenizer tokenizer = new JsonTokenizer(bais);
             JsonToken token = tokenizer.expect("parsing string literal.");
-            return token.literalValue();
+            return token.value;
         } catch (JsonException e) {
             throw new TParseException("Unable to parse string literal: " + mToken, e);
         } catch (IOException e) {

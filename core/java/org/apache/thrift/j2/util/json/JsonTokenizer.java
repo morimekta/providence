@@ -1,43 +1,42 @@
 package org.apache.thrift.j2.util.json;
 
 import org.apache.thrift.j2.util.TStringUtils;
+import org.apache.thrift.j2.util.io.Utf8StreamReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
 public class JsonTokenizer {
-    private final static int MARK_LIMIT = 4096;
+    private final ArrayList<String> lines;
+    private final Reader            reader;
 
-    private final InputStream mIn;
+    private int line;
+    private int pos;
+    private int lastChInt;
 
-    private int mLine;
-    private int mPos;
-
-    private int mLastByte;
-
-    private boolean mLiteral;
-    private boolean mLiteralExcaped;
-    private final ArrayList<String> mLines;
-    private       StringBuilder     mLineBuilder;
-    private       JsonToken            mNextToken;
+    private StringBuilder lineBuilder;
+    private JsonToken     nextToken;
 
     public JsonTokenizer(InputStream in) throws IOException {
-        mIn = in;
+        this(new Utf8StreamReader(in));
+    }
 
-        mLine = 1;
-        mPos = 0;
+    public JsonTokenizer(Reader reader) throws IOException {
+        this.reader = reader;
+        this.line = 1;
+        this.pos = 0;
 
-        mLastByte = 0;
-        mLiteral = false;
-        mLiteralExcaped = false;
+        this.lastChInt = 0;
 
-        mLineBuilder = new StringBuilder();
-        mLines = new ArrayList<>();
+        this.lineBuilder = new StringBuilder();
+        this.lines = new ArrayList<>(1024);
     }
 
     public JsonToken expect(String message) throws JsonException, IOException {
@@ -47,147 +46,222 @@ public class JsonTokenizer {
         return next();
     }
 
-    public void expectSymbol(JsonToken.CH symbol, String message) throws IOException, JsonException {
+    public int expectSymbol(String message, char... symbols) throws IOException, JsonException {
         if (!hasNext()) {
-            throw newParseException("Unexpected end of file, expected " + symbol + " while " + message);
-        } else if (mNextToken.isSymbol() && mNextToken.getSymbol().equals(symbol)) {
-            mNextToken = null;
+            throw newParseException(
+                    "Unexpected end of file, expected one of " + Arrays.toString(symbols) + " while " + message);
         } else {
-            throw newParseException("Expected " + symbol + " but found " + mNextToken + " while " + message);
-        }
-    }
+            if (nextToken.value.length() == 1) {
+                char ch = nextToken.value.charAt(0);
+                for (int i = 0; i < symbols.length; ++i) {
+                    if (ch == symbols[i]) {
+                        nextToken = null;
+                        return i;
+                    }
+                }
+            }
 
-    public JsonToken expectLiteral(String message) throws IOException, JsonException {
-        if (!hasNext()) {
-            throw newParseException("Unexpected end of file, expected identifier while " + message);
-        } else if (mNextToken.isLiteral()) {
-            return next();
-        } else {
-            throw newParseException("Expected identifier but found " + mNextToken + " while " + message);
+            throw newParseException(
+                    "Expected one of " + Arrays.toString(symbols) + " but found " + nextToken + " while " + message);
         }
     }
 
     public boolean hasNext() throws IOException, JsonException {
-        if (mNextToken == null) {
-            mNextToken = next();
+        if (nextToken == null) {
+            nextToken = next();
         }
-        return mNextToken != null;
+        return nextToken != null;
     }
 
     public JsonToken next() throws IOException, JsonException {
-        if (mNextToken != null) {
-            JsonToken tmp = mNextToken;
-            mNextToken = null;
+        if (nextToken != null) {
+            JsonToken tmp = nextToken;
+            nextToken = null;
             return tmp;
         }
 
-        int startPos = mPos;
-        StringBuilder builder = new StringBuilder();
+        int startPos = pos;
 
-        while (mLastByte >= 0) {
-            int b = mLastByte;
-            mLastByte = 0;
-            if (b == 0) {
-                b = mLastByte = mIn.read();
-                ++mPos;
+        StringBuilder literal = null;
+        StringBuilder number = null;
+        StringBuilder token = null;
 
-                if (b != '\n') {
-                    mLineBuilder.append((char) b);
+        boolean escaped = false;
+
+        while (lastChInt >= 0) {
+            if (lastChInt == 0) {
+                lastChInt = reader.read();
+                if (lastChInt < 0) {
+                    if (number != null) {
+                        return mkToken(JsonToken.Type.NUMBER, number, startPos);
+                    } else if (token != null) {
+                        return mkToken(JsonToken.Type.TOKEN, token, startPos);
+                    }
+                    break;
                 }
+
+                lineBuilder.append((char) lastChInt);
+
+                ++pos;
             }
-            if (b > 0) {
-                if (mLiteral) {
-                    mLastByte = 0;
 
-                    builder.append((char) b);
+            char ch = (char) lastChInt;
+            if (literal != null) {
+                lastChInt = 0;
 
-                    if (b == '\n') {
-                        throw newParseException("newline in string literal");
-                    } else if (b == JsonToken.CH.ESCAPE.c) {
-                        mLiteralExcaped = true;
-                    } else if (b == JsonToken.CH.QUOTE.c) {
-                        mLiteral = false;
-                        return mkToken(builder, startPos);
-                    } else if (JsonToken.mustUnicodeEscape(b)) {
-                        throw newParseException(String.format(
-                                "Illegal character in string literal '\\u%04x'", b));
-                    } else if (mLiteralExcaped) {
-                        mLiteralExcaped = false;
-                    }
-                    continue;
+                if (JsonToken.mustUnicodeEscape(ch)) {
+                    throw newParseException(String.format(
+                            "Illegal character in JSON literal: '\\u%04x'", (int) ch));
                 }
 
-                JsonToken.CH ct = JsonToken.CH.valueOf((char) b);
-                if (ct != null) {
-                    JsonToken token = mkToken(builder, startPos);
-                    if (token != null) {
-                        return token;
-                    } else {
-                        mLastByte = 0;  // consumed 'this'.
-                        if (b == JsonToken.CH.QUOTE.c) {
-                            mLiteral = true;
-                            mLiteralExcaped = false;
-                            builder.append((char) b);
-                            continue;
-                        }
-
-                        return mkToken(ct, mPos);
-                    }
-                } else if (b == ' ' || b == '\t' || b == '\r') {
-                    mLastByte = 0;
-                    if (builder.length() > 0) {
-                        return mkToken(builder, startPos);
-                    }
-                } else if (b == '\n') {
-                    mLastByte = 0;
-                    mLines.add(mLineBuilder.toString());
-                    mLineBuilder = new StringBuilder();
-
-                    JsonToken token = mkToken(builder, startPos);
-                    ++mLine;
-                    mPos = 0;
-                    if (token != null) {
-                        return token;
+                if (escaped) {
+                    escaped = false;
+                    switch (ch) {
+                        case 'b':
+                            literal.append('\b');
+                            break;
+                        case 'f':
+                            literal.append('\f');
+                            break;
+                        case 'n':
+                            literal.append('\n');
+                            break;
+                        case 'r':
+                            literal.append('\r');
+                            break;
+                        case 't':
+                            literal.append('\t');
+                            break;
+                        case '\"':
+                        case '\'':
+                        case '\\':
+                            literal.append(ch);
+                            break;
+                        case 'u':
+                            char[] i = new char[4];
+                            reader.read(i);
+                            int cp = Integer.parseInt(String.valueOf(i), 16);
+                            literal.append((char) cp);
+                            break;
+                        default:
+                            throw newParseException(String.format(
+                                    "Illegal escape entity in JSON literal: '\\%c'", ch));
                     }
                 } else {
-                    builder.append((char) b);
+                    switch (ch) {
+                        case '"':
+                            // end of literal.
+                            return mkToken(JsonToken.Type.LITERAL, literal, startPos);
+                        case '\\':
+                            escaped = true;
+                            break;
+                        default:
+                            literal.append(ch);
+                            break;
+                    }
                 }
+            } else if (number != null) {
+                if (Character.isDigit(ch) || ch == '+' || ch == '-' || ch == 'x' || ch == 'e' || ch == 'E' || ch == '.') {
+                    lastChInt = 0;
+                    number.append(ch);
+                } else {
+                    return mkToken(JsonToken.Type.NUMBER, number, startPos);
+                }
+            } else if (token != null) {
+                if (('A' <= ch && ch <= 'Z') ||
+                    ('a' <= ch && ch <= 'z') ||
+                    ('0' <= ch && ch <= '9') ||
+                    ch == '_' || ch == '.') {
+                    lastChInt = 0;
+                    token.append(ch);
+                } else {
+                    return mkToken(JsonToken.Type.TOKEN, token, startPos);
+                }
+            } else if (ch == '\n') {
+                // New line
+                lastChInt = 0;
+                lines.add(lineBuilder.toString());
+                lineBuilder = new StringBuilder();
+                ++line;
+                pos = 0;
             } else {
-                return mkToken(builder, startPos);
-            }
+                lastChInt = 0;
 
-            mLastByte = 0;
+                if (ch == ' ' || ch == '\t') {
+                    // just spacing.
+                } else if (ch < 32 || (127 <= ch && ch < 160) || (8192 <= ch && ch < 8448)) {
+                    throw newParseException(String.format(
+                            "Illegal character in JSON structure: '\\u%04x'", (int) ch));
+                } else {
+                    switch (ch) {
+                        case '[':
+                        case ']':
+                        case '{':
+                        case '}':
+                        case ':':
+                        case ',':
+                            return mkSymbol(ch, startPos);
+                        case '-':
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                        case '.':
+                            // starting a number.
+                            number = new StringBuilder();
+                            number.append(ch);
+                            break;
+                        case '\"':
+                            literal = new StringBuilder();
+                            escaped = false;
+                            break;
+                        default:
+                            token = new StringBuilder();
+                            token.append(ch);
+                            break;
+                    }
+                }
+            }
         }
 
         return null;
     }
 
     public String getLine(int line) throws IOException {
-        if (line < 1) throw new IllegalArgumentException("Oops!!!");
-        if (mLines.size() >= line) {
-            return mLines.get(line - 1);
+        if (line < 1)
+            throw new IllegalArgumentException("Oops!!!");
+        if (lines.size() >= line) {
+            return lines.get(line - 1);
         } else {
-            mLineBuilder.append(TStringUtils.readString(mIn, "\n"));
-            String ln = mLineBuilder.toString();
-            mLines.add(ln);
+            lineBuilder.append(TStringUtils.readString(reader, '\n'));
+            String ln = lineBuilder.toString();
+            lines.add(ln);
             return ln;
         }
     }
 
     private JsonException newParseException(String s) throws IOException, JsonException {
-        return new JsonException(s, getLine(mLine), mLine, mPos, 0);
+        return new JsonException(s, getLine(line), line, pos, 0);
     }
 
-    private JsonToken mkToken(JsonToken.CH ct, int pos) {
-        return new JsonToken(ct.toString(), mLine, pos, 1);
+    private JsonToken mkSymbol(char ct, int pos) {
+        return new JsonToken(JsonToken.Type.SYMBOL, line, pos, 1, String.valueOf(ct));
     }
 
-    private JsonToken mkToken(StringBuilder builder, int startPos) {
+
+    private JsonToken mkToken(JsonToken.Type type, StringBuilder builder, int startPos) {
         if (builder.length() > 0) {
-            return new JsonToken(builder.toString(),
-                              mLine,
-                              startPos,
-                              mPos - startPos - 1);
+            return new JsonToken(type,
+                                 line,
+                                 startPos,
+                                 pos - startPos - 1,
+                                 builder.toString());
         }
         return null;
     }

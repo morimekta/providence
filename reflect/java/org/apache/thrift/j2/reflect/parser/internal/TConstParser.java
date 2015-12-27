@@ -59,9 +59,9 @@ public class TConstParser {
     public Object parse(InputStream inputStream, TDescriptor type) throws TParseException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(inputStream);
-            return parseTypedValue(tokenizer.expect(""), tokenizer, type);
+            return parseTypedValue(tokenizer.expect("const value"), tokenizer, type);
         } catch (JsonException e) {
-            throw new TParseException("Unable to parse JSON", e);
+            throw new TParseException("Unable to parse JSON: ", e);
         } catch (IOException e) {
             throw new TParseException("Unable to read JSON from input", e);
         }
@@ -79,24 +79,17 @@ public class TConstParser {
         TMessageBuilder<T> builder = type.factory().builder();
 
         JsonToken token = tokenizer.expect("parsing message field id");
-        while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
-            F field;
-            if (token.isLiteral()) {
-                field = type.getField(token.literalValue());
-            } else {
-                field = type.getField(token.getToken());
-            }
+        while (!JsonToken.kMapEnd.equals(token.value)) {
+            F field = type.getField(token.value);
             if (field == null) {
-                throw new JsonException("Not a valid field name: " + token.getToken());
+                throw new JsonException("Not a valid field name: " + token.value);
             }
-            tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "");
+            tokenizer.expectSymbol("", JsonToken.kKeyValSepChar);
 
             builder.set(field.getKey(), parseTypedValue(tokenizer.expect("parsing field value."), tokenizer, field.getDescriptor()));
-            token = tokenizer.expect("parsing message fields list sep");
-            if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+
+            if (tokenizer.expectSymbol("Message field separator.", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                 break;
-            } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                throw new JsonException("Unexpected token " + token.getToken() + ", expected ',' list separator.");
             }
             token = tokenizer.expect("parsing message field id.");
         }
@@ -113,57 +106,57 @@ public class TConstParser {
                     } else if (token.isInteger()) {
                         return token.longValue() != 0;
                     }
-                    throw new JsonException("Not boolean value for bool: " + token.getToken(),
+                    throw new JsonException("Not boolean value for bool: " + token.value,
                                             tokenizer,
                                             token);
                 case BYTE:
                     if (token.isInteger()) {
                         return token.byteValue();
                     }
-                    throw new JsonException(token.getToken() + " is not a valid byte value.",
+                    throw new JsonException(token.value + " is not a valid byte value.",
                                             tokenizer,
                                             token);
                 case I16:
                     if (token.isInteger()) {
                         return token.shortValue();
                     }
-                    throw new JsonException(token.getToken() + " is not a valid short value.",
+                    throw new JsonException(token.value + " is not a valid short value.",
                                             tokenizer,
                                             token);
                 case I32:
                     if (token.isInteger()) {
                         return token.intValue();
                     }
-                    throw new JsonException(token.getToken() + " is not a valid int value.",
+                    throw new JsonException(token.value + " is not a valid int value.",
                                             tokenizer,
                                             token);
                 case I64:
                     if (token.isInteger()) {
                         return token.longValue();
                     }
-                    throw new JsonException(token.getToken() + " is not a valid long value.",
+                    throw new JsonException(token.value + " is not a valid long value.",
                                             tokenizer,
                                             token);
                 case DOUBLE:
                     if (token.isInteger() || token.isReal()) {
                         return token.doubleValue();
                     }
-                    throw new JsonException(token.getToken() + " is not a valid double value.",
+                    throw new JsonException(token.value + " is not a valid double value.",
                                             tokenizer,
                                             token);
                 case STRING:
                     if (token.isLiteral()) {
-                        return token.literalValue();
+                        return token.value;
                     }
                     throw new JsonException("Not a valid string value.", tokenizer, token);
                 case BINARY:
                     if (token.isLiteral()) {
-                        return parseBinary(token.literalValue());
+                        return parseBinary(token.value);
                     }
                     throw new JsonException("Not a valid binary value.", tokenizer, token);
                 case ENUM:
                     TEnumBuilder<?> eb = ((TEnumDescriptor<?>) valueType).factory().builder();
-                    String name = token.getToken();
+                    String name = token.value;
                     if (name.startsWith(valueType.getName())) {
                         name = name.substring(valueType.getName().length() + 1);
                     }
@@ -173,7 +166,7 @@ public class TConstParser {
                     }
                     return ev;
                 case MESSAGE:
-                    if (JsonToken.CH.MAP_START.equals(token.getSymbol())) {
+                    if (JsonToken.kMapStart.equals(token.value)) {
                         return parseMessage(tokenizer, (TStructDescriptor<?,?>) valueType);
                     }
                     throw new JsonException("Not a valid message start.", tokenizer, token);
@@ -181,20 +174,14 @@ public class TConstParser {
                     TDescriptor itemType = ((TList<?>) valueType).itemDescriptor();
                     LinkedList<Object> list = new LinkedList<>();
 
-                    if (!JsonToken.CH.LIST_START.equals(token.getSymbol())) {
+                    if (!JsonToken.kListStart.equals(token.value)) {
                         throw new JsonException("Not a valid list start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing list item.");
-                    while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kListEnd.equals(token.value)) {
                         list.add(parseTypedValue(token, tokenizer, itemType));
-                        token = tokenizer.expect("parsing list separator");
-                        if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                        if (tokenizer.expectSymbol("parsing list separator", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Unexpected symbol " + token + ". " +
-                                                            "Expected list separator or end.",
-                                                    tokenizer,
-                                                    token);
                         }
                         token = tokenizer.expect("parsing list item.");
                     }
@@ -203,22 +190,16 @@ public class TConstParser {
                     itemType = ((TSet<?>) valueType).itemDescriptor();
                     HashSet<Object> set = new HashSet<>();
 
-                    if (!JsonToken.CH.LIST_START.equals(token.getSymbol())) {
+                    if (!JsonToken.kListStart.equals(token.value)) {
                         throw new JsonException("Not a valid set list start token.",
                                                 tokenizer,
                                                 token);
                     }
                     token = tokenizer.expect("parsing set list item.");
-                    while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kListEnd.equals(token.value)) {
                         set.add(parseTypedValue(token, tokenizer, itemType));
-                        token = tokenizer.expect("parsing set list separator");
-                        if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                        if (tokenizer.expectSymbol("parsing list separator", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Unexpected symbol " + token + ". " +
-                                                            "Expected list separator or end.",
-                                                    tokenizer,
-                                                    token);
                         }
                         token = tokenizer.expect("parsing set list item.");
                     }
@@ -229,34 +210,28 @@ public class TConstParser {
                     TDescriptor keyType = ((TMap<?, ?>) valueType).keyDescriptor();
                     HashMap<Object, Object> map = new HashMap<>();
 
-                    if (!JsonToken.CH.MAP_START.equals(token.getSymbol())) {
+                    if (!JsonToken.kMapStart.equals(token.value)) {
                         throw new JsonException("Not a valid map start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing map key.");
-                    while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kMapEnd.equals(token.value)) {
                         Object key;
                         if (token.isLiteral()) {
-                            key = parsePrimitiveKey(token.literalValue(), keyType);
+                            key = parsePrimitiveKey(token.value, keyType);
                         } else {
                             if (keyType.getType().equals(TType.STRING) || keyType.getType().equals(TType.BINARY)) {
                                 throw new JsonException("Expected string literal for string key", tokenizer, token);
                             }
-                            key = parsePrimitiveKey(token.getToken(), keyType);
+                            key = parsePrimitiveKey(token.value, keyType);
                         }
 
-                        tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "parsing map (kv)");
+                        tokenizer.expectSymbol("parsing map (kv)", JsonToken.kKeyValSepChar);
                         map.put(key,
                                 parseTypedValue(tokenizer.expect("parsing map value."),
                                                 tokenizer,
                                                 itemType));
-                        token = tokenizer.expect("parsing map (sep)");
-                        if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                        if (tokenizer.expectSymbol("parsing list separator", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Unexpected symbol " + token + ". " +
-                                                            "Expected list separator or map end.",
-                                                    tokenizer,
-                                                    token);
                         }
                         token = tokenizer.expect("parsing map key.");
                     }

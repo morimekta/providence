@@ -1,7 +1,6 @@
 package org.apache.thrift.j2.util.json;
 
-import org.apache.thrift.j2.util.TTypeUtils;
-
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -9,41 +8,31 @@ import java.util.regex.Pattern;
  * @since 19.10.15
  */
 public class JsonToken {
-    public static final String NULL = "null";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
-
-    public enum CH {
-        LIST_START('['),
-        LIST_END(']'),
-        LIST_SEP(','),
-        MAP_START('{'),
-        MAP_END('}'),
-        MAP_KV_SEP(':'),
-        QUOTE('"'),
-        ESCAPE('\\'),
-        ;
-
-        protected char c;
-
-        CH(char c) {
-            this.c = c;
-        }
-
-        public static CH valueOf(char c) {
-            for (CH ch : values()) {
-                if (ch.c == c) {
-                    return ch;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return new String(new char[]{c});
-        }
+    public enum Type {
+        SYMBOL,   // on of []{},:
+        NUMBER,   // numerical
+        LITERAL,  // quoted literal
+        TOKEN,    // static token.
     }
+
+    public static final String kNull = "null";
+    public static final String kTrue = "true";
+    public static final String kFalse = "false";
+    public static final String kListStart = "[";
+    public static final String kListEnd = "]";
+    public static final String kListSep = ",";
+    public static final String kMapStart = "{";
+    public static final String kMapEnd = "}";
+    public static final String kKeyValSep = ":";
+    public static final String kQuote = "\"";
+
+    public static final char kListStartChar = '[';
+    public static final char kListEndChar = ']';
+    public static final char kListSepChar = ',';
+    public static final char kMapStartChar = '{';
+    public static final char kMapEndChar = '}';
+    public static final char kKeyValSepChar = ':';
+    public static final char kQuoteChar = '\"';
 
     private static final Pattern RE_LITERAL = Pattern.compile("\".*\"");
     private static final Pattern RE_BOOLEAN = Pattern.compile("(true|false)");
@@ -52,185 +41,116 @@ public class JsonToken {
     private static final Pattern RE_DOUBLE = Pattern.compile(
             "-?([0-9]+[.]?([eE][+-]?[0-9]+)?|-?([0-9]+)?[.][0-9]+([eE][+-]?[0-9]+)?)");
 
-    private final String mToken;
-    private final int mLine;
-    private final int mPos;
-    private final int mLen;
+    public final Type   type;
+    public final int    line;
+    public final int    pos;
+    public final int    len;
 
-    public JsonToken(String token, int line, int pos, int len) {
-        mToken = token;
-        mLine = line;
-        mPos = pos;
-        mLen = len;
-    }
+    public final String value;
 
     public static boolean mustUnicodeEscape(int b) {
         return b < 32 || (127 <= b && b < 160) || (8192 <= b && b < 8448);
     }
 
-    public String getToken() {
-        return mToken;
-    }
+    public JsonToken(Type type, int line, int pos, int len, String value) {
+        this.type = type;
+        this.line = line;
+        this.pos = pos;
+        this.len = len;
 
-    public int getLine() {
-        return mLine;
-    }
-
-    public int getPos() {
-        return mPos;
-    }
-
-    public int getLen() {
-        return mLen;
+        this.value = value;
     }
 
     public boolean isNull() {
-        return mToken.equals(NULL);
+        return value.equals(kNull);
     }
 
     public boolean isSymbol() {
-        return mToken.length() == 1 && CH.valueOf(mToken.charAt(0)) != null;
+        return value.length() == 1 && "{}[],:".indexOf(value.charAt(0)) >= 0;
     }
 
     public boolean isLiteral() {
-        return RE_LITERAL.matcher(mToken).matches();
+        return type == Type.LITERAL;
     }
 
     public boolean isBoolean() {
-        return RE_BOOLEAN.matcher(mToken).matches();
+        return type == Type.TOKEN && RE_BOOLEAN.matcher(value).matches();
     }
 
     public boolean isInteger() {
-        return RE_INTEGER.matcher(mToken).matches();
+        return type == Type.NUMBER && RE_INTEGER.matcher(value).matches();
     }
 
     public boolean isReal() {
-        return RE_DOUBLE.matcher(mToken).matches();
-    }
-
-    public CH getSymbol() {
-        return CH.valueOf(mToken.charAt(0));
-    }
-
-    public String literalValue() throws JsonException {
-        if (!isLiteral()) {
-            throw new JsonException(mToken + " is not a string literal.");
-        }
-
-        String literal = mToken.substring(1, mToken.length() - 1);
-        StringBuilder builder = new StringBuilder();
-
-        boolean escape = false;
-        for (int i = 0; i < literal.length(); ++i) {
-            char c = literal.charAt(i);
-            if (escape) {
-                switch (c) {
-                    case 'b':
-                        builder.append('\b');
-                        break;
-                    case 't':
-                        builder.append('\t');
-                        break;
-                    case 'n':
-                        builder.append('\n');
-                        break;
-                    case 'f':
-                        builder.append('\f');
-                        break;
-                    case 'r':
-                        builder.append('\r');
-                        break;
-                    case '\"':
-                    case '\\':
-                        builder.append(c);
-                        break;
-                    case 'u':
-                        if (literal.length() < i + 5) {
-                            throw new JsonException("Incomplete unicode at end of literal", mToken, mLine, mPos, mLen);
-                        }
-                        String unicode = literal.substring(i + 1, i + 5);
-                        try {
-                            int cp = Integer.parseInt(unicode, 16);
-                            builder.append((char) cp);
-                        } catch (NumberFormatException nfe) {
-                            throw new JsonException("Unable to parse unicode value from " + unicode, nfe);
-                        }
-                        i += 4;  // skip 4 more characters.
-                        break;
-                    default:
-                        throw new JsonException("Unknown escape sequence: '\\" + c + "'");
-                }
-                escape = false;
-            } else if (c == '\\') {
-                escape = true;
-            } else {
-                builder.append(c);
-            }
-        }
-
-        return builder.toString();
+        return type == Type.NUMBER && RE_DOUBLE.matcher(value).matches();
     }
 
     public boolean booleanValue() {
-        return mToken.equals(TRUE);
+        return value.equals(kTrue);
     }
 
     public byte byteValue() {
-        if (mToken.startsWith("0x")) {
-            return Byte.parseByte(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0") && mToken.length() > 1) {
-            return Byte.parseByte(mToken.substring(1), 8);
+        if (value.startsWith("0x")) {
+            return Byte.parseByte(value.substring(2), 16);
+        } else if (value.startsWith("0") && value.length() > 1) {
+            return Byte.parseByte(value.substring(1), 8);
         }
-        return Byte.parseByte(mToken);
+        return Byte.parseByte(value);
     }
 
     public short shortValue() {
-        if (mToken.startsWith("0x")) {
-            return Short.parseShort(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0") && mToken.length() > 1) {
-            return Short.parseShort(mToken.substring(1), 8);
+        if (value.startsWith("0x")) {
+            return Short.parseShort(value.substring(2), 16);
+        } else if (value.startsWith("0") && value.length() > 1) {
+            return Short.parseShort(value.substring(1), 8);
         }
-        return Short.parseShort(mToken);
+        return Short.parseShort(value);
     }
 
     public int intValue() {
-        if (mToken.startsWith("0x")) {
-            return Integer.parseInt(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0") && mToken.length() > 1) {
-            return Integer.parseInt(mToken.substring(1), 8);
+        if (value.startsWith("0x")) {
+            return Integer.parseInt(value.substring(2), 16);
+        } else if (value.startsWith("0") && value.length() > 1) {
+            return Integer.parseInt(value.substring(1), 8);
         }
-        return Integer.parseInt(mToken);
+        return Integer.parseInt(value);
     }
 
     public long longValue() {
-        if (mToken.startsWith("0x")) {
-            return Long.parseLong(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0") && mToken.length() > 1) {
-            return Long.parseLong(mToken.substring(1), 8);
+        if (value.startsWith("0x")) {
+            return Long.parseLong(value.substring(2), 16);
+        } else if (value.startsWith("0") && value.length() > 1) {
+            return Long.parseLong(value.substring(1), 8);
         }
-        return Long.parseLong(mToken);
+        return Long.parseLong(value);
     }
 
     public float floatValue() {
-        return Float.parseFloat(mToken);
+        return Float.parseFloat(value);
     }
 
     public double doubleValue() {
-        return Double.parseDouble(mToken);
+        return Double.parseDouble(value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(JsonToken.class, type, line, pos, len, value);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof JsonToken)) return false;
         JsonToken other = (JsonToken) o;
-        return TTypeUtils.equals(mToken, other.mToken) &&
-                TTypeUtils.equals(mLine, other.mLine) &&
-                TTypeUtils.equals(mPos, other.mPos) &&
-                TTypeUtils.equals(mLen, other.mLen);
+
+        return Objects.equals(value, other.value) &&
+               Objects.equals(line, other.line) &&
+               Objects.equals(pos, other.pos) &&
+               Objects.equals(len, other.len);
     }
 
     @Override
     public String toString() {
-        return String.format("Token('%s',%d:%d-%d)", mToken, mLine, mPos, mPos + mLen);
+        return String.format("%s('%s',%d:%d-%d)", type.toString(), value, line, pos, pos + len);
     }
 }

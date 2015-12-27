@@ -33,10 +33,10 @@ public class JsonException extends Exception {
     public JsonException(String message, JsonTokenizer tokenizer, JsonToken token) throws IOException {
         super(message);
 
-        mLine = tokenizer.getLine(token.getLine());
-        mLineNo = token.getLine();
-        mPos = token.getPos();
-        mLen = token.getLen();
+        mLine = tokenizer.getLine(token.line);
+        mLineNo = token.line;
+        mPos = token.pos;
+        mLen = token.len;
     }
 
     public String getLine() {

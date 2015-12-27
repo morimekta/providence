@@ -200,24 +200,24 @@ public class TJsonSerializer
             throws TSerializeException, JsonException, IOException {
         TMessageBuilder<T> builder = type.factory().builder();
 
-        JsonToken token = tokenizer.expect("Map key.");
-        while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+        JsonToken token = tokenizer.expect("message key");
+        while (!JsonToken.kMapEnd.equals(token.value)) {
             if (!token.isLiteral()) {
-                throw new JsonException("Key " + token.getToken() + " is not literal.",
+                throw new JsonException("" + token + " is not a literal.",
                                         tokenizer,
                                         token);
             }
-            String key = token.literalValue();
+            String key = token.value;
             TField<?> field;
             if (TStringUtils.isInteger(key)) {
                 field = type.getField(Integer.parseInt(key));
             } else {
                 field = type.getField(key);
             }
-            tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "parsing message field key sep.");
+            tokenizer.expectSymbol("message field key sep", JsonToken.kKeyValSepChar);
 
             if (field != null) {
-                Object value = parseTypedValue(tokenizer.expect("parsing map value."),
+                Object value = parseTypedValue(tokenizer.expect("map value"),
                                                tokenizer,
                                                field.getDescriptor());
                 builder.set(field.getKey(), value);
@@ -228,13 +228,10 @@ public class TJsonSerializer
                 consume(tokenizer.expect("consuming unknown message value"), tokenizer);
             }
 
-            token = tokenizer.expect("message entry separator");
-            if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+            if (tokenizer.expectSymbol("message entry separator", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                 break;
-            } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                throw new JsonException("Expected list separator, got " + token, tokenizer, token);
             }
-            token = tokenizer.expect("Map key.");
+            token = tokenizer.expect("message entry key.");
         }
 
         if (mStrict && !builder.isValid()) {
@@ -256,8 +253,8 @@ public class TJsonSerializer
         TMessageBuilder<T> builder = type.factory().builder();
 
         int i = 0;
-        JsonToken token = tokenizer.expect("List item.");
-        while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+        JsonToken token = tokenizer.expect("list item");
+        while (!JsonToken.kListEnd.equals(token.value)) {
             TField<?> field = type.getField(++i);
 
             if (field != null) {
@@ -273,13 +270,10 @@ public class TJsonSerializer
                 consume(token, tokenizer);
             }
 
-            token = tokenizer.expect("List sep or end.");
-            if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+            if (tokenizer.expectSymbol("consuming list (sep)", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                 break;
-            } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                throw new TSerializeException("ARGH!");
             }
-            token = tokenizer.expect("List item");
+            token = tokenizer.expect("consuming list item");
         }
 
         if (mStrict && !builder.isValid()) {
@@ -291,41 +285,29 @@ public class TJsonSerializer
 
     private void consume(JsonToken token, JsonTokenizer tokenizer) throws IOException, JsonException {
         if (token.isSymbol()) {
-            switch (token.getSymbol()) {
-                case LIST_START:
+            switch (token.value) {
+                case JsonToken.kListStart:
                     token = tokenizer.expect("consuming list item.");
-                    while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kListEnd.equals(token.value)) {
                         consume(token, tokenizer);
-                        token = tokenizer.expect("consuming list (sep)");
-                        if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                        if (tokenizer.expectSymbol("consuming list (sep)", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Unexpected symbol " + token + ". " +
-                                                            "Expected list separator or end.",
-                                                    tokenizer,
-                                                    token);
                         }
                         token = tokenizer.expect("consuming list item.");
                     }
                     break;
-                case MAP_START:
+                case JsonToken.kMapStart:
                     token = tokenizer.expect("consuming map key.");
-                    while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kMapEnd.equals(token.value)) {
                         if (!token.isLiteral()) {
                             throw new JsonException("Unexpected map key format " + token,
                                                     tokenizer,
                                                     token);
                         }
-                        tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "consuming map (kv)");
+                        tokenizer.expectSymbol("consuming map (kv)", JsonToken.kKeyValSepChar);
                         consume(tokenizer.expect("consuming map value"), tokenizer);
-                        token = tokenizer.expect("consuming map (sep)");
-                        if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                        if (tokenizer.expectSymbol("consuming map (sep)", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Unexpected symbol " + token + ". " +
-                                                            "Expected list separator or map end.",
-                                                    tokenizer,
-                                                    token);
                         }
                         token = tokenizer.expect("consuming map key.");
                     }
@@ -350,49 +332,48 @@ public class TJsonSerializer
                         return cast(token.intValue() != 0);
                     }
                     throw new TSerializeException("Not boolean value for token: " +
-                                                          token.getToken());
+                                                          token.value);
                 case BYTE:
                     if (token.isInteger()) {
                         return cast(token.byteValue());
                     }
-                    throw new TSerializeException("Not a valid byte value: " + token.getToken());
+                    throw new TSerializeException("Not a valid byte value: " + token.value);
                 case I16:
                     if (token.isInteger()) {
                         return cast(token.shortValue());
                     }
-                    throw new TSerializeException("Not a valid short value: " + token.getToken());
+                    throw new TSerializeException("Not a valid short value: " + token.value);
                 case I32:
                     if (token.isInteger()) {
                         return cast(token.intValue());
                     }
-                    throw new TSerializeException("Not a valid int value: " + token.getToken());
+                    throw new TSerializeException("Not a valid int value: " + token.value);
                 case I64:
                     if (token.isInteger()) {
                         return cast(token.longValue());
                     }
-                    throw new TSerializeException("Not a valid long value: " + token.getToken());
+                    throw new TSerializeException("Not a valid long value: " + token.value);
                 case DOUBLE:
                     if (token.isInteger() || token.isReal()) {
                         return cast(token.doubleValue());
                     }
-                    throw new TSerializeException("Not a valid double value: " + token.getToken());
+                    throw new TSerializeException("Not a valid double value: " + token.value);
                 case STRING:
                     if (token.isLiteral()) {
-                        return cast(token.literalValue());
+                        return cast(token.value);
                     }
-                    throw new TSerializeException("Not a valid string value: " + token.getToken());
+                    throw new TSerializeException("Not a valid string value: " + token.value);
                 case BINARY:
                     if (token.isLiteral()) {
-                        return cast(TBinary.fromBase64(token.literalValue()));
+                        return cast(TBinary.fromBase64(token.value));
                     }
-                    throw new TSerializeException("Not a valid binary value: " + token.getToken());
+                    throw new TSerializeException("Not a valid binary value: " + token.value);
                 case ENUM:
-                    TEnumBuilder<?> eb = ((TEnumDescriptor<?>) t).factory()
-                                                                 .builder();
+                    TEnumBuilder<?> eb = ((TEnumDescriptor<?>) t).factory().builder();
                     if (token.isInteger()) {
                         eb.setByValue(token.intValue());
                     } else if (token.isLiteral()) {
-                        eb.setByName(token.literalValue());
+                        eb.setByName(token.value);
                     } else {
                         throw new TSerializeException(token.toString() + " is not a enum value type");
                     }
@@ -400,80 +381,85 @@ public class TJsonSerializer
                         throw new TSerializeException(token.toString() + " is not a enum value");
                     }
                     return cast(eb.build());
-                case MESSAGE:
-                    TStructDescriptor<?,?> st = (TStructDescriptor<?,?>) t;
+                case MESSAGE: {
+                    TStructDescriptor<?, ?> st = (TStructDescriptor<?, ?>) t;
                     if (token.isSymbol()) {
-                        if (token.getSymbol().equals(JsonToken.CH.MAP_START)) {
+                        if (token.value.equals(JsonToken.kMapStart)) {
                             return cast((Object) parseMessage(tokenizer, st));
-                        } else if (token.getSymbol().equals(JsonToken.CH.LIST_START)) {
+                        } else if (token.value.equals(JsonToken.kListStart)) {
                             if (st.isCompactible()) {
                                 return cast((Object) parseCompactMessage(tokenizer, st));
                             } else {
-                                throw new TSerializeException(st.getName() + " is not compatible for compact struct notation.");
+                                throw new TSerializeException(
+                                        st.getName() + " is not compatible for compact struct notation.");
                             }
                         }
                     }
                     throw new TSerializeException(token + " not parsable message start.");
-                case LIST:
-                    TDescriptor type = ((TList<?>) t).itemDescriptor();
-                    if (!token.isSymbol() || !token.getSymbol().equals(JsonToken.CH.LIST_START)) {
+                }
+                case LIST: {
+                    TDescriptor itemType = ((TList<?>) t).itemDescriptor();
+                    if (!token.isSymbol() || !token.value.equals(JsonToken.kListStart)) {
                         throw new TSerializeException("Incompatible start of list " + token);
                     }
                     LinkedList<Object> list = new LinkedList<>();
                     token = tokenizer.expect("List item.");
-                    while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
-                        list.add(parseTypedValue(token, tokenizer, type));
-                        token = tokenizer.expect("expected end of list or separator");
-                        if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kListEnd.equals(token.value)) {
+                        list.add(parseTypedValue(token, tokenizer, itemType));
+
+                        if (tokenizer.expectSymbol("expected end of list or separator",
+                                                   JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new TSerializeException("ASDASDASD");
                         }
-                        token = tokenizer.expect("List item");
+                        token = tokenizer.expect("List item.");
                     }
                     return cast(list);
-                case SET:
-                    type = ((TSet<?>) t).itemDescriptor();
+                }
+                case SET: {
+                    TDescriptor<?> itemType = ((TSet<?>) t).itemDescriptor();
+                    if (!token.isSymbol() || !token.value.equals(JsonToken.kListStart)) {
+                        throw new TSerializeException("Incompatible start of list " + token);
+                    }
                     LinkedHashSet<Object> set = new LinkedHashSet<>();
-                    token = tokenizer.expect("Unexpected end of list");
-                    while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
-                        set.add(parseTypedValue(token,
-                                                tokenizer,
-                                                type));
-                        token = tokenizer.expect("expected end of list or separator");
-                        if (JsonToken.CH.LIST_END.equals(token.getSymbol())) {
+                    token = tokenizer.expect("List item.");
+                    while (!JsonToken.kListEnd.equals(token.value)) {
+                        set.add(parseTypedValue(token, tokenizer, itemType));
+
+                        if (tokenizer.expectSymbol("expected end of list or separator",
+                                                   JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new TSerializeException("ASDASDASD");
                         }
-                        token = tokenizer.expect("List item");
+                        token = tokenizer.expect("List item.");
                     }
                     return cast(set);
-                case MAP:
-                    type = ((TMap<?, ?>) t).itemDescriptor();
+                }
+                case MAP: {
+                    TDescriptor<?> itemType = ((TMap<?, ?>) t).itemDescriptor();
+                    TDescriptor<?> keyType = ((TMap<?, ?>) t).keyDescriptor();
+                    if (!token.isSymbol() || !token.value.equals(JsonToken.kMapStart)) {
+                        throw new TSerializeException("Incompatible start of map " + token);
+                    }
 
-                    TDescriptor keyType = ((TMap<?, ?>) t).keyDescriptor();
                     LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
 
                     token = tokenizer.expect("Unexpected end of map");
-                    while (!JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                    while (!JsonToken.kMapEnd.equals(token.value)) {
                         if (!token.isLiteral()) {
                             throw new JsonException("Unexpected map key format " + token + ", must be string.",
                                                     tokenizer, token);
                         }
-                        tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "Map value sep.");
+                        tokenizer.expectSymbol("Map key-val separator", ':');
 
-                        map.put(parsePrimitiveKey(token.literalValue(), keyType),
-                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, type));
-                        token = tokenizer.expect("parsing map content (sep).");
-                        if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
+                        map.put(parseMapKey(token.value, keyType),
+                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, itemType));
+                        if (tokenizer.expectSymbol("parsing map content (sep).",
+                                                   JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                             break;
-                        } else if (!JsonToken.CH.LIST_SEP.equals(token.getSymbol())) {
-                            throw new JsonException("Expected end of object or separator.");
                         }
                         token = tokenizer.expect("parsing map key.");
                     }
                     return cast(map);
+                }
             }
         } catch (JsonException je) {
             throw new TSerializeException(je, "Unable to parse type value " + token.toString());
@@ -486,7 +472,7 @@ public class TJsonSerializer
         throw new TSerializeException("Unhandled item type " + t.getQualifiedName(null));
     }
 
-    protected Object parsePrimitiveKey(String key, TDescriptor keyType) throws TSerializeException {
+    protected Object parseMapKey(String key, TDescriptor keyType) throws TSerializeException {
         try {
             switch (keyType.getType()) {
                 case ENUM:
@@ -540,7 +526,7 @@ public class TJsonSerializer
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
-                        tokenizer.expectSymbol(JsonToken.CH.MAP_START, "Message start");
+                        tokenizer.expectSymbol("Message start", JsonToken.kMapStartChar);
                         return cast(parseMessage(tokenizer, st));
                     } catch (IOException e) {
                         throw new TSerializeException(e, "Unable to tokenize map key: " + key);

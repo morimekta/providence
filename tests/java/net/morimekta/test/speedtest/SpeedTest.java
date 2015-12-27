@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- * Created by steineldar on 22.12.15.
+ * Speed test running through:
+ *  - Read a file for each protocol / serialization format.
+ *  - Write the same file back to a temp file.
  */
 public class SpeedTest {
     public static class Options {
@@ -49,17 +51,18 @@ public class SpeedTest {
         public String in;
     }
 
-    public enum Format {          //   J2    thrift
-        json_named("json"),       // 21.88
-        json("json"),             // 18.72
+    public enum Format {          //  TJ2    thrift
+        json_pretty("json"),      // 13.65
+        json_named("json"),       // 12.41
+        json("json"),             // 11.52
 
-        json_protocol("json"),    // 10.64   10.92
+        json_protocol("json"),    //  8.86   10.86
 
-        binary("bin"),            //  2.32
+        binary("bin"),            //  2.37
 
-        compact_protocol("bin"),  //  2.13    2.43
-        tuple_protocol("tuples"), //  1.92    2.02
-        binary_protocol("bin"),   //  1.82    1.99
+        compact_protocol("bin"),  //  2.44    2.71
+        binary_protocol("bin"),   //  2.05    2.43
+        tuple_protocol("tuples"), //  2.04    1.97
         ;
 
         String suffix;
@@ -92,21 +95,59 @@ public class SpeedTest {
 
             System.out.println("OUT: " + outDir.getAbsolutePath());
 
+            // Do a warmup read to make sure the disk is spinning.
+            Format fmt = Format.json_pretty;
+            File inFile = new File(inDir, String.format("%s.%s", fmt.name(), fmt.suffix));
+            File outFile;
+            BufferedInputStream inStream = new BufferedInputStream(
+                    new FileInputStream(inFile));
+            CountingOutputStream outStream;
+
+            System.out.print("Warmup: -");
+            byte[] buffer = new byte[65536];
+            int i = 0;
+
+            long start = System.nanoTime();
+
+            int inBytes = 0;
+            int r;
+            while ((r = inStream.read(buffer)) >= 0) {
+                inBytes += r;
+                System.out.print('\b');
+                i = (i + 1) % 4;
+                switch (i) {
+                    case 0:
+                        System.out.print('-'); break;
+                    case 1:
+                        System.out.print('\\'); break;
+                    case 2:
+                        System.out.print('|'); break;
+                    case 3:
+                        System.out.print('/'); break;
+                }
+            }
+
+            long end = System.nanoTime();
+            long time = (end - start) / 1000000;
+
+            System.out.format(" %,9d kB in %5.2fs", inBytes / 1024, (double) time / 1000);
+
+            System.out.println();
             System.out.println();
             System.out.println(" --- thrift ---");
             System.out.println();
 
             for (Format format : Format.values()) {
-                File inFile = new File(inDir, String.format("%s.%s", format.name(), format.suffix));
-                File outFile = new File(outDir, String.format("%s-j1.%s", format.name(), format.suffix));
+                inFile = new File(inDir, String.format("%s.%s", format.name(), format.suffix));
+                outFile = new File(outDir, String.format("%s-j1.%s", format.name(), format.suffix));
                 if (outFile.exists()) {
                     outFile.delete();
                 }
                 outFile.createNewFile();
 
-                BufferedInputStream inStream = new BufferedInputStream(
+                inStream = new BufferedInputStream(
                         new FileInputStream(inFile));
-                CountingOutputStream outStream = new CountingOutputStream(
+                outStream = new CountingOutputStream(
                         new BufferedOutputStream(
                                 new FileOutputStream(outFile, false)));
 
@@ -135,9 +176,9 @@ public class SpeedTest {
                         continue;
                 }
 
-                long in_size = inFile.length();
+                inBytes = (int) inFile.length();
 
-                long start = System.currentTimeMillis();
+                start = System.currentTimeMillis();
 
                 net.morimekta.test.Containers containers;
                 int num = 0;
@@ -171,11 +212,11 @@ public class SpeedTest {
 
                 inStream.close();
 
-                int out_size = outStream.getByteCount();
+                int outBytes = outStream.getByteCount();
 
                 outStream.close();
 
-                long end = System.currentTimeMillis();
+                end = System.currentTimeMillis();
 
                 wtime /= 1000000;
                 rtime /= 1000000;
@@ -186,16 +227,16 @@ public class SpeedTest {
                                   (double) (end - start) / 1000,
                                   (double) rtime / 1000,
                                   (double) wtime / 1000,
-                                  in_size / 1024, out_size / 1024);
+                                  inBytes / 1024, outBytes / 1024);
             }
 
             System.out.println();
             System.out.println(" --- thrift-j2 ---");
             System.out.println();
 
-            for (Format fmt : Format.values()) {
-                File inFile = new File(inDir, String.format("%s.%s", fmt.name(), fmt.suffix));
-                File outFile = new File(outDir, String.format("%s-j2.%s", fmt.name(), fmt.suffix));
+            for (Format format : Format.values()) {
+                inFile = new File(inDir, String.format("%s.%s", format.name(), format.suffix));
+                outFile = new File(outDir, String.format("%s-j2.%s", format.name(), format.suffix));
                 if (outFile.exists()) {
                     outFile.delete();
                 }
@@ -203,13 +244,13 @@ public class SpeedTest {
 
                 TSerializer serializer;
 
-                BufferedInputStream inStream = new BufferedInputStream(
+                inStream = new BufferedInputStream(
                         new FileInputStream(inFile));
-                CountingOutputStream outStream = new CountingOutputStream(
+                outStream = new CountingOutputStream(
                         new BufferedOutputStream(
                                 new FileOutputStream(outFile, false)));
 
-                switch (fmt) {
+                switch (format) {
                     case binary:
                         serializer = new TBinarySerializer();
                         break;
@@ -225,6 +266,9 @@ public class SpeedTest {
                     case json_named:
                         serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
                         break;
+                    case json_pretty:
+                        serializer = new TJsonSerializer(false, TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME, true);
+                        break;
                     case json_protocol:
                         serializer = new TJsonProtocolSerializer();
                         break;
@@ -232,12 +276,12 @@ public class SpeedTest {
                         serializer = new TTupleProtocolSerializer();
                         break;
                     default:
-                        System.out.format("%20s: [skipped]\n", fmt.name());
+                        System.out.format("%20s: [skipped]\n", format.name());
                         continue;
                 }
 
-                final long in_size = inFile.length();
-                final long start = System.currentTimeMillis();
+                inBytes = (int) inFile.length();
+                start = System.currentTimeMillis();
 
                 int num;
 
@@ -265,8 +309,8 @@ public class SpeedTest {
                     }
                 }
 
-                final long out_size = outStream.getByteCount();
-                final long end = System.currentTimeMillis();
+                final long outBytes = outStream.getByteCount();
+                end = System.currentTimeMillis();
 
                 outStream.close();
 
@@ -275,11 +319,11 @@ public class SpeedTest {
 
                 System.out.format(Locale.ENGLISH,
                                   "%20s: %5.2fs  (r: %5.2fs, w: %5.2fs)  #  %,7d kB -> %,7d kB\n",
-                                  fmt.name(),
+                                  format.name(),
                                   (double) (end - start) / 1000,
                                   (double) rtime / 1000,
                                   (double) wtime / 1000,
-                                  in_size / 1024, out_size / 1024);
+                                  inBytes / 1024, outBytes / 1024);
             }
         } catch (TException|TSerializeException|IOException | CmdLineException e) {
             System.out.flush();

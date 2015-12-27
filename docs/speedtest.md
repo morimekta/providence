@@ -14,13 +14,14 @@ Run one of the following data generation commands:
 
 And you should see output like this.
 ```
-          json_named:  259 867 kB in  6,39s
-                json:  228 742 kB in  4,77s
-       json_protocol:  253 320 kB in  4,19s
-              binary:  175 170 kB in  2,68s
-    compact_protocol:  168 476 kB in  1,75s
-     binary_protocol:  178 944 kB in  1,47s
-      tuple_protocol:  166 064 kB in  1,19s
+         json_pretty:  224,943 kB in  6.93s
+          json_named:  177,677 kB in  5.31s
+                json:  160,877 kB in  5.05s
+       json_protocol:  174,968 kB in  3.67s
+              binary:  121,022 kB in  1.43s
+    compact_protocol:  116,322 kB in  1.42s
+     binary_protocol:  123,306 kB in  1.31s
+      tuple_protocol:  115,161 kB in  1.30s
 ```
 
 # Results 2015-12-27
@@ -32,21 +33,23 @@ OUT: /tmp/thrift-j2-3440926060240928395-speed-test
 
  --- thrift ---
 
+         json_pretty: [skipped]
           json_named: [skipped]
                 json: [skipped]
-       json_protocol: 12,05s  (r:  7,51s, w:  4,51s) # 253 330 kB -> 253 330 kB
+       json_protocol: 11.58s  (r:  6.98s, w:  4.29s)  #  174,988 kB -> 186,596 kB
               binary: [skipped]
-    compact_protocol:  3,18s  (r:  1,63s, w:  1,52s) # 168 486 kB -> 168 486 kB
-     binary_protocol:  1,85s  (r:  0,79s, w:  0,83s) # 178 953 kB -> 178 953 kB
-      tuple_protocol:  2,00s  (r:  1,08s, w:  0,90s) # 166 074 kB -> 166 074 kB
+    compact_protocol:  3.14s  (r:  1.69s, w:  1.40s)  #  116,341 kB -> 118,827 kB
+     binary_protocol:  2.07s  (r:  0.89s, w:  1.10s)  #  123,326 kB -> 129,128 kB
+      tuple_protocol:  1.76s  (r:  0.86s, w:  0.80s)  #  115,180 kB -> 115,180 kB
 
  --- thrift-j2 ---
 
-          json_named: 18,40s  (r: 14,73s, w:  3,67s) # 259 877 kB -> 259 877 kB
-                json: 16,78s  (r: 13,37s, w:  3,41s) # 228 752 kB -> 228 752 kB
-       json_protocol: 10,48s  (r:  6,67s, w:  3,81s) # 253 330 kB -> 253 330 kB
-              binary:  1,86s  (r:  1,02s, w:  0,83s) # 175 180 kB -> 175 180 kB
-    compact_protocol:  2,96s  (r:  1,34s, w:  1,62s) # 168 486 kB -> 168 486 kB
-     binary_protocol:  1,99s  (r:  1,22s, w:  0,77s) # 178 953 kB -> 178 953 kB
-      tuple_protocol:  1,81s  (r:  1,20s, w:  0,61s) # 166 074 kB -> 166 074 kB
+         json_pretty: 13.07s  (r:  7.70s, w:  5.37s)  #  224,963 kB -> 224,963 kB
+          json_named: 12.42s  (r:  7.34s, w:  5.08s)  #  177,697 kB -> 177,697 kB
+                json: 11.46s  (r:  6.86s, w:  4.60s)  #  160,896 kB -> 160,896 kB
+       json_protocol:  8.34s  (r:  5.28s, w:  3.06s)  #  174,988 kB -> 174,988 kB
+              binary:  2.41s  (r:  1.17s, w:  1.24s)  #  121,041 kB -> 121,041 kB
+    compact_protocol:  2.42s  (r:  1.50s, w:  0.92s)  #  116,341 kB -> 116,341 kB
+     binary_protocol:  1.87s  (r:  1.17s, w:  0.71s)  #  123,326 kB -> 123,326 kB
+      tuple_protocol:  2.07s  (r:  1.35s, w:  0.72s)  #  115,180 kB -> 115,180 kB
 ```
