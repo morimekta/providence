@@ -19,6 +19,14 @@
 
 package org.apache.thrift.j2.reflect;
 
+import org.apache.thrift.j2.model.ThriftDocument;
+import org.apache.thrift.j2.reflect.contained.TCDocument;
+import org.apache.thrift.j2.reflect.parser.TParseException;
+import org.apache.thrift.j2.reflect.parser.TParser;
+import org.apache.thrift.j2.reflect.util.TDocumentConverter;
+import org.apache.thrift.j2.reflect.util.TTypeRegistry;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,13 +36,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.apache.thrift.j2.model.ThriftDocument;
-import org.apache.thrift.j2.reflect.contained.TCDocument;
-import org.apache.thrift.j2.reflect.parser.TParseException;
-import org.apache.thrift.j2.reflect.parser.TParser;
-import org.apache.thrift.j2.reflect.util.TDocumentConverter;
-import org.apache.thrift.j2.reflect.util.TTypeRegistry;
 
 /**
  * @author Stein Eldar Johnsen
@@ -125,7 +126,7 @@ public class TTypeLoader {
             return cdoc;
         }
 
-        InputStream in = new FileInputStream(file);
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
         ThriftDocument doc = mParser.parse(in, file.getName());
 
         LinkedList<File> queue = new LinkedList<>();

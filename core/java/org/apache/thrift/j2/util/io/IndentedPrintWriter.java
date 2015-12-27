@@ -25,55 +25,65 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.Stack;
 
-import org.apache.thrift.j2.util.TStringUtils;
-
 public class IndentedPrintWriter
         extends PrintWriter {
     public final static String NEWLINE = "\n";
     public final static String INDENT  = "    ";
 
-    private final Stack<String> mIndents;
-    private final String        mIndent;
-    private final String        mNewline;
-    private       String        mCurrentIndent;
+    private final Stack<String> indents;
+    private final String        indent;
+    private final String        newline;
+    private       String        current;
 
     public IndentedPrintWriter(OutputStream out) {
-        this(new PrintWriter(out), INDENT, NEWLINE);
+        this(out, INDENT, NEWLINE);
+    }
+
+    public IndentedPrintWriter(OutputStream out, String indent, String newline) {
+        super(out);
+        this.indent = indent;
+        this.newline = newline;
+
+        this.indents = new Stack<>();
+        this.current = "";
+    }
+
+    public IndentedPrintWriter(Writer out) {
+        this(out, INDENT, NEWLINE);
     }
 
     public IndentedPrintWriter(Writer out, String indent, String newline) {
         super(out);
-        mIndent = indent;
-        mNewline = newline;
+        this.indent = indent;
+        this.newline = newline;
 
-        mIndents = new Stack<>();
-        mCurrentIndent = "";
+        this.indents = new Stack<>();
+        this.current = "";
     }
 
     public IndentedPrintWriter begin() {
-        return begin(mIndent);
+        return begin(indent);
     }
 
     public IndentedPrintWriter begin(String indent) {
-        mIndents.push(indent);
-        mCurrentIndent = TStringUtils.join("", mIndents);
+        indents.push(current);
+        current = current + indent;
         return this;
     }
 
     public IndentedPrintWriter end() {
-        if (mIndents.isEmpty())
+        if (indents.isEmpty())
             throw new IllegalStateException("No indent to end");
-        mIndents.pop();
-        mCurrentIndent = TStringUtils.join("", mIndents);
+        current = indents.pop();
         return this;
     }
 
     public IndentedPrintWriter newline() {
-        return append(mNewline);
+        return append(newline);
     }
 
     public IndentedPrintWriter appendln() {
-        newline().append(mCurrentIndent);
+        newline().append(current);
         return this;
     }
 

@@ -18,17 +18,6 @@
  */
 package org.apache.thrift.j2.protocol;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.thrift.TException;
 import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumBuilder;
@@ -53,6 +42,17 @@ import org.apache.thrift.protocol.TStruct;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
@@ -82,8 +82,6 @@ class TProtocolSerializer extends TSerializer {
             return wrapper.getByteCount();
         } catch (TException e) {
             throw new TSerializeException(e, e.getMessage());
-        } finally {
-            transport.close();  // closes wrapper too.
         }
     }
 
@@ -113,8 +111,6 @@ class TProtocolSerializer extends TSerializer {
             return wrapper.getByteCount();
         } catch (TException e) {
             throw new TSerializeException(e, e.getMessage());
-        } finally {
-            transport.close();
         }
     }
 
@@ -127,8 +123,6 @@ class TProtocolSerializer extends TSerializer {
             TProtocol protocol = mProtocolFactory.getProtocol(transport);
 
             ret = read(protocol, definition);
-
-            transport.close();
         } catch (TTransportException e) {
             throw new TSerializeException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {

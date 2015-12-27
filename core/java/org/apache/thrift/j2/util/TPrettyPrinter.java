@@ -151,7 +151,7 @@ public class TPrettyPrinter {
                         writer.append(',');
                     }
                     writer.appendln();
-                    appendPrimitive(writer, entry.getKey());
+                    appendTypedValue(writer, mapType.keyDescriptor(), entry.getKey());
                     writer.append(":")
                           .append(mSpace);
                     appendTypedValue(writer, mapType.itemDescriptor(), entry.getValue());

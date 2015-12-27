@@ -19,18 +19,6 @@
 
 package org.apache.thrift.j2.serializer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-
 import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TEnumBuilder;
 import org.apache.thrift.j2.TEnumValue;
@@ -50,6 +38,18 @@ import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonToken;
 import org.apache.thrift.j2.util.json.JsonTokenizer;
 import org.apache.thrift.j2.util.json.JsonWriter;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Compact JSON serializer. This uses the most isCompact type-safe JSON format
@@ -457,10 +457,10 @@ public class TJsonSerializer
                             throw new JsonException("Unexpected map key format " + token + ", must be string.",
                                                     tokenizer, token);
                         }
-                        tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "");
+                        tokenizer.expectSymbol(JsonToken.CH.MAP_KV_SEP, "Map value sep.");
 
                         map.put(parsePrimitiveKey(token.literalValue(), keyType),
-                                parseTypedValue(tokenizer.expect(""), tokenizer, type));
+                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, type));
                         token = tokenizer.expect("parsing map content (sep).");
                         if (JsonToken.CH.MAP_END.equals(token.getSymbol())) {
                             break;
@@ -536,6 +536,7 @@ public class TJsonSerializer
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
+                        tokenizer.expectSymbol(JsonToken.CH.MAP_START, "Message start");
                         return cast(parseMessage(tokenizer, st));
                     } catch (IOException e) {
                         throw new TSerializeException(e, "Unable to tokenize map key: " + key);

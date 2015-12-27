@@ -39,6 +39,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -174,10 +175,9 @@ public class TBinarySerializer
             return null;
         }
 
-        int type = (type_and_flag & 0xf0) >> 4;
         int flag = (type_and_flag & 0x0f);
 
-        return new FieldInfo(id, DataType.findById(type), (byte) flag);
+        return new FieldInfo(id, DataType.findById(type_and_flag), (byte) flag);
     }
 
     protected FieldInfo readEntryFieldInfo(InputStream in, int fieldId) throws IOException, TSerializeException {
@@ -189,10 +189,9 @@ public class TBinarySerializer
             throw new TSerializeException("unable to read field info.");
         }
 
-        int type = (type_and_flag & 0xf0) >> 4;
         int flag = (type_and_flag & 0x0f);
 
-        return new FieldInfo(fieldId, DataType.findById(type), (byte) flag);
+        return new FieldInfo(fieldId, DataType.findById(type_and_flag), (byte) flag);
     }
 
     /**
@@ -250,14 +249,14 @@ public class TBinarySerializer
                             }
                             return cast(builder.build());
                         default:
-                            throw new TSerializeException("invalid type for numeric value " + type.getName());
+                            throw new TSerializeException("invalid type for numeric value " + type);
                     }
                 }
                 return null;
             case DOUBLE:
                 return cast(readDouble(in));
             case BINARY:
-                int bytes = fieldInfo.getBinaryLengthBytes();
+                int bytes = fieldInfo.getArrayLengthBytes();
                 int length = (int) readUnsigned(in, bytes);
                 byte[] binary = readBinary(in, length);
                 if (type != null) {
@@ -267,14 +266,14 @@ public class TBinarySerializer
                         case STRING:
                             return cast(new String(binary, fieldInfo.getStringEncoding()));
                         default:
-                            throw new TSerializeException("Illegal type for binary encoding.");
+                            throw new TSerializeException("Illegal type for binary encoding: " + type);
                     }
                 }
                 return null;
             case MESSAGE:
                 if (type != null) {
                     if (!type.getType().equals(TType.MESSAGE)) {
-                        throw new TSerializeException("Invalid type for message encoding.");
+                        throw new TSerializeException("Invalid type for message encoding: " + type);
                     }
                     return cast((Object) readMessage(in, (TStructDescriptor<?,?>) type, false));
                 } else {
@@ -282,59 +281,73 @@ public class TBinarySerializer
                     consumeMessage(in);
                     return null;
                 }
-            case COLLECTION:
-                if (fieldInfo.isCollectionMap()) {
-                    Map<Object,Object> out = new LinkedHashMap<>();
-
-                    TDescriptor keyType = null;
-                    TDescriptor valueType = null;
-                    if (type != null) {
-                        if (!type.getType().equals(TType.MAP)) {
-                            throw new TSerializeException("Invalid type for map encoding.");
-                        }
-
-                        TMap<?,?> mapType = (TMap<?,?>) type;
-                        keyType = mapType.keyDescriptor();
-                        valueType = mapType.itemDescriptor();
+            case MAP: {
+                TDescriptor keyType = null;
+                TDescriptor valueType = null;
+                if (type != null) {
+                    if (!type.getType().equals(TType.MAP)) {
+                        throw new TSerializeException("Invalid type for map encoding: " + type);
                     }
 
-                    FieldInfo entryInfo;
-                    while ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) != null) {
-                        Object key = readFieldValue(in, entryInfo, keyType);
-                        if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
-                            throw new TSerializeException("Unexpected end of map stream.");
-                        }
-                        Object value = readFieldValue(in, entryInfo, valueType);
-                        if (key != null && value != null) {
-                            out.put(key, value);
-                        } else if (mStrict) {
-                            throw new TSerializeException("Null key or value in map.");
-                        }
-                    }
-
-                    return cast(out);
-                } else {
-                    Collection<Object> out = new LinkedList<>();
-
-                    TDescriptor entryType = null;
-                    if (type != null) {
-                        if (!type.getType().equals(TType.LIST) &&
-                                !type.getType().equals(TType.SET)) {
-                            throw new TSerializeException("Invalid type for list encoding.");
-                        }
-                        entryType = ((TContainer<?, ?>) type).itemDescriptor();
-                    }
-
-                    FieldInfo entryInfo;
-                    while ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) != null) {
-                        Object key = readFieldValue(in, entryInfo, entryType);
-                        if (key != null) {
-                            out.add(key);
-                        }
-                    }
-
-                    return cast(out);
+                    TMap<?, ?> mapType = (TMap<?, ?>) type;
+                    keyType = mapType.keyDescriptor();
+                    valueType = mapType.itemDescriptor();
                 }
+
+                final int lb = fieldInfo.getArrayLengthBytes();
+                final int size = (int) readUnsigned(in, lb);
+
+                Map<Object, Object> out = new LinkedHashMap<>(size);
+
+                FieldInfo entryInfo;
+                for (int i = 0; i < size; ++i) {
+                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
+                        throw new TSerializeException("Unexpected end of map stream.");
+                    }
+                    Object key = readFieldValue(in, entryInfo, keyType);
+                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
+                        throw new TSerializeException("Unexpected end of map stream.");
+                    }
+                    Object value = readFieldValue(in, entryInfo, valueType);
+                    if (key != null && value != null) {
+                        out.put(key, value);
+                    } else if (mStrict) {
+                        throw new TSerializeException("Null key or value in map.");
+                    }
+                }
+                return cast(out);
+            }
+            case COLLECTION: {
+                TDescriptor entryType = null;
+                if (type != null) {
+                    if (!type.getType().equals(TType.LIST) &&
+                        !type.getType().equals(TType.SET)) {
+                        throw new TSerializeException("Invalid type for list encoding: " + type);
+                    }
+                    entryType = ((TContainer<?, ?>) type).itemDescriptor();
+                }
+
+                final int lb = fieldInfo.getArrayLengthBytes();
+                final int size = (int) readUnsigned(in, lb);
+
+                Collection<Object> out = type.getType().equals(TType.LIST) ?
+                                         new LinkedList<>() : new LinkedHashSet<>(size);
+
+                FieldInfo entryInfo;
+                for (int i = 0; i < size; ++i) {
+                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
+                        throw new TSerializeException("Unexpected end of collection.");
+                    }
+                    Object key = readFieldValue(in, entryInfo, entryType);
+                    if (key != null) {
+                        out.add(key);
+                    } else if (mStrict) {
+                        throw new TSerializeException("Null value in collection.");
+                    }
+                }
+
+                return cast(out);
+            }
             default:
                 throw new TSerializeException("unknown data type.");
         }
@@ -441,12 +454,12 @@ public class TBinarySerializer
     @SuppressWarnings("unchecked")
     protected int writeFieldValue(OutputStream out, Object value) throws IOException, TSerializeException {
         if (value instanceof TMessage) {
-            int type = DataType.MESSAGE.id << 4;
+            int type = DataType.MESSAGE.id;
             int flags = 0;
             out.write(type | flags);
             return 1 + serialize(out, (TMessage<?>) value);
         } else if (value instanceof Boolean) {
-            int type = DataType.BOOLEAN.id << 4;
+            int type = DataType.BOOLEAN.id;
             int flags = (Boolean) value ? FieldInfo.TRUE : FieldInfo.FALSE;
             out.write(type | flags);
             return 1;
@@ -458,25 +471,28 @@ public class TBinarySerializer
         } else if (value instanceof Double) {
             return writeDouble(out, (Double) value);
         } else if (value instanceof Map) {
-            int type = DataType.COLLECTION.id << 4;
-            int flag = FieldInfo.COLLECTION_MAP;
-            out.write(type | flag);
-            int len = 0;
-            for (Map.Entry<Object, Object> entry : ((Map<Object,Object>) value).entrySet()) {
+            Map<Object,Object> map = (Map<Object,Object>) value;
+            final int type = DataType.MAP.id;
+            final int lengthBytes = getBinaryLengthBytes(map.size());
+            final int flags = lengthBytes - 1;
+            out.write(type | flags);
+            int len = 1 + writeUnsigned(out, map.size(), lengthBytes);
+            for (Map.Entry<Object, Object> entry : map.entrySet()) {
                 len += writeFieldValue(out, entry.getKey());
                 len += writeFieldValue(out, entry.getValue());
             }
-            out.write(0);
-            return len + 2;
+            return len;
         } else if (value instanceof Collection) {
-            int type = DataType.COLLECTION.id << 4;
-            out.write(type);
-            int len = 0;
+            Collection<Object> coll = (Collection<Object>) value;
+            final int type = DataType.COLLECTION.id;
+            final int lengthBytes = getBinaryLengthBytes(coll.size());
+            final int flags = lengthBytes - 1;
+            out.write(type | flags);
+            int len = 1 + writeUnsigned(out, coll.size(), lengthBytes);
             for (Object item : ((Collection<Object>) value)) {
                 len += writeFieldValue(out, item);
             }
-            out.write(0);
-            return len + 2;
+            return len;
         } else {
             // enum and integers.
             long number;
@@ -486,13 +502,13 @@ public class TBinarySerializer
                 number = ((Number) value).longValue();
             }
             if (number == 0) {
-                int type = DataType.BOOLEAN.id << 4;
+                int type = DataType.BOOLEAN.id;
                 int flags = FieldInfo.FALSE;
                 out.write(type | flags);
                 return 1;
             }
             int flags = getNumericByteLengthFlag(number);
-            int type = DataType.INTEGER.id << 4;
+            int type = DataType.INTEGER.id;
             out.write(type | flags);
 
             int numBytes = getNumericByteLength(number);
@@ -509,7 +525,7 @@ public class TBinarySerializer
      * @throws IOException
      */
     protected int writeDouble(OutputStream out, double value) throws IOException {
-        int type = DataType.DOUBLE.id << 4;
+        int type = DataType.DOUBLE.id;
         out.write(type);
         long number = Double.doubleToLongBits(value);
         return 1 + writeUnsigned(out, number, 8);
@@ -570,7 +586,7 @@ public class TBinarySerializer
      * @throws IOException
      */
     protected int writeBinary(OutputStream out, int flags, byte[] bytes) throws IOException {
-        int type = DataType.BINARY.id << 4;
+        int type = DataType.BINARY.id;
         int lengthBytes = getBinaryLengthBytes(bytes.length);
         flags |= (lengthBytes - 1);
         out.write(type | flags);
@@ -587,11 +603,11 @@ public class TBinarySerializer
      * @return
      */
     protected int getBinaryLengthBytes(int length) {
-        if (length > ((2 << 24) - 1))
+        if (length > ((1 << 24) - 1))
             return 4;
-        if (length > ((2 << 16) - 1))
+        if (length > ((1 << 16) - 1))
             return 3;
-        if (length > ((2 << 8) - 1))
+        if (length > ((1 << 8) - 1))
             return 2;
         return 1;
     }
@@ -647,15 +663,13 @@ public class TBinarySerializer
      * DataType. Available values 1..7 (3-bit)
      */
     protected enum DataType {
-        // data type 0 is only used for list termination.
-        BOOLEAN(1),    // boolean / small int value in flags.
-        INTEGER(2),    // -> byte, i16, i32, i64, little endian, signed.
-        DOUBLE(3),     // -> 64 bit double
-        BINARY(4),     // -> binary, string with encoding.
-        MESSAGE(5),    // -> messages, terminated with field-ID 0.
-        COLLECTION(6); // -> list, set, map, terminated with data-type 0.
-        // unused: 7, TODO(morimekta): any message:
-        //   - some identifier (TBD), plus binary data (with content length).
+        BOOLEAN(0x10),    // boolean / small int value in flags.
+        INTEGER(0x20),    // -> byte, i16, i32, i64, little endian, signed.
+        DOUBLE(0x30),     // -> 64 bit double
+        BINARY(0x40),     // -> binary, string with encoding.
+        MESSAGE(0x50),    // -> messages, terminated with field-ID 0.
+        MAP(0x60),        // -> map.
+        COLLECTION(0x70); // -> list, set.
 
         public int id;
 
@@ -668,13 +682,14 @@ public class TBinarySerializer
          * @param id The ID number.
          * @return The DataType.
          */
-        public static DataType findById(int id) {
+        public static DataType findById(int id) throws TSerializeException {
+            final int t = id & 0xf0;
             for (DataType type : values()) {
-                if (id == type.id) {
+                if (t == type.id) {
                     return type;
                 }
             }
-            throw new IllegalArgumentException("No such data type: " + id);
+            throw new TSerializeException("No such data type: " + id);
         }
     }
 
@@ -708,38 +723,31 @@ public class TBinarySerializer
             return mFlags;
         }
 
-        public int getBinaryLengthBytes() {
+        public int getArrayLengthBytes() {
             return (mFlags & 0x03) + 1;
         }
 
-        public int getNumericBytes() {
+        public int getNumericBytes() throws TSerializeException {
             switch (mFlags & 0x03) {
-                case 0:
-                    return 1;
-                case 1:
-                    return 2;
-                case 2:
-                    return 4;
-                case 3:
-                    return 8;
+                case FIXED_8:
+                    return Byte.BYTES;
+                case FIXED_16:
+                    return Short.BYTES;
+                case FIXED_32:
+                    return Integer.BYTES;
+                case FIXED_64:
+                    return Long.BYTES;
                 default:
-                    throw new IllegalArgumentException("OOPS");
+                    throw new TSerializeException("OOPS");
             }
         }
 
         public Charset getStringEncoding() {
-            switch ((mFlags % 0x04) >> 2) {
-                case 0:
-                    return StandardCharsets.ISO_8859_1;
-                case 1:
-                    return StandardCharsets.UTF_8;
-                default:
-                    throw new IllegalArgumentException("OOPS");
+            if ((mFlags & ENCODING_UTF_8) != 0) {
+                return StandardCharsets.UTF_8;
+            } else {
+                return StandardCharsets.ISO_8859_1;
             }
-        }
-
-        public boolean isCollectionMap() {
-            return (mFlags & 0x01) != 0;
         }
 
         public static final int ENCODING_ISO_8859_1 = 0x00;
@@ -752,7 +760,5 @@ public class TBinarySerializer
 
         public static final int TRUE  = 0x01;
         public static final int FALSE = 0x00;
-
-        public static final int COLLECTION_MAP = 0x01;
     }
 }

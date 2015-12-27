@@ -113,9 +113,9 @@ public class TToken {
             JsonToken token = tokenizer.expect("parsing string literal.");
             return token.literalValue();
         } catch (JsonException e) {
-            throw new TParseException("Unable to parse string literal: " + mToken);
+            throw new TParseException("Unable to parse string literal: " + mToken, e);
         } catch (IOException e) {
-            throw new TParseException("Unable to read string literal: " + mToken);
+            throw new TParseException("Unable to read string literal: " + mToken, e);
         }
     }
 
