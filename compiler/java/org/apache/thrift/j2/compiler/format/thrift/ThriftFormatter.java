@@ -299,7 +299,7 @@ public class ThriftFormatter {
                   .append(ev.descriptor().getName()).append('.').append(ev.toString())
                   .append('\"');
         } else if (value instanceof String) {
-            JsonWriter json = new JsonWriter(writer, "");
+            JsonWriter json = new JsonWriter(writer);
             json.value(value);
             json.flush();
         } else if (value instanceof Boolean ||
@@ -308,12 +308,12 @@ public class ThriftFormatter {
                    value instanceof Short ||
                    value instanceof Long) {
             writer.append('\"');
-            JsonWriter json = new JsonWriter(writer, "");
+            JsonWriter json = new JsonWriter(writer);
             json.value(value);
             json.flush();
             writer.append('\"');
         } else if (value instanceof TBinary) {
-            JsonWriter json = new JsonWriter(writer, "");
+            JsonWriter json = new JsonWriter(writer);
             json.value(((TBinary) value).toBase64());
             json.flush();
         } else {
@@ -323,7 +323,7 @@ public class ThriftFormatter {
     }
 
     private void appendPrimitive(IndentedPrintWriter writer, Object value) throws IOException, JsonException {
-        JsonWriter json = new JsonWriter(writer, "");
+        JsonWriter json = new JsonWriter(writer);
         json.value(value);
         json.flush();
     }

@@ -174,7 +174,7 @@ public class TPrettyPrinter {
         if (o instanceof TEnumValue) {
             writer.print(o.toString());
         } else if (o instanceof String) {
-            JsonWriter jw = new JsonWriter(writer, "");
+            JsonWriter jw = new JsonWriter(writer);
             try {
                 jw.value(o);
                 jw.flush();

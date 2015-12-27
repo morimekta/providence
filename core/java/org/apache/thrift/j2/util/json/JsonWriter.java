@@ -1,7 +1,5 @@
 package org.apache.thrift.j2.util.json;
 
-import org.apache.thrift.j2.util.io.IndentedPrintWriter;
-
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Stack;
@@ -11,19 +9,16 @@ import java.util.Stack;
  * @since 19.10.15
  */
 public class JsonWriter {
-    private static final String SPACE = " ";
-
-    private enum Mode {
+    protected enum Mode {
         NONE,
         LIST,
         MAP,
     }
-    private enum Expectation {
+    protected enum Expectation {
         KEY,
         VALUE,
     }
-    private final IndentedPrintWriter mWriter;
-    private final String mSpace;
+    private final PrintWriter mWriter;
 
     private static class State {
         Mode mode;
@@ -35,17 +30,11 @@ public class JsonWriter {
     private State mState;
 
     public JsonWriter(OutputStream out) {
-        this(out, false);
+        this(new PrintWriter(out));
     }
 
-    public JsonWriter(OutputStream out, boolean pretty) {
-        this(pretty ? new IndentedPrintWriter(out) : new IndentedPrintWriter(new PrintWriter(out), "", ""),
-             pretty ? SPACE : "");
-    }
-
-    public JsonWriter(IndentedPrintWriter writer, String space) {
+    public JsonWriter(PrintWriter writer) {
         mWriter = writer;
-        mSpace = space;
         mStack = new Stack<>();
         mState = new State();
         mState.mode = Mode.NONE;
@@ -66,8 +55,7 @@ public class JsonWriter {
         mState.expect = Expectation.KEY;
         mState.num = 0;
 
-        mWriter.append(JsonToken.CH.MAP_START.c)
-               .begin();
+        mWriter.append('{');
 
         return this;
     }
@@ -81,8 +69,7 @@ public class JsonWriter {
         mState.expect = Expectation.VALUE;
         mState.num = 0;
 
-        mWriter.append(JsonToken.CH.LIST_START.c)
-               .begin();
+        mWriter.append('[');
 
         return this;
     }
@@ -90,16 +77,14 @@ public class JsonWriter {
     public JsonWriter endObject() throws JsonException {
         if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected end, not in object..");
         if (Expectation.VALUE.equals(mState.expect)) throw new JsonException("Expected map value but got end.");
-        mWriter.end()
-               .appendln(JsonToken.CH.MAP_END.c);
+        mWriter.append('}');
         mState = mStack.pop();
         return this;
     }
 
     public JsonWriter endArray() throws JsonException {
         if (!Mode.LIST.equals(mState.mode)) throw new JsonException("Unexpected end, not in list.");
-        mWriter.end()
-               .appendln(JsonToken.CH.LIST_END.c);
+        mWriter.append(']');
         mState = mStack.pop();
         return this;
     }
@@ -110,60 +95,79 @@ public class JsonWriter {
         if (key == null) throw new JsonException("Expected map key, got null");
 
         if (mState.num > 0) {
-            mWriter.append(JsonToken.CH.LIST_SEP.c);
+            mWriter.append(',');
         }
         ++mState.num;
         mState.expect = Expectation.VALUE;
 
-        mWriter.appendln();
         appendQuoted(key);
-        mWriter.append(JsonToken.CH.MAP_KV_SEP.c)
-               .append(mSpace);
+        mWriter.append(':');
+        return this;
+    }
+
+    public JsonWriter value(boolean value) throws JsonException {
+        startValue();
+
+        mWriter.append(value ? "true" : "false");
+        return this;
+    }
+
+    public JsonWriter value(long number) throws JsonException {
+        startValue();
+
+        mWriter.append(Long.toString(number));
+        return this;
+    }
+
+    public JsonWriter value(double number) throws JsonException {
+        startValue();
+
+        if (number == (double) (long) number) {
+            mWriter.append(Long.toString(((Number) number).longValue()));
+        } else {
+            mWriter.append(Double.toString(number));
+        }
+        return this;
+    }
+
+    public JsonWriter value(CharSequence value) throws JsonException {
+        startValue();
+
+        if (value == null) mWriter.append("null");
+        else appendQuoted(value.toString());
         return this;
     }
 
     public JsonWriter value(Object value) throws JsonException {
-        startValue();
-
         if (value == null) {
-            mWriter.append(JsonToken.NULL);
-        } else if (value instanceof String) {
-            appendQuoted((String) value);
+            startValue();
+            mWriter.append("null");
+            return this;
         } else if (value instanceof CharSequence) {
-            appendQuoted(value.toString());
+            return value((CharSequence) value);
         } else if (value instanceof Boolean) {
-            if ((Boolean) value) {
-                mWriter.append(JsonToken.TRUE);
-            } else {
-                mWriter.append(JsonToken.FALSE);
-            }
+            return value(((Boolean) value).booleanValue());
         } else if (value instanceof Double || value instanceof Float) {
-            Number n = (Number) value;
-            if (n.doubleValue() == ((double) n.longValue())) {
-                mWriter.append(Long.toString(((Number) value).longValue()));
-            } else {
-                mWriter.append(Double.toString(((Number) value).doubleValue()));
-            }
+            return value(((Number) value).doubleValue());
         } else if (value instanceof Number) {
-            mWriter.append(Long.toString(((Number) value).longValue()));
+            return value(((Number) value).longValue());
         } else {
             throw new JsonException("Unknown value type " + value.getClass().getSimpleName());
         }
-
-        return this;
     }
 
-    private void startValue() throws JsonException {
+    protected boolean startValue() throws JsonException {
         if (Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value.");
         if (Mode.LIST.equals(mState.mode)) {
             if (mState.num > 0) {
-                mWriter.append(JsonToken.CH.LIST_SEP.c);
+                mWriter.append(',');
             }
             ++mState.num;
-            mWriter.appendln();
+            return true;
         } else if (Mode.MAP.equals(mState.mode)){
             mState.expect = Expectation.KEY;
         }
+        return false;
     }
 
     // Copied from org.json JSONObject.quote and modified for local use.

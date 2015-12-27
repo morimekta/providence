@@ -1548,7 +1548,7 @@ public class Java2MessageFormatter {
                 break;
             case STRING:
                 try {
-                    JsonWriter json = new JsonWriter(writer, "");
+                    JsonWriter json = new JsonWriter(writer);
                     json.value(defaultValue.toString());
                     json.flush();
                 } catch (JsonException je) {
