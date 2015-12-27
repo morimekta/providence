@@ -2,7 +2,6 @@ package org.apache.thrift.j2.util.json;
 
 import org.apache.thrift.j2.util.TStringUtils;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 public class JsonTokenizer {
     private final static int MARK_LIMIT = 4096;
 
-    private final BufferedInputStream mIn;
+    private final InputStream mIn;
 
     private int mLine;
     private int mPos;
@@ -23,15 +22,12 @@ public class JsonTokenizer {
 
     private boolean mLiteral;
     private boolean mLiteralExcaped;
-    private boolean mSlash;
-
     private final ArrayList<String> mLines;
     private       StringBuilder     mLineBuilder;
     private       JsonToken            mNextToken;
 
     public JsonTokenizer(InputStream in) throws IOException {
-        mIn = new BufferedInputStream(in);
-        mIn.mark(MARK_LIMIT);
+        mIn = in;
 
         mLine = 1;
         mPos = 0;
@@ -148,7 +144,6 @@ public class JsonTokenizer {
                     mLineBuilder = new StringBuilder();
 
                     JsonToken token = mkToken(builder, startPos);
-                    mIn.mark(MARK_LIMIT);
                     ++mLine;
                     mPos = 0;
                     if (token != null) {
@@ -172,14 +167,10 @@ public class JsonTokenizer {
         if (mLines.size() >= line) {
             return mLines.get(line - 1);
         } else {
-            // Next line...
-            int pos = mPos;
-            mIn.reset();
-            String l = TStringUtils.readString(mIn, "\n");
-            mLines.add(l);
-            mIn.reset();
-            mIn.skip(pos);
-            return l;
+            mLineBuilder.append(TStringUtils.readString(mIn, "\n"));
+            String ln = mLineBuilder.toString();
+            mLines.add(ln);
+            return ln;
         }
     }
 

@@ -174,7 +174,7 @@ public class TJsonSerializer
             if (!tokenizer.hasNext()) {
                 return null;
             }
-            return parseTypedValue(tokenizer.expect("Missing value."), tokenizer, type);
+            return parseTypedValue(tokenizer.next(), tokenizer, type);
         } catch (JsonException e) {
             throw new TSerializeException(e, "Unable to parse JSON");
         } catch (IOException e) {
@@ -433,7 +433,7 @@ public class TJsonSerializer
                     LinkedHashSet<Object> set = new LinkedHashSet<>();
                     token = tokenizer.expect("Unexpected end of list");
                     while (!JsonToken.CH.LIST_END.equals(token.getSymbol())) {
-                        set.add(parseTypedValue(tokenizer.expect("Expected list item."),
+                        set.add(parseTypedValue(token,
                                                 tokenizer,
                                                 type));
                         token = tokenizer.expect("expected end of list or separator");
