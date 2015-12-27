@@ -251,7 +251,7 @@ class TProtocolSerializer extends TSerializer {
             case STRING:
                 if (type.equals(TPrimitive.BINARY)) {
                     ByteBuffer buffer = protocol.readBinary();
-                    return cast(buffer.array());
+                    return cast(TBinary.wrap(buffer.array()));
                 }
                 return cast(protocol.readString());
             case MESSAGE:
