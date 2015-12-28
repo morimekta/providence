@@ -96,9 +96,9 @@ public class SpeedTest {
             System.out.println(" --- thrift ---");
             System.out.println();
 
-            for (Format f : Format.values()) {
-                File inFile = new File(inDir, String.format("%s-j2.%s", f.name(), f.suffix));
-                File outFile = new File(outDir, String.format("%s-j1.%s", f.name(), f.suffix));
+            for (Format format : Format.values()) {
+                File inFile = new File(inDir, String.format("%s.%s", format.name(), format.suffix));
+                File outFile = new File(outDir, String.format("%s-j1.%s", format.name(), format.suffix));
                 if (outFile.exists()) {
                     outFile.delete();
                 }
@@ -110,28 +110,28 @@ public class SpeedTest {
                         new BufferedOutputStream(
                                 new FileOutputStream(outFile, false)));
 
-                TProtocolFactory in_prot;
-                TProtocolFactory out_prot;
+                TProtocolFactory inProt;
+                TProtocolFactory outProt;
 
-                switch (f) {
+                switch (format) {
                     case binary_protocol:
-                        in_prot = new TBinaryProtocol.Factory();
-                        out_prot = new TBinaryProtocol.Factory();
+                        inProt = new TBinaryProtocol.Factory();
+                        outProt = new TBinaryProtocol.Factory();
                         break;
                     case compact_protocol:
-                        in_prot = new TCompactProtocol.Factory();
-                        out_prot = new TCompactProtocol.Factory();
+                        inProt = new TCompactProtocol.Factory();
+                        outProt = new TCompactProtocol.Factory();
                         break;
                     case json_protocol:
-                        in_prot = new TJSONProtocol.Factory();
-                        out_prot = new TJSONProtocol.Factory();
+                        inProt = new TJSONProtocol.Factory();
+                        outProt = new TJSONProtocol.Factory();
                         break;
                     case tuple_protocol:
-                        in_prot = new TTupleProtocol.Factory();
-                        out_prot = new TTupleProtocol.Factory();
+                        inProt = new TTupleProtocol.Factory();
+                        outProt = new TTupleProtocol.Factory();
                         break;
                     default:
-                        System.out.format("%20s: [skipped]\n", f.name());
+                        System.out.format("%20s: [skipped]\n", format.name());
                         continue;
                 }
 
@@ -152,13 +152,13 @@ public class SpeedTest {
 
                     TTransport tin = new TIOStreamTransport(inStream);
                     containers = new net.morimekta.test.Containers();
-                    containers.read(in_prot.getProtocol(tin));
+                    containers.read(inProt.getProtocol(tin));
                     inStream.read();  // the separating newline.
 
                     long rend = System.nanoTime();
 
                     TTransport tout = new TIOStreamTransport(outStream);
-                    containers.write(out_prot.getProtocol(tout));
+                    containers.write(outProt.getProtocol(tout));
                     tout.flush();
                     outStream.write('\n');
                     outStream.flush();
@@ -182,7 +182,7 @@ public class SpeedTest {
 
                 System.out.format(Locale.ENGLISH,
                                   "%20s: %5.2fs  (r: %5.2fs, w: %5.2fs)  #  %,7d kB -> %,7d kB\n",
-                                  f.name(),
+                                  format.name(),
                                   (double) (end - start) / 1000,
                                   (double) rtime / 1000,
                                   (double) wtime / 1000,
@@ -194,33 +194,20 @@ public class SpeedTest {
             System.out.println();
 
             for (Format fmt : Format.values()) {
-                File in_dir = new File(inDir, fmt.name());
-                if (!in_dir.exists()) {
-                    throw new CmdLineException(parser,
-                                               new FormatString("Target is not a directory: %s"),
-                                               in_dir.getAbsolutePath());
+                File inFile = new File(inDir, String.format("%s.%s", fmt.name(), fmt.suffix));
+                File outFile = new File(outDir, String.format("%s-j2.%s", fmt.name(), fmt.suffix));
+                if (outFile.exists()) {
+                    outFile.delete();
                 }
-                if (!in_dir.isDirectory()) {
-                    throw new CmdLineException(parser,
-                                               new FormatString("Target is not a directory: %s"),
-                                               in_dir.getAbsolutePath());
-                }
-
-                File out_dir = new File(outDir, fmt.name());
-                out_dir.mkdir();
-
-                File in_file = new File(in_dir, String.format("data.%s", fmt.suffix));
-
-                File out_file = new File(out_dir, String.format("data-j2.%s", fmt.suffix));
-                out_file.createNewFile();
+                outFile.createNewFile();
 
                 TSerializer serializer;
 
                 BufferedInputStream inStream = new BufferedInputStream(
-                        new FileInputStream(in_file));
+                        new FileInputStream(inFile));
                 CountingOutputStream outStream = new CountingOutputStream(
                         new BufferedOutputStream(
-                                new FileOutputStream(out_file, false)));
+                                new FileOutputStream(outFile, false)));
 
                 switch (fmt) {
                     case binary:
@@ -249,7 +236,7 @@ public class SpeedTest {
                         continue;
                 }
 
-                final long in_size = in_file.length();
+                final long in_size = inFile.length();
                 final long start = System.currentTimeMillis();
 
                 int num;
