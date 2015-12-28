@@ -52,7 +52,6 @@ public class PrettyJsonWriter extends JsonWriter {
 
     @Override
     public PrettyJsonWriter key(String key) throws JsonException {
-        mIndentedWriter.appendln();
         super.key(key);
         mIndentedWriter.append(SPACE);
         return this;
@@ -62,6 +61,12 @@ public class PrettyJsonWriter extends JsonWriter {
     public PrettyJsonWriter value(Object value) throws JsonException {
         super.value(value);
         return this;
+    }
+
+    @Override
+    protected void startKey() throws JsonException {
+        super.startKey();
+        mIndentedWriter.appendln();
     }
 
     @Override

@@ -64,6 +64,10 @@ public class JsonToken {
         mLen = len;
     }
 
+    public static boolean mustUnicodeEscape(int b) {
+        return b < 32 || (127 <= b && b < 160) || (8192 <= b && b < 8448);
+    }
+
     public String getToken() {
         return mToken;
     }

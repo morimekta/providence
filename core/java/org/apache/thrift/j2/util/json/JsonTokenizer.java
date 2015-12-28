@@ -90,12 +90,12 @@ public class JsonTokenizer {
             if (b == 0) {
                 b = mLastByte = mIn.read();
                 ++mPos;
-            }
-            if (b > 0) {
+
                 if (b != '\n') {
                     mLineBuilder.append((char) b);
                 }
-
+            }
+            if (b > 0) {
                 if (mLiteral) {
                     mLastByte = 0;
 
@@ -103,16 +103,16 @@ public class JsonTokenizer {
 
                     if (b == '\n') {
                         throw newParseException("newline in string literal");
-                    } else if (b < 32 || (127 <= b && b < 160) || (8192 <= b && b < 8448)) {
-                        throw newParseException(String.format(
-                                "Illegal character in string literal '\\u%04x'", b));
-                    } else if (mLiteralExcaped) {
-                        mLiteralExcaped = false;
                     } else if (b == JsonToken.CH.ESCAPE.c) {
                         mLiteralExcaped = true;
                     } else if (b == JsonToken.CH.QUOTE.c) {
                         mLiteral = false;
                         return mkToken(builder, startPos);
+                    } else if (JsonToken.mustUnicodeEscape(b)) {
+                        throw newParseException(String.format(
+                                "Illegal character in string literal '\\u%04x'", b));
+                    } else if (mLiteralExcaped) {
+                        mLiteralExcaped = false;
                     }
                     continue;
                 }

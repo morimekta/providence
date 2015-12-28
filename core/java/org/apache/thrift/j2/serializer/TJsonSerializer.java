@@ -38,6 +38,7 @@ import org.apache.thrift.j2.util.json.JsonException;
 import org.apache.thrift.j2.util.json.JsonToken;
 import org.apache.thrift.j2.util.json.JsonTokenizer;
 import org.apache.thrift.j2.util.json.JsonWriter;
+import org.apache.thrift.j2.util.json.PrettyJsonWriter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -96,6 +97,7 @@ import java.util.Map;
  */
 public class TJsonSerializer
         extends TSerializer {
+
     public enum IdType {
         // print field and enums as numeric IDs and values.
         ID,
@@ -106,37 +108,39 @@ public class TJsonSerializer
     private final boolean mStrict;
     private final IdType mIdType;
     private final IdType mEnumType;
+    private final boolean mPretty;
 
     public TJsonSerializer() {
-        this(false, IdType.ID, IdType.ID);
+        this(false, IdType.ID, IdType.ID, false);
     }
 
     public TJsonSerializer(boolean strict) {
-        this(strict, IdType.ID, IdType.ID);
+        this(strict, IdType.ID, IdType.ID, false);
     }
 
     public TJsonSerializer(IdType idType) {
-        this(false, idType, idType);
+        this(false, idType, idType, false);
     }
 
     public TJsonSerializer(boolean strict, IdType idType) {
-        this(strict, idType, idType);
+        this(strict, idType, idType, false);
     }
 
     public TJsonSerializer(IdType idType, IdType enumType) {
-        this(false, idType, enumType);
+        this(false, idType, enumType, false);
     }
 
-    public TJsonSerializer(boolean strict, IdType idType, IdType enumType) {
+    public TJsonSerializer(boolean strict, IdType idType, IdType enumType, boolean pretty) {
         mStrict = strict;
         mIdType = idType;
         mEnumType = enumType;
+        mPretty = pretty;
     }
 
     @Override
     public int serialize(OutputStream output, TMessage<?> message) throws TSerializeException {
         CountingOutputStream counter = new CountingOutputStream(output);
-        JsonWriter jsonWriter = new JsonWriter(counter);
+        JsonWriter jsonWriter = mPretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             appendMessage(jsonWriter, message);
             jsonWriter.flush();

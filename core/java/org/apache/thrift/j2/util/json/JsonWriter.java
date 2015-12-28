@@ -2,6 +2,7 @@ package org.apache.thrift.j2.util.json;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -90,15 +91,12 @@ public class JsonWriter {
     }
 
     public JsonWriter key(String key) throws JsonException {
-        if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected map key outside map.");
-        if (!Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value or end");
-        if (key == null) throw new JsonException("Expected map key, got null");
+        startKey();
 
-        if (mState.num > 0) {
-            mWriter.append(',');
-        }
         ++mState.num;
         mState.expect = Expectation.VALUE;
+
+        if (key == null) throw new JsonException("Expected map key, got null");
 
         appendQuoted(key);
         mWriter.append(':');
@@ -115,15 +113,16 @@ public class JsonWriter {
     public JsonWriter value(long number) throws JsonException {
         startValue();
 
-        mWriter.append(Long.toString(number));
+        mWriter.format(Locale.ENGLISH, "%d", number);
         return this;
     }
 
     public JsonWriter value(double number) throws JsonException {
         startValue();
 
-        if (number == (double) (long) number) {
-            mWriter.append(Long.toString(((Number) number).longValue()));
+        final long i = (long) number;
+        if (number == (double) i) {
+            mWriter.format(Locale.ENGLISH, "%d", i);
         } else {
             mWriter.append(Double.toString(number));
         }
@@ -156,6 +155,15 @@ public class JsonWriter {
         }
     }
 
+    protected void startKey() throws JsonException {
+        if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected map key outside map.");
+        if (!Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value or end");
+
+        if (mState.num > 0) {
+            mWriter.append(',');
+        }
+    }
+
     protected boolean startValue() throws JsonException {
         if (Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value.");
         if (Mode.LIST.equals(mState.mode)) {
@@ -181,30 +189,31 @@ public class JsonWriter {
                 switch(c) {
                     case '\b':
                         mWriter.append("\\b");
-                        continue;
+                        break;
                     case '\t':
                         mWriter.append("\\t");
-                        continue;
+                        break;
                     case '\n':
                         mWriter.append("\\n");
-                        continue;
+                        break;
                     case '\f':
                         mWriter.append("\\f");
-                        continue;
+                        break;
                     case '\r':
                         mWriter.append("\\r");
-                        continue;
+                        break;
                     case '\"':
                     case '\\':
                         mWriter.append('\\');
                         mWriter.append(c);
-                        continue;
-                }
-
-                if(c >= 32 && (c < 127 || c >= 160) && (c < 8192 || c >= 8448)) {
-                    mWriter.append(c);
-                } else {
-                    mWriter.format("\\u%04x", (int) c);
+                        break;
+                    default:
+                        if(JsonToken.mustUnicodeEscape(c)) {
+                            mWriter.format("\\u%04x", (int) c);
+                        } else {
+                            mWriter.append(c);
+                        }
+                        break;
                 }
             }
 
