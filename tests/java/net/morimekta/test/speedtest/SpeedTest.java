@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Created by steineldar on 22.12.15.
@@ -40,7 +41,7 @@ public class SpeedTest {
     public static class Options {
         @Option(name = "--entries",
                 usage = "Expected number of entries to in input files")
-        public int entries = 10000;
+        public int entries = 50000;
 
         @Argument(usage = "Base input directory of data",
                   metaVar = "DIR",
@@ -49,16 +50,16 @@ public class SpeedTest {
     }
 
     public enum Format {          //   J2    thrift
-        binary_protocol("bin"),   //  1.82    1.99
-        tuple_protocol("tuples"), //  1.92    2.02
-        compact_protocol("bin"),  //  2.13    2.43
-
-        binary("bin"),            //  2.32
+        json_named("json"),       // 21.88
+        json("json"),             // 18.72
 
         json_protocol("json"),    // 10.64   10.92
 
-        json("json"),             // 18.72
-        json_named("json"),       // 21.88
+        binary("bin"),            //  2.32
+
+        compact_protocol("bin"),  //  2.13    2.43
+        tuple_protocol("tuples"), //  1.92    2.02
+        binary_protocol("bin"),   //  1.82    1.99
         ;
 
         String suffix;
@@ -75,48 +76,39 @@ public class SpeedTest {
         try {
             parser.parseArgument(args);
 
-            File in = new File(opts.in);
-            if (!in.exists()) {
+            File inDir = new File(opts.in);
+            if (!inDir.exists()) {
                 throw new CmdLineException(parser, new FormatString("Input folder does not exist: %s"), opts.in);
             }
-            if (!in.isDirectory()) {
+            if (!inDir.isDirectory()) {
                 throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), opts.in);
             }
 
-            File out = File.createTempFile("thrift-j2-", "-speed-test");
-            if (out.exists()) {
-                out.delete();
+            File outDir = File.createTempFile("thrift-j2-", "-speed-test");
+            if (outDir.exists()) {
+                outDir.delete();
             }
-            out.mkdirs();
+            outDir.mkdirs();
 
-            System.out.println("OUT: " + out.getAbsolutePath());
+            System.out.println("OUT: " + outDir.getAbsolutePath());
 
             System.out.println();
             System.out.println(" --- thrift ---");
             System.out.println();
 
             for (Format f : Format.values()) {
-                File in_dir = new File(in, f.name());
-                if (!in_dir.exists()) {
-                    throw new CmdLineException(parser, new FormatString("Target is not a directory: %s"), in_dir.getAbsolutePath());
+                File inFile = new File(inDir, String.format("%s-j2.%s", f.name(), f.suffix));
+                File outFile = new File(outDir, String.format("%s-j1.%s", f.name(), f.suffix));
+                if (outFile.exists()) {
+                    outFile.delete();
                 }
-                if (!in_dir.isDirectory()) {
-                    throw new CmdLineException(parser, new FormatString("Target is not a directory: %s"), in_dir.getAbsolutePath());
-                }
+                outFile.createNewFile();
 
-                File out_dir = new File(out, f.name());
-                out_dir.mkdir();
-
-                File in_file = new File(in_dir, String.format("data.%s", f.suffix));
-
-                File out_file = new File(out_dir, String.format("data-v1.%s", f.suffix));
-                out_file.createNewFile();
-
-                FileInputStream fis = new FileInputStream(in_file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                FileOutputStream fos = new FileOutputStream(out_file, false);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                CountingOutputStream os = new CountingOutputStream(bos);
+                BufferedInputStream inStream = new BufferedInputStream(
+                        new FileInputStream(inFile));
+                CountingOutputStream outStream = new CountingOutputStream(
+                        new BufferedOutputStream(
+                                new FileOutputStream(outFile, false)));
 
                 TProtocolFactory in_prot;
                 TProtocolFactory out_prot;
@@ -143,7 +135,7 @@ public class SpeedTest {
                         continue;
                 }
 
-                long in_size = in_file.length();
+                long in_size = inFile.length();
 
                 long start = System.currentTimeMillis();
 
@@ -158,17 +150,18 @@ public class SpeedTest {
 
                     long rstart = System.nanoTime();
 
-                    TTransport tin = new TIOStreamTransport(bis);
+                    TTransport tin = new TIOStreamTransport(inStream);
                     containers = new net.morimekta.test.Containers();
                     containers.read(in_prot.getProtocol(tin));
-                    bis.read();  // the separating newline.
+                    inStream.read();  // the separating newline.
 
                     long rend = System.nanoTime();
 
-                    TTransport tout = new TIOStreamTransport(os);
+                    TTransport tout = new TIOStreamTransport(outStream);
                     containers.write(out_prot.getProtocol(tout));
                     tout.flush();
-                    os.write('\n');
+                    outStream.write('\n');
+                    outStream.flush();
 
                     long wend = System.nanoTime();
 
@@ -176,20 +169,20 @@ public class SpeedTest {
                     wtime += (wend - rend);
                 }
 
-                bis.close();
-                os.flush();
+                inStream.close();
 
-                int out_size = os.getByteCount();
+                int out_size = outStream.getByteCount();
 
-                os.close();
+                outStream.close();
 
                 long end = System.currentTimeMillis();
 
                 wtime /= 1000000;
                 rtime /= 1000000;
 
-                System.out.format("%20s: %3d in %5.2fs  (r: %5.2fs, w: %5.2fs) # %,9d kB -> %,9d kB\n",
-                                  f.name(), num,
+                System.out.format(Locale.ENGLISH,
+                                  "%20s: %5.2fs  (r: %5.2fs, w: %5.2fs)  #  %,7d kB -> %,7d kB\n",
+                                  f.name(),
                                   (double) (end - start) / 1000,
                                   (double) rtime / 1000,
                                   (double) wtime / 1000,
@@ -201,15 +194,19 @@ public class SpeedTest {
             System.out.println();
 
             for (Format fmt : Format.values()) {
-                File in_dir = new File(in, fmt.name());
+                File in_dir = new File(inDir, fmt.name());
                 if (!in_dir.exists()) {
-                    throw new CmdLineException(parser, new FormatString("Target is not a directory: %s"), in_dir.getAbsolutePath());
+                    throw new CmdLineException(parser,
+                                               new FormatString("Target is not a directory: %s"),
+                                               in_dir.getAbsolutePath());
                 }
                 if (!in_dir.isDirectory()) {
-                    throw new CmdLineException(parser, new FormatString("Target is not a directory: %s"), in_dir.getAbsolutePath());
+                    throw new CmdLineException(parser,
+                                               new FormatString("Target is not a directory: %s"),
+                                               in_dir.getAbsolutePath());
                 }
 
-                File out_dir = new File(out, fmt.name());
+                File out_dir = new File(outDir, fmt.name());
                 out_dir.mkdir();
 
                 File in_file = new File(in_dir, String.format("data.%s", fmt.suffix));
@@ -219,11 +216,11 @@ public class SpeedTest {
 
                 TSerializer serializer;
 
-                FileInputStream fis = new FileInputStream(in_file);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-                FileOutputStream fos = new FileOutputStream(out_file, false);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                CountingOutputStream cos = new CountingOutputStream(bos);
+                BufferedInputStream inStream = new BufferedInputStream(
+                        new FileInputStream(in_file));
+                CountingOutputStream outStream = new CountingOutputStream(
+                        new BufferedOutputStream(
+                                new FileOutputStream(out_file, false)));
 
                 switch (fmt) {
                     case binary:
@@ -263,13 +260,14 @@ public class SpeedTest {
                 for (num = 0; num < opts.entries; ++num) {
                     try {
                         long rstart = System.nanoTime();
-                        TMessage<?> message = serializer.deserialize(bis, Containers.kDescriptor);
-                        bis.read();  // the separating newline.
+                        TMessage<?> message = serializer.deserialize(inStream, Containers.kDescriptor);
+                        inStream.read();  // the separating newline.
 
                         long rend = System.nanoTime();
 
-                        serializer.serialize(cos, message);
-                        cos.write('\n');
+                        serializer.serialize(outStream, message);
+                        outStream.write('\n');
+                        outStream.flush();
 
                         long wend = System.nanoTime();
 
@@ -280,18 +278,17 @@ public class SpeedTest {
                     }
                 }
 
-                cos.flush();
-
-                final long out_size = cos.getByteCount();
+                final long out_size = outStream.getByteCount();
                 final long end = System.currentTimeMillis();
 
-                cos.close();
+                outStream.close();
 
                 wtime /= 1000000;
                 rtime /= 1000000;
 
-                System.out.format("%20s: %3d in %5.2fs  (r: %5.2fs, w: %5.2fs) # %,9d kB -> %,9d kB\n",
-                        fmt.name(), num,
+                System.out.format(Locale.ENGLISH,
+                                  "%20s: %5.2fs  (r: %5.2fs, w: %5.2fs)  #  %,7d kB -> %,7d kB\n",
+                                  fmt.name(),
                                   (double) (end - start) / 1000,
                                   (double) rtime / 1000,
                                   (double) wtime / 1000,

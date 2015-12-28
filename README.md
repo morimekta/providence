@@ -5,6 +5,13 @@ The `thrift-j2` project was made in order to make an immutable model java
 library for thrift. It is mostly separate from the thrift library, but can use
 the standard thrift protocols to serialize and serialize messages.
 
+# Documentation
+
+* Compact [binary format](docs/compact-binary.md).
+* Compact [JSON format](docs/compact-json.md).
+* Generated [java code](docs/generated-java.md).
+* Testing [read & write speed](docs/speedtest.md).
+
 # Setup
 
 In order to compile thrift-j2, you need:
@@ -152,12 +159,6 @@ In addition the are some utility packages.
     * json (serialized format representing the thrift).
 
 There are other folders with internal utilities, docs, etc.
-
-# Documentation
-
-* Compact [binary format](docs/compact-binary.md).
-* Compact [JSON format](docs/compact-json.md).
-* Generated [java code](docs/generated-java.md).
 
 # Contributing
 

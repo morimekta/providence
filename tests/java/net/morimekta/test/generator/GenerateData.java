@@ -4,6 +4,9 @@ import net.morimekta.test.j2.Containers;
 import net.morimekta.test.j2.Primitives;
 import net.morimekta.test.j2.Value;
 
+import org.apache.thrift.j2.TBinary;
+import org.apache.thrift.j2.TMessage;
+import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
 import org.apache.thrift.j2.protocol.TCompactProtocolSerializer;
 import org.apache.thrift.j2.protocol.TJsonProtocolSerializer;
@@ -12,8 +15,6 @@ import org.apache.thrift.j2.serializer.TBinarySerializer;
 import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
 import org.apache.thrift.j2.serializer.TSerializer;
-import org.apache.thrift.j2.TBinary;
-import org.apache.thrift.j2.util.TBase64Utils;
 import org.apache.utils.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -23,14 +24,16 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 /**
  * Generate test data for speed test.
  */
 public class GenerateData {
-    public static final int ONE = 1;
     public static final int KEY = 12;
     public static final int DATA = 102;
 
@@ -39,9 +42,21 @@ public class GenerateData {
                 usage = "Number of entries to generate")
         public int entries = 10000;
 
-        @Option(name = "--items",
+        @Option(name = "--items_min",
                 usage = "Numer of items in each collection")
-        public int items = 10;
+        public int items_min = 10;
+
+        @Option(name = "--items_max",
+                usage = "Numer of items in each collection")
+        public int items_max = 10;
+
+        @Option(name = "--fill_grade",
+                usage = "How much of the fields should be filled.")
+        public double fill_grade = 1.0d;
+
+        @Option(name = "--seed",
+                usage = "Set the random seed for testing.")
+        public Long seed = null;
 
         @Option(name = "--out",
                 usage = "output directory of data",
@@ -50,18 +65,412 @@ public class GenerateData {
     }
 
     public enum Format {
-        binary("bin"),
-        binary_protocol("bin"),
-        compact_protocol("bin"),
-        json("json"),
+        json_pretty("json"),
         json_named("json"),
+        json("json"),
+
         json_protocol("json"),
-        tuple_protocol("tuples");
+
+        binary("bin"),
+
+        compact_protocol("bin"),
+        binary_protocol("bin"),
+        tuple_protocol("tuples"),
+        ;
 
         String suffix;
 
         Format(String s) {
             suffix = s;
+        }
+    }
+
+    private final Options opts;
+    private final CmdLineParser parser;
+    private final Random rand;
+
+    public GenerateData(Options opts, CmdLineParser parser) {
+        this.opts = opts;
+        this.parser = parser;
+
+        if (opts.seed != null) {
+            this.rand = new Random(opts.seed);
+        } else {
+            this.rand = new Random(System.nanoTime());
+        }
+    }
+
+    public int randomItemCount() {
+        if (opts.items_max <= opts.items_min) {
+            return opts.items_min;
+        }
+        return rand.nextInt(opts.items_max - opts.items_min) + opts.items_min;
+    }
+
+    public String nextString(final int size) {
+        char[] out = new char[size];
+        for (int i = 0; i < size; ++i) {
+            int c = rand.nextInt(128);
+            if (c == '\n' ||
+                c == '\t' ||
+                c == '\f' ||
+                c == '\r' ||
+                c == ' ' ||
+                (c >= 32 && c < 127)) {
+                out[i] = (char) c;
+            } else {
+                c = rand.nextInt(2048);
+                if (c >= 160 && Character.isAlphabetic(c)) {
+                    out[i] = (char) c;
+                } else {
+                    c = rand.nextInt(16536);
+                    if (Character.isAlphabetic(c) ||
+                        Character.isLetterOrDigit(c) ||
+                        Character.isIdeographic(c) ||
+                        Character.isSpaceChar(c) ||
+                        Character.isJavaIdentifierPart(c)) {
+                        out[i] = (char) c;
+                    } else {
+                        out[i] = '?';
+                    }
+                }
+            }
+        }
+        return String.valueOf(out);
+    }
+
+    public TBinary nextBinary(int size) {
+        byte[] out = new byte[size];
+        rand.nextBytes(out);
+        return TBinary.wrap(out);
+    }
+
+    public byte nextByte() {
+        byte[] out = new byte[1];
+        rand.nextBytes(out);
+        return out[0];
+    }
+
+    public double nextDouble() {
+        double v = rand.nextDouble();
+        return (v * 2000000d) - 1000000d;
+    }
+
+    public long nextLong() {
+        long out = rand.nextLong();
+        return out ^ (long) rand.nextInt();
+    }
+
+    public boolean doFill() {
+        if (opts.fill_grade >= 1.0) {
+            return true;
+        }
+        if (opts.fill_grade < 0.01) {
+            return false;
+        }
+        return opts.fill_grade < rand.nextDouble();
+    }
+
+    public Value nextValue() {
+        return Value.values()[rand.nextInt(Value.values().length)];
+    }
+
+    public Primitives nextPrimitives() {
+        Primitives._Builder builder = Primitives.builder();
+        if (doFill()) {
+            builder.setBooleanValue(rand.nextBoolean());
+        }
+        if (doFill()) {
+            builder.setByteValue(nextByte());
+        }
+        if (doFill()) {
+            builder.setShortValue((short) rand.nextInt());
+        }
+        if (doFill()) {
+            builder.setIntegerValue(rand.nextInt());
+        }
+        if (doFill()) {
+            builder.setLongValue(nextLong());
+        }
+        if (doFill()) {
+            builder.setDoubleValue(nextDouble());
+        }
+        if (doFill()) {
+            builder.setBinaryValue(nextBinary(DATA));
+        }
+        if (doFill()) {
+            builder.setStringValue(nextString(DATA));
+        }
+        if (doFill()) {
+            builder.setEnumValue(nextValue());
+        }
+
+        return builder.build();
+    }
+
+    public void run() throws CmdLineException, IOException, TSerializeException {
+        File outDir = new File(opts.out);
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+        if (!outDir.isDirectory()) {
+            throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), opts.out);
+        }
+
+        ArrayList<Containers> data = new ArrayList<>(opts.entries);
+        Random rand = new Random(System.nanoTime());
+        for (int e = 0; e < opts.entries; ++e) {
+            Containers._Builder containers = Containers.builder();
+
+            // --- LISTS ---
+
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBooleanList(rand.nextBoolean());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToByteList(nextByte());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToShortList((short) rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToIntegerList(rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToLongList(nextLong());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToDoubleList(nextDouble());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBinaryList(nextBinary(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToStringList(nextString(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToEnumList(nextValue());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToMessageList(nextPrimitives());
+                }
+            }
+
+            // --- SETS ---
+
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBooleanSet(rand.nextBoolean());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToByteSet(nextByte());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToShortSet((short) rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToIntegerSet(rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToLongSet(nextLong());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToDoubleSet(nextDouble());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBinarySet(nextBinary(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToStringSet(nextString(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToEnumSet(nextValue());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToMessageSet(nextPrimitives());
+                }
+            }
+
+            // --- MAPS ---
+
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBooleanMap(rand.nextBoolean(), rand.nextBoolean());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToByteMap(nextByte(), nextByte());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToShortMap((short) rand.nextInt(), (short) rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToIntegerMap(rand.nextInt(), rand.nextInt());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToLongMap(nextLong(), nextLong());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToDoubleMap(nextDouble(), nextDouble());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToBinaryMap(nextBinary(KEY), nextBinary(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToStringMap(nextString(KEY), nextString(DATA));
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToEnumMap(nextValue(), nextValue());
+                }
+            }
+            if (doFill()) {
+                final int items = randomItemCount();
+                for (int i = 0; i < items; ++i) {
+                    containers.addToMessageMap(nextString(KEY), nextPrimitives());
+                }
+            }
+
+            data.add(containers.build());
+        }
+
+        for (Format f : Format.values()) {
+            File outFile = new File(outDir, String.format("%s.%s", f.name(), f.suffix));
+            if (outFile.exists()) {
+                outFile.delete();
+            }
+            outFile.createNewFile();
+
+            TSerializer serializer;
+
+            switch (f) {
+                case binary:
+                    serializer = new TBinarySerializer();
+                    break;
+                case json:
+                    serializer = new TJsonSerializer(TJsonSerializer.IdType.ID);
+                    break;
+                case json_named:
+                    serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
+                    break;
+                case json_pretty:
+                    serializer = new TJsonSerializer(false, TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME, true);
+                    break;
+                case binary_protocol:
+                    serializer = new TBinaryProtocolSerializer();
+                    break;
+                case compact_protocol:
+                    serializer = new TCompactProtocolSerializer();
+                    break;
+                case json_protocol:
+                    serializer = new TJsonProtocolSerializer();
+                    break;
+                case tuple_protocol:
+                    serializer = new TTupleProtocolSerializer();
+                    break;
+                default:
+                    continue;
+            }
+
+            int size = 0;
+
+            long start = System.nanoTime();
+
+            BufferedOutputStream outStream = new BufferedOutputStream(new FileOutputStream(outFile, false));
+
+            for (Containers c : data) {
+                size += serializer.serialize(outStream, c);
+                outStream.write('\n');
+                outStream.flush();
+            }
+            outStream.close();
+
+            long end = System.nanoTime();
+
+            long timeMs = (end - start) / 1000000;
+
+            System.out.format(Locale.ENGLISH, "%20s:  %,7d kB in%6.2fs\n",
+                              f.name(), size / 1024, (double) timeMs / 1000);
         }
     }
 
@@ -71,215 +480,8 @@ public class GenerateData {
 
         try {
             parser.parseArgument(args);
-
-            File out = new File(opts.out);
-            if (!out.exists()) {
-                out.mkdirs();
-            }
-            if (!out.isDirectory()) {
-                throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), opts.out);
-            }
-
-            Value[] values = Value.values();
-
-            ArrayList<Containers> data = new ArrayList<>(opts.entries);
-            Random rand = new Random(System.nanoTime());
-            for (int e = 0; e < opts.entries; ++e) {
-                Containers._Builder containers = Containers.builder();
-
-                for (int i = 0; i < opts.items; ++i) {
-                    // LISTS:
-                    byte[] one = new byte[ONE];
-                    byte[] bytes = new byte[DATA];
-                    byte[] str = new byte[DATA];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(str);
-
-                    containers.addToBooleanList(rand.nextBoolean());
-                    containers.addToByteList(one[0]);
-                    containers.addToShortList((short) rand.nextInt());
-                    containers.addToIntegerList(rand.nextInt());
-                    containers.addToLongList(rand.nextLong());
-                    containers.addToDoubleList(rand.nextDouble());
-                    containers.addToBinaryList(TBinary.wrap(bytes));
-                    containers.addToStringList(TBase64Utils.encode(str));
-                    containers.addToEnumList(values[rand.nextInt(values.length)]);
-
-                    one = new byte[ONE];
-                    bytes = new byte[DATA];
-                    str = new byte[DATA];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(str);
-
-                    containers.addToMessageList(Primitives
-                            .builder()
-                            .setBooleanValue(rand.nextBoolean())
-                            .setByteValue(one[0])
-                            .setShortValue((short) rand.nextInt())
-                            .setIntegerValue(rand.nextInt())
-                            .setLongValue(rand.nextLong())
-                            .setDoubleValue(rand.nextDouble())
-                            .setBinaryValue(TBinary.wrap(bytes))
-                            .setStringValue(TBase64Utils.encode(str))
-                            .setEnumValue(values[rand.nextInt(values.length)])
-                            .build());
-
-                    // SETS:
-
-                    one = new byte[ONE];
-                    bytes = new byte[DATA];
-                    str = new byte[DATA];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(str);
-
-                    containers.addToBooleanSet(rand.nextBoolean());
-                    containers.addToByteSet(one[0]);
-                    containers.addToShortSet((short) rand.nextInt());
-                    containers.addToIntegerSet(rand.nextInt());
-                    containers.addToLongSet(rand.nextLong());
-                    containers.addToDoubleSet(rand.nextDouble());
-                    containers.addToBinarySet(TBinary.wrap(bytes));
-                    containers.addToStringSet(TBase64Utils.encode(str));
-                    containers.addToEnumSet(values[rand.nextInt(values.length)]);
-
-                    one = new byte[ONE];
-                    bytes = new byte[DATA];
-                    str = new byte[DATA];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(str);
-
-                    containers.addToMessageSet(Primitives
-                            .builder()
-                            .setBooleanValue(rand.nextBoolean())
-                            .setByteValue(one[0])
-                            .setShortValue((short) rand.nextInt())
-                            .setIntegerValue(rand.nextInt())
-                            .setLongValue(rand.nextLong())
-                            .setDoubleValue(rand.nextDouble())
-                            .setBinaryValue(TBinary.wrap(bytes))
-                            .setStringValue(TBase64Utils.encode(str))
-                            .setEnumValue(values[rand.nextInt(values.length)])
-                            .build());
-
-                    // MAPS:
-
-                    one = new byte[ONE];
-                    bytes = new byte[DATA];
-                    str = new byte[DATA];
-                    byte[] kone = new byte[ONE];
-                    byte[] kbytes = new byte[KEY];
-                    byte[] kstr = new byte[KEY];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(kone);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(kbytes);
-                    rand.nextBytes(str);
-                    rand.nextBytes(kstr);
-
-                    containers.addToBooleanMap(rand.nextBoolean(), rand.nextBoolean());
-                    containers.addToByteMap(kone[0], one[0]);
-                    containers.addToShortMap((short) rand.nextInt(), (short) rand.nextInt());
-                    containers.addToIntegerMap(rand.nextInt(), rand.nextInt());
-                    containers.addToLongMap(rand.nextLong(), rand.nextLong());
-                    containers.addToDoubleMap(rand.nextDouble(), rand.nextDouble());
-                    containers.addToBinaryMap(TBinary.wrap(kbytes), TBinary.wrap(bytes));
-                    containers.addToStringMap(TBase64Utils.encode(kstr), TBase64Utils.encode(str));
-                    containers.addToEnumMap(values[rand.nextInt(values.length)], values[rand.nextInt(values.length)]);
-
-                    one = new byte[ONE];
-                    bytes = new byte[DATA];
-                    str = new byte[DATA];
-                    kstr = new byte[KEY];
-
-                    rand.nextBytes(one);
-                    rand.nextBytes(bytes);
-                    rand.nextBytes(str);
-                    rand.nextBytes(kstr);
-
-                    containers.addToMessageMap(
-                            TBase64Utils.encode(kstr),
-                            Primitives
-                                    .builder()
-                                    .setBooleanValue(rand.nextBoolean())
-                                    .setByteValue(one[0])
-                                    .setShortValue((short) rand.nextInt())
-                                    .setIntegerValue(rand.nextInt())
-                                    .setLongValue(rand.nextLong())
-                                    .setDoubleValue(rand.nextDouble())
-                                    .setBinaryValue(TBinary.wrap(bytes))
-                                    .setStringValue(TBase64Utils.encode(str))
-                                    .setEnumValue(values[rand.nextInt(values.length)])
-                                    .build());
-                }
-
-                data.add(containers.build());
-            }
-
-            for (Format f : Format.values()) {
-                File dir = new File(out, f.name());
-                if (!dir.exists()) {
-                    dir.mkdir();
-                }
-                if (!dir.isDirectory()) {
-                    throw new CmdLineException(parser, new FormatString("Target is not a directory: %s"), dir.getAbsolutePath());
-                }
-                File file = new File(dir, String.format("data.%s", f.suffix));
-                if (file.exists()) {
-                    file.delete();
-                }
-                file.createNewFile();
-
-                TSerializer serializer;
-
-                switch (f) {
-                    case binary:
-                        serializer = new TBinarySerializer();
-                        break;
-                    case binary_protocol:
-                        serializer = new TBinaryProtocolSerializer();
-                        break;
-                    case compact_protocol:
-                        serializer = new TCompactProtocolSerializer();
-                        break;
-                    case json:
-                        serializer = new TJsonSerializer(TJsonSerializer.IdType.ID);
-                        break;
-                    case json_named:
-                        serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
-                        break;
-                    case json_protocol:
-                        serializer = new TJsonProtocolSerializer();
-                        break;
-                    case tuple_protocol:
-                        serializer = new TTupleProtocolSerializer();
-                        break;
-                    default:
-                        continue;
-                }
-
-                long start = System.currentTimeMillis();
-                int size = 0;
-                BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file, false));
-                for (Containers c : data) {
-                    size += serializer.serialize(os, c);
-                    os.write('\n');
-                }
-                os.flush();
-                os.close();
-                long end = System.currentTimeMillis();
-
-                System.out.format("%20s:%,9d kB in %5.2fs\n",
-                        f.name(), size / 1024, (double) (end - start) / 1000);
-            }
+            GenerateData cmd = new GenerateData(opts, parser);
+            cmd.run();
         } catch (TSerializeException|IOException|CmdLineException e) {
             System.out.flush();
             System.err.println();
