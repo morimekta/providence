@@ -28,9 +28,9 @@ java_legacy_thrift(
 
 java_binary(
     name = "generate-data",
-    srcs = [
-        "java/net/morimekta/test/generator/GenerateData.java",
-    ],
+    srcs = glob(
+         ["java/net/morimekta/test/generator/*.java"],
+    ),
     main_class = 'net.morimekta.test.generator.GenerateData',
     deps = [
         ":thrift-j2",
@@ -45,19 +45,20 @@ java_binary(
 )
 
 java_binary(
-     name = "speed-test",
-     srcs = [
-         "java/net/morimekta/test/speedtest/SpeedTest.java",
-     ],
-     main_class = 'net.morimekta.test.speedtest.SpeedTest',
-     deps = [
-         ":thrift-j2",
-         ":thrift",
-         "//core:core",
-         "//protocol:protocol",
-         "//utils:utils",
-         "//third-party:args4j",
-         "//third-party:slf4j-simple",
-         "//third-party:libthrift",
-     ]
- )
+    name = "speed-test",
+    srcs = glob(
+        ["java/net/morimekta/test/speedtest/*.java"],
+    ),
+    main_class = 'net.morimekta.test.speedtest.SpeedTest',
+    deps = [
+        ":thrift-j2",
+        ":thrift",
+        "//core:core",
+        "//protocol:protocol",
+        "//utils:utils",
+        "//third-party:args4j",
+        "//third-party:commons-math3",
+        "//third-party:libthrift",
+        "//third-party:slf4j-simple",
+    ]
+)

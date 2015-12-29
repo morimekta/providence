@@ -7,14 +7,15 @@ git_repository(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/steineldar/src/thrift-j2/./compiler/pom.xml
-# /home/steineldar/src/thrift-j2/./utils/pom.xml
-# /home/steineldar/src/thrift-j2/./messageio/pom.xml
-# /home/steineldar/src/thrift-j2/./reflect/pom.xml
-# /home/steineldar/src/thrift-j2/./jax-rs/pom.xml
-# /home/steineldar/src/thrift-j2/./core/pom.xml
-# /home/steineldar/src/thrift-j2/./protocol/pom.xml
-# /home/steineldar/src/thrift-j2/./converter/pom.xml
+# /home/morimekta/src/thrift-j2/./compiler/pom.xml
+# /home/morimekta/src/thrift-j2/./converter/pom.xml
+# /home/morimekta/src/thrift-j2/./core/pom.xml
+# /home/morimekta/src/thrift-j2/./jax-rs/pom.xml
+# /home/morimekta/src/thrift-j2/./messageio/pom.xml
+# /home/morimekta/src/thrift-j2/./protocol/pom.xml
+# /home/morimekta/src/thrift-j2/./reflect/pom.xml
+# /home/morimekta/src/thrift-j2/./tests/pom.xml
+# /home/morimekta/src/thrift-j2/./utils/pom.xml
 
 
 # org.apache.thrift-j2:thrift-j2-protocol:jar:0.0.1-SNAPSHOT
@@ -29,6 +30,13 @@ maven_jar(
     name = "commons-logging_commons-logging",
     artifact = "commons-logging:commons-logging:1.2",
     sha1 = "4bfc12adfe4842bf07b657f0369c4cb522955686",
+)
+
+# org.apache.thrift-j2:thrift-j2-tests:jar:0.0.1-SNAPSHOT
+maven_jar(
+    name = "org.apache.commons_commons-math3",
+    artifact = "org.apache.commons:commons-math3:3.5",
+    sha1 = "13af68e9a11576953f5c4b09436f8207be9d3a27",
 )
 
 # org.apache.thrift:libthrift:pom:0.9.3
@@ -91,6 +99,7 @@ maven_jar(
 # org.apache.thrift-j2:thrift-j2-converter:jar:0.0.1-SNAPSHOT
 # org.apache.thrift-j2:thrift-j2-jax-rs:jar:0.0.1-SNAPSHOT
 # org.apache.thrift-j2:thrift-j2-utils:jar:0.0.1-SNAPSHOT
+# org.apache.thrift-j2:thrift-j2-tests:jar:0.0.1-SNAPSHOT
 # org.apache.thrift-j2:thrift-j2-reflect:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "junit_junit",

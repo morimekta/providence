@@ -208,15 +208,7 @@ public class GenerateData {
         return builder.build();
     }
 
-    public void run() throws CmdLineException, IOException, TSerializeException {
-        File outDir = new File(opts.out);
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
-        if (!outDir.isDirectory()) {
-            throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), opts.out);
-        }
-
+    public ArrayList<Containers> generateData() {
         ArrayList<Containers> data = new ArrayList<>(opts.entries);
         Random rand = new Random(System.nanoTime());
         for (int e = 0; e < opts.entries; ++e) {
@@ -413,6 +405,20 @@ public class GenerateData {
 
             data.add(containers.build());
         }
+
+        return data;
+    }
+
+    public void run() throws CmdLineException, IOException, TSerializeException {
+        File outDir = new File(opts.out);
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+        if (!outDir.isDirectory()) {
+            throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), opts.out);
+        }
+
+        ArrayList<Containers> data = generateData();
 
         for (Format f : Format.values()) {
             File outFile = new File(outDir, String.format("%s.%s", f.name(), f.suffix));
