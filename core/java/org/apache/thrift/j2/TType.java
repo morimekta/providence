@@ -20,10 +20,7 @@
 package org.apache.thrift.j2;
 
 /**
- * Value types.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Value type constants.
  */
 public enum TType {
     STOP(0, "stop"),
@@ -39,7 +36,7 @@ public enum TType {
     I64(10, "i64"),
     STRING(11, "string"),
     BINARY(11, "binary"),  // encodes as string.
-    MESSAGE(12, "struct"),
+    MESSAGE(12, "message"),
     MAP(13, "map"),
     SET(14, "set"),
     LIST(15, "list"),
@@ -61,20 +58,47 @@ public enum TType {
     }
 
     public static TType findById(byte id) {
-        for (TType group : values()) {
-            if (id == group.id) {
-                return group;
-            }
+        switch (id) {
+            case 0: return STOP;
+            case 1: return VOID;
+            case 2: return BOOL;
+            case 3: return BYTE;
+            case 4: return DOUBLE;
+            // case 5:
+            case 6: return I16;
+            // case 7:
+            case 8: return I32;
+            // case 9:
+            case 10: return I64;
+            case 11: return STRING;
+            // BINARY is same as STRING.
+            case 12: return MESSAGE;
+            case 13: return MAP;
+            case 14: return SET;
+            case 15: return LIST;
+            // ENUM is same as I32.
+            default: return STOP;
         }
-        return STOP;
     }
 
     public static TType findByName(String name) {
-        for (TType group : values()) {
-            if (name.equals(group.name)) {
-                return group;
-            }
+        switch (name) {
+            case "stop": return STOP;
+            case "void": return VOID;
+            case "bool": return BOOL;
+            case "byte": return BYTE;
+            case "double": return DOUBLE;
+            case "i16": return I16;
+            case "i32": return I32;
+            case "i64": return I64;
+            case "binary": return BINARY;
+            case "string": return STRING;
+            case "message": return MESSAGE;
+            case "map": return MAP;
+            case "set": return SET;
+            case "list": return LIST;
+            case "enum": return ENUM;
+            default: return STOP;
         }
-        return STOP;
     }
 }

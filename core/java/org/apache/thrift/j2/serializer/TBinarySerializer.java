@@ -106,15 +106,14 @@ public class TBinarySerializer
     public <T> T deserialize(InputStream input, TDescriptor<T> descriptor)
             throws TSerializeException, IOException {
         // Assume it consists of a single field.
-        switch (descriptor.getType()) {
-            case MESSAGE:
-                return cast((Object) readMessage(input, (TStructDescriptor<?,?>) descriptor, true));
-            default:
-                FieldInfo info = readFieldInfo(input);
-                if (info == null) {
-                    throw new TSerializeException("Unexpected end of stream.");
-                }
-                return readFieldValue(input, info, descriptor);
+        if (TType.MESSAGE == descriptor.getType()) {
+            return cast((Object) readMessage(input, (TStructDescriptor<?, ?>) descriptor, true));
+        } else {
+            FieldInfo info = readFieldInfo(input);
+            if (info == null) {
+                throw new TSerializeException("Unexpected end of stream.");
+            }
+            return readFieldValue(input, info, descriptor);
         }
     }
 

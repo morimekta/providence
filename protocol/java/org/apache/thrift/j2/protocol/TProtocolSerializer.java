@@ -180,8 +180,7 @@ class TProtocolSerializer extends TSerializer {
         TMessageBuilder<T> builder = descriptor.factory().builder();
         protocol.readStructBegin();  // ignored.
         while ((f = protocol.readFieldBegin()) != null) {
-            TType type = TType.findById(f.type);
-            if (type.equals(TType.STOP)) {
+            if (f.type == TType.STOP.id) {
                 break;
             }
 
@@ -200,7 +199,7 @@ class TProtocolSerializer extends TSerializer {
             }
 
             if (f.type != getFieldType(field.getDescriptor())) {
-                throw new TSerializeException("Incompatible serialized type " + type +
+                throw new TSerializeException("Incompatible serialized type " + TType.findById(f.type) +
                                               " for field " + field.getName() +
                                               ", expected " + field.getDescriptor().getType());
             }
@@ -231,7 +230,7 @@ class TProtocolSerializer extends TSerializer {
             case I16:
                 return cast(protocol.readI16());
             case I32:
-                if (type.getType().equals(TType.ENUM)) {
+                if (TType.ENUM == type.getType()) {
                     TEnumDescriptor<?> et = (TEnumDescriptor<?>) type;
                     TEnumBuilder<?> eb = et.factory().builder();
                     int value = protocol.readI32();
@@ -249,23 +248,13 @@ class TProtocolSerializer extends TSerializer {
             case DOUBLE:
                 return cast(protocol.readDouble());
             case STRING:
-                if (type.equals(TPrimitive.BINARY)) {
+                if (type == TPrimitive.BINARY) {
                     ByteBuffer buffer = protocol.readBinary();
                     return cast(TBinary.wrap(buffer.array()));
                 }
                 return cast(protocol.readString());
             case MESSAGE:
                 return cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) type));
-            case ENUM:
-                TEnumDescriptor<?> ed = (TEnumDescriptor<?>) type;
-                TEnumBuilder<?> eb = ed.factory().builder();
-                int value = protocol.readI32();
-                eb.setByValue(value);
-                if (!eb.isValid()) {
-                    throw new TSerializeException("Invalid enum value " + value + " for " +
-                                                  ed.getQualifiedName(null));
-                }
-                return cast(eb.build());
             case LIST:
                 org.apache.thrift.protocol.TList listInfo = protocol.readListBegin();
                 TList<?> lDesc = (TList<?>) type;

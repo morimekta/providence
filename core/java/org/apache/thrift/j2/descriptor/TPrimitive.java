@@ -22,11 +22,12 @@ package org.apache.thrift.j2.descriptor;
 import org.apache.thrift.j2.TBinary;
 import org.apache.thrift.j2.TType;
 
+import java.util.Objects;
+
 /**
- * Static descriptors for primitive types.
+ * Descriptors for primitive types.
  *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * These are the basic types used in the thrift structure except containers.
  */
 public class TPrimitive<T> implements TDescriptor<T> {
     public static final TPrimitive<Void>    VOID   = new TPrimitive<>(TType.VOID, null);
@@ -78,30 +79,31 @@ public class TPrimitive<T> implements TDescriptor<T> {
         return mType;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mType, mDefault);
+    }
+
     public T getDefaultValue() {
         return mDefault;
     }
 
     public static TPrimitive<?> findByName(String name) {
-        switch (TType.findByName(name)) {
-            case VOID:
-                return VOID;
-            case BOOL:
-                return BOOL;
-            case BYTE:
-                return BYTE;
-            case I16:
-                return I16;
-            case I32:
-                return I32;
-            case I64:
-                return I64;
-            case DOUBLE:
-                return DOUBLE;
-            case STRING:
-                return STRING;
-            case BINARY:
-                return BINARY;
+        switch (name) {
+            case "void": return VOID;
+            case "bool": return BOOL;
+            case "byte": return BYTE;
+            case "i16": return I16;
+            case "i32": return I32;
+            case "i64": return I64;
+            case "double": return DOUBLE;
+            case "string": return STRING;
+            case "binary": return BINARY;
         }
         return null;
     }

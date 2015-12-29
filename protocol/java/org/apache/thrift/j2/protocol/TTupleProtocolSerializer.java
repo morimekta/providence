@@ -116,14 +116,13 @@ public class TTupleProtocolSerializer
 
     protected <T> T read(TTupleProtocol protocol, TDescriptor<T> descriptor)
             throws TException, TSerializeException {
-        switch (descriptor.getType()) {
-            case MESSAGE:
-                T ret = cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) descriptor));
-                return ret;
-            default:
-                protocol.readBitSet(1);  // ignored.
-                ret = readTypedValue(descriptor.getType().id, descriptor, protocol);
-                return ret;
+        if (TType.MESSAGE == descriptor.getType()) {
+            T ret = cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) descriptor));
+            return ret;
+        } else {
+            protocol.readBitSet(1);  // ignored.
+            T ret = readTypedValue(descriptor.getType().id, descriptor, protocol);
+            return ret;
         }
     }
 
@@ -175,7 +174,7 @@ public class TTupleProtocolSerializer
             case I16:
                 return cast(protocol.readI16());
             case I32:
-                if (type.getType().equals(TType.ENUM)) {
+                if (TType.ENUM == type.getType()) {
                     TEnumDescriptor<?> et = (TEnumDescriptor<?>) type;
                     TEnumBuilder<?> eb = et.factory().builder();
                     int value = protocol.readI32();
@@ -193,23 +192,13 @@ public class TTupleProtocolSerializer
             case DOUBLE:
                 return cast(protocol.readDouble());
             case STRING:
-                if (type.equals(TPrimitive.BINARY)) {
+                if (TPrimitive.BINARY == type) {
                     ByteBuffer buffer = protocol.readBinary();
                     return cast(TBinary.wrap(buffer.array()));
                 }
                 return cast(protocol.readString());
             case MESSAGE:
                 return cast((Object) readMessage(protocol, (TStructDescriptor<?,?>) type));
-            case ENUM:
-                TEnumDescriptor<?> ed = (TEnumDescriptor<?>) type;
-                TEnumBuilder<?> eb = ed.factory().builder();
-                int value = protocol.readI32();
-                eb.setByValue(value);
-                if (!eb.isValid()) {
-                    throw new TSerializeException("Invalid enum value " + value + " for " +
-                                                  ed.getQualifiedName(null));
-                }
-                return cast(eb.build());
             case LIST:
                 int lSize = protocol.readI32();
                 TList<?> lDesc = (TList<?>) type;
