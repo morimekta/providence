@@ -5,12 +5,7 @@ import net.morimekta.test.j2.Primitives;
 import net.morimekta.test.j2.Value;
 
 import org.apache.thrift.j2.TBinary;
-import org.apache.thrift.j2.TMessage;
-import org.apache.thrift.j2.descriptor.TDescriptor;
 import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
-import org.apache.thrift.j2.protocol.TCompactProtocolSerializer;
-import org.apache.thrift.j2.protocol.TJsonProtocolSerializer;
-import org.apache.thrift.j2.protocol.TTupleProtocolSerializer;
 import org.apache.thrift.j2.serializer.TBinarySerializer;
 import org.apache.thrift.j2.serializer.TJsonSerializer;
 import org.apache.thrift.j2.serializer.TSerializeException;
@@ -24,8 +19,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
@@ -66,16 +59,9 @@ public class GenerateData {
 
     public enum Format {
         json_pretty("json"),
-        json_named("json"),
         json("json"),
-
-        json_protocol("json"),
-
         binary("bin"),
-
-        compact_protocol("bin"),
         binary_protocol("bin"),
-        tuple_protocol("tuples"),
         ;
 
         String suffix;
@@ -436,23 +422,11 @@ public class GenerateData {
                 case json:
                     serializer = new TJsonSerializer(TJsonSerializer.IdType.ID);
                     break;
-                case json_named:
-                    serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
-                    break;
                 case json_pretty:
                     serializer = new TJsonSerializer(false, TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME, true);
                     break;
                 case binary_protocol:
                     serializer = new TBinaryProtocolSerializer();
-                    break;
-                case compact_protocol:
-                    serializer = new TCompactProtocolSerializer();
-                    break;
-                case json_protocol:
-                    serializer = new TJsonProtocolSerializer();
-                    break;
-                case tuple_protocol:
-                    serializer = new TTupleProtocolSerializer();
                     break;
                 default:
                     continue;

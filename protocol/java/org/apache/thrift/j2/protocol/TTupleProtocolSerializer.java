@@ -141,7 +141,7 @@ public class TTupleProtocolSerializer
 
         for (int i = 0; i < fields.length; ++i) {
             TField<?> fld = fields[i];
-            if (message.has(fld.getKey())) {
+            if (optionals.get(i)) {
                 writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
             }
         }
@@ -177,7 +177,7 @@ public class TTupleProtocolSerializer
                 if (TType.ENUM == type.getType()) {
                     TEnumDescriptor<?> et = (TEnumDescriptor<?>) type;
                     TEnumBuilder<?> eb = et.factory().builder();
-                    int value = protocol.readI32();
+                    final int value = protocol.readI32();
                     eb.setByValue(value);
                     if (!eb.isValid()) {
                         throw new TSerializeException("Invalid enum value " + value + " for " +

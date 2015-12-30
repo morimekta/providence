@@ -458,18 +458,18 @@ public class SpeedTest {
         Result thriftResult = new Result(format);
 
         for (int run = 1; run <= options.runs; ++run) {
-            runThriftJ2Test(thriftJ2Result, run);
-            if (fullStats) {
-                System.out.format("[thrift-j2] %2d:%s\n", run, thriftJ2Result.toString());
-            }
             if (format.name().endsWith("_protocol")) {
                 runThriftTest(thriftResult, run);
                 if (fullStats) {
-                    System.out.format("%s[thrift]    %2d:%s%s\n",
+                    System.out.format("%s[thrift]   %3d:%s%s\n",
                                       Color.YELLOW,
                                       run, thriftResult.toString(),
                                       Color.CLEAR);
                 }
+            }
+            runThriftJ2Test(thriftJ2Result, run);
+            if (fullStats) {
+                System.out.format("[thrift-j2]%3d:%s\n", run, thriftJ2Result.toString());
             }
         }
 
@@ -483,9 +483,9 @@ public class SpeedTest {
                 printStats("v1", "write", thriftResult.writeStat, Color.YELLOW);
                 System.out.println();
             } else {
-                System.out.format("[thrift-j2] %2d:%s\n",
+                System.out.format("[thrift-j2]%3d:%s\n",
                                   options.runs, thriftJ2Result.toString());
-                System.out.format("%s[thrift]    %2d:%s%s\n",
+                System.out.format("%s[thrift]   %3d:%s%s\n",
                                   Color.YELLOW,
                                   options.runs, thriftResult.toString(),
                                   Color.CLEAR);
@@ -496,7 +496,7 @@ public class SpeedTest {
             printStats("j2", "write", thriftJ2Result.writeStat, Color.DEFAULT);
             System.out.println();
         } else {
-            System.out.format("[thrift-j2] %2d:%s\n",
+            System.out.format("[thrift-j2]%3d:%s\n",
                               options.runs, thriftJ2Result.toString());
         }
     }
@@ -510,16 +510,18 @@ public class SpeedTest {
             norm.addValue(values[i]);
         }
         System.out.format(Locale.ENGLISH,
-                          "%s -- [%s] %5s: [%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs] mean: %6.2fµs dev: %,9.2f%s\n",
+                          "%s -- [%s] %5s: [%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs] mean: %6.2fµs gmean: %6.2fµs dev: %5.2f var: %5.2f%s\n",
                           color,
                           variant, op,
-                          norm.getPercentile(1)  / 1000,
-                          norm.getPercentile(10) / 1000,
-                          norm.getPercentile(50) / 1000,
-                          norm.getPercentile(90) / 1000,
-                          norm.getPercentile(99) / 1000,
-                          norm.getMean()         / 1000,
+                          norm.getPercentile(1)   / 1000,
+                          norm.getPercentile(10)  / 1000,
+                          norm.getPercentile(50)  / 1000,
+                          norm.getPercentile(90)  / 1000,
+                          norm.getPercentile(99)  / 1000,
+                          norm.getMean()          / 1000,
+                          norm.getGeometricMean() / 1000,
                           norm.getStandardDeviation() / 1000,
+                          norm.getPopulationVariance() / 1000,
                           Color.CLEAR);
     }
 
