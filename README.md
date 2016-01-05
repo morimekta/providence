@@ -1,9 +1,10 @@
-Immutable Thrift Java library
-=============================
+Providence Serialization 
+========================
 
-The `thrift-j2` project was made in order to make an immutable model java
+The `providence` project was made in order to make an immutable model java
 library for thrift. It is mostly separate from the thrift library, but can use
-the standard thrift protocols to serialize and serialize messages.
+the standard thrift protocols to serialize and serialize messages. It is mainly
+based on the Facebook / Apache `thrift` library, but with some limitations.
 
 # Documentation
 
@@ -17,9 +18,6 @@ the standard thrift protocols to serialize and serialize messages.
 In order to compile thrift-j2, you need:
 
 - `bazel` Found at [bazel.io](https://bazel.io/) is used as build system.
-- `android-sdk` Found at
-  [developer.android.com](https://developer.android.com/sdk/installing/index.html?pkg=tools)
-  is used for binding of android builds.
 
 Bazel was chosen as build tool for it's good support for multiple binaries and
 projects within the same codebase. This project has at least 2 binaries
@@ -29,20 +27,17 @@ projects within the same codebase. This project has at least 2 binaries
 
 Sadly there are no default APT package for buckbuild and android, so it has to
 be installed from source. The location does not matter, as long as it's
-available in the PATH, and android SDK it located at the `ANDROID_HOME`
-location (you may have to set up the env variable yourself).
-
-Make sure to install android API 16 / 4.4 (JELLYBEAN).
+available in the PATH.
 
 ```
-# git clone git@github.com:morimekta/thrift-j2.git thrift-j2
-# cd thrift-j2
+# git clone git@github.com:morimekta/providence.git providence
+# cd providence
 # bazel build //...
 ```
 
-# Differences
+# Differences with Thrift
 
-thrift-j2 is not *exactly* like thrift. The differences are mostly minute, but
+providence is not *exactly* like thrift. The differences are mostly minute, but
 all feature changes are there for a reason. Differences are based on the IDL at
 [thrift.apache.org](https://thrift.apache.org/docs/idl).
 
@@ -94,7 +89,7 @@ different serialization format that serializes the first M fields of the struct
 in order. E.g. in JSON a compact struct may be serialized as an array if (and
 only if).
 
-Messages will have a `compact()` method that determines if the message is
+Messages will have a `isCompact()` method that determines if the message is
 compact compatible for serialization. Descriptors will have a similar
 `compactible()` method which determines if the message can be deserialized with
 the compact format.
@@ -103,7 +98,12 @@ This mimics the way thrift serializes service method calls, but in a way that
 is generic to all messages.
 
 To annotate a struct as compact, add the `@compact` annotation to the struct
-comment.
+comment. This will still allow thrift compiler to parse the .thrift files.
+
+### Simple Messages.
+
+A simple message is one that does not contain nested structures, e.g. no containers,
+and no internal messages. Simple messages
 
 ### Reserved words.
 

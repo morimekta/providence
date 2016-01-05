@@ -1,18 +1,17 @@
 package net.morimekta.test.speedtest;
 
+import net.morimekta.providence.protocol.*;
+import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.test.j2.Containers;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.thrift.TException;
-import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
-import org.apache.thrift.j2.protocol.TCompactProtocolSerializer;
-import org.apache.thrift.j2.protocol.TJsonProtocolSerializer;
-import org.apache.thrift.j2.protocol.TTupleProtocolSerializer;
-import org.apache.thrift.j2.serializer.TBinarySerializer;
-import org.apache.thrift.j2.serializer.TJsonSerializer;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-import org.apache.thrift.j2.util.io.CountingOutputStream;
+import net.morimekta.providence.protocol.TCompactProtocolSerializer;
+import net.morimekta.providence.protocol.TJsonProtocolSerializer;
+import net.morimekta.providence.serializer.PBinarySerializer;
+import net.morimekta.providence.serializer.PJsonSerializer;
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.util.io.CountingOutputStream;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
@@ -20,8 +19,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
-import org.apache.utils.Color;
-import org.apache.utils.FormatString;
+import net.morimekta.utils.Color;
+import net.morimekta.utils.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -212,7 +211,7 @@ public class SpeedTest {
         thriftJ2Containers.clear();
 
         in = getInput(Format.binary);
-        TSerializer serializer = new TBinarySerializer();
+        PSerializer serializer = new PBinarySerializer();
 
         start = System.nanoTime();
 
@@ -224,7 +223,7 @@ public class SpeedTest {
                 if (in.read() == -1) {
                     break;
                 }
-            } catch (TSerializeException se) {
+            } catch (PSerializeException se) {
                 se.printStackTrace();
                 break;
             }
@@ -350,11 +349,11 @@ public class SpeedTest {
         return (testEnd - testStart) / 1000000;
     }
 
-    public long runThriftJ2Test(Result result, int run) throws IOException, TSerializeException {
-        TSerializer serializer;
+    public long runThriftJ2Test(Result result, int run) throws IOException, PSerializeException {
+        PSerializer serializer;
         switch (result.format) {
             case binary:
-                serializer = new TBinarySerializer();
+                serializer = new PBinarySerializer();
                 break;
             case binary_protocol:
                 serializer = new TBinaryProtocolSerializer();
@@ -363,13 +362,13 @@ public class SpeedTest {
                 serializer = new TCompactProtocolSerializer();
                 break;
             case json:
-                serializer = new TJsonSerializer(TJsonSerializer.IdType.ID);
+                serializer = new PJsonSerializer(PJsonSerializer.IdType.ID);
                 break;
             case json_named:
-                serializer = new TJsonSerializer(TJsonSerializer.IdType.NAME);
+                serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
                 break;
             case json_pretty:
-                serializer = new TJsonSerializer(false, TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME, true);
+                serializer = new PJsonSerializer(false, PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME, true);
                 break;
             case json_protocol:
                 serializer = new TJsonProtocolSerializer();
@@ -452,7 +451,7 @@ public class SpeedTest {
         return (testEnd - testStart) / 1000000;
     }
 
-    public void runTest(Format format, boolean fullStats) throws IOException, TException, TSerializeException {
+    public void runTest(Format format, boolean fullStats) throws IOException, TException, PSerializeException {
         // First test thrift-j2.
         Result thriftJ2Result = new Result(format);
         Result thriftResult = new Result(format);
@@ -545,7 +544,7 @@ public class SpeedTest {
                     speedTest.runTest(format, false);
                 }
             }
-        } catch (TException|TSerializeException|IOException | CmdLineException e) {
+        } catch (TException|PSerializeException |IOException | CmdLineException e) {
             System.out.flush();
             System.err.println();
             e.printStackTrace();

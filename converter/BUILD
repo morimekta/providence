@@ -10,6 +10,6 @@ java_binary(
     "//third-party:slf4j-simple",
     "//utils",
   ],
-  main_class = "org.apache.thrift.j2.converter.Convert",
+  main_class = "Convert",
   visibility = ['//visibility:public'],
 )

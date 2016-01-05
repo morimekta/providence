@@ -1,0 +1,110 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package net.morimekta.providence.descriptor;
+
+import net.morimekta.providence.PType;
+import net.morimekta.providence.Binary;
+
+import java.util.Objects;
+
+/**
+ * Descriptors for primitive types.
+ *
+ * These are the basic types used in the thrift structure except containers.
+ */
+public class PPrimitive<T> implements PDescriptor<T> {
+    public static final PPrimitive<Void> VOID   = new PPrimitive<>(PType.VOID, null);
+    public static final PPrimitive<Boolean> BOOL   = new PPrimitive<>(PType.BOOL, false);
+    public static final PPrimitive<Byte> BYTE   = new PPrimitive<>(PType.BYTE, (byte) 0);
+    public static final PPrimitive<Short> I16    = new PPrimitive<>(PType.I16, (short) 0);
+    public static final PPrimitive<Integer> I32    = new PPrimitive<>(PType.I32, 0);
+    public static final PPrimitive<Long> I64    = new PPrimitive<>(PType.I64, (long) 0);
+    public static final PPrimitive<Double> DOUBLE = new PPrimitive<>(PType.DOUBLE, 0.0);
+    public static final PPrimitive<String> STRING = new PPrimitive<>(PType.STRING, null);
+    public static final PPrimitive<Binary> BINARY = new PPrimitive<>(PType.BINARY, null);
+
+    private final PPrimitiveProvider<T> mProvider;
+    private final PType mType;
+    private final T                     mDefault;
+
+    private PPrimitive(PType type, T defValue) {
+        mType = type;
+        mProvider = new PPrimitiveProvider<>(this);
+        mDefault = defValue;
+    }
+
+    public PPrimitiveProvider<T> provider() {
+        return mProvider;
+    }
+
+    @Override
+    public String getPackageName() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return mType.name;
+    }
+
+    @Override
+    public String getQualifiedName(String packageName) {
+        return mType.name;
+    }
+
+    @Override
+    public String toString() {
+        return mType.name;
+    }
+
+    @Override
+    public PType getType() {
+        return mType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mType, mDefault);
+    }
+
+    public T getDefaultValue() {
+        return mDefault;
+    }
+
+    public static PPrimitive<?> findByName(String name) {
+        switch (name) {
+            case "void": return VOID;
+            case "bool": return BOOL;
+            case "byte": return BYTE;
+            case "i16": return I16;
+            case "i32": return I32;
+            case "i64": return I64;
+            case "double": return DOUBLE;
+            case "string": return STRING;
+            case "binary": return BINARY;
+        }
+        return null;
+    }
+}

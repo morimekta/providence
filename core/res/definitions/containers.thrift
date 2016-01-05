@@ -1,4 +1,4 @@
-namespace java org.apache.test.containers
+namespace java net.morimekta.test.containers
 
 include "primitives.thrift"
 

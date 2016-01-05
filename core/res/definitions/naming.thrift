@@ -1,4 +1,4 @@
-namespace java org.apache.test.naming
+namespace java net.morimekta.test.naming
 
 
 enum Fields {

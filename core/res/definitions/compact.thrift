@@ -1,4 +1,4 @@
-namespace java org.apache.test.compact
+namespace java net.morimekta.test.compact
 
 /** @compact */
 struct Category {

@@ -1,4 +1,4 @@
-namespace java org.apache.test.primitives
+namespace java net.morimekta.test.primitives
 
 enum Value {
    FIRST = 1,

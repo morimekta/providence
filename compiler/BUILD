@@ -2,7 +2,7 @@ java_library(
   name = "compiler",
   srcs = glob(
     ["java/**/*.java"],
-    exclude = ['java/org/apache/thrift/j2/compiler/Compiler.java']),
+    exclude = ['java/net/morimekta/providence/compiler/Compiler.java']),
   deps = [
     "//core:core",
     "//reflect:reflect",
@@ -29,7 +29,7 @@ java_test(
 java_binary(
   name = "thrift-j2c",
   srcs = [
-    'java/org/apache/thrift/j2/compiler/Compiler.java',
+    'java/net/morimekta/providence/compiler/Compiler.java',
   ],
   deps = [
     ":compiler",
@@ -37,7 +37,7 @@ java_binary(
     "//reflect:reflect",
     "//third-party:args4j",
   ],
-  main_class = "org.apache.thrift.j2.compiler.Compiler",
+  main_class = "net.morimekta.providence.compiler.Compiler",
   visibility = [
     "//visibility:public"
   ],

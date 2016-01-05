@@ -1,4 +1,4 @@
-namespace java org.apache.test.alltypes
+namespace java net.morimekta.test.alltypes
 
 
 typedef double real

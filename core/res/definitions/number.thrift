@@ -1,4 +1,4 @@
-namespace java org.apache.test.number
+namespace java net.morimekta.test.number
 
 
 typedef double real

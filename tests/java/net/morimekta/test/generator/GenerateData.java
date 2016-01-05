@@ -1,16 +1,16 @@
 package net.morimekta.test.generator;
 
+import net.morimekta.providence.Binary;
+import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.test.j2.Containers;
 import net.morimekta.test.j2.Primitives;
 import net.morimekta.test.j2.Value;
 
-import org.apache.thrift.j2.TBinary;
-import org.apache.thrift.j2.protocol.TBinaryProtocolSerializer;
-import org.apache.thrift.j2.serializer.TBinarySerializer;
-import org.apache.thrift.j2.serializer.TJsonSerializer;
-import org.apache.thrift.j2.serializer.TSerializeException;
-import org.apache.thrift.j2.serializer.TSerializer;
-import org.apache.utils.FormatString;
+import net.morimekta.providence.protocol.TBinaryProtocolSerializer;
+import net.morimekta.providence.serializer.PBinarySerializer;
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.utils.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -125,10 +125,10 @@ public class GenerateData {
         return String.valueOf(out);
     }
 
-    public TBinary nextBinary(int size) {
+    public Binary nextBinary(int size) {
         byte[] out = new byte[size];
         rand.nextBytes(out);
-        return TBinary.wrap(out);
+        return Binary.wrap(out);
     }
 
     public byte nextByte() {
@@ -395,7 +395,7 @@ public class GenerateData {
         return data;
     }
 
-    public void run() throws CmdLineException, IOException, TSerializeException {
+    public void run() throws CmdLineException, IOException, PSerializeException {
         File outDir = new File(opts.out);
         if (!outDir.exists()) {
             outDir.mkdirs();
@@ -413,17 +413,17 @@ public class GenerateData {
             }
             outFile.createNewFile();
 
-            TSerializer serializer;
+            PSerializer serializer;
 
             switch (f) {
                 case binary:
-                    serializer = new TBinarySerializer();
+                    serializer = new PBinarySerializer();
                     break;
                 case json:
-                    serializer = new TJsonSerializer(TJsonSerializer.IdType.ID);
+                    serializer = new PJsonSerializer(PJsonSerializer.IdType.ID);
                     break;
                 case json_pretty:
-                    serializer = new TJsonSerializer(false, TJsonSerializer.IdType.NAME, TJsonSerializer.IdType.NAME, true);
+                    serializer = new PJsonSerializer(false, PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME, true);
                     break;
                 case binary_protocol:
                     serializer = new TBinaryProtocolSerializer();
@@ -462,7 +462,7 @@ public class GenerateData {
             parser.parseArgument(args);
             GenerateData cmd = new GenerateData(opts, parser);
             cmd.run();
-        } catch (TSerializeException|IOException|CmdLineException e) {
+        } catch (PSerializeException |IOException|CmdLineException e) {
             System.out.flush();
             System.err.println();
             e.printStackTrace();
