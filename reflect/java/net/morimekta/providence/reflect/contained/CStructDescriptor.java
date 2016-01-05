@@ -19,14 +19,15 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageBuilderFactory;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
 /**
  * @author Stein Eldar Johnsen
@@ -123,10 +124,10 @@ public class CStructDescriptor
             if (field.getKey() != next) {
                 return false;
             }
-            if (hasOptional && field.getRequired()) {
+            if (hasOptional && field.getRequirement() == PRequirement.REQUIRED) {
                 return false;
             }
-            if (!field.getRequired()) hasOptional = true;
+            if (field.getRequirement() == PRequirement.OPTIONAL) hasOptional = true;
             next++;
         }
         return true;

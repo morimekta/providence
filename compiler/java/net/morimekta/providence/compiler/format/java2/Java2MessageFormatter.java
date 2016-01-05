@@ -1005,10 +1005,10 @@ public class Java2MessageFormatter {
                                          camelCase("kDefault", field.getName()));
             }
 
-            writer.formatln("%s(%d, %s, \"%s\", %s, %s),",
+            writer.formatln("%s(%d, PRequirement.%s, \"%s\", %s, %s),",
                             name,
                             field.getKey(),
-                            field.getRequired() ? "true" : "false",
+                            field.getRequirement().name(),
                             field.getName(),
                             provider,
                             defValue);
@@ -1017,13 +1017,13 @@ public class Java2MessageFormatter {
               .newline();
 
         writer.appendln("private final int mKey;")
-              .appendln("private final boolean mRequired;")
+              .appendln("private final PRequirement mRequired;")
               .appendln("private final String mName;")
               .appendln("private final PDescriptorProvider<?> mTypeProvider;")
               .appendln("private final PValueProvider<?> mDefaultValue;")
               .newline()
               .appendln(
-                      "_Field(int key, boolean required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {")
+                      "_Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {")
               .begin()
               .appendln("mKey = key;")
               .appendln("mRequired = required;")
@@ -1040,7 +1040,7 @@ public class Java2MessageFormatter {
               .appendln("public int getKey() { return mKey; }")
               .newline();
         writer.appendln("@Override")
-              .appendln("public boolean getRequired() { return mRequired; }")
+              .appendln("public PRequirement getRequirement() { return mRequired; }")
               .newline();
         writer.appendln("@Override")
               .appendln("public PType getType() { return getDescriptor().getType(); }")
@@ -1070,8 +1070,8 @@ public class Java2MessageFormatter {
               .appendln("       .append('{')")
               .appendln("       .append(mKey)")
               .appendln("       .append(\": \");")
-              .appendln("if (mRequired) {")
-              .appendln("    builder.append(\"required \");")
+              .appendln("if (mRequired != PRequirement.DEFAULT) {")
+              .appendln("    builder.append(mRequired.label).append(\" \");")
               .appendln("}")
               .appendln("builder.append(getDescriptor().getQualifiedName(null))")
               .appendln("       .append(' ')")
@@ -1247,7 +1247,7 @@ public class Java2MessageFormatter {
         } else {
             boolean first = true;
             for (PField<?> field : type.getFields()) {
-                if (field.getRequired()) {
+                if (field.getRequirement() == PRequirement.REQUIRED) {
                     if (first)
                         first = false;
                     else
@@ -1687,6 +1687,7 @@ public class Java2MessageFormatter {
         header.include(PField.class.getName());
         header.include(PTypeUtils.class.getName());
         header.include(PType.class.getName());
+        header.include(PRequirement.class.getName());
         header.include(PDescriptorProvider.class.getName());
         header.include(PValueProvider.class.getName());
         header.include(PDescriptor.class.getName());

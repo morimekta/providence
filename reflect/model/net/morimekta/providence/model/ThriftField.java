@@ -3,12 +3,19 @@ package net.morimekta.providence.model;
 import java.io.Serializable;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.*;
-import net.morimekta.providence.util.PTypeUtils;
-import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.descriptor.PDefaultValueProvider;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptorProvider;
+import net.morimekta.providence.descriptor.PValueProvider;
+import net.morimekta.providence.util.PTypeUtils;
 
 /**
  * For fields:
@@ -26,11 +33,11 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 public class ThriftField
         implements PMessage<ThriftField>, Serializable {
     private final static int kDefaultKey = 0;
-    private final static boolean kDefaultIsRequired = false;
+    private final static Requirement kDefaultRequirement = Requirement.DEFAULT;
 
     private final String mComment;
     private final Integer mKey;
-    private final Boolean mIsRequired;
+    private final Requirement mRequirement;
     private final String mType;
     private final String mName;
     private final String mDefaultValue;
@@ -38,7 +45,7 @@ public class ThriftField
     private ThriftField(_Builder builder) {
         mComment = builder.mComment;
         mKey = builder.mKey;
-        mIsRequired = builder.mIsRequired;
+        mRequirement = builder.mRequirement;
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
@@ -60,12 +67,12 @@ public class ThriftField
         return hasKey() ? mKey : kDefaultKey;
     }
 
-    public boolean hasIsRequired() {
-        return mIsRequired != null;
+    public boolean hasRequirement() {
+        return mRequirement != null;
     }
 
-    public boolean getIsRequired() {
-        return hasIsRequired() ? mIsRequired : kDefaultIsRequired;
+    public Requirement getRequirement() {
+        return hasRequirement() ? mRequirement : kDefaultRequirement;
     }
 
     public boolean hasType() {
@@ -97,7 +104,7 @@ public class ThriftField
         switch(key) {
             case 1: return hasComment();
             case 2: return hasKey();
-            case 3: return hasIsRequired();
+            case 3: return hasRequirement();
             case 4: return hasType();
             case 5: return hasName();
             case 6: return hasDefaultValue();
@@ -110,7 +117,7 @@ public class ThriftField
         switch(key) {
             case 1: return hasComment() ? 1 : 0;
             case 2: return hasKey() ? 1 : 0;
-            case 3: return hasIsRequired() ? 1 : 0;
+            case 3: return hasRequirement() ? 1 : 0;
             case 4: return hasType() ? 1 : 0;
             case 5: return hasName() ? 1 : 0;
             case 6: return hasDefaultValue() ? 1 : 0;
@@ -123,7 +130,7 @@ public class ThriftField
         switch(key) {
             case 1: return getComment();
             case 2: return getKey();
-            case 3: return getIsRequired();
+            case 3: return getRequirement();
             case 4: return getType();
             case 5: return getName();
             case 6: return getDefaultValue();
@@ -147,7 +154,7 @@ public class ThriftField
         ThriftField other = (ThriftField) o;
         return PTypeUtils.equals(mComment, other.mComment) &&
                PTypeUtils.equals(mKey, other.mKey) &&
-               PTypeUtils.equals(mIsRequired, other.mIsRequired) &&
+               PTypeUtils.equals(mRequirement, other.mRequirement) &&
                PTypeUtils.equals(mType, other.mType) &&
                PTypeUtils.equals(mName, other.mName) &&
                PTypeUtils.equals(mDefaultValue, other.mDefaultValue);
@@ -158,7 +165,7 @@ public class ThriftField
         return ThriftField.class.hashCode() +
                PTypeUtils.hashCode(_Field.COMMENT,mComment) +
                PTypeUtils.hashCode(_Field.KEY,mKey) +
-               PTypeUtils.hashCode(_Field.IS_REQUIRED,mIsRequired) +
+               PTypeUtils.hashCode(_Field.REQUIREMENT,mRequirement) +
                PTypeUtils.hashCode(_Field.TYPE,mType) +
                PTypeUtils.hashCode(_Field.NAME,mName) +
                PTypeUtils.hashCode(_Field.DEFAULT_VALUE,mDefaultValue);
@@ -177,21 +184,21 @@ public class ThriftField
     }
 
     public enum _Field implements PField {
-        COMMENT(1, false, "comment", PPrimitive.STRING.provider(), null),
-        KEY(2, true, "key", PPrimitive.I32.provider(), null),
-        IS_REQUIRED(3, false, "is_required", PPrimitive.BOOL.provider(), new PDefaultValueProvider<>(kDefaultIsRequired)),
-        TYPE(4, true, "type", PPrimitive.STRING.provider(), null),
-        NAME(5, true, "name", PPrimitive.STRING.provider(), null),
-        DEFAULT_VALUE(6, false, "default_value", PPrimitive.STRING.provider(), null),
+        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
+        KEY(2, PRequirement.REQUIRED, "key", PPrimitive.I32.provider(), null),
+        REQUIREMENT(3, PRequirement.DEFAULT, "requirement", Requirement.provider(), new PDefaultValueProvider<>(kDefaultRequirement)),
+        TYPE(4, PRequirement.REQUIRED, "type", PPrimitive.STRING.provider(), null),
+        NAME(5, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
+        DEFAULT_VALUE(6, PRequirement.DEFAULT, "default_value", PPrimitive.STRING.provider(), null),
         ;
 
         private final int mKey;
-        private final boolean mRequired;
+        private final PRequirement mRequired;
         private final String mName;
         private final PDescriptorProvider<?> mTypeProvider;
         private final PValueProvider<?> mDefaultValue;
 
-        _Field(int key, boolean required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -206,7 +213,7 @@ public class ThriftField
         public int getKey() { return mKey; }
 
         @Override
-        public boolean getRequired() { return mRequired; }
+        public PRequirement getRequirement() { return mRequired; }
 
         @Override
         public PType getType() { return getDescriptor().getType(); }
@@ -232,8 +239,8 @@ public class ThriftField
                    .append('{')
                    .append(mKey)
                    .append(": ");
-            if (mRequired) {
-                builder.append("required ");
+            if (mRequired != PRequirement.DEFAULT) {
+                builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
@@ -246,7 +253,7 @@ public class ThriftField
             switch (key) {
                 case 1: return _Field.COMMENT;
                 case 2: return _Field.KEY;
-                case 3: return _Field.IS_REQUIRED;
+                case 3: return _Field.REQUIREMENT;
                 case 4: return _Field.TYPE;
                 case 5: return _Field.NAME;
                 case 6: return _Field.DEFAULT_VALUE;
@@ -258,7 +265,7 @@ public class ThriftField
             switch (name) {
                 case "comment": return _Field.COMMENT;
                 case "key": return _Field.KEY;
-                case "is_required": return _Field.IS_REQUIRED;
+                case "requirement": return _Field.REQUIREMENT;
                 case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
                 case "default_value": return _Field.DEFAULT_VALUE;
@@ -332,7 +339,7 @@ public class ThriftField
             extends PMessageBuilder<ThriftField> {
         private String mComment;
         private Integer mKey;
-        private Boolean mIsRequired;
+        private Requirement mRequirement;
         private String mType;
         private String mName;
         private String mDefaultValue;
@@ -345,7 +352,7 @@ public class ThriftField
 
             mComment = base.mComment;
             mKey = base.mKey;
-            mIsRequired = base.mIsRequired;
+            mRequirement = base.mRequirement;
             mType = base.mType;
             mName = base.mName;
             mDefaultValue = base.mDefaultValue;
@@ -371,13 +378,13 @@ public class ThriftField
             return this;
         }
 
-        public _Builder setIsRequired(boolean value) {
-            mIsRequired = value;
+        public _Builder setRequirement(Requirement value) {
+            mRequirement = value;
             return this;
         }
 
-        public _Builder clearIsRequired() {
-            mIsRequired = null;
+        public _Builder clearRequirement() {
+            mRequirement = null;
             return this;
         }
 
@@ -416,7 +423,7 @@ public class ThriftField
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setKey((int) value); break;
-                case 3: setIsRequired((boolean) value); break;
+                case 3: setRequirement((Requirement) value); break;
                 case 4: setType((String) value); break;
                 case 5: setName((String) value); break;
                 case 6: setDefaultValue((String) value); break;

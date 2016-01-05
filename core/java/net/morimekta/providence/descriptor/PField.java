@@ -43,9 +43,9 @@ public interface PField<V> {
     int getKey();
 
     /**
-     * @return Whether the field is required for validity.
+     * @return How the field is required for validity.
      */
-    boolean getRequired();
+    PRequirement getRequirement();
 
     /**
      * @return The data type of the field.

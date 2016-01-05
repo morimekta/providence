@@ -11,11 +11,7 @@
 .idea/
 *.iml
 
-bazel-bin
-bazel-genfiles
-bazel-out
-bazel-testlogs
-bazel-thrift-j2
+bazel-*
 
 generated*/
 generated*

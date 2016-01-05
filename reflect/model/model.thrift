@@ -55,6 +55,15 @@ struct TypedefType {
 }
 
 /**
+ * The requirement of the field.
+ */
+enum Requirement {
+    DEFAULT = 0,
+    OPTIONAL = 1,
+    REQUIRED = 2,
+}
+
+/**
  * For fields:
  *   (<key>:)? (required|optional)? <type> <name> (= <default_value>)?
  * For const:
@@ -69,7 +78,7 @@ struct TypedefType {
 struct ThriftField {
     1: string comment;
     2: required i32 key;
-    3: bool is_required = false;
+    3: Requirement requirement = DEFAULT;
     4: required string type;
     5: required string name;
     6: string default_value;

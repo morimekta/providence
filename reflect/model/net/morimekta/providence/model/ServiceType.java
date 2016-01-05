@@ -6,13 +6,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.descriptor.*;
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptorProvider;
+import net.morimekta.providence.descriptor.PValueProvider;
+import net.morimekta.providence.util.PTypeUtils;
 
 /**
  * service (extends <extend>)? {
@@ -139,19 +146,19 @@ public class ServiceType
     }
 
     public enum _Field implements PField {
-        COMMENT(1, false, "comment", PPrimitive.STRING.provider(), null),
-        NAME(2, true, "name", PPrimitive.STRING.provider(), null),
-        EXTEND(3, false, "extend", PPrimitive.STRING.provider(), null),
-        METHODS(4, false, "methods", PList.provider(ServiceMethod.provider()), null),
+        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
+        NAME(2, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
+        EXTEND(3, PRequirement.DEFAULT, "extend", PPrimitive.STRING.provider(), null),
+        METHODS(4, PRequirement.DEFAULT, "methods", PList.provider(ServiceMethod.provider()), null),
         ;
 
         private final int mKey;
-        private final boolean mRequired;
+        private final PRequirement mRequired;
         private final String mName;
         private final PDescriptorProvider<?> mTypeProvider;
         private final PValueProvider<?> mDefaultValue;
 
-        _Field(int key, boolean required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -166,7 +173,7 @@ public class ServiceType
         public int getKey() { return mKey; }
 
         @Override
-        public boolean getRequired() { return mRequired; }
+        public PRequirement getRequirement() { return mRequired; }
 
         @Override
         public PType getType() { return getDescriptor().getType(); }
@@ -192,8 +199,8 @@ public class ServiceType
                    .append('{')
                    .append(mKey)
                    .append(": ");
-            if (mRequired) {
-                builder.append("required ");
+            if (mRequired != PRequirement.DEFAULT) {
+                builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')

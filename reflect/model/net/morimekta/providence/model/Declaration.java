@@ -2,11 +2,16 @@ package net.morimekta.providence.model;
 
 import java.io.Serializable;
 
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PUnionDescriptor;
+import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
 
@@ -158,20 +163,20 @@ public class Declaration
     }
 
     public enum _Field implements PField {
-        DECL_ENUM(1, false, "decl_enum", EnumType.provider(), null),
-        DECL_TYPEDEF(2, false, "decl_typedef", TypedefType.provider(), null),
-        DECL_STRUCT(3, false, "decl_struct", StructType.provider(), null),
-        DECL_SERVICE(4, false, "decl_service", ServiceType.provider(), null),
-        DECL_CONST(5, false, "decl_const", ThriftField.provider(), null),
+        DECL_ENUM(1, PRequirement.DEFAULT, "decl_enum", EnumType.provider(), null),
+        DECL_TYPEDEF(2, PRequirement.DEFAULT, "decl_typedef", TypedefType.provider(), null),
+        DECL_STRUCT(3, PRequirement.DEFAULT, "decl_struct", StructType.provider(), null),
+        DECL_SERVICE(4, PRequirement.DEFAULT, "decl_service", ServiceType.provider(), null),
+        DECL_CONST(5, PRequirement.DEFAULT, "decl_const", ThriftField.provider(), null),
         ;
 
         private final int mKey;
-        private final boolean mRequired;
+        private final PRequirement mRequired;
         private final String mName;
         private final PDescriptorProvider<?> mTypeProvider;
         private final PValueProvider<?> mDefaultValue;
 
-        _Field(int key, boolean required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -186,7 +191,7 @@ public class Declaration
         public int getKey() { return mKey; }
 
         @Override
-        public boolean getRequired() { return mRequired; }
+        public PRequirement getRequirement() { return mRequired; }
 
         @Override
         public PType getType() { return getDescriptor().getType(); }
@@ -212,8 +217,8 @@ public class Declaration
                    .append('{')
                    .append(mKey)
                    .append(": ");
-            if (mRequired) {
-                builder.append("required ");
+            if (mRequired != PRequirement.DEFAULT) {
+                builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')

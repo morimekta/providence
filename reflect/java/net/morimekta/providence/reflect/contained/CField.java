@@ -23,8 +23,11 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
+
+import java.util.Objects;
 
 /**
  * @author Stein Eldar Johnsen
@@ -33,20 +36,20 @@ import net.morimekta.providence.util.PTypeUtils;
 public class CField<T> implements PField<T> {
     private final String                 mComment;
     private final int                    mKey;
-    private final boolean                mRequired;
+    private final PRequirement            mRequirement;
     private final PDescriptorProvider<T> mTypeProvider;
     private final String                 mName;
-    private final PValueProvider<T> mDefaultValue;
+    private final PValueProvider<T>      mDefaultValue;
 
     public CField(String comment,
                   int key,
-                  boolean required,
+                  PRequirement requirement,
                   String name,
                   PDescriptorProvider<T> typeProvider,
                   PValueProvider<T> defaultValue) {
         mComment = comment;
         mKey = key;
-        mRequired = required;
+        mRequirement = requirement;
         mTypeProvider = typeProvider;
         mName = name;
         mDefaultValue = defaultValue;
@@ -63,8 +66,8 @@ public class CField<T> implements PField<T> {
     }
 
     @Override
-    public boolean getRequired() {
-        return mRequired;
+    public PRequirement getRequirement() {
+        return mRequirement;
     }
 
     @Override
@@ -99,8 +102,9 @@ public class CField<T> implements PField<T> {
                .append('{')
                .append(mKey)
                .append(": ");
-        if (mRequired) {
-            builder.append("required ");
+        if (mRequirement != PRequirement.DEFAULT) {
+            builder.append(mRequirement.label)
+                   .append(" ");
         }
         builder.append(getDescriptor().getQualifiedName(null))
                .append(" ")
@@ -117,7 +121,7 @@ public class CField<T> implements PField<T> {
         }
         CField<?> other = (CField<?>) o;
         return mKey == other.mKey &&
-               mRequired == other.mRequired &&
+               mRequirement == other.mRequirement &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
                PTypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
@@ -127,11 +131,6 @@ public class CField<T> implements PField<T> {
 
     @Override
     public int hashCode() {
-        return CField.class.hashCode() +
-               getDescriptor().hashCode() +
-               PTypeUtils.hashCode(mKey) +
-               PTypeUtils.hashCode(mRequired) +
-               PTypeUtils.hashCode(mName) +
-               PTypeUtils.hashCode(getDefaultValue());
+        return Objects.hash(CField.class, mKey, mRequirement, mName, getDefaultValue());
     }
 }

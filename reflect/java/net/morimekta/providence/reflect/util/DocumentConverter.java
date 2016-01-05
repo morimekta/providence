@@ -166,7 +166,7 @@ public class DocumentConverter {
         CField made = new CField<>(
                 field.getComment(),
                 field.getKey(),
-                field.getIsRequired(),
+                PRequirement.valueOf(field.getRequirement().getName()),
                 field.getName(),
                 type,
                 defaultValue);

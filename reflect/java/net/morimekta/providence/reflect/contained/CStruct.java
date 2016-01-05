@@ -19,14 +19,15 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
 /**
  * @author Stein Eldar Johnsen
@@ -49,7 +50,7 @@ public class CStruct
     @Override
     public boolean isValid() {
         for (PField<?> field : mType.getFields()) {
-            if (field.getRequired()) {
+            if (field.getRequirement() == PRequirement.REQUIRED) {
                 if (!mFields.containsKey(field.getKey())) {
                     return false;
                 }
@@ -82,7 +83,7 @@ public class CStruct
         @Override
         public boolean isValid() {
             for (PField<?> field : mType.getFields()) {
-                if (field.getRequired()) {
+                if (field.getRequirement() == PRequirement.REQUIRED) {
                     if (!mFields.containsKey(field.getKey())) {
                         return false;
                     }

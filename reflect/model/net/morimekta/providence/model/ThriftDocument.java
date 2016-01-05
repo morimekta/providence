@@ -8,12 +8,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.PMessageBuilderFactory;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptorProvider;
+import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
 
 /** <namespace>* <include>* <declataion>* */
@@ -156,20 +164,20 @@ public class ThriftDocument
     }
 
     public enum _Field implements PField {
-        COMMENT(1, false, "comment", PPrimitive.STRING.provider(), null),
-        PACKAGE(2, true, "package", PPrimitive.STRING.provider(), null),
-        INCLUDES(3, false, "includes", PList.provider(PPrimitive.STRING.provider()), null),
-        NAMESPACES(4, false, "namespaces", PMap.provider(PPrimitive.STRING.provider(), PPrimitive.STRING.provider()), null),
-        DECL(5, false, "decl", PList.provider(Declaration.provider()), null),
+        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
+        PACKAGE(2, PRequirement.REQUIRED, "package", PPrimitive.STRING.provider(), null),
+        INCLUDES(3, PRequirement.DEFAULT, "includes", PList.provider(PPrimitive.STRING.provider()), null),
+        NAMESPACES(4, PRequirement.DEFAULT, "namespaces", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
+        DECL(5, PRequirement.DEFAULT, "decl", PList.provider(Declaration.provider()), null),
         ;
 
         private final int mKey;
-        private final boolean mRequired;
+        private final PRequirement mRequired;
         private final String mName;
         private final PDescriptorProvider<?> mTypeProvider;
         private final PValueProvider<?> mDefaultValue;
 
-        _Field(int key, boolean required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -184,7 +192,7 @@ public class ThriftDocument
         public int getKey() { return mKey; }
 
         @Override
-        public boolean getRequired() { return mRequired; }
+        public PRequirement getRequirement() { return mRequired; }
 
         @Override
         public PType getType() { return getDescriptor().getType(); }
@@ -210,8 +218,8 @@ public class ThriftDocument
                    .append('{')
                    .append(mKey)
                    .append(": ");
-            if (mRequired) {
-                builder.append("required ");
+            if (mRequired != PRequirement.DEFAULT) {
+                builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')

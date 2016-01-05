@@ -170,8 +170,8 @@ public class ThriftFormatter {
                 appendBlockComment(builder, field.getComment(), false);
             }
             builder.formatln("%d: ", field.getKey());
-            if (field.getRequired()) {
-                builder.format("%s ", REQUIRED);
+            if (field.getRequirement() != PRequirement.DEFAULT) {
+                builder.format("%s ", field.getRequirement().label);
             }
             builder.format("%s %s",
                            field.getDescriptor().getQualifiedName(type.getPackageName()),

@@ -81,10 +81,6 @@ public class Java2TypeHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getQualifiedInstanceClassName(CDocument document) throws GeneratorException {
-        return Java2Utils.getJavaPackage(document) + "." + camelCase("", document.getPackageName());
-    }
-
     public String getInstanceClassName(PDescriptor type) {
         switch (type.getType()) {
             case BOOL:

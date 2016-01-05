@@ -19,30 +19,17 @@
 
 package net.morimekta.providence.reflect.parser;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.regex.Pattern;
-
 import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.model.*;
 import net.morimekta.providence.reflect.parser.internal.Keyword;
 import net.morimekta.providence.reflect.parser.internal.Symbol;
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
-import net.morimekta.providence.model.Declaration;
-import net.morimekta.providence.model.EnumType;
-import net.morimekta.providence.model.EnumValue;
-import net.morimekta.providence.model.ServiceMethod;
-import net.morimekta.providence.model.ServiceType;
-import net.morimekta.providence.model.StructType;
-import net.morimekta.providence.model.StructVariant;
-import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.model.ThriftField;
-import net.morimekta.providence.model.TypedefType;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author Stein Eldar Johnsen
@@ -568,10 +555,10 @@ public class ThriftParser implements Parser {
             }
 
             if (token.getToken().equals(Keyword.REQUIRED.keyword)) {
-                field.setIsRequired(true);
+                field.setRequirement(Requirement.REQUIRED);
                 token = tokenizer.expect("parsing struct " + id.getToken());
             } else if (token.getToken().equals(Keyword.OPTIONAL.keyword)) {
-                // skip. It's optional by default.
+                field.setRequirement(Requirement.OPTIONAL);
                 token = tokenizer.expect("parsing struct " + id.getToken());
             }
 

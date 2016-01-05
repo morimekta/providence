@@ -22,6 +22,7 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,120 +34,127 @@ import static org.junit.Assert.assertNotEquals;
  * @since 20.09.15
  */
 public class CFieldTest {
-    PField<?> fieldA;
-    PField<?> fieldB;
-    PField<?> fieldC;
-    PField<?> fieldD;
-    PField<?> fieldE;
-    PField<?> fieldF;
-    PField<?> fieldG;
-    PField<?> fieldH;
+    PField<?> field;
+    PField<?> fieldSame;
+    PField<?> fieldComment;
+    PField<?> fieldKey;
+    PField<?> fieldRequired;
+    PField<?> fieldOptional;
+    PField<?> fieldName;
+    PField<?> fieldType;
+    PField<?> fieldNoDefault;
+    PField<?> fieldDefault;
 
     @Before
     public void setUp() {
-        fieldA = new CField<>("comment", 4, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldB = new CField<>("comment", 4, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldC = new CField<>("tnemmoc", 4, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldD = new CField<>("comment", 6, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldE = new CField<>("comment", 4, true, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldF = new CField<>("comment", 4, false, "eman", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldG = new CField<>("comment", 4, false, "name", PPrimitive.I64.provider(), new PDefaultValueProvider<>(4L));
-        fieldH = new CField<>("comment", 4, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(6));
+        field = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldSame = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldComment = new CField<>("tnemmoc", 4, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldKey = new CField<>("comment", 6, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldRequired = new CField<>("comment", 4, PRequirement.REQUIRED, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldOptional = new CField<>("comment", 4, PRequirement.OPTIONAL, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldName = new CField<>("comment", 4, PRequirement.DEFAULT, "eman", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
+        fieldType = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I64.provider(), new PDefaultValueProvider<>(4L));
+        fieldNoDefault = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I64.provider(), null);
+        fieldDefault = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(6));
     }
 
     @Test
     public void testToString() {
-        assertEquals("PField{4: i32 name}", fieldA.toString());
-        assertEquals("PField{4: i32 name}", fieldB.toString());
-        assertEquals("PField{4: i32 name}", fieldC.toString());
-        assertEquals("PField{6: i32 name}", fieldD.toString());
-        assertEquals("PField{4: required i32 name}", fieldE.toString());
-        assertEquals("PField{4: i32 eman}", fieldF.toString());
-        assertEquals("PField{4: i64 name}", fieldG.toString());
-        assertEquals("PField{4: i32 name}", fieldH.toString());
+        assertEquals("PField{4: i32 name}", field.toString());
+        assertEquals("PField{4: i32 name}", fieldSame.toString());
+        assertEquals("PField{4: i32 name}", fieldComment.toString());
+        assertEquals("PField{6: i32 name}", fieldKey.toString());
+        assertEquals("PField{4: required i32 name}", fieldRequired.toString());
+        assertEquals("PField{4: i32 eman}", fieldName.toString());
+        assertEquals("PField{4: i64 name}", fieldType.toString());
+        assertEquals("PField{4: i32 name}", fieldDefault.toString());
+        assertEquals("PField{4: optional i32 name}", fieldOptional.toString());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(fieldA, fieldB);
-        assertEquals(fieldA, fieldC);
-        assertEquals(fieldB, fieldC);
+        assertEquals(field, fieldSame);
+        assertEquals(field, fieldComment);
+        assertEquals(fieldSame, fieldComment);
 
-        assertNotEquals(fieldA, fieldD);
-        assertNotEquals(fieldA, fieldE);
-        assertNotEquals(fieldA, fieldF);
-        assertNotEquals(fieldA, fieldG);
-        assertNotEquals(fieldA, fieldH);
+        assertNotEquals(field, fieldKey);
+        assertNotEquals(field, fieldRequired);
+        assertNotEquals(field, fieldName);
+        assertNotEquals(field, fieldType);
+        assertNotEquals(field, fieldDefault);
+        assertNotEquals(field, fieldNoDefault);
 
-        assertNotEquals(fieldB, fieldD);
-        assertNotEquals(fieldB, fieldE);
-        assertNotEquals(fieldB, fieldF);
-        assertNotEquals(fieldB, fieldG);
-        assertNotEquals(fieldB, fieldH);
+        assertNotEquals(fieldSame, fieldKey);
+        assertNotEquals(fieldSame, fieldRequired);
+        assertNotEquals(fieldSame, fieldName);
+        assertNotEquals(fieldSame, fieldType);
+        assertNotEquals(fieldSame, fieldDefault);
+        assertNotEquals(fieldSame, fieldNoDefault);
 
-        assertNotEquals(fieldC, fieldD);
-        assertNotEquals(fieldC, fieldE);
-        assertNotEquals(fieldC, fieldF);
-        assertNotEquals(fieldC, fieldG);
-        assertNotEquals(fieldC, fieldH);
+        assertNotEquals(fieldComment, fieldKey);
+        assertNotEquals(fieldComment, fieldRequired);
+        assertNotEquals(fieldComment, fieldName);
+        assertNotEquals(fieldComment, fieldType);
+        assertNotEquals(fieldComment, fieldDefault);
+        assertNotEquals(fieldComment, fieldNoDefault);
 
-        assertNotEquals(fieldD, fieldE);
-        assertNotEquals(fieldD, fieldF);
-        assertNotEquals(fieldD, fieldG);
-        assertNotEquals(fieldD, fieldH);
+        assertNotEquals(fieldKey, fieldRequired);
+        assertNotEquals(fieldKey, fieldName);
+        assertNotEquals(fieldKey, fieldType);
+        assertNotEquals(fieldKey, fieldDefault);
+        assertNotEquals(fieldKey, fieldNoDefault);
 
-        assertNotEquals(fieldE, fieldF);
-        assertNotEquals(fieldE, fieldG);
-        assertNotEquals(fieldE, fieldH);
+        assertNotEquals(fieldRequired, fieldName);
+        assertNotEquals(fieldRequired, fieldType);
+        assertNotEquals(fieldRequired, fieldDefault);
+        assertNotEquals(fieldRequired, fieldNoDefault);
 
-        assertNotEquals(fieldF, fieldG);
-        assertNotEquals(fieldF, fieldH);
+        assertNotEquals(fieldName, fieldType);
+        assertNotEquals(fieldName, fieldDefault);
+        assertNotEquals(fieldName, fieldNoDefault);
 
-        assertNotEquals(fieldG, fieldH);
+        assertNotEquals(fieldType, fieldDefault);
+        assertNotEquals(fieldType, fieldNoDefault);
 
-        fieldC = new CField<>(null, 4, false, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
-        fieldH = new CField<>("comment", 4, false, "name", PPrimitive.I32.provider(), null);
+        assertNotEquals(fieldDefault, fieldNoDefault);
 
-        assertEquals(fieldC, fieldA);
-        assertEquals(fieldC, fieldB);
+        // Null comment.
+        fieldComment = new CField<>(null, 4, PRequirement.DEFAULT, "name", PPrimitive.I32.provider(), new PDefaultValueProvider<>(4));
 
-        assertNotEquals(fieldH, fieldA);
-        assertNotEquals(fieldH, fieldB);
-        assertNotEquals(fieldH, fieldC);
-        assertNotEquals(fieldH, fieldD);
-        assertNotEquals(fieldH, fieldE);
-        assertNotEquals(fieldH, fieldF);
-        assertNotEquals(fieldH, fieldG);
+        assertEquals(fieldComment, field);
+        assertEquals(fieldComment, fieldSame);
+
     }
 
     @Test
     public void testHashCode() {
-        assertEquals(fieldA.hashCode(), fieldB.hashCode());
-        assertEquals(fieldA.hashCode(), fieldC.hashCode());
-        assertEquals(fieldB.hashCode(), fieldC.hashCode());
+        assertEquals(field.hashCode(), fieldSame.hashCode());
+        assertEquals(field.hashCode(), fieldComment.hashCode());
+        assertEquals(fieldSame.hashCode(), fieldComment.hashCode());
 
-        assertNotEquals(fieldA.hashCode(), fieldD.hashCode());
-        assertNotEquals(fieldA.hashCode(), fieldE.hashCode());
-        assertNotEquals(fieldA.hashCode(), fieldF.hashCode());
-        assertNotEquals(fieldA.hashCode(), fieldG.hashCode());
+        assertNotEquals(field.hashCode(), fieldKey.hashCode());
+        assertNotEquals(field.hashCode(), fieldRequired.hashCode());
+        assertNotEquals(field.hashCode(), fieldName.hashCode());
+        assertNotEquals(field.hashCode(), fieldDefault.hashCode());
 
-        assertNotEquals(fieldB.hashCode(), fieldD.hashCode());
-        assertNotEquals(fieldB.hashCode(), fieldE.hashCode());
-        assertNotEquals(fieldB.hashCode(), fieldF.hashCode());
-        assertNotEquals(fieldB.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldSame.hashCode(), fieldKey.hashCode());
+        assertNotEquals(fieldSame.hashCode(), fieldRequired.hashCode());
+        assertNotEquals(fieldSame.hashCode(), fieldName.hashCode());
+        assertNotEquals(fieldSame.hashCode(), fieldDefault.hashCode());
 
-        assertNotEquals(fieldC.hashCode(), fieldD.hashCode());
-        assertNotEquals(fieldC.hashCode(), fieldE.hashCode());
-        assertNotEquals(fieldC.hashCode(), fieldF.hashCode());
-        assertNotEquals(fieldC.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldComment.hashCode(), fieldKey.hashCode());
+        assertNotEquals(fieldComment.hashCode(), fieldRequired.hashCode());
+        assertNotEquals(fieldComment.hashCode(), fieldName.hashCode());
+        assertNotEquals(fieldComment.hashCode(), fieldDefault.hashCode());
 
-        assertNotEquals(fieldD.hashCode(), fieldE.hashCode());
-        assertNotEquals(fieldD.hashCode(), fieldF.hashCode());
-        assertNotEquals(fieldD.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldKey.hashCode(), fieldRequired.hashCode());
+        assertNotEquals(fieldKey.hashCode(), fieldName.hashCode());
+        assertNotEquals(fieldKey.hashCode(), fieldDefault.hashCode());
 
-        assertNotEquals(fieldE.hashCode(), fieldF.hashCode());
-        assertNotEquals(fieldE.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldRequired.hashCode(), fieldName.hashCode());
+        assertNotEquals(fieldRequired.hashCode(), fieldDefault.hashCode());
 
-        assertNotEquals(fieldF.hashCode(), fieldG.hashCode());
+        assertNotEquals(fieldName.hashCode(), fieldDefault.hashCode());
     }
 }
