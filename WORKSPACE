@@ -7,18 +7,19 @@ git_repository(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/thrift-j2/./compiler/pom.xml
-# /home/morimekta/src/thrift-j2/./converter/pom.xml
-# /home/morimekta/src/thrift-j2/./core/pom.xml
-# /home/morimekta/src/thrift-j2/./jax-rs/pom.xml
-# /home/morimekta/src/thrift-j2/./messageio/pom.xml
-# /home/morimekta/src/thrift-j2/./protocol/pom.xml
-# /home/morimekta/src/thrift-j2/./reflect/pom.xml
-# /home/morimekta/src/thrift-j2/./tests/pom.xml
-# /home/morimekta/src/thrift-j2/./utils/pom.xml
+# /home/steineldar/src/providence/./tests/pom.xml
+# /home/steineldar/src/providence/./compiler/pom.xml
+# /home/steineldar/src/providence/./utils/pom.xml
+# /home/steineldar/src/providence/./messageio/pom.xml
+# /home/steineldar/src/providence/./reflect/pom.xml
+# /home/steineldar/src/providence/./jax-rs/pom.xml
+# /home/steineldar/src/providence/./core/pom.xml
+# /home/steineldar/src/providence/./protocol/pom.xml
+# /home/steineldar/src/providence/./converter/pom.xml
 
 
-# org.apache.thrift-j2:thrift-j2-protocol:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-protocol:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.thrift_libthrift",
     artifact = "org.apache.thrift:libthrift:0.9.3",
@@ -32,7 +33,7 @@ maven_jar(
     sha1 = "4bfc12adfe4842bf07b657f0369c4cb522955686",
 )
 
-# org.apache.thrift-j2:thrift-j2-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.commons_commons-math3",
     artifact = "org.apache.commons:commons-math3:3.5",
@@ -60,15 +61,16 @@ maven_jar(
     sha1 = "42a25dc3219429f0e5d060061f71acb49bf010a0",
 )
 
-# org.apache.thrift-j2:thrift-j2-jax-rs:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-jax-rs:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "javax.ws.rs_javax.ws.rs-api",
     artifact = "javax.ws.rs:javax.ws.rs-api:2.0",
     sha1 = "61f0983eb190954ccdede31e786a9e0bd9767c4a",
 )
 
-# org.apache.thrift-j2:thrift-j2-compiler:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-converter:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.slf4j_slf4j-simple",
     artifact = "org.slf4j:slf4j-simple:1.7.12",
@@ -83,24 +85,25 @@ maven_jar(
     sha1 = "f5aa318bda4c6c8d688c9d00b90681dcd82ce636",
 )
 
-# org.apache.thrift-j2:thrift-j2-compiler:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-converter:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-utils:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "args4j_args4j",
     artifact = "args4j:args4j:2.32",
     sha1 = "1ccacebdf8f2db750eb09a402969050f27695fb7",
 )
 
-# org.apache.thrift-j2:thrift-j2-core:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-messageio:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-protocol:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-compiler:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-converter:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-jax-rs:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-utils:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-tests:jar:0.0.1-SNAPSHOT
-# org.apache.thrift-j2:thrift-j2-reflect:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-protocol:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-core:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-reflect:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-jax-rs:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "junit_junit",
     artifact = "junit:junit:4.12",

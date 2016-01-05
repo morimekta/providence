@@ -14,15 +14,15 @@ exports_files(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/thrift-j2/./compiler/pom.xml
-# /home/morimekta/src/thrift-j2/./converter/pom.xml
-# /home/morimekta/src/thrift-j2/./core/pom.xml
-# /home/morimekta/src/thrift-j2/./jax-rs/pom.xml
-# /home/morimekta/src/thrift-j2/./messageio/pom.xml
-# /home/morimekta/src/thrift-j2/./protocol/pom.xml
-# /home/morimekta/src/thrift-j2/./reflect/pom.xml
-# /home/morimekta/src/thrift-j2/./tests/pom.xml
-# /home/morimekta/src/thrift-j2/./utils/pom.xml
+# /home/steineldar/src/providence/./tests/pom.xml
+# /home/steineldar/src/providence/./compiler/pom.xml
+# /home/steineldar/src/providence/./utils/pom.xml
+# /home/steineldar/src/providence/./messageio/pom.xml
+# /home/steineldar/src/providence/./reflect/pom.xml
+# /home/steineldar/src/providence/./jax-rs/pom.xml
+# /home/steineldar/src/providence/./core/pom.xml
+# /home/steineldar/src/providence/./protocol/pom.xml
+# /home/steineldar/src/providence/./converter/pom.xml
 
 
 java_library(
