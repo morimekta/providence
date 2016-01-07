@@ -58,10 +58,7 @@ public class Java2Utils {
     }
 
     public static String getJavaPackage(CDocument document) throws GeneratorException {
-        String javaPackage = document.getNamespaceForLanguage("java2");
-        if (javaPackage == null) {
-            javaPackage = document.getNamespaceForLanguage("java");
-        }
+        String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
             throw new GeneratorException("No java namespace for thrift package " +
                                          document.getPackageName());

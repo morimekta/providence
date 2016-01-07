@@ -19,23 +19,36 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.*;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.Binary;
+import net.morimekta.providence.PEnumBuilder;
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.PUnion;
+import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Compact binary serializer. This uses the most isCompact binary format
  * allowable.
  * <p/>
- * See data definition file lib/java2/doc/isCompact-binary.md for format spec.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * See data definition file <code>docs/compact-binary.md</code> for format
+ * spec.
  */
 public class PBinarySerializer
         extends PSerializer {
@@ -57,15 +70,21 @@ public class PBinarySerializer
 
     @Override
     public int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException {
-        if (mStrict && !message.isValid()) {
-            throw new PSerializeException("Message not valid.");
-        }
         int len = 0;
-        for (PField<?> field : message.descriptor().getFields()) {
-            if (message.has(field.getKey())) {
+        if (message instanceof PUnion) {
+            PField field = ((PUnion) message).unionField();
+            if (field != null) {
                 len += writeUnsigned(output, field.getKey(), 2);
                 len += writeFieldValue(output,
                                        message.get(field.getKey()));
+            }
+        } else {
+            for (PField<?> field : message.descriptor().getFields()) {
+                if (message.has(field.getKey())) {
+                    len += writeUnsigned(output, field.getKey(), 2);
+                    len += writeFieldValue(output,
+                                           message.get(field.getKey()));
+                }
             }
         }
         // write 2 null-bytes (field ID 0).

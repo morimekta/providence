@@ -24,12 +24,24 @@ public class EnumValue
 
     private final String mComment;
     private final String mName;
-    private final Integer mValue;
+    private final int mValue;
 
     private EnumValue(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
-        mValue = builder.mValue;
+        if (builder.mValue != null) {
+            mValue = builder.mValue;
+        } else {
+            mValue = kDefaultValue;
+        }
+    }
+
+    public EnumValue(String pComment,
+                     String pName,
+                     int pValue) {
+        mComment = pComment;
+        mName = pName;
+        mValue = pValue;
     }
 
     public boolean hasComment() {
@@ -49,11 +61,11 @@ public class EnumValue
     }
 
     public boolean hasValue() {
-        return mValue != null;
+        return true;
     }
 
     public int getValue() {
-        return hasValue() ? mValue : kDefaultValue;
+        return mValue;
     }
 
     @Override
@@ -61,7 +73,7 @@ public class EnumValue
         switch(key) {
             case 1: return hasComment();
             case 2: return hasName();
-            case 3: return hasValue();
+            case 3: return true;
             default: return false;
         }
     }
@@ -71,7 +83,7 @@ public class EnumValue
         switch(key) {
             case 1: return hasComment() ? 1 : 0;
             case 2: return hasName() ? 1 : 0;
-            case 3: return hasValue() ? 1 : 0;
+            case 3: return 1;
             default: return 0;
         }
     }
@@ -116,11 +128,6 @@ public class EnumValue
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mName != null;
     }
 
     public enum _Field implements PField {

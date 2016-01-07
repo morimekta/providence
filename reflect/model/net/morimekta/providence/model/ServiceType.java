@@ -41,6 +41,16 @@ public class ServiceType
         mMethods = Collections.unmodifiableList(new LinkedList<>(builder.mMethods));
     }
 
+    public ServiceType(String pComment,
+                       String pName,
+                       String pExtend,
+                       List<ServiceMethod> pMethods) {
+        mComment = pComment;
+        mName = pName;
+        mExtend = pExtend;
+        mMethods = Collections.unmodifiableList(new LinkedList<>(pMethods));
+    }
+
     public boolean hasComment() {
         return mComment != null;
     }
@@ -138,11 +148,6 @@ public class ServiceType
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mName != null;
     }
 
     public enum _Field implements PField {

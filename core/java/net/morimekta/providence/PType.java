@@ -28,7 +28,7 @@ public enum PType {
     BOOL(2, "bool"),
     BYTE(3, "byte"),
     DOUBLE(4, "double"),
-    // no 5
+    // no 5 --> i8 ?
     I16(6, "i16"),
     // no 7
     I32(8, "i32"),

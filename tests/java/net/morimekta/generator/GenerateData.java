@@ -1,16 +1,16 @@
-package net.morimekta.test.generator;
+package net.morimekta.generator;
 
 import net.morimekta.providence.Binary;
-import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.test.j2.Containers;
-import net.morimekta.test.j2.Primitives;
-import net.morimekta.test.j2.Value;
-
 import net.morimekta.providence.protocol.TBinaryProtocolSerializer;
 import net.morimekta.providence.serializer.PBinarySerializer;
+import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.speedtest.providence.Containers;
+import net.morimekta.speedtest.providence.Primitives;
+import net.morimekta.speedtest.providence.Value;
 import net.morimekta.utils.FormatString;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;

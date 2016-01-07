@@ -2,9 +2,12 @@ def gen_thrift(name,
                gen,
                extension,
                flags=[],
+               options=None,
                deps=[],
                srcs=[],
                visibility=[]):
+    if options != None and len(options) > 0:
+        flags = flags + ['--options', ':'.join(options)]
     native.genrule(
         name=name,
         cmd='TMP=$$(mktemp -d);' +
@@ -35,6 +38,7 @@ def gen_legacy_thrift(name,
                       gen,
                       extension,
                       flags=[],
+                      options=[],
                       deps=[],
                       srcs=[],
                       visibility=[]):
@@ -67,6 +71,7 @@ def gen_legacy_thrift(name,
 def java_thrift(name,
                 srcs,
                 flags=[],
+                options=[],
                 visibility=[]):
     gen_thrift(
         name='__gen_%s' % name,
@@ -74,9 +79,10 @@ def java_thrift(name,
         extension='srcjar',
         srcs=srcs,
         flags=flags,
+        options=options,
     )
     deps = ['//core:core']
-    if '--android' in flags:
+    if '--android' in options:
       deps = deps + ['//third-party:android-util']
     native.java_library(
         name=name,
@@ -88,10 +94,14 @@ def java_thrift(name,
 def java_legacy_thrift(name,
                        srcs,
                        flags=[],
+                       options=[],
                        visibility=[]):
+    gen = ['java']
+    if 'android' in options:
+        gen = gen + ['android']
     gen_legacy_thrift(
             name='__gen_%s' % name,
-            gen='java',
+            gen=':'.join(gen),
             extension='srcjar',
             srcs=srcs,
             flags=flags,

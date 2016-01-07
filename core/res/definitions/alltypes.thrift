@@ -25,9 +25,23 @@ struct AllTypes {
     4: i32 i = 1234567890;
     5: i64 l = 1234567890123456789,
     6: real d = 2.99792458e+8
-    7: string s = "test\twith escapes\nand\u00a0unicode.";
+    7: string s = "test\twith escapes\nand\u00a0ũñı©ôðé.";
     8: binary bn = "dGVzdCAgICB3aXRoIGVzY2FwZXMNCmFuZCB1bmljb2RlLg==",
     9: Values v = Values.SECOND;
     10: Other o
     11: AllTypes self;
+}
+
+union OneType {
+    1: bool bl;
+    2: byte bt,
+    3: i16 sh
+    4: i32 i;
+    5: i64 l,
+    6: real d
+    7: string s;
+    8: binary bn,
+    9: Values v;
+    10: Other o
+    11: AllTypes all;
 }

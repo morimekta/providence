@@ -153,15 +153,6 @@ public class Declaration
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
     }
 
-    @Override
-    public boolean isValid() {
-        return (mDeclEnum != null ? 1 : 0) +
-               (mDeclTypedef != null ? 1 : 0) +
-               (mDeclStruct != null ? 1 : 0) +
-               (mDeclService != null ? 1 : 0) +
-               (mDeclConst != null ? 1 : 0) == 1;
-    }
-
     public enum _Field implements PField {
         DECL_ENUM(1, PRequirement.DEFAULT, "decl_enum", EnumType.provider(), null),
         DECL_TYPEDEF(2, PRequirement.DEFAULT, "decl_typedef", TypedefType.provider(), null),

@@ -9,7 +9,7 @@ java_library(
 java_thrift(
   name = 'generated',
   srcs = glob(['res/definitions/*.thrift']),
-  flags = ['--android'],
+  options = ['--android'],
   visibility = ['//visibility:public'],
 )
 

@@ -48,19 +48,6 @@ public class CStruct
     }
 
     @Override
-    public boolean isValid() {
-        for (PField<?> field : mType.getFields()) {
-            if (field.getRequirement() == PRequirement.REQUIRED) {
-                if (!mFields.containsKey(field.getKey())) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    @Override
     public PStructDescriptor<CStruct,CField> descriptor() {
         return mType;
     }

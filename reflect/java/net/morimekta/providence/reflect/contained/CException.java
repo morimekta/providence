@@ -162,11 +162,6 @@ public class CException
     }
 
     @Override
-    public boolean isValid() {
-        return mFields.size() == 1;
-    }
-
-    @Override
     public CExceptionDescriptor descriptor() {
         return mType;
     }

@@ -52,10 +52,6 @@ class TProtocolSerializer extends PSerializer {
     @Override
     public int serialize(OutputStream output, PMessage<?> message)
             throws IOException, PSerializeException {
-        if (!message.isValid()) {
-            throw new PSerializeException("Message is not valid for serialization.");
-        }
-
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {

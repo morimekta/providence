@@ -3,27 +3,21 @@ BIN_DIR="${HOME}/.apps/bin"
 
 model:
 	# rm -rf ${PWD}/reflect/model/net
-	bazel run //compiler:thrift-j2c -- --gen java2 --out ${PWD}/reflect/model ${PWD}/reflect/model/model.thrift
+	bazel run //compiler:thrift-j2c -- --gen java2 --options --containers=ORDERED --out ${PWD}/reflect/model ${PWD}/reflect/model/model.thrift
 
 resources:
-	# mkdir -p ${PWD}/core/generated
-	# rm -rf ${PWD}/core/generated/net
-	bazel run //compiler:thrift-j2c -- --android --gen java2 --out ${PWD}/core/generated ${PWD}/core/res/definitions/*.thrift
+	mkdir -p ${PWD}/generated/java
+	rm -rf ${PWD}/generated/java/net
+	bazel run //compiler:thrift-j2c -- --gen java2 --options --android --out ${PWD}/generated/java ${PWD}/core/res/definitions/*.thrift
+	bazel run //compiler:thrift-j2c -- --gen java2 --options --android --out ${PWD}/generated/java ${PWD}/tests/resources/providence-idl.thrift
+	bazel build //tests:thrift-idl
+	thrift --gen java:android -out ${PWD}/generated/java ${PWD}/bazel-genfiles/tests/thrift-idl.thrift
 
-test-thrift:
-	mkdir -p ${PWD}/tests/generated-thrift
-	rm -rf ${PWD}/tests/generated-thrift/net
-	mkdir -p ${PWD}/tests/generated-thrift-j2
-	rm -rf ${PWD}/tests/generated-thrift-j2/net
-	bazel build //tests:test-j2.thrift
-	bazel run //compiler:thrift-j2c -- --android --gen java2 --out ${PWD}/tests/generated-thrift-j2 ${PWD}/bazel-genfiles/tests/test-j2.thrift
-	thrift --gen java:android -out ${PWD}/tests/generated-thrift ${PWD}/tests/resources/test.thrift
+data:
+	bazel run //tests:generate-data -- --entries 10000 --out ${PWD}/generated/resources
 
-test-resources:
-	bazel run //tests:generate-data -- --entries 10000 --out ${PWD}/tests/generated/
-
-speedtest: test-resources
-	bazel run //tests:speed-test -- --entries 10000 ${PWD}/tests/generated
+speedtest:
+	bazel run //tests:speed-test -- --entries 10000 ${PWD}/generated/resources
 
 # --- Under here is for installing the binaries.
 

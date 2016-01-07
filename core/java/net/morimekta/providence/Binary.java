@@ -52,16 +52,6 @@ public class Binary implements Comparable<Binary> {
     }
 
     /**
-     * Decode base64 string and wrap the result in a byte sequence.
-     * @param base64 The string to decode.
-     * @return The resulting sequence.
-     */
-    public static Binary fromBase64(String base64) {
-        byte[] arr = PBase64Utils.decode(base64);
-        return new Binary(arr);
-    }
-
-    /**
      * Get the length of the backing array.
      * @return Byte count.
      */
@@ -91,11 +81,20 @@ public class Binary implements Comparable<Binary> {
     }
 
     /**
+     * Decode base64 string and wrap the result in a byte sequence.
+     * @param base64 The string to decode.
+     * @return The resulting sequence.
+     */
+    public static Binary fromBase64(String base64) {
+        byte[] arr = PBase64Utils.decode(base64);
+        return new Binary(arr);
+    }
+
+    /**
      * Get the sequence encoded as base64.
      * @return The encoded string.
      */
-    public
-    String toBase64() {
+    public String toBase64() {
         return PBase64Utils.encode(bytes);
     }
 

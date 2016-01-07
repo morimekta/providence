@@ -46,11 +46,6 @@ public class CUnion
     }
 
     @Override
-    public boolean isValid() {
-        return mFields.size() == 1;
-    }
-
-    @Override
     public CUnionDescriptor descriptor() {
         return mType;
     }

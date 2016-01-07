@@ -20,7 +20,17 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.model.*;
+import net.morimekta.providence.model.Declaration;
+import net.morimekta.providence.model.EnumType;
+import net.morimekta.providence.model.EnumValue;
+import net.morimekta.providence.model.Requirement;
+import net.morimekta.providence.model.ServiceMethod;
+import net.morimekta.providence.model.ServiceType;
+import net.morimekta.providence.model.StructType;
+import net.morimekta.providence.model.StructVariant;
+import net.morimekta.providence.model.ThriftDocument;
+import net.morimekta.providence.model.ThriftField;
+import net.morimekta.providence.model.TypedefType;
 import net.morimekta.providence.reflect.parser.internal.Keyword;
 import net.morimekta.providence.reflect.parser.internal.Symbol;
 import net.morimekta.providence.reflect.parser.internal.Token;
@@ -28,7 +38,11 @@ import net.morimekta.providence.reflect.parser.internal.Tokenizer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 /**
@@ -508,11 +522,13 @@ public class ThriftParser implements Parser {
     }
 
     private StructType parseStruct(Tokenizer tokenizer, String type, String comment) throws IOException, ParseException {
+
         StructType._Builder struct = StructType.builder();
         if (comment != null) {
             struct.setComment(comment);
             comment = null;
         }
+        boolean union = type.equals("union");
         if (!type.equals("struct")) {
             struct.setVariant(StructVariant.valueOf(type.toUpperCase()));
         }
@@ -555,11 +571,18 @@ public class ThriftParser implements Parser {
             }
 
             if (token.getToken().equals(Keyword.REQUIRED.keyword)) {
+                if (union) {
+                    throw new ParseException("Found required field in union. Not allowed. " + token.getToken(),
+                                             tokenizer, token);
+                }
                 field.setRequirement(Requirement.REQUIRED);
                 token = tokenizer.expect("parsing struct " + id.getToken());
             } else if (token.getToken().equals(Keyword.OPTIONAL.keyword)) {
                 field.setRequirement(Requirement.OPTIONAL);
                 token = tokenizer.expect("parsing struct " + id.getToken());
+            } else if (union) {
+                // All union fields are optional, regardless.
+                field.setRequirement(Requirement.OPTIONAL);
             }
 
             // Get type.... This is mandatory.

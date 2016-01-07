@@ -19,7 +19,7 @@
 
 package net.morimekta.providence;
 
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PField;
 
 /**
  * Base class for all messages.
@@ -27,43 +27,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public interface PMessage<T extends PMessage<T>>
-        extends PValue<T> {
-    /**
-     * @param key The key of the field.
-     * @return Whether the field is present.
-     */
-    boolean has(int key);
-
-    /**
-     * @param key The key of the field.
-     * @return Number of values for the field.
-     */
-    int num(int key);
-
-    /**
-     * @param key The key of the field.
-     * @return The value of the field.
-     */
-    Object get(int key);
-
-    /**
-     * Get a builder that extends the current object.
-     *
-     * @return The builder instance.
-     */
-    PMessageBuilder<T> mutate();
-
-    /**
-     * @return If the message is compact.
-     */
-    boolean isCompact();
-
-    /**
-     * @return If the message structure is simple.
-     */
-    boolean isSimple();
-
-    @Override
-    PStructDescriptor<T,?> descriptor();
+public interface PUnion<T extends PUnion<T>>
+        extends PMessage<T> {
+    PField<?> unionField();
 }

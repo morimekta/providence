@@ -19,8 +19,8 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PType;
 import net.morimekta.providence.Binary;
+import net.morimekta.providence.PType;
 
 import java.util.Objects;
 
@@ -30,19 +30,19 @@ import java.util.Objects;
  * These are the basic types used in the thrift structure except containers.
  */
 public class PPrimitive<T> implements PDescriptor<T> {
-    public static final PPrimitive<Void> VOID   = new PPrimitive<>(PType.VOID, null);
-    public static final PPrimitive<Boolean> BOOL   = new PPrimitive<>(PType.BOOL, false);
-    public static final PPrimitive<Byte> BYTE   = new PPrimitive<>(PType.BYTE, (byte) 0);
-    public static final PPrimitive<Short> I16    = new PPrimitive<>(PType.I16, (short) 0);
-    public static final PPrimitive<Integer> I32    = new PPrimitive<>(PType.I32, 0);
-    public static final PPrimitive<Long> I64    = new PPrimitive<>(PType.I64, (long) 0);
+    public static final PPrimitive<Void> VOID = new PPrimitive<>(PType.VOID, null);
+    public static final PPrimitive<Boolean> BOOL = new PPrimitive<>(PType.BOOL, false);
+    public static final PPrimitive<Byte> BYTE = new PPrimitive<>(PType.BYTE, (byte) 0);
+    public static final PPrimitive<Short> I16 = new PPrimitive<>(PType.I16, (short) 0);
+    public static final PPrimitive<Integer> I32 = new PPrimitive<>(PType.I32, 0);
+    public static final PPrimitive<Long> I64 = new PPrimitive<>(PType.I64, (long) 0);
     public static final PPrimitive<Double> DOUBLE = new PPrimitive<>(PType.DOUBLE, 0.0);
     public static final PPrimitive<String> STRING = new PPrimitive<>(PType.STRING, null);
     public static final PPrimitive<Binary> BINARY = new PPrimitive<>(PType.BINARY, null);
 
     private final PPrimitiveProvider<T> mProvider;
     private final PType mType;
-    private final T                     mDefault;
+    private final T mDefault;
 
     private PPrimitive(PType type, T defValue) {
         mType = type;
@@ -95,15 +95,24 @@ public class PPrimitive<T> implements PDescriptor<T> {
 
     public static PPrimitive<?> findByName(String name) {
         switch (name) {
-            case "void": return VOID;
-            case "bool": return BOOL;
-            case "byte": return BYTE;
-            case "i16": return I16;
-            case "i32": return I32;
-            case "i64": return I64;
-            case "double": return DOUBLE;
-            case "string": return STRING;
-            case "binary": return BINARY;
+            case "void":
+                return VOID;
+            case "bool":
+                return BOOL;
+            case "byte":
+                return BYTE;
+            case "i16":
+                return I16;
+            case "i32":
+                return I32;
+            case "i64":
+                return I64;
+            case "double":
+                return DOUBLE;
+            case "string":
+                return STRING;
+            case "binary":
+                return BINARY;
         }
         return null;
     }

@@ -39,18 +39,18 @@ import java.io.OutputStream;
  */
 public class Java2Generator
         extends Generator {
+    private final Java2Options mOptions;
     TypeRegistry mRegistry;
     Java2TypeHelper mTypeHelper;
-    boolean         mAndroid;
 
     public Java2Generator(FileManager manager,
                           TypeRegistry registry,
-                          boolean android) {
+                          Java2Options options) {
         super(manager);
         mRegistry = registry;
-        mAndroid = android;
+        mOptions = options;
 
-        mTypeHelper = new Java2TypeHelper(mRegistry);
+        mTypeHelper = new Java2TypeHelper(mRegistry, options);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Java2Generator
     public void generate(CDocument document) throws IOException, GeneratorException {
         String javaPackage = Java2Utils.getJavaPackage(document);
         Java2MessageFormatter messageFormatter =
-                new Java2MessageFormatter(mTypeHelper, mAndroid);
+                new Java2MessageFormatter(mTypeHelper, mOptions);
         Java2EnumFormatter enumFormatter
                 = new Java2EnumFormatter(mTypeHelper);
 

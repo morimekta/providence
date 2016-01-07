@@ -30,6 +30,14 @@ public class TypedefType
         mName = builder.mName;
     }
 
+    public TypedefType(String pComment,
+                       String pType,
+                       String pName) {
+        mComment = pComment;
+        mType = pType;
+        mName = pName;
+    }
+
     public boolean hasComment() {
         return mComment != null;
     }
@@ -114,11 +122,6 @@ public class TypedefType
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return true;
     }
 
     public enum _Field implements PField {

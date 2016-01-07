@@ -29,7 +29,7 @@ public class ServiceMethod
     private final static boolean kDefaultIsOneway = false;
 
     private final String mComment;
-    private final Boolean mIsOneway;
+    private final boolean mIsOneway;
     private final String mReturnType;
     private final String mName;
     private final List<ThriftField> mParams;
@@ -37,11 +37,29 @@ public class ServiceMethod
 
     private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
-        mIsOneway = builder.mIsOneway;
+        if (builder.mIsOneway != null) {
+            mIsOneway = builder.mIsOneway;
+        } else {
+            mIsOneway = kDefaultIsOneway;
+        }
         mReturnType = builder.mReturnType;
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(builder.mExceptions));
+    }
+
+    public ServiceMethod(String pComment,
+                         boolean pIsOneway,
+                         String pReturnType,
+                         String pName,
+                         List<ThriftField> pParams,
+                         List<ThriftField> pExceptions) {
+        mComment = pComment;
+        mIsOneway = pIsOneway;
+        mReturnType = pReturnType;
+        mName = pName;
+        mParams = Collections.unmodifiableList(new LinkedList<>(pParams));
+        mExceptions = Collections.unmodifiableList(new LinkedList<>(pExceptions));
     }
 
     public boolean hasComment() {
@@ -53,11 +71,11 @@ public class ServiceMethod
     }
 
     public boolean hasIsOneway() {
-        return mIsOneway != null;
+        return true;
     }
 
     public boolean getIsOneway() {
-        return hasIsOneway() ? mIsOneway : kDefaultIsOneway;
+        return mIsOneway;
     }
 
     public boolean hasReturnType() {
@@ -96,7 +114,7 @@ public class ServiceMethod
     public boolean has(int key) {
         switch(key) {
             case 1: return hasComment();
-            case 2: return hasIsOneway();
+            case 2: return true;
             case 3: return hasReturnType();
             case 4: return hasName();
             case 5: return numParams() > 0;
@@ -109,7 +127,7 @@ public class ServiceMethod
     public int num(int key) {
         switch(key) {
             case 1: return hasComment() ? 1 : 0;
-            case 2: return hasIsOneway() ? 1 : 0;
+            case 2: return 1;
             case 3: return hasReturnType() ? 1 : 0;
             case 4: return hasName() ? 1 : 0;
             case 5: return numParams();
@@ -167,11 +185,6 @@ public class ServiceMethod
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mName != null;
     }
 
     public enum _Field implements PField {

@@ -39,6 +39,14 @@ public class EnumType
         mValues = Collections.unmodifiableList(new LinkedList<>(builder.mValues));
     }
 
+    public EnumType(String pComment,
+                    String pName,
+                    List<EnumValue> pValues) {
+        mComment = pComment;
+        mName = pName;
+        mValues = Collections.unmodifiableList(new LinkedList<>(pValues));
+    }
+
     public boolean hasComment() {
         return mComment != null;
     }
@@ -123,11 +131,6 @@ public class EnumType
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mName != null;
     }
 
     public enum _Field implements PField {

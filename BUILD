@@ -6,7 +6,7 @@ release_jar('jax-rs', '//jax-rs')
 release_jar('messageio', '//messageio')
 
 filegroup(
-    name = 'thrift-j2',
+    name = 'providence',
     srcs = [
         ':core',
         ':jax-rs',

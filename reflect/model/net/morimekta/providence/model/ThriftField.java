@@ -36,7 +36,7 @@ public class ThriftField
     private final static Requirement kDefaultRequirement = Requirement.DEFAULT;
 
     private final String mComment;
-    private final Integer mKey;
+    private final int mKey;
     private final Requirement mRequirement;
     private final String mType;
     private final String mName;
@@ -44,11 +44,29 @@ public class ThriftField
 
     private ThriftField(_Builder builder) {
         mComment = builder.mComment;
-        mKey = builder.mKey;
+        if (builder.mKey != null) {
+            mKey = builder.mKey;
+        } else {
+            mKey = kDefaultKey;
+        }
         mRequirement = builder.mRequirement;
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
+    }
+
+    public ThriftField(String pComment,
+                       int pKey,
+                       Requirement pRequirement,
+                       String pType,
+                       String pName,
+                       String pDefaultValue) {
+        mComment = pComment;
+        mKey = pKey;
+        mRequirement = pRequirement;
+        mType = pType;
+        mName = pName;
+        mDefaultValue = pDefaultValue;
     }
 
     public boolean hasComment() {
@@ -60,11 +78,11 @@ public class ThriftField
     }
 
     public boolean hasKey() {
-        return mKey != null;
+        return true;
     }
 
     public int getKey() {
-        return hasKey() ? mKey : kDefaultKey;
+        return mKey;
     }
 
     public boolean hasRequirement() {
@@ -103,7 +121,7 @@ public class ThriftField
     public boolean has(int key) {
         switch(key) {
             case 1: return hasComment();
-            case 2: return hasKey();
+            case 2: return true;
             case 3: return hasRequirement();
             case 4: return hasType();
             case 5: return hasName();
@@ -116,7 +134,7 @@ public class ThriftField
     public int num(int key) {
         switch(key) {
             case 1: return hasComment() ? 1 : 0;
-            case 2: return hasKey() ? 1 : 0;
+            case 2: return 1;
             case 3: return hasRequirement() ? 1 : 0;
             case 4: return hasType() ? 1 : 0;
             case 5: return hasName() ? 1 : 0;
@@ -174,13 +192,6 @@ public class ThriftField
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mKey != null &&
-               mType != null &&
-               mName != null;
     }
 
     public enum _Field implements PField {

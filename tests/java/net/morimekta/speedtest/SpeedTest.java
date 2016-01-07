@@ -1,17 +1,20 @@
-package net.morimekta.test.speedtest;
+package net.morimekta.speedtest;
 
-import net.morimekta.providence.protocol.*;
-import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.test.j2.Containers;
-
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.thrift.TException;
+import net.morimekta.providence.protocol.TBinaryProtocolSerializer;
 import net.morimekta.providence.protocol.TCompactProtocolSerializer;
 import net.morimekta.providence.protocol.TJsonProtocolSerializer;
+import net.morimekta.providence.protocol.TTupleProtocolSerializer;
 import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.providence.util.io.CountingOutputStream;
+import net.morimekta.speedtest.providence.Containers;
+import net.morimekta.utils.Color;
+import net.morimekta.utils.FormatString;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
@@ -19,8 +22,6 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
-import net.morimekta.utils.Color;
-import net.morimekta.utils.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -146,7 +147,7 @@ public class SpeedTest {
 
     private final Options                                  options;
     private final CmdLineParser                            parser;
-    private final ArrayList<net.morimekta.test.Containers> thriftContainers;
+    private final ArrayList<net.morimekta.speedtest.thrift.Containers> thriftContainers;
     private final ArrayList<Containers>                    thriftJ2Containers;
     private final File                                     dataDir;
     private final File                                     testDir;
@@ -166,7 +167,7 @@ public class SpeedTest {
             throw new CmdLineException(parser, new FormatString("Output is not a directory: %s"), options.in);
         }
 
-        testDir = File.createTempFile("thrift-j2-", "-speed-test");
+        testDir = File.createTempFile("providence-", "-speed-test");
         if (testDir.exists()) {
             testDir.delete();
         }
@@ -189,7 +190,7 @@ public class SpeedTest {
 
         for (int i = 0; i < options.entries; ++i) {
             try {
-                net.morimekta.test.Containers containers = new net.morimekta.test.Containers();
+                net.morimekta.speedtest.thrift.Containers containers = new net.morimekta.speedtest.thrift.Containers();
                 containers.read(protocol);
                 thriftContainers.add(containers);
                 // Check if we have another entry. There should be a separating '\n' char.
@@ -205,7 +206,7 @@ public class SpeedTest {
         long end = System.nanoTime();
         long ms = (end - start) / 1000000;
 
-        System.out.format(" -- Read %d    [thrift] entries in %5.2fs.\n",
+        System.out.format(" -- Read %d     [thrift] entries in %5.2fs.\n",
                           thriftContainers.size(), (double) ms / 1000);
 
         thriftJ2Containers.clear();
@@ -232,7 +233,7 @@ public class SpeedTest {
         end = System.nanoTime();
         ms = (end - start) / 1000000;
 
-        System.out.format(" -- Read %d [thrift-j2] entries in %5.2fs.\n",
+        System.out.format(" -- Read %d [providence] entries in %5.2fs.\n",
                           thriftContainers.size(), (double) ms / 1000);
         System.out.println();
     }
@@ -287,7 +288,7 @@ public class SpeedTest {
 
         final int num = thriftContainers.size();
         for (int i = 0; i < num; ++i) {
-            net.morimekta.test.Containers containers = thriftContainers.get(i);
+            net.morimekta.speedtest.thrift.Containers containers = thriftContainers.get(i);
 
             long start = System.nanoTime();
 
@@ -315,8 +316,8 @@ public class SpeedTest {
 
         for (int i = 0; i < num; ++i) {
             boolean stop = false;
-            net.morimekta.test.Containers orig = thriftContainers.get(i);
-            net.morimekta.test.Containers read = new net.morimekta.test.Containers();
+            net.morimekta.speedtest.thrift.Containers orig = thriftContainers.get(i);
+            net.morimekta.speedtest.thrift.Containers read = new net.morimekta.speedtest.thrift.Containers();
 
             long start = System.nanoTime();
 
@@ -349,7 +350,7 @@ public class SpeedTest {
         return (testEnd - testStart) / 1000000;
     }
 
-    public long runThriftJ2Test(Result result, int run) throws IOException, PSerializeException {
+    public long runProvidenceTest(Result result, int run) throws IOException, PSerializeException {
         PSerializer serializer;
         switch (result.format) {
             case binary:
@@ -460,15 +461,15 @@ public class SpeedTest {
             if (format.name().endsWith("_protocol")) {
                 runThriftTest(thriftResult, run);
                 if (fullStats) {
-                    System.out.format("%s[thrift]   %3d:%s%s\n",
+                    System.out.format("%s[thrift]    %3d:%s%s\n",
                                       Color.YELLOW,
                                       run, thriftResult.toString(),
                                       Color.CLEAR);
                 }
             }
-            runThriftJ2Test(thriftJ2Result, run);
+            runProvidenceTest(thriftJ2Result, run);
             if (fullStats) {
-                System.out.format("[thrift-j2]%3d:%s\n", run, thriftJ2Result.toString());
+                System.out.format("[providence]%3d:%s\n", run, thriftJ2Result.toString());
             }
         }
 
@@ -482,9 +483,9 @@ public class SpeedTest {
                 printStats("v1", "write", thriftResult.writeStat, Color.YELLOW);
                 System.out.println();
             } else {
-                System.out.format("[thrift-j2]%3d:%s\n",
+                System.out.format("[providence]%3d:%s\n",
                                   options.runs, thriftJ2Result.toString());
-                System.out.format("%s[thrift]   %3d:%s%s\n",
+                System.out.format("%s[thrift]    %3d:%s%s\n",
                                   Color.YELLOW,
                                   options.runs, thriftResult.toString(),
                                   Color.CLEAR);
@@ -495,7 +496,7 @@ public class SpeedTest {
             printStats("j2", "write", thriftJ2Result.writeStat, Color.DEFAULT);
             System.out.println();
         } else {
-            System.out.format("[thrift-j2]%3d:%s\n",
+            System.out.format("[providence]%3d:%s\n",
                               options.runs, thriftJ2Result.toString());
         }
     }

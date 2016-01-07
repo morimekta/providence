@@ -2,25 +2,27 @@ load('/thrift', 'java_legacy_thrift')
 load('/thrift', 'java_thrift')
 
 genrule(
-    name = "test-j2",
-    cmd = "cat $(SRCS) | sed s/net.morimekta.test/net.morimekta.test.j2/ > $(OUTS)",
-    srcs = ["resources/test.thrift"],
-    outs = ["test-j2.thrift"],
+    name = "thrift-idl",
+    cmd = "cat $(SRCS) | sed s/providence/thrift/ > $(OUTS)",
+    srcs = ["resources/providence-idl.thrift"],
+    outs = ["thrift-idl.thrift"],
 )
 
 java_thrift(
-    name = "thrift-j2",
+    name = "providence",
     srcs = [
-        ":test-j2.thrift",
+        "resources/providence-idl.thrift"
     ],
-    flags = [
+    options = [
         "--android",
     ]
 )
 
 java_legacy_thrift(
     name = "thrift",
-    srcs = ["resources/test.thrift"],
+    srcs = [
+        ":thrift-idl.thrift",
+    ],
     flags = [
         "android",
     ]
@@ -29,12 +31,12 @@ java_legacy_thrift(
 java_binary(
     name = "generate-data",
     srcs = glob(
-         ["java/net/morimekta/test/generator/*.java"],
+         ["java/net/morimekta/generator/*.java"],
     ),
-    main_class = 'net.morimekta.test.generator.GenerateData',
+    main_class = 'net.morimekta.generator.GenerateData',
     deps = [
-        ":thrift-j2",
         ":thrift",
+        ":providence",
         "//core:core",
         "//protocol:protocol",
         "//utils:utils",
@@ -47,12 +49,12 @@ java_binary(
 java_binary(
     name = "speed-test",
     srcs = glob(
-        ["java/net/morimekta/test/speedtest/*.java"],
+        ["java/net/morimekta/speedtest/*.java"],
     ),
-    main_class = 'net.morimekta.test.speedtest.SpeedTest',
+    main_class = 'net.morimekta.speedtest.SpeedTest',
     deps = [
-        ":thrift-j2",
         ":thrift",
+        ":providence",
         "//core:core",
         "//protocol:protocol",
         "//utils:utils",

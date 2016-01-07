@@ -19,10 +19,10 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.util.io.IndentedPrintWriter;

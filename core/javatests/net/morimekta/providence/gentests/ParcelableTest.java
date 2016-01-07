@@ -1,18 +1,19 @@
 package net.morimekta.providence.gentests;
 
-import android.os.Parcel;
-
 import net.morimekta.providence.Binary;
+import net.morimekta.test.alltypes.AllTypes;
 import net.morimekta.test.alltypes.Empty;
 import net.morimekta.test.alltypes.Other;
+import net.morimekta.test.alltypes.Values;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
-import net.morimekta.test.alltypes.AllTypes;
-import net.morimekta.test.alltypes.Values;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import android.os.Parcel;
 
 /**
  * Tests of generated code providing android.os.Parcelable support.

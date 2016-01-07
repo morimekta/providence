@@ -21,11 +21,26 @@ package net.morimekta.providence.compiler.format.java2;
 
 import net.morimekta.providence.Binary;
 import net.morimekta.providence.compiler.generator.GeneratorException;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import static net.morimekta.providence.util.PStringUtils.camelCase;
 
@@ -39,8 +54,26 @@ public class Java2TypeHelper {
 
     private final TypeRegistry mRegistry;
 
-    public Java2TypeHelper(TypeRegistry registry) {
+    private final Class<? extends Set> setClass;
+    private final Class<? extends Map> mapClass;
+
+    public Java2TypeHelper(TypeRegistry registry, Java2Options options) {
         mRegistry = registry;
+
+        switch (options.containers) {
+            case ORDERED:
+                setClass = LinkedHashSet.class;
+                mapClass = LinkedHashMap.class;
+                break;
+            case SORTED:
+                setClass = TreeSet.class;
+                mapClass = TreeMap.class;
+                break;
+            default:
+                setClass = HashSet.class;
+                mapClass = HashMap.class;
+                break;
+        }
     }
 
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {
@@ -68,9 +101,9 @@ public class Java2TypeHelper {
             case BINARY:
                 return Binary.class.getName();
             case MAP:
-                return LinkedHashMap.class.getName();
+                return mapClass.getName();
             case SET:
-                return LinkedHashSet.class.getName();
+                return setClass.getName();
             case LIST:
                 return LinkedList.class.getName();
             case ENUM:
@@ -100,9 +133,9 @@ public class Java2TypeHelper {
             case BINARY:
                 return Binary.class.getSimpleName();
             case MAP:
-                return LinkedHashMap.class.getSimpleName();
+                return mapClass.getSimpleName();
             case SET:
-                return LinkedHashSet.class.getSimpleName();
+                return setClass.getSimpleName();
             case LIST:
                 return LinkedList.class.getSimpleName();
             case ENUM:

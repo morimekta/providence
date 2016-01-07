@@ -19,11 +19,21 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.*;
-import net.morimekta.providence.descriptor.*;
-import net.morimekta.providence.util.PStringUtils;
 import net.morimekta.providence.Binary;
+import net.morimekta.providence.PEnumBuilder;
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PUnion;
+import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.util.PStringUtils;
 import net.morimekta.providence.util.io.CountingOutputStream;
 import net.morimekta.providence.util.json.JsonException;
 import net.morimekta.providence.util.json.JsonToken;
@@ -181,13 +191,13 @@ public class PJsonSerializer
      * Parse JSON object as a message.
      *
      * @param tokenizer The object to parse.
-     * @param type    The message type.
-     * @param <T>     Message generic type.
+     * @param type      The message type.
+     * @param <T>       Message generic type.
      * @return The parsed message.
      * @throws JsonException
      */
     protected <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer,
-                                                     PStructDescriptor<T,?> type)
+                                                     PStructDescriptor<T, ?> type)
             throws PSerializeException, JsonException, IOException {
         PMessageBuilder<T> builder = type.factory().builder();
 
@@ -236,11 +246,11 @@ public class PJsonSerializer
      * Parse JSON object as a message.
      *
      * @param tokenizer The object to parse.
-     * @param type    The message type.
-     * @param <T>     Message generic type.
+     * @param type      The message type.
+     * @param <T>       Message generic type.
      * @return The parsed message.
      */
-    protected <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T,?> type) throws PSerializeException, IOException, JsonException {
+    protected <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type) throws PSerializeException, IOException, JsonException {
         PMessageBuilder<T> builder = type.factory().builder();
 
         int i = 0;
@@ -256,7 +266,7 @@ public class PJsonSerializer
             } else if (mStrict) {
                 throw new PSerializeException(
                         "Compact Field ID " + (i) + " outside field spectrum for type " +
-                                type.getQualifiedName(null));
+                        type.getQualifiedName(null));
             } else {
                 consume(token, tokenizer);
             }
@@ -323,7 +333,7 @@ public class PJsonSerializer
                         return cast(token.intValue() != 0);
                     }
                     throw new PSerializeException("Not boolean value for token: " +
-                                                          token.value);
+                                                  token.value);
                 case BYTE:
                     if (token.isInteger()) {
                         return cast(token.byteValue());
@@ -457,7 +467,7 @@ public class PJsonSerializer
         } catch (ClassCastException ce) {
             throw new PSerializeException(ce,
                                           "Serialized type " + token.getClass().getSimpleName() +
-                                                  " not compatible with " + t.getQualifiedName(null));
+                                          " not compatible with " + t.getQualifiedName(null));
         }
 
         throw new PSerializeException("Unhandled item type " + t.getQualifiedName(null));
@@ -509,7 +519,7 @@ public class PJsonSerializer
                 case BINARY:
                     return Binary.fromBase64(key);
                 case MESSAGE:
-                    PStructDescriptor<?,?> st = (PStructDescriptor<?,?>) keyType;
+                    PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
                         throw new PSerializeException("Only simple structs can be used as map key. " +
                                                       st.getQualifiedName(null) + " is not.");
@@ -533,32 +543,48 @@ public class PJsonSerializer
     }
 
     protected void appendMessage(JsonWriter writer, PMessage<?> message) throws PSerializeException, JsonException {
-        PStructDescriptor<?,?> type = message.descriptor();
-        if (message.isCompact()) {
-            writer.array();
-            for (PField<?> field : type.getFields()) {
-                if (message.has(field.getKey())) {
-                    appendTypedValue(writer, field.getDescriptor(), message.get(field.getKey()));
-                } else {
-                    break;
-                }
-            }
-            writer.endArray();
-        } else {
+        PStructDescriptor<?, ?> type = message.descriptor();
+        if (message instanceof PUnion) {
             writer.object();
-            for (PField<?> field : type.getFields()) {
-                if (message.has(field.getKey())) {
-                    Object value = message.get(field.getKey());
-                    if (IdType.ID.equals(mIdType)) {
-                        String key = String.valueOf(field.getKey());
-                        writer.key(key);
-                    } else {
-                        writer.key(field.getName());
-                    }
-                    appendTypedValue(writer, field.getDescriptor(), value);
+            PField field = ((PUnion) message).unionField();
+            if (field != null) {
+                Object value = message.get(field.getKey());
+                if (IdType.ID.equals(mIdType)) {
+                    String key = String.valueOf(field.getKey());
+                    writer.key(key);
+                } else {
+                    writer.key(field.getName());
                 }
+                appendTypedValue(writer, field.getDescriptor(), value);
             }
             writer.endObject();
+        } else {
+            if (message.isCompact()) {
+                writer.array();
+                for (PField<?> field : type.getFields()) {
+                    if (message.has(field.getKey())) {
+                        appendTypedValue(writer, field.getDescriptor(), message.get(field.getKey()));
+                    } else {
+                        break;
+                    }
+                }
+                writer.endArray();
+            } else {
+                writer.object();
+                for (PField<?> field : type.getFields()) {
+                    if (message.has(field.getKey())) {
+                        Object value = message.get(field.getKey());
+                        if (IdType.ID.equals(mIdType)) {
+                            String key = String.valueOf(field.getKey());
+                            writer.key(key);
+                        } else {
+                            writer.key(field.getName());
+                        }
+                        appendTypedValue(writer, field.getDescriptor(), value);
+                    }
+                }
+                writer.endObject();
+            }
         }
     }
 
@@ -604,7 +630,7 @@ public class PJsonSerializer
     }
 
     /**
-     * @param writer The writer to add primitive key to.
+     * @param writer    The writer to add primitive key to.
      * @param primitive Primitive object to get map key value of.
      */
     protected void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
@@ -623,10 +649,10 @@ public class PJsonSerializer
                 return primitive.toString();
             }
         } else if (primitive instanceof Boolean ||
-                primitive instanceof Byte ||
-                primitive instanceof Short ||
-                primitive instanceof Integer ||
-                primitive instanceof Long) {
+                   primitive instanceof Byte ||
+                   primitive instanceof Short ||
+                   primitive instanceof Integer ||
+                   primitive instanceof Long) {
             return primitive.toString();
         } else if (primitive instanceof Double) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -650,8 +676,8 @@ public class PJsonSerializer
             writer.flush();
             return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } else {
-            throw new PSerializeException("illegal simple type class " + primitive.getClass()
-                                                                                  .getSimpleName());
+            throw new PSerializeException("illegal simple type class " +
+                                          primitive.getClass().getSimpleName());
         }
     }
 
@@ -671,7 +697,7 @@ public class PJsonSerializer
         } else if (primitive instanceof Boolean) {
             writer.value(primitive);
         } else if (primitive instanceof Byte || primitive instanceof Short || primitive instanceof Integer ||
-                primitive instanceof Long) {
+                   primitive instanceof Long) {
             writer.value(((Number) primitive).longValue());
         } else if (primitive instanceof Double) {
             writer.value(((Number) primitive).doubleValue());

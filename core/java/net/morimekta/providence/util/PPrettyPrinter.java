@@ -22,7 +22,11 @@ package net.morimekta.providence.util;
 import net.morimekta.providence.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.PUnion;
+import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 import net.morimekta.providence.util.json.JsonException;
@@ -90,17 +94,31 @@ public class PPrettyPrinter {
         builder.append("{")
                .begin();
 
-        boolean first = true;
-        for (PField<?> field : type.getFields()) {
-            if (message.has(field.getKey())) {
-                if (first) first = false;
-                else builder.append(mSep);
+        if (message instanceof PUnion) {
+            PField<?> field = ((PUnion) message).unionField();
+            if (field != null) {
                 Object o = message.get(field.getKey());
 
                 builder.appendln(field.getName())
                        .append(":")
                        .append(mSpace);
                 appendTypedValue(builder, field.getDescriptor(), o);
+            }
+        } else {
+            boolean first = true;
+            for (PField<?> field : type.getFields()) {
+                if (message.has(field.getKey())) {
+                    if (first)
+                        first = false;
+                    else
+                        builder.append(mSep);
+                    Object o = message.get(field.getKey());
+
+                    builder.appendln(field.getName())
+                           .append(":")
+                           .append(mSpace);
+                    appendTypedValue(builder, field.getDescriptor(), o);
+                }
             }
         }
 

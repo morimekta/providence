@@ -19,9 +19,32 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.*;
+import net.morimekta.providence.Binary;
+import net.morimekta.providence.PException;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageBuilderFactory;
+import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.PUnion;
 import net.morimekta.providence.compiler.generator.GeneratorException;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDefaultValueProvider;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PExceptionDescriptor;
+import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptorProvider;
+import net.morimekta.providence.descriptor.PUnionDescriptor;
+import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
+import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 import net.morimekta.providence.util.json.JsonException;
@@ -45,15 +68,15 @@ public class Java2MessageFormatter {
             IndentedPrintWriter.INDENT;
 
     private final Java2TypeHelper mTypeHelper;
-    private final boolean         mAndroid;
+    private final Java2Options mOptions;
 
     public Java2MessageFormatter(Java2TypeHelper helper,
-                                 boolean android) {
+                                 Java2Options options) {
         mTypeHelper = helper;
-        mAndroid = android;
+        mOptions = options;
     }
 
-    public void format(IndentedPrintWriter writer, PStructDescriptor<?,?> type) throws GeneratorException, IOException {
+    public void format(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) throws GeneratorException, IOException {
         appendFileHeader(writer, type);
 
         if (type.getComment() != null) {
@@ -68,7 +91,8 @@ public class Java2MessageFormatter {
         appendFieldDefaultConstants(writer, type);
         appendFieldDeclarations(writer, type);
 
-        appendConstructor(writer, type);
+        appendBuilderConstructor(writer, type);
+        appendCreateConstructor(writer, type);
 
         appendFieldGetters(writer, type);
         appendInheritedGetter_has(writer, type);
@@ -80,12 +104,10 @@ public class Java2MessageFormatter {
         appendObjectHashCode(writer, type);
         appendObjectToString(writer);
 
-        appendIsValid(writer, type);
-
         appendFieldEnum(writer, type);
         appendDescriptor(writer, type);
 
-        if (mAndroid) {
+        if (mOptions.android) {
             appendParcelable(writer, type);
         }
 
@@ -96,7 +118,7 @@ public class Java2MessageFormatter {
         appendClassDefinitionEnd(writer);
     }
 
-    private void appendObjectCompact(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendObjectCompact(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         if (type.isCompactible()) {
             writer.appendln("@Override")
                   .appendln("public boolean isCompact() {")
@@ -104,15 +126,17 @@ public class Java2MessageFormatter {
                   .appendln("boolean missing = false;");
 
             for (PField<?> field : type.getFields()) {
-                writer.formatln("if (%s()) {", camelCase("has", field.getName()))
-                      .begin()
-                      .appendln("if (missing) return false;")
-                      .end()
-                      .appendln("} else {")
-                      .begin()
-                      .appendln("missing = true;")
-                      .end()
-                      .appendln('}');
+                if (!alwaysPresent(field)) {
+                    writer.formatln("if (%s()) {", camelCase("has", field.getName()))
+                          .begin()
+                          .appendln("if (missing) return false;")
+                          .end()
+                          .appendln("} else {")
+                          .begin()
+                          .appendln("missing = true;")
+                          .end()
+                          .appendln('}');
+                }
             }
 
             writer.appendln("return true;")
@@ -129,12 +153,12 @@ public class Java2MessageFormatter {
                   .newline();
         }
         writer.appendln("@Override")
-                .appendln("public boolean isSimple() {")
-                .begin()
-                .appendln("return descriptor().isSimple();")
-                .end()
-                .appendln('}')
-                .newline();
+              .appendln("public boolean isSimple() {")
+              .begin()
+              .appendln("return descriptor().isSimple();")
+              .end()
+              .appendln('}')
+              .newline();
     }
 
     private void appendParcelableArrayConverter(IndentedPrintWriter writer, String srcType, String srcName, String destType, String itemConvert) {
@@ -238,7 +262,7 @@ public class Java2MessageFormatter {
                 }
                 break;
             case MAP:
-                PMap<?,?> mType = (PMap<?, ?>) desc;
+                PMap<?, ?> mType = (PMap<?, ?>) desc;
                 switch (mType.itemDescriptor().getType()) {
                     case LIST:
                     case SET:
@@ -565,7 +589,7 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendParcelable(IndentedPrintWriter writer, PStructDescriptor<?,?> type) throws GeneratorException {
+    private void appendParcelable(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public int describeContents() {")
               .begin()
@@ -577,23 +601,49 @@ public class Java2MessageFormatter {
         writer.appendln("@Override")
               .appendln("public void writeToParcel(Parcel dest, int flags) {")
               .begin();
-        for (PField<?> field : type.getFields()) {
-            String fName = camelCase("m", field.getName());
-            switch (field.getDescriptor().getType()) {
-                case LIST:
-                case SET:
-                case MAP:
-                    writer.formatln("if (%s() > 0) {", camelCase("num", field.getName()));
-                    break;
-                default:
-                    writer.formatln("if (%s()) {", camelCase("has", field.getName()));
-                    break;
+        if (type.getVariant() == PMessageVariant.UNION) {
+            writer.appendln("if (tUnionField != null) {")
+                  .begin()
+                  .appendln("switch (tUnionField) {")
+                  .begin();
+            for (PField<?> field : type.getFields()) {
+                String fName = camelCase("m", field.getName());
+                String fEnum = c_case("", field.getName()).toUpperCase();
+                writer.formatln("case %s:", fEnum)
+                      .begin()
+                      .formatln("dest.writeInt(%d);", field.getKey());
+                appendParcelableWriter(writer, fName, field.getDescriptor());
+                writer.appendln("break;")
+                      .end();
             }
-            writer.begin()
-                  .formatln("dest.writeInt(%d);", field.getKey());
-            appendParcelableWriter(writer, fName, field.getDescriptor());
             writer.end()
-                  .appendln('}');
+                  .appendln("}")
+                  .end()
+                  .appendln("}");
+        } else {
+            for (PField<?> field : type.getFields()) {
+                String fName = camelCase("m", field.getName());
+                boolean checkPresence = !alwaysPresent(field);
+                if (checkPresence) {
+                    switch (field.getDescriptor().getType()) {
+                        case LIST:
+                        case SET:
+                        case MAP:
+                            writer.formatln("if (%s() > 0) {", camelCase("num", field.getName()));
+                            break;
+                        default:
+                            writer.formatln("if (%s()) {", camelCase("has", field.getName()));
+                            break;
+                    }
+                    writer.begin();
+                }
+                writer.formatln("dest.writeInt(%d);", field.getKey());
+                appendParcelableWriter(writer, fName, field.getDescriptor());
+                if (checkPresence) {
+                    writer.end()
+                          .appendln('}');
+                }
+            }
         }
         writer.appendln("dest.writeInt(0);")
               .end()
@@ -655,7 +705,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendBuilder(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendBuilder(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         boolean union = type.getVariant().equals(PMessageVariant.UNION);
 
         String simpleClass = mTypeHelper.getInstanceClassName(type);
@@ -992,7 +1042,7 @@ public class Java2MessageFormatter {
               .appendln('}');
     }
 
-    private void appendFieldEnum(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendFieldEnum(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("public enum _Field implements PField {")
               .begin();
 
@@ -1116,7 +1166,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendDescriptor(IndentedPrintWriter writer, PStructDescriptor<?,?> type) throws GeneratorException {
+    private void appendDescriptor(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) throws GeneratorException {
         String simpleClass = mTypeHelper.getInstanceClassName(type);
         String typeClass;
         switch (type.getVariant()) {
@@ -1228,7 +1278,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendIsValid(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendIsValid(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@Override")
               .appendln("public boolean isValid() {")
               .begin()
@@ -1260,10 +1310,18 @@ public class Java2MessageFormatter {
             }
         }
         writer.end()  // alignment indent
-                .append(';')
-                .end()
-                .appendln('}')
-                .newline();
+              .append(';')
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+    public boolean alwaysPresent(PField<?> field) {
+        if (field.getRequirement() == PRequirement.OPTIONAL) return false;
+        if (field.getDescriptor() instanceof PPrimitive) {
+            return ((PPrimitive) field.getDescriptor()).getDefaultValue() != null;
+        }
+        return false;
     }
 
     private void appendObjectToString(IndentedPrintWriter writer) {
@@ -1276,7 +1334,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendObjectEquals(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendObjectEquals(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         String typeName = mTypeHelper.getInstanceClassName(type);
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
@@ -1305,7 +1363,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendObjectHashCode(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendObjectHashCode(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
@@ -1315,7 +1373,7 @@ public class Java2MessageFormatter {
             String fName = camelCase("m", field.getName());
             String fEnum = c_case("", field.getName()).toUpperCase();
             writer.append(" +")
-                  .formatln("PTypeUtils.hashCode(_Field.%s,%s)", fEnum, fName);
+                  .formatln("PTypeUtils.hashCode(_Field.%s, %s)", fEnum, fName);
         }
         writer.end()
               .append(";")
@@ -1324,7 +1382,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_has(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendInheritedGetter_has(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@Override")
               .appendln("public boolean has(int key) {")
               .begin()
@@ -1341,9 +1399,13 @@ public class Java2MessageFormatter {
                                     camelCase("num", field.getName()));
                     break;
                 default:
-                    writer.formatln("case %d: return %s();",
-                                    field.getKey(),
-                                    camelCase("has", field.getName()));
+                    if (alwaysPresent(field)) {
+                        writer.formatln("case %d: return true;", field.getKey());
+                    } else {
+                        writer.formatln("case %d: return %s();",
+                                        field.getKey(),
+                                        camelCase("has", field.getName()));
+                    }
                     break;
             }
         }
@@ -1356,7 +1418,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_num(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendInheritedGetter_num(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@Override")
               .appendln("public int num(int key) {")
               .begin()
@@ -1373,9 +1435,13 @@ public class Java2MessageFormatter {
                                     camelCase("num", field.getName()));
                     break;
                 default:
-                    writer.formatln("case %d: return %s() ? 1 : 0;",
-                                    field.getKey(),
-                                    camelCase("has", field.getName()));
+                    if (alwaysPresent(field)) {
+                        writer.formatln("case %d: return 1;", field.getKey());
+                    } else {
+                        writer.formatln("case %d: return %s() ? 1 : 0;",
+                                        field.getKey(),
+                                        camelCase("has", field.getName()));
+                    }
                     break;
             }
         }
@@ -1388,7 +1454,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendInheritedGetter_get(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendInheritedGetter_get(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@Override")
               .appendln("public Object get(int key) {")
               .begin()
@@ -1408,7 +1474,7 @@ public class Java2MessageFormatter {
               .newline();
     }
 
-    private void appendFieldDefaultConstants(IndentedPrintWriter writer, PStructDescriptor<?,?> type)
+    private void appendFieldDefaultConstants(IndentedPrintWriter writer, PStructDescriptor<?, ?> type)
             throws GeneratorException {
         boolean hasDefault = false;
         for (PField<?> field : type.getFields()) {
@@ -1429,7 +1495,7 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFieldGetters(IndentedPrintWriter writer, PStructDescriptor<?,?> type) throws GeneratorException {
+    private void appendFieldGetters(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) throws GeneratorException {
         for (PField<?> field : type.getFields()) {
             String fName = camelCase("m", field.getName());
 
@@ -1444,6 +1510,30 @@ public class Java2MessageFormatter {
                           .appendln('}')
                           .newline();
                     break;
+                case BOOL:
+                case BYTE:
+                case I16:
+                case I32:
+                case I64:
+                case DOUBLE:
+                    if (alwaysPresent(field)) {
+                        if (field.getRequirement() == PRequirement.REQUIRED) {
+                            writer.formatln("public boolean %s() {", camelCase("has", field.getName()))
+                                  .begin()
+                                  .formatln("return true;")
+                                  .end()
+                                  .appendln('}')
+                                  .newline();
+                        } else {
+                            writer.formatln("public boolean %s() {", camelCase("has", field.getName()))
+                                  .begin()
+                                  .formatln("return %s != %s;", fName, camelCase("kDefault", field.getName()))
+                                  .end()
+                                  .appendln('}')
+                                  .newline();
+                        }
+                        break;
+                    }
                 default:
                     writer.formatln("public boolean %s() {", camelCase("has", field.getName()))
                           .begin()
@@ -1463,16 +1553,19 @@ public class Java2MessageFormatter {
                             mTypeHelper.getValueType(field.getDescriptor()),
                             camelCase("get", field.getName()))
                   .begin();
-
-            Object defaultValue = mTypeHelper.getDefaultValue(field);
-            if (defaultValue != null) {
-                writer.formatln("return %s() ? %s : %s;",
-                        camelCase("has", field.getName()),
-                        fName,
-                        camelCase("kDefault", field.getName()));
+            if (alwaysPresent(field)) {
+                writer.formatln("return %s;", fName);
             } else {
-                writer.formatln("return %s;",
-                        camelCase("m", field.getName()));
+                Object defaultValue = mTypeHelper.getDefaultValue(field);
+                if (defaultValue != null) {
+                    writer.formatln("return %s() ? %s : %s;",
+                                    camelCase("has", field.getName()),
+                                    fName,
+                                    camelCase("kDefault", field.getName()));
+                } else {
+                    writer.formatln("return %s;",
+                                    camelCase("m", field.getName()));
+                }
             }
             writer.end()
                   .appendln('}')
@@ -1480,7 +1573,8 @@ public class Java2MessageFormatter {
         }
 
         if (type.getVariant().equals(PMessageVariant.UNION)) {
-            writer.appendln("public _Field unionField() {")
+            writer.appendln("@Override")
+                  .appendln("public _Field unionField() {")
                   .begin()
                   .appendln("return tUnionField;")
                   .end()
@@ -1548,11 +1642,17 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFieldDeclarations(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendFieldDeclarations(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         for (PField<?> field : type.getFields()) {
-            writer.formatln("private final %s %s;",
-                            mTypeHelper.getFieldType(field.getDescriptor()),
-                            camelCase("m", field.getName()));
+            if (field.getRequirement() == PRequirement.OPTIONAL) {
+                writer.formatln("private final %s %s;",
+                                mTypeHelper.getFieldType(field.getDescriptor()),
+                                camelCase("m", field.getName()));
+            } else {
+                writer.formatln("private final %s %s;",
+                                mTypeHelper.getValueType(field.getDescriptor()),
+                                camelCase("m", field.getName()));
+            }
         }
         if (type.getVariant().equals(PMessageVariant.UNION)) {
             writer.appendln("private final _Field tUnionField;")
@@ -1561,56 +1661,167 @@ public class Java2MessageFormatter {
         writer.newline();
     }
 
-    private void appendConstructor(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendBuilderConstructor(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.formatln("private %s(_Builder builder) {", mTypeHelper.getInstanceClassName(type))
               .begin();
-        if (type.getVariant().equals(PMessageVariant.EXCEPTION)) {
-            writer.appendln("super(builder.createMessage());")
+        if (type.getVariant() == PMessageVariant.UNION) {
+            writer.appendln("tUnionField = builder.tUnionField;")
                   .newline();
-        }
-        for (PField<?> field : type.getFields()) {
-            String fName = camelCase("m", field.getName());
-            switch (field.getDescriptor().getType()) {
-                case LIST:
-                    writer.formatln("%s = Collections.unmodifiableList(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
-                    break;
-                case SET:
-                    writer.formatln("%s = Collections.unmodifiableSet(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
-                    break;
-                case MAP:
-                    writer.formatln("%s = Collections.unmodifiableMap(new %s<>(builder.%s));",
-                                    fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
-                    break;
-                default:
-                    writer.formatln("%s = builder.%s;", fName, fName);
-                    break;
+
+            for (PField<?> field : type.getFields()) {
+                String fName = camelCase("m", field.getName());
+                String fEnum = c_case("", field.getName()).toUpperCase();
+
+                switch (field.getDescriptor().getType()) {
+                    case LIST:
+                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableList(new %s<>(builder.%s)) : Collections.EMPTY_LIST;",
+                                        fName, fEnum, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    case SET:
+                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableSet(new %s<>(builder.%s)) : Collections.EMPTY_SET;",
+                                        fName, fEnum, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    case MAP:
+                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableMap(new %s<>(builder.%s)) : Collections.EMPTY_MAP;",
+                                        fName, fEnum, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    default:
+                        writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : null;", fName, fEnum, fName);
+                        break;
+                }
             }
-        }
-        if (type.getVariant().equals(PMessageVariant.UNION)) {
-            writer.newline()
-                  .appendln("tUnionField = builder.tUnionField;");
+        } else {
+            if (type.getVariant().equals(PMessageVariant.EXCEPTION)) {
+                writer.appendln("super(builder.createMessage());")
+                      .newline();
+            }
+            for (PField<?> field : type.getFields()) {
+                String fName = camelCase("m", field.getName());
+                switch (field.getDescriptor().getType()) {
+                    case LIST:
+                        writer.formatln("%s = Collections.unmodifiableList(new %s<>(builder.%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    case SET:
+                        writer.formatln("%s = Collections.unmodifiableSet(new %s<>(builder.%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    case MAP:
+                        writer.formatln("%s = Collections.unmodifiableMap(new %s<>(builder.%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), fName);
+                        break;
+                    default:
+                        if (alwaysPresent(field)) {
+                            writer.formatln("if (builder.%s != null) {", fName)
+                                  .formatln("    %s = builder.%s;", fName, fName)
+                                  .formatln("} else {")
+                                  .begin();
+                            if (field.getDescriptor() instanceof PPrimitive) {
+                                PPrimitive primitive = (PPrimitive) field.getDescriptor();
+                                if (primitive.getDefaultValue() != null) {
+                                    writer.formatln("%s = %s;", fName, camelCase("kDefault", field.getName()));
+                                } else {
+                                    writer.formatln("%s = null;", fName, fName);
+                                }
+                            } else {
+                                writer.formatln("%s = null;", fName, fName);
+                            }
+                            writer.end()
+                                  .formatln("}");
+                        } else {
+                            writer.formatln("%s = builder.%s;", fName, fName);
+                        }
+                        break;
+                }
+            }
         }
         writer.end()
               .appendln('}')
               .newline();
     }
 
-    private void appendClassDefinitionStart(IndentedPrintWriter writer, PStructDescriptor<?,?> type) {
+    private void appendCreateConstructor(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
+        if (type.getVariant() == PMessageVariant.STRUCT) {
+            String instanceClass = mTypeHelper.getInstanceClassName(type);
+            String spaces = instanceClass.replaceAll("[\\S]", " ");
+            writer.formatln("public %s(", mTypeHelper.getInstanceClassName(type))
+                  .begin("        " + spaces);
+            boolean first = true;
+            for (PField<?> field : type.getFields()) {
+                if (first) {
+                    first = false;
+                } else {
+                    writer.append(',')
+                          .appendln();
+                }
+                String pName = camelCase("p", field.getName());
+                writer.format("%s %s", mTypeHelper.getValueType(field.getDescriptor()), pName);
+            }
+            writer.end()
+                  .append(") {")
+                  .begin();
+
+            for (PField<?> field : type.getFields()) {
+                String fName = camelCase("m", field.getName());
+                String pName = camelCase("p", field.getName());
+                switch (field.getDescriptor().getType()) {
+                    case LIST:
+                        writer.formatln("%s = Collections.unmodifiableList(new %s<>(%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), pName);
+                        break;
+                    case SET:
+                        writer.formatln("%s = Collections.unmodifiableSet(new %s<>(%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), pName);
+                        break;
+                    case MAP:
+                        writer.formatln("%s = Collections.unmodifiableMap(new %s<>(%s));",
+                                        fName, mTypeHelper.getInstanceClassName(field.getDescriptor()), pName);
+                        break;
+                    default:
+                        writer.formatln("%s = %s;", fName, pName);
+                        break;
+                }
+            }
+            if (type.getVariant().equals(PMessageVariant.UNION)) {
+                writer.newline()
+                      .appendln("tUnionField = builder.tUnionField;");
+            }
+            writer.end()
+                  .appendln('}')
+                  .newline();
+        } else if (type.getVariant() == PMessageVariant.UNION) {
+            for (PField<?> field : type.getFields()) {
+                writer.formatln("public %s %s(%s value) {",
+                                mTypeHelper.getValueType(type),
+                                camelCase("with", field.getName()),
+                                mTypeHelper.getValueType(field.getDescriptor()))
+                      .begin()
+                      .appendln("_Builder builder = new _Builder();")
+                      .formatln("builder.%s(value);", camelCase("set", field.getName()))
+                      .appendln("return builder.build();")
+                      .end()
+                      .appendln("}")
+                      .newline();
+            }
+        }
+    }
+
+    private void appendClassDefinitionStart(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         writer.appendln("@SuppressWarnings(\"unused\")")
               .formatln("public class %s", mTypeHelper.getInstanceClassName(type))
               .begin(DBL_INDENT);
         if (type.getVariant().equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends PException");
         }
-        writer.formatln("implements PMessage<%s>, Serializable", mTypeHelper.getInstanceClassName(type));
-        if (mAndroid) {
+        writer.formatln("implements %s<%s>, Serializable",
+                        type.getVariant() == PMessageVariant.UNION ? "PUnion" : "PMessage",
+                        mTypeHelper.getInstanceClassName(type));
+        if (mOptions.android) {
             writer.format(", Parcelable");
         }
         writer.append(" {")
-                .end()  // double indent.
-                .begin();
+              .end()  // double indent.
+              .begin();
 
         if (type.getVariant().equals(PMessageVariant.EXCEPTION)) {
             writer.formatln("private final static long serialVersionUID = %dL;",
@@ -1650,7 +1861,7 @@ public class Java2MessageFormatter {
                 header.include(PSet.class.getName());
                 header.include(mTypeHelper.getQualifiedInstanceClassName(descriptor));
                 header.include(mTypeHelper.getQualifiedValueTypeName(descriptor));
-                if (mAndroid) {
+                if (mOptions.android) {
                     header.include(ArrayList.class.getName());
                 }
                 addTypeImports(header, sType.itemDescriptor());
@@ -1677,11 +1888,10 @@ public class Java2MessageFormatter {
         }
     }
 
-    private void appendFileHeader(IndentedPrintWriter writer, PStructDescriptor<?,?> type)
+    private void appendFileHeader(IndentedPrintWriter writer, PStructDescriptor<?, ?> type)
             throws GeneratorException, IOException {
         Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
         header.include(java.io.Serializable.class.getName());
-        header.include(PMessage.class.getName());
         header.include(PMessageBuilder.class.getName());
         header.include(PMessageBuilderFactory.class.getName());
         header.include(PField.class.getName());
@@ -1693,14 +1903,17 @@ public class Java2MessageFormatter {
         header.include(PDescriptor.class.getName());
         switch (type.getVariant()) {
             case STRUCT:
+                header.include(PMessage.class.getName());
                 header.include(PStructDescriptor.class.getName());
                 header.include(PStructDescriptorProvider.class.getName());
                 break;
             case UNION:
+                header.include(PUnion.class.getName());
                 header.include(PUnionDescriptor.class.getName());
                 header.include(PUnionDescriptorProvider.class.getName());
                 break;
             case EXCEPTION:
+                header.include(PMessage.class.getName());
                 header.include(PException.class.getName());
                 header.include(PExceptionDescriptor.class.getName());
                 header.include(PExceptionDescriptorProvider.class.getName());
@@ -1712,7 +1925,7 @@ public class Java2MessageFormatter {
                 header.include(PDefaultValueProvider.class.getName());
             }
         }
-        if (mAndroid) {
+        if (mOptions.android) {
             header.include("android.os.Parcel");
             header.include("android.os.Parcelable");
         }

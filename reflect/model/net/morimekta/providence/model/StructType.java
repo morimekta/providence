@@ -44,6 +44,16 @@ public class StructType
         mFields = Collections.unmodifiableList(new LinkedList<>(builder.mFields));
     }
 
+    public StructType(String pComment,
+                      StructVariant pVariant,
+                      String pName,
+                      List<ThriftField> pFields) {
+        mComment = pComment;
+        mVariant = pVariant;
+        mName = pName;
+        mFields = Collections.unmodifiableList(new LinkedList<>(pFields));
+    }
+
     public boolean hasComment() {
         return mComment != null;
     }
@@ -141,11 +151,6 @@ public class StructType
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mName != null;
     }
 
     public enum _Field implements PField {

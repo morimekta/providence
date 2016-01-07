@@ -42,6 +42,18 @@ public class ThriftDocument
         mDecl = Collections.unmodifiableList(new LinkedList<>(builder.mDecl));
     }
 
+    public ThriftDocument(String pComment,
+                          String pPackage,
+                          List<String> pIncludes,
+                          Map<String,String> pNamespaces,
+                          List<Declaration> pDecl) {
+        mComment = pComment;
+        mPackage = pPackage;
+        mIncludes = Collections.unmodifiableList(new LinkedList<>(pIncludes));
+        mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(pNamespaces));
+        mDecl = Collections.unmodifiableList(new LinkedList<>(pDecl));
+    }
+
     public boolean hasComment() {
         return mComment != null;
     }
@@ -156,11 +168,6 @@ public class ThriftDocument
     @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
-    }
-
-    @Override
-    public boolean isValid() {
-        return mPackage != null;
     }
 
     public enum _Field implements PField {
