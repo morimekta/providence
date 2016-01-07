@@ -80,7 +80,7 @@ public class Utf8StreamReader
                     buffer[c++] = in.read();
                 }
                 // 1111110x + 5 * 10xxxxxx  = 31 bit
-                if ((buffer[0] & 0xF8) == 0xF8) {
+                if ((buffer[0] & 0xFC) == 0xFC) {
                     buffer[c++] = in.read();
                 }
 

@@ -219,7 +219,7 @@ public class ThriftParser implements Parser {
     }
 
     private String parseLineComment(Tokenizer tokenizer, String comment) throws IOException {
-        String line = tokenizer.readUntil("\n").trim();
+        String line = tokenizer.readUntil('\n').trim();
         if (comment != null) {
              return comment + "\n" + line;
         }

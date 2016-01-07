@@ -19,12 +19,15 @@
 
 package net.morimekta.providence.util;
 
+import net.morimekta.providence.util.io.Utf8StreamReader;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -90,5 +93,44 @@ public class PStringUtilsTest {
 
         assertEquals("abc", PStringUtils.readString(is));
         assertEquals("xyz", PStringUtils.readString(is));
+    }
+
+    @Test
+    public void testReadString_partialReadWithTerminator() throws IOException {
+        byte[] buffer = new byte[]{
+                'a', 'b', 'c', '\r', '\n',
+                'x', 'y', 'z'
+        };
+        // BufferedInputStream supports marks.
+        InputStream is = new ByteArrayInputStream(buffer);
+
+        assertEquals("abc", PStringUtils.readString(is, "\r\n"));
+        assertEquals("xyz", PStringUtils.readString(is, "\r\n"));
+    }
+
+    @Test
+    public void testReadString_partialReader() throws IOException {
+        byte[] buffer = new byte[]{
+                'a', 'b', 'c', '\0',
+                'x', 'y', 'z'
+        };
+        // BufferedInputStream supports marks.
+        Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
+
+        assertEquals("abc", PStringUtils.readString(is));
+        assertEquals("xyz", PStringUtils.readString(is));
+    }
+
+    @Test
+    public void testReadString_partialReaderWithTerminator() throws IOException {
+        byte[] buffer = new byte[]{
+                'a', 'b', 'c', '\r', '\n',
+                'x', 'y', 'z'
+        };
+        // BufferedInputStream supports marks.
+        Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
+
+        assertEquals("abc", PStringUtils.readString(is, "\r\n"));
+        assertEquals("xyz", PStringUtils.readString(is, "\r\n"));
     }
 }

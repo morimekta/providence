@@ -19,14 +19,12 @@
 
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.util.io.TerminatedInputStream;
+import net.morimekta.providence.util.io.Utf8StreamReader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
@@ -90,7 +88,7 @@ public class PStringUtils {
      * @throws IOException
      */
     public static String readString(InputStream is) throws IOException {
-        return readString(is, "\0");
+        return readString(new Utf8StreamReader(is), '\0');
     }
 
     /**
@@ -102,17 +100,7 @@ public class PStringUtils {
      * @throws IOException
      */
     public static String readString(InputStream is, String term) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        @SuppressWarnings("resource")
-        TerminatedInputStream tis = new TerminatedInputStream(is, term.getBytes(), null);
-
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int len;
-        while ((len = tis.read(buffer, 0, BUFFER_SIZE)) > 0) {
-            baos.write(buffer, 0, len);
-        }
-        baos.flush();
-        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        return readString(new Utf8StreamReader(is), term);
     }
 
     /**
@@ -124,7 +112,7 @@ public class PStringUtils {
      * @throws IOException
      */
     public static String readString(Reader is) throws IOException {
-        return readString(is, '\n');
+        return readString(is, '\0');
     }
 
     /**
@@ -144,7 +132,35 @@ public class PStringUtils {
             if (ch == term) break;
             baos.write(ch);
         }
-        baos.flush();
+
+        return baos.toString();
+    }
+
+    /**
+     * Read next string from input stream.
+     *
+     * @param is The reader to read characters from.
+     * @param term Terminator character.
+     * @return The string up until, but not including the terminator.
+     * @throws IOException
+     */
+    public static String readString(Reader is, String term) throws IOException {
+        CharArrayWriter baos = new CharArrayWriter();
+
+        int ch_int;
+        char last = term.charAt(term.length() - 1);
+        while ((ch_int = is.read()) >= 0) {
+            final char ch = (char) ch_int;
+            baos.write(ch);
+            if (ch == last && baos.size() >= term.length()) {
+                String tmp = baos.toString();
+                System.err.println("tmp: \"" + tmp + "\"");
+                System.err.println("tmp: \"" + tmp.substring(tmp.length() - term.length()) + "\"");
+                if (tmp.substring(tmp.length() - term.length()).equals(term)) {
+                    return tmp.substring(0, tmp.length() - term.length());
+                }
+            }
+        }
 
         return baos.toString();
     }

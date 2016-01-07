@@ -79,6 +79,7 @@ public class Compiler {
             System.err.println();
             cli.printUsage(System.err);
         } catch (ParseException e) {
+            e.printStackTrace();
             if (e.getLine() != null) {
                 System.err.format("Error at line %d, pos %d-%d: %s\n" +
                                   "    %s\n" +

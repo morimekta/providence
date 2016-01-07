@@ -61,11 +61,10 @@ public class Utf8StreamReaderTest {
         byte[] data = original.getBytes(StandardCharsets.UTF_8);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        Utf8StreamReader reader = new Utf8StreamReader(bais);
 
-        assertEquals('ü', (char) reader.read());
-        assertEquals('$', (char) reader.read());
-        assertEquals('Ѹ', (char) reader.read());
-        assertEquals('~', (char) bais.read());
+        assertEquals('ü', (char) new Utf8StreamReader(bais).read());
+        assertEquals('$', (char) new Utf8StreamReader(bais).read());
+        assertEquals('Ѹ', (char) new Utf8StreamReader(bais).read());
+        assertEquals('~', (char) new Utf8StreamReader(bais).read());
     }
 }

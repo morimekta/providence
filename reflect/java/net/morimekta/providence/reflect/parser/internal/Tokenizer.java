@@ -19,22 +19,20 @@
 
 package net.morimekta.providence.reflect.parser.internal;
 
-import java.io.BufferedInputStream;
+import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.util.PStringUtils;
+import net.morimekta.providence.util.io.Utf8StreamReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.util.PStringUtils;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 24.09.15
  */
 public class Tokenizer {
-    private final static int MARK_LIMIT = 1024;
-
-    private final BufferedInputStream mIn;
+    private final Utf8StreamReader mIn;
 
     private int mLine;
     private int mPos;
@@ -50,7 +48,7 @@ public class Tokenizer {
     private Token mNextToken;
 
     public Tokenizer(InputStream in) throws IOException {
-        mIn = new BufferedInputStream(in);
+        mIn = new Utf8StreamReader(in);
 
         mLine = 1;
         mPos = 0;
@@ -194,7 +192,6 @@ public class Tokenizer {
                     mLineBuilder = new StringBuilder();
 
                     Token token = mkToken(builder, startPos);
-                    mIn.mark(MARK_LIMIT);
                     ++mLine;
                     mPos = 0;
                     if (token != null) {
@@ -223,13 +220,13 @@ public class Tokenizer {
             return mLines.get(line - 1);
         } else {
             // Next line...
-            int pos = mPos;
-            mIn.reset();
-            String l = PStringUtils.readString(mIn, "\n");
-            mIn.reset();
-            mIn.skip(pos);
-            return l;
+            mLineBuilder.append(PStringUtils.readString(mIn, '\n'));
+            return mLineBuilder.toString();
         }
+    }
+
+    public String readUntil(char terminator) throws IOException {
+        return PStringUtils.readString(mIn, terminator);
     }
 
     public String readUntil(String terminator) throws IOException {
