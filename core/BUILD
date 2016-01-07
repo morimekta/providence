@@ -9,7 +9,7 @@ java_library(
 java_thrift(
   name = 'generated',
   srcs = glob(['res/definitions/*.thrift']),
-  options = ['--android'],
+  options = ['--android', '--jackson'],
   visibility = ['//visibility:public'],
 )
 
@@ -18,6 +18,9 @@ java_test(
   srcs = glob(["javatests/**/*.java"]),
   deps = [
     "//third-party:android-util",
+    "//third-party:jackson-annotations",
+    "//third-party:jackson-core",
+    "//third-party:jackson-databind",
     "//third-party:junit",
     ":core",
     ":generated",

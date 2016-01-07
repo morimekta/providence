@@ -84,6 +84,12 @@ def java_thrift(name,
     deps = ['//core:core']
     if '--android' in options:
       deps = deps + ['//third-party:android-util']
+    if '--jackson' in options:
+        deps = deps + [
+            '//third-party:jackson-annotations',
+            '//third-party:jackson-databind',
+            '//jackson:jackson',
+        ]
     native.java_library(
         name=name,
         srcs=['__gen_%s' % name],

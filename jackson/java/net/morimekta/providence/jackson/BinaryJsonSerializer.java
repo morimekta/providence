@@ -17,32 +17,22 @@
  * under the License.
  */
 
-package net.morimekta.providence.compiler.format.java2;
+package net.morimekta.providence.jackson;
 
-import org.kohsuke.args4j.Option;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import net.morimekta.providence.Binary;
+
+import java.io.IOException;
 
 /**
- * Options class for java 2 generator.
+ * JSON data-bind serializer for Binary objects.
  */
-public class Java2Options {
-    @Option(name = "--android",
-            usage = "Add android.os.Parcelable support on all structs.")
-    public boolean android = false;
-
-    @Option(name = "--jackson",
-            usage = "Add jackson-databind annotations to all classes.")
-    public boolean jackson = false;
-
-    public enum Containers {
-        // HashSet, HashMap
-        DEFAULT,
-        // LinkedHashSet, LinkedHashMap
-        ORDERED,
-        // TreeSet, TreeMap
-        SORTED,
+public class BinaryJsonSerializer extends JsonSerializer<Binary> {
+    @Override
+    public void serialize(Binary value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        jgen.writeString(value.toBase64());
     }
-
-    @Option(name = "--containers",
-            usage = "Type of containers.")
-    public Containers containers = Containers.DEFAULT;
 }

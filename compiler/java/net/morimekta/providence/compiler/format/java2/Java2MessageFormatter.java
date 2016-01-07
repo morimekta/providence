@@ -1549,6 +1549,12 @@ public class Java2MessageFormatter {
                     writer.appendln(Java2Utils.DEPRECATED);
                 }
             }
+            if (mOptions.jackson) {
+                writer.formatln("@JsonProperty(\"%s\")", field.getName());
+                if (field.getType() == PType.BINARY) {
+                    writer.appendln("@JsonSerialize(using = BinaryJsonSerializer.class) ");
+                }
+            }
             writer.formatln("public %s %s() {",
                             mTypeHelper.getValueType(field.getDescriptor()),
                             camelCase("get", field.getName()))
@@ -1742,6 +1748,9 @@ public class Java2MessageFormatter {
 
     private void appendCreateConstructor(IndentedPrintWriter writer, PStructDescriptor<?, ?> type) {
         if (type.getVariant() == PMessageVariant.STRUCT) {
+            if (mOptions.jackson) {
+                writer.appendln("@JsonCreator");
+            }
             String instanceClass = mTypeHelper.getInstanceClassName(type);
             String spaces = instanceClass.replaceAll("[\\S]", " ");
             writer.formatln("public %s(", mTypeHelper.getInstanceClassName(type))
@@ -1755,6 +1764,12 @@ public class Java2MessageFormatter {
                           .appendln();
                 }
                 String pName = camelCase("p", field.getName());
+                if (mOptions.jackson) {
+                    writer.format("@JsonProperty(\"%s\") ", field.getName());
+                    if (field.getType() == PType.BINARY) {
+                        writer.append("@JsonDeserialize(using = BinaryJsonDeserializer.class) ");
+                    }
+                }
                 writer.format("%s %s", mTypeHelper.getValueType(field.getDescriptor()), pName);
             }
             writer.end()
@@ -1924,10 +1939,20 @@ public class Java2MessageFormatter {
             if (field.hasDefaultValue()) {
                 header.include(PDefaultValueProvider.class.getName());
             }
+            if (mOptions.jackson && field.getType() == PType.BINARY) {
+                header.include("com.fasterxml.jackson.databind.annotation.JsonDeserialize");
+                header.include("com.fasterxml.jackson.databind.annotation.JsonSerialize");
+                header.include("net.morimekta.providence.jackson.BinaryJsonDeserializer");
+                header.include("net.morimekta.providence.jackson.BinaryJsonSerializer");
+            }
         }
         if (mOptions.android) {
             header.include("android.os.Parcel");
             header.include("android.os.Parcelable");
+        }
+        if (mOptions.jackson) {
+            header.include("com.fasterxml.jackson.annotation.JsonCreator");
+            header.include("com.fasterxml.jackson.annotation.JsonProperty");
         }
 
         header.format(writer);

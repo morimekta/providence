@@ -33,6 +33,29 @@ java_library(
     ],
 )
 java_library(
+    name = "jackson-annotations",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@com.fasterxml.jackson.core_jackson-annotations//jar",
+    ],
+)
+java_library(
+    name = "jackson-core",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@com.fasterxml.jackson.core_jackson-core//jar",
+    ],
+)
+java_library(
+    name = "jackson-databind",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@com.fasterxml.jackson.core_jackson-databind//jar",
+        "@com.fasterxml.jackson.core_jackson-annotations//jar",
+        "@com.fasterxml.jackson.core_jackson-core//jar",
+    ],
+)
+java_library(
     name = "javax.ws.rs-api",
     visibility = ["//visibility:public"],
     exports = [
