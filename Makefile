@@ -32,7 +32,7 @@ install: thrift-j2 thrift-j2c
 	cp -f bazel-bin/compiler/providence-compiler_deploy.jar ${HOME}/.local/lib
 	cp -f bazel-bin/converter/providence-converter_deploy.jar ${HOME}/.local/lib
 	cp -f scripts/providence-compiler scripts/providence-converter ${HOME}/.local/bin
-	chmod a+x ${HOME}/.local/bin/thrift-j2 ${HOME}/.local/bin/thrift-j2c
+	chmod a+x ${HOME}/.local/bin/providence-converter ${HOME}/.local/bin/providence-compiler
 	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
 
 .PHONY: *
