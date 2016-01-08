@@ -23,43 +23,7 @@ enum Value {
    TWENTIETH = 10946
 }
 
-struct PrimitiveOptionals {
-    1: optional bool booleanValue;
-    2: optional byte byteValue,
-    3: optional i16 shortValue
-    4: optional i32 integerValue;
-    5: optional i64 longValue,
-    6: optional double doubleValue
-    7: optional string stringValue;
-    8: optional binary binaryValue,
-    9: optional Value enumValue;
-}
-
-struct PrimitiveRequireds {
-    1: required bool booleanValue;
-    2: required byte byteValue,
-    3: required i16 shortValue
-    4: required i32 integerValue;
-    5: required i64 longValue,
-    6: required double doubleValue
-    7: required string stringValue;
-    8: required binary binaryValue,
-    9: required Value enumValue;
-}
-
 struct Primitives {
-    1: bool booleanValue;
-    2: byte byteValue,
-    3: i16 shortValue
-    4: i32 integerValue;
-    5: i64 longValue,
-    6: double doubleValue
-    7: string stringValue;
-    8: binary binaryValue,
-    9: Value enumValue;
-}
-
-union PrimitiveUnion {
     1: bool booleanValue;
     2: byte byteValue,
     3: i16 shortValue

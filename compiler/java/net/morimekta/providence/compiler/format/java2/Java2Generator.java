@@ -60,7 +60,7 @@ public class Java2Generator
         Java2MessageFormatter messageFormatter =
                 new Java2MessageFormatter(mTypeHelper, mOptions);
         Java2EnumFormatter enumFormatter
-                = new Java2EnumFormatter(mTypeHelper);
+                = new Java2EnumFormatter(mTypeHelper, mOptions);
 
         String path = Java2Utils.getPackageClassPath(javaPackage);
 

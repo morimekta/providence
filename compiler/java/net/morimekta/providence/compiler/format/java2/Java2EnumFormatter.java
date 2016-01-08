@@ -32,14 +32,16 @@ import net.morimekta.providence.util.io.IndentedPrintWriter;
  * @since 20.09.15
  */
 public class Java2EnumFormatter {
-    private final Java2TypeHelper mTypeHelper;
+    private final Java2TypeHelper helper;
+    private final Java2Options options;
 
-    public Java2EnumFormatter(Java2TypeHelper helper) {
-        mTypeHelper = helper;
+    public Java2EnumFormatter(Java2TypeHelper helper, Java2Options options) {
+        this.helper = helper;
+        this.options = options;
     }
 
     public void format(IndentedPrintWriter writer, PEnumDescriptor<?> type) throws GeneratorException {
-        Java2HeaderFormatter header = new Java2HeaderFormatter(mTypeHelper.getJavaPackage(type));
+        Java2HeaderFormatter header = new Java2HeaderFormatter(helper.getJavaPackage(type));
 
         header.include(PEnumBuilder.class.getName());
         header.include(PEnumBuilderFactory.class.getName());
@@ -47,9 +49,14 @@ public class Java2EnumFormatter {
         header.include(PEnumDescriptor.class.getName());
         header.include(PEnumDescriptorProvider.class.getName());
 
+        if (options.jackson) {
+            header.include("com.fasterxml.jackson.annotation.JsonCreator");
+            header.include("com.fasterxml.jackson.annotation.JsonValue");
+        }
+
         header.format(writer);
 
-        String simpleClass = mTypeHelper.getInstanceClassName(type);
+        String simpleClass = helper.getInstanceClassName(type);
 
         if (type.getComment() != null) {
             Java2Utils.appendBlockComment(writer, type.getComment());
@@ -93,6 +100,10 @@ public class Java2EnumFormatter {
               .appendln('}')
               .newline();
 
+        if (options.jackson) {
+            writer.appendln("@JsonValue");
+        }
+
         writer.appendln("@Override")
               .appendln("public String getName() {")
               .begin()
@@ -116,6 +127,9 @@ public class Java2EnumFormatter {
               .appendln('}')
               .newline();
 
+        if (options.jackson) {
+            writer.appendln("@JsonCreator");
+        }
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()
               .appendln("switch (name) {")
@@ -141,7 +155,7 @@ public class Java2EnumFormatter {
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
-        String simpleClass = mTypeHelper.getInstanceClassName(type);
+        String simpleClass = helper.getInstanceClassName(type);
 
         writer.formatln("public static final PEnumDescriptor<%s> kDescriptor;", simpleClass)
               .newline();
@@ -216,7 +230,7 @@ public class Java2EnumFormatter {
     }
 
     protected void appendBuilder(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
-        String simpleClass = mTypeHelper.getInstanceClassName(type);
+        String simpleClass = helper.getInstanceClassName(type);
         writer.formatln("public static class _Builder extends PEnumBuilder<%s> {", simpleClass)
               .begin()
               .formatln("%s mValue;", simpleClass)
