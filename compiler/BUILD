@@ -27,7 +27,7 @@ java_test(
 )
 
 java_binary(
-  name = "thrift-j2c",
+  name = "providence-compiler",
   srcs = [
     'java/net/morimekta/providence/compiler/Compiler.java',
   ],

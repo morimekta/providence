@@ -22,16 +22,16 @@ speedtest:
 # --- Under here is for installing the binaries.
 
 thrift-j2:
-	bazel build //converter:thrift-j2_deploy.jar
 
 thrift-j2c:
-	bazel build //compiler:thrift-j2c_deploy.jar
 
 install: thrift-j2 thrift-j2c
+	bazel build //converter:providence-converter_deploy.jar
+	bazel build //compiler:providence-compiler_deploy.jar
 	mkdir -p ${HOME}/.local/bin ${HOME}/.local/lib
-	cp -f bazel-bin/compiler/thrift-j2c_deploy.jar ${HOME}/.local/lib
-	cp -f bazel-bin/converter/thrift-j2_deploy.jar ${HOME}/.local/lib
-	cp -f scripts/thrift-j2 scripts/thrift-j2c ${HOME}/.local/bin
+	cp -f bazel-bin/compiler/providence-compiler_deploy.jar ${HOME}/.local/lib
+	cp -f bazel-bin/converter/providence-converter_deploy.jar ${HOME}/.local/lib
+	cp -f scripts/providence-compiler scripts/providence-converter ${HOME}/.local/bin
 	chmod a+x ${HOME}/.local/bin/thrift-j2 ${HOME}/.local/bin/thrift-j2c
 	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
 
