@@ -197,5 +197,11 @@ public class CException
             }
             return this;
         }
+
+        @Override
+        public Builder clear(int key) {
+            mFields.remove(key);
+            return this;
+        }
     }
 }

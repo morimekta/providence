@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -28,6 +29,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class ThriftDocument
         implements PMessage<ThriftDocument>, Serializable {
+    private final static long serialVersionUID = -5731994850994905187L;
+
     private final String mComment;
     private final String mPackage;
     private final List<String> mIncludes;
@@ -73,7 +76,7 @@ public class ThriftDocument
     }
 
     public int numIncludes() {
-        return mIncludes.size();
+        return mIncludes != null ? mIncludes.size() : 0;
     }
 
     /** include "<package>.thrift" */
@@ -82,7 +85,7 @@ public class ThriftDocument
     }
 
     public int numNamespaces() {
-        return mNamespaces.size();
+        return mNamespaces != null ? mNamespaces.size() : 0;
     }
 
     /** namespace <key> <value> */
@@ -91,7 +94,7 @@ public class ThriftDocument
     }
 
     public int numDecl() {
-        return mDecl.size();
+        return mDecl != null ? mDecl.size() : 0;
     }
 
     public List<Declaration> getDecl() {
@@ -158,11 +161,11 @@ public class ThriftDocument
     @Override
     public int hashCode() {
         return ThriftDocument.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.PACKAGE,mPackage) +
-               PTypeUtils.hashCode(_Field.INCLUDES,mIncludes) +
-               PTypeUtils.hashCode(_Field.NAMESPACES,mNamespaces) +
-               PTypeUtils.hashCode(_Field.DECL,mDecl);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.PACKAGE, mPackage) +
+               PTypeUtils.hashCode(_Field.INCLUDES, mIncludes) +
+               PTypeUtils.hashCode(_Field.NAMESPACES, mNamespaces) +
+               PTypeUtils.hashCode(_Field.DECL, mDecl);
     }
 
     @Override
@@ -321,13 +324,17 @@ public class ThriftDocument
 
     public static class _Builder
             extends PMessageBuilder<ThriftDocument> {
+        private BitSet optionals;
+
         private String mComment;
         private String mPackage;
         private List<String> mIncludes;
         private Map<String,String> mNamespaces;
         private List<Declaration> mDecl;
 
+
         public _Builder() {
+            optionals = new BitSet(5);
             mIncludes = new LinkedList<>();
             mNamespaces = new LinkedHashMap<>();
             mDecl = new LinkedList<>();
@@ -336,44 +343,60 @@ public class ThriftDocument
         public _Builder(ThriftDocument base) {
             this();
 
-            mComment = base.mComment;
-            mPackage = base.mPackage;
-            mIncludes.addAll(base.mIncludes);
-            mNamespaces.putAll(base.mNamespaces);
-            mDecl.addAll(base.mDecl);
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasPackage()) {
+                optionals.set(1);
+                mPackage = base.mPackage;
+            }
+            if (base.numIncludes() > 0) {
+                optionals.set(2);
+                mIncludes.addAll(base.mIncludes);
+            }
+            if (base.numNamespaces() > 0) {
+                optionals.set(3);
+                mNamespaces.putAll(base.mNamespaces);
+            }
+            if (base.numDecl() > 0) {
+                optionals.set(4);
+                mDecl.addAll(base.mDecl);
+            }
         }
 
         /** Must come before the first statement of the header. */
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         /** Deducted from filename in .thrift IDL files. */
         public _Builder setPackage(String value) {
+            optionals.set(1);
             mPackage = value;
             return this;
         }
-
         public _Builder clearPackage() {
+            optionals.set(1, false);
             mPackage = null;
             return this;
         }
-
         /** include "<package>.thrift" */
         public _Builder setIncludes(Collection<String> value) {
+            optionals.set(2);
             mIncludes.clear();
             mIncludes.addAll(value);
             return this;
         }
-
         /** include "<package>.thrift" */
         public _Builder addToIncludes(String... values) {
+            optionals.set(2);
             for (String item : values) {
                 mIncludes.add(item);
             }
@@ -381,35 +404,37 @@ public class ThriftDocument
         }
 
         public _Builder clearIncludes() {
+            optionals.set(2, false);
             mIncludes.clear();
             return this;
         }
-
         /** namespace <key> <value> */
         public _Builder setNamespaces(Map<String,String> value) {
+            optionals.set(3);
             mNamespaces.clear();
             mNamespaces.putAll(value);
             return this;
         }
-
         /** namespace <key> <value> */
-        public _Builder addToNamespaces(String key, String value) {
+        public _Builder putToNamespaces(String key, String value) {
+            optionals.set(3);
             mNamespaces.put(key, value);
             return this;
         }
 
         public _Builder clearNamespaces() {
+            optionals.set(3, false);
             mNamespaces.clear();
             return this;
         }
-
         public _Builder setDecl(Collection<Declaration> value) {
+            optionals.set(4);
             mDecl.clear();
             mDecl.addAll(value);
             return this;
         }
-
         public _Builder addToDecl(Declaration... values) {
+            optionals.set(4);
             for (Declaration item : values) {
                 mDecl.add(item);
             }
@@ -417,12 +442,13 @@ public class ThriftDocument
         }
 
         public _Builder clearDecl() {
+            optionals.set(4, false);
             mDecl.clear();
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setPackage((String) value); break;
@@ -434,8 +460,20 @@ public class ThriftDocument
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearPackage(); break;
+                case 3: clearIncludes(); break;
+                case 4: clearNamespaces(); break;
+                case 5: clearDecl(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mPackage != null;
+            return optionals.get(1);
         }
 
         @Override

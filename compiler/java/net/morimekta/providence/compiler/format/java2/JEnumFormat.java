@@ -31,17 +31,17 @@ import net.morimekta.providence.util.io.IndentedPrintWriter;
  * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
-public class Java2EnumFormatter {
-    private final Java2TypeHelper helper;
-    private final Java2Options options;
+public class JEnumFormat {
+    private final JHelper  helper;
+    private final JOptions options;
 
-    public Java2EnumFormatter(Java2TypeHelper helper, Java2Options options) {
+    public JEnumFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }
 
     public void format(IndentedPrintWriter writer, PEnumDescriptor<?> type) throws GeneratorException {
-        Java2HeaderFormatter header = new Java2HeaderFormatter(helper.getJavaPackage(type));
+        JHeader header = new JHeader(helper.getJavaPackage(type));
 
         header.include(PEnumBuilder.class.getName());
         header.include(PEnumBuilderFactory.class.getName());
@@ -59,15 +59,22 @@ public class Java2EnumFormatter {
         String simpleClass = helper.getInstanceClassName(type);
 
         if (type.getComment() != null) {
-            Java2Utils.appendBlockComment(writer, type.getComment());
-        }
-        if (Java2Utils.hasDeprecatedAnnotation(type.getComment())) {
-            writer.appendln(Java2Utils.DEPRECATED);
+            JUtils.appendBlockComment(writer, type.getComment());
+            if (JAnnotation.isDeprecated(type)) {
+                writer.appendln(JAnnotation.DEPRECATED);
+            }
         }
         writer.formatln("public enum %s implements PEnumValue<%s> {", simpleClass, simpleClass)
               .begin();
 
         for (PEnumValue<?> v : type.getValues()) {
+            /* TODO: The enum value comments are buggy. It attaches to a different enum that it should...
+            if (v.getComment() != null) {
+                JUtils.appendBlockComment(writer, v.getComment());
+                if (JAnnotation.isDeprecated(v)) {
+                    writer.appendln(JAnnotation.DEPRECATED);
+                }
+            } */
             writer.formatln("%s(%d, \"%s\"),", v.getName().toUpperCase(), v.getValue(), v.getName());
         }
         writer.appendln(';')

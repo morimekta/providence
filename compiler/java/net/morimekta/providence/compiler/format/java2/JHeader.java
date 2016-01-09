@@ -29,11 +29,11 @@ import java.util.TreeSet;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class Java2HeaderFormatter {
+public class JHeader {
     private final TreeSet<String> mIncludes;
     private final String          mJavaPackage;
 
-    public Java2HeaderFormatter(String javaPackage) {
+    public JHeader(String javaPackage) {
         mJavaPackage = javaPackage;
         mIncludes = new TreeSet<>();
     }
@@ -63,9 +63,9 @@ public class Java2HeaderFormatter {
         writer.format("package %s;", mJavaPackage)
               .newline();
         // Order of imports:
-        //  - java.*
         //  - android.*
-        //  - org.apache.thrift2.*
+        //  - java.*
+        //  - net.morimekta.providence.*
         //  - *
         for (String include : includes) {
             if (include.startsWith("java.")) {
@@ -90,7 +90,7 @@ public class Java2HeaderFormatter {
             done.clear();
         }
         for (String include : includes) {
-            if (include.startsWith("org.apache.thrift2.")) {
+            if (include.startsWith("net.morimekta.providence.")) {
                 writer.formatln("import %s;", include);
                 done.add(include);
             }

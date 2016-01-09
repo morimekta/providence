@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,6 +30,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class ServiceType
         implements PMessage<ServiceType>, Serializable {
+    private final static long serialVersionUID = 789757775761432238L;
+
     private final String mComment;
     private final String mName;
     private final String mExtend;
@@ -76,7 +79,7 @@ public class ServiceType
     }
 
     public int numMethods() {
-        return mMethods.size();
+        return mMethods != null ? mMethods.size() : 0;
     }
 
     public List<ServiceMethod> getMethods() {
@@ -139,10 +142,10 @@ public class ServiceType
     @Override
     public int hashCode() {
         return ServiceType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.EXTEND,mExtend) +
-               PTypeUtils.hashCode(_Field.METHODS,mMethods);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.EXTEND, mExtend) +
+               PTypeUtils.hashCode(_Field.METHODS, mMethods);
     }
 
     @Override
@@ -298,61 +301,78 @@ public class ServiceType
 
     public static class _Builder
             extends PMessageBuilder<ServiceType> {
+        private BitSet optionals;
+
         private String mComment;
         private String mName;
         private String mExtend;
         private List<ServiceMethod> mMethods;
 
+
         public _Builder() {
+            optionals = new BitSet(4);
             mMethods = new LinkedList<>();
         }
 
         public _Builder(ServiceType base) {
             this();
 
-            mComment = base.mComment;
-            mName = base.mName;
-            mExtend = base.mExtend;
-            mMethods.addAll(base.mMethods);
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasName()) {
+                optionals.set(1);
+                mName = base.mName;
+            }
+            if (base.hasExtend()) {
+                optionals.set(2);
+                mExtend = base.mExtend;
+            }
+            if (base.numMethods() > 0) {
+                optionals.set(3);
+                mMethods.addAll(base.mMethods);
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(1);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(1, false);
             mName = null;
             return this;
         }
-
         public _Builder setExtend(String value) {
+            optionals.set(2);
             mExtend = value;
             return this;
         }
-
         public _Builder clearExtend() {
+            optionals.set(2, false);
             mExtend = null;
             return this;
         }
-
         public _Builder setMethods(Collection<ServiceMethod> value) {
+            optionals.set(3);
             mMethods.clear();
             mMethods.addAll(value);
             return this;
         }
-
         public _Builder addToMethods(ServiceMethod... values) {
+            optionals.set(3);
             for (ServiceMethod item : values) {
                 mMethods.add(item);
             }
@@ -360,12 +380,13 @@ public class ServiceType
         }
 
         public _Builder clearMethods() {
+            optionals.set(3, false);
             mMethods.clear();
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
@@ -376,8 +397,19 @@ public class ServiceType
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearName(); break;
+                case 3: clearExtend(); break;
+                case 4: clearMethods(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mName != null;
+            return optionals.get(1);
         }
 
         @Override

@@ -24,7 +24,7 @@ import org.kohsuke.args4j.Option;
 /**
  * Options class for java 2 generator.
  */
-public class Java2Options {
+public class JOptions {
     @Option(name = "--android",
             usage = "Add android.os.Parcelable support on all structs.")
     public boolean android = false;

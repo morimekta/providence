@@ -11,13 +11,13 @@ def gen_thrift(name,
     native.genrule(
         name=name,
         cmd='TMP=$$(mktemp -d);' +
-            '$(location //compiler:thrift-j2c) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
+            '$(location //compiler:providence-compiler) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
             '$(location //tools/jdk:jar) cf $@ -C $$TMP .;' +
             'rm -rf $$TMP',
         srcs=srcs,
         outs=['%s.%s' % (name, extension)],
         tools=[
-            '//compiler:thrift-j2c',
+            '//compiler:providence-compiler',
             '//tools/jdk:jar',
         ],
         local=1,

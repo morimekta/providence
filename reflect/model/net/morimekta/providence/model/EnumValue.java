@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -20,6 +21,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class EnumValue
         implements PMessage<EnumValue>, Serializable {
+    private final static long serialVersionUID = -4079600082644582517L;
+
     private final static int kDefaultValue = 0;
 
     private final String mComment;
@@ -29,11 +32,7 @@ public class EnumValue
     private EnumValue(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
-        if (builder.mValue != null) {
-            mValue = builder.mValue;
-        } else {
-            mValue = kDefaultValue;
-        }
+        mValue = builder.mValue;
     }
 
     public EnumValue(String pComment,
@@ -61,7 +60,7 @@ public class EnumValue
     }
 
     public boolean hasValue() {
-        return true;
+        return mValue != kDefaultValue;
     }
 
     public int getValue() {
@@ -120,9 +119,9 @@ public class EnumValue
     @Override
     public int hashCode() {
         return EnumValue.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.VALUE,mValue);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.VALUE, mValue);
     }
 
     @Override
@@ -275,53 +274,66 @@ public class EnumValue
 
     public static class _Builder
             extends PMessageBuilder<EnumValue> {
+        private BitSet optionals;
+
         private String mComment;
         private String mName;
-        private Integer mValue;
+        private int mValue;
+
 
         public _Builder() {
+            optionals = new BitSet(3);
+            mValue = kDefaultValue;
         }
 
         public _Builder(EnumValue base) {
             this();
 
-            mComment = base.mComment;
-            mName = base.mName;
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasName()) {
+                optionals.set(1);
+                mName = base.mName;
+            }
+            optionals.set(2);
             mValue = base.mValue;
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(1);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(1, false);
             mName = null;
             return this;
         }
-
         public _Builder setValue(int value) {
+            optionals.set(2);
             mValue = value;
             return this;
         }
-
         public _Builder clearValue() {
-            mValue = null;
+            optionals.set(2, false);
+            mValue = kDefaultValue;
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
@@ -331,8 +343,18 @@ public class EnumValue
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearName(); break;
+                case 3: clearValue(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mName != null;
+            return optionals.get(1);
         }
 
         @Override

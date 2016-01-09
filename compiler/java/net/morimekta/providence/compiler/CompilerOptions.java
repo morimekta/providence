@@ -19,8 +19,8 @@
 
 package net.morimekta.providence.compiler;
 
-import net.morimekta.providence.compiler.format.java2.Java2Generator;
-import net.morimekta.providence.compiler.format.java2.Java2Options;
+import net.morimekta.providence.compiler.format.java2.JGenerator;
+import net.morimekta.providence.compiler.format.java2.JOptions;
 import net.morimekta.providence.compiler.format.json.JsonGenerator;
 import net.morimekta.providence.compiler.format.thrift.ThriftGenerator;
 import net.morimekta.providence.compiler.generator.Generator;
@@ -167,12 +167,12 @@ public class CompilerOptions {
             case json:
                 return new JsonGenerator(getFileManager(cli), loader);
             case java2:
-                Java2Options options = new Java2Options();
+                JOptions options = new JOptions();
                 if (mOptions != null) {
                     CmdLineParser optParser = new CmdLineParser(options);
                     optParser.parseArgument(mOptions.split(":"));
                 }
-                return new Java2Generator(getFileManager(cli), loader.getRegistry(), options);
+                return new JGenerator(getFileManager(cli), loader.getRegistry(), options);
             default:
                 throw new CmdLineException(cli, new FormatString("Unknown language %s."), mGenerate.name());
         }

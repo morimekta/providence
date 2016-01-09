@@ -1,5 +1,5 @@
 java_library(
-  name = "protocol",
+  name = "thrift",
   srcs = glob(["java/**/*.java"]),
   deps = [
     "//core:core",

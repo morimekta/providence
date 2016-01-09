@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -32,6 +33,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class ThriftField
         implements PMessage<ThriftField>, Serializable {
+    private final static long serialVersionUID = 5114028868232611868L;
+
     private final static int kDefaultKey = 0;
     private final static Requirement kDefaultRequirement = Requirement.DEFAULT;
 
@@ -44,11 +47,7 @@ public class ThriftField
 
     private ThriftField(_Builder builder) {
         mComment = builder.mComment;
-        if (builder.mKey != null) {
-            mKey = builder.mKey;
-        } else {
-            mKey = kDefaultKey;
-        }
+        mKey = builder.mKey;
         mRequirement = builder.mRequirement;
         mType = builder.mType;
         mName = builder.mName;
@@ -181,12 +180,12 @@ public class ThriftField
     @Override
     public int hashCode() {
         return ThriftField.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.KEY,mKey) +
-               PTypeUtils.hashCode(_Field.REQUIREMENT,mRequirement) +
-               PTypeUtils.hashCode(_Field.TYPE,mType) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.DEFAULT_VALUE,mDefaultValue);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.KEY, mKey) +
+               PTypeUtils.hashCode(_Field.REQUIREMENT, mRequirement) +
+               PTypeUtils.hashCode(_Field.TYPE, mType) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.DEFAULT_VALUE, mDefaultValue);
     }
 
     @Override
@@ -348,89 +347,111 @@ public class ThriftField
 
     public static class _Builder
             extends PMessageBuilder<ThriftField> {
+        private BitSet optionals;
+
         private String mComment;
-        private Integer mKey;
+        private int mKey;
         private Requirement mRequirement;
         private String mType;
         private String mName;
         private String mDefaultValue;
 
+
         public _Builder() {
+            optionals = new BitSet(6);
+            mKey = kDefaultKey;
         }
 
         public _Builder(ThriftField base) {
             this();
 
-            mComment = base.mComment;
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            optionals.set(1);
             mKey = base.mKey;
-            mRequirement = base.mRequirement;
-            mType = base.mType;
-            mName = base.mName;
-            mDefaultValue = base.mDefaultValue;
+            if (base.hasRequirement()) {
+                optionals.set(2);
+                mRequirement = base.mRequirement;
+            }
+            if (base.hasType()) {
+                optionals.set(3);
+                mType = base.mType;
+            }
+            if (base.hasName()) {
+                optionals.set(4);
+                mName = base.mName;
+            }
+            if (base.hasDefaultValue()) {
+                optionals.set(5);
+                mDefaultValue = base.mDefaultValue;
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setKey(int value) {
+            optionals.set(1);
             mKey = value;
             return this;
         }
-
         public _Builder clearKey() {
-            mKey = null;
+            optionals.set(1, false);
+            mKey = kDefaultKey;
             return this;
         }
-
         public _Builder setRequirement(Requirement value) {
+            optionals.set(2);
             mRequirement = value;
             return this;
         }
-
         public _Builder clearRequirement() {
+            optionals.set(2, false);
             mRequirement = null;
             return this;
         }
-
         public _Builder setType(String value) {
+            optionals.set(3);
             mType = value;
             return this;
         }
-
         public _Builder clearType() {
+            optionals.set(3, false);
             mType = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(4);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(4, false);
             mName = null;
             return this;
         }
-
         public _Builder setDefaultValue(String value) {
+            optionals.set(5);
             mDefaultValue = value;
             return this;
         }
-
         public _Builder clearDefaultValue() {
+            optionals.set(5, false);
             mDefaultValue = null;
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setKey((int) value); break;
@@ -443,10 +464,23 @@ public class ThriftField
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearKey(); break;
+                case 3: clearRequirement(); break;
+                case 4: clearType(); break;
+                case 5: clearName(); break;
+                case 6: clearDefaultValue(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mKey != null &&
-                   mType != null &&
-                   mName != null;
+            return optionals.get(1) &&
+                   optionals.get(3) &&
+                   optionals.get(4);
         }
 
         @Override

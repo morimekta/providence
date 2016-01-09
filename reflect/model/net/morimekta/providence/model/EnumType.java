@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -29,6 +30,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class EnumType
         implements PMessage<EnumType>, Serializable {
+    private final static long serialVersionUID = 5720337451968926862L;
+
     private final String mComment;
     private final String mName;
     private final List<EnumValue> mValues;
@@ -64,7 +67,7 @@ public class EnumType
     }
 
     public int numValues() {
-        return mValues.size();
+        return mValues != null ? mValues.size() : 0;
     }
 
     public List<EnumValue> getValues() {
@@ -123,9 +126,9 @@ public class EnumType
     @Override
     public int hashCode() {
         return EnumType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.VALUES,mValues);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.VALUES, mValues);
     }
 
     @Override
@@ -278,49 +281,63 @@ public class EnumType
 
     public static class _Builder
             extends PMessageBuilder<EnumType> {
+        private BitSet optionals;
+
         private String mComment;
         private String mName;
         private List<EnumValue> mValues;
 
+
         public _Builder() {
+            optionals = new BitSet(3);
             mValues = new LinkedList<>();
         }
 
         public _Builder(EnumType base) {
             this();
 
-            mComment = base.mComment;
-            mName = base.mName;
-            mValues.addAll(base.mValues);
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasName()) {
+                optionals.set(1);
+                mName = base.mName;
+            }
+            if (base.numValues() > 0) {
+                optionals.set(2);
+                mValues.addAll(base.mValues);
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(1);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(1, false);
             mName = null;
             return this;
         }
-
         public _Builder setValues(Collection<EnumValue> value) {
+            optionals.set(2);
             mValues.clear();
             mValues.addAll(value);
             return this;
         }
-
         public _Builder addToValues(EnumValue... values) {
+            optionals.set(2);
             for (EnumValue item : values) {
                 mValues.add(item);
             }
@@ -328,12 +345,13 @@ public class EnumType
         }
 
         public _Builder clearValues() {
+            optionals.set(2, false);
             mValues.clear();
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
@@ -343,8 +361,18 @@ public class EnumType
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearName(); break;
+                case 3: clearValues(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mName != null;
+            return optionals.get(1);
         }
 
         @Override

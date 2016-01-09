@@ -45,19 +45,17 @@ import java.util.TreeSet;
 import static net.morimekta.providence.util.PStringUtils.camelCase;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 20.09.15
+ *
  */
-public class Java2TypeHelper {
+public class JHelper {
     public static String packageSeparator     = ".";
-    public static char   packageSeparatorChar = '.';
 
     private final TypeRegistry mRegistry;
 
     private final Class<? extends Set> setClass;
     private final Class<? extends Map> mapClass;
 
-    public Java2TypeHelper(TypeRegistry registry, Java2Options options) {
+    public JHelper(TypeRegistry registry, JOptions options) {
         mRegistry = registry;
 
         switch (options.containers) {
@@ -79,10 +77,10 @@ public class Java2TypeHelper {
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {
         String packageContext = type.getPackageName();
         CDocument document = mRegistry.getDocumentForPackage(packageContext);
-        return Java2Utils.getJavaPackage(document);
+        return JUtils.getJavaPackage(document);
     }
 
-    public String getQualifiedInstanceClassName(PDescriptor type) throws GeneratorException {
+    public String getQualifiedInstanceClassName(PDescriptor<?> type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.class.getName();
@@ -109,7 +107,7 @@ public class Java2TypeHelper {
             case ENUM:
             case MESSAGE:
                 PDeclaredDescriptor<?> dt = (PDeclaredDescriptor<?>) type;
-                return getJavaPackage(dt) + packageSeparator + Java2Utils.getClassName(dt);
+                return getJavaPackage(dt) + packageSeparator + JUtils.getClassName(dt);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
@@ -140,7 +138,7 @@ public class Java2TypeHelper {
                 return LinkedList.class.getSimpleName();
             case ENUM:
             case MESSAGE:
-                return Java2Utils.getClassName((PDeclaredDescriptor<?>) type);
+                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
@@ -160,7 +158,7 @@ public class Java2TypeHelper {
             case ENUM:
             case MESSAGE:
                 PDeclaredDescriptor<?> dt = (PDeclaredDescriptor<?>) type;
-                return getJavaPackage(dt) + "." + Java2Utils.getClassName((PDeclaredDescriptor<?>) type);
+                return getJavaPackage(dt) + "." + JUtils.getClassName((PDeclaredDescriptor<?>) type);
             default:
                 return null;
         }
@@ -202,7 +200,7 @@ public class Java2TypeHelper {
                                      getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
-                return Java2Utils.getClassName((PDeclaredDescriptor<?>) type);
+                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
@@ -243,7 +241,7 @@ public class Java2TypeHelper {
                                      getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
-                return Java2Utils.getClassName((PDeclaredDescriptor<?>) type);
+                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }

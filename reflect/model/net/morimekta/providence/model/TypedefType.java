@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -20,6 +21,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class TypedefType
         implements PMessage<TypedefType>, Serializable {
+    private final static long serialVersionUID = 5431583053440540554L;
+
     private final String mComment;
     private final String mType;
     private final String mName;
@@ -114,9 +117,9 @@ public class TypedefType
     @Override
     public int hashCode() {
         return TypedefType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.TYPE,mType) +
-               PTypeUtils.hashCode(_Field.NAME,mName);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.TYPE, mType) +
+               PTypeUtils.hashCode(_Field.NAME, mName);
     }
 
     @Override
@@ -269,57 +272,81 @@ public class TypedefType
 
     public static class _Builder
             extends PMessageBuilder<TypedefType> {
+        private BitSet optionals;
+
         private String mComment;
         private String mType;
         private String mName;
 
+
         public _Builder() {
+            optionals = new BitSet(3);
         }
 
         public _Builder(TypedefType base) {
             this();
 
-            mComment = base.mComment;
-            mType = base.mType;
-            mName = base.mName;
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasType()) {
+                optionals.set(1);
+                mType = base.mType;
+            }
+            if (base.hasName()) {
+                optionals.set(2);
+                mName = base.mName;
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setType(String value) {
+            optionals.set(1);
             mType = value;
             return this;
         }
-
         public _Builder clearType() {
+            optionals.set(1, false);
             mType = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(2);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(2, false);
             mName = null;
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setType((String) value); break;
                 case 3: setName((String) value); break;
+            }
+            return this;
+        }
+
+        @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearType(); break;
+                case 3: clearName(); break;
             }
             return this;
         }

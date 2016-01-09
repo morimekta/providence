@@ -27,16 +27,12 @@ import net.morimekta.providence.util.PStringUtils;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class Java2Utils {
-    private static final Pattern DEPRECATED_RE = Pattern.compile("[@][Dd]eprecated\\b", Pattern.MULTILINE);
-    protected static final String DEPRECATED = "@Deprecated";
-
+public class JUtils {
     public static long generateSerialVersionUID(PStructDescriptor<?,?> type) {
         String string = type.getVariant().getName() + " " + type.getQualifiedName(null);
 
@@ -46,11 +42,6 @@ public class Java2Utils {
             hash = 4909L * hash + 7919L * string.charAt(i);
         }
         return hash;
-    }
-
-    public static boolean hasDeprecatedAnnotation(String comment) {
-        if (comment == null) return false;
-        return DEPRECATED_RE.matcher(comment).find();
     }
 
     public static String getClassName(PDeclaredDescriptor<?> type) {
@@ -67,7 +58,6 @@ public class Java2Utils {
     }
 
     public static String getPackageClassPath(String javaPackage) throws GeneratorException {
-        System.out.println("PATH OF = " + javaPackage);
         String[] parts = javaPackage.split("[.]");
         return PStringUtils.join(File.separator, parts);
     }

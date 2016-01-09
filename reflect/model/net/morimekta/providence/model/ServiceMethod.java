@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,6 +27,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class ServiceMethod
         implements PMessage<ServiceMethod>, Serializable {
+    private final static long serialVersionUID = -8952857258512990537L;
+
     private final static boolean kDefaultIsOneway = false;
 
     private final String mComment;
@@ -37,11 +40,7 @@ public class ServiceMethod
 
     private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
-        if (builder.mIsOneway != null) {
-            mIsOneway = builder.mIsOneway;
-        } else {
-            mIsOneway = kDefaultIsOneway;
-        }
+        mIsOneway = builder.mIsOneway;
         mReturnType = builder.mReturnType;
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
@@ -71,10 +70,10 @@ public class ServiceMethod
     }
 
     public boolean hasIsOneway() {
-        return true;
+        return mIsOneway != kDefaultIsOneway;
     }
 
-    public boolean getIsOneway() {
+    public boolean isIsOneway() {
         return mIsOneway;
     }
 
@@ -95,7 +94,7 @@ public class ServiceMethod
     }
 
     public int numParams() {
-        return mParams.size();
+        return mParams != null ? mParams.size() : 0;
     }
 
     public List<ThriftField> getParams() {
@@ -103,7 +102,7 @@ public class ServiceMethod
     }
 
     public int numExceptions() {
-        return mExceptions.size();
+        return mExceptions != null ? mExceptions.size() : 0;
     }
 
     public List<ThriftField> getExceptions() {
@@ -140,7 +139,7 @@ public class ServiceMethod
     public Object get(int key) {
         switch(key) {
             case 1: return getComment();
-            case 2: return getIsOneway();
+            case 2: return isIsOneway();
             case 3: return getReturnType();
             case 4: return getName();
             case 5: return getParams();
@@ -174,12 +173,12 @@ public class ServiceMethod
     @Override
     public int hashCode() {
         return ServiceMethod.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.IS_ONEWAY,mIsOneway) +
-               PTypeUtils.hashCode(_Field.RETURN_TYPE,mReturnType) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.PARAMS,mParams) +
-               PTypeUtils.hashCode(_Field.EXCEPTIONS,mExceptions);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.IS_ONEWAY, mIsOneway) +
+               PTypeUtils.hashCode(_Field.RETURN_TYPE, mReturnType) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.PARAMS, mParams) +
+               PTypeUtils.hashCode(_Field.EXCEPTIONS, mExceptions);
     }
 
     @Override
@@ -341,14 +340,19 @@ public class ServiceMethod
 
     public static class _Builder
             extends PMessageBuilder<ServiceMethod> {
+        private BitSet optionals;
+
         private String mComment;
-        private Boolean mIsOneway;
+        private boolean mIsOneway;
         private String mReturnType;
         private String mName;
         private List<ThriftField> mParams;
         private List<ThriftField> mExceptions;
 
+
         public _Builder() {
+            optionals = new BitSet(6);
+            mIsOneway = kDefaultIsOneway;
             mParams = new LinkedList<>();
             mExceptions = new LinkedList<>();
         }
@@ -356,61 +360,78 @@ public class ServiceMethod
         public _Builder(ServiceMethod base) {
             this();
 
-            mComment = base.mComment;
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            optionals.set(1);
             mIsOneway = base.mIsOneway;
-            mReturnType = base.mReturnType;
-            mName = base.mName;
-            mParams.addAll(base.mParams);
-            mExceptions.addAll(base.mExceptions);
+            if (base.hasReturnType()) {
+                optionals.set(2);
+                mReturnType = base.mReturnType;
+            }
+            if (base.hasName()) {
+                optionals.set(3);
+                mName = base.mName;
+            }
+            if (base.numParams() > 0) {
+                optionals.set(4);
+                mParams.addAll(base.mParams);
+            }
+            if (base.numExceptions() > 0) {
+                optionals.set(5);
+                mExceptions.addAll(base.mExceptions);
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setIsOneway(boolean value) {
+            optionals.set(1);
             mIsOneway = value;
             return this;
         }
-
         public _Builder clearIsOneway() {
-            mIsOneway = null;
+            optionals.set(1, false);
+            mIsOneway = kDefaultIsOneway;
             return this;
         }
-
         public _Builder setReturnType(String value) {
+            optionals.set(2);
             mReturnType = value;
             return this;
         }
-
         public _Builder clearReturnType() {
+            optionals.set(2, false);
             mReturnType = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(3);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(3, false);
             mName = null;
             return this;
         }
-
         public _Builder setParams(Collection<ThriftField> value) {
+            optionals.set(4);
             mParams.clear();
             mParams.addAll(value);
             return this;
         }
-
         public _Builder addToParams(ThriftField... values) {
+            optionals.set(4);
             for (ThriftField item : values) {
                 mParams.add(item);
             }
@@ -418,17 +439,18 @@ public class ServiceMethod
         }
 
         public _Builder clearParams() {
+            optionals.set(4, false);
             mParams.clear();
             return this;
         }
-
         public _Builder setExceptions(Collection<ThriftField> value) {
+            optionals.set(5);
             mExceptions.clear();
             mExceptions.addAll(value);
             return this;
         }
-
         public _Builder addToExceptions(ThriftField... values) {
+            optionals.set(5);
             for (ThriftField item : values) {
                 mExceptions.add(item);
             }
@@ -436,12 +458,13 @@ public class ServiceMethod
         }
 
         public _Builder clearExceptions() {
+            optionals.set(5, false);
             mExceptions.clear();
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setIsOneway((boolean) value); break;
@@ -454,8 +477,21 @@ public class ServiceMethod
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearIsOneway(); break;
+                case 3: clearReturnType(); break;
+                case 4: clearName(); break;
+                case 5: clearParams(); break;
+                case 6: clearExceptions(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mName != null;
+            return optionals.get(3);
         }
 
         @Override

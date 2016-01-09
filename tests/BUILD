@@ -2,14 +2,14 @@ load('/thrift', 'java_legacy_thrift')
 load('/thrift', 'java_thrift')
 
 genrule(
-    name = "thrift-idl",
+    name = "thrift-idl_thrift",
     cmd = "cat $(SRCS) | sed s/providence/thrift/ > $(OUTS)",
     srcs = ["resources/providence-idl.thrift"],
     outs = ["thrift-idl.thrift"],
 )
 
 java_thrift(
-    name = "providence",
+    name = "providence-idl",
     srcs = [
         "resources/providence-idl.thrift"
     ],
@@ -19,11 +19,11 @@ java_thrift(
 )
 
 java_legacy_thrift(
-    name = "thrift",
+    name = "thrift-idl",
     srcs = [
         ":thrift-idl.thrift",
     ],
-    flags = [
+    options = [
         "android",
     ]
 )
@@ -35,11 +35,11 @@ java_binary(
     ),
     main_class = 'net.morimekta.generator.GenerateData',
     deps = [
-        ":thrift",
-        ":providence",
-        "//core:core",
-        "//protocol:protocol",
-        "//utils:utils",
+        ":thrift-idl",
+        ":providence-idl",
+        "//core",
+        "//thrift",
+        "//utils",
         "//third-party:args4j",
         "//third-party:slf4j-simple",
         "//third-party:libthrift",
@@ -53,11 +53,11 @@ java_binary(
     ),
     main_class = 'net.morimekta.speedtest.SpeedTest',
     deps = [
-        ":thrift",
-        ":providence",
-        "//core:core",
-        "//protocol:protocol",
-        "//utils:utils",
+        ":thrift-idl",
+        ":providence-idl",
+        "//core",
+        "//thrift",
+        "//utils",
         "//third-party:args4j",
         "//third-party:commons-math3",
         "//third-party:libthrift",

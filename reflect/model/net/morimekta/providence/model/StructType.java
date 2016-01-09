@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -30,6 +31,8 @@ import net.morimekta.providence.util.PTypeUtils;
 @SuppressWarnings("unused")
 public class StructType
         implements PMessage<StructType>, Serializable {
+    private final static long serialVersionUID = -7531050363059752370L;
+
     private final static StructVariant kDefaultVariant = StructVariant.STRUCT;
 
     private final String mComment;
@@ -79,7 +82,7 @@ public class StructType
     }
 
     public int numFields() {
-        return mFields.size();
+        return mFields != null ? mFields.size() : 0;
     }
 
     public List<ThriftField> getFields() {
@@ -142,10 +145,10 @@ public class StructType
     @Override
     public int hashCode() {
         return StructType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT,mComment) +
-               PTypeUtils.hashCode(_Field.VARIANT,mVariant) +
-               PTypeUtils.hashCode(_Field.NAME,mName) +
-               PTypeUtils.hashCode(_Field.FIELDS,mFields);
+               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
+               PTypeUtils.hashCode(_Field.VARIANT, mVariant) +
+               PTypeUtils.hashCode(_Field.NAME, mName) +
+               PTypeUtils.hashCode(_Field.FIELDS, mFields);
     }
 
     @Override
@@ -301,61 +304,78 @@ public class StructType
 
     public static class _Builder
             extends PMessageBuilder<StructType> {
+        private BitSet optionals;
+
         private String mComment;
         private StructVariant mVariant;
         private String mName;
         private List<ThriftField> mFields;
 
+
         public _Builder() {
+            optionals = new BitSet(4);
             mFields = new LinkedList<>();
         }
 
         public _Builder(StructType base) {
             this();
 
-            mComment = base.mComment;
-            mVariant = base.mVariant;
-            mName = base.mName;
-            mFields.addAll(base.mFields);
+            if (base.hasComment()) {
+                optionals.set(0);
+                mComment = base.mComment;
+            }
+            if (base.hasVariant()) {
+                optionals.set(1);
+                mVariant = base.mVariant;
+            }
+            if (base.hasName()) {
+                optionals.set(2);
+                mName = base.mName;
+            }
+            if (base.numFields() > 0) {
+                optionals.set(3);
+                mFields.addAll(base.mFields);
+            }
         }
 
         public _Builder setComment(String value) {
+            optionals.set(0);
             mComment = value;
             return this;
         }
-
         public _Builder clearComment() {
+            optionals.set(0, false);
             mComment = null;
             return this;
         }
-
         public _Builder setVariant(StructVariant value) {
+            optionals.set(1);
             mVariant = value;
             return this;
         }
-
         public _Builder clearVariant() {
+            optionals.set(1, false);
             mVariant = null;
             return this;
         }
-
         public _Builder setName(String value) {
+            optionals.set(2);
             mName = value;
             return this;
         }
-
         public _Builder clearName() {
+            optionals.set(2, false);
             mName = null;
             return this;
         }
-
         public _Builder setFields(Collection<ThriftField> value) {
+            optionals.set(3);
             mFields.clear();
             mFields.addAll(value);
             return this;
         }
-
         public _Builder addToFields(ThriftField... values) {
+            optionals.set(3);
             for (ThriftField item : values) {
                 mFields.add(item);
             }
@@ -363,12 +383,13 @@ public class StructType
         }
 
         public _Builder clearFields() {
+            optionals.set(3, false);
             mFields.clear();
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setVariant((StructVariant) value); break;
@@ -379,8 +400,19 @@ public class StructType
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearComment(); break;
+                case 2: clearVariant(); break;
+                case 3: clearName(); break;
+                case 4: clearFields(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return mName != null;
+            return optionals.get(2);
         }
 
         @Override

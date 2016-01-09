@@ -2,10 +2,10 @@ package net.morimekta.providence.model;
 
 import java.io.Serializable;
 
-import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
@@ -18,7 +18,9 @@ import net.morimekta.providence.util.PTypeUtils;
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
 @SuppressWarnings("unused")
 public class Declaration
-        implements PMessage<Declaration>, Serializable {
+        implements PUnion<Declaration>, Serializable {
+    private final static long serialVersionUID = -6998763195276182553L;
+
     private final EnumType mDeclEnum;
     private final TypedefType mDeclTypedef;
     private final StructType mDeclStruct;
@@ -28,17 +30,37 @@ public class Declaration
 
 
     private Declaration(_Builder builder) {
-        mDeclEnum = builder.mDeclEnum;
-        mDeclTypedef = builder.mDeclTypedef;
-        mDeclStruct = builder.mDeclStruct;
-        mDeclService = builder.mDeclService;
-        mDeclConst = builder.mDeclConst;
-
         tUnionField = builder.tUnionField;
+
+        mDeclEnum = tUnionField == _Field.DECL_ENUM ? builder.mDeclEnum : null;
+        mDeclTypedef = tUnionField == _Field.DECL_TYPEDEF ? builder.mDeclTypedef : null;
+        mDeclStruct = tUnionField == _Field.DECL_STRUCT ? builder.mDeclStruct : null;
+        mDeclService = tUnionField == _Field.DECL_SERVICE ? builder.mDeclService : null;
+        mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
+    }
+
+    public Declaration withDeclEnum(EnumType value) {
+        return new _Builder().setDeclEnum(value).build();
+    }
+
+    public Declaration withDeclTypedef(TypedefType value) {
+        return new _Builder().setDeclTypedef(value).build();
+    }
+
+    public Declaration withDeclStruct(StructType value) {
+        return new _Builder().setDeclStruct(value).build();
+    }
+
+    public Declaration withDeclService(ServiceType value) {
+        return new _Builder().setDeclService(value).build();
+    }
+
+    public Declaration withDeclConst(ThriftField value) {
+        return new _Builder().setDeclConst(value).build();
     }
 
     public boolean hasDeclEnum() {
-        return mDeclEnum != null;
+        return tUnionField == _Field.DECL_ENUM && mDeclEnum != null;
     }
 
     public EnumType getDeclEnum() {
@@ -46,7 +68,7 @@ public class Declaration
     }
 
     public boolean hasDeclTypedef() {
-        return mDeclTypedef != null;
+        return tUnionField == _Field.DECL_TYPEDEF && mDeclTypedef != null;
     }
 
     public TypedefType getDeclTypedef() {
@@ -54,7 +76,7 @@ public class Declaration
     }
 
     public boolean hasDeclStruct() {
-        return mDeclStruct != null;
+        return tUnionField == _Field.DECL_STRUCT && mDeclStruct != null;
     }
 
     public StructType getDeclStruct() {
@@ -62,7 +84,7 @@ public class Declaration
     }
 
     public boolean hasDeclService() {
-        return mDeclService != null;
+        return tUnionField == _Field.DECL_SERVICE && mDeclService != null;
     }
 
     public ServiceType getDeclService() {
@@ -70,13 +92,14 @@ public class Declaration
     }
 
     public boolean hasDeclConst() {
-        return mDeclConst != null;
+        return tUnionField == _Field.DECL_CONST && mDeclConst != null;
     }
 
     public ThriftField getDeclConst() {
         return mDeclConst;
     }
 
+    @Override
     public _Field unionField() {
         return tUnionField;
     }
@@ -141,11 +164,11 @@ public class Declaration
     @Override
     public int hashCode() {
         return Declaration.class.hashCode() +
-               PTypeUtils.hashCode(_Field.DECL_ENUM,mDeclEnum) +
-               PTypeUtils.hashCode(_Field.DECL_TYPEDEF,mDeclTypedef) +
-               PTypeUtils.hashCode(_Field.DECL_STRUCT,mDeclStruct) +
-               PTypeUtils.hashCode(_Field.DECL_SERVICE,mDeclService) +
-               PTypeUtils.hashCode(_Field.DECL_CONST,mDeclConst);
+               PTypeUtils.hashCode(_Field.DECL_ENUM, mDeclEnum) +
+               PTypeUtils.hashCode(_Field.DECL_TYPEDEF, mDeclTypedef) +
+               PTypeUtils.hashCode(_Field.DECL_STRUCT, mDeclStruct) +
+               PTypeUtils.hashCode(_Field.DECL_SERVICE, mDeclService) +
+               PTypeUtils.hashCode(_Field.DECL_CONST, mDeclConst);
     }
 
     @Override
@@ -304,12 +327,13 @@ public class Declaration
 
     public static class _Builder
             extends PMessageBuilder<Declaration> {
+        private _Field tUnionField;
+
         private EnumType mDeclEnum;
         private TypedefType mDeclTypedef;
         private StructType mDeclStruct;
         private ServiceType mDeclService;
         private ThriftField mDeclConst;
-        private _Field tUnionField;
 
 
         public _Builder() {
@@ -318,13 +342,13 @@ public class Declaration
         public _Builder(Declaration base) {
             this();
 
+            tUnionField = base.tUnionField;
+
             mDeclEnum = base.mDeclEnum;
             mDeclTypedef = base.mDeclTypedef;
             mDeclStruct = base.mDeclStruct;
             mDeclService = base.mDeclService;
             mDeclConst = base.mDeclConst;
-
-            tUnionField = base.tUnionField;
         }
 
         public _Builder setDeclEnum(EnumType value) {
@@ -332,63 +356,54 @@ public class Declaration
             mDeclEnum = value;
             return this;
         }
-
         public _Builder clearDeclEnum() {
-            if (mDeclEnum != null) tUnionField = null;
+            if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
             mDeclEnum = null;
             return this;
         }
-
         public _Builder setDeclTypedef(TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
         }
-
         public _Builder clearDeclTypedef() {
-            if (mDeclTypedef != null) tUnionField = null;
+            if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
             mDeclTypedef = null;
             return this;
         }
-
         public _Builder setDeclStruct(StructType value) {
             tUnionField = _Field.DECL_STRUCT;
             mDeclStruct = value;
             return this;
         }
-
         public _Builder clearDeclStruct() {
-            if (mDeclStruct != null) tUnionField = null;
+            if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
             mDeclStruct = null;
             return this;
         }
-
         public _Builder setDeclService(ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
             mDeclService = value;
             return this;
         }
-
         public _Builder clearDeclService() {
-            if (mDeclService != null) tUnionField = null;
+            if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
             mDeclService = null;
             return this;
         }
-
         public _Builder setDeclConst(ThriftField value) {
             tUnionField = _Field.DECL_CONST;
             mDeclConst = value;
             return this;
         }
-
         public _Builder clearDeclConst() {
-            if (mDeclConst != null) tUnionField = null;
+            if (tUnionField == _Field.DECL_CONST) tUnionField = null;
             mDeclConst = null;
             return this;
         }
-
         @Override
         public _Builder set(int key, Object value) {
+            if (value == null) return clear(key);
             switch (key) {
                 case 1: setDeclEnum((EnumType) value); break;
                 case 2: setDeclTypedef((TypedefType) value); break;
@@ -400,12 +415,20 @@ public class Declaration
         }
 
         @Override
+        public _Builder clear(int key) {
+            switch (key) {
+                case 1: clearDeclEnum(); break;
+                case 2: clearDeclTypedef(); break;
+                case 3: clearDeclStruct(); break;
+                case 4: clearDeclService(); break;
+                case 5: clearDeclConst(); break;
+            }
+            return this;
+        }
+
+        @Override
         public boolean isValid() {
-            return (mDeclEnum != null ? 1 : 0) +
-                   (mDeclTypedef != null ? 1 : 0) +
-                   (mDeclStruct != null ? 1 : 0) +
-                   (mDeclService != null ? 1 : 0) +
-                   (mDeclConst != null ? 1 : 0) == 1;
+            return tUnionField != null;
         }
 
         @Override

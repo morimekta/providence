@@ -38,11 +38,11 @@ public class PMessageTest {
         assertEquals("calculator.Operand{number:44}", value.toString());
 
         value = Operand.builder()
-                     .setImaginary(Imaginary.builder()
-                                            .setV(12.9)
-                                            .setI(1.0)
-                                            .build())
-                     .build();
+                       .setImaginary(Imaginary.builder()
+                                              .setV(12.9)
+                                              .setI(1.0)
+                                              .build())
+                       .build();
 
         assertEquals("calculator.Operand{imaginary:{v:12.9,i:1}}", value.toString());
     }

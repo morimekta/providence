@@ -154,8 +154,6 @@ public class PStringUtils {
             baos.write(ch);
             if (ch == last && baos.size() >= term.length()) {
                 String tmp = baos.toString();
-                System.err.println("tmp: \"" + tmp + "\"");
-                System.err.println("tmp: \"" + tmp.substring(tmp.length() - term.length()) + "\"");
                 if (tmp.substring(tmp.length() - term.length()).equals(term)) {
                     return tmp.substring(0, tmp.length() - term.length());
                 }

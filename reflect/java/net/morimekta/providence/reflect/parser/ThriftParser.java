@@ -578,11 +578,11 @@ public class ThriftParser implements Parser {
                 field.setRequirement(Requirement.REQUIRED);
                 token = tokenizer.expect("parsing struct " + id.getToken());
             } else if (token.getToken().equals(Keyword.OPTIONAL.keyword)) {
-                field.setRequirement(Requirement.OPTIONAL);
+                if (!union) {
+                    // All union fields are default (not optional), regardless.
+                    field.setRequirement(Requirement.OPTIONAL);
+                }
                 token = tokenizer.expect("parsing struct " + id.getToken());
-            } else if (union) {
-                // All union fields are optional, regardless.
-                field.setRequirement(Requirement.OPTIONAL);
             }
 
             // Get type.... This is mandatory.

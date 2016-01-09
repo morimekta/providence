@@ -8,6 +8,7 @@ enum Values {
   SECOND = 0x03;
   THIRD
   FOURTH = 1
+  /* @deprecated */
   FIFTH
 }
 

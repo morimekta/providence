@@ -158,9 +158,9 @@ public class DocumentConverter {
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
             defaultValue = new ConstProvider(mRegistry,
-                                              field.getType(),
-                                              pkg,
-                                              field.getDefaultValue());
+                                             field.getType(),
+                                             pkg,
+                                             field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
         CField made = new CField<>(

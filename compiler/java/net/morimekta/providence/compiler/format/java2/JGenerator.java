@@ -37,32 +37,32 @@ import java.io.OutputStream;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class Java2Generator
+public class JGenerator
         extends Generator {
-    private final Java2Options mOptions;
+    private final JOptions mOptions;
     TypeRegistry mRegistry;
-    Java2TypeHelper mTypeHelper;
+    JHelper      mTypeHelper;
 
-    public Java2Generator(FileManager manager,
-                          TypeRegistry registry,
-                          Java2Options options) {
+    public JGenerator(FileManager manager,
+                      TypeRegistry registry,
+                      JOptions options) {
         super(manager);
         mRegistry = registry;
         mOptions = options;
 
-        mTypeHelper = new Java2TypeHelper(mRegistry, options);
+        mTypeHelper = new JHelper(mRegistry, options);
     }
 
     @Override
     @SuppressWarnings("resource")
     public void generate(CDocument document) throws IOException, GeneratorException {
-        String javaPackage = Java2Utils.getJavaPackage(document);
-        Java2MessageFormatter messageFormatter =
-                new Java2MessageFormatter(mTypeHelper, mOptions);
-        Java2EnumFormatter enumFormatter
-                = new Java2EnumFormatter(mTypeHelper, mOptions);
+        String javaPackage = JUtils.getJavaPackage(document);
+        JMessageFormat messageFormatter =
+                new JMessageFormat(mTypeHelper, mOptions);
+        JEnumFormat enumFormatter
+                = new JEnumFormat(mTypeHelper, mOptions);
 
-        String path = Java2Utils.getPackageClassPath(javaPackage);
+        String path = JUtils.getPackageClassPath(javaPackage);
 
         for (PDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
             String file = mTypeHelper.getInstanceClassName(type) + ".java";
@@ -82,7 +82,6 @@ public class Java2Generator
                 }
                 writer.flush();
             } finally {
-                System.out.println(path + File.separatorChar + file + " OK");
                 getFileManager().finalize(out);
             }
         }
