@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.Binary;
 import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -28,18 +27,13 @@ import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.compiler.generator.GeneratorException;
-import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
@@ -47,12 +41,8 @@ import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
-import net.morimekta.providence.util.json.JsonException;
-import net.morimekta.providence.util.json.JsonWriter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 
 import static net.morimekta.providence.util.PStringUtils.camelCase;
@@ -77,9 +67,13 @@ public class JMessageFormat {
 
     public void format(IndentedPrintWriter writer, PStructDescriptor<?, ?> descriptor) throws GeneratorException, IOException {
         JMessage message = new JMessage(descriptor, helper);
-        JAndroid android = new JAndroid(writer, helper);
 
-        appendFileHeader(writer, message);
+        JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
+        JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, helper);
+        JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper);
+        JValueFormat values = new JValueFormat(writer, options, helper);
+
+        appendFileHeader(writer, message, values);
 
         if (descriptor.getComment() != null) {
             JUtils.appendBlockComment(writer, descriptor.getComment());
@@ -88,23 +82,36 @@ public class JMessageFormat {
             }
         }
 
-        appendClassDefinitionStart(writer, message);
+        writer.appendln("@SuppressWarnings(\"unused\")")
+              .formatln("public class %s", message.instanceType())
+              .begin(DBL_INDENT);
+        if (message.variant().equals(PMessageVariant.EXCEPTION)) {
+            writer.appendln("extends PException");
+        }
+        writer.formatln("implements %s<%s>, Serializable",
+                        message.isUnion() ? "PUnion" : "PMessage",
+                        message.instanceType());
+        if (options.android) {
+            writer.format(", Parcelable");
+        }
+        writer.append(" {")
+              .end()  // double indent.
+              .begin();
 
-        appendFieldDefaultConstants(writer, message);
+        writer.formatln("private final static long serialVersionUID = %dL;",
+                        JUtils.generateSerialVersionUID(message.descriptor()))
+              .newline();
+
+        values.appendDefaultConstants(message.fields());
+
         appendFieldDeclarations(writer, message);
 
         appendBuilderConstructor(writer, message);
         appendCreateConstructor(writer, message);
 
         appendFieldGetters(writer, message);
-        appendInheritedGetter_has(writer, message);
-        appendInheritedGetter_num(writer, message);
-        appendInheritedGetter_get(writer, message);
 
-        appendObjectCompact(writer, message);
-        appendObjectEquals(writer, message);
-        appendObjectHashCode(writer, message);
-        appendObjectToString(writer);
+        overrides.appendOverrides(message);
 
         appendFieldEnum(writer, message);
         appendDescriptor(writer, message);
@@ -113,57 +120,14 @@ public class JMessageFormat {
             android.appendParcelable(message);
         }
 
-        appendBuilder(writer, message);
-        appendClassDefinitionEnd(writer);
-    }
+        builder.appendBuilder(message);
 
-    private void appendObjectCompact(IndentedPrintWriter writer, JMessage message) {
-        if (message.descriptor().isCompactible()) {
-            writer.appendln("@Override")
-                  .appendln("public boolean isCompact() {")
-                  .begin()
-                  .appendln("boolean missing = false;");
-
-            boolean hasCheck = false;
-            for (JField field : message.fields()) {
-                if (!field.alwaysPresent()) {
-                    hasCheck = true;
-                    writer.formatln("if (%s()) {", field.presence())
-                          .appendln("    if (missing) return false;")
-                          .appendln("} else {")
-                          .appendln("    missing = true;")
-                          .appendln('}');
-                } else if (hasCheck) {
-                    writer.appendln("if (missing) return false;");
-                    hasCheck = false;
-                }
-            }
-
-            writer.appendln("return true;")
-                  .end()
-                  .appendln('}')
-                  .newline();
-        } else {
-            writer.appendln("@Override")
-                  .appendln("public boolean isCompact() {")
-                  .begin()
-                  .appendln("return false;")
-                  .end()
-                  .appendln('}')
-                  .newline();
-        }
-        writer.appendln("@Override")
-              .appendln("public boolean isSimple() {")
-              .begin()
-              .appendln("return descriptor().isSimple();")
-              .end()
+        writer.end()
               .appendln('}')
               .newline();
     }
 
     private void appendBuilder(IndentedPrintWriter writer, JMessage message) {
-        JMessageBuilderFormat format = new JMessageBuilderFormat(writer, helper);
-        format.appendBuilder(message);
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) {
@@ -397,159 +361,6 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendObjectToString(IndentedPrintWriter writer) {
-        writer.appendln("@Override")
-              .appendln("public String toString() {")
-              .begin()
-              .appendln("return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);")
-              .end()
-              .appendln("}")
-              .newline();
-    }
-
-    private void appendObjectEquals(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@Override")
-              .appendln("public boolean equals(Object o) {")
-              .begin()
-              .formatln("if (o == null || !(o instanceof %s)) return false;", message.instanceType());
-        if (message.fields().size() > 0) {
-            boolean first = true;
-            writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
-                  .appendln("return ");
-            for (JField field : message.fields()) {
-                if (first)
-                    first = false;
-                else {
-                    writer.append(" &&")
-                          .appendln("       ");
-                }
-                writer.format("PTypeUtils.equals(%s, other.%s)", field.member(), field.member());
-            }
-            writer.append(';');
-        } else {
-            writer.appendln("return true;");
-        }
-        writer.end()
-              .appendln("}")
-              .newline();
-    }
-
-    private void appendObjectHashCode(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@Override")
-              .appendln("public int hashCode() {")
-              .begin()
-              .formatln("return %s.class.hashCode()", message.instanceType())
-              .begin("       ");
-        for (JField field : message.fields()) {
-            writer.append(" +")
-                  .formatln("PTypeUtils.hashCode(_Field.%s, %s)", field.fieldEnum(), field.member());
-        }
-        writer.end()
-              .append(";")
-              .end()
-              .appendln("}")
-              .newline();
-    }
-
-    private void appendInheritedGetter_has(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@Override")
-              .appendln("public boolean has(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s() > 0;",
-                                field.id(), field.counter());
-            } else if (field.alwaysPresent()) {
-                writer.formatln("case %d: return true;",
-                                field.id());
-            } else {
-                writer.formatln("case %d: return %s();",
-                                field.id(), field.presence());
-            }
-        }
-
-        writer.appendln("default: return false;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendInheritedGetter_num(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@Override")
-              .appendln("public int num(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s();",
-                                field.id(), field.counter());
-            } else if (field.alwaysPresent()) {
-                writer.formatln("case %d: return 1;", field.id());
-            } else {
-                writer.formatln("case %d: return %s() ? 1 : 0;",
-                                field.id(), field.presence());
-            }
-        }
-
-        writer.appendln("default: return 0;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendInheritedGetter_get(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@Override")
-              .appendln("public Object get(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            writer.formatln("case %d: return %s();",
-                            field.id(), field.getter());
-        }
-
-        writer.appendln("default: return null;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendFieldDefaultConstants(IndentedPrintWriter writer, JMessage message)
-            throws GeneratorException {
-        boolean hasDefault = false;
-        for (JField field : message.fields()) {
-            if (field.hasDefault()) {
-                Object defaultValue = helper.getDefaultValue(field.getPField());
-                if (defaultValue != null) {
-                    hasDefault = true;
-                    writer.formatln("private final static %s %s = ",
-                                    field.valueType(),
-                                    field.kDefault())
-                          .begin(DBL_INDENT);
-                    appendTypedValue(writer, defaultValue, field.getPField().getDescriptor());
-                    writer.append(';')
-                          .end();
-                }
-            }
-        }
-
-        if (hasDefault) {
-            writer.newline();
-        }
-    }
-
     private void appendFieldGetters(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         for (JField field : message.fields()) {
             if (message.isUnion()) {
@@ -636,65 +447,6 @@ public class JMessageFormat {
                   .end()
                   .appendln('}')
                   .newline();
-        }
-    }
-
-    private void appendTypedValue(IndentedPrintWriter writer,
-                                  Object defaultValue,
-                                  PDescriptor type)
-            throws GeneratorException {
-        switch (type.getType()) {
-            case BOOL:
-                writer.append(defaultValue.toString());
-                break;
-            case BYTE:
-                writer.append("(byte)").append(defaultValue.toString());
-                break;
-            case I16:
-                writer.append("(short)").append(defaultValue.toString());
-                break;
-            case I32:
-                writer.append(defaultValue.toString());
-                break;
-            case I64:
-                writer.append(defaultValue.toString()).append("L");
-                break;
-            case DOUBLE:
-                writer.append(defaultValue.toString()).append("d");
-                break;
-            case BINARY:
-                writer.append("Binary.wrap(new byte[]{");
-                byte[] bytes = (byte[]) defaultValue;
-                boolean first = true;
-                for (byte b : bytes) {
-                    if (first)
-                        first = false;
-                    else
-                        writer.append(',');
-                    writer.format("0x%02x", b);
-                }
-                writer.append("})");
-                break;
-            case STRING:
-                try {
-                    JsonWriter json = new JsonWriter(writer);
-                    json.value(defaultValue.toString());
-                    json.flush();
-                } catch (JsonException je) {
-                    throw new GeneratorException("Unable to format string value");
-                }
-                break;
-            case ENUM:
-                writer.format("%s.%s", helper.getInstanceClassName(type), defaultValue.toString());
-                break;
-            case MESSAGE:
-                // writer.write("null");
-                throw new GeneratorException("Message structs cannot have default values");
-            case MAP:
-            case LIST:
-            case SET:
-                // writer.write("null");
-                throw new GeneratorException("Collections cannot have default value.");
         }
     }
 
@@ -859,87 +611,7 @@ public class JMessageFormat {
         }
     }
 
-    private void appendClassDefinitionStart(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s", message.instanceType())
-              .begin(DBL_INDENT);
-        if (message.variant().equals(PMessageVariant.EXCEPTION)) {
-            writer.appendln("extends PException");
-        }
-        writer.formatln("implements %s<%s>, Serializable",
-                        message.isUnion() ? "PUnion" : "PMessage",
-                        message.instanceType());
-        if (options.android) {
-            writer.format(", Parcelable");
-        }
-        writer.append(" {")
-              .end()  // double indent.
-              .begin();
-
-        writer.formatln("private final static long serialVersionUID = %dL;",
-                        JUtils.generateSerialVersionUID(message.descriptor()))
-              .newline();
-    }
-
-    private void appendClassDefinitionEnd(IndentedPrintWriter writer) {
-        writer.end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void addTypeImports(JHeader header, PDescriptor<?> descriptor) throws GeneratorException {
-        switch (descriptor.getType()) {
-            case ENUM:
-            case MESSAGE:
-                // Avoid never-ending recursion (with circular contained
-                // structs) by stopping on already included structs and enums.
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                break;
-            case LIST:
-                PContainer<?, ?> lType = (PContainer<?, ?>) descriptor;
-                header.include(java.util.Collection.class.getName());
-                header.include(java.util.Collections.class.getName());
-                header.include(PList.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                addTypeImports(header, lType.itemDescriptor());
-                break;
-            case SET:
-                PContainer<?, ?> sType = (PContainer<?, ?>) descriptor;
-                header.include(java.util.Collection.class.getName());
-                header.include(java.util.Collections.class.getName());
-                header.include(PSet.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                if (options.android) {
-                    header.include(ArrayList.class.getName());
-                }
-                addTypeImports(header, sType.itemDescriptor());
-                break;
-            case MAP:
-                PMap<?, ?> mType = (PMap<?, ?>) descriptor;
-                header.include(java.util.Collections.class.getName());
-                header.include(PMap.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                header.include(helper.getQualifiedInstanceClassName(mType.itemDescriptor()));
-                header.include(helper.getQualifiedInstanceClassName(mType.keyDescriptor()));
-                addTypeImports(header, mType.keyDescriptor());
-                addTypeImports(header, mType.itemDescriptor());
-                break;
-            case BINARY:
-                header.include(Arrays.class.getName());
-                header.include(PPrimitive.class.getName());
-                header.include(Binary.class.getName());
-                break;
-            default:
-                header.include(PPrimitive.class.getName());
-                break;
-        }
-    }
-
-    private void appendFileHeader(IndentedPrintWriter writer, JMessage message)
+    private void appendFileHeader(IndentedPrintWriter writer, JMessage message, JValueFormat values)
             throws GeneratorException, IOException {
         JHeader header = new JHeader(helper.getJavaPackage(message.descriptor()));
         header.include(java.io.Serializable.class.getName());
@@ -974,7 +646,7 @@ public class JMessageFormat {
                 break;
         }
         for (JField field : message.fields()) {
-            addTypeImports(header, field.getPField().getDescriptor());
+            values.addTypeImports(header, field.getPField().getDescriptor());
             if (field.getPField().hasDefaultValue()) {
                 header.include(PDefaultValueProvider.class.getName());
             }

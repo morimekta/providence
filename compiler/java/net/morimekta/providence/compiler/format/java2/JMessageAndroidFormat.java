@@ -11,11 +11,11 @@ import net.morimekta.providence.util.io.IndentedPrintWriter;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class JAndroid {
+public class JMessageAndroidFormat {
     private final IndentedPrintWriter writer;
     private final JHelper helper;
 
-    public JAndroid(IndentedPrintWriter writer, JHelper helper) {
+    public JMessageAndroidFormat(IndentedPrintWriter writer, JHelper helper) {
         this.writer = writer;
         this.helper = helper;
     }

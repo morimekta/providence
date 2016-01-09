@@ -29,7 +29,6 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -63,6 +62,19 @@ public class JGenerator
                 = new JEnumFormat(mTypeHelper, mOptions);
 
         String path = JUtils.getPackageClassPath(javaPackage);
+
+        if (document.getConstants().size() > 0) {
+            String file = mTypeHelper.getConstantsClassName(document) + ".java";
+            OutputStream out = getFileManager().create(path, file);
+            try {
+                JConstantsFormat constFormat =  new JConstantsFormat(mTypeHelper, mOptions);
+                IndentedPrintWriter writer = new IndentedPrintWriter(out);
+                constFormat.format(writer, document);
+                writer.flush();
+            } finally {
+                getFileManager().finalize(out);
+            }
+        }
 
         for (PDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
             String file = mTypeHelper.getInstanceClassName(type) + ".java";

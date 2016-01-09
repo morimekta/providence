@@ -80,6 +80,10 @@ public class JHelper {
         return JUtils.getJavaPackage(document);
     }
 
+    public String getJavaPackage(CDocument document) throws GeneratorException {
+        return JUtils.getJavaPackage(document);
+    }
+
     public String getQualifiedInstanceClassName(PDescriptor<?> type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
