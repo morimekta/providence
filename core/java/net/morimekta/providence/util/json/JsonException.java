@@ -1,5 +1,7 @@
 package net.morimekta.providence.util.json;
 
+import net.morimekta.providence.util.PStringUtils;
+
 import java.io.IOException;
 
 /**
@@ -7,62 +9,59 @@ import java.io.IOException;
  * @since 19.10.15
  */
 public class JsonException extends Exception {
-    private final String mLine;
-    private final int    mLineNo;
-    private final int    mPos;
-    private final int    mLen;
-
-    public JsonException(String message, Throwable cause) {
-        this(message, null, 0, 0, 0);
-        initCause(cause);
-    }
+    private final String line;
+    private final int    lineNo;
+    private final int    linePos;
+    private final int    len;
 
     public JsonException(String message) {
         this(message, null, 0, 0, 0);
     }
 
-    public JsonException(String message, String line, int lineNo, int pos, int len) {
+    public JsonException(String message, String line, int lineNo, int linePos, int len) {
         super(message);
 
-        mLine = line;
-        mLineNo = lineNo;
-        mPos = pos;
-        mLen = len;
+        this.line = line;
+        this.lineNo = lineNo;
+        this.linePos = linePos;
+        this.len = len;
     }
 
     public JsonException(String message, JsonTokenizer tokenizer, JsonToken token) throws IOException {
         super(message);
 
-        mLine = tokenizer.getLine(token.line);
-        mLineNo = token.line;
-        mPos = token.pos;
-        mLen = token.len;
+        line = tokenizer.getLine(token.lineNo);
+        lineNo = token.lineNo;
+        linePos = token.linePos;
+        len = token.length();
     }
 
     public String getLine() {
-        return mLine;
+        return line;
     }
 
     public int getLineNo() {
-        return mLineNo;
+        return lineNo;
     }
 
-    public int getPos() {
-        return mPos;
+    public int getLinePos() {
+        return linePos;
     }
 
     public int getLen() {
-        return mLen;
+        return len;
     }
 
     @Override
     public String toString() {
-        if (mLine != null) {
-            return String.format("JsonException(%s,%d:%d,\"%s\")",
+        if (line != null) {
+            return String.format("%s : %d : %d - %d\n# %s\n#%s^",
                                  getLocalizedMessage(),
                                  getLineNo(),
-                                 getPos(),
-                                 getLine());
+                                 getLinePos(),
+                                 getLen(),
+                                 getLine(),
+                                 PStringUtils.times("-", linePos));
         } else {
             return String.format("JsonException(%s)",
                                  getLocalizedMessage());

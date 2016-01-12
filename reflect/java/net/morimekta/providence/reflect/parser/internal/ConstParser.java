@@ -23,7 +23,13 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.util.PBase64Utils;
 import net.morimekta.providence.util.PStringUtils;
@@ -73,10 +79,10 @@ public class ConstParser {
         PMessageBuilder<T> builder = type.factory().builder();
 
         JsonToken token = tokenizer.expect("parsing message field id");
-        while (!JsonToken.kMapEnd.equals(token.value)) {
-            F field = type.getField(token.value);
+        while (!token.isSymbol(JsonToken.kMapEndChar)) {
+            F field = type.getField(token.substring(1, -1));
             if (field == null) {
-                throw new JsonException("Not a valid field name: " + token.value);
+                throw new JsonException("Not a valid field name: " + token.substring(1, -1));
             }
             tokenizer.expectSymbol("", JsonToken.kKeyValSepChar);
 
@@ -100,57 +106,57 @@ public class ConstParser {
                     } else if (token.isInteger()) {
                         return token.longValue() != 0;
                     }
-                    throw new JsonException("Not boolean value for bool: " + token.value,
+                    throw new JsonException("Not boolean value for bool: " + token.asString(),
                                             tokenizer,
                                             token);
                 case BYTE:
                     if (token.isInteger()) {
                         return token.byteValue();
                     }
-                    throw new JsonException(token.value + " is not a valid byte value.",
+                    throw new JsonException(token.asString() + " is not a valid byte value.",
                                             tokenizer,
                                             token);
                 case I16:
                     if (token.isInteger()) {
                         return token.shortValue();
                     }
-                    throw new JsonException(token.value + " is not a valid short value.",
+                    throw new JsonException(token.asString() + " is not a valid short value.",
                                             tokenizer,
                                             token);
                 case I32:
                     if (token.isInteger()) {
                         return token.intValue();
                     }
-                    throw new JsonException(token.value + " is not a valid int value.",
+                    throw new JsonException(token.asString() + " is not a valid int value.",
                                             tokenizer,
                                             token);
                 case I64:
                     if (token.isInteger()) {
                         return token.longValue();
                     }
-                    throw new JsonException(token.value + " is not a valid long value.",
+                    throw new JsonException(token.asString() + " is not a valid long value.",
                                             tokenizer,
                                             token);
                 case DOUBLE:
                     if (token.isInteger() || token.isReal()) {
                         return token.doubleValue();
                     }
-                    throw new JsonException(token.value + " is not a valid double value.",
+                    throw new JsonException(token.asString() + " is not a valid double value.",
                                             tokenizer,
                                             token);
                 case STRING:
                     if (token.isLiteral()) {
-                        return token.value;
+                        return token.decodeJsonLiteral();
                     }
                     throw new JsonException("Not a valid string value.", tokenizer, token);
                 case BINARY:
                     if (token.isLiteral()) {
-                        return parseBinary(token.value);
+                        return parseBinary(token.substring(1, -1));
                     }
                     throw new JsonException("Not a valid binary value.", tokenizer, token);
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) valueType).factory().builder();
-                    String name = token.value;
+                    String name = token.asString();
                     if (name.startsWith(valueType.getName())) {
                         name = name.substring(valueType.getName().length() + 1);
                     }
@@ -160,7 +166,7 @@ public class ConstParser {
                     }
                     return ev;
                 case MESSAGE:
-                    if (JsonToken.kMapStart.equals(token.value)) {
+                    if (token.isSymbol(JsonToken.kMapStartChar)) {
                         return parseMessage(tokenizer, (PStructDescriptor<?,?>) valueType);
                     }
                     throw new JsonException("Not a valid message start.", tokenizer, token);
@@ -168,11 +174,11 @@ public class ConstParser {
                     PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
                     LinkedList<Object> list = new LinkedList<>();
 
-                    if (!JsonToken.kListStart.equals(token.value)) {
+                    if (!token.isSymbol(JsonToken.kListStartChar)) {
                         throw new JsonException("Not a valid list start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing list item.");
-                    while (!JsonToken.kListEnd.equals(token.value)) {
+                    while (!token.isSymbol(JsonToken.kListEndChar)) {
                         list.add(parseTypedValue(token, tokenizer, itemType));
                         if (tokenizer.expectSymbol("parsing list separator", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
@@ -184,13 +190,13 @@ public class ConstParser {
                     itemType = ((PSet<?>) valueType).itemDescriptor();
                     HashSet<Object> set = new HashSet<>();
 
-                    if (!JsonToken.kListStart.equals(token.value)) {
+                    if (!token.isSymbol(JsonToken.kListStartChar)) {
                         throw new JsonException("Not a valid set list start token.",
                                                 tokenizer,
                                                 token);
                     }
                     token = tokenizer.expect("parsing set list item.");
-                    while (!JsonToken.kListEnd.equals(token.value)) {
+                    while (!token.isSymbol(JsonToken.kListEndChar)) {
                         set.add(parseTypedValue(token, tokenizer, itemType));
                         if (tokenizer.expectSymbol("parsing list separator", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
@@ -204,19 +210,19 @@ public class ConstParser {
                     PDescriptor keyType = ((PMap<?, ?>) valueType).keyDescriptor();
                     HashMap<Object, Object> map = new HashMap<>();
 
-                    if (!JsonToken.kMapStart.equals(token.value)) {
+                    if (!token.isSymbol(JsonToken.kMapStartChar)) {
                         throw new JsonException("Not a valid map start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing map key.");
-                    while (!JsonToken.kMapEnd.equals(token.value)) {
+                    while (!token.isSymbol(JsonToken.kMapEndChar)) {
                         Object key;
                         if (token.isLiteral()) {
-                            key = parsePrimitiveKey(token.value, keyType);
+                            key = parsePrimitiveKey(token.decodeJsonLiteral(), keyType);
                         } else {
                             if (keyType.getType().equals(PType.STRING) || keyType.getType().equals(PType.BINARY)) {
                                 throw new JsonException("Expected string literal for string key", tokenizer, token);
                             }
-                            key = parsePrimitiveKey(token.value, keyType);
+                            key = parsePrimitiveKey(token.asString(), keyType);
                         }
 
                         tokenizer.expectSymbol("parsing map (kv)", JsonToken.kKeyValSepChar);

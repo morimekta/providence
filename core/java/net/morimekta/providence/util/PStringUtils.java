@@ -51,6 +51,24 @@ public class PStringUtils {
     }
 
     /**
+     * Join array with delimiter.
+     *
+     * @param delimiter The delimiter.
+     * @param chars The char array to join.
+     * @return The joined string.
+     */
+    public static String join(String delimiter, char... chars) {
+        StringBuilder builder = new StringBuilder(chars.length + (delimiter.length() * chars.length));
+        boolean first = true;
+        for (char string : chars) {
+            if (first) first = false;
+            else builder.append(delimiter);
+            builder.append(string);
+        }
+        return builder.toString();
+    }
+
+    /**
      * Join collection with delimiter.
      *
      * @param delimiter The delimiter.

@@ -1,13 +1,14 @@
 package net.morimekta.providence.util.json;
 
+import net.morimekta.providence.util.Slice;
+
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 19.10.15
  */
-public class JsonToken {
+public class JsonToken extends Slice {
     public enum Type {
         SYMBOL,   // on of []{},:
         NUMBER,   // numerical
@@ -15,16 +16,9 @@ public class JsonToken {
         TOKEN,    // static token.
     }
 
-    public static final String kNull = "null";
-    public static final String kTrue = "true";
-    public static final String kFalse = "false";
-    public static final String kListStart = "[";
-    public static final String kListEnd = "]";
-    public static final String kListSep = ",";
-    public static final String kMapStart = "{";
-    public static final String kMapEnd = "}";
-    public static final String kKeyValSep = ":";
-    public static final String kQuote = "\"";
+    public static final byte[] kNull = new byte[]{'n', 'u', 'l', 'l'};
+    public static final byte[] kTrue = new byte[]{'t', 'r', 'u', 'e'};
+    public static final byte[] kFalse = new byte[]{'f', 'a', 'l', 's', 'e'};
 
     public static final char kListStartChar = '[';
     public static final char kListEndChar = ']';
@@ -32,41 +26,28 @@ public class JsonToken {
     public static final char kMapStartChar = '{';
     public static final char kMapEndChar = '}';
     public static final char kKeyValSepChar = ':';
-    public static final char kQuoteChar = '\"';
 
-    private static final Pattern RE_LITERAL = Pattern.compile("\".*\"");
-    private static final Pattern RE_BOOLEAN = Pattern.compile("(true|false)");
-    private static final Pattern RE_INTEGER = Pattern.compile(
-            "-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
-    private static final Pattern RE_DOUBLE = Pattern.compile(
-            "-?([0-9]+[.]?([eE][+-]?[0-9]+)?|-?([0-9]+)?[.][0-9]+([eE][+-]?[0-9]+)?)");
+    public final Type type;
+    public final int  lineNo;
+    public final int  linePos;
 
-    public final Type   type;
-    public final int    line;
-    public final int    pos;
-    public final int    len;
-
-    public final String value;
-
-    public static boolean mustUnicodeEscape(int b) {
-        return b < 32 || (127 <= b && b < 160) || (8192 <= b && b < 8448);
-    }
-
-    public JsonToken(Type type, int line, int pos, int len, String value) {
+    public JsonToken(Type type, byte[] lineBuffer, int offset, int len, int lineNo, int linePos) {
+        super(lineBuffer, offset, len);
         this.type = type;
-        this.line = line;
-        this.pos = pos;
-        this.len = len;
-
-        this.value = value;
+        this.lineNo = lineNo;
+        this.linePos = linePos;
     }
 
     public boolean isNull() {
-        return value.equals(kNull);
+        return type == Type.TOKEN && strEquals(kNull);
     }
 
     public boolean isSymbol() {
-        return value.length() == 1 && "{}[],:".indexOf(value.charAt(0)) >= 0;
+        return length() == 1 && "{}[],:".indexOf(charAt(0)) >= 0;
+    }
+
+    public final boolean isSymbol(char c) {
+        return length() == 1 && charAt(0) == c;
     }
 
     public boolean isLiteral() {
@@ -74,83 +55,123 @@ public class JsonToken {
     }
 
     public boolean isBoolean() {
-        return type == Type.TOKEN && RE_BOOLEAN.matcher(value).matches();
+        return type == Type.TOKEN && strEquals(kTrue) || strEquals(kFalse);
     }
 
     public boolean isInteger() {
-        return type == Type.NUMBER && RE_INTEGER.matcher(value).matches();
+        return type == Type.NUMBER && !containsAny((byte) '.', (byte) 'e', (byte) 'E');
     }
 
     public boolean isReal() {
-        return type == Type.NUMBER && RE_DOUBLE.matcher(value).matches();
+        return type == Type.NUMBER;
     }
 
     public boolean booleanValue() {
-        return value.equals(kTrue);
+        return strEquals(kTrue);
     }
 
     public byte byteValue() {
-        if (value.startsWith("0x")) {
-            return Byte.parseByte(value.substring(2), 16);
-        } else if (value.startsWith("0") && value.length() > 1) {
-            return Byte.parseByte(value.substring(1), 8);
-        }
-        return Byte.parseByte(value);
+        return (byte) parseInteger();
     }
 
     public short shortValue() {
-        if (value.startsWith("0x")) {
-            return Short.parseShort(value.substring(2), 16);
-        } else if (value.startsWith("0") && value.length() > 1) {
-            return Short.parseShort(value.substring(1), 8);
-        }
-        return Short.parseShort(value);
+        return (short) parseInteger();
     }
 
     public int intValue() {
-        if (value.startsWith("0x")) {
-            return Integer.parseInt(value.substring(2), 16);
-        } else if (value.startsWith("0") && value.length() > 1) {
-            return Integer.parseInt(value.substring(1), 8);
-        }
-        return Integer.parseInt(value);
+        return (int) parseInteger();
     }
 
     public long longValue() {
-        if (value.startsWith("0x")) {
-            return Long.parseLong(value.substring(2), 16);
-        } else if (value.startsWith("0") && value.length() > 1) {
-            return Long.parseLong(value.substring(1), 8);
-        }
-        return Long.parseLong(value);
-    }
-
-    public float floatValue() {
-        return Float.parseFloat(value);
+        return parseInteger();
     }
 
     public double doubleValue() {
-        return Double.parseDouble(value);
+        return parseDouble();
+    }
+
+    /**
+     * Get the whole slice as a string.
+     * @return Slice decoded as UTF_8 string.
+     */
+    public String decodeJsonLiteral() {
+        // This decodes the string from UTF_8 bytes.
+        String tmp = substring(1, -1);
+        final int l = tmp.length();
+        StringBuilder out = new StringBuilder(l);
+
+        boolean esc = false;
+        for (int i = 0; i < l; ++i) {
+            if (esc) {
+                esc = false;
+
+                char ch = tmp.charAt(i);
+                switch (ch) {
+                    case 'b':
+                        out.append('\b');
+                        break;
+                    case 'f':
+                        out.append('\f');
+                        break;
+                    case 'n':
+                        out.append('\n');
+                        break;
+                    case 'r':
+                        out.append('\r');
+                        break;
+                    case 't':
+                        out.append('\t');
+                        break;
+                    case '\"':
+                    case '\'':
+                    case '\\':
+                        out.append(ch);
+                        break;
+                    case 'u':
+                        if (l < i + 5) {
+                            out.append('?');
+                        } else {
+                            String n = tmp.substring(i + 1, i + 5);
+                            int cp = Integer.parseInt(n, 16);
+                            out.append((char) cp);
+                        }
+                        i += 4;  // skipping 4 more characters.
+                        break;
+                    default:
+                        out.append('?');
+                        break;
+                }
+            } else if (tmp.charAt(i) == '\\') {
+                esc = true;
+            } else {
+                out.append(tmp.charAt(i));
+            }
+        }
+        return out.toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(JsonToken.class, type, line, pos, len, value);
+        return Objects.hash(toString(), type, lineNo);
     }
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof JsonToken)) return false;
         JsonToken other = (JsonToken) o;
 
-        return Objects.equals(value, other.value) &&
-               Objects.equals(line, other.line) &&
-               Objects.equals(pos, other.pos) &&
-               Objects.equals(len, other.len);
+        return super.equals(o) &&
+               Objects.equals(lineNo, other.lineNo);
     }
 
     @Override
     public String toString() {
-        return String.format("%s('%s',%d:%d-%d)", type.toString(), value, line, pos, pos + len);
+        return String.format("%s('%s',%d:%d-%d)",
+                             type.toString(),
+                             asString(),
+                             lineNo,
+                             linePos,
+                             linePos + length());
     }
 }

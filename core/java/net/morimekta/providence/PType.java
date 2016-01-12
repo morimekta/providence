@@ -27,20 +27,17 @@ public enum PType {
     VOID(1, "void"),
     BOOL(2, "bool"),
     BYTE(3, "byte"),
-    DOUBLE(4, "double"),
-    // no 5 --> i8 ?
     I16(6, "i16"),
-    // no 7
     I32(8, "i32"),
-    // no 9
     I64(10, "i64"),
+    DOUBLE(4, "double"),
     STRING(11, "string"),
     BINARY(11, "binary"),  // encodes as string.
+    ENUM(8, "enum"),  // encodes as i32
     MESSAGE(12, "message"),
     MAP(13, "map"),
     SET(14, "set"),
     LIST(15, "list"),
-    ENUM(8, "enum"),  // encodes as i32
     ;
 
     // Thrift serialized type ID number.
@@ -88,12 +85,15 @@ public enum PType {
             case "bool": return BOOL;
             case "byte": return BYTE;
             case "double": return DOUBLE;
+            case "i8": return BYTE;
             case "i16": return I16;
             case "i32": return I32;
             case "i64": return I64;
             case "binary": return BINARY;
             case "string": return STRING;
-            case "message": return MESSAGE;
+            case "struct": return MESSAGE;
+            case "union": return MESSAGE;
+            case "exception": return MESSAGE;
             case "map": return MAP;
             case "set": return SET;
             case "list": return LIST;

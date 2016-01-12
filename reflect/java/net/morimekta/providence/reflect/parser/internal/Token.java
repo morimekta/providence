@@ -111,16 +111,12 @@ public class Token {
             ByteArrayInputStream bais = new ByteArrayInputStream(mToken.getBytes(StandardCharsets.UTF_8));
             JsonTokenizer tokenizer = new JsonTokenizer(bais);
             JsonToken token = tokenizer.expect("parsing string literal.");
-            return token.value;
+            return token.decodeJsonLiteral();
         } catch (JsonException e) {
             throw new ParseException("Unable to parse string literal: " + mToken, e);
         } catch (IOException e) {
             throw new ParseException("Unable to read string literal: " + mToken, e);
         }
-    }
-
-    public int keyValue() {
-        return Integer.parseInt(mToken);
     }
 
     public int intValue() {

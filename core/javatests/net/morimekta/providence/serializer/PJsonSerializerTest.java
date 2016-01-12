@@ -68,38 +68,38 @@ public class PJsonSerializerTest {
                                                                            .build())
                                                     .build())
                               .build();
-        mCompactIdJson = "{" +
-                         "    \"1\":4," +
-                         "    \"2\":[" +
-                         "        {\"1\":{" +
-                         "            \"1\":2," +
-                         "            \"2\":[" +
-                         "                {\"2\":1234}," +
-                         "                {\"2\":4.321}" +
-                         "            ]" +
-                         "        }}," +
-                         "        {\"3\":{" +
-                         "            \"1\":1.7," +
-                         "            \"2\":-2" +
-                         "        }}" +
-                         "    ]" +
+        mCompactIdJson = "{\n" +
+                         "    \"1\":4,\n" +
+                         "    \"2\":[\n" +
+                         "        {\"1\":{\n" +
+                         "            \"1\":2,\n" +
+                         "            \"2\":[\n" +
+                         "                {\"2\":1234},\n" +
+                         "                {\"2\":4.321}\n" +
+                         "            ]\n" +
+                         "        }},\n" +
+                         "        {\"3\":{\n" +
+                         "            \"1\":1.7,\n" +
+                         "            \"2\":-2\n" +
+                         "        }}\n" +
+                         "    ]\n" +
                          "}";
-        mCompactNamedJson = "{" +
-                            "    \"operator\":\"MULTIPLY\"," +
-                            "    \"operands\":[" +
-                            "        {\"operation\":{" +
-                            "            \"operator\":\"ADD\"," +
-                            "            \"operands\":[" +
-                            "                {\"number\":1234}," +
-                            "                {\"number\":4.321}" +
-                            "            ]" +
-                            "        }}," +
-                            "        {\"imaginary\":{" +
-                            "            \"v\":1.7," +
-                            "            \"i\":-2" +
-                            "        }}" +
-                            "    ]" +
-                            "}";
+        mCompactNamedJson = "{\n" +
+                            "    \"operator\":\"MULTIPLY\",\n" +
+                            "    \"operands\":[\n" +
+                            "        {\"operation\":{\n" +
+                            "            \"operator\":\"ADD\",\n" +
+                            "            \"operands\":[\n" +
+                            "                {\"number\":1234},\n" +
+                            "                {\"number\":4.321}\n" +
+                            "            ]\n" +
+                            "        }},\n" +
+                            "        {\"imaginary\":{\n" +
+                            "            \"v\":1.7,\n" +
+                            "            \"i\":-2\n" +
+                            "        }}\n" +
+                            "    ]\n" +
+                            "}\n";
 
         mCategory1 = Category.builder()
                              .setName("my_category")
@@ -117,7 +117,7 @@ public class PJsonSerializerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PJsonSerializer serializer = new PJsonSerializer();
 
-        String expectedOutput = mCompactIdJson.replaceAll(" ", "");
+        String expectedOutput = mCompactIdJson.replaceAll("[ \n]", "");
         int expectedLength = serializer.serialize(baos, mOperation);
         assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
         assertEquals(expectedLength, baos.toByteArray().length);
@@ -128,7 +128,7 @@ public class PJsonSerializerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
 
-        String expectedOutput = mCompactNamedJson.replaceAll(" ", "");
+        String expectedOutput = mCompactNamedJson.replaceAll("[ \n]", "");
         int expectedLength = serializer.serialize(baos, mOperation);
         assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
         assertEquals(expectedLength, baos.toByteArray().length);

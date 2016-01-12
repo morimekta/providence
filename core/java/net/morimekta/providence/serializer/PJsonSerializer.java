@@ -106,10 +106,10 @@ public class PJsonSerializer
         NAME
     }
 
-    private final boolean mStrict;
-    private final IdType mIdType;
-    private final IdType mEnumType;
-    private final boolean mPretty;
+    private final boolean readStrict;
+    private final IdType  idType;
+    private final IdType  enumType;
+    private final boolean pretty;
 
     public PJsonSerializer() {
         this(false, IdType.ID, IdType.ID, false);
@@ -123,25 +123,25 @@ public class PJsonSerializer
         this(false, idType, idType, false);
     }
 
-    public PJsonSerializer(boolean strict, IdType idType) {
-        this(strict, idType, idType, false);
+    public PJsonSerializer(boolean readStrict, IdType idType) {
+        this(readStrict, idType, idType, false);
     }
 
     public PJsonSerializer(IdType idType, IdType enumType) {
         this(false, idType, enumType, false);
     }
 
-    public PJsonSerializer(boolean strict, IdType idType, IdType enumType, boolean pretty) {
-        mStrict = strict;
-        mIdType = idType;
-        mEnumType = enumType;
-        mPretty = pretty;
+    public PJsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {
+        this.readStrict = readStrict;
+        this.idType = idType;
+        this.enumType = enumType;
+        this.pretty = pretty;
     }
 
     @Override
     public int serialize(OutputStream output, PMessage<?> message) throws PSerializeException {
         CountingOutputStream counter = new CountingOutputStream(output);
-        JsonWriter jsonWriter = mPretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
+        JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             appendMessage(jsonWriter, message);
             jsonWriter.flush();
@@ -150,7 +150,7 @@ public class PJsonSerializer
         } catch (JsonException e) {
             throw new PSerializeException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to write to stream");
+            throw new PSerializeException(e, "Unable to writeBinary to stream");
         }
     }
 
@@ -167,7 +167,7 @@ public class PJsonSerializer
         } catch (JsonException e) {
             throw new PSerializeException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to write to stream");
+            throw new PSerializeException(e, "Unable to writeBinary to stream");
         }
     }
 
@@ -202,13 +202,13 @@ public class PJsonSerializer
         PMessageBuilder<T> builder = type.factory().builder();
 
         JsonToken token = tokenizer.expect("message key");
-        while (!JsonToken.kMapEnd.equals(token.value)) {
+        while (!token.isSymbol(JsonToken.kMapEndChar)) {
             if (!token.isLiteral()) {
                 throw new JsonException("" + token + " is not a literal.",
                                         tokenizer,
                                         token);
             }
-            String key = token.value;
+            String key = token.substring(1, -1);
             PField<?> field;
             if (PStringUtils.isInteger(key)) {
                 field = type.getField(Integer.parseInt(key));
@@ -222,7 +222,7 @@ public class PJsonSerializer
                                                tokenizer,
                                                field.getDescriptor());
                 builder.set(field.getKey(), value);
-            } else if (mStrict) {
+            } else if (readStrict) {
                 throw new PSerializeException(
                         "Unknown field " + key + " for type " + type.getQualifiedName(null));
             } else {
@@ -235,7 +235,7 @@ public class PJsonSerializer
             token = tokenizer.expect("message entry key.");
         }
 
-        if (mStrict && !builder.isValid()) {
+        if (readStrict && !builder.isValid()) {
             throw new PSerializeException("Type " + type.getName() + " not properly populated");
         }
 
@@ -255,15 +255,15 @@ public class PJsonSerializer
 
         int i = 0;
         JsonToken token = tokenizer.expect("list item");
-        while (!JsonToken.kListEnd.equals(token.value)) {
+        while (!token.isSymbol(JsonToken.kListEndChar)) {
             PField<?> field = type.getField(++i);
 
             if (field != null) {
                 Object value = parseTypedValue(token,
                                                tokenizer,
                                                field.getDescriptor());
-                builder.set(field.getKey(), value);
-            } else if (mStrict) {
+                builder.set(i, value);
+            } else if (readStrict) {
                 throw new PSerializeException(
                         "Compact Field ID " + (i) + " outside field spectrum for type " +
                         type.getQualifiedName(null));
@@ -277,7 +277,7 @@ public class PJsonSerializer
             token = tokenizer.expect("consuming list item");
         }
 
-        if (mStrict && !builder.isValid()) {
+        if (readStrict && !builder.isValid()) {
             throw new PSerializeException("Type " + type.getName() + " not properly populated");
         }
 
@@ -286,33 +286,34 @@ public class PJsonSerializer
 
     private void consume(JsonToken token, JsonTokenizer tokenizer) throws IOException, JsonException {
         if (token.isSymbol()) {
-            switch (token.value) {
-                case JsonToken.kListStart:
+            if (token.charAt(0) == JsonToken.kListStartChar) {
+                token = tokenizer.expect("consuming list item.");
+                while (JsonToken.kListEndChar != token.charAt(0)) {
+                    consume(token, tokenizer);
+                    if (0 == tokenizer.expectSymbol("consuming list (sep)",
+                                                    JsonToken.kListEndChar,
+                                                    JsonToken.kListSepChar)) {
+                        break;
+                    }
                     token = tokenizer.expect("consuming list item.");
-                    while (!JsonToken.kListEnd.equals(token.value)) {
-                        consume(token, tokenizer);
-                        if (tokenizer.expectSymbol("consuming list (sep)", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
-                            break;
-                        }
-                        token = tokenizer.expect("consuming list item.");
+                }
+            } else if (token.charAt(0) == JsonToken.kMapStartChar) {
+                token = tokenizer.expect("consuming map key.");
+                while (JsonToken.kMapEndChar != token.charAt(0)) {
+                    if (!token.isLiteral()) {
+                        throw new JsonException("Unexpected map key format " + token,
+                                                tokenizer,
+                                                token);
                     }
-                    break;
-                case JsonToken.kMapStart:
+                    tokenizer.expectSymbol("consuming map (kv)", JsonToken.kKeyValSepChar);
+                    consume(tokenizer.expect("consuming map value"), tokenizer);
+                    if (0 == tokenizer.expectSymbol("consuming map (sep)",
+                                                    JsonToken.kMapEndChar,
+                                                    JsonToken.kListSepChar)) {
+                        break;
+                    }
                     token = tokenizer.expect("consuming map key.");
-                    while (!JsonToken.kMapEnd.equals(token.value)) {
-                        if (!token.isLiteral()) {
-                            throw new JsonException("Unexpected map key format " + token,
-                                                    tokenizer,
-                                                    token);
-                        }
-                        tokenizer.expectSymbol("consuming map (kv)", JsonToken.kKeyValSepChar);
-                        consume(tokenizer.expect("consuming map value"), tokenizer);
-                        if (tokenizer.expectSymbol("consuming map (sep)", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
-                            break;
-                        }
-                        token = tokenizer.expect("consuming map key.");
-                    }
-                    break;
+                }
             }
         }
         // Otherwise it is a simple value. No need to consume.
@@ -333,97 +334,104 @@ public class PJsonSerializer
                         return cast(token.intValue() != 0);
                     }
                     throw new PSerializeException("Not boolean value for token: " +
-                                                  token.value);
+                                                  token.asString());
                 case BYTE:
                     if (token.isInteger()) {
                         return cast(token.byteValue());
                     }
-                    throw new PSerializeException("Not a valid byte value: " + token.value);
+                    throw new PSerializeException("Not a valid byte value: " + token.asString());
                 case I16:
                     if (token.isInteger()) {
                         return cast(token.shortValue());
                     }
-                    throw new PSerializeException("Not a valid short value: " + token.value);
+                    throw new PSerializeException("Not a valid short value: " + token.asString());
                 case I32:
                     if (token.isInteger()) {
                         return cast(token.intValue());
                     }
-                    throw new PSerializeException("Not a valid int value: " + token.value);
+                    throw new PSerializeException("Not a valid int value: " + token.asString());
                 case I64:
                     if (token.isInteger()) {
                         return cast(token.longValue());
                     }
-                    throw new PSerializeException("Not a valid long value: " + token.value);
+                    throw new PSerializeException("Not a valid long value: " + token.asString());
                 case DOUBLE:
-                    if (token.isInteger() || token.isReal()) {
+                    if (token.isReal()) {
                         return cast(token.doubleValue());
                     }
-                    throw new PSerializeException("Not a valid double value: " + token.value);
+                    throw new PSerializeException("Not a valid double value: " + token.asString());
                 case STRING:
                     if (token.isLiteral()) {
-                        return cast(token.value);
+                        return cast(token.decodeJsonLiteral());
                     }
-                    throw new PSerializeException("Not a valid string value: " + token.value);
+                    throw new PSerializeException("Not a valid string value: " + token.asString());
                 case BINARY:
                     if (token.isLiteral()) {
-                        return cast(Binary.fromBase64(token.value));
+                        return cast(Binary.fromBase64(token.substring(1, -1)));
                     }
-                    throw new PSerializeException("Not a valid binary value: " + token.value);
+                    throw new PSerializeException("Not a valid binary value: " + token.asString());
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).factory().builder();
                     if (token.isInteger()) {
                         eb.setByValue(token.intValue());
                     } else if (token.isLiteral()) {
-                        eb.setByName(token.value);
+                        eb.setByName(token.substring(1, -1));
                     } else {
                         throw new PSerializeException(token.toString() + " is not a enum value type");
                     }
-                    if (mStrict && !eb.isValid()) {
+                    if (readStrict && !eb.isValid()) {
                         throw new PSerializeException(token.toString() + " is not a enum value");
                     }
                     return cast(eb.build());
                 case MESSAGE: {
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) t;
-                    if (token.isSymbol()) {
-                        if (token.value.equals(JsonToken.kMapStart)) {
-                            return cast((Object) parseMessage(tokenizer, st));
-                        } else if (token.value.equals(JsonToken.kListStart)) {
-                            if (st.isCompactible()) {
-                                return cast((Object) parseCompactMessage(tokenizer, st));
-                            } else {
-                                throw new PSerializeException(
-                                        st.getName() + " is not compatible for compact struct notation.");
-                            }
+                    if (token.isSymbol(JsonToken.kMapStartChar)) {
+                        return cast((Object) parseMessage(tokenizer, st));
+                    } else if (token.isSymbol(JsonToken.kListStartChar)) {
+                        if (st.isCompactible()) {
+                            return cast((Object) parseCompactMessage(tokenizer, st));
+                        } else {
+                            throw new PSerializeException(
+                                    st.getName() + " is not compatible for compact struct notation.");
                         }
                     }
                     throw new PSerializeException(token + " not parsable message start.");
                 }
-                case LIST: {
-                    PDescriptor itemType = ((PList<?>) t).itemDescriptor();
-                    if (!token.isSymbol() || !token.value.equals(JsonToken.kListStart)) {
-                        throw new PSerializeException("Incompatible start of list " + token);
+                case MAP: {
+                    PDescriptor<?> itemType = ((PMap<?, ?>) t).itemDescriptor();
+                    PDescriptor<?> keyType = ((PMap<?, ?>) t).keyDescriptor();
+                    if (!token.isSymbol(JsonToken.kMapStartChar)) {
+                        throw new PSerializeException("Incompatible start of map " + token);
                     }
-                    LinkedList<Object> list = new LinkedList<>();
-                    token = tokenizer.expect("List item.");
-                    while (!JsonToken.kListEnd.equals(token.value)) {
-                        list.add(parseTypedValue(token, tokenizer, itemType));
 
-                        if (tokenizer.expectSymbol("expected end of list or separator",
-                                                   JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
+                    LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
+
+                    token = tokenizer.expect("Unexpected end of map");
+                    while (!token.isSymbol(JsonToken.kMapEndChar)) {
+                        if (!token.isLiteral()) {
+                            throw new JsonException("Unexpected map key format " + token + ", must be string.",
+                                                    tokenizer, token);
+                        }
+                        tokenizer.expectSymbol("Map key-val separator", ':');
+
+                        map.put(parseMapKey(token.decodeJsonLiteral(), keyType),
+                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, itemType));
+                        if (tokenizer.expectSymbol("parsing map content (sep).",
+                                                   JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
                             break;
                         }
-                        token = tokenizer.expect("List item.");
+                        token = tokenizer.expect("parsing map key.");
                     }
-                    return cast(list);
+                    return cast(map);
                 }
                 case SET: {
                     PDescriptor<?> itemType = ((PSet<?>) t).itemDescriptor();
-                    if (!token.isSymbol() || !token.value.equals(JsonToken.kListStart)) {
+                    if (!token.isSymbol(JsonToken.kListStartChar)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
                     LinkedHashSet<Object> set = new LinkedHashSet<>();
                     token = tokenizer.expect("List item.");
-                    while (!JsonToken.kListEnd.equals(token.value)) {
+                    while (!token.isSymbol(JsonToken.kListEndChar)) {
                         set.add(parseTypedValue(token, tokenizer, itemType));
 
                         if (tokenizer.expectSymbol("expected end of list or separator",
@@ -434,40 +442,31 @@ public class PJsonSerializer
                     }
                     return cast(set);
                 }
-                case MAP: {
-                    PDescriptor<?> itemType = ((PMap<?, ?>) t).itemDescriptor();
-                    PDescriptor<?> keyType = ((PMap<?, ?>) t).keyDescriptor();
-                    if (!token.isSymbol() || !token.value.equals(JsonToken.kMapStart)) {
-                        throw new PSerializeException("Incompatible start of map " + token);
+                case LIST: {
+                    PDescriptor itemType = ((PList<?>) t).itemDescriptor();
+                    if (!token.isSymbol(JsonToken.kListStartChar)) {
+                        throw new PSerializeException("Incompatible start of list " + token);
                     }
+                    LinkedList<Object> list = new LinkedList<>();
+                    token = tokenizer.expect("List item.");
+                    while (!token.isSymbol(JsonToken.kListEndChar)) {
+                        list.add(parseTypedValue(token, tokenizer, itemType));
 
-                    LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
-
-                    token = tokenizer.expect("Unexpected end of map");
-                    while (!JsonToken.kMapEnd.equals(token.value)) {
-                        if (!token.isLiteral()) {
-                            throw new JsonException("Unexpected map key format " + token + ", must be string.",
-                                                    tokenizer, token);
-                        }
-                        tokenizer.expectSymbol("Map key-val separator", ':');
-
-                        map.put(parseMapKey(token.value, keyType),
-                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, itemType));
-                        if (tokenizer.expectSymbol("parsing map content (sep).",
-                                                   JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
+                        if (tokenizer.expectSymbol("expected end of list or separator",
+                                                   JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
                             break;
                         }
-                        token = tokenizer.expect("parsing map key.");
+                        token = tokenizer.expect("List item.");
                     }
-                    return cast(map);
+                    return cast(list);
                 }
             }
         } catch (JsonException je) {
-            throw new PSerializeException(je, "Unable to parse type value " + token.toString());
+            throw new PSerializeException(je, "Unable to parse type value.");
         } catch (ClassCastException ce) {
             throw new PSerializeException(ce,
-                                          "Serialized type " + token.getClass().getSimpleName() +
-                                          " not compatible with " + t.getQualifiedName(null));
+                                          "Serialized type  not compatible with " +
+                                          t.getQualifiedName(null));
         }
 
         throw new PSerializeException("Unhandled item type " + t.getQualifiedName(null));
@@ -476,19 +475,6 @@ public class PJsonSerializer
     protected Object parseMapKey(String key, PDescriptor keyType) throws PSerializeException {
         try {
             switch (keyType.getType()) {
-                case ENUM:
-                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory().builder();
-                    if (PStringUtils.isInteger(key)) {
-                        eb.setByValue(Integer.parseInt(key));
-                    } else {
-                        eb.setByName(key);
-                    }
-                    if (mStrict && !eb.isValid()) {
-                        throw new PSerializeException(key + " is not a valid enum value for " + keyType
-                                .getQualifiedName(
-                                        null));
-                    }
-                    return eb.build();
                 case BOOL:
                     return Boolean.parseBoolean(key);
                 case BYTE:
@@ -518,6 +504,19 @@ public class PJsonSerializer
                     return key;
                 case BINARY:
                     return Binary.fromBase64(key);
+                case ENUM:
+                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory().builder();
+                    if (PStringUtils.isInteger(key)) {
+                        eb.setByValue(Integer.parseInt(key));
+                    } else {
+                        eb.setByName(key);
+                    }
+                    if (readStrict && !eb.isValid()) {
+                        throw new PSerializeException(key + " is not a valid enum value for " + keyType
+                                .getQualifiedName(
+                                        null));
+                    }
+                    return eb.build();
                 case MESSAGE:
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
@@ -549,7 +548,7 @@ public class PJsonSerializer
             PField field = ((PUnion) message).unionField();
             if (field != null) {
                 Object value = message.get(field.getKey());
-                if (IdType.ID.equals(mIdType)) {
+                if (IdType.ID.equals(idType)) {
                     writer.key(field.getKey());
                 } else {
                     writer.key(field.getName());
@@ -573,7 +572,7 @@ public class PJsonSerializer
                 for (PField<?> field : type.getFields()) {
                     if (message.has(field.getKey())) {
                         Object value = message.get(field.getKey());
-                        if (IdType.ID.equals(mIdType)) {
+                        if (IdType.ID.equals(idType)) {
                             writer.key(field.getKey());
                         } else {
                             writer.key(field.getName());
@@ -589,19 +588,9 @@ public class PJsonSerializer
     protected void appendTypedValue(JsonWriter writer, PDescriptor type, Object value)
             throws PSerializeException, JsonException {
         switch (type.getType()) {
-            case LIST:
-            case SET:
-                writer.array();
-
-                PContainer<?, ?> containerType = (PContainer<?, ?>) type;
-
-                Collection<?> collection = (Collection<?>) value;
-
-                for (Object i : collection) {
-                    appendTypedValue(writer, containerType.itemDescriptor(), i);
-                }
-
-                writer.endArray();
+            case MESSAGE:
+                PMessage<?> message = (PMessage<?>) value;
+                appendMessage(writer, message);
                 break;
             case MAP:
                 writer.object();
@@ -617,9 +606,19 @@ public class PJsonSerializer
 
                 writer.endObject();
                 break;
-            case MESSAGE:
-                PMessage<?> message = (PMessage<?>) value;
-                appendMessage(writer, message);
+            case SET:
+            case LIST:
+                writer.array();
+
+                PContainer<?, ?> containerType = (PContainer<?, ?>) type;
+
+                Collection<?> collection = (Collection<?>) value;
+
+                for (Object i : collection) {
+                    appendTypedValue(writer, containerType.itemDescriptor(), i);
+                }
+
+                writer.endArray();
                 break;
             default:
                 appendPrimitive(writer, value);
@@ -633,7 +632,7 @@ public class PJsonSerializer
      */
     protected void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
         if (primitive instanceof PEnumValue) {
-            if (IdType.ID.equals(mIdType)) {
+            if (IdType.ID.equals(idType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
             } else {
                 writer.key(primitive.toString());
@@ -679,7 +678,7 @@ public class PJsonSerializer
      */
     protected void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
         if (primitive instanceof PEnumValue) {
-            if (IdType.ID.equals(mEnumType)) {
+            if (IdType.ID.equals(enumType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());
             } else {
                 writer.value(primitive.toString());
