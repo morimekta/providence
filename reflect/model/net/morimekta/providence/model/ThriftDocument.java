@@ -416,7 +416,7 @@ public class ThriftDocument
             return this;
         }
         /** namespace <key> <value> */
-        public _Builder putToNamespaces(String key, String value) {
+        public _Builder putInNamespaces(String key, String value) {
             optionals.set(3);
             mNamespaces.put(key, value);
             return this;

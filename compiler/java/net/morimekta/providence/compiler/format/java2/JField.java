@@ -92,7 +92,7 @@ public class JField {
 
     public String adder() {
         if (field.getType() == PType.MAP) {
-            return PStringUtils.camelCase("putTo", field.getName());
+            return PStringUtils.camelCase("putIn", field.getName());
         } else {
             return PStringUtils.camelCase("addTo", field.getName());
         }

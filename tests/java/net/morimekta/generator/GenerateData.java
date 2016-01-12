@@ -10,7 +10,6 @@ import net.morimekta.speedtest.providence.Containers;
 import net.morimekta.speedtest.providence.Primitives;
 import net.morimekta.speedtest.providence.Value;
 import net.morimekta.utils.FormatString;
-
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -331,61 +330,61 @@ public class GenerateData {
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToBooleanMap(rand.nextBoolean(), rand.nextBoolean());
+                    containers.putInBooleanMap(rand.nextBoolean(), rand.nextBoolean());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToByteMap(nextByte(), nextByte());
+                    containers.putInByteMap(nextByte(), nextByte());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToShortMap((short) rand.nextInt(), (short) rand.nextInt());
+                    containers.putInShortMap((short) rand.nextInt(), (short) rand.nextInt());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToIntegerMap(rand.nextInt(), rand.nextInt());
+                    containers.putInIntegerMap(rand.nextInt(), rand.nextInt());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToLongMap(nextLong(), nextLong());
+                    containers.putInLongMap(nextLong(), nextLong());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToDoubleMap(nextDouble(), nextDouble());
+                    containers.putInDoubleMap(nextDouble(), nextDouble());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToBinaryMap(nextBinary(KEY), nextBinary(DATA));
+                    containers.putInBinaryMap(nextBinary(KEY), nextBinary(DATA));
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToStringMap(nextString(KEY), nextString(DATA));
+                    containers.putInStringMap(nextString(KEY), nextString(DATA));
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToEnumMap(nextValue(), nextValue());
+                    containers.putInEnumMap(nextValue(), nextValue());
                 }
             }
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToMessageMap(nextString(KEY), nextPrimitives());
+                    containers.putInMessageMap(nextString(KEY), nextPrimitives());
                 }
             }
 
