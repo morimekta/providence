@@ -19,15 +19,16 @@
 
 package net.morimekta.providence.util;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.morimekta.providence.Binary;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
+
+import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Thrift type utilities.
@@ -36,9 +37,23 @@ import net.morimekta.providence.descriptor.PField;
  * @since 25.08.15
  */
 public class PTypeUtils {
+    public static String toString(double d) {
+        long l = (long) d;
+        if (d == l) {
+            // actually an integer or long value.
+            return Long.toString(l);
+        } else if (d > ((10 << 9) - 1) || (1 / d) > (10 << 6)) {
+            // Scientific notation should be used.
+            return new DecimalFormat("0.#########E0").format(d);
+        } else {
+            return Double.toString(d);
+        }
+    }
+
+
     public static String toString(Binary bytes) {
         if (bytes == null) return NULL;
-        return bytes.toBase64();
+        return String.format("b64(%s)", bytes.toBase64());
     }
 
     public static String toString(Collection<?> collection) {
@@ -79,7 +94,7 @@ public class PTypeUtils {
      */
     public static String toString(PMessage<?> message) {
         if (message == null) return NULL;
-        return new PPrettyPrinter("", "", "").format(message);
+        return message.asString();
     }
 
     public static String toString(Object o) {
@@ -93,6 +108,8 @@ public class PTypeUtils {
             return toString((Binary) o);
         } else if (o instanceof PMessage) {
             return toString((PMessage<?>) o);
+        } else if (o instanceof Double) {
+            return toString(((Double) o).doubleValue());
         } else {
             return o.toString();
         }

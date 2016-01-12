@@ -183,7 +183,52 @@ public class ServiceMethod
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
+        return "model.ServiceMethod" + asString();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+
+        boolean first = true;
+        if (hasComment()) {
+            first = false;
+            out.append("comment:");
+            out.append('\"').append(mComment).append('\"');
+        }
+        if (hasIsOneway()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("is_oneway:");
+            out.append(mIsOneway ? "true" : "false");
+        }
+        if (hasReturnType()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("return_type:");
+            out.append('\"').append(mReturnType).append('\"');
+        }
+        if (hasName()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("name:");
+            out.append('\"').append(mName).append('\"');
+        }
+        if (numParams() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("params:");
+            out.append(PTypeUtils.toString(mParams));
+        }
+        if (numExceptions() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("exceptions:");
+            out.append(PTypeUtils.toString(mExceptions));
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public enum _Field implements PField {

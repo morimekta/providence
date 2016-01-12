@@ -30,6 +30,7 @@ public class JMessageOverridesFormat {
         appendEquals(message);
         appendHashCode(message);
         appendToString(message);
+        appendAsString(message);
     }
 
     private void appendIsCompact(JMessage message) {
@@ -198,7 +199,137 @@ public class JMessageOverridesFormat {
         writer.appendln("@Override")
               .appendln("public String toString() {")
               .begin()
-              .appendln("return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);")
+              .formatln("return \"%s\" + asString();", message.descriptor().getQualifiedName(null))
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendAsString(JMessage message) {
+        writer.appendln("@Override")
+              .appendln("public String asString() {")
+              .begin()
+              .appendln("StringBuilder out = new StringBuilder();")
+              .appendln("out.append(\"{\");")
+              .newline();
+
+        if (message.isUnion()) {
+            writer.appendln("switch (tUnionField) {")
+                  .begin();
+
+            for (JField field : message.fields()) {
+                writer.formatln("case %s: {", field.fieldEnum())
+                      .begin()
+                      .formatln("out.append(\"%s:\");", field.name());
+
+                switch (field.type()) {
+                    case BOOL:
+                        writer.formatln("out.append(%s);", field.member());
+                        break;
+                    case BYTE:
+                        writer.formatln("out.append(%s);", field.member());
+                        break;
+                    case I16:
+                        writer.formatln("out.append(%s);", field.member());
+                        break;
+                    case I32:
+                        writer.formatln("out.append(%s);", field.member());
+                        break;
+                    case I64:
+                        writer.formatln("out.append(%s);", field.member());
+                        break;
+                    case DOUBLE:
+                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        break;
+                    case STRING:
+                        writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
+                        break;
+                    case BINARY:
+                        writer.formatln("out.append(\"b64(\").append(%s.toBase64()).append(')');", field.member());
+                        break;
+                    case ENUM:
+                        writer.formatln("out.append(%s.getName());", field.member());
+                        break;
+                    case MESSAGE:
+                        writer.formatln("out.append(%s.asString());", field.member());
+                        break;
+                    case SET:
+                    case LIST:
+                    case MAP:
+                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        break;
+                }
+
+                writer.appendln("break;")
+                      .end()
+                      .appendln('}');
+            }
+            writer.end()
+                  .appendln('}');
+        } else {
+            writer.appendln("boolean first = true;");
+
+            boolean first = true;
+            for (JField field : message.fields()) {
+                if (field.container()) {
+                    writer.formatln("if (%s() > 0) {", field.counter());
+                } else {
+                    writer.formatln("if (%s()) {", field.presence());
+                }
+                writer.begin();
+                if (first) {
+                    first = false;
+                } else {
+                    writer.appendln("if (!first) out.append(',');");
+                }
+                writer.appendln("first = false;")
+                      .formatln("out.append(\"%s:\");", field.name());
+
+                switch (field.type()) {
+                    case BOOL:
+                        writer.formatln("out.append(%s ? \"true\" : \"false\");", field.member());
+                        break;
+                    case BYTE:
+                        writer.formatln("out.append(Byte.toString(%s));", field.member());
+                        break;
+                    case I16:
+                        writer.formatln("out.append(Short.toString(%s));", field.member());
+                        break;
+                    case I32:
+                        writer.formatln("out.append(Integer.toString(%s));", field.member());
+                        break;
+                    case I64:
+                        writer.formatln("out.append(Long.toString(%s));", field.member());
+                        break;
+                    case DOUBLE:
+                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        break;
+                    case STRING:
+                        writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
+                        break;
+                    case BINARY:
+                        writer.formatln("out.append(\"hex(\").append(%s.toHexString()).append(')');", field.member());
+                        break;
+                    case ENUM:
+                        writer.formatln("out.append(%s.getName());", field.member());
+                        break;
+                    case MESSAGE:
+                        writer.formatln("out.append(%s.asString());", field.member());
+                        break;
+                    case SET:
+                    case LIST:
+                    case MAP:
+                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        break;
+                }
+
+                writer.end()
+                      .appendln('}');
+            }
+        }
+
+        writer.appendln("out.append('}');")
+              .appendln("return out.toString();")
               .end()
               .appendln("}")
               .newline();

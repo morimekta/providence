@@ -173,7 +173,43 @@ public class Declaration
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
+        return "model.Declaration" + asString();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+
+        switch (tUnionField) {
+            case DECL_ENUM: {
+                out.append("decl_enum:");
+                out.append(mDeclEnum.asString());
+                break;
+            }
+            case DECL_TYPEDEF: {
+                out.append("decl_typedef:");
+                out.append(mDeclTypedef.asString());
+                break;
+            }
+            case DECL_STRUCT: {
+                out.append("decl_struct:");
+                out.append(mDeclStruct.asString());
+                break;
+            }
+            case DECL_SERVICE: {
+                out.append("decl_service:");
+                out.append(mDeclService.asString());
+                break;
+            }
+            case DECL_CONST: {
+                out.append("decl_const:");
+                out.append(mDeclConst.asString());
+                break;
+            }
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public enum _Field implements PField {

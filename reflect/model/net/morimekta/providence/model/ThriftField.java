@@ -190,7 +190,52 @@ public class ThriftField
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
+        return "model.ThriftField" + asString();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+
+        boolean first = true;
+        if (hasComment()) {
+            first = false;
+            out.append("comment:");
+            out.append('\"').append(mComment).append('\"');
+        }
+        if (hasKey()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("key:");
+            out.append(Integer.toString(mKey));
+        }
+        if (hasRequirement()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("requirement:");
+            out.append(mRequirement.getName());
+        }
+        if (hasType()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("type:");
+            out.append('\"').append(mType).append('\"');
+        }
+        if (hasName()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("name:");
+            out.append('\"').append(mName).append('\"');
+        }
+        if (hasDefaultValue()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("default_value:");
+            out.append('\"').append(mDefaultValue).append('\"');
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public enum _Field implements PField {

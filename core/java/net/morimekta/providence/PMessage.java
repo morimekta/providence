@@ -64,6 +64,12 @@ public interface PMessage<T extends PMessage<T>>
      */
     boolean isSimple();
 
+    /**
+     * Pure string representation of content. Does not contain type info.
+     * @return String representation.
+     */
+    String asString();
+
     @Override
     PStructDescriptor<T,?> descriptor();
 }

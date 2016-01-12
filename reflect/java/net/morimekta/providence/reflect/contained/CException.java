@@ -152,8 +152,12 @@ public class CException
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) +
-               new PPrettyPrinter("", "", "").format(this);
+        return descriptor().getQualifiedName(null) + asString();
+    }
+
+    @Override
+    public String asString() {
+        return new PPrettyPrinter("", "", "").format(this);
     }
 
     @Override

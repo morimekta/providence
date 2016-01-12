@@ -150,7 +150,40 @@ public class ServiceType
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
+        return "model.ServiceType" + asString();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+
+        boolean first = true;
+        if (hasComment()) {
+            first = false;
+            out.append("comment:");
+            out.append('\"').append(mComment).append('\"');
+        }
+        if (hasName()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("name:");
+            out.append('\"').append(mName).append('\"');
+        }
+        if (hasExtend()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("extend:");
+            out.append('\"').append(mExtend).append('\"');
+        }
+        if (numMethods() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("methods:");
+            out.append(PTypeUtils.toString(mMethods));
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public enum _Field implements PField {

@@ -170,7 +170,46 @@ public class ThriftDocument
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + PTypeUtils.toString(this);
+        return "model.ThriftDocument" + asString();
+    }
+
+    @Override
+    public String asString() {
+        StringBuilder out = new StringBuilder();
+        out.append("{");
+
+        boolean first = true;
+        if (hasComment()) {
+            first = false;
+            out.append("comment:");
+            out.append('\"').append(mComment).append('\"');
+        }
+        if (hasPackage()) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("package:");
+            out.append('\"').append(mPackage).append('\"');
+        }
+        if (numIncludes() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("includes:");
+            out.append(PTypeUtils.toString(mIncludes));
+        }
+        if (numNamespaces() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("namespaces:");
+            out.append(PTypeUtils.toString(mNamespaces));
+        }
+        if (numDecl() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("decl:");
+            out.append(PTypeUtils.toString(mDecl));
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public enum _Field implements PField {
