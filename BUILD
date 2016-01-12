@@ -23,8 +23,10 @@ test_suite(
         '//compiler:test',
         # '//converter:test',
         '//core:test',
+        '//jackson:test',
         '//jax-rs:test',
         '//messageio:test',
         '//reflect:test',
+        '//tests:test',
     ],
 )

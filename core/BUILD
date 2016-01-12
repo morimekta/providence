@@ -17,17 +17,9 @@ java_test(
   name = "test",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
-    "//third-party:android-util",
-    "//third-party:jackson-annotations",
-    "//third-party:jackson-core",
-    "//third-party:jackson-databind",
     "//third-party:junit",
     ":core",
     ":generated",
-  ],
-  resources = [
-    "//third-party:LICENSE-Apache-2.0",
-    "//third-party:LICENSE-MIT",
   ],
   size = 'small',
 )

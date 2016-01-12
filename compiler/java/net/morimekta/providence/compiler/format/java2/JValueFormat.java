@@ -13,7 +13,6 @@ import net.morimekta.providence.util.json.JsonException;
 import net.morimekta.providence.util.json.JsonWriter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,7 +96,6 @@ public class JValueFormat {
                 addTypeImports(header, mType.itemDescriptor());
                 break;
             case BINARY:
-                header.include(Arrays.class.getName());
                 header.include(PPrimitive.class.getName());
                 header.include(Binary.class.getName());
                 break;

@@ -12,9 +12,6 @@ java_thrift(
     name = "providence-idl",
     srcs = [
         "resources/providence-idl.thrift"
-    ],
-    options = [
-        "--android",
     ]
 )
 
@@ -22,11 +19,29 @@ java_legacy_thrift(
     name = "thrift-idl",
     srcs = [
         ":thrift-idl.thrift",
-    ],
-    options = [
-        "android",
     ]
 )
+
+java_test(
+  name = "test",
+  srcs = glob(["javatests/**/*.java"]),
+  deps = [
+    "//third-party:android-util",
+    "//third-party:jackson-annotations",
+    "//third-party:jackson-core",
+    "//third-party:jackson-databind",
+    "//third-party:junit",
+    "//core:core",
+    "//core:generated",
+  ],
+  # Ensures the binaries compile properly.
+  data = [
+    ":generate-data",
+    ":speed-test",
+  ],
+  size = 'small',
+)
+
 
 java_binary(
     name = "generate-data",
@@ -35,7 +50,6 @@ java_binary(
     ),
     main_class = 'net.morimekta.generator.GenerateData',
     deps = [
-        ":thrift-idl",
         ":providence-idl",
         "//core",
         "//thrift",

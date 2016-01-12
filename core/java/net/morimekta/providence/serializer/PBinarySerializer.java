@@ -44,7 +44,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Compact binary serializer. This uses the most isCompact binary format
+ * Compact binary serializer. This uses the most compact binary format
  * allowable.
  * <p/>
  * See data definition file <code>docs/compact-binary.md</code> for format

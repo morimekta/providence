@@ -10,10 +10,11 @@ import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import android.os.Parcel;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests of generated code providing android.os.Parcelable support.
@@ -40,9 +41,9 @@ public class ParcelableTest {
         empty.writeToParcel(parcel, 0);
 
         AllTypes copy = AllTypes.CREATOR.createFromParcel(parcel);
-        Assert.assertEquals(original, copy);
+        assertEquals(original, copy);
         Empty other = Empty.CREATOR.createFromParcel(parcel);
-        Assert.assertEquals(empty, other);
+        assertEquals(empty, other);
     }
 
     @Test
@@ -76,6 +77,6 @@ public class ParcelableTest {
 
         original.writeToParcel(parcel, 0);
         Operation copy = Operation.CREATOR.createFromParcel(parcel);
-        Assert.assertEquals(original, copy);
+        assertEquals(original, copy);
     }
 }

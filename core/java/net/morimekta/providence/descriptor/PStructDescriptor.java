@@ -64,7 +64,7 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
     public abstract F getField(int key);
 
     /**
-     * @return True iff the struct can be (de)serialized with isCompact message
+     * @return True iff the struct can be (de)serialized with compact message
      *         format.
      */
     public boolean isCompactible() {

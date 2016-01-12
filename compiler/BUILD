@@ -23,6 +23,9 @@ java_test(
     "//reflect:reflect",
     "//third-party:junit",
   ],
+  data = [
+    ":providence-compiler",
+  ],
   size = 'small',
 )
 

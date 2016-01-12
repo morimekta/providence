@@ -69,7 +69,7 @@ public class JMessageFormat {
         JMessage message = new JMessage(descriptor, helper);
 
         JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
-        JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, helper);
+        JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, options, helper);
         JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper);
         JValueFormat values = new JValueFormat(writer, options, helper);
 
@@ -80,6 +80,10 @@ public class JMessageFormat {
             if (JAnnotation.isDeprecated(descriptor)) {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
+        }
+
+        if (options.jackson) {
+            writer.appendln("@JsonIgnoreProperties(ignoreUnknown = true)");
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
@@ -662,6 +666,8 @@ public class JMessageFormat {
             header.include("android.os.Parcelable");
         }
         if (options.jackson) {
+            header.include("com.fasterxml.jackson.annotation.JsonIgnore");
+            header.include("com.fasterxml.jackson.annotation.JsonIgnoreProperties");
             header.include("com.fasterxml.jackson.annotation.JsonCreator");
             header.include("com.fasterxml.jackson.annotation.JsonProperty");
         }

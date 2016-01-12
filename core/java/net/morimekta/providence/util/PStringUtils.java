@@ -32,8 +32,6 @@ import java.util.Collection;
  * @since 18.09.15
  */
 public class PStringUtils {
-    private final static int BUFFER_SIZE = 4096; // 2 << 12 / 4k
-
     /**
      * Join set of strings with delimiter.
      *

@@ -7,11 +7,13 @@ import net.morimekta.providence.util.io.IndentedPrintWriter;
  * @since 08.01.16.
  */
 public class JMessageOverridesFormat {
-    IndentedPrintWriter writer;
-    JHelper             helper;
+    private final IndentedPrintWriter writer;
+    private final JOptions            options;
+    private final JHelper             helper;
 
-    public JMessageOverridesFormat(IndentedPrintWriter writer, JHelper helper) {
+    public JMessageOverridesFormat(IndentedPrintWriter writer, JOptions options, JHelper helper) {
         this.writer = writer;
+        this.options = options;
         this.helper = helper;
     }
 
@@ -34,6 +36,9 @@ public class JMessageOverridesFormat {
     }
 
     private void appendIsCompact(JMessage message) {
+        if (options.jackson) {
+            writer.append("@JsonIgnore");
+        }
         writer.appendln("@Override")
               .appendln("public boolean isCompact() {")
               .begin();
@@ -66,6 +71,9 @@ public class JMessageOverridesFormat {
     }
 
     private void appendIsSimple() {
+        if (options.jackson) {
+            writer.append("@JsonIgnore");
+        }
         writer.appendln("@Override")
               .appendln("public boolean isSimple() {")
               .begin()

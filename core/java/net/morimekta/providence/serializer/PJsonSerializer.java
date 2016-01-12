@@ -54,7 +54,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Compact JSON serializer. This uses the most isCompact type-safe JSON format
+ * Compact JSON serializer. This uses the most compact type-safe JSON format
  * allowable. There are two optional variants switching the struct field ID
  * between numeric ID and field name.
  * <p/>
@@ -80,7 +80,7 @@ import java.util.Map;
  * But without formatting spaces. The formatted JSON can be read normally.
  * Binary fields are base64 encoded.
  *
- * This format supports 'isCompact' struct formatting. A isCompact struct is
+ * This format supports 'compact' struct formatting. A compact struct is
  * formatted as a list with fields in order from 1 to N. E.g.:
  *
  * <pre>

@@ -95,7 +95,7 @@ public class Utf8StreamReader
         in.close();
     }
 
-    private static char convert(final int[] arr, final int num) throws IOException {
+    protected static char convert(final int[] arr, final int num) throws IOException {
         int cp = 0;
         switch (num) {
             case 1:
