@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -49,8 +50,28 @@ public class SpeedTest {
         public int entries = 10000;
 
         @Option(name = "--runs",
-                usage = "Number of runs per file.")
+                usage = "Number of runs per file. If negative, never stop")
         public int runs = 1;
+
+        enum Operation {
+            read,
+            write,
+            both,
+        }
+
+        @Option(name = "--op",
+                usage = "Which IO operation to do, or both.")
+        public Operation op = Operation.both;
+
+        enum Engine {
+            providence,
+            thrift,
+            both,
+        }
+
+        @Option(name = "--engine",
+                usage = "Which compiler engine to check, or both.")
+        public Engine engine = Engine.both;
 
         @Option(name = "--cleanup",
                 usage = "Clean up files after testing to avoid disk clutter.")
@@ -124,18 +145,19 @@ public class SpeedTest {
         }
     }
 
-    public enum Format {          //  TJ2    thrift
-        json_pretty("json"),      // 13.65
-        json_named("json"),       // 12.41
-        json("json"),             // 11.52
+    //                                    read         write
+    public enum Format {          //  prov  thrift - prov  thrift
+        json_pretty("json"),      // 13.65         -
+        json_named("json"),       // 12.41         -
+        json("json"),             // 11.52         -
 
-        json_protocol("json"),    //  8.86   10.86
+        json_protocol("json"),    //  8.86   10.86 -
 
-        binary("bin"),            //  2.37
+        binary("bin"),            //  2.37         -
 
-        compact_protocol("bin"),  //  2.44    2.71
-        binary_protocol("bin"),   //  2.05    2.43
-        tuple_protocol("tuples"), //  2.04    1.97
+        compact_protocol("bin"),  //  2.44    2.71 -
+        binary_protocol("bin"),   //  2.05    2.43 -
+        tuple_protocol("tuples"), //  2.04    1.97 -
         ;
 
         String suffix;
@@ -238,8 +260,20 @@ public class SpeedTest {
         System.out.println();
     }
 
+    public File getTestFile(Format format, String variant, int run) {
+        if (options.runs < 0) {
+            // rotate between file [1 .. 10]...
+            return new File(testDir, String.format("%s-%s-%03d.%s", format.name(), variant, ((run - 1) % 10) + 1, format.suffix));
+        } else if (options.op == Options.Operation.read) {
+            // If we test fixed N reads' make only one file.
+            return new File(testDir, String.format("%s-%s.%s", format.name(), variant, format.suffix));
+        } else {
+            return new File(testDir, String.format("%s-%s-%03d.%s", format.name(), variant, run, format.suffix));
+        }
+    }
+
     public CountingOutputStream getTestOutput(Format format, String variant, int run) throws IOException {
-        File outFile = new File(testDir, String.format("%s-%s-%03d.%s", format.name(), variant, run, format.suffix));
+        File outFile = getTestFile(format, variant, run);
         if (options.cleanup) {
             outFile.deleteOnExit();
         }
@@ -251,7 +285,7 @@ public class SpeedTest {
     }
 
     public InputStream getTestInput(Format format, String variant, int run) throws IOException {
-        File inFile = new File(testDir, String.format("%s-%s-%03d.%s", format.name(), variant, run, format.suffix));
+        File inFile = getTestFile(format, variant, run);
         if (!inFile.exists()) {
             throw new IOException("No such test file: " + inFile.getAbsolutePath());
         }
@@ -280,71 +314,78 @@ public class SpeedTest {
 
         long testStart = System.nanoTime();
 
-        // Write test.
-        CountingOutputStream out = getTestOutput(result.format, "v1", run);
-        TProtocol protocol = factory.getProtocol(new TIOStreamTransport(out));
-
-        long writeRunTime = 0;
-
         final int num = thriftContainers.size();
-        for (int i = 0; i < num; ++i) {
-            net.morimekta.speedtest.thrift.Containers containers = thriftContainers.get(i);
 
-            long start = System.nanoTime();
+        if (options.op != Options.Operation.read) {
+            // Write test.
+            CountingOutputStream out = getTestOutput(result.format, "t1", run);
+            TProtocol protocol = factory.getProtocol(new TIOStreamTransport(out));
 
-            if (i != 0) {
-                out.write('\n');
+            long writeRunTime = 0;
+
+            for (int i = 0; i < num; ++i) {
+                net.morimekta.speedtest.thrift.Containers containers = thriftContainers.get(i);
+
+                long start = System.nanoTime();
+
+                if (i != 0) {
+                    out.write('\n');
+                }
+                containers.write(protocol);
+                out.flush();
+
+                long end = System.nanoTime();
+                long writeTime = end - start;
+
+                writeRunTime += writeTime;
+                result.writeStat.addValue(writeTime);
+                result.writeStat.addValue(writeTime);
             }
-            containers.write(protocol);
-            out.flush();
 
-            long end = System.nanoTime();
-            long writeTime = end - start;
+            out.close();
 
-            writeRunTime += writeTime;
-            result.writeStat.addValue(writeTime);
+            result.writeRunStat.addValue(writeRunTime);
         }
 
-        out.close();
+        if (options.op != Options.Operation.write) {
+            // Read test.
+            InputStream in = getTestInput(result.format, "t1", run);
+            TProtocol protocol = factory.getProtocol(new TIOStreamTransport(in));
 
-        result.writeRunStat.addValue(writeRunTime);
+            long readRunTime = 0;
 
-        InputStream in = getTestInput(result.format, "v1", run);
-        protocol = factory.getProtocol(new TIOStreamTransport(in));
+            for (int i = 0; i < num; ++i) {
+                boolean stop = false;
+                net.morimekta.speedtest.thrift.Containers orig = thriftContainers.get(i);
+                net.morimekta.speedtest.thrift.Containers read = new net.morimekta.speedtest.thrift.Containers();
 
-        long readRunTime = 0;
+                long start = System.nanoTime();
 
-        for (int i = 0; i < num; ++i) {
-            boolean stop = false;
-            net.morimekta.speedtest.thrift.Containers orig = thriftContainers.get(i);
-            net.morimekta.speedtest.thrift.Containers read = new net.morimekta.speedtest.thrift.Containers();
+                read.read(protocol);
+                // Check if we have another entry. There should be a separating '\n' char.
+                if (in.read() == -1) {
+                    stop = true;
+                }
 
-            long start = System.nanoTime();
+                long end = System.nanoTime();
+                long readTime = end - start;
 
-            read.read(protocol);
-            // Check if we have another entry. There should be a separating '\n' char.
-            if (in.read() == -1) {
-                stop = true;
+                readRunTime += readTime;
+                result.readStat.addValue(readTime);
+
+                if (!read.equals(orig)) {
+                    ++result.readDiscrepancies;
+                }
+
+                if (stop) {
+                    break;
+                }
             }
 
-            long end = System.nanoTime();
-            long readTime = end - start;
+            in.close();
 
-            readRunTime += readTime;
-            result.readStat.addValue(readTime);
-
-            if (!read.equals(orig)) {
-                ++result.readDiscrepancies;
-            }
-
-            if (stop) {
-                break;
-            }
+            result.readRunStat.addValue(readRunTime);
         }
-
-        in.close();
-
-        result.readRunStat.addValue(readRunTime);
 
         long testEnd = System.nanoTime();
         return (testEnd - testStart) / 1000000;
@@ -382,82 +423,83 @@ public class SpeedTest {
         }
 
         long testStart = System.nanoTime();
+        final int num = thriftContainers.size();
 
         // Write test.
-        CountingOutputStream out = getTestOutput(result.format, "j2", run);
+        if (options.op != Options.Operation.read) {
+            CountingOutputStream out = getTestOutput(result.format, "p2", run);
 
-        long writeRunTime = 0;
-        final int num = thriftContainers.size();
-        for (int i = 0; i < num; ++i) {
-            Containers containers = thriftJ2Containers.get(i);
+            long writeRunTime = 0;
+            for (int i = 0; i < num; ++i) {
+                Containers containers = thriftJ2Containers.get(i);
 
-            long start = System.nanoTime();
+                long start = System.nanoTime();
 
-            if (i != 0) {
-                out.write('\n');
+                if (i != 0) {
+                    out.write('\n');
+                }
+                serializer.serialize(out, containers);
+                out.flush();
+
+                long end = System.nanoTime();
+                long writeTime = end - start;
+
+                writeRunTime += writeTime;
+                result.writeStat.addValue(writeTime);
             }
-            serializer.serialize(out, containers);
-            out.flush();
 
-            long end = System.nanoTime();
-            long writeTime = end - start;
+            out.close();
 
-            writeRunTime += writeTime;
-            result.writeStat.addValue(writeTime);
+            result.writeRunStat.addValue(writeRunTime);
         }
-
-        out.close();
-
-        result.writeRunStat.addValue(writeRunTime);
 
         // Read test
-        InputStream in = getTestInput(result.format, "j2", run);
+        if (options.op != Options.Operation.write) {
+            InputStream in = getTestInput(result.format, "p2", run);
 
-        long readRunTime = 0;
-        for (int i = 0; i < num; ++i) {
-            Containers orig = thriftJ2Containers.get(i);
+            long readRunTime = 0;
+            for (int i = 0; i < num; ++i) {
+                Containers orig = thriftJ2Containers.get(i);
 
-            boolean stop = false;
-            long start = System.nanoTime();
+                boolean stop = false;
+                long start = System.nanoTime();
 
-            Containers read = serializer.deserialize(in, Containers.kDescriptor);
-            if (read == null) {
-                System.out.println("Oops.");
-                break;
+                Containers read = serializer.deserialize(in, Containers.kDescriptor);
+                if (read == null) {
+                    System.out.println("Oops.");
+                    break;
+                }
+                if (in.read() == -1) {
+                    stop = true;
+                }
+
+                long end = System.nanoTime();
+                long readTime = end - start;
+
+                readRunTime += readTime;
+                result.readStat.addValue(readTime);
+
+                if (!read.equals(orig)) {
+                    ++result.readDiscrepancies;
+                }
+
+                if (stop) {
+                    break;
+                }
             }
-            if (in.read() == -1) {
-                stop = true;
-            }
 
-            long end = System.nanoTime();
-            long readTime = end - start;
+            in.close();
 
-            readRunTime += readTime;
-            result.readStat.addValue(readTime);
-
-            if (!read.equals(orig)) {
-                ++result.readDiscrepancies;
-            }
-
-            if (stop) {
-                break;
-            }
+            result.readRunStat.addValue(readRunTime);
         }
-
-        in.close();
-
-        result.readRunStat.addValue(readRunTime);
 
         long testEnd = System.nanoTime();
         return (testEnd - testStart) / 1000000;
     }
 
-    public void runTest(Format format, boolean fullStats) throws IOException, TException, PSerializeException {
-        // First test thrift-j2.
-        Result thriftJ2Result = new Result(format);
-        Result thriftResult = new Result(format);
-
-        for (int run = 1; run <= options.runs; ++run) {
+    public void runTests(Result providenceResult, Result thriftResult, Format format, int run, boolean fullStats)
+            throws IOException, PSerializeException, TException {
+        if (options.engine != Options.Engine.providence) {
             if (format.name().endsWith("_protocol")) {
                 runThriftTest(thriftResult, run);
                 if (fullStats) {
@@ -467,24 +509,110 @@ public class SpeedTest {
                                       Color.CLEAR);
                 }
             }
-            runProvidenceTest(thriftJ2Result, run);
+        }
+        if (options.engine != Options.Engine.thrift) {
+            runProvidenceTest(providenceResult, run);
             if (fullStats) {
-                System.out.format("[providence]%3d:%s\n", run, thriftJ2Result.toString());
+                System.out.format("[providence]%3d:%s\n", run, providenceResult.toString());
+            }
+        }
+    }
+
+    public void runTest(Format format, boolean fullStats) throws IOException, TException, PSerializeException {
+        // First test thrift-p2.
+        if (options.op == Options.Operation.read) {
+            PSerializer serializer;
+            switch (format) {
+                case binary:
+                    serializer = new PBinarySerializer();
+                    break;
+                case binary_protocol:
+                    serializer = new TBinaryProtocolSerializer();
+                    break;
+                case compact_protocol:
+                    serializer = new TCompactProtocolSerializer();
+                    break;
+                case json:
+                    serializer = new PJsonSerializer(PJsonSerializer.IdType.ID);
+                    break;
+                case json_named:
+                    serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
+                    break;
+                case json_pretty:
+                    serializer = new PJsonSerializer(false, PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME, true);
+                    break;
+                case json_protocol:
+                    serializer = new TJsonProtocolSerializer();
+                    break;
+                case tuple_protocol:
+                    serializer = new TTupleProtocolSerializer();
+                    break;
+                default:
+                    throw new IllegalArgumentException("NOOO");
+            }
+
+            File first = getTestFile(format, "p2", 1);
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(first));
+            for (int i = 0; i < options.entries; ++i) {
+                Containers containers = thriftJ2Containers.get(i);
+
+                if (i != 0) {
+                    out.write('\n');
+                }
+                serializer.serialize(out, containers);
+            }
+            out.flush();
+            out.close();
+
+            if (options.runs < 0) {
+                for (int i = 2; i <= 10; ++i) {
+                    File nth = getTestFile(format, "p2", i);
+
+                    Files.copy(first.toPath(), nth.toPath());
+                }
             }
         }
 
-        if (format.name().endsWith("_protocol")) {
+        if (options.runs < 0) {
+            for (int run = 0; run < 10_000; ++run) {
+                System.out.println();
+                System.out.println(" ------------ RUN " + run + " ------------");
+                System.out.println();
+
+                Result providenceResult = new Result(format);
+                Result thriftResult = new Result(format);
+
+                runTests(providenceResult, thriftResult, format, run, false);
+                printStats(providenceResult, thriftResult, true);
+            }
+        } else {
+            Result providenceResult = new Result(format);
+            Result thriftResult = new Result(format);
+            for (int run = 1; run <= options.runs; ++run) {
+                runTests(providenceResult, thriftResult, format, run, fullStats);
+            }
+
+            printStats(providenceResult, thriftResult, fullStats);
+        }
+    }
+
+    public void printStats(Result providenceResult, Result thriftResult, boolean fullStats) {
+        if (providenceResult.format.name().endsWith("_protocol")) {
             if (fullStats) {
-                System.out.println();
-                printStats("j2", "read", thriftJ2Result.readStat, Color.DEFAULT);
-                printStats("v1", "read", thriftResult.readStat, Color.YELLOW);
-                System.out.println();
-                printStats("j2", "write", thriftJ2Result.writeStat, Color.DEFAULT);
-                printStats("v1", "write", thriftResult.writeStat, Color.YELLOW);
+                if (options.op != Options.Operation.write) {
+                    System.out.println();
+                    printStats("p2", "read", providenceResult.readStat, Color.GREEN);
+                    printStats("t1", "read", thriftResult.readStat, Color.YELLOW);
+                }
+                if (options.op != Options.Operation.read) {
+                    System.out.println();
+                    printStats("p2", "write", providenceResult.writeStat, Color.GREEN);
+                    printStats("t1", "write", thriftResult.writeStat, Color.YELLOW);
+                }
                 System.out.println();
             } else {
                 System.out.format("[providence]%3d:%s\n",
-                                  options.runs, thriftJ2Result.toString());
+                                  options.runs, providenceResult.toString());
                 System.out.format("%s[thrift]    %3d:%s%s\n",
                                   Color.YELLOW,
                                   options.runs, thriftResult.toString(),
@@ -492,12 +620,16 @@ public class SpeedTest {
             }
         } else if (fullStats) {
             System.out.println();
-            printStats("j2", "read", thriftJ2Result.readStat, Color.DEFAULT);
-            printStats("j2", "write", thriftJ2Result.writeStat, Color.DEFAULT);
+            if (options.op != Options.Operation.write) {
+                printStats("p2", "read", providenceResult.readStat, Color.GREEN);
+            }
+            if (options.op != Options.Operation.read) {
+                printStats("p2", "write", providenceResult.writeStat, Color.YELLOW);
+            }
             System.out.println();
         } else {
             System.out.format("[providence]%3d:%s\n",
-                              options.runs, thriftJ2Result.toString());
+                              options.runs, providenceResult.toString());
         }
     }
 
@@ -510,7 +642,7 @@ public class SpeedTest {
             norm.addValue(values[i]);
         }
         System.out.format(Locale.ENGLISH,
-                          "%s -- [%s] %5s: [%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs /%6.2fµs] mean: %6.2fµs gmean: %6.2fµs dev: %5.2f var: %5.2f%s\n",
+                          "%s -- [%s] %5s: [%7.2fµs /%7.2fµs /%7.2fµs /%8.2fµs /%8.2fµs] mean: %7.2fµs gmean: %7.2fµs dev: %7.2f  var: %7.2f^2%s\n",
                           color,
                           variant, op,
                           norm.getPercentile(1)   / 1000,
@@ -521,7 +653,7 @@ public class SpeedTest {
                           norm.getMean()          / 1000,
                           norm.getGeometricMean() / 1000,
                           norm.getStandardDeviation() / 1000,
-                          norm.getPopulationVariance() / 1000,
+                          Math.sqrt(norm.getPopulationVariance() / 1000),
                           Color.CLEAR);
     }
 
@@ -531,6 +663,9 @@ public class SpeedTest {
 
         try {
             parser.parseArgument(args);
+            if (opts.runs < 1 && opts.format == null) {
+                throw new CmdLineException("If --runs is less than 1, --format must be set.");
+            }
             SpeedTest speedTest = new SpeedTest(opts, parser);
 
             speedTest.readTestData();
@@ -549,6 +684,8 @@ public class SpeedTest {
             System.out.flush();
             System.err.println();
             e.printStackTrace();
+            System.err.println();
+            System.err.println(e.getMessage());
             System.err.println();
             parser.printSingleLineUsage(System.err);
             System.err.println();
