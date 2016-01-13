@@ -22,7 +22,14 @@ package net.morimekta.providence.compiler.format.thrift;
 import net.morimekta.providence.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 import net.morimekta.providence.util.json.JsonException;
@@ -128,10 +135,12 @@ public class ThriftFormatter {
             builder.formatln("const %s %s = ",
                              constant.getDescriptor().getQualifiedName(document.getPackageName()),
                              constant.getName());
-            appendTypedValue(builder,
+            JsonWriter json = new JsonWriter(builder);
+            appendTypedValue(json,
                              constant.getDefaultValue(),
                              constant.getDescriptor(),
                              document.getPackageName());
+            json.flush();
             // represent the actual value...
             builder.newline();
         }
@@ -178,10 +187,12 @@ public class ThriftFormatter {
                            field.getName());
             if (field.getDefaultValue() != null) {
                 builder.append(" = ");
-                appendTypedValue(builder,
+                JsonWriter json = new JsonWriter(builder);
+                appendTypedValue(json,
                                  field.getDefaultValue(),
                                  field.getDescriptor(),
                                  field.getDescriptor().getPackageName());
+                json.flush();
             }
             builder.append(';');
         }
@@ -223,59 +234,42 @@ public class ThriftFormatter {
      * @param packageContext
      * @throws JsonException
      */
-    protected void appendTypedValue(IndentedPrintWriter writer,
+    protected void appendTypedValue(JsonWriter writer,
                                     Object value,
                                     PDescriptor type,
                                     String packageContext) throws IOException, JsonException {
         switch (type.getType()) {
             case ENUM:
-                writer.format("%s.%s", type.getQualifiedName(packageContext), value.toString());
+                writer.valueLiteral(String.format("%s.%s", type.getQualifiedName(packageContext), value.toString()));
                 break;
             case LIST:
             case SET:
                 PContainer<?, ?> cType = (PContainer<?, ?>) type;
                 @SuppressWarnings("unchecked")
                 Collection<Object> collection = (Collection<Object>) value;
-                writer.append('[')
-                      .begin();
-                boolean first = true;
+
+                writer.array();
                 for (Object item : collection) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',');
-                    }
-                    writer.appendln("");
                     appendTypedValue(writer,
                                      item,
                                      cType.itemDescriptor(),
                                      packageContext);
                 }
-                writer.end()
-                      .appendln(']');
+                writer.endArray();
                 break;
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) value;
-                writer.append('{').begin();
-                first = true;
+                writer.object();
                 for (Entry<Object, Object> entry : map.entrySet()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',');
-                    }
-                    writer.appendln("");
                     appendMapKey(writer, entry.getKey());
-                    writer.append(" : ");
                     appendTypedValue(writer,
                                      entry.getValue(),
                                      mType.itemDescriptor(),
                                      packageContext);
                 }
-                writer.end()
-                      .appendln('}');
+                writer.endObject();
                 break;
             case MESSAGE:
                 appendMessage(writer, (PMessage<?>) value, packageContext);
@@ -286,60 +280,75 @@ public class ThriftFormatter {
         }
     }
 
-    private void appendMapKey(IndentedPrintWriter writer, Object value) throws IOException, JsonException {
-        if (value instanceof PEnumValue<?>) {
-            PEnumValue<?> ev = (PEnumValue<?>) value;
-            writer.append('\"')
-                  .append(ev.descriptor().getName()).append('.').append(ev.toString())
-                  .append('\"');
-        } else if (value instanceof String) {
-            JsonWriter json = new JsonWriter(writer);
-            json.value(value);
-            json.flush();
-        } else if (value instanceof Boolean ||
-                   value instanceof Double ||
-                   value instanceof Byte ||
-                   value instanceof Short ||
-                   value instanceof Long) {
-            writer.append('\"');
-            JsonWriter json = new JsonWriter(writer);
-            json.value(value);
-            json.flush();
-            writer.append('\"');
-        } else if (value instanceof Binary) {
-            JsonWriter json = new JsonWriter(writer);
-            json.value(((Binary) value).toBase64());
-            json.flush();
+    private void appendMapKey(JsonWriter writer, Object key) throws IOException, JsonException {
+        if (key instanceof PEnumValue<?>) {
+            PEnumValue<?> ev = (PEnumValue<?>) key;
+            writer.keyLiteral(String.format(
+                    "%s.%s",
+                    ev.descriptor().getName(),
+                    ev.toString()));
+        } else if (key instanceof Boolean) {
+            writer.key((Boolean) key);
+        } else if (key instanceof Byte) {
+            writer.key((Byte) key);
+        } else if (key instanceof Short) {
+            writer.key((Short) key);
+        } else if (key instanceof Integer) {
+            writer.key((Integer) key);
+        } else if (key instanceof Long) {
+            writer.key((Long) key);
+        } else if (key instanceof Double) {
+            writer.key((Double) key);
+        } else if (key instanceof String) {
+            writer.key((String) key);
+        } else if (key instanceof Binary) {
+            writer.key((Binary) key);
         } else {
             throw new IllegalArgumentException("No such primitive value type: " +
-                    value.getClass().getSimpleName());
+                    key.getClass().getSimpleName());
         }
     }
 
-    private void appendPrimitive(IndentedPrintWriter writer, Object value) throws IOException, JsonException {
-        JsonWriter json = new JsonWriter(writer);
-        json.value(value);
-        json.flush();
+    private void appendPrimitive(JsonWriter writer, Object value) throws IOException, JsonException {
+        if (value instanceof PEnumValue<?>) {
+            PEnumValue<?> ev = (PEnumValue<?>) value;
+            writer.valueLiteral(String.format(
+                    "%s.%s",
+                    ev.descriptor().getName(),
+                    ev.toString()));
+        } else if (value instanceof Boolean) {
+            writer.value((Boolean) value);
+        } else if (value instanceof Byte) {
+            writer.value((Byte) value);
+        } else if (value instanceof Short) {
+            writer.value((Short) value);
+        } else if (value instanceof Integer) {
+            writer.value((Integer) value);
+        } else if (value instanceof Long) {
+            writer.value((Long) value);
+        } else if (value instanceof Double) {
+            writer.value((Double) value);
+        } else if (value instanceof String) {
+            writer.value((String) value);
+        } else if (value instanceof Binary) {
+            writer.value((Binary) value);
+        } else {
+            throw new IllegalArgumentException("No such primitive value type: " +
+                                               value.getClass().getSimpleName());
+        }
     }
 
-    private void appendMessage(IndentedPrintWriter writer, PMessage<?> message, String packageContext) throws IOException, JsonException {
-        boolean first = true;
-
-        writer.append('{')
-              .begin();
+    private void appendMessage(JsonWriter writer, PMessage<?> message, String packageContext) throws IOException, JsonException {
+        writer.object();
         for (PField<?> field : message.descriptor().getFields()) {
             if (message.has(field.getKey())) {
-                if (first) first = false;
-                else writer.append(',');
-
-                writer.formatln("\"%s\": ", field.getName());
+                writer.key(field.getName());
                 appendTypedValue(writer,
                                  message.get(field.getKey()),
                                  field.getDescriptor(),
                                  packageContext);
             }
         }
-        writer.end()
-              .appendln('}');
+        writer.endObject();
     }
 }

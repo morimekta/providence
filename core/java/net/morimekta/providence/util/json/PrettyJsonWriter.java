@@ -1,5 +1,6 @@
 package net.morimekta.providence.util.json;
 
+import net.morimekta.providence.Binary;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 
 import java.io.OutputStream;
@@ -51,14 +52,118 @@ public class PrettyJsonWriter extends JsonWriter {
     }
 
     @Override
-    public PrettyJsonWriter key(String key) throws JsonException {
+    public PrettyJsonWriter key(boolean key) throws JsonException {
         super.key(key);
         mIndentedWriter.append(SPACE);
         return this;
     }
 
     @Override
-    public PrettyJsonWriter value(Object value) throws JsonException {
+    public PrettyJsonWriter key(byte key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(short key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(int key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(long key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(double key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(CharSequence key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter key(Binary key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter keyLiteral(CharSequence key) throws JsonException {
+        super.key(key);
+        mIndentedWriter.append(SPACE);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(boolean value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(byte value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(short value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(int value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(long value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(double value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(CharSequence value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter value(Binary value) throws JsonException {
+        super.value(value);
+        return this;
+    }
+
+    @Override
+    public PrettyJsonWriter valueLiteral(CharSequence value) throws JsonException {
         super.value(value);
         return this;
     }

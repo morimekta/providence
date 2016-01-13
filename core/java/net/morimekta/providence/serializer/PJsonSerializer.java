@@ -550,8 +550,7 @@ public class PJsonSerializer
             if (field != null) {
                 Object value = message.get(field.getKey());
                 if (IdType.ID.equals(mIdType)) {
-                    String key = String.valueOf(field.getKey());
-                    writer.key(key);
+                    writer.key(field.getKey());
                 } else {
                     writer.key(field.getName());
                 }
@@ -575,8 +574,7 @@ public class PJsonSerializer
                     if (message.has(field.getKey())) {
                         Object value = message.get(field.getKey());
                         if (IdType.ID.equals(mIdType)) {
-                            String key = String.valueOf(field.getKey());
-                            writer.key(key);
+                            writer.key(field.getKey());
                         } else {
                             writer.key(field.getName());
                         }
@@ -634,36 +632,28 @@ public class PJsonSerializer
      * @param primitive Primitive object to get map key value of.
      */
     protected void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
-        writer.key(getPrimitiveKey(primitive));
-    }
-
-    /**
-     * @param primitive Primitive object to get map key value of.
-     * @return The map key.
-     */
-    protected String getPrimitiveKey(Object primitive) throws PSerializeException, JsonException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(mIdType)) {
-                return String.valueOf(((PEnumValue<?>) primitive).getValue());
+                writer.key(((PEnumValue<?>) primitive).getValue());
             } else {
-                return primitive.toString();
+                writer.key(primitive.toString());
             }
-        } else if (primitive instanceof Boolean ||
-                   primitive instanceof Byte ||
-                   primitive instanceof Short ||
-                   primitive instanceof Integer ||
-                   primitive instanceof Long) {
-            return primitive.toString();
+        } else if (primitive instanceof Boolean) {
+            writer.key(((Boolean) primitive));
+        } else if (primitive instanceof Byte) {
+            writer.key(((Byte) primitive));
+        } else if (primitive instanceof Short) {
+            writer.key(((Short) primitive));
+        } else if (primitive instanceof Integer) {
+            writer.key(((Integer) primitive));
+        } else if (primitive instanceof Long) {
+            writer.key(((Long) primitive));
         } else if (primitive instanceof Double) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JsonWriter doubleWriter = new JsonWriter(out);
-            doubleWriter.value(primitive);
-            doubleWriter.flush();
-            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+            writer.key(((Double) primitive));
         } else if (primitive instanceof String) {
-            return (String) primitive;
+            writer.key((String) primitive);
         } else if (primitive instanceof Binary) {
-            return ((Binary) primitive).toBase64();
+            writer.key((Binary) primitive);
         } else if (primitive instanceof PMessage) {
             PMessage<?> message = (PMessage<?>) primitive;
             if (!message.isSimple()) {
@@ -671,10 +661,10 @@ public class PJsonSerializer
                                               message.descriptor().getQualifiedName(null) + " is not.");
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JsonWriter writer = new JsonWriter(baos);
-            appendMessage(writer, message);
-            writer.flush();
-            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            JsonWriter json = new JsonWriter(baos);
+            appendMessage(json, message);
+            json.flush();
+            writer.key(new String(baos.toByteArray(), StandardCharsets.UTF_8));
         } else {
             throw new PSerializeException("illegal simple type class " +
                                           primitive.getClass().getSimpleName());
@@ -695,16 +685,21 @@ public class PJsonSerializer
                 writer.value(primitive.toString());
             }
         } else if (primitive instanceof Boolean) {
-            writer.value(primitive);
-        } else if (primitive instanceof Byte || primitive instanceof Short || primitive instanceof Integer ||
-                   primitive instanceof Long) {
-            writer.value(((Number) primitive).longValue());
+            writer.value(((Boolean) primitive));
+        } else if (primitive instanceof Byte) {
+            writer.value(((Byte) primitive));
+        } else if (primitive instanceof Short) {
+            writer.value(((Short) primitive));
+        } else if (primitive instanceof Integer) {
+            writer.value(((Integer) primitive));
+        } else if (primitive instanceof Long) {
+            writer.value(((Long) primitive));
         } else if (primitive instanceof Double) {
-            writer.value(((Number) primitive).doubleValue());
+            writer.value(((Double) primitive));
         } else if (primitive instanceof String) {
-            writer.value(primitive);
+            writer.value((String) primitive);
         } else if (primitive instanceof Binary) {
-            writer.value(((Binary) primitive).toBase64());
+            writer.value((Binary) primitive);
         } else {
             throw new PSerializeException("illegal primitive type class " +
                                           primitive.getClass().getSimpleName());

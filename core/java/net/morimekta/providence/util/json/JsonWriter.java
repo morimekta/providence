@@ -1,8 +1,9 @@
 package net.morimekta.providence.util.json;
 
+import net.morimekta.providence.Binary;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Locale;
 import java.util.Stack;
 
 /**
@@ -90,16 +91,87 @@ public class JsonWriter {
         return this;
     }
 
-    public JsonWriter key(String key) throws JsonException {
+    public JsonWriter key(boolean key) throws JsonException {
         startKey();
 
-        ++mState.num;
-        mState.expect = Expectation.VALUE;
+        mWriter.append(key ? "\"true\":" : "\"false\":");
+        return this;
+    }
+
+    public JsonWriter key(byte key) throws JsonException {
+        startKey();
+
+        mWriter.append('\"').print((int) key);
+        mWriter.append('\"').append(':');
+        return this;
+    }
+
+    public JsonWriter key(short key) throws JsonException {
+        startKey();
+
+        mWriter.append('\"').print((int) key);
+        mWriter.append('\"').append(':');
+        return this;
+    }
+
+    public JsonWriter key(int key) throws JsonException {
+        startKey();
+
+        mWriter.append('\"').print(key);
+        mWriter.append('\"').append(':');
+        return this;
+    }
+
+    public JsonWriter key(long key) throws JsonException {
+        startKey();
+
+        mWriter.append('\"').print(key);
+        mWriter.append('\"').append(':');
+        return this;
+    }
+
+    public JsonWriter key(double key) throws JsonException {
+        startKey();
+
+        mWriter.append('\"');
+        final long i = (long) key;
+        if (key == (double) i) {
+            mWriter.print(i);
+        } else {
+            mWriter.print(key);
+        }
+        mWriter.append('\"').append(':');
+        return this;
+    }
+
+    public JsonWriter key(CharSequence key) throws JsonException {
+        startKey();
 
         if (key == null) throw new JsonException("Expected map key, got null");
 
-        appendQuoted(key);
+        appendQuoted(key.toString());
         mWriter.append(':');
+        return this;
+    }
+
+    public JsonWriter key(Binary key) throws JsonException {
+        startKey();
+
+        if (key == null) throw new JsonException("Expected map key, got null");
+
+        mWriter.append('\"');
+        mWriter.append(key.toBase64());
+        mWriter.append('\"')
+               .append(':');
+        return this;
+    }
+
+    public JsonWriter keyLiteral(CharSequence key) throws JsonException {
+        startKey();
+
+        if (key == null) throw new JsonException("Expected map key, got null");
+
+        mWriter.append(key).append(':');
         return this;
     }
 
@@ -110,10 +182,31 @@ public class JsonWriter {
         return this;
     }
 
+    public JsonWriter value(byte value) throws JsonException {
+        startValue();
+
+        mWriter.print((int) value);
+        return this;
+    }
+
+    public JsonWriter value(short value) throws JsonException {
+        startValue();
+
+        mWriter.print((int) value);
+        return this;
+    }
+
+    public JsonWriter value(int value) throws JsonException {
+        startValue();
+
+        mWriter.print(value);
+        return this;
+    }
+
     public JsonWriter value(long number) throws JsonException {
         startValue();
 
-        mWriter.format(Locale.ENGLISH, "%d", number);
+        mWriter.print((int) number);
         return this;
     }
 
@@ -122,9 +215,9 @@ public class JsonWriter {
 
         final long i = (long) number;
         if (number == (double) i) {
-            mWriter.format(Locale.ENGLISH, "%d", i);
+            mWriter.print(i);
         } else {
-            mWriter.append(Double.toString(number));
+            mWriter.print(number);
         }
         return this;
     }
@@ -137,22 +230,24 @@ public class JsonWriter {
         return this;
     }
 
-    public JsonWriter value(Object value) throws JsonException {
-        if (value == null) {
-            startValue();
-            mWriter.append("null");
-            return this;
-        } else if (value instanceof CharSequence) {
-            return value((CharSequence) value);
-        } else if (value instanceof Boolean) {
-            return value(((Boolean) value).booleanValue());
-        } else if (value instanceof Double || value instanceof Float) {
-            return value(((Number) value).doubleValue());
-        } else if (value instanceof Number) {
-            return value(((Number) value).longValue());
-        } else {
-            throw new JsonException("Unknown value type " + value.getClass().getSimpleName());
+    public JsonWriter value(Binary value) throws JsonException {
+        startValue();
+
+        if (value == null) mWriter.append("null");
+        else {
+            mWriter.append('\"')
+                   .append(value.toBase64())
+                   .append('\"');
         }
+        return this;
+    }
+
+    public JsonWriter valueLiteral(CharSequence value) throws JsonException {
+        startValue();
+
+        if (value == null) mWriter.append("null");
+        else mWriter.append(value.toString());
+        return this;
     }
 
     protected void startKey() throws JsonException {
@@ -162,6 +257,9 @@ public class JsonWriter {
         if (mState.num > 0) {
             mWriter.append(',');
         }
+
+        ++mState.num;
+        mState.expect = Expectation.VALUE;
     }
 
     protected boolean startValue() throws JsonException {

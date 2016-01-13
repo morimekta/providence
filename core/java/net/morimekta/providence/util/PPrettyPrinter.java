@@ -191,7 +191,7 @@ public class PPrettyPrinter {
         } else if (o instanceof String) {
             JsonWriter jw = new JsonWriter(writer);
             try {
-                jw.value(o);
+                jw.value((String) o);
                 jw.flush();
             } catch (JsonException e) {}
         } else if (o instanceof Binary) {
