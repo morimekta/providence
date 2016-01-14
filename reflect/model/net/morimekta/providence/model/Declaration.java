@@ -48,23 +48,23 @@ public class Declaration
                 _Field.DECL_CONST, mDeclConst);
     }
 
-    public Declaration withDeclEnum(EnumType value) {
+    public static Declaration withDeclEnum(EnumType value) {
         return new _Builder().setDeclEnum(value).build();
     }
 
-    public Declaration withDeclTypedef(TypedefType value) {
+    public static Declaration withDeclTypedef(TypedefType value) {
         return new _Builder().setDeclTypedef(value).build();
     }
 
-    public Declaration withDeclStruct(StructType value) {
+    public static Declaration withDeclStruct(StructType value) {
         return new _Builder().setDeclStruct(value).build();
     }
 
-    public Declaration withDeclService(ServiceType value) {
+    public static Declaration withDeclService(ServiceType value) {
         return new _Builder().setDeclService(value).build();
     }
 
-    public Declaration withDeclConst(ThriftField value) {
+    public static Declaration withDeclConst(ThriftField value) {
         return new _Builder().setDeclConst(value).build();
     }
 
