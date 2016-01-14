@@ -359,6 +359,7 @@ public class JMessageBuilderFormat {
               .appendln("StringBuilder builder = new StringBuilder();")
               .appendln("builder.append('{');")
               .appendln("boolean first = true;");
+        boolean alwaysAfter = false;
         for (JField field : message.fields()) {
             if (!field.alwaysPresent()) {
                 if (field.container()) {
@@ -369,9 +370,14 @@ public class JMessageBuilderFormat {
                 writer.begin();
             }
 
-            writer.appendln("if (first) first = false;")
-                  .appendln("else builder.append(',');")
-                  .formatln("builder.append(\"%s:\")", field.name());
+            if (alwaysAfter) {
+                writer.appendln("builder.append(',');");
+            } else {
+                writer.appendln("if (first) first = false;")
+                      .appendln("else builder.append(',');");
+            }
+
+            writer.formatln("builder.append(\"%s:\")", field.name());
             switch (field.type()) {
                 case BOOL:
                 case I32:
@@ -407,7 +413,8 @@ public class JMessageBuilderFormat {
             if (!field.alwaysPresent()) {
                 writer.end()
                       .appendln('}');
-
+            } else {
+                alwaysAfter = true;
             }
         }
         writer.appendln("builder.append('}');")
