@@ -1,6 +1,7 @@
 package net.morimekta.providence.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
@@ -13,7 +14,6 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
 
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
 @SuppressWarnings("unused")
@@ -26,8 +26,9 @@ public class Declaration
     private final StructType mDeclStruct;
     private final ServiceType mDeclService;
     private final ThriftField mDeclConst;
-    private final _Field tUnionField;
 
+    private final _Field tUnionField;
+    private final int tHashCode;
 
     private Declaration(_Builder builder) {
         tUnionField = builder.tUnionField;
@@ -37,6 +38,14 @@ public class Declaration
         mDeclStruct = tUnionField == _Field.DECL_STRUCT ? builder.mDeclStruct : null;
         mDeclService = tUnionField == _Field.DECL_SERVICE ? builder.mDeclService : null;
         mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
+
+        tHashCode = Objects.hash(
+                Declaration.class,
+                _Field.DECL_ENUM, mDeclEnum,
+                _Field.DECL_TYPEDEF, mDeclTypedef,
+                _Field.DECL_STRUCT, mDeclStruct,
+                _Field.DECL_SERVICE, mDeclService,
+                _Field.DECL_CONST, mDeclConst);
     }
 
     public Declaration withDeclEnum(EnumType value) {
@@ -154,21 +163,17 @@ public class Declaration
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Declaration)) return false;
         Declaration other = (Declaration) o;
-        return PTypeUtils.equals(mDeclEnum, other.mDeclEnum) &&
-               PTypeUtils.equals(mDeclTypedef, other.mDeclTypedef) &&
-               PTypeUtils.equals(mDeclStruct, other.mDeclStruct) &&
-               PTypeUtils.equals(mDeclService, other.mDeclService) &&
-               PTypeUtils.equals(mDeclConst, other.mDeclConst);
+        return Objects.equals(tUnionField, other.tUnionField) &&
+               Objects.equals(mDeclEnum, other.mDeclEnum) &&
+               Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
+               Objects.equals(mDeclStruct, other.mDeclStruct) &&
+               Objects.equals(mDeclService, other.mDeclService) &&
+               Objects.equals(mDeclConst, other.mDeclConst);
     }
 
     @Override
     public int hashCode() {
-        return Declaration.class.hashCode() +
-               PTypeUtils.hashCode(_Field.DECL_ENUM, mDeclEnum) +
-               PTypeUtils.hashCode(_Field.DECL_TYPEDEF, mDeclTypedef) +
-               PTypeUtils.hashCode(_Field.DECL_STRUCT, mDeclStruct) +
-               PTypeUtils.hashCode(_Field.DECL_SERVICE, mDeclService) +
-               PTypeUtils.hashCode(_Field.DECL_CONST, mDeclConst);
+        return tHashCode;
     }
 
     @Override
@@ -263,8 +268,7 @@ public class Declaration
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(Declaration.class.getSimpleName())
-                   .append('{')
+            builder.append("Declaration._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -273,7 +277,7 @@ public class Declaration
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

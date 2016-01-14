@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -35,11 +36,18 @@ public class EnumType
     private final String mComment;
     private final String mName;
     private final List<EnumValue> mValues;
+    private final int tHashCode;
 
     private EnumType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mValues = Collections.unmodifiableList(new LinkedList<>(builder.mValues));
+
+        tHashCode = Objects.hash(
+                EnumType.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.VALUES, PTypeUtils.hashCode(mValues));
     }
 
     public EnumType(String pComment,
@@ -48,6 +56,12 @@ public class EnumType
         mComment = pComment;
         mName = pName;
         mValues = Collections.unmodifiableList(new LinkedList<>(pValues));
+
+        tHashCode = Objects.hash(
+                EnumType.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.VALUES, PTypeUtils.hashCode(mValues));
     }
 
     public boolean hasComment() {
@@ -118,17 +132,14 @@ public class EnumType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumType)) return false;
         EnumType other = (EnumType) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mName, other.mName) &&
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mName, other.mName) &&
                PTypeUtils.equals(mValues, other.mValues);
     }
 
     @Override
     public int hashCode() {
-        return EnumType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.VALUES, mValues);
+        return tHashCode;
     }
 
     @Override
@@ -212,8 +223,7 @@ public class EnumType
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(EnumType.class.getSimpleName())
-                   .append('{')
+            builder.append("EnumType._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -222,7 +232,7 @@ public class EnumType
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

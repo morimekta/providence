@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -36,6 +37,7 @@ public class ThriftDocument
     private final List<String> mIncludes;
     private final Map<String,String> mNamespaces;
     private final List<Declaration> mDecl;
+    private final int tHashCode;
 
     private ThriftDocument(_Builder builder) {
         mComment = builder.mComment;
@@ -43,6 +45,14 @@ public class ThriftDocument
         mIncludes = Collections.unmodifiableList(new LinkedList<>(builder.mIncludes));
         mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mNamespaces));
         mDecl = Collections.unmodifiableList(new LinkedList<>(builder.mDecl));
+
+        tHashCode = Objects.hash(
+                ThriftDocument.class,
+                _Field.COMMENT, mComment,
+                _Field.PACKAGE, mPackage,
+                _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
+                _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
+                _Field.DECL, PTypeUtils.hashCode(mDecl));
     }
 
     public ThriftDocument(String pComment,
@@ -55,6 +65,14 @@ public class ThriftDocument
         mIncludes = Collections.unmodifiableList(new LinkedList<>(pIncludes));
         mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(pNamespaces));
         mDecl = Collections.unmodifiableList(new LinkedList<>(pDecl));
+
+        tHashCode = Objects.hash(
+                ThriftDocument.class,
+                _Field.COMMENT, mComment,
+                _Field.PACKAGE, mPackage,
+                _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
+                _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
+                _Field.DECL, PTypeUtils.hashCode(mDecl));
     }
 
     public boolean hasComment() {
@@ -151,8 +169,8 @@ public class ThriftDocument
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftDocument)) return false;
         ThriftDocument other = (ThriftDocument) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mPackage, other.mPackage) &&
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mPackage, other.mPackage) &&
                PTypeUtils.equals(mIncludes, other.mIncludes) &&
                PTypeUtils.equals(mNamespaces, other.mNamespaces) &&
                PTypeUtils.equals(mDecl, other.mDecl);
@@ -160,12 +178,7 @@ public class ThriftDocument
 
     @Override
     public int hashCode() {
-        return ThriftDocument.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.PACKAGE, mPackage) +
-               PTypeUtils.hashCode(_Field.INCLUDES, mIncludes) +
-               PTypeUtils.hashCode(_Field.NAMESPACES, mNamespaces) +
-               PTypeUtils.hashCode(_Field.DECL, mDecl);
+        return tHashCode;
     }
 
     @Override
@@ -263,8 +276,7 @@ public class ThriftDocument
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(ThriftDocument.class.getSimpleName())
-                   .append('{')
+            builder.append("ThriftDocument._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -273,7 +285,7 @@ public class ThriftDocument
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

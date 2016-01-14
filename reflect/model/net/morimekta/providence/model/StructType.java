@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -39,12 +40,20 @@ public class StructType
     private final StructVariant mVariant;
     private final String mName;
     private final List<ThriftField> mFields;
+    private final int tHashCode;
 
     private StructType(_Builder builder) {
         mComment = builder.mComment;
         mVariant = builder.mVariant;
         mName = builder.mName;
         mFields = Collections.unmodifiableList(new LinkedList<>(builder.mFields));
+
+        tHashCode = Objects.hash(
+                StructType.class,
+                _Field.COMMENT, mComment,
+                _Field.VARIANT, mVariant,
+                _Field.NAME, mName,
+                _Field.FIELDS, PTypeUtils.hashCode(mFields));
     }
 
     public StructType(String pComment,
@@ -55,6 +64,13 @@ public class StructType
         mVariant = pVariant;
         mName = pName;
         mFields = Collections.unmodifiableList(new LinkedList<>(pFields));
+
+        tHashCode = Objects.hash(
+                StructType.class,
+                _Field.COMMENT, mComment,
+                _Field.VARIANT, mVariant,
+                _Field.NAME, mName,
+                _Field.FIELDS, PTypeUtils.hashCode(mFields));
     }
 
     public boolean hasComment() {
@@ -136,19 +152,15 @@ public class StructType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof StructType)) return false;
         StructType other = (StructType) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mVariant, other.mVariant) &&
-               PTypeUtils.equals(mName, other.mName) &&
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mVariant, other.mVariant) &&
+               Objects.equals(mName, other.mName) &&
                PTypeUtils.equals(mFields, other.mFields);
     }
 
     @Override
     public int hashCode() {
-        return StructType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.VARIANT, mVariant) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.FIELDS, mFields);
+        return tHashCode;
     }
 
     @Override
@@ -239,8 +251,7 @@ public class StructType
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(StructType.class.getSimpleName())
-                   .append('{')
+            builder.append("StructType._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -249,7 +260,7 @@ public class StructType
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

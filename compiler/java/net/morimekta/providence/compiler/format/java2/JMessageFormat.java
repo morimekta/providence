@@ -44,6 +44,7 @@ import net.morimekta.providence.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Objects;
 
 import static net.morimekta.providence.util.PStringUtils.camelCase;
 
@@ -131,9 +132,6 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendBuilder(IndentedPrintWriter writer, JMessage message) {
-    }
-
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) {
         writer.appendln("public enum _Field implements PField {")
               .begin();
@@ -204,8 +202,7 @@ public class JMessageFormat {
               .appendln("public String toString() {")
               .begin()
               .appendln("StringBuilder builder = new StringBuilder();")
-              .formatln("builder.append(%s.class.getSimpleName())", message.instanceType())
-              .appendln("       .append('{')")
+              .formatln("builder.append(\"%s._Field(\")", message.instanceType())
               .appendln("       .append(mKey)")
               .appendln("       .append(\": \");")
               .appendln("if (mRequired != PRequirement.DEFAULT) {")
@@ -214,7 +211,7 @@ public class JMessageFormat {
               .appendln("builder.append(getDescriptor().getQualifiedName(null))")
               .appendln("       .append(' ')")
               .appendln("       .append(mName)")
-              .appendln("       .append('}');")
+              .appendln("       .append(')');")
               .appendln("return builder.toString();")
               .end()
               .appendln('}')
@@ -460,10 +457,11 @@ public class JMessageFormat {
                             field.fieldType(), field.member());
         }
         if (message.isUnion()) {
-            writer.appendln("private final _Field tUnionField;")
-                  .newline();
+            writer.newline()
+                  .appendln("private final _Field tUnionField;");
         }
-        writer.newline();
+        writer.appendln("private final int tHashCode;")
+              .newline();
     }
 
     private void appendBuilderConstructor(IndentedPrintWriter writer, JMessage message) {
@@ -512,6 +510,8 @@ public class JMessageFormat {
                         break;
                 }
             }
+            writer.newline();
+            appendHashCode(writer, message);
         } else {
             if (message.isException()) {
                 writer.appendln("super(builder.createMessage());")
@@ -542,6 +542,8 @@ public class JMessageFormat {
                         break;
                 }
             }
+            writer.newline();
+            appendHashCode(writer, message);
         }
         writer.end()
               .appendln('}')
@@ -609,11 +611,30 @@ public class JMessageFormat {
                         break;
                 }
             }
+            writer.newline();
+            appendHashCode(writer, message);
             writer.end()
                   .appendln('}')
                   .newline();
         }
     }
+
+    private void appendHashCode(IndentedPrintWriter writer, JMessage message) {
+        writer.appendln("tHashCode = Objects.hash(")
+              .begin(DBL_INDENT)
+              .formatln("%s.class", message.instanceType());
+        for (JField field : message.fields()) {
+            writer.append(",");
+            if (field.container()) {
+                writer.formatln("_Field.%s, PTypeUtils.hashCode(%s)", field.fieldEnum(), field.member());
+            } else {
+                writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+            }
+        }
+        writer.end()
+              .append(");");
+    }
+
 
     private void appendFileHeader(IndentedPrintWriter writer, JMessage message, JValueFormat values)
             throws GeneratorException, IOException {
@@ -622,12 +643,12 @@ public class JMessageFormat {
         header.include(PMessageBuilder.class.getName());
         header.include(PMessageBuilderFactory.class.getName());
         header.include(PField.class.getName());
-        header.include(PTypeUtils.class.getName());
         header.include(PType.class.getName());
         header.include(PRequirement.class.getName());
         header.include(PDescriptorProvider.class.getName());
         header.include(PValueProvider.class.getName());
         header.include(PDescriptor.class.getName());
+        header.include(Objects.class.getName());
         if (!message.isUnion()) {
             header.include(BitSet.class.getName());
         }
@@ -653,6 +674,9 @@ public class JMessageFormat {
             values.addTypeImports(header, field.getPField().getDescriptor());
             if (field.getPField().hasDefaultValue()) {
                 header.include(PDefaultValueProvider.class.getName());
+            }
+            if (field.container() || field.type() == PType.DOUBLE) {
+                header.include(PTypeUtils.class.getName());
             }
             if (options.jackson && field.binary()) {
                 header.include("com.fasterxml.jackson.databind.annotation.JsonDeserialize");

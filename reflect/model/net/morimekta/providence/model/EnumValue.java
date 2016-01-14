@@ -2,6 +2,7 @@ package net.morimekta.providence.model;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -15,7 +16,6 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
 
 /** <name> (= <value>) */
 @SuppressWarnings("unused")
@@ -28,11 +28,18 @@ public class EnumValue
     private final String mComment;
     private final String mName;
     private final int mValue;
+    private final int tHashCode;
 
     private EnumValue(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mValue = builder.mValue;
+
+        tHashCode = Objects.hash(
+                EnumValue.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.VALUE, mValue);
     }
 
     public EnumValue(String pComment,
@@ -41,6 +48,12 @@ public class EnumValue
         mComment = pComment;
         mName = pName;
         mValue = pValue;
+
+        tHashCode = Objects.hash(
+                EnumValue.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.VALUE, mValue);
     }
 
     public boolean hasComment() {
@@ -111,17 +124,14 @@ public class EnumValue
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumValue)) return false;
         EnumValue other = (EnumValue) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mName, other.mName) &&
-               PTypeUtils.equals(mValue, other.mValue);
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mName, other.mName) &&
+               Objects.equals(mValue, other.mValue);
     }
 
     @Override
     public int hashCode() {
-        return EnumValue.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.VALUE, mValue);
+        return tHashCode;
     }
 
     @Override
@@ -205,8 +215,7 @@ public class EnumValue
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(EnumValue.class.getSimpleName())
-                   .append('{')
+            builder.append("EnumValue._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -215,7 +224,7 @@ public class EnumValue
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

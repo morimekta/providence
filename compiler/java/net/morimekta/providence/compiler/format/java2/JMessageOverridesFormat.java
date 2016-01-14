@@ -37,7 +37,7 @@ public class JMessageOverridesFormat {
 
     private void appendIsCompact(JMessage message) {
         if (options.jackson) {
-            writer.append("@JsonIgnore");
+            writer.appendln("@JsonIgnore");
         }
         writer.appendln("@Override")
               .appendln("public boolean isCompact() {")
@@ -72,7 +72,7 @@ public class JMessageOverridesFormat {
 
     private void appendIsSimple() {
         if (options.jackson) {
-            writer.append("@JsonIgnore");
+            writer.appendln("@JsonIgnore");
         }
         writer.appendln("@Override")
               .appendln("public boolean isSimple() {")
@@ -168,6 +168,10 @@ public class JMessageOverridesFormat {
             boolean first = true;
             writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
                   .appendln("return ");
+            if (message.isUnion()) {
+                writer.append("Objects.equals(tUnionField, other.tUnionField)");
+                first = false;
+            }
             for (JField field : message.fields()) {
                 if (first)
                     first = false;
@@ -175,7 +179,11 @@ public class JMessageOverridesFormat {
                     writer.append(" &&")
                           .appendln("       ");
                 }
-                writer.format("PTypeUtils.equals(%s, other.%s)", field.member(), field.member());
+                if (field.container()) {
+                    writer.format("PTypeUtils.equals(%s, other.%s)", field.member(), field.member());
+                } else {
+                    writer.format("Objects.equals(%s, other.%s)", field.member(), field.member());
+                }
             }
             writer.append(';');
         } else {
@@ -190,15 +198,8 @@ public class JMessageOverridesFormat {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
-              .formatln("return %s.class.hashCode()", message.instanceType())
-              .begin("       ");
-        for (JField field : message.fields()) {
-            writer.append(" +")
-                  .formatln("PTypeUtils.hashCode(_Field.%s, %s)", field.fieldEnum(), field.member());
-        }
+              .formatln("return tHashCode;");
         writer.end()
-              .append(";")
-              .end()
               .appendln("}")
               .newline();
     }

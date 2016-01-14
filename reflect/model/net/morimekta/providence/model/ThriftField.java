@@ -2,6 +2,7 @@ package net.morimekta.providence.model;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -16,7 +17,6 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
 
 /**
  * For fields:
@@ -44,6 +44,7 @@ public class ThriftField
     private final String mType;
     private final String mName;
     private final String mDefaultValue;
+    private final int tHashCode;
 
     private ThriftField(_Builder builder) {
         mComment = builder.mComment;
@@ -52,6 +53,15 @@ public class ThriftField
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
+
+        tHashCode = Objects.hash(
+                ThriftField.class,
+                _Field.COMMENT, mComment,
+                _Field.KEY, mKey,
+                _Field.REQUIREMENT, mRequirement,
+                _Field.TYPE, mType,
+                _Field.NAME, mName,
+                _Field.DEFAULT_VALUE, mDefaultValue);
     }
 
     public ThriftField(String pComment,
@@ -66,6 +76,15 @@ public class ThriftField
         mType = pType;
         mName = pName;
         mDefaultValue = pDefaultValue;
+
+        tHashCode = Objects.hash(
+                ThriftField.class,
+                _Field.COMMENT, mComment,
+                _Field.KEY, mKey,
+                _Field.REQUIREMENT, mRequirement,
+                _Field.TYPE, mType,
+                _Field.NAME, mName,
+                _Field.DEFAULT_VALUE, mDefaultValue);
     }
 
     public boolean hasComment() {
@@ -169,23 +188,17 @@ public class ThriftField
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftField)) return false;
         ThriftField other = (ThriftField) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mKey, other.mKey) &&
-               PTypeUtils.equals(mRequirement, other.mRequirement) &&
-               PTypeUtils.equals(mType, other.mType) &&
-               PTypeUtils.equals(mName, other.mName) &&
-               PTypeUtils.equals(mDefaultValue, other.mDefaultValue);
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mKey, other.mKey) &&
+               Objects.equals(mRequirement, other.mRequirement) &&
+               Objects.equals(mType, other.mType) &&
+               Objects.equals(mName, other.mName) &&
+               Objects.equals(mDefaultValue, other.mDefaultValue);
     }
 
     @Override
     public int hashCode() {
-        return ThriftField.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.KEY, mKey) +
-               PTypeUtils.hashCode(_Field.REQUIREMENT, mRequirement) +
-               PTypeUtils.hashCode(_Field.TYPE, mType) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.DEFAULT_VALUE, mDefaultValue);
+        return tHashCode;
     }
 
     @Override
@@ -290,8 +303,7 @@ public class ThriftField
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(ThriftField.class.getSimpleName())
-                   .append('{')
+            builder.append("ThriftField._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -300,7 +312,7 @@ public class ThriftField
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

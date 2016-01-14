@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -36,12 +37,20 @@ public class ServiceType
     private final String mName;
     private final String mExtend;
     private final List<ServiceMethod> mMethods;
+    private final int tHashCode;
 
     private ServiceType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mExtend = builder.mExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(builder.mMethods));
+
+        tHashCode = Objects.hash(
+                ServiceType.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.EXTEND, mExtend,
+                _Field.METHODS, PTypeUtils.hashCode(mMethods));
     }
 
     public ServiceType(String pComment,
@@ -52,6 +61,13 @@ public class ServiceType
         mName = pName;
         mExtend = pExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(pMethods));
+
+        tHashCode = Objects.hash(
+                ServiceType.class,
+                _Field.COMMENT, mComment,
+                _Field.NAME, mName,
+                _Field.EXTEND, mExtend,
+                _Field.METHODS, PTypeUtils.hashCode(mMethods));
     }
 
     public boolean hasComment() {
@@ -133,19 +149,15 @@ public class ServiceType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ServiceType)) return false;
         ServiceType other = (ServiceType) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mName, other.mName) &&
-               PTypeUtils.equals(mExtend, other.mExtend) &&
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mName, other.mName) &&
+               Objects.equals(mExtend, other.mExtend) &&
                PTypeUtils.equals(mMethods, other.mMethods);
     }
 
     @Override
     public int hashCode() {
-        return ServiceType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.EXTEND, mExtend) +
-               PTypeUtils.hashCode(_Field.METHODS, mMethods);
+        return tHashCode;
     }
 
     @Override
@@ -236,8 +248,7 @@ public class ServiceType
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(ServiceType.class.getSimpleName())
-                   .append('{')
+            builder.append("ServiceType._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -246,7 +257,7 @@ public class ServiceType
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

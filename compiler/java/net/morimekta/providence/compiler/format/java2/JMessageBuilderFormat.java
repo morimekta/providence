@@ -43,7 +43,7 @@ public class JMessageBuilderFormat {
         appendOverrideIsValid(message);
 
         if (message.isException()) {
-            appendGenerateMessage(message);
+            appendCreateMessage(message);
         }
 
         writer.appendln("@Override")
@@ -353,7 +353,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendGenerateMessage(JMessage message) {
+    private void appendCreateMessage(JMessage message) {
         writer.appendln("protected String createMessage() {")
               .begin()
               .appendln("StringBuilder builder = new StringBuilder();")
@@ -368,13 +368,46 @@ public class JMessageBuilderFormat {
                 }
                 writer.begin();
             }
+
             writer.appendln("if (first) first = false;")
                   .appendln("else builder.append(',');")
-                  .formatln("builder.append(\"%s:\")", field.name())
-                  .formatln("       .append(PTypeUtils.toString(%s));", field.member());
+                  .formatln("builder.append(\"%s:\")", field.name());
+            switch (field.type()) {
+                case BOOL:
+                case I32:
+                case I64:
+                    writer.formatln("       .append(%s);", field.member());
+                    break;
+                case BYTE:
+                case I16:
+                    writer.formatln("       .append((int) %s);", field.member());
+                    break;
+                case DOUBLE:
+                case MAP:
+                case SET:
+                case LIST:
+                    writer.formatln("       .append(PTypeUtils.toString(%s));", field.member());
+                    break;
+                case STRING:
+                    writer.formatln("       .append(%s.toString());", field.member());
+                    break;
+                case BINARY:
+                    writer.appendln("       .append(\"b64(\")")
+                          .formatln("       .append(%s.toBase64())", field.member())
+                          .appendln("       .append(')');");
+                    break;
+                case MESSAGE:
+                    writer.formatln("       .append(%s.asString());", field.member());
+                    break;
+                default:
+                    writer.formatln("       .append(%s.toString());", field.member());
+                    break;
+            }
+
             if (!field.alwaysPresent()) {
                 writer.end()
                       .appendln('}');
+
             }
         }
         writer.appendln("builder.append('}');")

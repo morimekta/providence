@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -37,6 +38,7 @@ public class ServiceMethod
     private final String mName;
     private final List<ThriftField> mParams;
     private final List<ThriftField> mExceptions;
+    private final int tHashCode;
 
     private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
@@ -45,6 +47,15 @@ public class ServiceMethod
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(builder.mExceptions));
+
+        tHashCode = Objects.hash(
+                ServiceMethod.class,
+                _Field.COMMENT, mComment,
+                _Field.IS_ONEWAY, mIsOneway,
+                _Field.RETURN_TYPE, mReturnType,
+                _Field.NAME, mName,
+                _Field.PARAMS, PTypeUtils.hashCode(mParams),
+                _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
     }
 
     public ServiceMethod(String pComment,
@@ -59,6 +70,15 @@ public class ServiceMethod
         mName = pName;
         mParams = Collections.unmodifiableList(new LinkedList<>(pParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(pExceptions));
+
+        tHashCode = Objects.hash(
+                ServiceMethod.class,
+                _Field.COMMENT, mComment,
+                _Field.IS_ONEWAY, mIsOneway,
+                _Field.RETURN_TYPE, mReturnType,
+                _Field.NAME, mName,
+                _Field.PARAMS, PTypeUtils.hashCode(mParams),
+                _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
     }
 
     public boolean hasComment() {
@@ -162,23 +182,17 @@ public class ServiceMethod
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ServiceMethod)) return false;
         ServiceMethod other = (ServiceMethod) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mIsOneway, other.mIsOneway) &&
-               PTypeUtils.equals(mReturnType, other.mReturnType) &&
-               PTypeUtils.equals(mName, other.mName) &&
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mIsOneway, other.mIsOneway) &&
+               Objects.equals(mReturnType, other.mReturnType) &&
+               Objects.equals(mName, other.mName) &&
                PTypeUtils.equals(mParams, other.mParams) &&
                PTypeUtils.equals(mExceptions, other.mExceptions);
     }
 
     @Override
     public int hashCode() {
-        return ServiceMethod.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.IS_ONEWAY, mIsOneway) +
-               PTypeUtils.hashCode(_Field.RETURN_TYPE, mReturnType) +
-               PTypeUtils.hashCode(_Field.NAME, mName) +
-               PTypeUtils.hashCode(_Field.PARAMS, mParams) +
-               PTypeUtils.hashCode(_Field.EXCEPTIONS, mExceptions);
+        return tHashCode;
     }
 
     @Override
@@ -283,8 +297,7 @@ public class ServiceMethod
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(ServiceMethod.class.getSimpleName())
-                   .append('{')
+            builder.append("ServiceMethod._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -293,7 +306,7 @@ public class ServiceMethod
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 

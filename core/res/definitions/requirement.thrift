@@ -71,10 +71,23 @@ union UnionFields {
     9: Value enumValue;
 }
 
+exception ExceptionFields {
+    1: bool booleanValue;
+    2: byte byteValue,
+    3: i16 shortValue
+    4: i32 integerValue;
+    5: i64 longValue,
+    6: double doubleValue
+    7: string stringValue;
+    8: binary binaryValue,
+    9: Value enumValue;
+}
+
+// all types as list<x>.
 struct Requirements {
-    // all types as list<x>.
-    1: required list<RequiredFields> requiredList;
-    2: optional list<OptionalFields> optionalList;
-    3:          list<DefaultFields>  defaultList;
-    4:          list<UnionFields>    unionList;
+    1: required list<RequiredFields>  requiredList;
+    2: optional list<OptionalFields>  optionalList;
+    3:          list<DefaultFields>   defaultList;
+    4:          list<UnionFields>     unionList;
+    5:          list<ExceptionFields> exceptionList;
 }

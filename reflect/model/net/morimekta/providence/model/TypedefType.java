@@ -2,6 +2,7 @@ package net.morimekta.providence.model;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Objects;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
@@ -15,7 +16,6 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
 
 /** typedef <type> <name> */
 @SuppressWarnings("unused")
@@ -26,11 +26,18 @@ public class TypedefType
     private final String mComment;
     private final String mType;
     private final String mName;
+    private final int tHashCode;
 
     private TypedefType(_Builder builder) {
         mComment = builder.mComment;
         mType = builder.mType;
         mName = builder.mName;
+
+        tHashCode = Objects.hash(
+                TypedefType.class,
+                _Field.COMMENT, mComment,
+                _Field.TYPE, mType,
+                _Field.NAME, mName);
     }
 
     public TypedefType(String pComment,
@@ -39,6 +46,12 @@ public class TypedefType
         mComment = pComment;
         mType = pType;
         mName = pName;
+
+        tHashCode = Objects.hash(
+                TypedefType.class,
+                _Field.COMMENT, mComment,
+                _Field.TYPE, mType,
+                _Field.NAME, mName);
     }
 
     public boolean hasComment() {
@@ -109,17 +122,14 @@ public class TypedefType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
-        return PTypeUtils.equals(mComment, other.mComment) &&
-               PTypeUtils.equals(mType, other.mType) &&
-               PTypeUtils.equals(mName, other.mName);
+        return Objects.equals(mComment, other.mComment) &&
+               Objects.equals(mType, other.mType) &&
+               Objects.equals(mName, other.mName);
     }
 
     @Override
     public int hashCode() {
-        return TypedefType.class.hashCode() +
-               PTypeUtils.hashCode(_Field.COMMENT, mComment) +
-               PTypeUtils.hashCode(_Field.TYPE, mType) +
-               PTypeUtils.hashCode(_Field.NAME, mName);
+        return tHashCode;
     }
 
     @Override
@@ -203,8 +213,7 @@ public class TypedefType
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(TypedefType.class.getSimpleName())
-                   .append('{')
+            builder.append("TypedefType._Field(")
                    .append(mKey)
                    .append(": ");
             if (mRequired != PRequirement.DEFAULT) {
@@ -213,7 +222,7 @@ public class TypedefType
             builder.append(getDescriptor().getQualifiedName(null))
                    .append(' ')
                    .append(mName)
-                   .append('}');
+                   .append(')');
             return builder.toString();
         }
 
