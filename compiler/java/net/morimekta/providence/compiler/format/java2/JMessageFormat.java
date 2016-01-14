@@ -555,7 +555,7 @@ public class JMessageFormat {
             // TODO(steineldar): Handle constructing exception!
         } else if (message.isUnion()) {
             for (JField field : message.fields()) {
-                writer.formatln("public %s %s(%s value) {",
+                writer.formatln("public static %s %s(%s value) {",
                                 message.instanceType(),
                                 camelCase("with", field.name()),
                                 field.valueType())

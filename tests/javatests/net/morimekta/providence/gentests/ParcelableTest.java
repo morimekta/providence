@@ -3,18 +3,23 @@ package net.morimekta.providence.gentests;
 import net.morimekta.providence.Binary;
 import net.morimekta.test.alltypes.AllTypes;
 import net.morimekta.test.alltypes.Empty;
+import net.morimekta.test.alltypes.OneType;
 import net.morimekta.test.alltypes.Other;
 import net.morimekta.test.alltypes.Values;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.requirement.ExceptionFields;
+import net.morimekta.test.requirement.Value;
 
 import org.junit.Test;
 
 import android.os.Parcel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests of generated code providing android.os.Parcelable support.

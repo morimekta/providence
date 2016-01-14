@@ -14,6 +14,7 @@ java_test(
   name = "test",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
+    ":jackson",
     "//third-party:jackson-annotations",
     "//third-party:jackson-core",
     "//third-party:jackson-databind",

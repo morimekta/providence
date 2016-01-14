@@ -1,6 +1,14 @@
 package net.morimekta.providence.jackson;
 
+import net.morimekta.providence.Binary;
+import net.morimekta.providence.util.PBase64Utils;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * @author Stein Eldar Johnsen
@@ -8,7 +16,18 @@ import org.junit.Test;
  */
 public class BinaryJsonDeserializerTest {
     @Test
-    public void testDeserialize() {
+    public void testDeserialize() throws IOException {
+        BinaryJsonDeserializer deserializer = new BinaryJsonDeserializer();
 
+        byte[] data = new byte[]{12, 34, 56, 78, 91, 23, 45, 67, 78, 90};
+        String encoded = "[\"" + PBase64Utils.encode(data) + "\"]";
+
+        JsonFactory factory = new JsonFactory();
+        JsonParser parser = factory.createParser(encoded);
+
+        parser.nextToken();  // start of array.
+        parser.nextToken();  // start of literal.
+
+        Assert.assertEquals(Binary.wrap(data), deserializer.deserialize(parser, null));
     }
 }
