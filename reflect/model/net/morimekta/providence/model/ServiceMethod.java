@@ -30,10 +30,10 @@ public class ServiceMethod
         implements PMessage<ServiceMethod>, Serializable {
     private final static long serialVersionUID = -8952857258512990537L;
 
-    private final static boolean kDefaultIsOneway = false;
+    private final static boolean kDefaultOneWay = false;
 
     private final String mComment;
-    private final boolean mIsOneway;
+    private final boolean mOneWay;
     private final String mReturnType;
     private final String mName;
     private final List<ThriftField> mParams;
@@ -42,7 +42,7 @@ public class ServiceMethod
 
     private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
-        mIsOneway = builder.mIsOneway;
+        mOneWay = builder.mOneWay;
         mReturnType = builder.mReturnType;
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
@@ -51,7 +51,7 @@ public class ServiceMethod
         tHashCode = Objects.hash(
                 ServiceMethod.class,
                 _Field.COMMENT, mComment,
-                _Field.IS_ONEWAY, mIsOneway,
+                _Field.ONE_WAY, mOneWay,
                 _Field.RETURN_TYPE, mReturnType,
                 _Field.NAME, mName,
                 _Field.PARAMS, PTypeUtils.hashCode(mParams),
@@ -59,13 +59,13 @@ public class ServiceMethod
     }
 
     public ServiceMethod(String pComment,
-                         boolean pIsOneway,
+                         boolean pOneWay,
                          String pReturnType,
                          String pName,
                          List<ThriftField> pParams,
                          List<ThriftField> pExceptions) {
         mComment = pComment;
-        mIsOneway = pIsOneway;
+        mOneWay = pOneWay;
         mReturnType = pReturnType;
         mName = pName;
         mParams = Collections.unmodifiableList(new LinkedList<>(pParams));
@@ -74,7 +74,7 @@ public class ServiceMethod
         tHashCode = Objects.hash(
                 ServiceMethod.class,
                 _Field.COMMENT, mComment,
-                _Field.IS_ONEWAY, mIsOneway,
+                _Field.ONE_WAY, mOneWay,
                 _Field.RETURN_TYPE, mReturnType,
                 _Field.NAME, mName,
                 _Field.PARAMS, PTypeUtils.hashCode(mParams),
@@ -89,12 +89,12 @@ public class ServiceMethod
         return mComment;
     }
 
-    public boolean hasIsOneway() {
-        return mIsOneway != kDefaultIsOneway;
+    public boolean hasOneWay() {
+        return true;
     }
 
-    public boolean isIsOneway() {
-        return mIsOneway;
+    public boolean isOneWay() {
+        return mOneWay;
     }
 
     public boolean hasReturnType() {
@@ -159,7 +159,7 @@ public class ServiceMethod
     public Object get(int key) {
         switch(key) {
             case 1: return getComment();
-            case 2: return isIsOneway();
+            case 2: return isOneWay();
             case 3: return getReturnType();
             case 4: return getName();
             case 5: return getParams();
@@ -183,7 +183,7 @@ public class ServiceMethod
         if (o == null || !(o instanceof ServiceMethod)) return false;
         ServiceMethod other = (ServiceMethod) o;
         return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mIsOneway, other.mIsOneway) &&
+               Objects.equals(mOneWay, other.mOneWay) &&
                Objects.equals(mReturnType, other.mReturnType) &&
                Objects.equals(mName, other.mName) &&
                PTypeUtils.equals(mParams, other.mParams) &&
@@ -211,11 +211,11 @@ public class ServiceMethod
             out.append("comment:");
             out.append('\"').append(mComment).append('\"');
         }
-        if (hasIsOneway()) {
+        if (hasOneWay()) {
             if (!first) out.append(',');
             first = false;
-            out.append("is_oneway:");
-            out.append(mIsOneway ? "true" : "false");
+            out.append("one_way:");
+            out.append(mOneWay ? "true" : "false");
         }
         if (hasReturnType()) {
             if (!first) out.append(',');
@@ -247,7 +247,7 @@ public class ServiceMethod
 
     public enum _Field implements PField {
         COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        IS_ONEWAY(2, PRequirement.DEFAULT, "is_oneway", PPrimitive.BOOL.provider(), new PDefaultValueProvider<>(kDefaultIsOneway)),
+        ONE_WAY(2, PRequirement.DEFAULT, "one_way", PPrimitive.BOOL.provider(), new PDefaultValueProvider<>(kDefaultOneWay)),
         RETURN_TYPE(3, PRequirement.DEFAULT, "return_type", PPrimitive.STRING.provider(), null),
         NAME(4, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         PARAMS(5, PRequirement.DEFAULT, "params", PList.provider(ThriftField.provider()), null),
@@ -313,7 +313,7 @@ public class ServiceMethod
         public static _Field forKey(int key) {
             switch (key) {
                 case 1: return _Field.COMMENT;
-                case 2: return _Field.IS_ONEWAY;
+                case 2: return _Field.ONE_WAY;
                 case 3: return _Field.RETURN_TYPE;
                 case 4: return _Field.NAME;
                 case 5: return _Field.PARAMS;
@@ -325,7 +325,7 @@ public class ServiceMethod
         public static _Field forName(String name) {
             switch (name) {
                 case "comment": return _Field.COMMENT;
-                case "is_oneway": return _Field.IS_ONEWAY;
+                case "one_way": return _Field.ONE_WAY;
                 case "return_type": return _Field.RETURN_TYPE;
                 case "name": return _Field.NAME;
                 case "params": return _Field.PARAMS;
@@ -401,7 +401,7 @@ public class ServiceMethod
         private BitSet optionals;
 
         private String mComment;
-        private boolean mIsOneway;
+        private boolean mOneWay;
         private String mReturnType;
         private String mName;
         private List<ThriftField> mParams;
@@ -410,7 +410,7 @@ public class ServiceMethod
 
         public _Builder() {
             optionals = new BitSet(6);
-            mIsOneway = kDefaultIsOneway;
+            mOneWay = kDefaultOneWay;
             mParams = new LinkedList<>();
             mExceptions = new LinkedList<>();
         }
@@ -423,7 +423,7 @@ public class ServiceMethod
                 mComment = base.mComment;
             }
             optionals.set(1);
-            mIsOneway = base.mIsOneway;
+            mOneWay = base.mOneWay;
             if (base.hasReturnType()) {
                 optionals.set(2);
                 mReturnType = base.mReturnType;
@@ -452,14 +452,14 @@ public class ServiceMethod
             mComment = null;
             return this;
         }
-        public _Builder setIsOneway(boolean value) {
+        public _Builder setOneWay(boolean value) {
             optionals.set(1);
-            mIsOneway = value;
+            mOneWay = value;
             return this;
         }
-        public _Builder clearIsOneway() {
+        public _Builder clearOneWay() {
             optionals.set(1, false);
-            mIsOneway = kDefaultIsOneway;
+            mOneWay = kDefaultOneWay;
             return this;
         }
         public _Builder setReturnType(String value) {
@@ -525,7 +525,7 @@ public class ServiceMethod
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
-                case 2: setIsOneway((boolean) value); break;
+                case 2: setOneWay((boolean) value); break;
                 case 3: setReturnType((String) value); break;
                 case 4: setName((String) value); break;
                 case 5: setParams((List<ThriftField>) value); break;
@@ -538,7 +538,7 @@ public class ServiceMethod
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;
-                case 2: clearIsOneway(); break;
+                case 2: clearOneWay(); break;
                 case 3: clearReturnType(); break;
                 case 4: clearName(); break;
                 case 5: clearParams(); break;

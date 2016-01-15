@@ -391,21 +391,12 @@ public class JMessageFormat {
                       .appendln('}')
                       .newline();
             } else if (field.alwaysPresent()) {
-                if (field.isRequired()) {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .begin()
-                          .formatln("return true;")
-                          .end()
-                          .appendln('}')
-                          .newline();
-                } else {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .begin()
-                          .formatln("return %s != %s;", field.member(), field.kDefault())
-                          .end()
-                          .appendln('}')
-                          .newline();
-                }
+                writer.formatln("public boolean %s() {", field.presence())
+                      .begin()
+                      .formatln("return true;")
+                      .end()
+                      .appendln('}')
+                      .newline();
             } else {
                 writer.formatln("public boolean %s() {", field.presence())
                       .begin()

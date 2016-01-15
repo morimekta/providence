@@ -101,7 +101,7 @@ struct StructType {
  */
 struct ServiceMethod {
     1: string comment;
-    2: bool is_oneway = false;
+    2: bool one_way = false;
     3: string return_type
     4: required string name;
     5: list<ThriftField> params;

@@ -272,7 +272,7 @@ public class ThriftParser implements Parser {
             }
 
             if (token.getToken().equals(Keyword.ONEWAY.keyword)) {
-                method.setIsOneway(true);
+                method.setOneWay(true);
                 token = tokenizer.expect("reading service method");
             }
             if (!token.isQualifiedIdentifier()) {

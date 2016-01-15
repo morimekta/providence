@@ -73,7 +73,7 @@ public class EnumValue
     }
 
     public boolean hasValue() {
-        return mValue != kDefaultValue;
+        return true;
     }
 
     public int getValue() {
