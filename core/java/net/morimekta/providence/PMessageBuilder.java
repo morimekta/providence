@@ -29,5 +29,7 @@ public abstract class PMessageBuilder<T extends PMessage<T>>
 
     public abstract PMessageBuilder<T> set(int key, Object value);
 
+    public abstract PMessageBuilder<T> addTo(int key, Object value);
+
     public abstract PMessageBuilder<T> clear(int key);
 }

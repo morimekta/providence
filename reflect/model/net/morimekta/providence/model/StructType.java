@@ -444,6 +444,15 @@ public class StructType
         }
 
         @Override
+        public _Builder addTo(int key, Object value) {
+            switch (key) {
+                case 4: addToFields((ThriftField) value); break;
+                default: break;
+            }
+            return this;
+        }
+
+        @Override
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;

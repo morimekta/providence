@@ -521,6 +521,14 @@ public class ThriftField
         }
 
         @Override
+        public _Builder addTo(int key, Object value) {
+            switch (key) {
+                default: break;
+            }
+            return this;
+        }
+
+        @Override
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;

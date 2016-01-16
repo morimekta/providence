@@ -21,12 +21,17 @@ package net.morimekta.providence.reflect.contained;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.PTypeUtils;
@@ -198,6 +203,34 @@ public class CException
             }
             if (value != null) {
                 mFields.put(field.getKey(), value);
+            }
+            return this;
+        }
+
+        @Override
+        public Builder addTo(int key, Object value) {
+            PField<?> field = mType.getField(key);
+            if (field == null) {
+                return this; // soft ignoring unsupported fields.
+            }
+            if (value != null) {
+                if (field.getType() == PType.LIST) {
+                    @SuppressWarnings("unchecked")
+                    List<Object> list = (List<Object>) mFields.get(field.getKey());
+                    if (list == null) {
+                        list = new LinkedList<>();
+                        mFields.put(field.getKey(), list);
+                    }
+                    list.add(value);
+                } else if (field.getType() == PType.SET) {
+                    @SuppressWarnings("unchecked")
+                    Set<Object> set = (Set<Object>) mFields.get(field.getKey());
+                    if (set == null) {
+                        set = new HashSet<>();
+                        mFields.put(field.getKey(), set);
+                    }
+                    set.add(value);
+                }
             }
             return this;
         }

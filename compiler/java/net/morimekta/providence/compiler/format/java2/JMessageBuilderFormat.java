@@ -2,6 +2,7 @@ package net.morimekta.providence.compiler.format.java2;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.util.io.IndentedPrintWriter;
 
@@ -39,6 +40,7 @@ public class JMessageBuilderFormat {
         }
 
         appendOverrideSetter(message);
+        appendOverrideAdder(message);
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
 
@@ -298,6 +300,29 @@ public class JMessageBuilderFormat {
                             field.id(), field.setter(), field.valueType());
         }
         writer.end()
+              .appendln('}')
+              .appendln("return this;")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendOverrideAdder(JMessage message) {
+        writer.appendln("@Override")
+              .appendln("public _Builder addTo(int key, Object value) {")
+              .begin()
+              .appendln("switch (key) {")
+              .begin();
+        for (JField field : message.fields()) {
+            if (field.type() == PType.LIST || field.type() == PType.SET) {
+                PContainer<?,?> ct = (PContainer<?, ?>) field.getPField().getDescriptor();
+                PDescriptor<?> itype = ct.itemDescriptor();
+                writer.formatln("case %d: %s((%s) value); break;",
+                                field.id(), field.adder(), helper.getValueType(itype));
+            }
+        }
+        writer.appendln("default: break;")
+              .end()
               .appendln('}')
               .appendln("return this;")
               .end()

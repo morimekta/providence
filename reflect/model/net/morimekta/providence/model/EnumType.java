@@ -398,6 +398,15 @@ public class EnumType
         }
 
         @Override
+        public _Builder addTo(int key, Object value) {
+            switch (key) {
+                case 3: addToValues((EnumValue) value); break;
+                default: break;
+            }
+            return this;
+        }
+
+        @Override
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;

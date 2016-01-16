@@ -535,6 +535,16 @@ public class ServiceMethod
         }
 
         @Override
+        public _Builder addTo(int key, Object value) {
+            switch (key) {
+                case 5: addToParams((ThriftField) value); break;
+                case 6: addToExceptions((ThriftField) value); break;
+                default: break;
+            }
+            return this;
+        }
+
+        @Override
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;

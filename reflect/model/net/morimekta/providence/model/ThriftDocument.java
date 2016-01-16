@@ -511,6 +511,16 @@ public class ThriftDocument
         }
 
         @Override
+        public _Builder addTo(int key, Object value) {
+            switch (key) {
+                case 3: addToIncludes((String) value); break;
+                case 5: addToDecl((Declaration) value); break;
+                default: break;
+            }
+            return this;
+        }
+
+        @Override
         public _Builder clear(int key) {
             switch (key) {
                 case 1: clearComment(); break;
