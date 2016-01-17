@@ -19,17 +19,19 @@
 
 package net.morimekta.providence.serializer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import net.morimekta.providence.Binary;
+import net.morimekta.providence.util.io.BinaryWriter;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -85,162 +87,25 @@ public class PBinarySerializerTest {
     @Test
     public void testWriteDouble() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+        BinaryWriter wirter = new BinaryWriter(baos);
         PBinarySerializer serializer = new PBinarySerializer();
 
-        assertEquals(9, serializer.writeDouble(baos, 1234567890.0));
+        assertEquals(9, serializer.writeDouble(wirter, 1234567890.0));
         assertEquals("30000080b48065d241", Binary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
-        assertEquals(9, serializer.writeDouble(baos, 1.2345678900));
+        assertEquals(9, serializer.writeDouble(wirter, 1.2345678900));
         assertEquals("301bde8342cac0f33f", Binary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
-        assertEquals(9, serializer.writeDouble(baos, -1234567890.0));
+        assertEquals(9, serializer.writeDouble(wirter, -1234567890.0));
         assertEquals("30000080b48065d2c1", Binary.wrap(baos.toByteArray()).toHexString());
 
         baos.reset();
 
-        assertEquals(9, serializer.writeDouble(baos, -1.2345678900));
+        assertEquals(9, serializer.writeDouble(wirter, -1.2345678900));
         assertEquals("301bde8342cac0f3bf", Binary.wrap(baos.toByteArray()).toHexString());
     }
-
-    @Test
-    public void testReadDouble() throws IOException, PSerializeException {
-        PBinarySerializer serializer = new PBinarySerializer();
-        ByteArrayInputStream bais;
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("000080b48065d241").get());
-        assertEquals(1234567890.0d, serializer.readDouble(bais), 0.0);
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("1bde8342cac0f33f").get());
-        assertEquals(1.2345678900d, serializer.readDouble(bais), 0.0);
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("000080b48065d2c1").get());
-        assertEquals(-1234567890.0d, serializer.readDouble(bais), 0.0);
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("1bde8342cac0f3bf").get());
-        assertEquals(-1.2345678900d, serializer.readDouble(bais), 0.0);
-    }
-
-    @Test
-    public void testWriteUnsigned() throws IOException {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        PBinarySerializer serializer = new PBinarySerializer();
-
-        assertEquals(1, serializer.writeUnsigned(baos, 1, 1));
-        assertEquals("01", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(1, serializer.writeUnsigned(baos, 255, 1));
-        assertEquals("ff", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeUnsigned(baos, Long.MAX_VALUE, 8));
-        assertEquals("ffffffffffffff7f", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeUnsigned(baos, Long.MIN_VALUE, 8));
-        assertEquals("0000000000000080", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeUnsigned(baos, -1, 8));
-        assertEquals("ffffffffffffffff", Binary.wrap(baos.toByteArray()).toHexString());
-    }
-
-    @Test
-    public void testReadUnsigned() throws IOException, PSerializeException {
-        PBinarySerializer serializer = new PBinarySerializer();
-        ByteArrayInputStream bais;
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("01").get());
-        assertEquals(1, serializer.readUnsigned(bais, 1));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("ff").get());
-        assertEquals(255, serializer.readUnsigned(bais, 1));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("0100000000000000").get());
-        assertEquals(1, serializer.readUnsigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("ffffffffffffffff").get());
-        assertEquals(-1, serializer.readUnsigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("ffffffffffffff7f").get());
-        assertEquals(Long.MAX_VALUE, serializer.readUnsigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("0000000000000080").get());
-        assertEquals(Long.MIN_VALUE, serializer.readUnsigned(bais, 8));
-    }
-
-    @Test
-    public void testWriteSigned() throws IOException, PSerializeException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        PBinarySerializer serializer = new PBinarySerializer();
-
-        assertEquals(1, serializer.writeSigned(baos, 1, 1));
-        assertEquals("01", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(1, serializer.writeSigned(baos, -1, 1));
-        assertEquals("81", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeSigned(baos, 1, 8));
-        assertEquals("0100000000000000", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeSigned(baos, -1, 8));
-        assertEquals("0100000000000080", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeSigned(baos, Long.MAX_VALUE, 8));
-        assertEquals("ffffffffffffff7f", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeSigned(baos, Long.MIN_VALUE + 1, 8));
-        assertEquals("ffffffffffffffff", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(8, serializer.writeSigned(baos, Long.MIN_VALUE, 8));
-        assertEquals("0000000000000080", Binary.wrap(baos.toByteArray()).toHexString());
-    }
-
-    @Test
-    public void testReadSigned() throws IOException, PSerializeException {
-        PBinarySerializer serializer = new PBinarySerializer();
-        ByteArrayInputStream bais;
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("01").get());
-        assertEquals(1, serializer.readSigned(bais, 1));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("81").get());
-        assertEquals(-1, serializer.readSigned(bais, 1));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("0100000000000000").get());
-        assertEquals(1, serializer.readSigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("0100000000000080").get());
-        assertEquals(-1, serializer.readSigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("ffffffffffffff7f").get());
-        assertEquals(Long.MAX_VALUE, serializer.readSigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("ffffffffffffffff").get());
-        assertEquals(Long.MIN_VALUE  + 1, serializer.readSigned(bais, 8));
-
-        bais = new ByteArrayInputStream(Binary.fromHexString("0000000000000080").get());
-        assertEquals(Long.MIN_VALUE, serializer.readSigned(bais, 8));
-    }
-
 }
