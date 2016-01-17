@@ -7,23 +7,21 @@ git_repository(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/providence/./pom.xml
-# /home/morimekta/src/providence/./compiler/pom.xml
-# /home/morimekta/src/providence/./converter/pom.xml
-# /home/morimekta/src/providence/./core-jackson/pom.xml
-# /home/morimekta/src/providence/./core/pom.xml
-# /home/morimekta/src/providence/./jax-rs/pom.xml
-# /home/morimekta/src/providence/./messageio/pom.xml
-# /home/morimekta/src/providence/./reflect/pom.xml
-# /home/morimekta/src/providence/./testing/pom.xml
-# /home/morimekta/src/providence/./tests/pom.xml
-# /home/morimekta/src/providence/./thrift/pom.xml
-# /home/morimekta/src/providence/./utils/pom.xml
+# /home/morimekta/src/providence/compiler/pom.xml
+# /home/morimekta/src/providence/converter/pom.xml
+# /home/morimekta/src/providence/core-jackson/pom.xml
+# /home/morimekta/src/providence/core/pom.xml
+# /home/morimekta/src/providence/messageio/pom.xml
+# /home/morimekta/src/providence/reflect/pom.xml
+# /home/morimekta/src/providence/testing/pom.xml
+# /home/morimekta/src/providence/thrift/pom.xml
+# /home/morimekta/src/providence/tools/pom.xml
+# /home/morimekta/src/providence/utils/pom.xml
 
 
 # net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "args4j_args4j",
@@ -71,22 +69,15 @@ maven_jar(
     sha1 = "4bfc12adfe4842bf07b657f0369c4cb522955686",
 )
 
-# net.mormekta.providence:providence-jax-rs:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "javax.ws.rs_javax.ws.rs-api",
-    artifact = "javax.ws.rs:javax.ws.rs-api:2.0",
-    sha1 = "61f0983eb190954ccdede31e786a9e0bd9767c4a",
-)
-
 # net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-core:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-jax-rs:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-reflect:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "junit_junit",
@@ -100,7 +91,7 @@ maven_jar(
     artifact = "net.mormekta:android-util:0.1",
 )
 
-# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.commons_commons-math3",
     artifact = "org.apache.commons:commons-math3:3.5",
@@ -122,8 +113,8 @@ maven_jar(
     sha1 = "f5aa318bda4c6c8d688c9d00b90681dcd82ce636",
 )
 
-# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.thrift_libthrift",
     artifact = "org.apache.thrift:libthrift:0.9.3",
@@ -139,6 +130,7 @@ maven_jar(
 )
 
 # net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT wanted version 1.10.19
 maven_jar(
     name = "org.mockito_mockito-core",
     artifact = "org.mockito:mockito-core:1.10.17",
@@ -155,7 +147,7 @@ maven_jar(
 
 # net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tests:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.slf4j_slf4j-simple",
     artifact = "org.slf4j:slf4j-simple:1.7.12",

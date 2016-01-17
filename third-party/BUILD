@@ -14,18 +14,16 @@ exports_files(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/providence/./pom.xml
-# /home/morimekta/src/providence/./compiler/pom.xml
-# /home/morimekta/src/providence/./converter/pom.xml
-# /home/morimekta/src/providence/./core-jackson/pom.xml
-# /home/morimekta/src/providence/./core/pom.xml
-# /home/morimekta/src/providence/./jax-rs/pom.xml
-# /home/morimekta/src/providence/./messageio/pom.xml
-# /home/morimekta/src/providence/./reflect/pom.xml
-# /home/morimekta/src/providence/./testing/pom.xml
-# /home/morimekta/src/providence/./tests/pom.xml
-# /home/morimekta/src/providence/./thrift/pom.xml
-# /home/morimekta/src/providence/./utils/pom.xml
+# /home/morimekta/src/providence/compiler/pom.xml
+# /home/morimekta/src/providence/converter/pom.xml
+# /home/morimekta/src/providence/core-jackson/pom.xml
+# /home/morimekta/src/providence/core/pom.xml
+# /home/morimekta/src/providence/messageio/pom.xml
+# /home/morimekta/src/providence/reflect/pom.xml
+# /home/morimekta/src/providence/testing/pom.xml
+# /home/morimekta/src/providence/thrift/pom.xml
+# /home/morimekta/src/providence/tools/pom.xml
+# /home/morimekta/src/providence/utils/pom.xml
 
 
 java_library(
@@ -56,13 +54,6 @@ java_library(
         "@com.fasterxml.jackson.core_jackson-databind//jar",
         "@com.fasterxml.jackson.core_jackson-annotations//jar",
         "@com.fasterxml.jackson.core_jackson-core//jar",
-    ],
-)
-java_library(
-    name = "javax.ws.rs-api",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@javax.ws.rs_javax.ws.rs-api//jar",
     ],
 )
 java_library(

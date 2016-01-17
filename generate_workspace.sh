@@ -13,7 +13,7 @@ fi
 
 TMP_file=$(mktemp -t 'backend-servlet.XXXXXXXXXX')
 
-POMS=( $(find | grep '/pom.xml' | sed -e 's:/pom.xml$::' -e 's:^:-m :') )
+POMS=( $(find | grep '/pom.xml' | sed -e 's:/pom.xml$::' -e 's:^./:-m :') )
 
 echo "-- log file ${TMP_file}"
 echo "## generate_workspace ${POMS[@]}"
