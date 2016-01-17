@@ -72,10 +72,6 @@ Field type IDs 8 to 15 are not used (yet).
   - 2: 4 bytes (i32 / int)
   - 3: 8 bytes (i64 / long)
 
-It is re-endoded so that negative numbers are flipped, and then then sign bit
-set. -0 mean MIN_VALUE (based on byte count). The sign bit is the most
-significant bit. The resulted value is little-endian byte encoded.
-
 ## DOUBLE
 
 The double is standard `[1:11:52]` encoded then little-endian serialized onto the byte stream.

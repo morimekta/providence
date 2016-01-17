@@ -287,6 +287,8 @@ public class BinaryReader extends InputStream {
      * Write a signed number as varint (integer with variable number of bytes,
      * determined as part of the bytes themselves.
      *
+     * NOTE: Reading varint accepts end of stream as '0'.
+     *
      * @return The varint read from stream.
      */
     public int readIntVarint() throws IOException {
@@ -309,6 +311,8 @@ public class BinaryReader extends InputStream {
     /**
      * Write a signed number as varint (integer with variable number of bytes,
      * determined as part of the bytes themselves.
+     *
+     * NOTE: Reading varint accepts end of stream as '0'.
      *
      * @return The varint read from stream.
      */
