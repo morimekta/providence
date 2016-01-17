@@ -42,7 +42,7 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeByte(byte integer) throws IOException {
-        out.write(integer < 0 ? 0x100 + integer : integer);
+        out.write(integer);
         return 1;
     }
 
@@ -54,8 +54,8 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeShort(short integer) throws IOException {
-        out.write((integer & 0x00ff));
-        out.write((integer & 0xff00) >> 8);
+        out.write(integer);
+        out.write(integer >>> 8);
         return 2;
     }
 
@@ -67,10 +67,10 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeInt(int integer) throws IOException {
-        out.write((integer & 0x000000ff));
-        out.write((integer & 0x0000ff00) >> 8);
-        out.write((integer & 0x00ff0000) >> 16);
-        out.write((integer & 0xff000000) >> 24);
+        out.write(integer);
+        out.write(integer >>> 8);
+        out.write(integer >>> 16);
+        out.write(integer >>> 24);
         return 4;
     }
 
@@ -82,14 +82,14 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeLong(long integer) throws IOException {
-        out.write((int) ((integer & 0x00000000000000ffL)));
-        out.write((int) ((integer & 0x000000000000ff00L) >> 8));
-        out.write((int) ((integer & 0x0000000000ff0000L) >> 16));
-        out.write((int) ((integer & 0x00000000ff000000L) >> 24));
-        out.write((int) ((integer & 0x000000ff00000000L) >> 32));
-        out.write((int) ((integer & 0x0000ff0000000000L) >> 40));
-        out.write((int) ((integer & 0x00ff000000000000L) >> 48));
-        out.write((int) ((integer & 0xff00000000000000L) >> 56));
+        out.write((int) (integer));
+        out.write((int) (integer >>> 8));
+        out.write((int) (integer >>> 16));
+        out.write((int) (integer >>> 24));
+        out.write((int) (integer >>> 32));
+        out.write((int) (integer >>> 40));
+        out.write((int) (integer >>> 48));
+        out.write((int) (integer >>> 56));
         return 8;
     }
 
@@ -131,8 +131,8 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeUInt16(int number) throws IOException {
-        out.write((number & 0x000000ff));
-        out.write((number & 0x0000ff00) >> 8);
+        out.write(number);
+        out.write(number >>> 8);
         return 2;
     }
 
@@ -142,9 +142,9 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeUInt24(int number) throws IOException {
-        out.write((number & 0x000000ff));
-        out.write((number & 0x0000ff00) >> 8);
-        out.write((number & 0x00ff0000) >> 16);
+        out.write(number);
+        out.write(number >>> 8);
+        out.write(number >>> 16);
         return 3;
     }
 
@@ -154,7 +154,11 @@ public class BinaryWriter extends OutputStream {
      * @throws IOException
      */
     public int writeUInt32(int number) throws IOException {
-        return writeInt(number);
+        out.write(number);
+        out.write(number >>> 8);
+        out.write(number >>> 16);
+        out.write(number >>> 24);
+        return 4;
     }
 
     /**
@@ -244,7 +248,7 @@ public class BinaryWriter extends OutputStream {
         out.write((c ? 0x80 : 0x00) | (varint & 0x7f));
         while (c) {
             ++b;
-            varint = (varint >> 7) & 0x01ffffff;
+            varint >>>= 7;
             c = (varint ^ (varint & 0x7f)) != 0;
             out.write((c ? 0x80 : 0x00) | (varint & 0x7f));
         }
@@ -264,7 +268,7 @@ public class BinaryWriter extends OutputStream {
         out.write((c ? 0x80 : 0x00) | (int) (varint & 0x7f));
         while (c) {
             ++b;
-            varint = (varint >> 7) & 0x01ffffffffffffffL;
+            varint >>>= 7;
             c = (varint ^ (varint & 0x7f)) != 0;
             out.write((c ? 0x80 : 0x00) | (int) (varint & 0x7f));
         }
