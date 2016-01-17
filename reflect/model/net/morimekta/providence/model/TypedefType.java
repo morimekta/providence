@@ -26,18 +26,13 @@ public class TypedefType
     private final String mComment;
     private final String mType;
     private final String mName;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private TypedefType(_Builder builder) {
         mComment = builder.mComment;
         mType = builder.mType;
         mName = builder.mName;
-
-        tHashCode = Objects.hash(
-                TypedefType.class,
-                _Field.COMMENT, mComment,
-                _Field.TYPE, mType,
-                _Field.NAME, mName);
     }
 
     public TypedefType(String pComment,
@@ -46,12 +41,6 @@ public class TypedefType
         mComment = pComment;
         mType = pType;
         mName = pName;
-
-        tHashCode = Objects.hash(
-                TypedefType.class,
-                _Field.COMMENT, mComment,
-                _Field.TYPE, mType,
-                _Field.NAME, mName);
     }
 
     public boolean hasComment() {
@@ -129,6 +118,13 @@ public class TypedefType
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    TypedefType.class,
+                    _Field.COMMENT, mComment,
+                    _Field.TYPE, mType,
+                    _Field.NAME, mName);
+        }
         return tHashCode;
     }
 

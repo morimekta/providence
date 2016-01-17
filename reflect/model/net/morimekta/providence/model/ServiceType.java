@@ -37,20 +37,14 @@ public class ServiceType
     private final String mName;
     private final String mExtend;
     private final List<ServiceMethod> mMethods;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private ServiceType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mExtend = builder.mExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(builder.mMethods));
-
-        tHashCode = Objects.hash(
-                ServiceType.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.EXTEND, mExtend,
-                _Field.METHODS, PTypeUtils.hashCode(mMethods));
     }
 
     public ServiceType(String pComment,
@@ -61,13 +55,6 @@ public class ServiceType
         mName = pName;
         mExtend = pExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(pMethods));
-
-        tHashCode = Objects.hash(
-                ServiceType.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.EXTEND, mExtend,
-                _Field.METHODS, PTypeUtils.hashCode(mMethods));
     }
 
     public boolean hasComment() {
@@ -157,6 +144,14 @@ public class ServiceType
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    ServiceType.class,
+                    _Field.COMMENT, mComment,
+                    _Field.NAME, mName,
+                    _Field.EXTEND, mExtend,
+                    _Field.METHODS, PTypeUtils.hashCode(mMethods));
+        }
         return tHashCode;
     }
 

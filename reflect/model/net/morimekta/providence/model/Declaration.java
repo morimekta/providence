@@ -28,7 +28,8 @@ public class Declaration
     private final ThriftField mDeclConst;
 
     private final _Field tUnionField;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private Declaration(_Builder builder) {
         tUnionField = builder.tUnionField;
@@ -38,14 +39,6 @@ public class Declaration
         mDeclStruct = tUnionField == _Field.DECL_STRUCT ? builder.mDeclStruct : null;
         mDeclService = tUnionField == _Field.DECL_SERVICE ? builder.mDeclService : null;
         mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
-
-        tHashCode = Objects.hash(
-                Declaration.class,
-                _Field.DECL_ENUM, mDeclEnum,
-                _Field.DECL_TYPEDEF, mDeclTypedef,
-                _Field.DECL_STRUCT, mDeclStruct,
-                _Field.DECL_SERVICE, mDeclService,
-                _Field.DECL_CONST, mDeclConst);
     }
 
     public static Declaration withDeclEnum(EnumType value) {
@@ -173,6 +166,15 @@ public class Declaration
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    Declaration.class,
+                    _Field.DECL_ENUM, mDeclEnum,
+                    _Field.DECL_TYPEDEF, mDeclTypedef,
+                    _Field.DECL_STRUCT, mDeclStruct,
+                    _Field.DECL_SERVICE, mDeclService,
+                    _Field.DECL_CONST, mDeclConst);
+        }
         return tHashCode;
     }
 

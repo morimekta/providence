@@ -28,18 +28,13 @@ public class EnumValue
     private final String mComment;
     private final String mName;
     private final int mValue;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private EnumValue(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mValue = builder.mValue;
-
-        tHashCode = Objects.hash(
-                EnumValue.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.VALUE, mValue);
     }
 
     public EnumValue(String pComment,
@@ -48,12 +43,6 @@ public class EnumValue
         mComment = pComment;
         mName = pName;
         mValue = pValue;
-
-        tHashCode = Objects.hash(
-                EnumValue.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.VALUE, mValue);
     }
 
     public boolean hasComment() {
@@ -131,6 +120,13 @@ public class EnumValue
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    EnumValue.class,
+                    _Field.COMMENT, mComment,
+                    _Field.NAME, mName,
+                    _Field.VALUE, mValue);
+        }
         return tHashCode;
     }
 

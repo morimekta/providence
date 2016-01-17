@@ -451,7 +451,8 @@ public class JMessageFormat {
             writer.newline()
                   .appendln("private final _Field tUnionField;");
         }
-        writer.appendln("private final int tHashCode;")
+        writer.appendln()
+              .appendln("private volatile int tHashCode;")
               .newline();
     }
 
@@ -501,8 +502,6 @@ public class JMessageFormat {
                         break;
                 }
             }
-            writer.newline();
-            appendHashCode(writer, message);
         } else {
             if (message.isException()) {
                 writer.appendln("super(builder.createMessage());")
@@ -533,8 +532,6 @@ public class JMessageFormat {
                         break;
                 }
             }
-            writer.newline();
-            appendHashCode(writer, message);
         }
         writer.end()
               .appendln('}')
@@ -602,30 +599,11 @@ public class JMessageFormat {
                         break;
                 }
             }
-            writer.newline();
-            appendHashCode(writer, message);
             writer.end()
                   .appendln('}')
                   .newline();
         }
     }
-
-    private void appendHashCode(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("tHashCode = Objects.hash(")
-              .begin(DBL_INDENT)
-              .formatln("%s.class", message.instanceType());
-        for (JField field : message.fields()) {
-            writer.append(",");
-            if (field.container()) {
-                writer.formatln("_Field.%s, PTypeUtils.hashCode(%s)", field.fieldEnum(), field.member());
-            } else {
-                writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
-            }
-        }
-        writer.end()
-              .append(");");
-    }
-
 
     private void appendFileHeader(IndentedPrintWriter writer, JMessage message, JValueFormat values)
             throws GeneratorException, IOException {

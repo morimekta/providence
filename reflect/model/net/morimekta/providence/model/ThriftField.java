@@ -44,7 +44,8 @@ public class ThriftField
     private final String mType;
     private final String mName;
     private final String mDefaultValue;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private ThriftField(_Builder builder) {
         mComment = builder.mComment;
@@ -53,15 +54,6 @@ public class ThriftField
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
-
-        tHashCode = Objects.hash(
-                ThriftField.class,
-                _Field.COMMENT, mComment,
-                _Field.KEY, mKey,
-                _Field.REQUIREMENT, mRequirement,
-                _Field.TYPE, mType,
-                _Field.NAME, mName,
-                _Field.DEFAULT_VALUE, mDefaultValue);
     }
 
     public ThriftField(String pComment,
@@ -76,15 +68,6 @@ public class ThriftField
         mType = pType;
         mName = pName;
         mDefaultValue = pDefaultValue;
-
-        tHashCode = Objects.hash(
-                ThriftField.class,
-                _Field.COMMENT, mComment,
-                _Field.KEY, mKey,
-                _Field.REQUIREMENT, mRequirement,
-                _Field.TYPE, mType,
-                _Field.NAME, mName,
-                _Field.DEFAULT_VALUE, mDefaultValue);
     }
 
     public boolean hasComment() {
@@ -198,6 +181,16 @@ public class ThriftField
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    ThriftField.class,
+                    _Field.COMMENT, mComment,
+                    _Field.KEY, mKey,
+                    _Field.REQUIREMENT, mRequirement,
+                    _Field.TYPE, mType,
+                    _Field.NAME, mName,
+                    _Field.DEFAULT_VALUE, mDefaultValue);
+        }
         return tHashCode;
     }
 

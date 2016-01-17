@@ -38,7 +38,8 @@ public class ServiceMethod
     private final String mName;
     private final List<ThriftField> mParams;
     private final List<ThriftField> mExceptions;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private ServiceMethod(_Builder builder) {
         mComment = builder.mComment;
@@ -47,15 +48,6 @@ public class ServiceMethod
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(builder.mExceptions));
-
-        tHashCode = Objects.hash(
-                ServiceMethod.class,
-                _Field.COMMENT, mComment,
-                _Field.ONE_WAY, mOneWay,
-                _Field.RETURN_TYPE, mReturnType,
-                _Field.NAME, mName,
-                _Field.PARAMS, PTypeUtils.hashCode(mParams),
-                _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
     }
 
     public ServiceMethod(String pComment,
@@ -70,15 +62,6 @@ public class ServiceMethod
         mName = pName;
         mParams = Collections.unmodifiableList(new LinkedList<>(pParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(pExceptions));
-
-        tHashCode = Objects.hash(
-                ServiceMethod.class,
-                _Field.COMMENT, mComment,
-                _Field.ONE_WAY, mOneWay,
-                _Field.RETURN_TYPE, mReturnType,
-                _Field.NAME, mName,
-                _Field.PARAMS, PTypeUtils.hashCode(mParams),
-                _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
     }
 
     public boolean hasComment() {
@@ -192,6 +175,16 @@ public class ServiceMethod
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    ServiceMethod.class,
+                    _Field.COMMENT, mComment,
+                    _Field.ONE_WAY, mOneWay,
+                    _Field.RETURN_TYPE, mReturnType,
+                    _Field.NAME, mName,
+                    _Field.PARAMS, PTypeUtils.hashCode(mParams),
+                    _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
+        }
         return tHashCode;
     }
 

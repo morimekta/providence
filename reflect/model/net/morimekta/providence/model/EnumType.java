@@ -36,18 +36,13 @@ public class EnumType
     private final String mComment;
     private final String mName;
     private final List<EnumValue> mValues;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private EnumType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
         mValues = Collections.unmodifiableList(new LinkedList<>(builder.mValues));
-
-        tHashCode = Objects.hash(
-                EnumType.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.VALUES, PTypeUtils.hashCode(mValues));
     }
 
     public EnumType(String pComment,
@@ -56,12 +51,6 @@ public class EnumType
         mComment = pComment;
         mName = pName;
         mValues = Collections.unmodifiableList(new LinkedList<>(pValues));
-
-        tHashCode = Objects.hash(
-                EnumType.class,
-                _Field.COMMENT, mComment,
-                _Field.NAME, mName,
-                _Field.VALUES, PTypeUtils.hashCode(mValues));
     }
 
     public boolean hasComment() {
@@ -139,6 +128,13 @@ public class EnumType
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    EnumType.class,
+                    _Field.COMMENT, mComment,
+                    _Field.NAME, mName,
+                    _Field.VALUES, PTypeUtils.hashCode(mValues));
+        }
         return tHashCode;
     }
 

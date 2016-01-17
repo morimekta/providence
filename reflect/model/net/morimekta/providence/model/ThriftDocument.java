@@ -37,7 +37,8 @@ public class ThriftDocument
     private final List<String> mIncludes;
     private final Map<String,String> mNamespaces;
     private final List<Declaration> mDecl;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private ThriftDocument(_Builder builder) {
         mComment = builder.mComment;
@@ -45,14 +46,6 @@ public class ThriftDocument
         mIncludes = Collections.unmodifiableList(new LinkedList<>(builder.mIncludes));
         mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mNamespaces));
         mDecl = Collections.unmodifiableList(new LinkedList<>(builder.mDecl));
-
-        tHashCode = Objects.hash(
-                ThriftDocument.class,
-                _Field.COMMENT, mComment,
-                _Field.PACKAGE, mPackage,
-                _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
-                _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
-                _Field.DECL, PTypeUtils.hashCode(mDecl));
     }
 
     public ThriftDocument(String pComment,
@@ -65,14 +58,6 @@ public class ThriftDocument
         mIncludes = Collections.unmodifiableList(new LinkedList<>(pIncludes));
         mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(pNamespaces));
         mDecl = Collections.unmodifiableList(new LinkedList<>(pDecl));
-
-        tHashCode = Objects.hash(
-                ThriftDocument.class,
-                _Field.COMMENT, mComment,
-                _Field.PACKAGE, mPackage,
-                _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
-                _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
-                _Field.DECL, PTypeUtils.hashCode(mDecl));
     }
 
     public boolean hasComment() {
@@ -178,6 +163,15 @@ public class ThriftDocument
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    ThriftDocument.class,
+                    _Field.COMMENT, mComment,
+                    _Field.PACKAGE, mPackage,
+                    _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
+                    _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
+                    _Field.DECL, PTypeUtils.hashCode(mDecl));
+        }
         return tHashCode;
     }
 

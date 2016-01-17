@@ -40,20 +40,14 @@ public class StructType
     private final StructVariant mVariant;
     private final String mName;
     private final List<ThriftField> mFields;
-    private final int tHashCode;
+    
+    private volatile int tHashCode;
 
     private StructType(_Builder builder) {
         mComment = builder.mComment;
         mVariant = builder.mVariant;
         mName = builder.mName;
         mFields = Collections.unmodifiableList(new LinkedList<>(builder.mFields));
-
-        tHashCode = Objects.hash(
-                StructType.class,
-                _Field.COMMENT, mComment,
-                _Field.VARIANT, mVariant,
-                _Field.NAME, mName,
-                _Field.FIELDS, PTypeUtils.hashCode(mFields));
     }
 
     public StructType(String pComment,
@@ -64,13 +58,6 @@ public class StructType
         mVariant = pVariant;
         mName = pName;
         mFields = Collections.unmodifiableList(new LinkedList<>(pFields));
-
-        tHashCode = Objects.hash(
-                StructType.class,
-                _Field.COMMENT, mComment,
-                _Field.VARIANT, mVariant,
-                _Field.NAME, mName,
-                _Field.FIELDS, PTypeUtils.hashCode(mFields));
     }
 
     public boolean hasComment() {
@@ -160,6 +147,14 @@ public class StructType
 
     @Override
     public int hashCode() {
+        if (tHashCode == 0) {
+            tHashCode = Objects.hash(
+                    StructType.class,
+                    _Field.COMMENT, mComment,
+                    _Field.VARIANT, mVariant,
+                    _Field.NAME, mName,
+                    _Field.FIELDS, PTypeUtils.hashCode(mFields));
+        }
         return tHashCode;
     }
 

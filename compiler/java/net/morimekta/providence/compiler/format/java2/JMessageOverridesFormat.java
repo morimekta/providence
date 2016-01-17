@@ -198,8 +198,26 @@ public class JMessageOverridesFormat {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
-              .formatln("return tHashCode;");
+              .appendln("if (tHashCode == 0) {")
+              .begin()
+              .appendln("tHashCode = Objects.hash(")
+              .begin("        ")
+              .formatln("%s.class", message.instanceType());
+        for (JField field : message.fields()) {
+            writer.append(",");
+            if (field.container()) {
+                writer.formatln("_Field.%s, PTypeUtils.hashCode(%s)", field.fieldEnum(), field.member());
+            } else {
+                writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+            }
+        }
+
         writer.end()
+              .append(");")
+              .end()
+              .appendln('}')
+              .appendln("return tHashCode;")
+              .end()
               .appendln("}")
               .newline();
     }
