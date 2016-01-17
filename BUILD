@@ -20,13 +20,14 @@ filegroup(
 test_suite(
     name = 'all_tests',
     tests = [
-        '//compiler:test',
-        # '//converter:test',
-        '//core:test',
-        '//jackson:test',
-        '//jax-rs:test',
-        '//messageio:test',
-        '//reflect:test',
-        '//tests:test',
+        '//compiler:tests',
+        # '//converter:tests',
+        # '//thrift:tests',
+        '//core:tests',
+        '//jackson:tests',
+        '//jax-rs:tests',
+        '//messageio:tests',
+        '//reflect:tests',
+        '//tests:tests',
     ],
 )

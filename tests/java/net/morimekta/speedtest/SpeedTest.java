@@ -1,15 +1,15 @@
 package net.morimekta.speedtest;
 
-import net.morimekta.providence.protocol.TBinaryProtocolSerializer;
-import net.morimekta.providence.protocol.TCompactProtocolSerializer;
-import net.morimekta.providence.protocol.TJsonProtocolSerializer;
-import net.morimekta.providence.protocol.TTupleProtocolSerializer;
 import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.util.io.CountingOutputStream;
-import net.morimekta.speedtest.providence.Containers;
+import net.morimekta.test.providence.Containers;
 import net.morimekta.utils.Color;
 import net.morimekta.utils.FormatString;
 
@@ -167,12 +167,12 @@ public class SpeedTest {
         }
     }
 
-    private final Options                                  options;
-    private final CmdLineParser                            parser;
-    private final ArrayList<net.morimekta.speedtest.thrift.Containers> thriftContainers;
-    private final ArrayList<Containers>                    thriftJ2Containers;
-    private final File                                     dataDir;
-    private final File                                     testDir;
+    private final Options                                         options;
+    private final CmdLineParser                                   parser;
+    private final ArrayList<net.morimekta.test.thrift.Containers> thriftContainers;
+    private final ArrayList<Containers>                           thriftJ2Containers;
+    private final File                                            dataDir;
+    private final File                                            testDir;
 
     public SpeedTest(Options opts, CmdLineParser prs) throws CmdLineException, IOException {
         options = opts;
@@ -212,7 +212,7 @@ public class SpeedTest {
 
         for (int i = 0; i < options.entries; ++i) {
             try {
-                net.morimekta.speedtest.thrift.Containers containers = new net.morimekta.speedtest.thrift.Containers();
+                net.morimekta.test.thrift.Containers containers = new net.morimekta.test.thrift.Containers();
                 containers.read(protocol);
                 thriftContainers.add(containers);
                 // Check if we have another entry. There should be a separating '\n' char.
@@ -324,7 +324,7 @@ public class SpeedTest {
             long writeRunTime = 0;
 
             for (int i = 0; i < num; ++i) {
-                net.morimekta.speedtest.thrift.Containers containers = thriftContainers.get(i);
+                net.morimekta.test.thrift.Containers containers = thriftContainers.get(i);
 
                 long start = System.nanoTime();
 
@@ -356,8 +356,8 @@ public class SpeedTest {
 
             for (int i = 0; i < num; ++i) {
                 boolean stop = false;
-                net.morimekta.speedtest.thrift.Containers orig = thriftContainers.get(i);
-                net.morimekta.speedtest.thrift.Containers read = new net.morimekta.speedtest.thrift.Containers();
+                net.morimekta.test.thrift.Containers orig = thriftContainers.get(i);
+                net.morimekta.test.thrift.Containers read = new net.morimekta.test.thrift.Containers();
 
                 long start = System.nanoTime();
 

@@ -1,14 +1,14 @@
 package net.morimekta.generator;
 
 import net.morimekta.providence.Binary;
-import net.morimekta.providence.protocol.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.speedtest.providence.Containers;
-import net.morimekta.speedtest.providence.Primitives;
-import net.morimekta.speedtest.providence.Value;
+import net.morimekta.test.providence.Containers;
+import net.morimekta.test.providence.DefaultFields;
+import net.morimekta.test.providence.Value;
 import net.morimekta.utils.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -160,8 +160,8 @@ public class GenerateData {
         return Value.values()[rand.nextInt(Value.values().length)];
     }
 
-    public Primitives nextPrimitives() {
-        Primitives._Builder builder = Primitives.builder();
+    public DefaultFields nextDefaultFields() {
+        DefaultFields._Builder builder = DefaultFields.builder();
         if (doFill()) {
             builder.setBooleanValue(rand.nextBoolean());
         }
@@ -258,7 +258,7 @@ public class GenerateData {
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToMessageList(nextPrimitives());
+                    containers.addToMessageList(nextDefaultFields());
                 }
             }
 
@@ -321,7 +321,7 @@ public class GenerateData {
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.addToMessageSet(nextPrimitives());
+                    containers.addToMessageSet(nextDefaultFields());
                 }
             }
 
@@ -384,7 +384,7 @@ public class GenerateData {
             if (doFill()) {
                 final int items = randomItemCount();
                 for (int i = 0; i < items; ++i) {
-                    containers.putInMessageMap(nextString(KEY), nextPrimitives());
+                    containers.putInMessageMap(nextString(KEY), nextDefaultFields());
                 }
             }
 

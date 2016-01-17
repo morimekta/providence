@@ -1,5 +1,3 @@
-load('/thrift', 'gen_thrift')
-
 filegroup(
   name = 'failure-thrift',
   srcs = glob(['res/failure/*.thrift']),
@@ -18,7 +16,7 @@ java_library(
 )
 
 java_test(
-  name = "test",
+  name = "javatests",
   size = "small",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
@@ -26,4 +24,11 @@ java_test(
     "//core:core",
     "//third-party:junit",
   ],
+)
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":javatests",
+    ]
 )

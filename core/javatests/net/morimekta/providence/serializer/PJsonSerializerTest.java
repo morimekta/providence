@@ -19,19 +19,21 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.calculator.Operator;
-import net.morimekta.test.compact.Category;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.CompactFields;
+import net.morimekta.test.providence.Containers;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.morimekta.providence.util.PStringUtils.readString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -40,76 +42,43 @@ import static org.junit.Assert.assertNull;
  * @since 18.10.15
  */
 public class PJsonSerializerTest {
-    private Operation mOperation;
-    private Category  mCategory1;
-    private Category  mCategory2;
-    private String    mCompactIdJson;
-    private String    mCompactNamedJson;
+    private String compact_json;
+    private String named_json;
+    private String pretty_json;
+
+    private Operation operation;
+
+    private CompactFields cat1;
+    private CompactFields cat2;
+
+    private ArrayList<Containers> testData;
 
     @Before
-    public void setUp() {
-        mOperation = Operation.builder()
-                              .setOperator(Operator.MULTIPLY)
-                              .addToOperands(Operand.builder()
-                                                    .setOperation(Operation.builder()
-                                                                           .setOperator(Operator.ADD)
-                                                                           .addToOperands(Operand.builder()
-                                                                                                 .setNumber(1234)
-                                                                                                 .build())
-                                                                           .addToOperands(Operand.builder()
-                                                                                                 .setNumber(4.321)
-                                                                                                 .build())
-                                                                           .build())
-                                                    .build())
-                              .addToOperands(Operand.builder()
-                                                    .setImaginary(Imaginary.builder()
-                                                                           .setV(1.7)
-                                                                           .setI(-2.0)
-                                                                           .build())
-                                                    .build())
-                              .build();
-        mCompactIdJson = "{\n" +
-                         "    \"1\":4,\n" +
-                         "    \"2\":[\n" +
-                         "        {\"1\":{\n" +
-                         "            \"1\":2,\n" +
-                         "            \"2\":[\n" +
-                         "                {\"2\":1234},\n" +
-                         "                {\"2\":4.321}\n" +
-                         "            ]\n" +
-                         "        }},\n" +
-                         "        {\"3\":{\n" +
-                         "            \"1\":1.7,\n" +
-                         "            \"2\":-2\n" +
-                         "        }}\n" +
-                         "    ]\n" +
-                         "}";
-        mCompactNamedJson = "{\n" +
-                            "    \"operator\":\"MULTIPLY\",\n" +
-                            "    \"operands\":[\n" +
-                            "        {\"operation\":{\n" +
-                            "            \"operator\":\"ADD\",\n" +
-                            "            \"operands\":[\n" +
-                            "                {\"number\":1234},\n" +
-                            "                {\"number\":4.321}\n" +
-                            "            ]\n" +
-                            "        }},\n" +
-                            "        {\"imaginary\":{\n" +
-                            "            \"v\":1.7,\n" +
-                            "            \"i\":-2\n" +
-                            "        }}\n" +
-                            "    ]\n" +
-                            "}\n";
+    public void setUp() throws PSerializeException, IOException {
+        PJsonSerializer serializer = new PJsonSerializer(false);
 
-        mCategory1 = Category.builder()
-                             .setName("my_category")
-                             .setId(44)
-                             .build();
-        mCategory2 = Category.builder()
-                             .setName("my_category")
-                             .setId(44)
-                             .setLabel("My Category")
-                             .build();
+        try (InputStream in = getClass().getResourceAsStream("/json/calculator/compact.json")) {
+            compact_json = readString(in).trim();
+        }
+        try (InputStream in = getClass().getResourceAsStream("/json/calculator/named.json")) {
+            named_json = readString(in).trim();
+        }
+        try (InputStream in = getClass().getResourceAsStream("/json/calculator/pretty.json")) {
+            pretty_json = readString(in).trim();
+        }
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(compact_json.getBytes(UTF_8));
+        operation = serializer.deserialize(bais, Operation.kDescriptor);
+
+        cat1 = CompactFields.builder()
+                            .setName("my_category")
+                            .setId(44)
+                            .build();
+        cat2 = CompactFields.builder()
+                            .setName("my_category")
+                            .setId(44)
+                            .setLabel("My Category")
+                            .build();
     }
 
     @Test
@@ -117,9 +86,8 @@ public class PJsonSerializerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PJsonSerializer serializer = new PJsonSerializer();
 
-        String expectedOutput = mCompactIdJson.replaceAll("[ \n]", "");
-        int expectedLength = serializer.serialize(baos, mOperation);
-        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        int expectedLength = serializer.serialize(baos, operation);
+        assertEquals(compact_json, new String(baos.toByteArray(), UTF_8));
         assertEquals(expectedLength, baos.toByteArray().length);
     }
 
@@ -128,32 +96,31 @@ public class PJsonSerializerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
 
-        String expectedOutput = mCompactNamedJson.replaceAll("[ \n]", "");
-        int expectedLength = serializer.serialize(baos, mOperation);
-        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        int expectedLength = serializer.serialize(baos, operation);
+        assertEquals(named_json, new String(baos.toByteArray(), UTF_8));
         assertEquals(expectedLength, baos.toByteArray().length);
     }
 
     @Test
     public void testDeserialize_compactIdJson() throws PSerializeException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(mCompactIdJson.getBytes());
+        ByteArrayInputStream bais = new ByteArrayInputStream(compact_json.getBytes());
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
         Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
-        assertEquals(mOperation, operation);
+        assertEquals(operation, operation);
     }
 
     @Test
     public void testDeserialize_compactNamedJson() throws PSerializeException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(mCompactNamedJson.getBytes());
+        ByteArrayInputStream bais = new ByteArrayInputStream(named_json.getBytes());
         // Deserializing can deserialize both formats regardless of serializer
         // type.
         PJsonSerializer serializer = new PJsonSerializer();
         Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
-        assertEquals(mOperation, operation);
+        assertEquals(operation, operation);
     }
 
     @Test
@@ -162,33 +129,33 @@ public class PJsonSerializerTest {
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
 
         String expectedOutput = "[\"my_category\",44]";
-        int expectedLength = serializer.serialize(baos, mCategory1);
+        int expectedLength = serializer.serialize(baos, cat1);
 
-        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(expectedOutput, new String(baos.toByteArray(), UTF_8));
         assertEquals(18, expectedLength);
 
         baos.reset();
 
         expectedOutput = "[\"my_category\",44,\"My Category\"]";
-        expectedLength = serializer.serialize(baos, mCategory2);
+        expectedLength = serializer.serialize(baos, cat2);
 
-        assertEquals(expectedOutput, new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(expectedOutput, new String(baos.toByteArray(), UTF_8));
         assertEquals(32, expectedLength);
     }
 
     @Test
     public void testDeserialize_compactStruct() throws PSerializeException {
-        ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(StandardCharsets.UTF_8));
+        ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(UTF_8));
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
 
-        Category category = serializer.deserialize(bais, Category.kDescriptor);
+        CompactFields category = serializer.deserialize(bais, CompactFields.kDescriptor);
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());
         assertNull(category.getLabel());
 
-        bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(StandardCharsets.UTF_8));
-        category = serializer.deserialize(bais, Category.kDescriptor);
+        bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(UTF_8));
+        category = serializer.deserialize(bais, CompactFields.kDescriptor);
 
         assertEquals("my_category", category.getName());
         assertEquals(44, category.getId());

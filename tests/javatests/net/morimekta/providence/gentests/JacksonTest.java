@@ -1,8 +1,9 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.Binary;
-import net.morimekta.test.primitives.Primitives;
-import net.morimekta.test.primitives.Value;
+import net.morimekta.test.providence.CompactFields;
+import net.morimekta.test.providence.DefaultValues;
+import net.morimekta.test.providence.Value;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -21,19 +22,20 @@ import static org.junit.Assert.assertEquals;
  * Jackson serialization and seserialization testing.
  */
 public class JacksonTest {
-    private Primitives primitives;
+    private DefaultValues primitives;
 
     @Before
     public void setUp() {
-        primitives = new Primitives(true,
-                                    (byte) 64,
-                                    (short) 12345,
-                                    1234567890,
-                                    1234567890123456789L,
-                                    1234567890.12345,
-                                    "Ûñı©óð€",
-                                    Binary.wrap(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }),
-                                    Value.FIRST);
+        primitives = new DefaultValues(true,
+                                       (byte) 64,
+                                       (short) 12345,
+                                       1234567890,
+                                       1234567890123456789L,
+                                       1234567890.12345,
+                                       "Ûñı©óð€",
+                                       Binary.wrap(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }),
+                                       Value.FIRST,
+                                       new CompactFields("Test", 4, null));
     }
 
     @Test
@@ -47,15 +49,16 @@ public class JacksonTest {
 
         assertEquals(
                 "{" +
-                "\"bl\":true," +
-                "\"bt\":64," +
-                "\"sh\":12345," +
-                "\"i\":1234567890," +
-                "\"l\":1234567890123456789," +
-                "\"d\":1.23456789012345E9," +
-                "\"s\":\"Ûñı©óð€\"," +
-                "\"bn\":\"AAECAwQFBgcICQA=\"," +
-                "\"v\":\"FIRST\"" +
+                "\"booleanValue\":true," +
+                "\"byteValue\":64," +
+                "\"shortValue\":12345," +
+                "\"integerValue\":1234567890," +
+                "\"longValue\":1234567890123456789," +
+                "\"doubleValue\":1.23456789012345E9," +
+                "\"stringValue\":\"Ûñı©óð€\"," +
+                "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                "\"enumValue\":\"FIRST\"," +
+                "\"compactValue\":{\"name\":\"Test\",\"id\":4,\"label\":null}" +
                 "}", serialized);
     }
 
@@ -70,59 +73,62 @@ public class JacksonTest {
 
         assertEquals(
                 "[{" +
-                "\"bl\":true," +
-                "\"bt\":64," +
-                "\"sh\":12345," +
-                "\"i\":1234567890," +
-                "\"l\":1234567890123456789," +
-                "\"d\":1.23456789012345E9," +
-                "\"s\":\"Ûñı©óð€\"," +
-                "\"bn\":\"AAECAwQFBgcICQA=\"," +
-                "\"v\":\"FIRST\"" +
+                "\"booleanValue\":true," +
+                "\"byteValue\":64," +
+                "\"shortValue\":12345," +
+                "\"integerValue\":1234567890," +
+                "\"longValue\":1234567890123456789," +
+                "\"doubleValue\":1.23456789012345E9," +
+                "\"stringValue\":\"Ûñı©óð€\"," +
+                "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                "\"enumValue\":\"FIRST\"," +
+                "\"compactValue\":{\"name\":\"Test\",\"id\":4,\"label\":null}" +
                 "}]", serialized);
     }
 
     @Test
     public void testDeserialize_primitives() throws IOException {
         String message = "{" +
-                "\"bl\":true," +
-                "\"bt\":64," +
-                "\"sh\":12345," +
-                "\"i\":1234567890," +
-                "\"l\":1234567890123456789," +
-                "\"d\":1.23456789012345E9," +
-                "\"s\":\"Ûñı©óð€\"," +
-                "\"bn\":\"AAECAwQFBgcICQA=\"," +
-                "\"v\":\"FIRST\"" +
-                "}";
+                         "\"booleanValue\":true," +
+                         "\"byteValue\":64," +
+                         "\"shortValue\":12345," +
+                         "\"integerValue\":1234567890," +
+                         "\"longValue\":1234567890123456789," +
+                         "\"doubleValue\":1.23456789012345E9," +
+                         "\"stringValue\":\"Ûñı©óð€\"," +
+                         "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                         "\"enumValue\":\"FIRST\"," +
+                         "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                         "}";
 
         ObjectMapper mapper = new ObjectMapper();
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
-        Primitives out = mapper.readValue(in, Primitives.class);
+        DefaultValues out = mapper.readValue(in, DefaultValues.class);
 
         assertEquals(primitives, out);
     }
     @Test
     public void testDeserialize_collection() throws IOException {
         String message = "[{" +
-                         "\"bl\":true," +
-                         "\"bt\":64," +
-                         "\"sh\":12345," +
-                         "\"i\":1234567890," +
-                         "\"l\":1234567890123456789," +
-                         "\"d\":1.23456789012345E9," +
-                         "\"s\":\"Ûñı©óð€\"," +
-                         "\"bn\":\"AAECAwQFBgcICQA=\"," +
-                         "\"v\":\"FIRST\"" +
+                         "\"booleanValue\":true," +
+                         "\"byteValue\":64," +
+                         "\"shortValue\":12345," +
+                         "\"integerValue\":1234567890," +
+                         "\"longValue\":1234567890123456789," +
+                         "\"doubleValue\":1.23456789012345E9," +
+                         "\"stringValue\":\"Ûñı©óð€\"," +
+                         "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                         "\"enumValue\":\"FIRST\"," +
+                         "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
                          "}]";
 
         ObjectMapper mapper = new ObjectMapper();
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
-        ArrayList<Primitives> out = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(ArrayList.class, Primitives.class));
+        ArrayList<DefaultValues> out = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(ArrayList.class, DefaultValues.class));
 
         assertEquals(primitives, out.get(0));
 

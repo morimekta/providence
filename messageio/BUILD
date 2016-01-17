@@ -8,12 +8,21 @@ java_library(
 )
 
 java_test(
-    name = 'test',
+    name = 'javatests',
     srcs = glob(['javatests/**/*.java']),
     deps = [
         ':messageio',
         '//core:core',
+        '//core:providence-idl-with-deps',
         '//third-party:junit',
     ],
     size = 'small',
+)
+
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":javatests",
+    ]
 )

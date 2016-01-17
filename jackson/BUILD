@@ -1,4 +1,4 @@
-load('/thrift', 'java_thrift')
+exports_files(glob(["resources/**"]))
 
 java_library(
   name = "jackson",
@@ -11,7 +11,7 @@ java_library(
 )
 
 java_test(
-  name = "test",
+  name = "javatests",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":jackson",
@@ -20,7 +20,14 @@ java_test(
     "//third-party:jackson-databind",
     "//third-party:junit",
     "//core:core",
-    "//core:generated",
+    "//core:providence-idl",
   ],
   size = 'small',
+)
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":javatests",
+    ]
 )

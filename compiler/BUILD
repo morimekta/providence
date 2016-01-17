@@ -15,7 +15,7 @@ java_library(
 )
 
 java_test(
-  name = "test",
+  name = "javatests",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":compiler",
@@ -44,4 +44,11 @@ java_binary(
   visibility = [
     "//visibility:public"
   ],
+)
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":javatests",
+    ]
 )

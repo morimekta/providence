@@ -1,4 +1,4 @@
-package net.morimekta.providence.protocol;
+package net.morimekta.providence.thrift;
 
 import net.morimekta.providence.*;
 import net.morimekta.providence.descriptor.*;

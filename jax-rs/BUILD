@@ -9,14 +9,21 @@ java_library(
 )
 
 java_test(
-  name = "test",
+  name = "javatests",
   srcs = glob(["javatests/**/*.java"]),
   deps = [
     ":jax-rs",
     "//core:core",
-    "//core:generated",
+    "//core:providence-idl",
     "//third-party:junit",
     "//third-party:javax.ws.rs-api",
   ],
   size = 'small',
+)
+
+test_suite(
+    name = "tests",
+    tests = [
+        ":javatests",
+    ]
 )

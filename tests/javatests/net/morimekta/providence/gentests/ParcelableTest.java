@@ -1,25 +1,18 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.Binary;
-import net.morimekta.test.alltypes.AllTypes;
-import net.morimekta.test.alltypes.Empty;
-import net.morimekta.test.alltypes.OneType;
-import net.morimekta.test.alltypes.Other;
-import net.morimekta.test.alltypes.Values;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
-import net.morimekta.test.requirement.ExceptionFields;
-import net.morimekta.test.requirement.Value;
+import net.morimekta.test.providence.DefaultValues;
+import net.morimekta.test.providence.Value;
 
 import org.junit.Test;
 
 import android.os.Parcel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests of generated code providing android.os.Parcelable support.
@@ -29,26 +22,20 @@ public class ParcelableTest {
     public void testAllTypes() {
         Parcel parcel = Parcel.obtain();
 
-        AllTypes original = AllTypes.builder()
-                                    .setBl(true)
-                                    .setBn(Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5}))
-                                    .setBt((byte) 6)
-                                    .setD(7.8d)
-                                    .setI(9)
-                                    .setL(10L)
-                                    .setO(Other.builder().setV(Values.FIFTH).build())
-                                    .setS("11")
-                                    .setSh((short) 12)
-                                    .setV(Values.THIRD)
-                                    .build();
+        DefaultValues original = DefaultValues.builder()
+                                              .setBooleanValue(true)
+                                              .setByteValue((byte) 6)
+                                              .setIntegerValue(9)
+                                              .setLongValue(10L)
+                                              .setDoubleValue(7.8d)
+                                              .setShortValue((short) 12)
+                                              .setStringValue("11")
+                                              .setBinaryValue(Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5}))
+                                              .setEnumValue(Value.THIRD)
+                                              .build();
         original.writeToParcel(parcel, 0);
-        Empty empty = Empty.builder().build();
-        empty.writeToParcel(parcel, 0);
-
-        AllTypes copy = AllTypes.CREATOR.createFromParcel(parcel);
+        DefaultValues copy = DefaultValues.CREATOR.createFromParcel(parcel);
         assertEquals(original, copy);
-        Empty other = Empty.CREATOR.createFromParcel(parcel);
-        assertEquals(empty, other);
     }
 
     @Test

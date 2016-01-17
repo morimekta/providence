@@ -13,3 +13,8 @@ java_binary(
   main_class = "Convert",
   visibility = ['//visibility:public'],
 )
+
+
+test_suite(
+    name = "tests",
+)

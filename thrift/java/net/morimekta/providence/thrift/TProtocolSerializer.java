@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.protocol;
+package net.morimekta.providence.thrift;
 
 import net.morimekta.providence.*;
 import net.morimekta.providence.descriptor.*;
