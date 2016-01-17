@@ -11,53 +11,36 @@ import java.util.Stack;
  * @since 19.10.15
  */
 public class JsonWriter {
-    protected enum Mode {
-        NONE,
-        LIST,
-        MAP,
-    }
-    protected enum Expectation {
-        KEY,
-        VALUE,
-    }
-    private final PrintWriter mWriter;
+    public static final String kNull = "null";
+    public static final String kTrue = "true";
+    public static final String kFalse = "false";
 
-    private static class State {
-        Mode mode;
-        Expectation expect;
-        int num;
-    }
+    private final PrintWriter        writer;
+    private final Stack<JsonContext> stack;
 
-    private Stack<State> mStack;
-    private State mState;
+    private JsonContext context;
 
     public JsonWriter(OutputStream out) {
         this(new PrintWriter(out));
     }
 
     public JsonWriter(PrintWriter writer) {
-        mWriter = writer;
-        mStack = new Stack<>();
-        mState = new State();
-        mState.mode = Mode.NONE;
-        mState.expect = Expectation.VALUE;
-        mState.num = 0;
+        this.writer = writer;
+        this.stack = new Stack<>();
+
+        context = new JsonContext(JsonContext.Mode.VALUE);
     }
 
     public void flush() {
-        mWriter.flush();
+        writer.flush();
     }
 
     public JsonWriter object() throws JsonException {
         startValue();
 
-        mStack.push(mState);
-        mState = new State();
-        mState.mode = Mode.MAP;
-        mState.expect = Expectation.KEY;
-        mState.num = 0;
-
-        mWriter.append('{');
+        stack.push(context);
+        context = new JsonContext(JsonContext.Mode.MAP);
+        writer.write('{');
 
         return this;
     }
@@ -65,82 +48,89 @@ public class JsonWriter {
     public JsonWriter array() throws JsonException {
         startValue();
 
-        mStack.push(mState);
-        mState = new State();
-        mState.mode = Mode.LIST;
-        mState.expect = Expectation.VALUE;
-        mState.num = 0;
-
-        mWriter.append('[');
+        stack.push(context);
+        context = new JsonContext(JsonContext.Mode.LIST);
+        writer.write('[');
 
         return this;
     }
 
     public JsonWriter endObject() throws JsonException {
-        if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected end, not in object..");
-        if (Expectation.VALUE.equals(mState.expect)) throw new JsonException("Expected map value but got end.");
-        mWriter.append('}');
-        mState = mStack.pop();
+        if (context == null) throw new JsonException("Ending object on closed writer.");
+        if (!context.map()) throw new JsonException("Unexpected end, not in object.");
+        if (context.value()) throw new JsonException("Expected map value but got end.");
+        writer.write('}');
+        context = stack.pop();
         return this;
     }
 
     public JsonWriter endArray() throws JsonException {
-        if (!Mode.LIST.equals(mState.mode)) throw new JsonException("Unexpected end, not in list.");
-        mWriter.append(']');
-        mState = mStack.pop();
+        if (context == null) throw new JsonException("Ending array on closed writer.");
+        if (!context.list()) throw new JsonException("Unexpected end, not in list.");
+        writer.write(']');
+        context = stack.pop();
         return this;
     }
 
     public JsonWriter key(boolean key) throws JsonException {
         startKey();
 
-        mWriter.append(key ? "\"true\":" : "\"false\":");
+        writer.write(key ? "\"true\":" : "\"false\":");
         return this;
     }
 
     public JsonWriter key(byte key) throws JsonException {
         startKey();
 
-        mWriter.append('\"').print((int) key);
-        mWriter.append('\"').append(':');
+        writer.write('\"');
+        writer.print((int) key);
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
     public JsonWriter key(short key) throws JsonException {
         startKey();
 
-        mWriter.append('\"').print((int) key);
-        mWriter.append('\"').append(':');
+        writer.write('\"');
+        writer.print((int) key);
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
     public JsonWriter key(int key) throws JsonException {
         startKey();
 
-        mWriter.append('\"').print(key);
-        mWriter.append('\"').append(':');
+        writer.write('\"');
+        writer.print(key);
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
     public JsonWriter key(long key) throws JsonException {
         startKey();
 
-        mWriter.append('\"').print(key);
-        mWriter.append('\"').append(':');
+        writer.write('\"');
+        writer.print(key);
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
     public JsonWriter key(double key) throws JsonException {
         startKey();
 
-        mWriter.append('\"');
+        writer.write('\"');
         final long i = (long) key;
         if (key == (double) i) {
-            mWriter.print(i);
+            writer.print(i);
         } else {
-            mWriter.print(key);
+            writer.print(key);
         }
-        mWriter.append('\"').append(':');
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
@@ -149,8 +139,8 @@ public class JsonWriter {
 
         if (key == null) throw new JsonException("Expected map key, got null");
 
-        appendQuoted(key.toString());
-        mWriter.append(':');
+        writeQuoted(key);
+        writer.write(':');
         return this;
     }
 
@@ -159,10 +149,10 @@ public class JsonWriter {
 
         if (key == null) throw new JsonException("Expected map key, got null");
 
-        mWriter.append('\"');
-        mWriter.append(key.toBase64());
-        mWriter.append('\"')
-               .append(':');
+        writer.write('\"');
+        writer.write(key.toBase64());
+        writer.write('\"');
+        writer.write(':');
         return this;
     }
 
@@ -171,42 +161,43 @@ public class JsonWriter {
 
         if (key == null) throw new JsonException("Expected map key, got null");
 
-        mWriter.append(key).append(':');
+        writer.write(key.toString());
+        writer.write(':');
         return this;
     }
 
     public JsonWriter value(boolean value) throws JsonException {
         startValue();
 
-        mWriter.append(value ? "true" : "false");
+        writer.write(value ? kTrue : kFalse);
         return this;
     }
 
     public JsonWriter value(byte value) throws JsonException {
         startValue();
 
-        mWriter.print((int) value);
+        writer.print((int) value);
         return this;
     }
 
     public JsonWriter value(short value) throws JsonException {
         startValue();
 
-        mWriter.print((int) value);
+        writer.print((int) value);
         return this;
     }
 
     public JsonWriter value(int value) throws JsonException {
         startValue();
 
-        mWriter.print(value);
+        writer.print(value);
         return this;
     }
 
     public JsonWriter value(long number) throws JsonException {
         startValue();
 
-        mWriter.print((int) number);
+        writer.print(number);
         return this;
     }
 
@@ -215,9 +206,9 @@ public class JsonWriter {
 
         final long i = (long) number;
         if (number == (double) i) {
-            mWriter.print(i);
+            writer.print(i);
         } else {
-            mWriter.print(number);
+            writer.print(number);
         }
         return this;
     }
@@ -225,19 +216,19 @@ public class JsonWriter {
     public JsonWriter value(CharSequence value) throws JsonException {
         startValue();
 
-        if (value == null) mWriter.append("null");
-        else appendQuoted(value.toString());
+        if (value == null) writer.write(kNull);
+        else writeQuoted(value);
         return this;
     }
 
     public JsonWriter value(Binary value) throws JsonException {
         startValue();
 
-        if (value == null) mWriter.append("null");
+        if (value == null) writer.write(kNull);
         else {
-            mWriter.append('\"')
-                   .append(value.toBase64())
-                   .append('\"');
+            writer.write('\"');
+            writer.write(value.toBase64());
+            writer.write('\"');
         }
         return this;
     }
@@ -245,79 +236,81 @@ public class JsonWriter {
     public JsonWriter valueLiteral(CharSequence value) throws JsonException {
         startValue();
 
-        if (value == null) mWriter.append("null");
-        else mWriter.append(value.toString());
+        if (value == null) writer.write(kNull);
+        else writer.write(value.toString());
         return this;
     }
 
     protected void startKey() throws JsonException {
-        if (!Mode.MAP.equals(mState.mode)) throw new JsonException("Unexpected map key outside map.");
-        if (!Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value or end");
+        if (context == null) throw new JsonException("Starting key on closed writer.");
+        if (!context.map()) throw new JsonException("Unexpected map key outside map.");
+        if (!context.key()) throw new JsonException("Unexpected map key, expected value or end");
 
-        if (mState.num > 0) {
-            mWriter.append(',');
+        if (context.num > 0) {
+            writer.write(',');
         }
 
-        ++mState.num;
-        mState.expect = Expectation.VALUE;
+        ++context.num;
+        context.expect = JsonContext.Expect.VALUE;
     }
 
     protected boolean startValue() throws JsonException {
-        if (Expectation.KEY.equals(mState.expect)) throw new JsonException("Unexpected map key, expected value.");
-        if (Mode.LIST.equals(mState.mode)) {
-            if (mState.num > 0) {
-                mWriter.append(',');
+        if (context == null) throw new JsonException("Starting value on closed writer.");
+        if (context.key()) throw new JsonException("Unexpected map key, expected value.");
+        if (context.list()) {
+            if (context.num > 0) {
+                writer.write(',');
             }
-            ++mState.num;
+            ++context.num;
             return true;
-        } else if (Mode.MAP.equals(mState.mode)){
-            mState.expect = Expectation.KEY;
+        } else if (context.map()){
+            context.expect = JsonContext.Expect.KEY;
         }
         return false;
     }
 
     // Copied from org.json JSONObject.quote and modified for local use.
-    private void appendQuoted(String string) {
+    private void writeQuoted(CharSequence string) {
         if(string != null && string.length() != 0) {
             int len = string.length();
-            mWriter.append('\"');
+            writer.write('\"');
 
             for(int i = 0; i < len; ++i) {
                 char c = string.charAt(i);
                 switch(c) {
                     case '\b':
-                        mWriter.append("\\b");
+                        writer.write("\\b");
                         break;
                     case '\t':
-                        mWriter.append("\\t");
+                        writer.write("\\t");
                         break;
                     case '\n':
-                        mWriter.append("\\n");
+                        writer.write("\\n");
                         break;
                     case '\f':
-                        mWriter.append("\\f");
+                        writer.write("\\f");
                         break;
                     case '\r':
-                        mWriter.append("\\r");
+                        writer.write("\\r");
                         break;
                     case '\"':
                     case '\\':
-                        mWriter.append('\\');
-                        mWriter.append(c);
+                        writer.write('\\');
+                        writer.write(c);
                         break;
                     default:
-                        if(JsonToken.mustUnicodeEscape(c)) {
-                            mWriter.format("\\u%04x", (int) c);
+                        if(c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448)) {
+                            writer.format("\\u%04x", (int) c);
                         } else {
-                            mWriter.append(c);
+                            writer.write(c);
                         }
                         break;
                 }
             }
 
-            mWriter.append('\"');
+            writer.write('\"');
         } else {
-            mWriter.append("\"\"");
+            writer.write("\"\"");
         }
     }
 }
