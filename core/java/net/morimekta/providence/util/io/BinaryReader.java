@@ -34,15 +34,14 @@ public class BinaryReader extends InputStream {
      */
     @Override
     public int read(byte[] out) throws IOException {
-        final int end = out.length;
         int i, off = 0;
-        while (off < end && (i = in.read(out, off, end - off)) > 0) {
+        while (off < out.length && (i = in.read(out, off, out.length - off)) > 0) {
             off += i;
         }
-        if (off < end) {
+        if (off < out.length) {
             throw new IOException();
         }
-        return end;
+        return out.length;
     }
 
     /**

@@ -10,7 +10,7 @@ import java.io.OutputStream;
  * @since 19.10.15
  */
 public class PrettyJsonWriter extends JsonWriter {
-    private static final String SPACE = " ";
+    private static final char SPACE = ' ';
 
     private final IndentedPrintWriter mIndentedWriter;
 
