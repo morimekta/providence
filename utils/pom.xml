@@ -3,15 +3,12 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.mormekta.providence</groupId>
+    <parent>
+        <groupId>net.mormekta.providence</groupId>
+        <artifactId>providence</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
     <artifactId>providence-utils</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.7</java.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -26,4 +23,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <sourceDirectory>java/</sourceDirectory>
+        <testSourceDirectory>javatests/</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

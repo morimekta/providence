@@ -3,17 +3,27 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.mormekta.providence</groupId>
+    <parent>
+        <groupId>net.mormekta.providence</groupId>
+        <artifactId>providence</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
     <artifactId>providence-jackson</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
 
+    <!-- 1.7 required for android support. -->
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <java.version>1.7</java.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>net.mormekta.providence</groupId>
+            <artifactId>providence-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
