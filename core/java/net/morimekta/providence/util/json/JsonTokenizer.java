@@ -173,9 +173,9 @@ public class JsonTokenizer {
         while (lastByte == '+' ||
                lastByte == '-' ||
                lastByte == 'x' ||
-               lastByte == 'e' ||
-               lastByte == 'E' ||
                lastByte == '.' ||
+               (lastByte >= 'a' && lastByte <= 'f') ||
+               (lastByte >= 'A' && lastByte <= 'F') ||
                (lastByte >= '0' && lastByte <= '9')) {
             ++len;
             // numbers are terminated by first non-numeric character.
