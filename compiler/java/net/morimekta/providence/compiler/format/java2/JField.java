@@ -23,7 +23,9 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.util.PStringUtils;
+
+import static net.morimekta.providence.util.PStringUtils.c_case;
+import static net.morimekta.providence.util.PStringUtils.camelCase;
 
 /**
  *
@@ -64,50 +66,50 @@ public class JField {
     }
 
     public String param() {
-        return PStringUtils.camelCase("p", field.getName());
+        return camelCase("p", field.getName());
     }
 
     public String member() {
-        return PStringUtils.camelCase("m", field.getName());
+        return camelCase("m", field.getName());
     }
 
     public String getter() {
         if (field.getType() == PType.BOOL) {
-            return PStringUtils.camelCase("is", field.getName());
+            return camelCase("is", field.getName());
         }
-        return PStringUtils.camelCase("get", field.getName());
+        return camelCase("get", field.getName());
     }
 
     public String presence() {
-        return PStringUtils.camelCase("has", field.getName());
+        return camelCase("has", field.getName());
     }
 
     public String counter() {
-        return PStringUtils.camelCase("num", field.getName());
+        return camelCase("num", field.getName());
     }
 
     public String setter() {
-        return PStringUtils.camelCase("set", field.getName());
+        return camelCase("set", field.getName());
     }
 
     public String adder() {
         if (field.getType() == PType.MAP) {
-            return PStringUtils.camelCase("putIn", field.getName());
+            return camelCase("putIn", field.getName());
         } else {
-            return PStringUtils.camelCase("addTo", field.getName());
+            return camelCase("addTo", field.getName());
         }
     }
 
     public String resetter() {
-        return PStringUtils.camelCase("clear", field.getName());
+        return camelCase("clear", field.getName());
     }
 
     public String fieldEnum() {
-        return  PStringUtils.c_case("", field.getName()).toUpperCase();
+        return  c_case("", field.getName()).toUpperCase();
     }
 
     public String kDefault() {
-        return PStringUtils.camelCase("kDefault", field.getName());
+        return camelCase("kDefault", field.getName());
     }
 
     public boolean hasDefault() {
@@ -149,20 +151,6 @@ public class JField {
 
     public String instanceType() {
         return helper.getInstanceClassName(field.getDescriptor());
-    }
-
-    public Object getDefaultValue(PField<?> field) {
-        if (field.hasDefaultValue()) {
-            return field.getDefaultValue();
-        }
-        if (field.getDescriptor() instanceof PPrimitive) {
-            return ((PPrimitive) field.getDescriptor()).getDefaultValue();
-        }
-        return null;
-    }
-
-    public String provider() {
-        return helper.getProviderName(field.getDescriptor());
     }
 
     public boolean hasComment() {

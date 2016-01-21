@@ -219,6 +219,42 @@ public class PStringUtils {
      * the name has a '_' character inserted before each upper-case letter,
      * not including the first character. Then the whole thing is lower-cased.
      *
+     * @param prefix The prefix.
+     * @param name The name to c-case.
+     * @param suffix The suffix.
+     * @return the_c_cased_name
+     */
+    public static String c_case(String prefix, String name, String suffix) {
+        // Assume we insert at most 4 '_' chars for a majority of names.
+        StringBuilder builder = new StringBuilder(prefix.length() + name.length() + 5);
+        builder.append(prefix);
+
+        boolean lastUpper = true;
+        for (char c : name.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                if (!lastUpper) {
+                    builder.append('_');
+                }
+                lastUpper = true;
+            } else if (c == '_' || c == '.' || c == '-') {
+                builder.append('_');
+                lastUpper = true;
+                continue;
+            } else {
+                lastUpper = false;
+            }
+            builder.append(Character.toLowerCase(c));
+        }
+        builder.append(suffix);
+
+        return builder.toString();
+    }
+
+    /**
+     * Format a prefixed name as c_case. The prefix is kept verbatim, while
+     * the name has a '_' character inserted before each upper-case letter,
+     * not including the first character. Then the whole thing is lower-cased.
+     *
      * Note that this will mangle upper-case abbreviations.
      *
      * @param prefix The prefix.
@@ -226,25 +262,7 @@ public class PStringUtils {
      * @return the_c_cased_name
      */
     public static String c_case(String prefix, String name) {
-        // Assume we insert at most 4 '_' chars for a majority of names.
-        StringBuilder builder = new StringBuilder(prefix.length() + name.length() + 5);
-        builder.append(prefix);
-        // This does the opposite of camelCase, and inserts a '_' before each
-        // capital letter, and lower cases the whole string. But avoids adding
-        // separator before the first character (by lower casing the first
-        // character of the name.
-        if (Character.isUpperCase(name.charAt(0))) {
-            name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-        }
-
-        for (char c : name.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                builder.append('_');
-            }
-            builder.append(Character.toLowerCase(c));
-        }
-
-        return builder.toString();
+        return c_case(prefix, name, "");
     }
 
     public static String capitalize(String string) {
