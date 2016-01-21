@@ -54,7 +54,7 @@ def java_providence(name,
         deps = deps + [
             '//third-party:jackson-annotations',
             '//third-party:jackson-databind',
-            '//jackson:jackson',
+            '//core-jackson',
         ]
     native.java_library(
         name=name,

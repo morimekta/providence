@@ -22,12 +22,12 @@ test_suite(
     tests = [
         '//compiler:tests',
         # '//converter:tests',
-        # '//thrift:tests',
         '//core:tests',
-        '//jackson:tests',
+        '//core-jackson:tests',
         '//jax-rs:tests',
         '//messageio:tests',
         '//reflect:tests',
-        '//tests:tests',
+        '//testing:tests',
+        # '//thrift:tests',
     ],
 )

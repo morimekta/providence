@@ -22,12 +22,13 @@
         <module>compiler</module>
         <module>converter</module>
         <module>core</module>
+        <module>core-jackson</module>
+        <module>thrift</module>
         <module>reflect</module>
-        <module>jackson</module>
         <module>jax-rs</module>
         <module>messageio</module>
         <module>tests</module>
-        <module>thrift</module>
         <module>utils</module>
+        <module>testing</module>
     </modules>
 </project>

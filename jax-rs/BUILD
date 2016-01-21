@@ -14,7 +14,7 @@ java_test(
   deps = [
     ":jax-rs",
     "//core:core",
-    "//core:providence-idl",
+    "//testing:providence-idl",
     "//third-party:junit",
     "//third-party:javax.ws.rs-api",
   ],

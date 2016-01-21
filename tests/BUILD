@@ -10,11 +10,9 @@ java_test(
         "//core:core",
         "//core:providence-idl-with-deps"
     ],
+    resources = glob([ "resourcestest/**" ]),
+    resource_strip_prefix = "testing/resourcestest/",
     # Ensures the binaries compile properly.
-    data = [
-        ":generate-data",
-        ":speed-test",
-    ],
     size = 'small',
 )
 

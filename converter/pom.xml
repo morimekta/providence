@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>net.mormekta.providence</groupId>
-            <artifactId>providence-jackson</artifactId>
+            <artifactId>providence-core-jackson</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

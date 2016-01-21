@@ -13,7 +13,7 @@ java_test(
     deps = [
         ':messageio',
         '//core:core',
-        '//core:providence-idl-with-deps',
+        '//testing:providence-idl',
         '//third-party:junit',
     ],
     size = 'small',

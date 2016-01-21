@@ -8,10 +8,9 @@ model:
 resources:
 	mkdir -p ${PWD}/generated/java
 	mkdir -p ${PWD}/core/generated
-	bazel run //compiler:providence-compiler -- --gen java2                               --out ${PWD}/core/generated ${PWD}/core/resources/definitions/*/*.thrift
-	bazel run //compiler:providence-compiler -- --gen java2 --options --android:--jackson --out ${PWD}/generated/java ${PWD}/core/resources/definitions/*/*.thrift
-	bazel build //core:thrift-idl
-	thrift --gen java:android -out ${PWD}/generated/java ${PWD}/bazel-genfiles/core/thrift-idl.thrift
+	bazel run //compiler:providence-compiler -- --gen java2 --options --android:--jackson --out ${PWD}/generated/java ${PWD}/core/defs/*/*.thrift
+	bazel build //testing:thrift-idl
+	thrift --gen java:android -out ${PWD}/generated/java ${PWD}/bazel-genfiles/testing/thrift-idl.thrift
 
 data:
 	bazel run //tests:generate-data -- --entries 10000 --out ${PWD}/generated/resources

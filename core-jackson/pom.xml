@@ -8,7 +8,7 @@
         <artifactId>providence</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>providence-jackson</artifactId>
+    <artifactId>providence-core-jackson</artifactId>
 
     <!-- 1.7 required for android support. -->
     <properties>

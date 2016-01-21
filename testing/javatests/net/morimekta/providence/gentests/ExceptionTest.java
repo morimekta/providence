@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExceptionTest {
     @Test
-    public void testExceptionFields() {
+    public void testGetMessage() {
         ExceptionFields ex = ExceptionFields.builder()
                                             .setBooleanValue(true)
                                             .setBinaryValue(Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5}))

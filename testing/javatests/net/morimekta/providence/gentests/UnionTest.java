@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class UnionTest {
     @Test
-    public void testOneType_bool() {
+    public void testUnionFields_bool() {
         UnionFields bl1 = UnionFields.builder().setBooleanValue(true).build();
         UnionFields bl2 = UnionFields.withBooleanValue(true);
         UnionFields bl3 = UnionFields.withBooleanValue(false);

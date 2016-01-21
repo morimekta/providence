@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static net.morimekta.providence.testing.MessageAssert.assertMessageEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -107,7 +108,7 @@ public class JacksonTest {
 
         DefaultValues out = mapper.readValue(in, DefaultValues.class);
 
-        assertEquals(primitives, out);
+        assertMessageEquals(primitives, out);
     }
     @Test
     public void testDeserialize_collection() throws IOException {
@@ -130,7 +131,6 @@ public class JacksonTest {
 
         ArrayList<DefaultValues> out = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(ArrayList.class, DefaultValues.class));
 
-        assertEquals(primitives, out.get(0));
-
+        assertMessageEquals(primitives, out.get(0));
     }
 }

@@ -14,15 +14,18 @@ exports_files(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/steineldar/src/providence/./tests/pom.xml
-# /home/steineldar/src/providence/./compiler/pom.xml
-# /home/steineldar/src/providence/./utils/pom.xml
-# /home/steineldar/src/providence/./messageio/pom.xml
-# /home/steineldar/src/providence/./reflect/pom.xml
-# /home/steineldar/src/providence/./jax-rs/pom.xml
-# /home/steineldar/src/providence/./core/pom.xml
-# /home/steineldar/src/providence/./protocol/pom.xml
-# /home/steineldar/src/providence/./converter/pom.xml
+# /home/morimekta/src/providence/./pom.xml
+# /home/morimekta/src/providence/./compiler/pom.xml
+# /home/morimekta/src/providence/./converter/pom.xml
+# /home/morimekta/src/providence/./core-jackson/pom.xml
+# /home/morimekta/src/providence/./core/pom.xml
+# /home/morimekta/src/providence/./jax-rs/pom.xml
+# /home/morimekta/src/providence/./messageio/pom.xml
+# /home/morimekta/src/providence/./reflect/pom.xml
+# /home/morimekta/src/providence/./testing/pom.xml
+# /home/morimekta/src/providence/./tests/pom.xml
+# /home/morimekta/src/providence/./thrift/pom.xml
+# /home/morimekta/src/providence/./utils/pom.xml
 
 
 java_library(
@@ -88,6 +91,21 @@ java_library(
         "@org.apache.httpcomponents_httpclient//jar",
         "@org.apache.httpcomponents_httpcore//jar",
         "@org.slf4j_slf4j-api//jar",
+    ],
+)
+java_library(
+    name = "hamcrest-core",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@org.hamcrest_hamcrest-core//jar",
+    ],
+)
+java_library(
+    name = "mockito-core",
+    visibility = ["//visibility:public"],
+    testonly = 1,
+    exports = [
+        "@org.mockito_mockito-core//jar",
     ],
 )
 java_library(
