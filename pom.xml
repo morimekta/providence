@@ -19,14 +19,21 @@
     </properties>
 
     <modules>
-        <module>compiler</module>
-        <module>converter</module>
+        <!-- the real core. -->
         <module>core</module>
         <module>core-jackson</module>
-        <module>thrift</module>
+
+        <!-- dynamic -->
         <module>reflect</module>
+        <module>compiler</module>
+        <module>converter</module>
+
+        <!-- core utility libraries -->
+        <module>thrift</module>
         <module>messageio</module>
-        <module>tests</module>
+
+        <!-- testing and internal utilities -->
+        <module>tools</module>
         <module>utils</module>
         <module>testing</module>
     </modules>

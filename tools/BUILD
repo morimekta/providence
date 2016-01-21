@@ -1,14 +1,28 @@
+java_library(
+    name = "tools",
+    srcs = glob(
+        ["java/**/*.java"],
+        exclude = [
+            "java/**/generator/*.java",
+            "java/**/speedtest/*.java",
+        ]
+    ),
+    deps = [
+        "//core",
+        "//testing:providence-idl",
+        "//third-party:hamcrest-core",
+        "//third-party:junit",
+    ],
+)
+
 java_test(
     name = "javatests",
     srcs = glob(["javatests/**/*.java"]),
     deps = [
-        "//third-party:android-util",
-        "//third-party:jackson-annotations",
-        "//third-party:jackson-core",
-        "//third-party:jackson-databind",
+        ":tools",
+        "//core",
+        "//testing:providence-idl",
         "//third-party:junit",
-        "//core:core",
-        "//core:providence-idl-with-deps"
     ],
     resources = glob([ "resourcestest/**" ]),
     resource_strip_prefix = "testing/resourcestest/",
@@ -24,13 +38,14 @@ test_suite(
 )
 
 java_binary(
-    name = "generate-data",
+    name = "data-generator",
     srcs = glob(
-         ["java/net/morimekta/generator/*.java"],
+         ["java/net/morimekta/providence/tools/generator/*.java"],
     ),
-    main_class = 'net.morimekta.generator.GenerateData',
+    main_class = 'net.morimekta.providence.tools.generator.DataGenerator',
     deps = [
-        "//core:providence-idl",
+        ":tools",
+        "//testing:providence-idl",
         "//core:core",
         "//thrift",
         "//utils",
@@ -43,15 +58,16 @@ java_binary(
 java_binary(
     name = "speed-test",
     srcs = glob(
-        ["java/net/morimekta/speedtest/*.java"],
+        ["java/net/morimekta/providence/tools/speedtest/*.java"],
     ),
     main_class = 'net.morimekta.speedtest.SpeedTest',
     deps = [
-        "//core:thrift-idl",
-        "//core:providence-idl",
+        "//testing:thrift-idl",
+        "//testing:providence-idl",
         "//core",
         "//thrift",
         "//utils",
+        "//third-party:android-util",
         "//third-party:args4j",
         "//third-party:commons-math3",
         "//third-party:libthrift",

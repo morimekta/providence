@@ -8,7 +8,7 @@
         <artifactId>providence</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>providence-tests</artifactId>
+    <artifactId>providence-tools</artifactId>
 
     <dependencies>
         <dependency>
@@ -25,6 +25,11 @@
             <groupId>net.mormekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta</groupId>
+            <artifactId>android-util</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <dependency>
@@ -47,5 +52,23 @@
             <artifactId>commons-math3</artifactId>
             <version>3.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <sourceDirectory>java/</sourceDirectory>
+        <testSourceDirectory>javatests/</testSourceDirectory>
+    </build>
 </project>

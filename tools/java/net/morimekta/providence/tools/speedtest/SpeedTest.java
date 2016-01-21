@@ -1,4 +1,4 @@
-package net.morimekta.speedtest;
+package net.morimekta.providence.tools.speedtest;
 
 import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
@@ -145,19 +145,21 @@ public class SpeedTest {
         }
     }
 
-    //                                    read         write
-    public enum Format {          //  prov  thrift - prov  thrift
-        json_pretty("json"),      // 13.65         -
-        json_named("json"),       // 12.41         -
-        json("json"),             // 11.52         -
+    //                                    read           write           total
+    public enum Format {          //  prov  thrift -  prov  thrift =  prov  thrift
+        json_pretty("json"),      //  8.45         -  4.04         =  12.45
+        json_named("json"),       //  5.52         -  3.75         =   9.27
+        json("json"),             //  5.14         -  2.65         =   7.79
 
-        json_protocol("json"),    //  8.86   10.86 -
+        json_protocol("json"),    //  6.31    6.10 -  3.95   3.77  =  10.25   9.87
 
-        binary("bin"),            //  2.37         -
+        binary("bin"),            //  0.95         -  1.42         =   2.37
+        // fast_binary("bin"),    //  1.07         -  0.98         =   2.05         -- disc.
+        // proto --- BUGGY!
 
-        compact_protocol("bin"),  //  2.44    2.71 -
-        binary_protocol("bin"),   //  2.05    2.43 -
-        tuple_protocol("tuples"), //  2.04    1.97 -
+        compact_protocol("bin"),  //  1.33    1.22 -  1.89   0.85  =   3.23   2.07
+        binary_protocol("bin"),   //  1.20    0.80 -  0.87   1.20  =   2.06   2.00
+        tuple_protocol("tuples"), //  1.23    1.02 -  0.75   0.73  =   1.99   1.75
         ;
 
         String suffix;
@@ -397,6 +399,12 @@ public class SpeedTest {
             case binary:
                 serializer = new PBinarySerializer();
                 break;
+            // case fast_binary:
+            //     serializer = new PFastBinarySerializer();
+            //     break;
+            // case proto:
+            //     serializer = new PProtoSerializer();
+            //     break;
             case binary_protocol:
                 serializer = new TBinaryProtocolSerializer();
                 break;

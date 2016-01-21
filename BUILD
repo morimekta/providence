@@ -25,6 +25,7 @@ test_suite(
         '//messageio:tests',
         '//reflect:tests',
         '//testing:tests',
+        '//tools:tests',
         # '//thrift:tests',
     ],
 )
