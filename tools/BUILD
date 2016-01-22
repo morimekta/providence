@@ -10,6 +10,7 @@ java_library(
     deps = [
         "//core",
         "//testing:providence-idl",
+        "//third-party:commons-math3",
         "//third-party:hamcrest-core",
         "//third-party:junit",
     ],

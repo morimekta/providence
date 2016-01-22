@@ -37,7 +37,7 @@ public class MessageGenerator {
                                   randomGenerator.nextShort(),
                                   randomGenerator.nextInt(),
                                   randomGenerator.nextLong(),
-                                  randomGenerator.nextDouble(),
+                                  randomGenerator.nextDistributedDouble(),
                                   randomGenerator.nextString(DATA),
                                   randomGenerator.nextBinary(DATA),
                                   nextValue(),
@@ -70,7 +70,7 @@ public class MessageGenerator {
             builder.setLongValue(randomGenerator.nextLong());
         }
         if (doFill()) {
-            builder.setDoubleValue(randomGenerator.nextDouble());
+            builder.setDoubleValue(randomGenerator.nextDistributedDouble());
         }
         if (doFill()) {
             builder.setBinaryValue(randomGenerator.nextBinary(DATA));
@@ -106,7 +106,7 @@ public class MessageGenerator {
             builder.setLongValue(randomGenerator.nextLong());
         }
         if (doFill()) {
-            builder.setDoubleValue(randomGenerator.nextDouble());
+            builder.setDoubleValue(randomGenerator.nextDistributedDouble());
         }
         if (doFill()) {
             builder.setBinaryValue(randomGenerator.nextBinary(DATA));
@@ -142,7 +142,7 @@ public class MessageGenerator {
             builder.setLongValue(randomGenerator.nextLong());
         }
         if (doFill()) {
-            builder.setDoubleValue(randomGenerator.nextDouble());
+            builder.setDoubleValue(randomGenerator.nextDistributedDouble());
         }
         if (doFill()) {
             builder.setBinaryValue(randomGenerator.nextBinary(DATA));
@@ -178,7 +178,7 @@ public class MessageGenerator {
             builder.setLongValue(randomGenerator.nextLong());
         }
         if (doFill()) {
-            builder.setDoubleValue(randomGenerator.nextDouble(Integer.MIN_VALUE, Integer.MAX_VALUE));
+            builder.setDoubleValue(randomGenerator.nextDistributedDouble());
         }
         if (doFill()) {
             builder.setBinaryValue(randomGenerator.nextBinary(DATA));
@@ -217,7 +217,7 @@ public class MessageGenerator {
                 builder.setLongValue(randomGenerator.nextLong());
                 break;
             case DOUBLE_VALUE:
-                builder.setDoubleValue(randomGenerator.nextDouble(Integer.MIN_VALUE, Integer.MAX_VALUE));
+                builder.setDoubleValue(randomGenerator.nextDistributedDouble());
                 break;
             case STRING_VALUE:
                 builder.setStringValue(randomGenerator.nextString(DATA));
@@ -280,7 +280,7 @@ public class MessageGenerator {
         if (doFill()) {
             final int items = randomItemCount();
             for (int i = 0; i < items; ++i) {
-                containers.addToDoubleList(randomGenerator.nextDouble());
+                containers.addToDoubleList(randomGenerator.nextDistributedDouble());
             }
         }
         if (doFill()) {
@@ -343,7 +343,7 @@ public class MessageGenerator {
         if (doFill()) {
             final int items = randomItemCount();
             for (int i = 0; i < items; ++i) {
-                containers.addToDoubleSet(randomGenerator.nextDouble());
+                containers.addToDoubleSet(randomGenerator.nextDistributedDouble());
             }
         }
         if (doFill()) {
@@ -406,7 +406,8 @@ public class MessageGenerator {
         if (doFill()) {
             final int items = randomItemCount();
             for (int i = 0; i < items; ++i) {
-                containers.putInDoubleMap(randomGenerator.nextDouble(), randomGenerator.nextDouble());
+                containers.putInDoubleMap(randomGenerator.nextDistributedDouble(),
+                                          randomGenerator.nextDistributedDouble());
             }
         }
         if (doFill()) {

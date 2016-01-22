@@ -2,17 +2,20 @@ package net.morimekta.providence.tools.data;
 
 import net.morimekta.providence.Binary;
 
-import java.util.Random;
+import org.apache.commons.math3.distribution.CauchyDistribution;
+import org.apache.commons.math3.distribution.RealDistribution;
 
-import static java.lang.Math.floor;
+import java.util.Random;
 
 /**
  */
 public class RandomGenerator {
-    private final Random random;
+    private final Random           random;
+    private final RealDistribution normal;
 
     public RandomGenerator(Random random) {
         this.random = random;
+        this.normal = new CauchyDistribution(0, 1 << 20);
     }
 
     /**
@@ -95,7 +98,11 @@ public class RandomGenerator {
     }
 
     public int nextInt() {
-        return random.nextInt();
+        long v = 0;
+        for (int i = 0; i < 100; ++i) {
+            v += random.nextInt();
+        }
+        return (int) (v / 100);
     }
 
     public int nextInt(int bound) {
@@ -123,12 +130,8 @@ public class RandomGenerator {
         return random.nextDouble();
     }
 
-    public double nextDouble(double granularity) {
-        return floor(random.nextDouble() / granularity) * granularity;
-    }
-
-    public double nextDouble(double lowerBound, double upperBound) {
-        return (random.nextDouble() * (upperBound - lowerBound)) - lowerBound;
+    public double nextDistributedDouble() {
+        return normal.inverseCumulativeProbability(random.nextDouble());
     }
 
     public boolean byChance(double probability) {
