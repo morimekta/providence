@@ -27,7 +27,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.mio.PMessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.utils.FormatString;
+import net.morimekta.console.FormatString;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 

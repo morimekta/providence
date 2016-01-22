@@ -22,6 +22,7 @@ package net.morimekta.util.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 /**
@@ -99,7 +100,7 @@ public class Utf8StreamReader
         int cp = 0;
         switch (num) {
             case 1:
-                throw new IOException("Not enough bytes for utf-8 encoding");
+                throw new UnsupportedEncodingException("Not enough bytes for utf-8 encoding");
             case 2:
                 cp = (arr[0] & 0x1f);
                 break;
@@ -117,10 +118,11 @@ public class Utf8StreamReader
                 break;
         }
         for (int i = 1; i < num; ++i) {
-            if (arr[i] == -1) throw new IOException("Unexpected end of stream inside utf-8 char.");
+            if (arr[i] == -1) throw new IOException("End of stream inside utf-8 encoded entity.");
             if ((arr[i] & 0xC0) != 0x80) {
-                throw new IOException(String.format(Locale.ENGLISH,
-                                                    "Unexpected non utf-8 char in utf-8 extra bytes: %2x", arr[i]));
+                throw new UnsupportedEncodingException(
+                        String.format(Locale.ENGLISH,
+                                      "Unexpected non-entity utf-8 char in entity extra bytes: %2x", arr[i]));
             }
             cp = (cp << 6) | (arr[i] & 0x3f);
         }

@@ -49,7 +49,7 @@ public class BinaryReader extends InputStream {
      * Read binary data from stream.
      *
      * @param out The output buffer to read into.
-     * @throws IOException If the entire byte array was not read.
+     * @throws IOException If unable to fill the entire byte array.
      */
     @Override
     public int read(byte[] out) throws IOException {
@@ -69,7 +69,7 @@ public class BinaryReader extends InputStream {
      * @param out The output buffer to read into.
      * @param off Offset in out array to writeBinary to.
      * @param len Number of bytes to read.
-     * @throws IOException If the entire byte array was not read.
+     * @throws IOException If unable to fill the requested part of the byte array.
      */
     @Override
     public int read(byte[] out, int off, int len) throws IOException {

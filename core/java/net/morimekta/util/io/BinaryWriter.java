@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 16.01.16.
+ * Binary data writer.
  */
 public class BinaryWriter extends OutputStream {
     private final OutputStream out;

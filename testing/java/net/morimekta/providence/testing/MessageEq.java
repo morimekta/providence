@@ -48,32 +48,39 @@ public class MessageEq<T extends PMessage<T>>
     @Override
     public void describeMismatch(Object actual, Description mismatchDescription) {
         if (expected == null) {
-            mismatchDescription.appendText("expected null, but got " + toString(actual));
+            mismatchDescription.appendText("got " + toString(actual));
         } else if (actual == null) {
-            mismatchDescription.appendText("expected " + toString(expected) + " but got null");
+            mismatchDescription.appendText("got null");
         } else {
             LinkedList<String> mismatches = new LinkedList<>();
             collectMismatches("", (PMessage) expected, (PMessage) actual, mismatches);
-            mismatchDescription.appendText("expected[\n");
-            int i = 0;
-            for (String mismatch : mismatches) {
-                if (i >= 20) {
-                    int remaining = mismatches.size() - i;
-                    mismatchDescription.appendText("    ... and " + remaining + "more\n");
-                    break;
+            if (mismatches.size() == 1) {
+                mismatchDescription.appendText(mismatches.getFirst());
+            } else {
+                boolean first = true;
+                mismatchDescription.appendText("[");
+                int i = 0;
+                for (String mismatch : mismatches) {
+                    if (first) first = false;
+                    else mismatchDescription.appendText(",");
+                    mismatchDescription.appendText("\n    ");
+                    if (i >= 20) {
+                        int remaining = mismatches.size() - i;
+                        mismatchDescription.appendText("... and " + remaining + "more");
+                        break;
+                    }
+                    mismatchDescription.appendText(mismatch);
+                    ++i;
                 }
-                mismatchDescription.appendText("    " + mismatch + "\n");
-                ++i;
+                mismatchDescription.appendText("\n]");
             }
-            mismatchDescription.appendText("]");
         }
     }
 
-    protected static <T extends PMessage<T>> void collectMismatches(
-            String xPath,
-            T expected,
-            T actual,
-            LinkedList<String> mismatches) {
+    protected static <T extends PMessage<T>> void collectMismatches(String xPath,
+                                                                    T expected,
+                                                                    T actual,
+                                                                    LinkedList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
         for (PField<?> field : expected.descriptor().getFields()) {
@@ -123,10 +130,10 @@ public class MessageEq<T extends PMessage<T>>
                         }
                         default: {
                             mismatches.add(String.format(
-                                    "expected %s to be %s, but was %s",
+                                    "%s was %s, expected %s",
                                     fieldXPath,
-                                    toString(expected.get(field.getKey())),
-                                    toString(actual.get(field.getKey()))));
+                                    toString(actual.get(field.getKey())),
+                                    toString(expected.get(field.getKey()))));
                             break;
                         }
                     }
@@ -143,19 +150,19 @@ public class MessageEq<T extends PMessage<T>>
                                 .stream()
                                 .filter(key -> !expected.keySet().contains(key))
                                 .map(key -> String.format(
-                                        "unexpected map key %s in %s, was %s",
+                                        "found unexpected entry (%s, %s) in %s",
                                         Objects.toString(key),
-                                        xPath,
-                                        toString(actual.get(key))))
+                                        toString(actual.get(key)),
+                                        xPath))
                                 .collect(Collectors.toList()));
 
         for (K key : expected.keySet()) {
             if (!actual.keySet().contains(key)) {
                 mismatches.add(String.format(
-                        "missing map key %s in %s, to be %s",
+                        "did not find entry (%s, %s) in in %s",
                         toString(key),
-                        xPath,
-                        toString(expected.get(key))));
+                        toString(expected.get(key)),
+                        xPath));
             } else {
                 V exp = expected.get(key);
                 V act = actual.get(key);
@@ -165,7 +172,7 @@ public class MessageEq<T extends PMessage<T>>
                                                       xPath,
                                                       toString(key));
                     if (exp == null || act == null) {
-                        mismatches.add(String.format("expected %s to be %s, but was %s",
+                        mismatches.add(String.format("%s was %s, should be %s",
                                                      keyedXPath,
                                                      toString(exp),
                                                      toString(act)));
@@ -175,10 +182,10 @@ public class MessageEq<T extends PMessage<T>>
                                           (PMessage) act,
                                           mismatches);
                     } else {
-                        mismatches.add(String.format("expected %s to be %s, but was %s",
+                        mismatches.add(String.format("%s was %s, should be %s",
                                                      keyedXPath,
-                                                     toString(exp),
-                                                     toString(act)));
+                                                     toString(act),
+                                                     toString(exp)));
                     }
                 }
             }
@@ -196,7 +203,7 @@ public class MessageEq<T extends PMessage<T>>
                 actual.stream()
                       .filter(item -> !expected.contains(item))
                       .map(item -> String.format(
-                              "unexpected set value %s in %s",
+                              "found unexpected set value %s in %s",
                               toString(item),
                               xPath))
                       .collect(Collectors.toList()));
@@ -205,7 +212,7 @@ public class MessageEq<T extends PMessage<T>>
                 expected.stream()
                         .filter(item -> !actual.contains(item))
                         .map(item -> String.format(
-                                "missing set value %s in %s",
+                                "did not find value %s in %s",
                                 toString(item),
                                 xPath))
                         .collect(Collectors.toList()));
@@ -227,7 +234,7 @@ public class MessageEq<T extends PMessage<T>>
 
             int actualIndex = actual.indexOf(expectedItem);
             T actualItem =
-                    actual.size() >= expectedIndex ? null : actual.get(expectedIndex);
+                    actual.size() <= expectedIndex ? null : actual.get(expectedIndex);
             if (PTypeUtils.equals(expectedItem, actualItem)) {
                 continue;
             }
@@ -334,8 +341,8 @@ public class MessageEq<T extends PMessage<T>>
 
     protected static String limitToString(PMessage<?> message) {
         String tos = message == null ? "null" : message.toString();
-        if (tos.length() > 45) {
-            tos = tos.substring(0, 40) + "...}";
+        if (tos.length() > 65) {
+            tos = tos.substring(0, 60) + "...}";
         }
 
         return tos;

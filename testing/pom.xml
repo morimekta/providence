@@ -23,7 +23,7 @@
         </dependency>
 
         <dependency>
-            <groupId>net.mormekta</groupId>
+            <groupId>net.morimekta</groupId>
             <artifactId>android-util</artifactId>
             <version>0.1</version>
         </dependency>

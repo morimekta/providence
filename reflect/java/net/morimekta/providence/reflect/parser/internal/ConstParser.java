@@ -80,7 +80,7 @@ public class ConstParser {
 
         JsonToken token = tokenizer.expect("parsing message field id");
         while (!token.isSymbol(JsonToken.kMapEndChar)) {
-            F field = type.getField(token.substring(1, -1));
+            F field = type.getField(token.substring(1, -1).asString());
             if (field == null) {
                 throw new JsonException("Not a valid field name: " + token.substring(1, -1));
             }
@@ -151,7 +151,7 @@ public class ConstParser {
                     throw new JsonException("Not a valid string value.", tokenizer, token);
                 case BINARY:
                     if (token.isLiteral()) {
-                        return parseBinary(token.substring(1, -1));
+                        return parseBinary(token.substring(1, -1).asString());
                     }
                     throw new JsonException("Not a valid binary value.", tokenizer, token);
                 case ENUM:

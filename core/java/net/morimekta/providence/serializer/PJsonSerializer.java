@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -33,6 +32,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.util.json.JsonException;
@@ -208,7 +208,7 @@ public class PJsonSerializer
                                         tokenizer,
                                         token);
             }
-            String key = token.substring(1, -1);
+            String key = token.substring(1, -1).asString();
             PField<?> field;
             if (Strings.isInteger(key)) {
                 field = type.getField(Integer.parseInt(key));
@@ -367,7 +367,7 @@ public class PJsonSerializer
                     throw new PSerializeException("Not a valid string value: " + token.asString());
                 case BINARY:
                     if (token.isLiteral()) {
-                        return cast(Binary.fromBase64(token.substring(1, -1)));
+                        return cast(Binary.fromBase64(token.substring(1, -1).asString()));
                     }
                     throw new PSerializeException("Not a valid binary value: " + token.asString());
                 case ENUM:
@@ -375,7 +375,7 @@ public class PJsonSerializer
                     if (token.isInteger()) {
                         eb.setByValue(token.intValue());
                     } else if (token.isLiteral()) {
-                        eb.setByName(token.substring(1, -1));
+                        eb.setByName(token.substring(1, -1).asString());
                     } else {
                         throw new PSerializeException(token.toString() + " is not a enum value type");
                     }

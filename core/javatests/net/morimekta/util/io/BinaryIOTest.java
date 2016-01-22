@@ -1,8 +1,6 @@
 package net.morimekta.util.io;
 
 import net.morimekta.util.Binary;
-import net.morimekta.util.io.BinaryReader;
-import net.morimekta.util.io.BinaryWriter;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -26,11 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
  * String utilities.
  */
 public class Strings {
+    private static final Pattern INT = Pattern.compile("-?[0-9]+");
+
     /**
      * Join set of strings with delimiter.
      *
@@ -92,7 +95,7 @@ public class Strings {
      * @return True if key is an integer.
      */
     public static boolean isInteger(String key) {
-        return key.matches("[0-9]+");
+        return INT.matcher(key).matches();
     }
 
     /**

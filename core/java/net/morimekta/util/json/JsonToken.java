@@ -115,7 +115,7 @@ public class JsonToken extends Slice {
      */
     public String decodeJsonLiteral() {
         // This decodes the string from UTF_8 bytes.
-        String tmp = substring(1, -1);
+        String tmp = substring(1, -1).asString();
         final int l = tmp.length();
         StringBuilder out = new StringBuilder(l);
 

@@ -94,10 +94,10 @@ public class PFastBinarySerializer extends PSerializer {
     public <T> T deserialize(InputStream is, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
-        // Assume it consists of a single field.
         if (PType.MESSAGE == descriptor.getType()) {
             return cast((Object) readMessage(in, (PStructDescriptor<?, ?>) descriptor));
         } else {
+            // Assume it consists of a single field.
             int tag = in.readIntVarint();
             if (tag > 0) {
                 return readFieldValue(in, tag & 0x0f, descriptor);

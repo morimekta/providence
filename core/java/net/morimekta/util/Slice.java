@@ -49,10 +49,10 @@ public class Slice implements Comparable<Slice> {
         return new String(fb, off, len, UTF_8);
     }
 
-    public final String substring(int start, int end) {
+    public final Slice substring(int start, int end) {
         int l = end < 0 ? (len - start) + end : end - start;
         if (l < 0 || l > (len - start)) throw new IllegalArgumentException();
-        return new String(fb, off + start, l, UTF_8);
+        return new Slice(fb, off + start, l);
     }
 
     public final char charAt(int i) {

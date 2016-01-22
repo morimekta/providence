@@ -19,8 +19,6 @@
 
 package net.morimekta.util.io;
 
-import net.morimekta.util.io.Utf8StreamReader;
-
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

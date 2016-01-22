@@ -19,8 +19,6 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.util.Binary;
-import net.morimekta.util.io.BinaryWriter;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
@@ -82,30 +80,5 @@ public class PBinarySerializerTest {
         Operation operation = serializer.deserialize(bais, Operation.kDescriptor);
 
         assertEquals(mOperation, operation);
-    }
-
-    @Test
-    public void testWriteDouble() throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        BinaryWriter wirter = new BinaryWriter(baos);
-        PBinarySerializer serializer = new PBinarySerializer();
-
-        assertEquals(9, serializer.writeDouble(wirter, 1234567890.0));
-        assertEquals("30000080b48065d241", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(9, serializer.writeDouble(wirter, 1.2345678900));
-        assertEquals("301bde8342cac0f33f", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(9, serializer.writeDouble(wirter, -1234567890.0));
-        assertEquals("30000080b48065d2c1", Binary.wrap(baos.toByteArray()).toHexString());
-
-        baos.reset();
-
-        assertEquals(9, serializer.writeDouble(wirter, -1.2345678900));
-        assertEquals("301bde8342cac0f3bf", Binary.wrap(baos.toByteArray()).toHexString());
     }
 }
