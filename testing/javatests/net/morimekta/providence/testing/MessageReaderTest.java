@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static net.morimekta.providence.testing.MessageAssert.assertMessageEquals;
+import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -108,8 +108,8 @@ public class MessageReaderTest {
 
     @Test
     public void testArrayListFromJsonResource() throws PSerializeException, IOException {
-        List<Containers> pretty = MessageReader.arrayListFromJsonResource("/json/tests/pretty.json", Containers.kDescriptor);
-        List<Containers> compact = MessageReader.arrayListFromJsonResource("/json/tests/test.json", Containers.kDescriptor);
+        List<Containers> pretty = MessageReader.arrayListFromJsonResource("/compat/pretty.json", Containers.kDescriptor);
+        List<Containers> compact = MessageReader.arrayListFromJsonResource("/compat/compact.json", Containers.kDescriptor);
 
         assertEquals(10, pretty.size());
         assertEquals(pretty.size(), compact.size());

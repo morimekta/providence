@@ -27,7 +27,7 @@ import net.morimekta.providence.util.PTypeUtils;
 /** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
 @SuppressWarnings("unused")
 public class ServiceMethod
-        implements PMessage<ServiceMethod>, Serializable {
+        implements PMessage<ServiceMethod>, Serializable, Comparable<ServiceMethod> {
     private final static long serialVersionUID = -8952857258512990537L;
 
     private final static boolean kDefaultOneWay = false;
@@ -236,6 +236,51 @@ public class ServiceMethod
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(ServiceMethod other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mOneWay, other.mOneWay);
+        if (c != 0) return c;
+
+        c = Boolean.compare(mReturnType != null, other.mReturnType != null);
+        if (c != 0) return c;
+        if (mReturnType != null) {
+            c = mReturnType.compareTo(other.mReturnType);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mParams != null, other.mParams != null);
+        if (c != 0) return c;
+        if (mParams != null) {
+            c = Integer.compare(mParams.hashCode(), other.mParams.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mExceptions != null, other.mExceptions != null);
+        if (c != 0) return c;
+        if (mExceptions != null) {
+            c = Integer.compare(mExceptions.hashCode(), other.mExceptions.hashCode());
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

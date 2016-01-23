@@ -20,7 +20,7 @@ import net.morimekta.providence.descriptor.PValueProvider;
 /** typedef <type> <name> */
 @SuppressWarnings("unused")
 public class TypedefType
-        implements PMessage<TypedefType>, Serializable {
+        implements PMessage<TypedefType>, Serializable, Comparable<TypedefType> {
     private final static long serialVersionUID = 5431583053440540554L;
 
     private final String mComment;
@@ -158,6 +158,34 @@ public class TypedefType
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(TypedefType other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mType != null, other.mType != null);
+        if (c != 0) return c;
+        if (mType != null) {
+            c = mType.compareTo(other.mType);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

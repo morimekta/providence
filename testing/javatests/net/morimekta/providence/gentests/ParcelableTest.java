@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import android.os.Parcel;
 
-import static net.morimekta.providence.testing.MessageAssert.assertMessageEquals;
+import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
 import static org.junit.Assert.assertEquals;
 
 /**

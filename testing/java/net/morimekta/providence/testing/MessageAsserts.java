@@ -1,19 +1,19 @@
 package net.morimekta.providence.testing;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.util.Binary;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertThat;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 21.01.16.
+ * Assert shorthands for providence messages.
  */
-public class MessageAssert {
+public class MessageAsserts {
     public static <T extends PMessage<T>>void assertMessageEquals(T expected, T actual) {
-        Assert.assertThat(actual, new MessageEq<>(expected));
+        assertThat(actual, new MessageEq<>(expected));
     }
 
     public static <T extends PMessage<T>>void assertMessageEquals(String reason, T expected, T actual) {
-        Assert.assertThat(reason, actual, new MessageEq<>(expected));
+        assertThat(reason, actual, new MessageEq<>(expected));
     }
 }

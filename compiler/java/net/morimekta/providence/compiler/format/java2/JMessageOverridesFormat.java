@@ -33,6 +33,7 @@ public class JMessageOverridesFormat {
         appendHashCode(message);
         appendToString(message);
         appendAsString(message);
+        appendCompareTo(message);
     }
 
     private void appendIsCompact(JMessage message) {
@@ -358,6 +359,123 @@ public class JMessageOverridesFormat {
         writer.appendln("out.append('}');")
               .appendln("return out.toString();")
               .end()
+              .appendln("}")
+              .newline();
+    }
+
+    private void appendCompareTo(JMessage message) {
+        writer.appendln("@Override")
+              .formatln("public int compareTo(%s other) {", message.instanceType())
+              .begin();
+
+        if (message.isUnion()) {
+            writer.appendln("int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());")
+                  .appendln("if (c != 0) return c;")
+                  .newline()
+                  .appendln("switch (tUnionField) {")
+                  .begin();
+
+            for (JField field : message.fields()) {
+                writer.formatln("case %s:", field.fieldEnum())
+                      .begin();
+
+                switch (field.type()) {
+                    case BOOL:
+                        writer.formatln("return Boolean.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case BYTE:
+                        writer.formatln("return Byte.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I16:
+                        writer.formatln("return Short.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I32:
+                        writer.formatln("return Integer.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I64:
+                        writer.formatln("return Long.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case DOUBLE:
+                        writer.formatln("return Double.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case STRING:
+                    case BINARY:
+                    case MESSAGE:
+                        writer.formatln("return %s.compareTo(other.%s);", field.member(), field.member());
+                        break;
+                    case ENUM:
+                        writer.formatln("return Integer.compare(%s.getValue(), other.%s.getValue());", field.member(), field.member());
+                        break;
+                    case SET:
+                    case LIST:
+                    case MAP:
+                        // containers aren't really comparable, just make some consistent comparison.
+                        writer.formatln("return Integer.compare(%s.hashCode(), other.%s.hashCode());", field.member(), field.member());
+                        break;
+                }
+
+                writer.end();
+            }
+            writer.appendln("default: return 0;")
+                  .end()
+                  .appendln('}');
+        } else {
+            writer.appendln("int c;");
+
+            for (JField field : message.fields()) {
+                writer.newline();
+
+                if (!field.alwaysPresent()) {
+                    writer.formatln("c = Boolean.compare(%s != null, other.%s != null);", field.member(), field.member())
+                          .appendln("if (c != 0) return c;")
+                          .formatln("if (%s != null) {", field.member())
+                          .begin();
+                }
+                switch (field.type()) {
+                    case BOOL:
+                        writer.formatln("c = Boolean.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case BYTE:
+                        writer.formatln("c = Byte.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I16:
+                        writer.formatln("c = Short.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I32:
+                        writer.formatln("c = Integer.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case I64:
+                        writer.formatln("c = Long.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case DOUBLE:
+                        writer.formatln("c = Double.compare(%s, other.%s);", field.member(), field.member());
+                        break;
+                    case STRING:
+                    case BINARY:
+                    case MESSAGE:
+                        writer.formatln("c = %s.compareTo(other.%s);", field.member(), field.member());
+                        break;
+                    case ENUM:
+                        writer.formatln("c = Integer.compare(%s.getValue(), %s.getValue());", field.member(), field.member());
+                        break;
+                    case SET:
+                    case LIST:
+                    case MAP:
+                        writer.formatln("c = Integer.compare(%s.hashCode(), other.%s.hashCode());", field.member(), field.member());
+                        break;
+                }
+                writer.appendln("if (c != 0) return c;");
+
+                if (!field.alwaysPresent()) {
+                    writer.end()
+                          .appendln('}');
+                }
+            }
+            writer.newline()
+                  .appendln("return 0;");
+        }
+
+        writer.end()
               .appendln("}")
               .newline();
     }

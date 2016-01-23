@@ -30,7 +30,7 @@ import net.morimekta.providence.util.PTypeUtils;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements PMessage<ServiceType>, Serializable {
+        implements PMessage<ServiceType>, Serializable, Comparable<ServiceType> {
     private final static long serialVersionUID = 789757775761432238L;
 
     private final String mComment;
@@ -191,6 +191,41 @@ public class ServiceType
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(ServiceType other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mExtend != null, other.mExtend != null);
+        if (c != 0) return c;
+        if (mExtend != null) {
+            c = mExtend.compareTo(other.mExtend);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mMethods != null, other.mMethods != null);
+        if (c != 0) return c;
+        if (mMethods != null) {
+            c = Integer.compare(mMethods.hashCode(), other.mMethods.hashCode());
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

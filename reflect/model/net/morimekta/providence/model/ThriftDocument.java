@@ -29,7 +29,7 @@ import net.morimekta.providence.util.PTypeUtils;
 /** <namespace>* <include>* <declataion>* */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements PMessage<ThriftDocument>, Serializable {
+        implements PMessage<ThriftDocument>, Serializable, Comparable<ThriftDocument> {
     private final static long serialVersionUID = -5731994850994905187L;
 
     private final String mComment;
@@ -217,6 +217,48 @@ public class ThriftDocument
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(ThriftDocument other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mPackage != null, other.mPackage != null);
+        if (c != 0) return c;
+        if (mPackage != null) {
+            c = mPackage.compareTo(other.mPackage);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mIncludes != null, other.mIncludes != null);
+        if (c != 0) return c;
+        if (mIncludes != null) {
+            c = Integer.compare(mIncludes.hashCode(), other.mIncludes.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mNamespaces != null, other.mNamespaces != null);
+        if (c != 0) return c;
+        if (mNamespaces != null) {
+            c = Integer.compare(mNamespaces.hashCode(), other.mNamespaces.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mDecl != null, other.mDecl != null);
+        if (c != 0) return c;
+        if (mDecl != null) {
+            c = Integer.compare(mDecl.hashCode(), other.mDecl.hashCode());
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

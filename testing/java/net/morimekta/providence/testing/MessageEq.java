@@ -1,15 +1,19 @@
 package net.morimekta.providence.testing;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.util.Strings;
 import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
+import net.morimekta.util.json.JsonException;
+import net.morimekta.util.json.JsonWriter;
 
+import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,6 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Stein Eldar Johnsen
@@ -35,6 +41,9 @@ public class MessageEq<T extends PMessage<T>>
     public boolean matches(Object item) {
         if (expected == null)
             return item == null;
+        if (!(item instanceof PMessage)) {
+            throw new AssertionFailedError("Item " + item.toString() + " not a providence message.");
+        }
         return expected.equals(item);
     }
 
@@ -232,12 +241,11 @@ public class MessageEq<T extends PMessage<T>>
             T expectedItem = expected.get(expectedIndex);
             handledItems.add(expectedItem);
 
-            int actualIndex = actual.indexOf(expectedItem);
-            T actualItem =
-                    actual.size() <= expectedIndex ? null : actual.get(expectedIndex);
+            T actualItem = actual.size() > expectedIndex ? actual.get(expectedIndex) : null;
             if (PTypeUtils.equals(expectedItem, actualItem)) {
                 continue;
             }
+            int actualIndex = actual.indexOf(expectedItem);
 
             int actualItemExpectedIndex = -1;
             if (actualItem != null) {
@@ -305,19 +313,27 @@ public class MessageEq<T extends PMessage<T>>
         } else if (o instanceof PEnumValue) {
             return ((PEnumValue) o).descriptor().getName() + "." + ((PEnumValue) o).getName();
         } else if (o instanceof Map) {
-            return Strings.join(
+            return "{" + Strings.join(
                     ",",
                     ((Map<?, ?>) o).entrySet().stream()
                                    .map(e -> toString(e.getKey()) + ":" + toString(e.getValue()))
-                                   .collect(Collectors.toList()));
+                                   .collect(Collectors.toList())) + "}";
         } else if (o instanceof Collection) {
-            return Strings.join(
+            return "[" + Strings.join(
                     ",",
                     ((Collection<?>) o).stream()
                                        .map(MessageEq::toString)
-                                       .collect(Collectors.toList()));
+                                       .collect(Collectors.toList())) + "]";
         } else if (o instanceof CharSequence) {
-            return "\"" + o.toString() + "\"";
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JsonWriter writer = new JsonWriter(baos);
+            try {
+                writer.value((CharSequence) o);
+                writer.flush();
+                return new String(baos.toByteArray(), UTF_8);
+            } catch (JsonException e) {
+                return "\"" + o.toString() + "\"";
+            }
         } else if (o instanceof Binary) {
             int len = ((Binary) o).length();
             if (len > 65) {

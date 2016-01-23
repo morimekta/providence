@@ -31,7 +31,7 @@ import net.morimekta.providence.util.PTypeUtils;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements PMessage<StructType>, Serializable {
+        implements PMessage<StructType>, Serializable, Comparable<StructType> {
     private final static long serialVersionUID = -7531050363059752370L;
 
     private final static StructVariant kDefaultVariant = StructVariant.STRUCT;
@@ -194,6 +194,41 @@ public class StructType
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(StructType other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mVariant != null, other.mVariant != null);
+        if (c != 0) return c;
+        if (mVariant != null) {
+            c = Integer.compare(mVariant.getValue(), mVariant.getValue());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mFields != null, other.mFields != null);
+        if (c != 0) return c;
+        if (mFields != null) {
+            c = Integer.compare(mFields.hashCode(), other.mFields.hashCode());
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

@@ -22,8 +22,11 @@ package net.morimekta.util.json;
 import net.morimekta.util.Binary;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Stack;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Stein Eldar Johnsen
@@ -40,7 +43,7 @@ public class JsonWriter {
     private JsonContext context;
 
     public JsonWriter(OutputStream out) {
-        this(new PrintWriter(out));
+        this(new PrintWriter(new OutputStreamWriter(out, UTF_8)));
     }
 
     public JsonWriter(PrintWriter writer) {
@@ -318,7 +321,7 @@ public class JsonWriter {
                         writer.write(c);
                         break;
                     default:
-                        if(c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448)) {
+                        if(c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448) || !Character.isDefined(c)) {
                             writer.format("\\u%04x", (int) c);
                         } else {
                             writer.write(c);

@@ -147,6 +147,22 @@ public class Binary implements Comparable<Binary> {
     }
 
     /**
+     * Make a hex string from a byte array.
+     *
+     * @return The hex string.
+     */
+    public String toHexString(int line_len) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < bytes.length; ++i) {
+            builder.append(String.format("%02x", bytes[i]));
+            if (i % line_len == (line_len -1)) {
+                builder.append('\n');
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
      * Get a byte buffer wrapping the binary data.
      * @return A byte buffer.
      */

@@ -19,10 +19,10 @@
 
 package net.morimekta.providence.util;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.util.Binary;
 
 import java.text.DecimalFormat;
 import java.util.Collection;

@@ -29,4 +29,12 @@ public abstract class PException extends Exception {
     protected PException(String message) {
         super(message);
     }
+
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
 }

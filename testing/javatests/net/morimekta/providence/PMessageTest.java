@@ -19,9 +19,15 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.testing.MessageReader;
 import net.morimekta.test.calculator.Operand;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.calculator.Operation;
+
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -31,20 +37,27 @@ import static org.junit.Assert.assertNotEquals;
  * @since 18.10.15
  */
 public class PMessageTest {
+    private static Operation operation;
+    @Before
+    public void setUp() throws IOException, PSerializeException {
+        synchronized (PMessageTest.class) {
+            if (operation == null) {
+                operation = MessageReader.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
+            }
+        }
+    }
+
     @Test
-    public void testToString() {
-        Operand value = Operand.builder().setNumber(44).build();
-
-        assertEquals("calculator.Operand{number:44}", value.toString());
-
-        value = Operand.builder()
-                       .setImaginary(Imaginary.builder()
-                                              .setV(12.9)
-                                              .setI(1.0)
-                                              .build())
-                       .build();
-
-        assertEquals("calculator.Operand{imaginary:{v:12.9,i:1}}", value.toString());
+    public void testToString() throws IOException, PSerializeException {
+        assertEquals("calculator.Operand{imaginary:{v:1.7,i:-2}}", operation.getOperands().get(1).toString());
+        assertEquals("calculator.Operand{number:4.321}", operation.getOperands().get(0).getOperation().getOperands().get(1).toString());
+        assertEquals("calculator.Operation{operator:ADD,operands:[{number:1234},{number:4.321}]}", operation.getOperands().get(0).getOperation().toString());
+        assertEquals("calculator.Operation{" +
+                     "operator:MULTIPLY,operands:[" +
+                     "{operation:{operator:ADD,operands:[{number:1234},{number:4.321}]}}," +
+                     "{imaginary:{v:1.7,i:-2}}" +
+                     "]" +
+                     "}", operation.toString());
     }
 
     @Test

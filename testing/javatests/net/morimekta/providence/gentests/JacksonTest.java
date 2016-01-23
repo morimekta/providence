@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static net.morimekta.providence.testing.MessageAssert.assertMessageEquals;
+import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
 import static org.junit.Assert.assertEquals;
 
 /**

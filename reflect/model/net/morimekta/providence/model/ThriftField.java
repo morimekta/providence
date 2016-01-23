@@ -32,7 +32,7 @@ import net.morimekta.providence.descriptor.PValueProvider;
  */
 @SuppressWarnings("unused")
 public class ThriftField
-        implements PMessage<ThriftField>, Serializable {
+        implements PMessage<ThriftField>, Serializable, Comparable<ThriftField> {
     private final static long serialVersionUID = 5114028868232611868L;
 
     private final static int kDefaultKey = 0;
@@ -242,6 +242,51 @@ public class ThriftField
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(ThriftField other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Integer.compare(mKey, other.mKey);
+        if (c != 0) return c;
+
+        c = Boolean.compare(mRequirement != null, other.mRequirement != null);
+        if (c != 0) return c;
+        if (mRequirement != null) {
+            c = Integer.compare(mRequirement.getValue(), mRequirement.getValue());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mType != null, other.mType != null);
+        if (c != 0) return c;
+        if (mType != null) {
+            c = mType.compareTo(other.mType);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mDefaultValue != null, other.mDefaultValue != null);
+        if (c != 0) return c;
+        if (mDefaultValue != null) {
+            c = mDefaultValue.compareTo(other.mDefaultValue);
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

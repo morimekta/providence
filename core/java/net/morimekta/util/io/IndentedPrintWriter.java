@@ -20,10 +20,13 @@
 package net.morimekta.util.io;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 import java.util.Stack;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class IndentedPrintWriter
         extends PrintWriter {
@@ -40,7 +43,7 @@ public class IndentedPrintWriter
     }
 
     public IndentedPrintWriter(OutputStream out, String indent, String newline) {
-        super(out);
+        super(new OutputStreamWriter(out, UTF_8));
         this.indent = indent;
         this.newline = newline;
 

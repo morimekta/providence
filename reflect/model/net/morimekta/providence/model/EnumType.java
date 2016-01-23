@@ -30,7 +30,7 @@ import net.morimekta.providence.util.PTypeUtils;
  */
 @SuppressWarnings("unused")
 public class EnumType
-        implements PMessage<EnumType>, Serializable {
+        implements PMessage<EnumType>, Serializable, Comparable<EnumType> {
     private final static long serialVersionUID = 5720337451968926862L;
 
     private final String mComment;
@@ -168,6 +168,34 @@ public class EnumType
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(EnumType other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mValues != null, other.mValues != null);
+        if (c != 0) return c;
+        if (mValues != null) {
+            c = Integer.compare(mValues.hashCode(), other.mValues.hashCode());
+            if (c != 0) return c;
+        }
+
+        return 0;
     }
 
     public enum _Field implements PField {

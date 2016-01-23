@@ -2,7 +2,6 @@ package net.morimekta.providence.testing;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
@@ -21,57 +20,39 @@ public class MessageReader {
     public static <T extends PMessage<T>> T fromJsonResource(
             String path, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
-        InputStream in = MessageReader.class.getResourceAsStream(path);
-        if (in == null) {
-            Assert.fail("Resource " + path + " does not exist.");
-        }
-        PSerializer serializer = new PJsonSerializer(false);
-        return serializer.deserialize(new BufferedInputStream(in), descriptor);
+        return fromResource(path, descriptor, new PJsonSerializer(true));
     }
 
     public static <T extends PMessage<T>> ArrayList<T> arrayListFromJsonResource(
             String path, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
-        InputStream in = MessageReader.class.getResourceAsStream(path);
-        if (in == null) {
-            Assert.fail("Resource " + path + " does not exist.");
-        }
-        in = new BufferedInputStream(in);
-        PSerializer serializer = new PJsonSerializer(false);
-        ArrayList<T> out = new ArrayList<>();
-        while (true) {
-            T item = serializer.deserialize(in, descriptor);
-            if (item == null) break;
-            out.add(item);
-        }
-        return out;
+        return arrayListFromResource(path, descriptor, new PJsonSerializer(true));
     }
 
     public static <T extends PMessage<T>> T fromResource(
-            String path, PDescriptor<T> descriptor)
+            String path, PDescriptor<T> descriptor, PSerializer serializer)
             throws PSerializeException, IOException {
         InputStream in = MessageReader.class.getResourceAsStream(path);
         if (in == null) {
             Assert.fail("Resource " + path + " does not exist.");
         }
-        PSerializer serializer = new PBinarySerializer(false);
         return serializer.deserialize(new BufferedInputStream(in), descriptor);
     }
 
     public static <T extends PMessage<T>> ArrayList<T> arrayListFromResource(
-            String path, PDescriptor<T> descriptor)
+            String path, PDescriptor<T> descriptor, PSerializer serializer)
             throws PSerializeException, IOException {
         InputStream in = MessageReader.class.getResourceAsStream(path);
         if (in == null) {
             Assert.fail("Resource " + path + " does not exist.");
         }
         in = new BufferedInputStream(in);
-        PSerializer serializer = new PBinarySerializer(false);
         ArrayList<T> out = new ArrayList<>();
         while (true) {
             T item = serializer.deserialize(in, descriptor);
             if (item == null) break;
             out.add(item);
+            if (in.read() < 0) break;
         }
         return out;
     }

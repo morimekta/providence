@@ -93,8 +93,9 @@ public class JMessageFormat {
         if (message.variant().equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends PException");
         }
-        writer.formatln("implements %s<%s>, Serializable",
+        writer.formatln("implements %s<%s>, Serializable, Comparable<%s>",
                         message.isUnion() ? "PUnion" : "PMessage",
+                        message.instanceType(),
                         message.instanceType());
         if (options.android) {
             writer.format(", Parcelable");
@@ -618,6 +619,7 @@ public class JMessageFormat {
         header.include(PValueProvider.class.getName());
         header.include(PDescriptor.class.getName());
         header.include(Objects.class.getName());
+        header.include(Comparable.class.getName());
         if (!message.isUnion()) {
             header.include(BitSet.class.getName());
         }

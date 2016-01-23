@@ -18,7 +18,7 @@ import net.morimekta.providence.descriptor.PValueProvider;
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
 @SuppressWarnings("unused")
 public class Declaration
-        implements PUnion<Declaration>, Serializable {
+        implements PUnion<Declaration>, Serializable, Comparable<Declaration> {
     private final static long serialVersionUID = -6998763195276182553L;
 
     private final EnumType mDeclEnum;
@@ -217,6 +217,26 @@ public class Declaration
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(Declaration other) {
+        int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());
+        if (c != 0) return c;
+
+        switch (tUnionField) {
+            case DECL_ENUM:
+                return mDeclEnum.compareTo(other.mDeclEnum);
+            case DECL_TYPEDEF:
+                return mDeclTypedef.compareTo(other.mDeclTypedef);
+            case DECL_STRUCT:
+                return mDeclStruct.compareTo(other.mDeclStruct);
+            case DECL_SERVICE:
+                return mDeclService.compareTo(other.mDeclService);
+            case DECL_CONST:
+                return mDeclConst.compareTo(other.mDeclConst);
+            default: return 0;
+        }
     }
 
     public enum _Field implements PField {

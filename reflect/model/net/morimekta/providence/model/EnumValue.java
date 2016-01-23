@@ -20,7 +20,7 @@ import net.morimekta.providence.descriptor.PValueProvider;
 /** <name> (= <value>) */
 @SuppressWarnings("unused")
 public class EnumValue
-        implements PMessage<EnumValue>, Serializable {
+        implements PMessage<EnumValue>, Serializable, Comparable<EnumValue> {
     private final static long serialVersionUID = -4079600082644582517L;
 
     private final static int kDefaultValue = 0;
@@ -160,6 +160,30 @@ public class EnumValue
         }
         out.append('}');
         return out.toString();
+    }
+
+    @Override
+    public int compareTo(EnumValue other) {
+        int c;
+
+        c = Boolean.compare(mComment != null, other.mComment != null);
+        if (c != 0) return c;
+        if (mComment != null) {
+            c = mComment.compareTo(other.mComment);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mName != null, other.mName != null);
+        if (c != 0) return c;
+        if (mName != null) {
+            c = mName.compareTo(other.mName);
+            if (c != 0) return c;
+        }
+
+        c = Integer.compare(mValue, other.mValue);
+        if (c != 0) return c;
+
+        return 0;
     }
 
     public enum _Field implements PField {
