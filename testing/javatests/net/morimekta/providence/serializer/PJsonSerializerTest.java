@@ -33,7 +33,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.morimekta.providence.util.PStringUtils.readString;
+import static net.morimekta.util.Strings.readString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 

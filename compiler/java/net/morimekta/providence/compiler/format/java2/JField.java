@@ -24,8 +24,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 
-import static net.morimekta.providence.util.PStringUtils.c_case;
-import static net.morimekta.providence.util.PStringUtils.camelCase;
+import static net.morimekta.util.Strings.c_case;
+import static net.morimekta.util.Strings.camelCase;
 
 /**
  *

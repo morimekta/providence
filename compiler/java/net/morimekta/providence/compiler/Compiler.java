@@ -25,7 +25,7 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.util.PStringUtils;
+import net.morimekta.util.Strings;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -87,7 +87,7 @@ public class Compiler {
                                   e.getLineNo(), e.getPos(), e.getPos() + e.getLen(),
                                   e.getLocalizedMessage(),
                                   e.getLine(),
-                                  PStringUtils.times("~", e.getPos()), '^');
+                                  Strings.times("~", e.getPos()), '^');
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }

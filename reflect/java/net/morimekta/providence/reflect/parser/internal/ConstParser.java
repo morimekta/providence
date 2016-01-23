@@ -31,11 +31,11 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.util.PBase64Utils;
-import net.morimekta.providence.util.PStringUtils;
-import net.morimekta.providence.util.json.JsonException;
-import net.morimekta.providence.util.json.JsonToken;
-import net.morimekta.providence.util.json.JsonTokenizer;
+import net.morimekta.util.Base64;
+import net.morimekta.util.Strings;
+import net.morimekta.util.json.JsonException;
+import net.morimekta.util.json.JsonToken;
+import net.morimekta.util.json.JsonTokenizer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -251,7 +251,7 @@ public class ConstParser {
         switch (keyType.getType()) {
             case ENUM:
                 PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory().builder();
-                if (PStringUtils.isInteger(key)) {
+                if (Strings.isInteger(key)) {
                     return eb.setByValue(Integer.parseInt(key)).build();
                 } else {
                     // Check for qualified name ( e.g. EnumName.VALUE ).
@@ -296,6 +296,6 @@ public class ConstParser {
      * @return The decoded byte array.
      */
     private byte[] parseBinary(String value) {
-        return PBase64Utils.decode(value);
+        return Base64.decode(value);
     }
 }

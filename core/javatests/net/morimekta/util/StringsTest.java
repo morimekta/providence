@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package net.morimekta.providence.util;
+package net.morimekta.util;
 
-import net.morimekta.providence.util.io.Utf8StreamReader;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import static org.junit.Assert.fail;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class PStringUtilsTest {
+public class StringsTest {
     byte[] mArray;
     byte[] mArray_withEscaping;
     byte[] mArray_withNullbyte;
@@ -59,7 +59,7 @@ public class PStringUtilsTest {
 
     private String TSU_readString(byte[] bytes) throws IOException{
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-        return PStringUtils.readString(is);
+        return Strings.readString(is);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class PStringUtilsTest {
                 throw new IOException();
             }
         };
-        fail("unexpected output: " + PStringUtils.readString(is));
+        fail("unexpected output: " + Strings.readString(is));
     }
 
     @Test
@@ -91,8 +91,8 @@ public class PStringUtilsTest {
         // BufferedInputStream supports marks.
         InputStream is = new ByteArrayInputStream(buffer);
 
-        assertEquals("abc", PStringUtils.readString(is));
-        assertEquals("xyz", PStringUtils.readString(is));
+        assertEquals("abc", Strings.readString(is));
+        assertEquals("xyz", Strings.readString(is));
     }
 
     @Test
@@ -104,8 +104,8 @@ public class PStringUtilsTest {
         // BufferedInputStream supports marks.
         InputStream is = new ByteArrayInputStream(buffer);
 
-        assertEquals("abc", PStringUtils.readString(is, "\r\n"));
-        assertEquals("xyz", PStringUtils.readString(is, "\r\n"));
+        assertEquals("abc", Strings.readString(is, "\r\n"));
+        assertEquals("xyz", Strings.readString(is, "\r\n"));
     }
 
     @Test
@@ -117,8 +117,8 @@ public class PStringUtilsTest {
         // BufferedInputStream supports marks.
         Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
 
-        assertEquals("abc", PStringUtils.readString(is));
-        assertEquals("xyz", PStringUtils.readString(is));
+        assertEquals("abc", Strings.readString(is));
+        assertEquals("xyz", Strings.readString(is));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class PStringUtilsTest {
         // BufferedInputStream supports marks.
         Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
 
-        assertEquals("abc", PStringUtils.readString(is, "\r\n"));
-        assertEquals("xyz", PStringUtils.readString(is, "\r\n"));
+        assertEquals("abc", Strings.readString(is, "\r\n"));
+        assertEquals("xyz", Strings.readString(is, "\r\n"));
     }
 }

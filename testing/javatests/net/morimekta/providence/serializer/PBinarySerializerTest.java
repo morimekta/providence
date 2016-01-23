@@ -19,8 +19,8 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.Binary;
-import net.morimekta.providence.util.io.BinaryWriter;
+import net.morimekta.util.Binary;
+import net.morimekta.util.io.BinaryWriter;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;

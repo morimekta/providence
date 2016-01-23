@@ -40,13 +40,13 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Objects;
 
-import static net.morimekta.providence.util.PStringUtils.camelCase;
+import static net.morimekta.util.Strings.camelCase;
 
 /**
  * @author Stein Eldar Johnsen

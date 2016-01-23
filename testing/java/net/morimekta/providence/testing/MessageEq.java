@@ -1,10 +1,10 @@
 package net.morimekta.providence.testing;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.util.PStringUtils;
+import net.morimekta.util.Strings;
 import net.morimekta.providence.util.PTypeUtils;
 
 import org.hamcrest.BaseMatcher;
@@ -285,7 +285,7 @@ public class MessageEq<T extends PMessage<T>>
             mismatches.add(String.format(
                     "unexpected item ordering in %s: [%s]",
                     xPath,
-                    PStringUtils.join(",", reordering)));
+                    Strings.join(",", reordering)));
         }
 
     }
@@ -298,13 +298,13 @@ public class MessageEq<T extends PMessage<T>>
         } else if (o instanceof PEnumValue) {
             return ((PEnumValue) o).descriptor().getName() + "." + ((PEnumValue) o).getName();
         } else if (o instanceof Map) {
-            return PStringUtils.join(
+            return Strings.join(
                     ",",
                     ((Map<?, ?>) o).entrySet().stream()
                                    .map(e -> toString(e.getKey()) + ":" + toString(e.getValue()))
                                    .collect(Collectors.toList()));
         } else if (o instanceof Collection) {
-            return PStringUtils.join(
+            return Strings.join(
                     ",",
                     ((Collection<?>) o).stream()
                                        .map(MessageEq::toString)

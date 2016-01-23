@@ -25,7 +25,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
  * @author Stein Eldar Johnsen

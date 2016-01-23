@@ -7,7 +7,7 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Collection;
 

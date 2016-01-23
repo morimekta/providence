@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.HashSet;
 import java.util.Set;

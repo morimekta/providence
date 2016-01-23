@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -32,8 +32,8 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.io.BinaryReader;
-import net.morimekta.providence.util.io.BinaryWriter;
+import net.morimekta.util.io.BinaryReader;
+import net.morimekta.util.io.BinaryWriter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

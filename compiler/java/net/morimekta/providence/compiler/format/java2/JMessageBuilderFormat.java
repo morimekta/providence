@@ -4,7 +4,7 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
  * @author Stein Eldar Johnsen

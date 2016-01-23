@@ -31,7 +31,7 @@ import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.utils.FormatString;
+import net.morimekta.console.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

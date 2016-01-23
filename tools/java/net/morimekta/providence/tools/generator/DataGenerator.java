@@ -8,7 +8,7 @@ import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.test.providence.Containers;
-import net.morimekta.utils.FormatString;
+import net.morimekta.console.FormatString;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;

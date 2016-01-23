@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.mio;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PSerializer;

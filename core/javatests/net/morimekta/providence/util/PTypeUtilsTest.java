@@ -19,7 +19,9 @@
 
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -199,23 +201,23 @@ public class PTypeUtilsTest {
 
     @Test
     public void testIsInteger() {
-        assertTrue(PStringUtils.isInteger("0"));
-        assertTrue(PStringUtils.isInteger("5"));
-        assertTrue(PStringUtils.isInteger("12345"));
-        assertTrue(PStringUtils.isInteger("1234567890"));
-        assertTrue(PStringUtils.isInteger("987654321098765")); // long
+        assertTrue(Strings.isInteger("0"));
+        assertTrue(Strings.isInteger("5"));
+        assertTrue(Strings.isInteger("12345"));
+        assertTrue(Strings.isInteger("1234567890"));
+        assertTrue(Strings.isInteger("987654321098765")); // long
 
-        assertFalse(PStringUtils.isInteger("0.0")); // float / double
-        assertFalse(PStringUtils.isInteger("0.5"));
-        assertFalse(PStringUtils.isInteger("0.55555555555"));
-        assertFalse(PStringUtils.isInteger("1234567890.0"));
+        assertFalse(Strings.isInteger("0.0")); // float / double
+        assertFalse(Strings.isInteger("0.5"));
+        assertFalse(Strings.isInteger("0.55555555555"));
+        assertFalse(Strings.isInteger("1234567890.0"));
         // scientific notation
-        assertFalse(PStringUtils.isInteger("1.23456789E-8"));
-        assertFalse(PStringUtils.isInteger("1.23456789E12"));
-        assertFalse(PStringUtils.isInteger("1.4f"));
-        assertFalse(PStringUtils.isInteger("1..23456789E12"));
-        assertFalse(PStringUtils.isInteger("1..23456789E-8"));
-        assertFalse(PStringUtils.isInteger("0xff")); // hex
-        assertFalse(PStringUtils.isInteger("deadbeef")); // non-prefixed hex.
+        assertFalse(Strings.isInteger("1.23456789E-8"));
+        assertFalse(Strings.isInteger("1.23456789E12"));
+        assertFalse(Strings.isInteger("1.4f"));
+        assertFalse(Strings.isInteger("1..23456789E12"));
+        assertFalse(Strings.isInteger("1..23456789E-8"));
+        assertFalse(Strings.isInteger("0xff")); // hex
+        assertFalse(Strings.isInteger("deadbeef")); // non-prefixed hex.
     }
 }

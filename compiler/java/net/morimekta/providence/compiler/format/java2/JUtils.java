@@ -23,8 +23,8 @@ import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.util.PStringUtils;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.Strings;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.File;
 
@@ -45,7 +45,7 @@ public class JUtils {
     }
 
     public static String getClassName(PDeclaredDescriptor<?> type) {
-        return PStringUtils.camelCase("", type.getName());
+        return Strings.camelCase("", type.getName());
     }
 
     public static String getJavaPackage(CDocument document) throws GeneratorException {
@@ -59,7 +59,7 @@ public class JUtils {
 
     public static String getPackageClassPath(String javaPackage) throws GeneratorException {
         String[] parts = javaPackage.split("[.]");
-        return PStringUtils.join(File.separator, parts);
+        return Strings.join(File.separator, parts);
     }
 
     public static void appendBlockComment(IndentedPrintWriter writer, String comment) {

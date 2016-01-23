@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package net.morimekta.providence.util;
+package net.morimekta.util;
 
-import net.morimekta.providence.Binary;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -81,7 +80,7 @@ public class BinaryTest {
 
     @Test
     public void testBase64() {
-        String a = PBase64Utils.encode(a1);
+        String a = Base64.encode(a1);
 
         assertEquals(a, Binary.wrap(a1).toBase64());
         assertEquals(Binary.wrap(a2), Binary.fromBase64(a));

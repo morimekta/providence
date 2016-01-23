@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.compiler.format.thrift;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PContainer;
@@ -31,9 +31,9 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
-import net.morimekta.providence.util.json.JsonException;
-import net.morimekta.providence.util.json.JsonWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
+import net.morimekta.util.json.JsonException;
+import net.morimekta.util.json.JsonWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;

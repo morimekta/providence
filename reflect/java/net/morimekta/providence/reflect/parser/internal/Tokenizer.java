@@ -20,8 +20,8 @@
 package net.morimekta.providence.reflect.parser.internal;
 
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.util.PStringUtils;
-import net.morimekta.providence.util.io.Utf8StreamReader;
+import net.morimekta.util.Strings;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,17 +220,17 @@ public class Tokenizer {
             return mLines.get(line - 1);
         } else {
             // Next line...
-            mLineBuilder.append(PStringUtils.readString(mIn, '\n'));
+            mLineBuilder.append(Strings.readString(mIn, '\n'));
             return mLineBuilder.toString();
         }
     }
 
     public String readUntil(char terminator) throws IOException {
-        return PStringUtils.readString(mIn, terminator);
+        return Strings.readString(mIn, terminator);
     }
 
     public String readUntil(String terminator) throws IOException {
-        return PStringUtils.readString(mIn, terminator);
+        return Strings.readString(mIn, terminator);
     }
 
     private ParseException newParseException(String s) throws IOException {

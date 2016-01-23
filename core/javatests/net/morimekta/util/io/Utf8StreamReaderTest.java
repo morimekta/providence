@@ -17,7 +17,9 @@
  * under the License.
  */
 
-package net.morimekta.providence.util.io;
+package net.morimekta.util.io;
+
+import net.morimekta.util.io.Utf8StreamReader;
 
 import org.junit.Test;
 

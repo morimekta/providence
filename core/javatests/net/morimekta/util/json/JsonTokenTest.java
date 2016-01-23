@@ -1,4 +1,4 @@
-package net.morimekta.providence.util.json;
+package net.morimekta.util.json;
 
 import org.junit.Test;
 

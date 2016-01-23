@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.reflect.util.TypeRegistry;

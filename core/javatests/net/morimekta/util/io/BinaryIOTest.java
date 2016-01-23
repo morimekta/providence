@@ -1,6 +1,8 @@
-package net.morimekta.providence.util.io;
+package net.morimekta.util.io;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
+import net.morimekta.util.io.BinaryReader;
+import net.morimekta.util.io.BinaryWriter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +20,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class BinaryIOTest {
     ByteArrayOutputStream out;
-    BinaryWriter writer;
+    BinaryWriter          writer;
 
     @Before
     public void setUp() throws InterruptedException, IOException {

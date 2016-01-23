@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PType;
 
 import java.util.Objects;

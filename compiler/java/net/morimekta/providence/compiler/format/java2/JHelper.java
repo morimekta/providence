@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -42,7 +42,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import static net.morimekta.providence.util.PStringUtils.camelCase;
+import static net.morimekta.util.Strings.camelCase;
 
 /**
  *

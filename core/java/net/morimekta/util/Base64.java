@@ -17,15 +17,14 @@
  * under the License.
  */
 
-package net.morimekta.providence.util;
+package net.morimekta.util;
 
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * Base64 utilities.
  */
-public class PBase64Utils {
+public class Base64 {
     public static String encode(byte[] bytes) {
         return DatatypeConverter.printBase64Binary(bytes);
     }

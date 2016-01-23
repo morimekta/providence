@@ -4,7 +4,9 @@ import net.morimekta.providence.*;
 import net.morimekta.providence.descriptor.*;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.providence.util.io.CountingOutputStream;
+import net.morimekta.util.io.CountingOutputStream;
+import net.morimekta.util.Binary;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TTupleProtocol;

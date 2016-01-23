@@ -1,6 +1,6 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.test.providence.CompactFields;
 import net.morimekta.test.providence.DefaultValues;
 import net.morimekta.test.providence.Value;

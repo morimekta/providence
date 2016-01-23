@@ -1,4 +1,6 @@
-package net.morimekta.providence.util;
+package net.morimekta.util;
+
+import net.morimekta.util.Slice;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -27,7 +27,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.util.TypeRegistry;
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;

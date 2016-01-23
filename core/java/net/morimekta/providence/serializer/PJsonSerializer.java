@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -33,13 +33,13 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PStringUtils;
-import net.morimekta.providence.util.io.CountingOutputStream;
-import net.morimekta.providence.util.json.JsonException;
-import net.morimekta.providence.util.json.JsonToken;
-import net.morimekta.providence.util.json.JsonTokenizer;
-import net.morimekta.providence.util.json.JsonWriter;
-import net.morimekta.providence.util.json.PrettyJsonWriter;
+import net.morimekta.util.Strings;
+import net.morimekta.util.io.CountingOutputStream;
+import net.morimekta.util.json.JsonException;
+import net.morimekta.util.json.JsonToken;
+import net.morimekta.util.json.JsonTokenizer;
+import net.morimekta.util.json.JsonWriter;
+import net.morimekta.util.json.PrettyJsonWriter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -210,7 +210,7 @@ public class PJsonSerializer
             }
             String key = token.substring(1, -1);
             PField<?> field;
-            if (PStringUtils.isInteger(key)) {
+            if (Strings.isInteger(key)) {
                 field = type.getField(Integer.parseInt(key));
             } else {
                 field = type.getField(key);
@@ -506,7 +506,7 @@ public class PJsonSerializer
                     return Binary.fromBase64(key);
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory().builder();
-                    if (PStringUtils.isInteger(key)) {
+                    if (Strings.isInteger(key)) {
                         eb.setByValue(Integer.parseInt(key));
                     } else {
                         eb.setByName(key);

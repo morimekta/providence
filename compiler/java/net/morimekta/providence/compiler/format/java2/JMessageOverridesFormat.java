@@ -1,6 +1,6 @@
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.providence.util.io.IndentedPrintWriter;
+import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
  * @author Stein Eldar Johnsen

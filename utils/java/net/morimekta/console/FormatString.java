@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.utils;
+package net.morimekta.console;
 
 import java.util.Locale;
 

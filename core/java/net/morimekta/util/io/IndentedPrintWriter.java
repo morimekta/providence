@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.providence.util.io;
+package net.morimekta.util.io;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;

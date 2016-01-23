@@ -20,9 +20,9 @@
 package net.morimekta.providence.reflect.parser.internal;
 
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.util.json.JsonException;
-import net.morimekta.providence.util.json.JsonToken;
-import net.morimekta.providence.util.json.JsonTokenizer;
+import net.morimekta.util.json.JsonException;
+import net.morimekta.util.json.JsonToken;
+import net.morimekta.util.json.JsonTokenizer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package net.morimekta.providence.jackson;
 
-import net.morimekta.providence.Binary;
-import net.morimekta.providence.util.PBase64Utils;
+import net.morimekta.util.Binary;
+import net.morimekta.util.Base64;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -20,7 +20,7 @@ public class BinaryJsonDeserializerTest {
         BinaryJsonDeserializer deserializer = new BinaryJsonDeserializer();
 
         byte[] data = new byte[]{12, 34, 56, 78, 91, 23, 45, 67, 78, 90};
-        String encoded = "[\"" + PBase64Utils.encode(data) + "\"]";
+        String encoded = "[\"" + Base64.encode(data) + "\"]";
 
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(encoded);

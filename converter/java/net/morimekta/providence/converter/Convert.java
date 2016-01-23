@@ -23,7 +23,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.mio.PMessageReader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.util.PStringUtils;
+import net.morimekta.util.Strings;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.mio.PMessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -108,7 +108,7 @@ public class Convert {
                                   e.getLineNo(), e.getPos(), e.getPos() + e.getLen(),
                                   e.getLocalizedMessage(),
                                   e.getLine(),
-                                  PStringUtils.times("~", e.getPos()), '^');
+                                  Strings.times("~", e.getPos()), '^');
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }

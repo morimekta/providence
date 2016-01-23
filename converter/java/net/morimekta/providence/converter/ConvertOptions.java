@@ -51,7 +51,7 @@ import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.providence.util.io.CountingOutputStream;
+import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.utils.FormatString;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;

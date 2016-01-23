@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.data;
 
-import net.morimekta.providence.Binary;
+import net.morimekta.util.Binary;
 
 import org.apache.commons.math3.distribution.CauchyDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;

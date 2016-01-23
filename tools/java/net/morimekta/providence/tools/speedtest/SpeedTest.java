@@ -8,10 +8,10 @@ import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
-import net.morimekta.providence.util.io.CountingOutputStream;
+import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.test.providence.Containers;
-import net.morimekta.utils.Color;
-import net.morimekta.utils.FormatString;
+import net.morimekta.console.Color;
+import net.morimekta.console.FormatString;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.thrift.TException;

@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package net.morimekta.providence.util;
+package net.morimekta.util;
 
-import net.morimekta.providence.util.io.Utf8StreamReader;
+import net.morimekta.util.io.Utf8StreamReader;
 
 import java.io.CharArrayWriter;
 import java.io.IOException;
@@ -28,10 +28,9 @@ import java.io.Reader;
 import java.util.Collection;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 18.09.15
+ * String utilities.
  */
-public class PStringUtils {
+public class Strings {
     /**
      * Join set of strings with delimiter.
      *
