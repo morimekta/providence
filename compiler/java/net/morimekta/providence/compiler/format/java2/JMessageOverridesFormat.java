@@ -116,7 +116,7 @@ public class JMessageOverridesFormat {
             if (field.container()) {
                 writer.formatln("case %d: return %s() > 0;",
                                 field.id(), field.counter());
-            } else if (field.alwaysPresent()) {
+            } else if (field.alwaysPresent() && !message.isUnion()) {
                 writer.formatln("case %d: return true;",
                                 field.id());
             } else {
@@ -144,7 +144,7 @@ public class JMessageOverridesFormat {
             if (field.container()) {
                 writer.formatln("case %d: return %s();",
                                 field.id(), field.counter());
-            } else if (field.alwaysPresent()) {
+            } else if (field.alwaysPresent() && !message.isUnion()) {
                 writer.formatln("case %d: return 1;", field.id());
             } else {
                 writer.formatln("case %d: return %s() ? 1 : 0;",

@@ -26,6 +26,6 @@ test_suite(
         '//reflect:tests',
         '//testing:tests',
         '//tools:tests',
-        # '//thrift:tests',
+        '//thrift:tests',
     ],
 )

@@ -32,6 +32,13 @@
             <groupId>net.mormekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.13</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

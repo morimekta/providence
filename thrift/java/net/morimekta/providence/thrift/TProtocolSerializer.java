@@ -26,8 +26,12 @@ import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.util.Binary;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TField;
+import org.apache.thrift.protocol.TList;
+import org.apache.thrift.protocol.TMap;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.TSet;
 import org.apache.thrift.protocol.TStruct;
 import org.apache.thrift.protocol.TType;
 import org.apache.thrift.transport.TIOStreamTransport;
@@ -81,7 +85,7 @@ class TProtocolSerializer extends PSerializer {
                     break;
                 default:
                     protocol.writeStructBegin(new TStruct("msg"));
-                    protocol.writeFieldBegin(new org.apache.thrift.protocol.TField("", getFieldType(descriptor), (short) 0));
+                    protocol.writeFieldBegin(new TField("", getFieldType(descriptor), (short) 0));
                     writeTypedValue(value, descriptor, protocol);
                     protocol.writeFieldEnd();
                     protocol.writeFieldStop();
@@ -122,7 +126,7 @@ class TProtocolSerializer extends PSerializer {
                 return ret;
             default:
                 protocol.readStructBegin();
-                org.apache.thrift.protocol.TField field = protocol.readFieldBegin();
+                TField field = protocol.readFieldBegin();
                 if (field == null) {
                     throw new PSerializeException("Unexpected end of fields.");
                 }
@@ -143,7 +147,7 @@ class TProtocolSerializer extends PSerializer {
         for (PField<?> field : type.getFields()) {
             if (!message.has(field.getKey())) continue;
 
-            protocol.writeFieldBegin(new org.apache.thrift.protocol.TField(
+            protocol.writeFieldBegin(new TField(
                     field.getName(), getFieldType(field.getDescriptor()), (short) field.getKey()));
 
             writeTypedValue(message.get(field.getKey()), field.getDescriptor(), protocol);
@@ -157,7 +161,7 @@ class TProtocolSerializer extends PSerializer {
 
     protected <T extends PMessage<T>> T readMessage(TProtocol protocol, PStructDescriptor<T,?> descriptor)
             throws PSerializeException, TException {
-        org.apache.thrift.protocol.TField f;
+        TField f;
 
         PMessageBuilder<T> builder = descriptor.factory().builder();
         protocol.readStructBegin();  // ignored.
@@ -238,7 +242,7 @@ class TProtocolSerializer extends PSerializer {
             case TType.STRUCT:
                 return cast((Object) readMessage(protocol, (PStructDescriptor<?,?>) type));
             case TType.LIST:
-                org.apache.thrift.protocol.TList listInfo = protocol.readListBegin();
+                TList listInfo = protocol.readListBegin();
                 PList<?> lDesc = (PList<?>) type;
                 PDescriptor liDesc = lDesc.itemDescriptor();
 
@@ -250,7 +254,7 @@ class TProtocolSerializer extends PSerializer {
                 protocol.readListEnd();
                 return cast(list);
             case TType.SET:
-                org.apache.thrift.protocol.TSet setInfo = protocol.readSetBegin();
+                TSet setInfo = protocol.readSetBegin();
                 PSet<?> sDesc = (PSet<?>) type;
                 PDescriptor siDesc = sDesc.itemDescriptor();
 
@@ -262,7 +266,7 @@ class TProtocolSerializer extends PSerializer {
                 protocol.readSetEnd();
                 return cast(set);
             case TType.MAP:
-                org.apache.thrift.protocol.TMap mapInfo = protocol.readMapBegin();
+                TMap mapInfo = protocol.readMapBegin();
                 PMap<?,?> mDesc = (PMap<?,?>) type;
                 PDescriptor mkDesc = mDesc.keyDescriptor();
                 PDescriptor miDesc = mDesc.itemDescriptor();
@@ -318,7 +322,7 @@ class TProtocolSerializer extends PSerializer {
             case LIST:
                 PList<?> lType = (PList<?>) type;
                 List<?> list = (List<?>) item;
-                org.apache.thrift.protocol.TList listInfo = new org.apache.thrift.protocol.TList(getFieldType(lType.itemDescriptor()), list.size());
+                TList listInfo = new TList(getFieldType(lType.itemDescriptor()), list.size());
                 protocol.writeListBegin(listInfo);
                 for (Object i : list) {
                     writeTypedValue(i, lType.itemDescriptor(), protocol);
@@ -328,7 +332,7 @@ class TProtocolSerializer extends PSerializer {
             case SET:
                 PSet<?> sType = (PSet<?>) type;
                 Set<?> set = (Set<?>) item;
-                org.apache.thrift.protocol.TSet setInfo = new org.apache.thrift.protocol.TSet(getFieldType(sType.itemDescriptor()), set.size());
+                TSet setInfo = new TSet(getFieldType(sType.itemDescriptor()), set.size());
                 protocol.writeSetBegin(setInfo);
                 for (Object i : set) {
                     writeTypedValue(i, sType.itemDescriptor(), protocol);
@@ -338,7 +342,7 @@ class TProtocolSerializer extends PSerializer {
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
                 Map<?, ?> map = (Map<?, ?>) item;
-                protocol.writeMapBegin(new org.apache.thrift.protocol.TMap(getFieldType(mType.keyDescriptor()),
+                protocol.writeMapBegin(new TMap(getFieldType(mType.keyDescriptor()),
                                                 getFieldType(mType.itemDescriptor()),
                                                 map.size()));
 

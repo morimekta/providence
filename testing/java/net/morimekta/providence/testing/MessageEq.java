@@ -2,6 +2,8 @@ package net.morimekta.providence.testing;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.util.Binary;
@@ -38,13 +40,15 @@ public class MessageEq<T extends PMessage<T>>
     }
 
     @Override
-    public boolean matches(Object item) {
+    public boolean matches(Object actual) {
         if (expected == null)
-            return item == null;
-        if (!(item instanceof PMessage)) {
-            throw new AssertionFailedError("Item " + item.toString() + " not a providence message.");
+            return actual == null;
+        if (!(actual instanceof PMessage)) {
+            throw new AssertionFailedError("Item " + actual.toString() + " not a providence message.");
         }
-        return expected.equals(item);
+        LinkedList<String> mismatches = new LinkedList<>();
+        collectMismatches("", (PMessage) expected, (PMessage) actual, mismatches);
+        return mismatches.size() == 0;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class MessageEq<T extends PMessage<T>>
                 for (String mismatch : mismatches) {
                     if (first) first = false;
                     else mismatchDescription.appendText(",");
-                    mismatchDescription.appendText("\n    ");
+                    mismatchDescription.appendText("\n        ");
                     if (i >= 20) {
                         int remaining = mismatches.size() - i;
                         mismatchDescription.appendText("... and " + remaining + "more");
@@ -81,7 +85,7 @@ public class MessageEq<T extends PMessage<T>>
                     mismatchDescription.appendText(mismatch);
                     ++i;
                 }
-                mismatchDescription.appendText("\n]");
+                mismatchDescription.appendText("\n     ]");
             }
         }
     }
@@ -92,59 +96,72 @@ public class MessageEq<T extends PMessage<T>>
                                                                     LinkedList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
+        if (expected.descriptor().getVariant() == PMessageVariant.UNION) {
+            PUnion<?> eu = (PUnion) expected;
+            PUnion<?> ac = (PUnion) actual;
+
+            if (!eu.unionField().equals(ac.unionField())) {
+                mismatches.add(String.format(
+                        "%s to have %s, but had %s",
+                        xPath,
+                        eu.unionField().getName(),
+                        ac.unionField().getName()));
+            }
+        }
+
         for (PField<?> field : expected.descriptor().getFields()) {
             int key = field.getKey();
             String fieldXPath = xPath.isEmpty() ? field.getName() : xPath + "." + field.getName();
 
-            if (!PTypeUtils.equals(expected.get(key), actual.get(key))) {
+            if (expected.has(key) != actual.has(key)) {
                 if (!expected.has(key)) {
                     mismatches.add(String.format(
-                            "expected %s to be missing, but was %s",
+                            "%s to be missing, but was %s",
                             fieldXPath,
                             toString(actual.get(field.getKey()))));
                 } else if (!actual.has(key)) {
                     mismatches.add(String.format(
-                            "expected %s to be %s, but was missing",
+                            "%s to be %s, but was missing",
                             fieldXPath,
                             toString(expected.get(field.getKey()))));
-                } else {
-                    switch (field.getType()) {
-                        case MESSAGE: {
-                            collectMismatches(fieldXPath,
-                                              (PMessage) expected.get(key),
-                                              (PMessage) actual.get(key),
+                }
+            } else if (!PTypeUtils.equals(expected.get(key), actual.get(key))) {
+                switch (field.getType()) {
+                    case MESSAGE: {
+                        collectMismatches(fieldXPath,
+                                          (PMessage) expected.get(key),
+                                          (PMessage) actual.get(key),
+                                          mismatches);
+                        break;
+                    }
+                    case LIST: {
+                        collectListMismatches(fieldXPath,
+                                              (List) expected.get(key),
+                                              (List) actual.get(key),
                                               mismatches);
-                            break;
-                        }
-                        case LIST: {
-                            collectListMismatches(fieldXPath,
-                                                  (List) expected.get(key),
-                                                  (List) actual.get(key),
-                                                  mismatches);
-                            break;
-                        }
-                        case SET: {
-                            collectSetMismatches(fieldXPath,
-                                                 (Set) expected.get(key),
-                                                 (Set) actual.get(key),
-                                                 mismatches);
-                            break;
-                        }
-                        case MAP: {
-                            collectMapMismatches(fieldXPath,
-                                                 (Map) expected.get(key),
-                                                 (Map) actual.get(key),
-                                                 mismatches);
-                            break;
-                        }
-                        default: {
-                            mismatches.add(String.format(
-                                    "%s was %s, expected %s",
-                                    fieldXPath,
-                                    toString(actual.get(field.getKey())),
-                                    toString(expected.get(field.getKey()))));
-                            break;
-                        }
+                        break;
+                    }
+                    case SET: {
+                        collectSetMismatches(fieldXPath,
+                                             (Set) expected.get(key),
+                                             (Set) actual.get(key),
+                                             mismatches);
+                        break;
+                    }
+                    case MAP: {
+                        collectMapMismatches(fieldXPath,
+                                             (Map) expected.get(key),
+                                             (Map) actual.get(key),
+                                             mismatches);
+                        break;
+                    }
+                    default: {
+                        mismatches.add(String.format(
+                                "%s was %s, expected %s",
+                                fieldXPath,
+                                toString(actual.get(field.getKey())),
+                                toString(expected.get(field.getKey()))));
+                        break;
                     }
                 }
             }
