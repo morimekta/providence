@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -32,6 +31,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
 
@@ -180,19 +180,19 @@ public class PFastBinarySerializer extends PSerializer {
                 return out.writeVarint(key << 3 | ((Boolean) value ? TRUE : NONE));
             }
             case BYTE: {
-                int len = out.writeVarint(key << 3);
+                int len = out.writeVarint(key << 3 | VARINT);
                 return len + out.writeZigzag((byte) value);
             }
             case I16: {
-                int len = out.writeVarint(key << 3);
+                int len = out.writeVarint(key << 3 | VARINT);
                 return len + out.writeZigzag((short) value);
             }
             case I32: {
-                int len = out.writeVarint(key << 3);
+                int len = out.writeVarint(key << 3 | VARINT);
                 return len + out.writeZigzag((int) value);
             }
             case I64: {
-                int len = out.writeVarint(key << 3);
+                int len = out.writeVarint(key << 3 | VARINT);
                 return len + out.writeZigzag((long) value);
             }
             case DOUBLE: {
@@ -214,7 +214,7 @@ public class PFastBinarySerializer extends PSerializer {
                 return len + bytes.length();
             }
             case ENUM: {
-                int len = out.writeVarint(key << 3);
+                int len = out.writeVarint(key << 3 | VARINT);
                 return len + out.writeZigzag(((PEnumValue) value).getValue());
             }
             case MESSAGE: {
@@ -222,9 +222,11 @@ public class PFastBinarySerializer extends PSerializer {
                 return len + writeMessage(out, (PMessage<?>) value);
             }
             case MAP: {
+                int len = out.writeVarint(key << 3 | COLLECTION);
+
                 Map<Object,Object> map = (Map<Object,Object>) value;
                 PMap<?,?> desc = (PMap<?,?>) descriptor;
-                int len = out.writeVarint(key << 3 | COLLECTION);
+
                 len += out.writeVarint(map.size() * 2);
                 for (Map.Entry<Object,Object> entry : map.entrySet()) {
                     len += writeFieldValue(out, 1, desc.keyDescriptor(), entry.getKey());
@@ -234,12 +236,14 @@ public class PFastBinarySerializer extends PSerializer {
             }
             case SET:
             case LIST: {
+                int len = out.writeVarint(key << 3 | COLLECTION);
+
                 Collection<Object> coll = (Collection<Object>) value;
                 PContainer<?,?> desc = (PContainer<?,?>) descriptor;
-                int len = out.writeVarint(key << 3 | COLLECTION);
+
                 len += out.writeVarint(coll.size());
                 for (Object item : coll) {
-                    len += writeFieldValue(out, 1, desc.itemDescriptor(), item);
+                    len += writeFieldValue(out, 0, desc.itemDescriptor(), item);
                 }
                 return len;
             }
@@ -272,11 +276,11 @@ public class PFastBinarySerializer extends PSerializer {
                 switch (descriptor.getType()) {
                     case BYTE: return cast((byte) in.readIntZigzag());
                     case I16: return cast((short) in.readIntZigzag());
-                    case I32: return cast(in.readIntZigzag());
+                    case I32: return cast((int) in.readIntZigzag());
                     case I64: return cast(in.readLongZigzag());
                     case ENUM: {
                         PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory().builder();
-                        builder.setByValue(in.readIntVarint());
+                        builder.setByValue(in.readIntZigzag());
                         return cast(builder.build());
                     }
                     default: {

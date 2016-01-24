@@ -163,6 +163,9 @@ public class BinaryIOTest {
         testZigzag(-1, 1);
         testZigzag(0xcafe, 3);
         testZigzag(-123456, 3);
+        testZigzag(615671317, 5);
+        testZigzag(Integer.MIN_VALUE, 5);
+        testZigzag(Integer.MAX_VALUE, 5);
 
         // test long (64 bit) varints.
 
@@ -200,6 +203,8 @@ public class BinaryIOTest {
         testVarint(-1, 5);
         testVarint(0xcafe, 3);
         testVarint(-123456, 5);
+        testVarint(Integer.MIN_VALUE, 5);
+        testVarint(Integer.MAX_VALUE, 5);
 
         // test long (64 bit) varints.
 
@@ -208,6 +213,8 @@ public class BinaryIOTest {
         testVarint(-1L, 10);
         testVarint(0xcafeL, 3);
         testVarint(-123456L, 10);
+        testVarint(Long.MIN_VALUE, 10);
+        testVarint(Long.MAX_VALUE, 9);
 
         testVarint(1234567890123456789L, 9);
         testVarint(0xcafebabedeadbeefL, 10);

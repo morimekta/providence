@@ -286,7 +286,7 @@ public class BinaryReader extends InputStream {
      */
     public int readIntZigzag() throws IOException {
         int value = readIntVarint();
-        return (value & 1) != 0 ? ~(value >> 1) : value >> 1;
+        return (value & 1) != 0 ? ~(value >>> 1) : value >>> 1;
     }
 
     /**
@@ -299,7 +299,7 @@ public class BinaryReader extends InputStream {
      */
     public long readLongZigzag() throws IOException {
         long value = readLongVarint();
-        return (value & 1) != 0 ? ~(value >> 1) : value >> 1;
+        return (value & 1) != 0 ? ~(value >>> 1) : value >>> 1;
     }
 
     /**
@@ -322,7 +322,7 @@ public class BinaryReader extends InputStream {
             shift += 7;
             i = readUInt8();
             c = (i & 0x80) > 0;
-            out = out | (i & 0x7f) << shift;
+            out |= ((i & 0x7f) << shift);
         }
         return out;
     }
@@ -339,8 +339,9 @@ public class BinaryReader extends InputStream {
         int i = in.read();
         if (i < 0) return 0;
 
-        long out = (i & 0x7f);
         boolean c = (i & 0x80) > 0;
+        long out = (i & 0x7f);
+
         int shift = 0;
         while (c) {
             shift += 7;

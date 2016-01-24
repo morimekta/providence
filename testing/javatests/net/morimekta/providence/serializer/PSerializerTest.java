@@ -228,18 +228,21 @@ public class PSerializerTest {
 
     @Test
     public void testBinary() throws IOException, PSerializeException {
-        testSerializer(new PBinarySerializer(true));
+        PSerializer serializer = new PBinarySerializer(true);
+        testSerializer(serializer);
     }
 
     @Test
-    @Ignore("Fast binary does not parse.")
     public void testFastBinary() throws IOException, PSerializeException {
-        testSerializer(new PFastBinarySerializer(true));
+        PSerializer serializer = new PFastBinarySerializer(true);
+        testSerializer(serializer);
+        testOutput(serializer, "/compat/fast-binary.data", false);
     }
 
     @Test
-    @Ignore("Proto does not parse.")
+    @Ignore("Proto serialization format does not parse.")
     public void testProto() throws IOException, PSerializeException {
-        testSerializer(new PProtoSerializer(true));
+        PSerializer serializer = new PProtoSerializer(true);
+        testSerializer(serializer);
     }
 }

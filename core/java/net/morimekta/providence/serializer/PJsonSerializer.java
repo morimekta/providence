@@ -112,7 +112,7 @@ public class PJsonSerializer
     private final boolean pretty;
 
     public PJsonSerializer() {
-        this(false, IdType.ID, IdType.ID, false);
+        this(true, IdType.ID, IdType.ID, false);
     }
 
     public PJsonSerializer(boolean strict) {
@@ -120,7 +120,7 @@ public class PJsonSerializer
     }
 
     public PJsonSerializer(IdType idType) {
-        this(false, idType, idType, false);
+        this(true, idType, idType, false);
     }
 
     public PJsonSerializer(boolean readStrict, IdType idType) {
@@ -128,7 +128,7 @@ public class PJsonSerializer
     }
 
     public PJsonSerializer(IdType idType, IdType enumType) {
-        this(false, idType, enumType, false);
+        this(true, idType, enumType, false);
     }
 
     public PJsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {

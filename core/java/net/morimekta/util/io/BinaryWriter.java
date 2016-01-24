@@ -262,7 +262,7 @@ public class BinaryWriter extends OutputStream {
      */
     public int writeVarint(int varint) throws IOException {
         int b = 1;
-        boolean c = (varint & (varint ^ 0x7f)) != 0;
+        boolean c = (varint ^ (varint & 0x7f)) != 0;
         out.write((c ? 0x80 : 0x00) | (varint & 0x7f));
         while (c) {
             ++b;

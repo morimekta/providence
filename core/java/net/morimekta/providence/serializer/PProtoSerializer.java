@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -32,6 +31,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
 
@@ -131,16 +131,16 @@ public class PProtoSerializer
     // --- MESSAGE ---
 
     protected int writeMessage(BinaryWriter writer, PMessage<?> message) throws IOException, PSerializeException {
-        int len = 1;
+        int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                writeMessageField(writer, field, message);
+                len += writeMessageField(writer, field, message);
             }
         } else {
             for (PField<?> field : message.descriptor().getFields()) {
                 if (message.has(field.getKey())) {
-                    writeMessageField(writer, field, message);
+                    len += writeMessageField(writer, field, message);
                 }
             }
         }
@@ -159,11 +159,11 @@ public class PProtoSerializer
             Collection<Object> container = (Collection<Object>) message.get(field.getKey());
 
             for (Object item : container) {
-                writer.writeVarint(tag);
-                writeFieldValue(writer,
-                                type,
-                                ct.itemDescriptor(),
-                                item);
+                len += writer.writeVarint(tag);
+                len += writeFieldValue(writer,
+                                       type,
+                                       ct.itemDescriptor(),
+                                       item);
             }
         } else {
             int type = getType(field.getType());
