@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.mormekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${providence.version}</version>
     </parent>
     <artifactId>providence-reflect</artifactId>
 
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>net.mormekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${providence.version}</version>
         </dependency>
 
         <dependency>

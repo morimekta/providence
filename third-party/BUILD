@@ -30,6 +30,7 @@ java_library(
         "@args4j_args4j//jar",
     ],
 )
+
 java_library(
     name = "jackson-annotations",
     visibility = ["//visibility:public"],
@@ -37,6 +38,7 @@ java_library(
         "@com.fasterxml.jackson.core_jackson-annotations//jar",
     ],
 )
+
 java_library(
     name = "jackson-core",
     visibility = ["//visibility:public"],
@@ -44,6 +46,7 @@ java_library(
         "@com.fasterxml.jackson.core_jackson-core//jar",
     ],
 )
+
 java_library(
     name = "jackson-databind",
     visibility = ["//visibility:public"],
@@ -53,15 +56,16 @@ java_library(
         "@com.fasterxml.jackson.core_jackson-core//jar",
     ],
 )
+
 java_library(
     name = "junit",
     visibility = ["//visibility:public"],
-    testonly = 1,
     exports = [
         "@junit_junit//jar",
         "@org.hamcrest_hamcrest-core//jar",
     ],
 )
+
 java_library(
     name = "commons-math3",
     visibility = ["//visibility:public"],
@@ -69,6 +73,7 @@ java_library(
         "@org.apache.commons_commons-math3//jar",
     ],
 )
+
 java_library(
     name = "libthrift",
     visibility = ["//visibility:public"],
@@ -81,6 +86,7 @@ java_library(
         "@org.slf4j_slf4j-api//jar",
     ],
 )
+
 java_library(
     name = "hamcrest-core",
     visibility = ["//visibility:public"],
@@ -88,6 +94,7 @@ java_library(
         "@org.hamcrest_hamcrest-core//jar",
     ],
 )
+
 java_library(
     name = "mockito-core",
     visibility = ["//visibility:public"],
@@ -96,6 +103,15 @@ java_library(
         "@org.mockito_mockito-core//jar",
     ],
 )
+
+java_library(
+    name = "slf4j-api",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@org.slf4j_slf4j-api//jar",
+    ],
+)
+
 java_library(
     name = "slf4j-simple",
     visibility = ["//visibility:public"],

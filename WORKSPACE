@@ -76,12 +76,6 @@ maven_jar(
     sha1 = "2973d150c0dc1fefe998f834810d68f278ea58ec",
 )
 
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net.mormekta_android-util",
-    artifact = "net.mormekta:android-util:0.1",
-)
-
 # net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.commons_commons-math3",
@@ -128,6 +122,7 @@ maven_jar(
     sha1 = "8cf9c4a457943791f8d462b42951932b7b5d8ab9",
 )
 
+# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
 # org.apache.thrift:libthrift:pom:0.9.3
 # org.slf4j:slf4j-simple:jar:1.7.12
 maven_jar(
