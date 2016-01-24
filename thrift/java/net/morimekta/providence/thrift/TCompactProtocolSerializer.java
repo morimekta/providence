@@ -9,6 +9,10 @@ import org.apache.thrift.protocol.TCompactProtocol;
 public class TCompactProtocolSerializer
         extends TProtocolSerializer {
     public TCompactProtocolSerializer() {
-        super(new TCompactProtocol.Factory());
+        this(true);
+    }
+
+    public TCompactProtocolSerializer(boolean readStrict) {
+        super(readStrict, new TCompactProtocol.Factory());
     }
 }

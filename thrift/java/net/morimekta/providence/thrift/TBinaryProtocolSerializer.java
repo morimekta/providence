@@ -8,6 +8,10 @@ import org.apache.thrift.protocol.TBinaryProtocol;
  */
 public class TBinaryProtocolSerializer extends TProtocolSerializer {
     public TBinaryProtocolSerializer() {
-        super(new TBinaryProtocol.Factory());
+        this(true);
+    }
+
+    public TBinaryProtocolSerializer(boolean readStrict) {
+        super(readStrict, new TBinaryProtocol.Factory(readStrict, true));
     }
 }

@@ -9,6 +9,10 @@ import org.apache.thrift.protocol.TJSONProtocol;
 public class TJsonProtocolSerializer
         extends TProtocolSerializer {
     public TJsonProtocolSerializer() {
-        super(new TJSONProtocol.Factory());
+        this(true);
+    }
+
+    public TJsonProtocolSerializer(boolean readStrict) {
+        super(readStrict, new TJSONProtocol.Factory());
     }
 }

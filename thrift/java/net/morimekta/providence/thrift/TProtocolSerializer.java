@@ -18,12 +18,23 @@
  */
 package net.morimekta.providence.thrift;
 
-import net.morimekta.providence.*;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.PEnumBuilder;
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.util.Binary;
+import net.morimekta.util.io.CountingOutputStream;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TField;
@@ -42,17 +53,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 23.09.15
  */
 class TProtocolSerializer extends PSerializer {
-    private final TProtocolFactory mProtocolFactory;
+    private final TProtocolFactory protocolFactory;
+    private final boolean          readStrict;
 
-    public TProtocolSerializer(TProtocolFactory protocolFactory) {
-        mProtocolFactory = protocolFactory;
+    public TProtocolSerializer(boolean readStrict, TProtocolFactory protocolFactory) {
+        this.readStrict = readStrict;
+        this.protocolFactory = protocolFactory;
     }
 
     @Override
@@ -61,7 +79,7 @@ class TProtocolSerializer extends PSerializer {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
-            TProtocol protocol = mProtocolFactory.getProtocol(transport);
+            TProtocol protocol = protocolFactory.getProtocol(transport);
             write(message, protocol);
             transport.flush();
             wrapper.flush();
@@ -78,7 +96,7 @@ class TProtocolSerializer extends PSerializer {
         TTransport transport = new TIOStreamTransport(wrapper);
 
         try {
-            TProtocol protocol = mProtocolFactory.getProtocol(transport);
+            TProtocol protocol = protocolFactory.getProtocol(transport);
             switch (descriptor.getType()) {
                 case MESSAGE:
                     write((PMessage<?>) value, protocol);
@@ -106,7 +124,7 @@ class TProtocolSerializer extends PSerializer {
         T ret;
         try {
             TTransport transport = new TIOStreamTransport(input);
-            TProtocol protocol = mProtocolFactory.getProtocol(transport);
+            TProtocol protocol = protocolFactory.getProtocol(transport);
 
             ret = read(protocol, definition);
         } catch (TTransportException e) {

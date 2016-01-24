@@ -9,6 +9,6 @@ import org.apache.thrift.protocol.TSimpleJSONProtocol;
 public class TSimpleJsonProtocolSerializer
         extends TProtocolSerializer {
     public TSimpleJsonProtocolSerializer() {
-        super(new TSimpleJSONProtocol.Factory());
+        super(false, new TSimpleJSONProtocol.Factory());
     }
 }

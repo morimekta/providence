@@ -1,11 +1,22 @@
 package net.morimekta.providence.thrift;
 
-import net.morimekta.providence.*;
-import net.morimekta.providence.descriptor.*;
+import net.morimekta.providence.PEnumBuilder;
+import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.util.Binary;
+import net.morimekta.util.io.CountingOutputStream;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TProtocolFactory;
@@ -18,7 +29,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.BitSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * TProtocol serializer specialized for Tuple protocol, just because thrift
@@ -27,10 +44,16 @@ import java.util.*;
  */
 public class TTupleProtocolSerializer
         extends PSerializer {
-    private final TProtocolFactory mProtocolFactory;
+    private final boolean          readStrict;
+    private final TProtocolFactory protocolFactory;
 
     public TTupleProtocolSerializer() {
-        mProtocolFactory = new TTupleProtocol.Factory();
+        this(true);
+    }
+
+    public TTupleProtocolSerializer(boolean readStrict) {
+        this.readStrict = readStrict;
+        this.protocolFactory = new TTupleProtocol.Factory();
     }
 
     @Override
@@ -39,7 +62,7 @@ public class TTupleProtocolSerializer
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
-            TTupleProtocol protocol = (TTupleProtocol) mProtocolFactory.getProtocol(transport);
+            TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
             writeMessage(message, protocol);
             transport.flush();
             wrapper.flush();
@@ -56,7 +79,7 @@ public class TTupleProtocolSerializer
         TTransport transport = new TIOStreamTransport(wrapper);
 
         try {
-            TTupleProtocol protocol = (TTupleProtocol) mProtocolFactory.getProtocol(transport);
+            TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
             switch (descriptor.getType()) {
                 case MESSAGE:
                     writeMessage((PMessage<?>) value, protocol);
@@ -82,7 +105,7 @@ public class TTupleProtocolSerializer
         T ret;
         try {
             TTransport transport = new TIOStreamTransport(input);
-            TTupleProtocol protocol = (TTupleProtocol) mProtocolFactory.getProtocol(transport);
+            TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
 
             ret = read(protocol, definition);
         } catch (TTransportException e) {
@@ -142,6 +165,10 @@ public class TTupleProtocolSerializer
             }
         }
 
+        if (readStrict && !builder.isValid()) {
+            throw new PSerializeException("");
+        }
+
         return builder.build();
     }
 
@@ -159,7 +186,7 @@ public class TTupleProtocolSerializer
                     PEnumBuilder<?> eb = et.factory().builder();
                     final int value = protocol.readI32();
                     eb.setByValue(value);
-                    if (!eb.isValid()) {
+                    if (readStrict && !eb.isValid()) {
                         throw new PSerializeException("Invalid enum value " + value + " for " +
                                                       et.getQualifiedName(null));
                     }

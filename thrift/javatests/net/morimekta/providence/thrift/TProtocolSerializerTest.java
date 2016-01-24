@@ -5,6 +5,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
 
@@ -13,11 +14,16 @@ import org.apache.thrift.TEnum;
 import org.apache.thrift.TException;
 import org.apache.thrift.TFieldIdEnum;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.TSimpleJSONProtocol;
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -141,7 +147,7 @@ public class TProtocolSerializerTest {
         }
     }
 
-    public void testRecoding(TProtocolFactory factory, TProtocolSerializer serializer)
+    public void testRecoding(TProtocolFactory factory, PSerializer serializer)
             throws IOException, PSerializeException, TException {
         assertEquals(10, containers.size());
 
@@ -155,6 +161,7 @@ public class TProtocolSerializerTest {
             serializer.serialize(baos, containers.get(i));
         }
 
+        // Read back as providence to check simple Write-Read integrity.
         ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
         for (int i = 0; i < 10; ++i) {
             if (i != 0) {
@@ -164,24 +171,66 @@ public class TProtocolSerializerTest {
             assertMessageEquals(containers.get(i), back);
         }
 
+        // Read back with thrift to check compatibility.
         in = new ByteArrayInputStream(baos.toByteArray());
-        TTransport transport = new TIOStreamTransport(in);
-        TProtocol protocol = factory.getProtocol(transport);
+        TTransport inTrans = new TIOStreamTransport(in);
+        TProtocol inProt = factory.getProtocol(inTrans);
+
+        // And write it back the the BAOS to check that we can get back the same again.
+        baos.reset();
+        TTransport outTrans = new TIOStreamTransport(baos);
+        TProtocol outProt = factory.getProtocol(outTrans);
 
         for (int i = 0; i < 10; ++i) {
             if (i != 0) {
                 assertEquals('\n', in.read());
+                baos.write('\n');
             }
             net.morimekta.test.thrift.Containers tc = new net.morimekta.test.thrift.Containers();
-            tc.read(protocol);
+            tc.read(inProt);
 
             Containers expected = containers.get(i);
             assertConsistent("[" + i + "]", expected, tc);
+
+            tc.write(outProt);
+        }
+
+        // And read back from thrift again.
+        in = new ByteArrayInputStream(baos.toByteArray());
+        for (int i = 0; i < 10; ++i) {
+            if (i != 0) {
+                assertEquals('\n', in.read());
+            }
+            Containers back = serializer.deserialize(in, Containers.kDescriptor);
+            assertMessageEquals(containers.get(i), back);
         }
     }
 
     @Test
     public void testTBinaryProtocol() throws IOException, PSerializeException, TException {
         testRecoding(new TBinaryProtocol.Factory(), new TBinaryProtocolSerializer());
+    }
+
+    @Test
+    public void testTCompactProtocol() throws IOException, PSerializeException, TException {
+        testRecoding(new TCompactProtocol.Factory(), new TCompactProtocolSerializer());
+    }
+
+    @Test
+    @Ignore("TTupleProtocol is pretty volatile in thrift-0.9.x, so " +
+            "0.9.1 and 0.9.3 seems to generate different encoding.")
+    public void testTTupleProtocol() throws IOException, PSerializeException, TException {
+        testRecoding(new TTupleProtocol.Factory(), new TTupleProtocolSerializer());
+    }
+
+    @Test
+    public void testTJsonProtocol() throws IOException, PSerializeException, TException {
+        testRecoding(new TJSONProtocol.Factory(), new TJsonProtocolSerializer());
+    }
+
+    @Test
+    @Ignore("TSimpleJsonProtocl is write-only.")
+    public void testTSimpleJsonProtocol() throws IOException, PSerializeException, TException {
+        testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
     }
 }
