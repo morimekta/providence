@@ -1,14 +1,16 @@
 load('release', 'release_jar')
 
-release_jar('core', '//core:core')
-release_jar('reflect', '//reflect:reflect')
-release_jar('messageio', '//messageio:messageio')
-release_jar('thrift', '//thrift:thrift')
+release_jar('core', '//core')
+release_jar('core-jackson', '//core-jackson')
+release_jar('reflect', '//reflect')
+release_jar('messageio', '//messageio')
+release_jar('thrift', '//thrift')
 
 filegroup(
     name = 'providence',
     srcs = [
         ':core',
+        ':core-jackson',
         ':messageio',
         ':thrift',
         ':reflect',
@@ -18,7 +20,6 @@ filegroup(
 test_suite(
     name = 'all_tests',
     tests = [
-        '//compiler:tests',
         # '//converter:tests',
         '//core:tests',
         '//core-jackson:tests',

@@ -18,6 +18,11 @@
         </dependency>
         <dependency>
             <groupId>net.mormekta.providence</groupId>
+            <artifactId>providence-reflect</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.mormekta.providence</groupId>
             <artifactId>providence-utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
@@ -26,6 +31,12 @@
             <artifactId>providence-thrift</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>net.mormekta.providence</groupId>
+            <artifactId>providence-messageio</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>net.morimekta</groupId>
             <artifactId>android-util</artifactId>

@@ -11,13 +11,13 @@ def gen_providence_source(name,
     native.genrule(
         name=name,
         cmd='TMP=$$(mktemp -d);' +
-            '$(location //compiler:providence-compiler) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
+            '$(location //tools:providence-compiler) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
             '$(location //tools/jdk:jar) cf $@ -C $$TMP .;' +
             'rm -rf $$TMP',
         srcs=srcs,
         outs=['%s.%s' % (name, extension)],
         tools=[
-            '//compiler:providence-compiler',
+            '//tools:providence-compiler',
             '//tools/jdk:jar',
         ],
         local=1,

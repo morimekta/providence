@@ -74,5 +74,33 @@
                 <directory>resourcestest/</directory>
             </testResource>
         </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/generated-sources" />
+                                <exec executable="providence-compiler">
+                                    <arg value="--gen" />
+                                    <arg value="java2"/>
+                                    <arg value="--options"/>
+                                    <arg value="--android:--jackson:--containers=SORTED"/>
+                                    <arg value="--out"/>
+                                    <arg value="target/generated-sources"/>
+                                    <arg value="defs/**/*.thrift"/>
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

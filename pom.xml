@@ -22,13 +22,9 @@
         <!-- the real core. -->
         <module>core</module>
         <module>core-jackson</module>
-
-        <!-- dynamic -->
         <module>reflect</module>
-        <module>compiler</module>
-        <module>converter</module>
 
-        <!-- core utility libraries -->
+        <!-- utility libraries -->
         <module>thrift</module>
         <module>messageio</module>
 
