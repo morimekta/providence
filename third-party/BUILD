@@ -14,8 +14,6 @@ exports_files(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/providence/compiler/pom.xml
-# /home/morimekta/src/providence/converter/pom.xml
 # /home/morimekta/src/providence/core-jackson/pom.xml
 # /home/morimekta/src/providence/core/pom.xml
 # /home/morimekta/src/providence/messageio/pom.xml
@@ -23,7 +21,6 @@ exports_files(
 # /home/morimekta/src/providence/testing/pom.xml
 # /home/morimekta/src/providence/thrift/pom.xml
 # /home/morimekta/src/providence/tools/pom.xml
-# /home/morimekta/src/providence/utils/pom.xml
 
 
 java_library(

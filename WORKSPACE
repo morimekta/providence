@@ -7,8 +7,6 @@ git_repository(
 # --- AUTO_UPDATED AFTER THIS LINE ---
 
 # The following dependencies were calculated from:
-# /home/morimekta/src/providence/compiler/pom.xml
-# /home/morimekta/src/providence/converter/pom.xml
 # /home/morimekta/src/providence/core-jackson/pom.xml
 # /home/morimekta/src/providence/core/pom.xml
 # /home/morimekta/src/providence/messageio/pom.xml
@@ -16,13 +14,9 @@ git_repository(
 # /home/morimekta/src/providence/testing/pom.xml
 # /home/morimekta/src/providence/thrift/pom.xml
 # /home/morimekta/src/providence/tools/pom.xml
-# /home/morimekta/src/providence/utils/pom.xml
 
 
-# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "args4j_args4j",
     artifact = "args4j:args4j:2.32",
@@ -69,8 +63,6 @@ maven_jar(
     sha1 = "4bfc12adfe4842bf07b657f0369c4cb522955686",
 )
 
-# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-core:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
@@ -78,7 +70,6 @@ maven_jar(
 # net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-utils:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "junit_junit",
     artifact = "junit:junit:4.12",
@@ -145,8 +136,7 @@ maven_jar(
     sha1 = "8e20852d05222dc286bf1c71d78d0531e177c317",
 )
 
-# net.mormekta.providence:providence-compiler:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-converter:jar:0.0.1-SNAPSHOT
+# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
 # net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.slf4j_slf4j-simple",
