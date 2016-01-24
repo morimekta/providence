@@ -84,7 +84,8 @@ public class JMessageFormat {
         }
 
         if (options.jackson) {
-            writer.appendln("@JsonIgnoreProperties(ignoreUnknown = true)");
+            writer.appendln("@JsonIgnoreProperties(ignoreUnknown = true)")
+                  .appendln("@JsonInclude(JsonInclude.Include.NON_EMPTY)");
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
@@ -665,6 +666,7 @@ public class JMessageFormat {
             header.include("com.fasterxml.jackson.annotation.JsonIgnoreProperties");
             header.include("com.fasterxml.jackson.annotation.JsonCreator");
             header.include("com.fasterxml.jackson.annotation.JsonProperty");
+            header.include("com.fasterxml.jackson.annotation.JsonInclude");
         }
 
         header.format(writer);

@@ -14,11 +14,10 @@ resources:
 
 data:
 	mkdir -p tmp/
-	bazel run //tools:data-generator -- --entries 10 --out ${PWD}/testing/resourcestest/json/tests
 	bazel run //tools:data-generator -- --entries 10000 --out ${PWD}/generated/resources
 
 speedtest:
-	bazel run //tests:speed-test -- --entries 10000 ${PWD}/generated/resources
+	bazel run //tools:speed-test -- --entries 10000 ${PWD}/generated/resources
 
 # --- Under here is for installing the binaries.
 

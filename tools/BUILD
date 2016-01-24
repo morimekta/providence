@@ -61,7 +61,7 @@ java_binary(
     srcs = glob(
         ["java/net/morimekta/providence/tools/speedtest/*.java"],
     ),
-    main_class = 'net.morimekta.speedtest.SpeedTest',
+    main_class = 'net.morimekta.providence.tools.speedtest.SpeedTest',
     deps = [
         "//testing:thrift-idl",
         "//testing:providence-idl",

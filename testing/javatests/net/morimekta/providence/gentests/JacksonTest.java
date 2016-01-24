@@ -59,7 +59,7 @@ public class JacksonTest {
                 "\"stringValue\":\"Ûñı©óð€\"," +
                 "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
                 "\"enumValue\":\"FIRST\"," +
-                "\"compactValue\":{\"name\":\"Test\",\"id\":4,\"label\":null}" +
+                "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
                 "}", serialized);
     }
 
@@ -83,7 +83,7 @@ public class JacksonTest {
                 "\"stringValue\":\"Ûñı©óð€\"," +
                 "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
                 "\"enumValue\":\"FIRST\"," +
-                "\"compactValue\":{\"name\":\"Test\",\"id\":4,\"label\":null}" +
+                "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
                 "}]", serialized);
     }
 

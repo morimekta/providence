@@ -1,6 +1,9 @@
 package net.morimekta.providence.tools.speedtest;
 
+import net.morimekta.console.Color;
+import net.morimekta.console.FormatString;
 import net.morimekta.providence.serializer.PBinarySerializer;
+import net.morimekta.providence.serializer.PFastBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
@@ -8,10 +11,8 @@ import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
-import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.test.providence.Containers;
-import net.morimekta.console.Color;
-import net.morimekta.console.FormatString;
+import net.morimekta.util.io.CountingOutputStream;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.thrift.TException;
@@ -147,19 +148,19 @@ public class SpeedTest {
 
     //                                    read           write           total
     public enum Format {          //  prov  thrift -  prov  thrift =  prov  thrift
-        json_pretty("json"),      //  8.45         -  4.04         =  12.45
-        json_named("json"),       //  5.52         -  3.75         =   9.27
-        json("json"),             //  5.14         -  2.65         =   7.79
+        json_pretty("json"),      //  3.13         -  3.80         =   6.93
+        json_named("json"),       //  1.97         -  2.63         =   4.60
+        json("json"),             //  1.71         -  1.54         =   3.25
 
-        json_protocol("json"),    //  6.31    6.10 -  3.95   3.77  =  10.25   9.87
+        json_protocol("json"),    //  2.01    2.57 -  1.51   1.48  =   3.52   4.04
 
-        binary("bin"),            //  0.95         -  1.42         =   2.37
-        // fast_binary("bin"),    //  1.07         -  0.98         =   2.05         -- disc.
+        binary("bin"),            //  0.48         -  0.61         =   1.08
+        fast_binary("bin"),       //  0.49         -  0.41         =   0.90
         // proto --- BUGGY!
 
-        compact_protocol("bin"),  //  1.33    1.22 -  1.89   0.85  =   3.23   2.07
-        binary_protocol("bin"),   //  1.20    0.80 -  0.87   1.20  =   2.06   2.00
-        tuple_protocol("tuples"), //  1.23    1.02 -  0.75   0.73  =   1.99   1.75
+        compact_protocol("bin"),  //  0.69    0.63 -  0.62   0.54  =   1.31   1.18
+        binary_protocol("bin"),   //  0.62    0.49 -  0.49   0.39  =   1.11   0.89
+        tuple_protocol("tuples"), //  0.68    0.38 -  0.42   0.38  =   1.09   0.76
         ;
 
         String suffix;
@@ -399,9 +400,9 @@ public class SpeedTest {
             case binary:
                 serializer = new PBinarySerializer();
                 break;
-            // case fast_binary:
-            //     serializer = new PFastBinarySerializer();
-            //     break;
+            case fast_binary:
+                serializer = new PFastBinarySerializer();
+                break;
             // case proto:
             //     serializer = new PProtoSerializer();
             //     break;

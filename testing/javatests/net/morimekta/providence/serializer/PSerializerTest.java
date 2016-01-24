@@ -230,6 +230,7 @@ public class PSerializerTest {
     public void testBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PBinarySerializer(true);
         testSerializer(serializer);
+        testOutput(serializer, "/compat/binary.json", false);
     }
 
     @Test

@@ -46,9 +46,7 @@ public class MessageEq<T extends PMessage<T>>
         if (!(actual instanceof PMessage)) {
             throw new AssertionFailedError("Item " + actual.toString() + " not a providence message.");
         }
-        LinkedList<String> mismatches = new LinkedList<>();
-        collectMismatches("", (PMessage) expected, (PMessage) actual, mismatches);
-        return mismatches.size() == 0;
+        return expected.equals(actual);
     }
 
     @Override
