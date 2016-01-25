@@ -10,11 +10,21 @@ release_jar('thrift', '//thrift')
 java_pkg_deb(
     name = "providence-compiler-deb",
     jar = "//tools:providence-compiler_deploy.jar",
+    description = "Source code compiler for providence.\n" +
+                  "Compiles *.thrift and *.json definition files to providence source code.\n",
     package = "providence-compiler",
+    depends = [
+        "java8-jdk",
+    ],
+    suggests = [
+        "openjdk8-jdk",
+    ],
 )
 
 java_pkg_deb(
     name = "providence-converter-deb",
+    description = "Providence data converter.\n" +
+                  "Converts data files from one format to another using providence definitions.\n",
     jar = "//tools:providence-converter_deploy.jar",
     package = "providence-converter",
 )
