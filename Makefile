@@ -22,13 +22,9 @@ speedtest:
 # --- Under here is for installing the binaries.
 
 install:
-	bazel build //tools:providence-converter_deploy.jar
-	bazel build //tools:providence-compiler_deploy.jar
-	mkdir -p ${HOME}/.local/bin ${HOME}/.local/lib
-	cp -f bazel-bin/tools/providence-compiler_deploy.jar ${HOME}/.local/lib
-	cp -f bazel-bin/tools/providence-converter_deploy.jar ${HOME}/.local/lib
-	cp -f scripts/providence-compiler scripts/providence-converter ${HOME}/.local/bin
-	chmod a+x ${HOME}/.local/bin/providence-converter ${HOME}/.local/bin/providence-compiler
-	@echo '[INFO]: Remember to add to PATH: "${HOME}/.local/bin"'
+	bazel build :providence-compiler-deb :providence-converter-deb
+	@echo '[INFO]: To install run:'
+	@echo '[INFO]: $ sudo gdebi bazel-bin/providence-compiler-deb.deb'
+	@echo '[INFO]: $ sudo gdebi bazel-bin/providence-converter-deb.deb'
 
 .PHONY: *
