@@ -4,7 +4,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>net.mormekta.providence</groupId>
+        <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
         <version>${providence.version}</version>
     </parent>
@@ -12,22 +12,27 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.mormekta.providence</groupId>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
             <version>${providence.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.mormekta.providence</groupId>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
             <version>${providence.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.mormekta.providence</groupId>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-testing</artifactId>
+            <version>${providence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
             <version>${providence.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.mormekta.providence</groupId>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-messageio</artifactId>
             <version>${providence.version}</version>
         </dependency>

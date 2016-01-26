@@ -22,7 +22,6 @@ package net.morimekta.providence.serializer;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,11 +36,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
-import static net.morimekta.providence.testing.MessageReader.arrayListFromJsonResource;
-import static net.morimekta.providence.testing.MessageReader.arrayListFromResource;
-import static net.morimekta.providence.testing.MessageReader.fromJsonResource;
+import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromJsonResource;
+import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromResource;
+import static net.morimekta.providence.testing.ProvidenceHelper.fromJsonResource;
+import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -94,7 +94,7 @@ public class PSerializerTest {
             bais = new ByteArrayInputStream(baos.toByteArray());
             Operation actual = serializer.deserialize(bais, Operation.kDescriptor);
 
-            assertMessageEquals(operation, actual);
+            assertThat(actual, messageEq(operation));
         }
 
         // complex message, one at a time.
@@ -108,7 +108,7 @@ public class PSerializerTest {
             bais = new ByteArrayInputStream(baos.toByteArray());
             Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
 
-            assertMessageEquals(expected, actual);
+            assertThat(actual, messageEq(expected));
         }
 
         // complex message in stream.
@@ -134,7 +134,7 @@ public class PSerializerTest {
                 Containers expected = containers.get(i);
                 Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
 
-                assertMessageEquals(expected, actual);
+                assertThat(actual, messageEq(expected));
             }
 
             assertEquals(0, bais.available());
@@ -151,7 +151,7 @@ public class PSerializerTest {
 
         assertEquals(containers.size(), actual.size());
         for (int i = 0; i < containers.size(); ++i) {
-            assertMessageEquals(containers.get(i), actual.get(i));
+            assertThat(actual.get(i), messageEq(containers.get(i)));
         }
     }
 

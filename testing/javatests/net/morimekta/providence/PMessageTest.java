@@ -20,7 +20,7 @@
 package net.morimekta.providence;
 
 import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.testing.MessageReader;
+import net.morimekta.providence.testing.ProvidenceHelper;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 
@@ -42,7 +42,7 @@ public class PMessageTest {
     public void setUp() throws IOException, PSerializeException {
         synchronized (PMessageTest.class) {
             if (operation == null) {
-                operation = MessageReader.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
+                operation = ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
             }
         }
     }

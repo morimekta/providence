@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Convenience methods for reading providence messages from resources.
  */
-public class MessageReader {
+public class ProvidenceHelper {
     public static <T extends PMessage<T>> T fromJsonResource(
             String path, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
@@ -32,7 +32,7 @@ public class MessageReader {
     public static <T extends PMessage<T>> T fromResource(
             String path, PDescriptor<T> descriptor, PSerializer serializer)
             throws PSerializeException, IOException {
-        InputStream in = MessageReader.class.getResourceAsStream(path);
+        InputStream in = ProvidenceHelper.class.getResourceAsStream(path);
         if (in == null) {
             Assert.fail("Resource " + path + " does not exist.");
         }
@@ -42,7 +42,7 @@ public class MessageReader {
     public static <T extends PMessage<T>> ArrayList<T> arrayListFromResource(
             String path, PDescriptor<T> descriptor, PSerializer serializer)
             throws PSerializeException, IOException {
-        InputStream in = MessageReader.class.getResourceAsStream(path);
+        InputStream in = ProvidenceHelper.class.getResourceAsStream(path);
         if (in == null) {
             Assert.fail("Resource " + path + " does not exist.");
         }
@@ -57,5 +57,5 @@ public class MessageReader {
         return out;
     }
 
-    private MessageReader() {}
+    private ProvidenceHelper() {}
 }

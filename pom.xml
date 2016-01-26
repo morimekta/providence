@@ -16,58 +16,11 @@
         <jackson.version>2.4.2</jackson.version>
     </properties>
 
-    <groupId>net.mormekta.providence</groupId>
+    <groupId>net.morimekta.providence</groupId>
     <artifactId>providence</artifactId>
     <version>${providence.version}</version>
 
     <packaging>pom</packaging>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-core</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-core-jackson</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-thrift</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-reflect</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-testing</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta.providence</groupId>
-                <artifactId>providence-tools</artifactId>
-                <version>${providence.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.mormekta</groupId>
-                <artifactId>android-util</artifactId>
-                <version>0.1</version>
-                <scope>provided</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <modules>
         <!-- the real core. -->

@@ -8,7 +8,6 @@ import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
-
 import org.apache.thrift.TBase;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TException;
@@ -36,9 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
-import static net.morimekta.providence.testing.MessageReader.arrayListFromJsonResource;
+import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromJsonResource;
+import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  */
@@ -168,7 +168,7 @@ public class TProtocolSerializerTest {
                 assertEquals('\n', in.read());
             }
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
-            assertMessageEquals(containers.get(i), back);
+            assertThat(back, messageEq(containers.get(i)));
         }
 
         // Read back with thrift to check compatibility.
@@ -202,7 +202,7 @@ public class TProtocolSerializerTest {
                 assertEquals('\n', in.read());
             }
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
-            assertMessageEquals(containers.get(i), back);
+            assertThat(back, messageEq(containers.get(i)));
         }
     }
 

@@ -3,7 +3,7 @@ load("/thrift", "java_thrift")
 
 java_providence(
   name = "providence-idl",
-  srcs = glob([ "defs/**/*.thrift" ]),
+  srcs = glob([ "defs/*/*.thrift" ]),
   options = [ "--android", "--jackson", "--containers=SORTED" ],
   visibility = [ "//visibility:public" ],
 )

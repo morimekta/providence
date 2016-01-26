@@ -1,19 +1,17 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.util.Binary;
+import android.os.Parcel;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
 import net.morimekta.test.number.Imaginary;
 import net.morimekta.test.providence.DefaultValues;
 import net.morimekta.test.providence.Value;
-
+import net.morimekta.util.Binary;
 import org.junit.Test;
 
-import android.os.Parcel;
-
-import static net.morimekta.providence.testing.MessageAsserts.assertMessageEquals;
-import static org.junit.Assert.assertEquals;
+import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests of generated code providing android.os.Parcelable support.
@@ -36,7 +34,7 @@ public class ParcelableTest {
                                               .build();
         original.writeToParcel(parcel, 0);
         DefaultValues copy = DefaultValues.CREATOR.createFromParcel(parcel);
-        assertMessageEquals(original, copy);
+        assertThat(copy, messageEq(original));
     }
 
     @Test
@@ -70,6 +68,6 @@ public class ParcelableTest {
 
         original.writeToParcel(parcel, 0);
         Operation copy = Operation.CREATOR.createFromParcel(parcel);
-        assertMessageEquals(original, copy);
+        assertThat(copy, messageEq(original));
     }
 }

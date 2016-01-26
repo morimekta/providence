@@ -1,5 +1,6 @@
 package net.morimekta.providence.testing;
 
+import junit.framework.AssertionFailedError;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
@@ -10,8 +11,6 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
-
-import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
@@ -32,7 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 21.01.16.
  */
 public class MessageEq<T extends PMessage<T>>
-        extends BaseMatcher<PMessage<T>> {
+        extends BaseMatcher<T> {
     private final PMessage<T> expected;
 
     public MessageEq(PMessage<T> expected) {
