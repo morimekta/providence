@@ -96,6 +96,14 @@ java_library(
 )
 
 java_library(
+    name = "ini4j",
+    visibility = ["//visibility:public"],
+    exports = [
+        "@org.ini4j_ini4j//jar",
+    ],
+)
+
+java_library(
     name = "mockito-core",
     visibility = ["//visibility:public"],
     testonly = 1,

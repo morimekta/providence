@@ -1,25 +1,29 @@
-Immutable Thrift Java library
-=============================
+Providence License
+==================
 
-The contributors are the copyright holders of the content. Each java and
-script file should be marked with `@Author` tags designating the main
-contributors to each file. All contributors (regardless of impact) should
-be listed here in alphabetical order.
+The providence project is under the Apache 2.0 license, except where
+specifically noted otherwise. See contributor list for details.
 
 - @tag is the github user.
 - <email@example.com> Email address, may be anonymized with '...' to stop
   mail sniffers.
 
-## CONTRIBUTORS
+## Constributors
 
 - [@morimekta](http://github.com/morimekta) Stein Eldar Johnsen
 
-## COPYRIGHT NOTICE
+## Exceptions
+
+- `generate_workspace.sh` script is MIT licensed.
+
+## Copyright Notice
 
 All files in the project that does not have a copyright notice implicitly
 has this notice. This includes config files, code files, scripts etc.
 
 ```
+Copyright (c) ${YEAR}, Providence Authors
+
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements. See the NOTICE file
 distributed with this work for additional information
@@ -43,5 +47,4 @@ under the License.
 The different libraries may use the same or other licenses.
 
 - `Apache-2.0` license can be found [here](http://www.apache.org/licenses/LICENSE-2.0).
-- `CDDL+GPL-1.1` license can be found [here](https://glassfish.java.net/public/CDDL+GPL_1_1.html).
 - `MIT` license can be found [here](https://opensource.org/licenses/MIT).

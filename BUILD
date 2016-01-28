@@ -3,6 +3,7 @@ load('release', 'java_pkg_deb')
 
 release_jar('core', '//core')
 release_jar('core-jackson', '//core-jackson')
+release_jar('core-streams', '//core-streams')
 release_jar('reflect', '//reflect')
 release_jar('messageio', '//messageio')
 release_jar('thrift', '//thrift')
@@ -13,6 +14,7 @@ java_pkg_deb(
     description = "Source code compiler for providence.\n" +
                   "Compiles *.thrift and *.json definition files to providence source code.\n",
     package = "providence-compiler",
+    exe = "pvdc",
     depends = [
         "java8-jdk",
     ],
@@ -27,6 +29,7 @@ java_pkg_deb(
                   "Converts data files from one format to another using providence definitions.\n",
     jar = "//tools:providence-converter_deploy.jar",
     package = "providence-converter",
+    exe = "pvd",
 )
 
 filegroup(

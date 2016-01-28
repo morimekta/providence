@@ -230,6 +230,17 @@ public class MessageStreams {
                         return null;
                     }
                 }
+                // Try to check if there is a byte available. Since the
+                // available() method ony checks for available non-blocking
+                // reads, we need to actually try to read a byte.
+                //
+                // Sadly this means it's only available when marks are
+                // supported.
+                if (in.markSupported()) {
+                    in.mark(2);
+                    if (in.read() < 0) return null;
+                    in.reset();
+                }
                 T out = serializer.deserialize(in, descriptor);
                 if(out == null) {
                     close();

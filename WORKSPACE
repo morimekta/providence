@@ -15,34 +15,33 @@ git_repository(
 # /home/morimekta/src/providence/thrift/pom.xml
 # /home/morimekta/src/providence/tools/pom.xml
 
-
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "args4j_args4j",
     artifact = "args4j:args4j:2.32",
     sha1 = "1ccacebdf8f2db750eb09a402969050f27695fb7",
 )
 
-# com.fasterxml.jackson.core:jackson-databind:bundle:2.4.2
-# net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# com.fasterxml.jackson.core:jackson-databind:bundle:2.4.2 wanted version 2.4.0
+# net.morimekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "com.fasterxml.jackson.core_jackson-annotations",
-    artifact = "com.fasterxml.jackson.core:jackson-annotations:2.4.0",
-    sha1 = "d6a66c7a5f01cf500377bd669507a08cfeba882a",
+    artifact = "com.fasterxml.jackson.core:jackson-annotations:2.4.2",
+    sha1 = "6bb52af09372d5064206d47d7887d41671f00f7d",
 )
 
 # com.fasterxml.jackson.core:jackson-databind:bundle:2.4.2
-# net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "com.fasterxml.jackson.core_jackson-core",
     artifact = "com.fasterxml.jackson.core:jackson-core:2.4.2",
     sha1 = "ceb72830d95c512b4b300a38f29febc85bdf6e4b",
 )
 
-# net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "com.fasterxml.jackson.core_jackson-databind",
     artifact = "com.fasterxml.jackson.core:jackson-databind:2.4.2",
@@ -63,20 +62,20 @@ maven_jar(
     sha1 = "4bfc12adfe4842bf07b657f0369c4cb522955686",
 )
 
-# net.mormekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-core:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-reflect:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-core:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-reflect:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "junit_junit",
     artifact = "junit:junit:4.12",
     sha1 = "2973d150c0dc1fefe998f834810d68f278ea58ec",
 )
 
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.commons_commons-math3",
     artifact = "org.apache.commons:commons-math3:3.5",
@@ -98,8 +97,9 @@ maven_jar(
     sha1 = "f5aa318bda4c6c8d688c9d00b90681dcd82ce636",
 )
 
-# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.apache.thrift_libthrift",
     artifact = "org.apache.thrift:libthrift:0.9.3",
@@ -107,22 +107,30 @@ maven_jar(
 )
 
 # junit:junit:jar:4.12
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.hamcrest_hamcrest-core",
     artifact = "org.hamcrest:hamcrest-core:1.3",
     sha1 = "42a25dc3219429f0e5d060061f71acb49bf010a0",
 )
 
-# net.mormekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT wanted version 1.10.19
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+maven_jar(
+    name = "org.ini4j_ini4j",
+    artifact = "org.ini4j:ini4j:0.5.4",
+    sha1 = "4a3ee4146a90c619b20977d65951825f5675b560",
+)
+
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT wanted version 1.10.19
 maven_jar(
     name = "org.mockito_mockito-core",
     artifact = "org.mockito:mockito-core:1.10.17",
     sha1 = "8cf9c4a457943791f8d462b42951932b7b5d8ab9",
 )
 
-# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
 # org.apache.thrift:libthrift:pom:0.9.3
 # org.slf4j:slf4j-simple:jar:1.7.12
 maven_jar(
@@ -131,8 +139,8 @@ maven_jar(
     sha1 = "8e20852d05222dc286bf1c71d78d0531e177c317",
 )
 
-# net.mormekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.mormekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
+# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
 maven_jar(
     name = "org.slf4j_slf4j-simple",
     artifact = "org.slf4j:slf4j-simple:1.7.12",

@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2016, Providence Authors
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -19,41 +21,34 @@
 
 package net.morimekta.providence.converter;
 
-import net.morimekta.console.FormatString;
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.mio.PMessageReader;
-import net.morimekta.providence.mio.PMessageWriter;
-import net.morimekta.providence.reflect.TypeLoader;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.io.UncheckedIOException;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 27.09.15
  */
 public class Convert {
-    private final ConvertOptions mOpts;
+    private final ConvertOptions options;
 
     public Convert() {
-        mOpts = new ConvertOptions();
+        options = new ConvertOptions();
     }
 
     @SuppressWarnings("unchecked")
-    public void run(String... args) {
-        CmdLineParser cli = new CmdLineParser(mOpts);
+    public <T extends PMessage<T>> void run(String... args) {
+        CmdLineParser cli = new CmdLineParser(options);
         try {
             cli.parseArgument(args);
-            if (mOpts.isHelp()) {
-                System.out.println("convert --def file --type type.Name --if [format] --of [format] file");
+            if (options.isHelp()) {
+                cli.printSingleLineUsage(System.out);
                 System.out.println();
                 cli.printUsage(System.out);
                 System.out.println();
@@ -64,39 +59,15 @@ public class Convert {
                 return;
             }
 
-            Parser parser = mOpts.getParser(cli);
-            List<File> includes = mOpts.getIncludes(cli);
-            File definition = mOpts.getDefinition(cli);
-
-            TypeLoader loader = new TypeLoader(includes, parser);
-
-            loader.load(definition);
-
-            PDeclaredDescriptor tmpDesc = loader.getRegistry()
-                                                .getDescriptor(mOpts.mType, null);
-            if (tmpDesc == null) {
-                throw new CmdLineException(cli, new FormatString("Unknown type: %s"), mOpts.mType);
-            }
-            if (!(tmpDesc instanceof PStructDescriptor)) {
-                throw new CmdLineException(cli, new FormatString("Not a message type: "), mOpts.mType);
-            }
-
-            PStructDescriptor<?, ?> desc = (PStructDescriptor<?, ?>) tmpDesc;
-            PMessageReader input = mOpts.getInput(cli, desc);
-            PMessageWriter output = mOpts.getOutput(cli);
-
-            input.each(output);
-            output.flush();
-
-            input.close();
-            output.close();
+            options.getInput(cli)
+                   .collect(options.getOutput(cli));
 
             System.exit(0);
             return;
         } catch (CmdLineException e) {
             System.out.flush();
             System.err.println(e.getMessage());
-            System.err.println("convert --def file --type type.Name --if [format] --of [format] file");
+            cli.printSingleLineUsage(System.err);
             System.err.println();
             cli.printUsage(System.err);
             System.err.println();
@@ -117,7 +88,7 @@ public class Convert {
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
-        } catch (IOException e) {
+        } catch (UncheckedIOException | IOException e) {
             System.out.flush();
             System.err.println();
             System.err.print("I/O error: ");

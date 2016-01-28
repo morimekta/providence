@@ -24,9 +24,7 @@ import net.morimekta.providence.PMessage;
 import java.io.IOException;
 
 /**
- * Read messages (in global order) from a set of files in the format:
- * <p/>
- * {name}-{shard}-{seq}
+ * Message reader interface.
  */
 public abstract class PMessageReader<T extends PMessage<T>> {
     /**

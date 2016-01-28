@@ -17,7 +17,9 @@ based on the Facebook / Apache `thrift` library, but with some limitations.
 
 In order to compile thrift-j2, you need:
 
-- `bazel` Found at [bazel.io](https://bazel.io/) is used as build system.
+- `bazel` Found at [bazel.io](https://bazel.io/) is used as primary build system.
+- `java` Is the compiler and runtime. I recommend using `openjdk8-jdk`.
+- `alien` Is used to generate RPM for release builds.
 
 Bazel was chosen as build tool for it's good support for multiple binaries and
 projects within the same codebase. This project has at least 2 binaries
@@ -103,7 +105,9 @@ comment. This will still allow thrift compiler to parse the .thrift files.
 ### Simple Messages.
 
 A simple message is one that does not contain nested structures, e.g. no containers,
-and no internal messages. Simple messages
+and no internal messages. Simple messages is easier to use as map keys, and some
+serialization formats may require that map key messages to be simple. Note that
+the simple definition is on the type, not the message.
 
 ### Reserved words.
 
@@ -137,23 +141,28 @@ be part of the comments.
 The library packages are:
 
 * `core`  The core thrift message handling. Needed to use thrift objects, and
-       contains simple to use serialization and deserialization modules, thrift IO,
-       debugging tools (pretty printer).
+        contains simple to use serialization and deserialization modules, thrift
+        IO, debugging tools (pretty printer).
+* `core-jackson` Core jackson helper classes (specifically for serializing and
+        deserializing Binary data). Is needed if the '--jackson' option is set
+        during source generation. 
 * `reflect` Reflective library that reads thrift dynamically. This library
-       makes full-fledged in-memory representations of thrift struct types, and can
-       be used to parse and print serialized thrift messages.
-* `client` Client libraries for Client-Server service handling. With core is
-       the only parts needed for a client side application using thrift service
-       API. Contains default client transport and protocol handlers.
-* `server` Server libraries for Client-Server service handling.
-* `jax-rs` REST wrappers for javax.ws.rs (used by dropwizard etc.).
+        makes full-fledged in-memory representations of thrift struct types,
+        and can be used to parse and print serialized thrift messages.
+
+Extra libraries.
+       
+* `messageio` Classes for stream-lining IO with messages.
+        TODO: Also move this to 'extra'.
+* `thrift` Thrift protocol compatibility library. Contains serializers that
+        wrap the native TProtocol classes from Apache thrift. 
 
 In addition the are some utility packages.
 
-* `converter` A tool to convert serialized thrift data from one format to
-       another or read serialized thrift files to command line.
-* `compiler` The compiler app that generates code using the libraries. Can
-       currently compile:
+* `tools` Tools for helping out with providence. Compiler, converter and bazel
+        helpers. The converter 
+        The compiler app generates code using the libraries. Can currently
+        compile:
     * java2 (the format it itself uses).
     * thrift (re-generating thrift files).
     * json (serialized format representing the thrift).

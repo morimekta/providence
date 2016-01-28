@@ -1,4 +1,6 @@
 /*
+ * Copyright (c) 2016, Providence Authors
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,33 +18,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package net.morimekta.providence.converter;
 
-package net.morimekta.console;
+import org.junit.Test;
 
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Localizable;
-
-import java.util.Locale;
-
-public class FormatString implements Localizable {
-    String mFormat;
-
-    public FormatString(String format) {
-        mFormat = format;
-    }
-
-    @Override
-    public String formatWithLocale(Locale locale, Object... args) {
-        return String.format(mFormat, args);
-    }
-
-    @Override
-    public String format(Object... args) {
-        return String.format(mFormat, args);
-    }
-
-    public static CmdLineException except(CmdLineParser cli, String format, String... args) {
-        return new CmdLineException(cli, new FormatString(format), args);
+/**
+ * TODO: Write class description!
+ */
+public class ConverterTest {
+    @Test
+    public void testConverter() {
+        
     }
 }
