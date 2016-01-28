@@ -144,6 +144,11 @@ public abstract class CMessage<T extends PMessage<T>>
     }
 
     @Override
+    public int compareTo(T other) {
+        return PTypeUtils.compare((T) this, other);
+    }
+
+    @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + asString();
     }

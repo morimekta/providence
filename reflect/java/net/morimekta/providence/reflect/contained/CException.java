@@ -156,6 +156,11 @@ public class CException
     }
 
     @Override
+    public int compareTo(CException other) {
+        return PTypeUtils.compare(this, other);
+    }
+
+    @Override
     public String toString() {
         return descriptor().getQualifiedName(null) + asString();
     }

@@ -25,6 +25,6 @@ import net.morimekta.providence.descriptor.PDescriptor;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public interface PValue<T> {
+public interface PValue<T> extends Comparable<T> {
     PDescriptor descriptor();
 }

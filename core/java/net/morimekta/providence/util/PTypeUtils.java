@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.util;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -215,6 +216,49 @@ public class PTypeUtils {
             hash ^= hashCode(entry.getKey()) * hashCode(entry.getValue());
         }
         return hash;
+    }
+
+    private static <T extends PMessage<T>> int compare(T m1, T m2) {
+        int c = 0;
+        c = m1.descriptor().getQualifiedName(null).compareTo(m2.descriptor().getQualifiedName(null));
+        if (c != 0) return c;
+        for (PField<?> field : m1.descriptor().getFields()) {
+            c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
+            if (c != 0) return c;
+            if (m1.has(field.getKey())) {
+                c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
+                if (c != 0) return c;
+            }
+        }
+        return 0;
+    }
+
+    public static <T extends Comparable<T>> int compare(T o1, T o2) {
+        if (o1 == null || o2 == null) {
+            return Boolean.compare(o1 != null, o2 != null);
+        } else if (o1 instanceof Boolean && o2 instanceof Boolean) {
+            return Boolean.compare((Boolean) o1, (Boolean) o2);
+        } else if (o1 instanceof Short && o2 instanceof Short) {
+            return Short.compare((Short) o1, (Short) o2);
+        } else if (o1 instanceof Integer && o2 instanceof Integer) {
+            return Integer.compare((Integer) o1, (Integer) o2);
+        } else if (o1 instanceof Long && o2 instanceof Long) {
+            return Long.compare((Long) o1, (Long) o2);
+        } else if (o1 instanceof Double && o2 instanceof Double) {
+            return Double.compare((Double) o1, (Double) o2);
+        } else if (o1 instanceof String && o2 instanceof String) {
+            return ((String) o1).compareTo((String) o2);
+        } else if (o1 instanceof Binary && o2 instanceof Binary) {
+            return ((Binary) o1).compareTo((Binary) o2);
+        } else if (o1 instanceof PEnumValue && o2 instanceof PEnumValue) {
+            return Integer.compare(((PEnumValue) o1).getValue(), ((PEnumValue) o2).getValue());
+        } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
+            return compare((PMessage) o1, (PMessage) o2);
+        } else if (o2 instanceof Map && o2 instanceof Map) {
+        } else if (o2 instanceof Set && o2 instanceof Set) {
+        } else if (o2 instanceof List && o2 instanceof List) {
+        }
+        return 0;
     }
 
 }

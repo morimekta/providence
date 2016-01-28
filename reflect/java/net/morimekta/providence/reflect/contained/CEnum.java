@@ -73,6 +73,11 @@ public class CEnum
     }
 
     @Override
+    public int compareTo(CEnum other) {
+        return Integer.compare(mValue, other.mValue);
+    }
+
+    @Override
     public String toString() {
         return mName.toUpperCase();
     }
