@@ -52,6 +52,7 @@ test_suite(
     tests = [
         '//core:tests',
         '//core-jackson:tests',
+        '//core-streams:tests',
         '//messageio:tests',
         '//reflect:tests',
         '//testing:tests',
