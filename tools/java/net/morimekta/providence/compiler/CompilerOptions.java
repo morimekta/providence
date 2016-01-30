@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.compiler;
 
+import net.morimekta.console.FormatString;
 import net.morimekta.providence.compiler.format.java2.JGenerator;
 import net.morimekta.providence.compiler.format.java2.JOptions;
 import net.morimekta.providence.compiler.format.json.JsonGenerator;
@@ -31,7 +32,7 @@ import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.console.FormatString;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -84,14 +85,14 @@ public class CompilerOptions {
     protected String mOptions = null;
 
     @Option(name = "--help",
-            aliases = { "-?", "-h" },
+            aliases = {"-?", "-h"},
             help = true,
             usage = "This help message.")
     protected boolean mHelp = false;
 
     @Argument(metaVar = "file",
-            required = true,
-            usage = "Input files to compile.")
+              required = true,
+              usage = "Input files to compile.")
     protected List<String> mInputFiles = new LinkedList<>();
 
     public CompilerOptions() {

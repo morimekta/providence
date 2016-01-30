@@ -30,7 +30,7 @@ import java.io.OutputStream;
  */
 public class CountingOutputStream extends OutputStream {
     private final OutputStream mOut;
-    private int mByteCount;
+    private       int          mByteCount;
 
     public CountingOutputStream(OutputStream out) {
         mOut = out;

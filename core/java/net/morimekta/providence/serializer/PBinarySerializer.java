@@ -52,8 +52,7 @@ import java.util.Map;
  * See data definition file <code>docs/compact-binary.md</code> for format
  * spec.
  */
-public class PBinarySerializer
-        extends PSerializer {
+public class PBinarySerializer extends PSerializer {
     private final boolean mStrict;
 
     /**
@@ -78,15 +77,14 @@ public class PBinarySerializer
             PField field = ((PUnion) message).unionField();
             if (field != null) {
                 len += writer.writeUInt16(field.getKey());
-                len += writeFieldValue(writer,
-                                       message.get(field.getKey()));
+                len += writeFieldValue(writer, message.get(field.getKey()));
             }
         } else {
-            for (PField<?> field : message.descriptor().getFields()) {
+            for (PField<?> field : message.descriptor()
+                                          .getFields()) {
                 if (message.has(field.getKey())) {
                     len += writer.writeUInt16(field.getKey());
-                    len += writeFieldValue(writer,
-                                           message.get(field.getKey()));
+                    len += writeFieldValue(writer, message.get(field.getKey()));
                 }
             }
         }
@@ -99,7 +97,8 @@ public class PBinarySerializer
     public <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
             throws IOException, PSerializeException {
         try {
-            if (descriptor.getType().equals(PType.MESSAGE)) {
+            if (descriptor.getType()
+                          .equals(PType.MESSAGE)) {
                 return serialize(output, (PMessage<?>) value);
             } else {
                 BinaryWriter writer = new BinaryWriter(output);
@@ -111,8 +110,7 @@ public class PBinarySerializer
     }
 
     @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> descriptor)
-            throws PSerializeException, IOException {
+    public <T> T deserialize(InputStream input, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader reader = new BinaryReader(input);
         // Assume it consists of a single field.
         if (PType.MESSAGE == descriptor.getType()) {
@@ -126,9 +124,11 @@ public class PBinarySerializer
         }
     }
 
-    private <T extends PMessage<T>> T readMessage(BinaryReader input, PStructDescriptor<T,?> descriptor, boolean nullable)
-            throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.factory().builder();
+    private <T extends PMessage<T>> T readMessage(BinaryReader input,
+                                                  PStructDescriptor<T, ?> descriptor,
+                                                  boolean nullable) throws PSerializeException, IOException {
+        PMessageBuilder<T> builder = descriptor.factory()
+                                               .builder();
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
@@ -171,7 +171,6 @@ public class PBinarySerializer
      *
      * @param in The stream to consume.
      * @return The field info or null.
-     * @throws IOException
      */
     protected FieldInfo readFieldInfo(BinaryReader in) throws IOException, PSerializeException {
         int id = in.readUInt16();
@@ -203,6 +202,7 @@ public class PBinarySerializer
      * @param fieldInfo The field info about the content.
      * @param type      The type to generate content for.
      * @return The field value, or null if no type.
+     *
      * @throws IOException If unable to read from stream or invalid field type.
      */
     protected <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor<T> type)
@@ -242,7 +242,9 @@ public class PBinarySerializer
                             return cast(number);
                         case ENUM:
                             PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
-                            PEnumBuilder<?> builder = et.factory().builder().setByValue(number.intValue());
+                            PEnumBuilder<?> builder = et.factory()
+                                                        .builder()
+                                                        .setByValue(number.intValue());
                             if (mStrict && !builder.isValid()) {
                                 throw new PSerializeException(number + " is not a valid " +
                                                               type.getQualifiedName(null) + " enum value.");
@@ -272,10 +274,11 @@ public class PBinarySerializer
                 return null;
             case DataType.MESSAGE:
                 if (type != null) {
-                    if (!type.getType().equals(PType.MESSAGE)) {
+                    if (!type.getType()
+                             .equals(PType.MESSAGE)) {
                         throw new PSerializeException("Invalid type for message encoding: " + type);
                     }
-                    return cast((Object) readMessage(in, (PStructDescriptor<?,?>) type, false));
+                    return cast((Object) readMessage(in, (PStructDescriptor<?, ?>) type, false));
                 } else {
                     // consume message.
                     consumeMessage(in);
@@ -285,7 +288,8 @@ public class PBinarySerializer
                 PDescriptor keyType = null;
                 PDescriptor valueType = null;
                 if (type != null) {
-                    if (!type.getType().equals(PType.MAP)) {
+                    if (!type.getType()
+                             .equals(PType.MAP)) {
                         throw new PSerializeException("Invalid type for map encoding: " + type);
                     }
 
@@ -320,8 +324,9 @@ public class PBinarySerializer
             case DataType.COLLECTION: {
                 PDescriptor entryType = null;
                 if (type != null) {
-                    if (!type.getType().equals(PType.LIST) &&
-                        !type.getType().equals(PType.SET)) {
+                    if (!type.getType()
+                             .equals(PType.LIST) && !type.getType()
+                                                         .equals(PType.SET)) {
                         throw new PSerializeException("Invalid type for list encoding: " + type);
                     }
                     entryType = ((PContainer<?, ?>) type).itemDescriptor();
@@ -330,8 +335,8 @@ public class PBinarySerializer
                 final int lb = fieldInfo.getArrayLengthBytes();
                 final int size = in.readUnsigned(lb);
 
-                Collection<Object> out = type.getType().equals(PType.LIST) ?
-                                         new LinkedList<>() : new LinkedHashSet<>(size);
+                Collection<Object> out = type.getType()
+                                             .equals(PType.LIST) ? new LinkedList<>() : new LinkedHashSet<>(size);
 
                 FieldInfo entryInfo;
                 for (int i = 0; i < size; ++i) {
@@ -358,10 +363,9 @@ public class PBinarySerializer
     /**
      * Write a field value to stream.
      *
-     * @param out The stream to write to.
+     * @param out   The stream to write to.
      * @param value The value to write.
      * @return The number of bytes written.
-     * @throws IOException
      */
     @SuppressWarnings("unchecked")
     protected int writeFieldValue(BinaryWriter out, Object value) throws IOException, PSerializeException {
@@ -380,7 +384,7 @@ public class PBinarySerializer
         } else if (value instanceof Double) {
             return writeDouble(out, (double) value);
         } else if (value instanceof Map) {
-            Map<Object,Object> map = (Map<Object,Object>) value;
+            Map<Object, Object> map = (Map<Object, Object>) value;
             final int lengthBytes = getArrayLengthBytes(map.size());
             final int flags = DataType.MAP | (lengthBytes - 1);
             out.write(flags);
@@ -416,7 +420,7 @@ public class PBinarySerializer
             long number = (long) value;
             out.write(DataType.INTEGER | getNumericByteLengthFlag(number));
             return 1 + out.writeSigned(number, getNumericByteLength(number));
-        } else if (value instanceof PEnumValue){
+        } else if (value instanceof PEnumValue) {
             int number = ((PEnumValue<?>) value).getValue();
             out.write(DataType.INTEGER | getNumericByteLengthFlag(number));
             return 1 + out.writeSigned(number, getNumericByteLength(number));
@@ -428,10 +432,9 @@ public class PBinarySerializer
     /**
      * Write a double value to stream.
      *
-     * @param out The stream to write to.
+     * @param out   The stream to write to.
      * @param value The double value to write.
      * @return The number of bytes written.
-     * @throws IOException
      */
     protected int writeDouble(BinaryWriter out, double value) throws IOException {
         int flags = DataType.DOUBLE;
@@ -440,7 +443,6 @@ public class PBinarySerializer
     }
 
     /**
-     *
      * @param out
      * @param bytes
      * @return
@@ -463,57 +465,70 @@ public class PBinarySerializer
      * @return
      */
     protected int getArrayLengthBytes(int length) {
-        if (length >= ((1 << 24) - 1))
+        if (length >= ((1 << 24) - 1)) {
             return 4;
-        if (length >= ((1 << 16) - 1))
+        }
+        if (length >= ((1 << 16) - 1)) {
             return 3;
-        if (length >= ((1 << 8) - 1))
+        }
+        if (length >= ((1 << 8) - 1)) {
             return 2;
+        }
         return 1;
     }
 
     /**
-     *
      * @param value
      * @return
      */
     protected int getNumericByteLength(long value) {
-        if (value > Integer.MAX_VALUE)
+        if (value > Integer.MAX_VALUE) {
             return 8;
-        if (value > Short.MAX_VALUE)
+        }
+        if (value > Short.MAX_VALUE) {
             return 4;
-        if (value > Byte.MAX_VALUE)
+        }
+        if (value > Byte.MAX_VALUE) {
             return 2;
+        }
 
-        if (value < Integer.MIN_VALUE)
+        if (value < Integer.MIN_VALUE) {
             return 8;
-        if (value < Short.MIN_VALUE)
+        }
+        if (value < Short.MIN_VALUE) {
             return 4;
-        if (value < Byte.MIN_VALUE)
+        }
+        if (value < Byte.MIN_VALUE) {
             return 2;
+        }
 
         return 1;
     }
 
     /**
-     *
      * @param value
      * @return
      */
     protected int getNumericByteLengthFlag(long value) {
-        if (value > Integer.MAX_VALUE)
+        if (value > Integer.MAX_VALUE) {
             return FieldInfo.FIXED_64;
-        if (value > Short.MAX_VALUE)
+        }
+        if (value > Short.MAX_VALUE) {
             return FieldInfo.FIXED_32;
-        if (value > Byte.MAX_VALUE)
+        }
+        if (value > Byte.MAX_VALUE) {
             return FieldInfo.FIXED_16;
+        }
 
-        if (value < Integer.MIN_VALUE)
+        if (value < Integer.MIN_VALUE) {
             return FieldInfo.FIXED_64;
-        if (value < Short.MIN_VALUE)
+        }
+        if (value < Short.MIN_VALUE) {
             return FieldInfo.FIXED_32;
-        if (value < Byte.MIN_VALUE)
+        }
+        if (value < Byte.MIN_VALUE) {
             return FieldInfo.FIXED_16;
+        }
         return FieldInfo.FIXED_8;
     }
 

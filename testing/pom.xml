@@ -91,9 +91,9 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="target/generated-sources" />
+                                <mkdir dir="target/generated-sources"/>
                                 <exec executable="providence-compiler">
-                                    <arg value="--gen" />
+                                    <arg value="--gen"/>
                                     <arg value="java2"/>
                                     <arg value="--options"/>
                                     <arg value="--android:--jackson:--containers=SORTED"/>
@@ -118,9 +118,9 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <mkdir dir="target/generated-sources" />
+                                <mkdir dir="target/generated-sources"/>
                                 <exec executable="thrift">
-                                    <arg value="--gen" />
+                                    <arg value="--gen"/>
                                     <arg value="java"/>
                                     <arg value="--out"/>
                                     <arg value="target/generated-sources"/>

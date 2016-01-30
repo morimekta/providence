@@ -19,6 +19,15 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.util.PPrettyPrinter;
+import net.morimekta.providence.util.PTypeUtils;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,24 +38,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PTypeUtils;
-import net.morimekta.providence.util.PPrettyPrinter;
-import net.morimekta.providence.descriptor.PPrimitive;
-
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CException
-        extends Throwable
-        implements PMessage<CException> {
+public class CException extends Throwable implements PMessage<CException> {
     private final CExceptionDescriptor mType;
-    private final Map<Integer, Object>  mFields;
+    private final Map<Integer, Object> mFields;
 
     protected CException(Builder builder) {
         mFields = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields));
@@ -59,7 +57,8 @@ public class CException
         if (field == null) {
             return false;
         }
-        switch (field.getDescriptor().getType()) {
+        switch (field.getDescriptor()
+                     .getType()) {
             case MAP:
             case LIST:
             case SET:
@@ -75,7 +74,8 @@ public class CException
         if (field == null) {
             return 0;
         }
-        switch (field.getDescriptor().getType()) {
+        switch (field.getDescriptor()
+                     .getType()) {
             case MAP:
                 Map<?, ?> value = (Map<?, ?>) mFields.get(key);
                 return value == null ? 0 : value.size();
@@ -107,11 +107,15 @@ public class CException
 
     @Override
     public boolean isCompact() {
-        if (!descriptor().isCompactible()) return false;
+        if (!descriptor().isCompactible()) {
+            return false;
+        }
         boolean missing = false;
         for (PField<?> field : descriptor().getFields()) {
             if (has(field.getKey())) {
-                if (missing) return false;
+                if (missing) {
+                    return false;
+                }
             } else {
                 missing = true;
             }
@@ -131,16 +135,21 @@ public class CException
         }
 
         CException other = (CException) o;
-        PStructDescriptor<?,?> type = other.descriptor();
-        if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
-            !descriptor().getVariant().equals(type.getVariant())) {
+        PStructDescriptor<?, ?> type = other.descriptor();
+        if (!descriptor().getQualifiedName(null)
+                         .equals(type.getQualifiedName(null)) || !descriptor().getVariant()
+                                                                              .equals(type.getVariant())) {
             return false;
         }
 
         for (PField<?> field : descriptor().getFields()) {
             int id = field.getKey();
-            if (has(id) != other.has(id)) return false;
-            if (PTypeUtils.equals(get(id), other.get(id))) return false;
+            if (has(id) != other.has(id)) {
+                return false;
+            }
+            if (PTypeUtils.equals(get(id), other.get(id))) {
+                return false;
+            }
         }
         return true;
     }
@@ -180,10 +189,9 @@ public class CException
         return mType;
     }
 
-    public static class Builder
-            extends PMessageBuilder<CException> {
+    public static class Builder extends PMessageBuilder<CException> {
         private final CExceptionDescriptor mType;
-        private final Map<Integer, Object>  mFields;
+        private final Map<Integer, Object> mFields;
 
         public Builder(CExceptionDescriptor type) {
             mType = type;

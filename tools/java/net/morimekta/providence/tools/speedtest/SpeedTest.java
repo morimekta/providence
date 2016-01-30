@@ -40,9 +40,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 /**
- * Speed test running through:
- *  - Read a file for each protocol / serialization format.
- *  - Write the same file back to a temp file.
+ * Speed test running through: - Read a file for each protocol / serialization format. - Write the same file back to a
+ * temp file.
  */
 public class SpeedTest {
     public static class Options {
@@ -146,22 +145,31 @@ public class SpeedTest {
         }
     }
 
-    //                                    read           write           total
-    public enum Format {          //  prov  thrift -  prov  thrift =  prov  thrift
-        json_pretty("json"),      //  3.13         -  3.80         =   6.93
-        json_named("json"),       //  1.97         -  2.63         =   4.60
-        json("json"),             //  1.71         -  1.54         =   3.25
+    public enum Format {
+        //      read           write           total
+        //  prov  thrift -  prov  thrift =  prov  thrift
+        //  3.13         -  3.80         =   6.93
+        json_pretty("json"),
+        //  1.97         -  2.63         =   4.60
+        json_named("json"),
+        //  1.71         -  1.54         =   3.25
+        json("json"),
 
-        json_protocol("json"),    //  2.01    2.57 -  1.51   1.48  =   3.52   4.04
+        //  2.01    2.57 -  1.51   1.48  =   3.52   4.04
+        json_protocol("json"),
 
-        binary("bin"),            //  0.48         -  0.61         =   1.08
-        fast_binary("bin"),       //  0.49         -  0.41         =   0.90
+        //  0.48         -  0.61         =   1.08
+        binary("bin"),
+        //  0.49         -  0.41         =   0.90
+        fast_binary("bin"),
         // proto --- BUGGY!
 
-        compact_protocol("bin"),  //  0.69    0.63 -  0.62   0.54  =   1.31   1.18
-        binary_protocol("bin"),   //  0.62    0.49 -  0.49   0.39  =   1.11   0.89
-        tuple_protocol("tuples"), //  0.68    0.38 -  0.42   0.38  =   1.09   0.76
-        ;
+        //  0.69    0.63 -  0.62   0.54  =   1.31   1.18
+        compact_protocol("bin"),
+        //  0.62    0.49 -  0.49   0.39  =   1.11   0.89
+        binary_protocol("bin"),
+        //  0.68    0.38 -  0.42   0.38  =   1.09   0.76
+        tuple_protocol("tuples"),;
 
         String suffix;
 
@@ -231,8 +239,7 @@ public class SpeedTest {
         long end = System.nanoTime();
         long ms = (end - start) / 1000000;
 
-        System.out.format(" -- Read %d     [thrift] entries in %5.2fs.\n",
-                          thriftContainers.size(), (double) ms / 1000);
+        System.out.format(" -- Read %d     [thrift] entries in %5.2fs.\n", thriftContainers.size(), (double) ms / 1000);
 
         thriftJ2Containers.clear();
 
@@ -258,15 +265,19 @@ public class SpeedTest {
         end = System.nanoTime();
         ms = (end - start) / 1000000;
 
-        System.out.format(" -- Read %d [providence] entries in %5.2fs.\n",
-                          thriftContainers.size(), (double) ms / 1000);
+        System.out.format(" -- Read %d [providence] entries in %5.2fs.\n", thriftContainers.size(), (double) ms / 1000);
         System.out.println();
     }
 
     public File getTestFile(Format format, String variant, int run) {
         if (options.runs < 0) {
             // rotate between file [1 .. 10]...
-            return new File(testDir, String.format("%s-%s-%03d.%s", format.name(), variant, ((run - 1) % 10) + 1, format.suffix));
+            return new File(testDir,
+                            String.format("%s-%s-%03d.%s",
+                                          format.name(),
+                                          variant,
+                                          ((run - 1) % 10) + 1,
+                                          format.suffix));
         } else if (options.op == Options.Operation.read) {
             // If we test fixed N reads' make only one file.
             return new File(testDir, String.format("%s-%s.%s", format.name(), variant, format.suffix));
@@ -282,9 +293,7 @@ public class SpeedTest {
         }
         outFile.createNewFile();
 
-        return new CountingOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(outFile, false)));
+        return new CountingOutputStream(new BufferedOutputStream(new FileOutputStream(outFile, false)));
     }
 
     public InputStream getTestInput(Format format, String variant, int run) throws IOException {
@@ -509,12 +518,14 @@ public class SpeedTest {
     public void runTests(Result providenceResult, Result thriftResult, Format format, int run, boolean fullStats)
             throws IOException, PSerializeException, TException {
         if (options.engine != Options.Engine.providence) {
-            if (format.name().endsWith("_protocol")) {
+            if (format.name()
+                      .endsWith("_protocol")) {
                 runThriftTest(thriftResult, run);
                 if (fullStats) {
                     System.out.format("%s[thrift]    %3d:%s%s\n",
                                       Color.YELLOW,
-                                      run, thriftResult.toString(),
+                                      run,
+                                      thriftResult.toString(),
                                       Color.CLEAR);
                 }
             }
@@ -548,7 +559,10 @@ public class SpeedTest {
                     serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
                     break;
                 case json_pretty:
-                    serializer = new PJsonSerializer(false, PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME, true);
+                    serializer = new PJsonSerializer(false,
+                                                     PJsonSerializer.IdType.NAME,
+                                                     PJsonSerializer.IdType.NAME,
+                                                     true);
                     break;
                 case json_protocol:
                     serializer = new TJsonProtocolSerializer();
@@ -606,7 +620,8 @@ public class SpeedTest {
     }
 
     public void printStats(Result providenceResult, Result thriftResult, boolean fullStats) {
-        if (providenceResult.format.name().endsWith("_protocol")) {
+        if (providenceResult.format.name()
+                                   .endsWith("_protocol")) {
             if (fullStats) {
                 if (options.op != Options.Operation.write) {
                     System.out.println();
@@ -620,11 +635,11 @@ public class SpeedTest {
                 }
                 System.out.println();
             } else {
-                System.out.format("[providence]%3d:%s\n",
-                                  options.runs, providenceResult.toString());
+                System.out.format("[providence]%3d:%s\n", options.runs, providenceResult.toString());
                 System.out.format("%s[thrift]    %3d:%s%s\n",
                                   Color.YELLOW,
-                                  options.runs, thriftResult.toString(),
+                                  options.runs,
+                                  thriftResult.toString(),
                                   Color.CLEAR);
             }
         } else if (fullStats) {
@@ -637,8 +652,7 @@ public class SpeedTest {
             }
             System.out.println();
         } else {
-            System.out.format("[providence]%3d:%s\n",
-                              options.runs, providenceResult.toString());
+            System.out.format("[providence]%3d:%s\n", options.runs, providenceResult.toString());
         }
     }
 
@@ -653,13 +667,14 @@ public class SpeedTest {
         System.out.format(Locale.ENGLISH,
                           "%s -- [%s] %5s: [%7.2fµs /%7.2fµs /%7.2fµs /%8.2fµs /%8.2fµs] mean: %7.2fµs gmean: %7.2fµs dev: %7.2f  var: %7.2f^2%s\n",
                           color,
-                          variant, op,
-                          norm.getPercentile(1)   / 1000,
-                          norm.getPercentile(10)  / 1000,
-                          norm.getPercentile(50)  / 1000,
-                          norm.getPercentile(90)  / 1000,
-                          norm.getPercentile(99)  / 1000,
-                          norm.getMean()          / 1000,
+                          variant,
+                          op,
+                          norm.getPercentile(1) / 1000,
+                          norm.getPercentile(10) / 1000,
+                          norm.getPercentile(50) / 1000,
+                          norm.getPercentile(90) / 1000,
+                          norm.getPercentile(99) / 1000,
+                          norm.getMean() / 1000,
                           norm.getGeometricMean() / 1000,
                           norm.getStandardDeviation() / 1000,
                           Math.sqrt(norm.getPopulationVariance() / 1000),
@@ -689,7 +704,7 @@ public class SpeedTest {
                     speedTest.runTest(format, false);
                 }
             }
-        } catch (TException|PSerializeException |IOException | CmdLineException e) {
+        } catch (TException | PSerializeException | IOException | CmdLineException e) {
             System.out.flush();
             System.err.println();
             e.printStackTrace();

@@ -19,13 +19,13 @@
 
 package net.morimekta.console;
 
-import java.util.Locale;
-
 import org.kohsuke.args4j.Localizable;
 
-public class FormatString
-        implements Localizable {
+import java.util.Locale;
+
+public class FormatString implements Localizable {
     String mFormat;
+
     public FormatString(String format) {
         mFormat = format;
     }

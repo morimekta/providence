@@ -13,7 +13,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
  */
 public class JMessageAndroidFormat {
     private final IndentedPrintWriter writer;
-    private final JHelper helper;
+    private final JHelper             helper;
 
     public JMessageAndroidFormat(IndentedPrintWriter writer, JHelper helper) {
         this.writer = writer;
@@ -30,8 +30,7 @@ public class JMessageAndroidFormat {
               .appendln('}');
     }
 
-    private void appendParcelableWriter(String fName, PDescriptor<?> desc) throws
-                                                                                                       GeneratorException {
+    private void appendParcelableWriter(String fName, PDescriptor<?> desc) throws GeneratorException {
         switch (desc.getType()) {
             case BOOL:
                 writer.formatln("dest.writeByte(%s ? (byte) 1 : (byte) 0);", fName);
@@ -65,7 +64,8 @@ public class JMessageAndroidFormat {
             case SET:
                 PContainer<?, ?> cType = (PContainer<?, ?>) desc;
                 String iTypeName = helper.getInstanceClassName(cType.itemDescriptor());
-                switch (cType.itemDescriptor().getType()) {
+                switch (cType.itemDescriptor()
+                             .getType()) {
                     case BOOL:
                         appendParcelableArrayConverter("Boolean", fName, "boolean", "item");
                         writer.appendln("dest.writeBooleanArray(arr);");
@@ -102,12 +102,11 @@ public class JMessageAndroidFormat {
                               .appendln('}');
                         break;
                     case MESSAGE:
-                        if (desc.getType().equals(PType.SET)) {
-                            writer.formatln("dest.writeTypedList(new ArrayList<>(%s));",
-                                            fName, iTypeName, fName);
+                        if (desc.getType()
+                                .equals(PType.SET)) {
+                            writer.formatln("dest.writeTypedList(new ArrayList<>(%s));", fName, iTypeName, fName);
                         } else {
-                            writer.formatln("dest.writeTypedList(%s);",
-                                            fName, iTypeName, fName);
+                            writer.formatln("dest.writeTypedList(%s);", fName, iTypeName, fName);
                         }
                         break;
                     case ENUM:
@@ -123,7 +122,8 @@ public class JMessageAndroidFormat {
                 break;
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) desc;
-                switch (mType.itemDescriptor().getType()) {
+                switch (mType.itemDescriptor()
+                             .getType()) {
                     case LIST:
                     case SET:
                     case MAP:
@@ -135,7 +135,8 @@ public class JMessageAndroidFormat {
                 String kTypeName = helper.getInstanceClassName(mType.keyDescriptor());
                 iTypeName = helper.getInstanceClassName(mType.itemDescriptor());
                 String kName = fName + ".keySet()";
-                switch (mType.keyDescriptor().getType()) {
+                switch (mType.keyDescriptor()
+                             .getType()) {
                     case BOOL:
                         appendParcelableArrayConverter("Boolean", kName, "boolean", "item");
                         writer.appendln("dest.writeBooleanArray(arr);");
@@ -173,7 +174,9 @@ public class JMessageAndroidFormat {
                         break;
                     case MESSAGE:
                         writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
-                                        kName, kTypeName, kName);
+                                        kName,
+                                        kTypeName,
+                                        kName);
                         break;
                     case ENUM:
                         appendParcelableArrayConverter(kTypeName, kName, "int", "item.getValue()");
@@ -185,7 +188,8 @@ public class JMessageAndroidFormat {
                 writer.end()
                       .appendln('}');
                 String vName = fName + ".values()";
-                switch (mType.itemDescriptor().getType()) {
+                switch (mType.itemDescriptor()
+                             .getType()) {
                     case BOOL:
                         appendParcelableArrayConverter("Boolean", vName, "boolean", "item");
                         writer.appendln("dest.writeBooleanArray(arr);");
@@ -223,7 +227,9 @@ public class JMessageAndroidFormat {
                         break;
                     case MESSAGE:
                         writer.formatln("dest.writeParcelableArray(%s.toArray(new %s[%s.size()]), 0);",
-                                        vName, iTypeName, vName);
+                                        vName,
+                                        iTypeName,
+                                        vName);
                         break;
                     case ENUM:
                         appendParcelableArrayConverter(iTypeName, vName, "int", "item.getValue()");
@@ -273,18 +279,17 @@ public class JMessageAndroidFormat {
                 writer.formatln("builder.%s(Binary.wrap(source.createByteArray()));", setF);
                 break;
             case ENUM:
-                writer.formatln("builder.%s(%s.forValue(source.readInt()));",
-                                setF, classF);
+                writer.formatln("builder.%s(%s.forValue(source.readInt()));", setF, classF);
                 break;
             case MESSAGE:
-                writer.formatln("builder.%s((%s) source.readTypedObject(%s.CREATOR));",
-                                setF, classF, classF);
+                writer.formatln("builder.%s((%s) source.readTypedObject(%s.CREATOR));", setF, classF, classF);
                 break;
             case LIST:
             case SET:
                 PContainer<?, ?> cType = (PContainer<?, ?>) desc;
                 String cItemClass = helper.getInstanceClassName(cType.itemDescriptor());
-                switch (cType.itemDescriptor().getType()) {
+                switch (cType.itemDescriptor()
+                             .getType()) {
                     case BOOL:
                         writer.formatln("builder.%s(source.createBooleanArray());", addToF);
                         break;
@@ -315,9 +320,10 @@ public class JMessageAndroidFormat {
                               .appendln('}');
                         break;
                     case MESSAGE:
-                        writer.formatln(
-                                "builder.%s(source.createTypedArrayList(%s.CREATOR));",
-                                setF, cItemClass, cItemClass);
+                        writer.formatln("builder.%s(source.createTypedArrayList(%s.CREATOR));",
+                                        setF,
+                                        cItemClass,
+                                        cItemClass);
                         break;
                     case ENUM:
                         writer.appendln("int[] tmp = source.createIntArray();")
@@ -336,7 +342,8 @@ public class JMessageAndroidFormat {
                 break;
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) desc;
-                switch (mType.itemDescriptor().getType()) {
+                switch (mType.itemDescriptor()
+                             .getType()) {
                     case LIST:
                     case SET:
                     case MAP:
@@ -346,7 +353,8 @@ public class JMessageAndroidFormat {
                 String mkClass = helper.getInstanceClassName(mType.keyDescriptor());
                 String miClass = helper.getInstanceClassName(mType.itemDescriptor());
 
-                switch (mType.keyDescriptor().getType()) {
+                switch (mType.keyDescriptor()
+                             .getType()) {
                     case BOOL:
                         writer.appendln("boolean[] keys = source.createBooleanArray();");
                         break;
@@ -392,7 +400,8 @@ public class JMessageAndroidFormat {
                     default:
                         throw new GeneratorException("Containers not allowed in map key.");
                 }
-                switch (mType.itemDescriptor().getType()) {
+                switch (mType.itemDescriptor()
+                             .getType()) {
                     case BOOL:
                         writer.appendln("boolean[] values = source.createBooleanArray();");
                         break;
@@ -470,7 +479,9 @@ public class JMessageAndroidFormat {
                 writer.formatln("case %s:", field.fieldEnum())
                       .begin()
                       .formatln("dest.writeInt(%d);", field.id());
-                appendParcelableWriter(field.member(), field.getPField().getDescriptor());
+                appendParcelableWriter(field.member(),
+                                       field.getPField()
+                                            .getDescriptor());
                 writer.appendln("break;")
                       .end();
             }
@@ -494,7 +505,9 @@ public class JMessageAndroidFormat {
                     writer.begin();
                 }
                 writer.formatln("dest.writeInt(%d);", field.id());
-                appendParcelableWriter(field.member(), field.getPField().getDescriptor());
+                appendParcelableWriter(field.member(),
+                                       field.getPField()
+                                            .getDescriptor());
                 if (!field.alwaysPresent()) {
                     writer.end()
                           .appendln('}');
@@ -506,10 +519,9 @@ public class JMessageAndroidFormat {
               .appendln('}')
               .newline();
 
-        writer.formatln(
-                "public static final Parcelable.Creator<%s> CREATOR = new Parcelable.Creator<%s>() {",
-                message.instanceType(),
-                message.instanceType())
+        writer.formatln("public static final Parcelable.Creator<%s> CREATOR = new Parcelable.Creator<%s>() {",
+                        message.instanceType(),
+                        message.instanceType())
               .begin();
 
         writer.appendln("@Override")
@@ -527,7 +539,10 @@ public class JMessageAndroidFormat {
             writer.formatln("case %d: {", field.id())
                   .begin();
 
-            appendParcelableReader(field.setter(), field.adder(), field.getPField().getDescriptor());
+            appendParcelableReader(field.setter(),
+                                   field.adder(),
+                                   field.getPField()
+                                        .getDescriptor());
 
             writer.appendln("break;")
                   .end()

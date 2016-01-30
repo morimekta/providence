@@ -37,7 +37,7 @@ public class Color {
     public static final Color INVERT    = new Color(7);
     public static final Color HIDDEN    = new Color(8);
 
-    private final int[] mods;
+    private final int[]  mods;
     private final String str;
 
     public Color(int... values) {
@@ -84,7 +84,8 @@ public class Color {
 
         int fg = 0;
         int bg = 0;
-        all: for (Color c : colors) {
+        all:
+        for (Color c : colors) {
             for (int i : c.mods) {
                 if (i == 0) {
                     fg = 0;

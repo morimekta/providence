@@ -25,7 +25,7 @@ package net.morimekta.providence.compiler.generator;
  */
 public class GeneratorException extends Exception {
     private static final long serialVersionUID = 1441965857338834100L;
-    
+
     public GeneratorException(String message) {
         super(message);
     }

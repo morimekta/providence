@@ -6,7 +6,7 @@ package net.morimekta.providence.mio.utils;
  */
 public class Shard {
     public final String name;
-    public final int num;
+    public final int    num;
 
     public Shard(String pattern) {
         String[] parts = pattern.split("[@]");
@@ -22,6 +22,7 @@ public class Shard {
 
     /**
      * Generate a sequence for given shard number.
+     *
      * @param shard Shard number to get file sequence for.
      * @return The sequence iterator.
      */

@@ -1,10 +1,11 @@
 package net.morimekta.providence.gentests;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.morimekta.test.providence.CompactFields;
 import net.morimekta.test.providence.DefaultValues;
 import net.morimekta.test.providence.Value;
 import net.morimekta.util.Binary;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +35,7 @@ public class JacksonTest {
                                        1234567890123456789L,
                                        1234567890.12345,
                                        "Ûñı©óð€",
-                                       Binary.wrap(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }),
+                                       Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
                                        Value.FIRST,
                                        new CompactFields("Test", 4, null));
     }
@@ -48,19 +49,18 @@ public class JacksonTest {
 
         String serialized = new String(out.toByteArray(), StandardCharsets.UTF_8);
 
-        assertEquals(
-                "{" +
-                "\"booleanValue\":true," +
-                "\"byteValue\":64," +
-                "\"shortValue\":12345," +
-                "\"integerValue\":1234567890," +
-                "\"longValue\":1234567890123456789," +
-                "\"doubleValue\":1.23456789012345E9," +
-                "\"stringValue\":\"Ûñı©óð€\"," +
-                "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
-                "\"enumValue\":\"FIRST\"," +
-                "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
-                "}", serialized);
+        assertEquals("{" +
+                     "\"booleanValue\":true," +
+                     "\"byteValue\":64," +
+                     "\"shortValue\":12345," +
+                     "\"integerValue\":1234567890," +
+                     "\"longValue\":1234567890123456789," +
+                     "\"doubleValue\":1.23456789012345E9," +
+                     "\"stringValue\":\"Ûñı©óð€\"," +
+                     "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                     "\"enumValue\":\"FIRST\"," +
+                     "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                     "}", serialized);
     }
 
     @Test
@@ -72,19 +72,18 @@ public class JacksonTest {
 
         String serialized = new String(out.toByteArray(), StandardCharsets.UTF_8);
 
-        assertEquals(
-                "[{" +
-                "\"booleanValue\":true," +
-                "\"byteValue\":64," +
-                "\"shortValue\":12345," +
-                "\"integerValue\":1234567890," +
-                "\"longValue\":1234567890123456789," +
-                "\"doubleValue\":1.23456789012345E9," +
-                "\"stringValue\":\"Ûñı©óð€\"," +
-                "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
-                "\"enumValue\":\"FIRST\"," +
-                "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
-                "}]", serialized);
+        assertEquals("[{" +
+                     "\"booleanValue\":true," +
+                     "\"byteValue\":64," +
+                     "\"shortValue\":12345," +
+                     "\"integerValue\":1234567890," +
+                     "\"longValue\":1234567890123456789," +
+                     "\"doubleValue\":1.23456789012345E9," +
+                     "\"stringValue\":\"Ûñı©óð€\"," +
+                     "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
+                     "\"enumValue\":\"FIRST\"," +
+                     "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                     "}]", serialized);
     }
 
     @Test
@@ -110,6 +109,7 @@ public class JacksonTest {
 
         assertThat(out, messageEq(primitives));
     }
+
     @Test
     public void testDeserialize_collection() throws IOException {
         String message = "[{" +
@@ -129,7 +129,10 @@ public class JacksonTest {
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
-        ArrayList<DefaultValues> out = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(ArrayList.class, DefaultValues.class));
+        ArrayList<DefaultValues> out = mapper.readValue(in,
+                                                        mapper.getTypeFactory()
+                                                              .constructCollectionType(ArrayList.class,
+                                                                                       DefaultValues.class));
 
         assertThat(out.get(0), messageEq(primitives));
     }

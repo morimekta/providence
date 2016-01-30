@@ -36,7 +36,7 @@ import java.util.Objects;
 public class CField<T> implements PField<T> {
     private final String                 mComment;
     private final int                    mKey;
-    private final PRequirement            mRequirement;
+    private final PRequirement           mRequirement;
     private final PDescriptorProvider<T> mTypeProvider;
     private final String                 mName;
     private final PValueProvider<T>      mDefaultValue;
@@ -72,7 +72,8 @@ public class CField<T> implements PField<T> {
 
     @Override
     public PType getType() {
-        return mTypeProvider.descriptor().getType();
+        return mTypeProvider.descriptor()
+                            .getType();
     }
 
     @Override

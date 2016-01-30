@@ -36,7 +36,7 @@ import java.io.OutputStream;
  * @since 22.09.15
  */
 public class JsonGenerator extends Generator {
-    private final TypeLoader mLoader;
+    private final TypeLoader      mLoader;
     private final PJsonSerializer mSerializer;
 
     public JsonGenerator(FileManager fileManager, TypeLoader loader) {
@@ -48,7 +48,8 @@ public class JsonGenerator extends Generator {
     @Override
     public void generate(CDocument document) throws IOException, GeneratorException {
         for (ThriftDocument doc : mLoader.loadedDocuments()) {
-            if (doc.getPackage().equals(document.getPackageName())) {
+            if (doc.getPackage()
+                   .equals(document.getPackageName())) {
                 OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
                 try {
                     mSerializer.serialize(out, doc);

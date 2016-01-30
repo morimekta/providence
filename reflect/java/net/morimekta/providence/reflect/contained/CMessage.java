@@ -33,8 +33,7 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class CMessage<T extends PMessage<T>>
-        implements PMessage<T> {
+public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     protected final Map<Integer, Object> mFields;
 
     protected CMessage(Map<Integer, Object> fields) {
@@ -47,7 +46,8 @@ public abstract class CMessage<T extends PMessage<T>>
         if (field == null) {
             return false;
         }
-        switch (field.getDescriptor().getType()) {
+        switch (field.getDescriptor()
+                     .getType()) {
             case MAP:
             case LIST:
             case SET:
@@ -63,7 +63,8 @@ public abstract class CMessage<T extends PMessage<T>>
         if (field == null) {
             return 0;
         }
-        switch (field.getDescriptor().getType()) {
+        switch (field.getDescriptor()
+                     .getType()) {
             case MAP:
                 Map<?, ?> value = (Map<?, ?>) mFields.get(key);
                 return value == null ? 0 : value.size();
@@ -95,11 +96,15 @@ public abstract class CMessage<T extends PMessage<T>>
 
     @Override
     public boolean isCompact() {
-        if (!descriptor().isCompactible()) return false;
+        if (!descriptor().isCompactible()) {
+            return false;
+        }
         boolean missing = false;
         for (PField<?> field : descriptor().getFields()) {
             if (has(field.getKey())) {
-                if (missing) return false;
+                if (missing) {
+                    return false;
+                }
             } else {
                 missing = true;
             }
@@ -119,16 +124,21 @@ public abstract class CMessage<T extends PMessage<T>>
         }
 
         CMessage other = (CMessage) o;
-        PStructDescriptor<?,?> type = other.descriptor();
-        if (!descriptor().getQualifiedName(null).equals(type.getQualifiedName(null)) ||
-            !descriptor().getVariant().equals(type.getVariant())) {
+        PStructDescriptor<?, ?> type = other.descriptor();
+        if (!descriptor().getQualifiedName(null)
+                         .equals(type.getQualifiedName(null)) || !descriptor().getVariant()
+                                                                              .equals(type.getVariant())) {
             return false;
         }
 
         for (PField<?> field : descriptor().getFields()) {
             int id = field.getKey();
-            if (has(id) != other.has(id)) return false;
-            if (!PTypeUtils.equals(get(id), other.get(id))) return false;
+            if (has(id) != other.has(id)) {
+                return false;
+            }
+            if (!PTypeUtils.equals(get(id), other.get(id))) {
+                return false;
+            }
         }
         return true;
     }

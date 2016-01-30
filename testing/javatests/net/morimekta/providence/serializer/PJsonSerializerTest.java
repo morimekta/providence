@@ -38,14 +38,14 @@ public class PJsonSerializerTest {
     @Test
     public void testSerialize_compactStruct() throws PSerializeException {
         CompactFields cat1 = CompactFields.builder()
-                            .setName("my_category")
-                            .setId(44)
-                            .build();
+                                          .setName("my_category")
+                                          .setId(44)
+                                          .build();
         CompactFields cat2 = CompactFields.builder()
-                            .setName("my_category")
-                            .setId(44)
-                            .setLabel("My Category")
-                            .build();
+                                          .setName("my_category")
+                                          .setId(44)
+                                          .setLabel("My Category")
+                                          .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);

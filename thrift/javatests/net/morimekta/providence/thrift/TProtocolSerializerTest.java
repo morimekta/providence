@@ -8,6 +8,7 @@ import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
+
 import org.apache.thrift.TBase;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TException;
@@ -55,14 +56,15 @@ public class TProtocolSerializerTest {
         }
     }
 
-    public <PM extends PMessage<PM>,
-            F extends TFieldIdEnum,
-            TB extends TBase<TB, F>>
-    void assertConsistent(String prefix, PM providence, TB thrift) {
-        if (providence.descriptor().getVariant() == PMessageVariant.UNION) {
+    public <PM extends PMessage<PM>, F extends TFieldIdEnum, TB extends TBase<TB, F>> void assertConsistent(String prefix,
+                                                                                                            PM providence,
+                                                                                                            TB thrift) {
+        if (providence.descriptor()
+                      .getVariant() == PMessageVariant.UNION) {
 
         } else {
-            for (PField<?> field : providence.descriptor().getFields()) {
+            for (PField<?> field : providence.descriptor()
+                                             .getFields()) {
                 F thriftField = thrift.fieldForId(field.getKey());
 
                 String fieldPath = (prefix.isEmpty() ? "" : prefix + ".") + field.getName();
@@ -117,9 +119,7 @@ public class TProtocolSerializerTest {
                                 Object ti = tl.get(i);
 
                                 if (pi instanceof PMessage) {
-                                    assertConsistent(itemPath,
-                                                     (PMessage) pi,
-                                                     (TBase) ti);
+                                    assertConsistent(itemPath, (PMessage) pi, (TBase) ti);
                                 } else if (pi instanceof Collection) {
                                     // TODO: Compare actual content.
                                 } else if (pi instanceof Map) {

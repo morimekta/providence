@@ -19,20 +19,18 @@
 
 package net.morimekta.providence.descriptor;
 
-import java.util.Map;
-
 import net.morimekta.providence.PType;
+
+import java.util.Map;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class PMap<K, V>
-        extends PContainer<V, Map<K, V>> {
+public class PMap<K, V> extends PContainer<V, Map<K, V>> {
     private final PDescriptorProvider<K> mKeyDescriptor;
 
-    public PMap(PDescriptorProvider<K> keyDesc,
-                PDescriptorProvider<V> itemDesc) {
+    public PMap(PDescriptorProvider<K> keyDesc, PDescriptorProvider<V> itemDesc) {
         super(itemDesc);
         mKeyDescriptor = keyDesc;
     }
@@ -48,8 +46,8 @@ public class PMap<K, V>
 
     @Override
     public String getQualifiedName(String packageName) {
-        return "map<" + keyDescriptor().getQualifiedName(packageName) + "," + itemDescriptor().getQualifiedName(
-                packageName) + ">";
+        return "map<" + keyDescriptor().getQualifiedName(packageName) + "," +
+               itemDescriptor().getQualifiedName(packageName) + ">";
     }
 
     @Override
@@ -63,8 +61,9 @@ public class PMap<K, V>
             return false;
         }
         PMap<?, ?> other = (PMap<?, ?>) o;
-        return other.itemDescriptor().equals(itemDescriptor()) &&
-               other.keyDescriptor().equals(keyDescriptor());
+        return other.itemDescriptor()
+                    .equals(itemDescriptor()) && other.keyDescriptor()
+                                                      .equals(keyDescriptor());
     }
 
     @Override
@@ -74,10 +73,8 @@ public class PMap<K, V>
                keyDescriptor().hashCode();
     }
 
-    public static <K, V>
-    PContainerProvider<V, Map<K, V>, PMap<K, V>> provider(
-            PDescriptorProvider<K> keyDesc,
-            PDescriptorProvider<V> itemDesc) {
+    public static <K, V> PContainerProvider<V, Map<K, V>, PMap<K, V>> provider(PDescriptorProvider<K> keyDesc,
+                                                                               PDescriptorProvider<V> itemDesc) {
         return new PContainerProvider<>(new PMap<>(keyDesc, itemDesc));
     }
 }

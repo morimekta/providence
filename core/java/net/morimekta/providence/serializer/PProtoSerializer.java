@@ -49,7 +49,7 @@ import java.util.Map;
 
 /**
  * Compact binary serializer using the protocol buffer serialization format.
- *
+ * <p/>
  * The format is very simple, though has some drawbacks:
  * <ul>
  *     <li>Contained Messages are serialized and written as bytes, requiring
@@ -75,8 +75,7 @@ import java.util.Map;
  * See data definition file <code>docs/proto-serializer.md</code> for format
  * spec and type matching.
  */
-public class PProtoSerializer
-        extends PSerializer {
+public class PProtoSerializer extends PSerializer {
     private final boolean strict;
 
     /**
@@ -116,8 +115,7 @@ public class PProtoSerializer
     }
 
     @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> descriptor)
-            throws PSerializeException, IOException {
+    public <T> T deserialize(InputStream input, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader reader = new BinaryReader(input);
         // Assume it consists of a single field.
         if (PType.MESSAGE == descriptor.getType()) {
@@ -138,7 +136,8 @@ public class PProtoSerializer
                 len += writeMessageField(writer, field, message);
             }
         } else {
-            for (PField<?> field : message.descriptor().getFields()) {
+            for (PField<?> field : message.descriptor()
+                                          .getFields()) {
                 if (message.has(field.getKey())) {
                     len += writeMessageField(writer, field, message);
                 }
@@ -152,44 +151,39 @@ public class PProtoSerializer
         int len = 0;
         if (field.getType() == PType.SET || field.getType() == PType.LIST) {
             // Encode as repeated field.
-            PContainer<?,?> ct = (PContainer<?, ?>) field.getDescriptor();
-            int type = getType(ct.itemDescriptor().getType());
+            PContainer<?, ?> ct = (PContainer<?, ?>) field.getDescriptor();
+            int type = getType(ct.itemDescriptor()
+                                 .getType());
             int tag = field.getKey() << 3 | type;
             @SuppressWarnings("unchecked")
             Collection<Object> container = (Collection<Object>) message.get(field.getKey());
 
             for (Object item : container) {
                 len += writer.writeVarint(tag);
-                len += writeFieldValue(writer,
-                                       type,
-                                       ct.itemDescriptor(),
-                                       item);
+                len += writeFieldValue(writer, type, ct.itemDescriptor(), item);
             }
         } else {
             int type = getType(field.getType());
             int tag = (field.getKey() << 3) | type;
             len += writer.writeVarint(tag);
-            len += writeFieldValue(writer,
-                                   type,
-                                   field.getDescriptor(),
-                                   message.get(field.getKey()));
+            len += writeFieldValue(writer, type, field.getDescriptor(), message.get(field.getKey()));
         }
         return len;
     }
 
-    private <T extends PMessage<T>> T readMessage(BinaryReader input, PStructDescriptor<T,?> descriptor)
+    private <T extends PMessage<T>> T readMessage(BinaryReader input, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.factory().builder();
+        PMessageBuilder<T> builder = descriptor.factory()
+                                               .builder();
         int tag;
         while ((tag = input.readIntVarint()) > 0) {
             int id = tag >>> 3;
             int type = tag & 0x7;
             PField<?> field = descriptor.getField(id);
             if (field != null) {
-                if ((field.getType() == PType.LIST || field.getType() == PType.SET) &&
-                        type != BINARY) {
+                if ((field.getType() == PType.LIST || field.getType() == PType.SET) && type != BINARY) {
                     // Non-packed repeated field.
-                    PContainer<?,?> ct = (PContainer<?, ?>) field.getDescriptor();
+                    PContainer<?, ?> ct = (PContainer<?, ?>) field.getDescriptor();
                     Object value = readFieldValue(input, type, ct.itemDescriptor());
                     builder.addTo(field.getKey(), value);
                 } else {
@@ -212,10 +206,11 @@ public class PProtoSerializer
     /**
      * Read a field value from stream.
      *
-     * @param in        The stream to consume.
+     * @param in         The stream to consume.
      * @param type       The field info about the content.
-     * @param descriptor      The type to generate content for.
+     * @param descriptor The type to generate content for.
      * @return The field value, or null if no type.
+     *
      * @throws IOException If unable to read from stream or invalid field type.
      */
     protected <T> T readFieldValue(BinaryReader in, int type, PDescriptor<T> descriptor)
@@ -235,7 +230,8 @@ public class PProtoSerializer
                         case I64:
                             return cast(in.readLongZigzag());
                         case ENUM:
-                            PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory().builder();
+                            PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory()
+                                                                                       .builder();
                             builder.setByValue(in.readIntZigzag());
                             return cast(builder.build());
                         default:
@@ -277,11 +273,10 @@ public class PProtoSerializer
                             ByteArrayInputStream tmp = new ByteArrayInputStream(bytes);
                             BinaryReader reader = new BinaryReader(tmp);
 
-                            PContainer<?,?> ct = (PContainer<?, ?>) descriptor;
+                            PContainer<?, ?> ct = (PContainer<?, ?>) descriptor;
                             PDescriptor<?> it = ct.itemDescriptor();
-                            Collection<Object> out = descriptor.getType() == PType.SET ?
-                                                     new LinkedHashSet<>() :
-                                                     new LinkedList<>();
+                            Collection<Object> out =
+                                    descriptor.getType() == PType.SET ? new LinkedHashSet<>() : new LinkedList<>();
                             int itag = reader.readIntVarint() & 0x7;
                             while (tmp.available() > 0) {
                                 out.add(readFieldValue(reader, itag, it));
@@ -292,11 +287,11 @@ public class PProtoSerializer
                             ByteArrayInputStream tmp = new ByteArrayInputStream(bytes);
                             BinaryReader reader = new BinaryReader(tmp);
 
-                            PMap<?,?> ct = (PMap) descriptor;
+                            PMap<?, ?> ct = (PMap) descriptor;
                             PDescriptor<?> kt = ct.keyDescriptor();
                             PDescriptor<?> vt = ct.itemDescriptor();
 
-                            Map<Object,Object> out = new LinkedHashMap<>();
+                            Map<Object, Object> out = new LinkedHashMap<>();
                             int ktag;
                             while ((ktag = reader.readIntVarint()) > 0) {
                                 Object key = readFieldValue(reader, ktag & 0x07, kt);
@@ -324,12 +319,12 @@ public class PProtoSerializer
     /**
      * Write a field value to stream.
      *
-     * @param out The stream to write to.
+     * @param out   The stream to write to.
      * @param value The value to write.
      * @return The number of bytes written.
-     * @throws IOException
      */
-    protected int writeFieldValue(BinaryWriter out, int tag, PDescriptor<?> descriptor, Object value) throws IOException, PSerializeException {
+    protected int writeFieldValue(BinaryWriter out, int tag, PDescriptor<?> descriptor, Object value)
+            throws IOException, PSerializeException {
         int len = 0;
         switch (tag) {
             case VARINT:
@@ -376,13 +371,14 @@ public class PProtoSerializer
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     BinaryWriter packedWriter = new BinaryWriter(baos);
 
-                    PContainer<?,?> ct = (PContainer<?,?>) descriptor;
-                    int iTag = getType(ct.itemDescriptor().getType());
+                    PContainer<?, ?> ct = (PContainer<?, ?>) descriptor;
+                    int iTag = getType(ct.itemDescriptor()
+                                         .getType());
                     @SuppressWarnings("unchecked")
                     Collection<Object> coll = (Collection<Object>) value;
                     packedWriter.writeVarint(iTag);
                     for (Object item : coll) {
-                        writeFieldValue(packedWriter, iTag, ct.itemDescriptor(),  item);
+                        writeFieldValue(packedWriter, iTag, ct.itemDescriptor(), item);
                     }
                     packedWriter.flush();
 
@@ -394,9 +390,11 @@ public class PProtoSerializer
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     BinaryWriter mapWriter = new BinaryWriter(baos);
 
-                    PMap<?,?> ct = (PMap<?,?>) descriptor;
-                    int kTag = getType(ct.keyDescriptor().getType());
-                    int vTag = getType(ct.itemDescriptor().getType());
+                    PMap<?, ?> ct = (PMap<?, ?>) descriptor;
+                    int kTag = getType(ct.keyDescriptor()
+                                         .getType());
+                    int vTag = getType(ct.itemDescriptor()
+                                         .getType());
                     @SuppressWarnings("unchecked")
                     Map<Object, Object> map = (Map<Object, Object>) value;
                     for (Map.Entry<Object, Object> entry : map.entrySet()) {
@@ -443,9 +441,9 @@ public class PProtoSerializer
         }
     }
 
-    private static final int VARINT      = 0x00;  // -> bool, byte, i16, i32, i64, enum
-    private static final int FIXED_64    = 0x01;  // -> double
-    private static final int BINARY      = 0x02;  // -> varint + n bytes.
+    private static final int VARINT   = 0x00;  // -> bool, byte, i16, i32, i64, enum
+    private static final int FIXED_64 = 0x01;  // -> double
+    private static final int BINARY   = 0x02;  // -> varint + n bytes.
     //                       START_GROUP = 0x03;
     //                       END_GROUP   = 0x04;
     //                       FIXED_32    = 0x05;

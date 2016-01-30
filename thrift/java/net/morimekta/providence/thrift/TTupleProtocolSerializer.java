@@ -42,8 +42,7 @@ import java.util.Set;
  * decided that this protocol should be written in a different way than other
  * protocols.
  */
-public class TTupleProtocolSerializer
-        extends PSerializer {
+public class TTupleProtocolSerializer extends PSerializer {
     private final boolean          readStrict;
     private final TProtocolFactory protocolFactory;
 
@@ -57,8 +56,7 @@ public class TTupleProtocolSerializer
     }
 
     @Override
-    public int serialize(OutputStream output, PMessage<?> message)
-            throws IOException, PSerializeException {
+    public int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -100,8 +98,7 @@ public class TTupleProtocolSerializer
     }
 
     @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> definition)
-            throws IOException, PSerializeException {
+    public <T> T deserialize(InputStream input, PDescriptor<T> definition) throws IOException, PSerializeException {
         T ret;
         try {
             TTransport transport = new TIOStreamTransport(input);
@@ -117,10 +114,9 @@ public class TTupleProtocolSerializer
         return ret;
     }
 
-    protected <T> T read(TTupleProtocol protocol, PDescriptor<T> descriptor)
-            throws TException, PSerializeException {
+    protected <T> T read(TTupleProtocol protocol, PDescriptor<T> descriptor) throws TException, PSerializeException {
         if (PType.MESSAGE == descriptor.getType()) {
-            T ret = cast((Object) readMessage(protocol, (PStructDescriptor<?,?>) descriptor));
+            T ret = cast((Object) readMessage(protocol, (PStructDescriptor<?, ?>) descriptor));
             return ret;
         } else {
             protocol.readBitSet(1);  // ignored.
@@ -131,7 +127,7 @@ public class TTupleProtocolSerializer
 
     protected void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, PSerializeException {
         TTupleProtocol oprot = protocol;
-        PStructDescriptor<?,?> descriptor = message.descriptor();
+        PStructDescriptor<?, ?> descriptor = message.descriptor();
         BitSet optionals = new BitSet();
         PField<?>[] fields = descriptor.getFields();
         for (int i = 0; i < fields.length; ++i) {
@@ -156,7 +152,8 @@ public class TTupleProtocolSerializer
         PField<?>[] fields = descriptor.getFields();
         BitSet optionals = iprot.readBitSet(fields.length);
 
-        PMessageBuilder<T> builder = descriptor.factory().builder();
+        PMessageBuilder<T> builder = descriptor.factory()
+                                               .builder();
 
         for (int i = 0; i < fields.length; ++i) {
             if (optionals.get(i)) {
@@ -172,7 +169,8 @@ public class TTupleProtocolSerializer
         return builder.build();
     }
 
-    protected <T> T readTypedValue(byte tType, PDescriptor<T> type, TTupleProtocol protocol) throws TException, PSerializeException {
+    protected <T> T readTypedValue(byte tType, PDescriptor<T> type, TTupleProtocol protocol)
+            throws TException, PSerializeException {
         switch (PType.findById(tType)) {
             case BOOL:
                 return cast(protocol.readBool());
@@ -183,7 +181,8 @@ public class TTupleProtocolSerializer
             case I32:
                 if (PType.ENUM == type.getType()) {
                     PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
-                    PEnumBuilder<?> eb = et.factory().builder();
+                    PEnumBuilder<?> eb = et.factory()
+                                           .builder();
                     final int value = protocol.readI32();
                     eb.setByValue(value);
                     if (readStrict && !eb.isValid()) {
@@ -205,7 +204,7 @@ public class TTupleProtocolSerializer
                 }
                 return cast(protocol.readString());
             case MESSAGE:
-                return cast((Object) readMessage(protocol, (PStructDescriptor<?,?>) type));
+                return cast((Object) readMessage(protocol, (PStructDescriptor<?, ?>) type));
             case LIST:
                 int lSize = protocol.readI32();
                 PList<?> lDesc = (PList<?>) type;
@@ -230,11 +229,11 @@ public class TTupleProtocolSerializer
                 return cast(set);
             case MAP:
                 int mSize = protocol.readI32();
-                PMap<?,?> mDesc = (PMap<?,?>) type;
+                PMap<?, ?> mDesc = (PMap<?, ?>) type;
                 PDescriptor mkDesc = mDesc.keyDescriptor();
                 PDescriptor miDesc = mDesc.itemDescriptor();
 
-                Map<Object,Object> map = new LinkedHashMap<>();
+                Map<Object, Object> map = new LinkedHashMap<>();
                 for (int i = 0; i < mSize; ++i) {
                     Object key = readTypedValue(mkDesc.getType().id, mkDesc, protocol);
                     Object val = readTypedValue(miDesc.getType().id, miDesc, protocol);

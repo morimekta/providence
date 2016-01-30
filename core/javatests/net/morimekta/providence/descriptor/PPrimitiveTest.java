@@ -20,6 +20,7 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -82,25 +83,57 @@ public class PPrimitiveTest {
 
     @Test
     public void testEquals() {
-        assertEquals(PPrimitive.BOOL, PPrimitive.BOOL.provider().descriptor());
-        assertEquals(PPrimitive.BYTE, PPrimitive.BYTE.provider().descriptor());
-        assertEquals(PPrimitive.I16, PPrimitive.I16.provider().descriptor());
-        assertEquals(PPrimitive.I32, PPrimitive.I32.provider().descriptor());
-        assertEquals(PPrimitive.I64, PPrimitive.I64.provider().descriptor());
-        assertEquals(PPrimitive.DOUBLE, PPrimitive.DOUBLE.provider().descriptor());
-        assertEquals(PPrimitive.STRING, PPrimitive.STRING.provider().descriptor());
-        assertEquals(PPrimitive.BINARY, PPrimitive.BINARY.provider().descriptor());
+        assertEquals(PPrimitive.BOOL,
+                     PPrimitive.BOOL.provider()
+                                    .descriptor());
+        assertEquals(PPrimitive.BYTE,
+                     PPrimitive.BYTE.provider()
+                                    .descriptor());
+        assertEquals(PPrimitive.I16,
+                     PPrimitive.I16.provider()
+                                   .descriptor());
+        assertEquals(PPrimitive.I32,
+                     PPrimitive.I32.provider()
+                                   .descriptor());
+        assertEquals(PPrimitive.I64,
+                     PPrimitive.I64.provider()
+                                   .descriptor());
+        assertEquals(PPrimitive.DOUBLE,
+                     PPrimitive.DOUBLE.provider()
+                                      .descriptor());
+        assertEquals(PPrimitive.STRING,
+                     PPrimitive.STRING.provider()
+                                      .descriptor());
+        assertEquals(PPrimitive.BINARY,
+                     PPrimitive.BINARY.provider()
+                                      .descriptor());
     }
 
     @Test
     public void testNotEquals() {
-        assertNotEquals(PPrimitive.BOOL, PPrimitive.BYTE.provider().descriptor());
-        assertNotEquals(PPrimitive.BYTE, PPrimitive.I16.provider().descriptor());
-        assertNotEquals(PPrimitive.I16, PPrimitive.I32.provider().descriptor());
-        assertNotEquals(PPrimitive.I32, PPrimitive.I64.provider().descriptor());
-        assertNotEquals(PPrimitive.I64, PPrimitive.DOUBLE.provider().descriptor());
-        assertNotEquals(PPrimitive.DOUBLE, PPrimitive.STRING.provider().descriptor());
-        assertNotEquals(PPrimitive.STRING, PPrimitive.BINARY.provider().descriptor());
-        assertNotEquals(PPrimitive.BINARY, PPrimitive.BOOL.provider().descriptor());
+        assertNotEquals(PPrimitive.BOOL,
+                        PPrimitive.BYTE.provider()
+                                       .descriptor());
+        assertNotEquals(PPrimitive.BYTE,
+                        PPrimitive.I16.provider()
+                                      .descriptor());
+        assertNotEquals(PPrimitive.I16,
+                        PPrimitive.I32.provider()
+                                      .descriptor());
+        assertNotEquals(PPrimitive.I32,
+                        PPrimitive.I64.provider()
+                                      .descriptor());
+        assertNotEquals(PPrimitive.I64,
+                        PPrimitive.DOUBLE.provider()
+                                         .descriptor());
+        assertNotEquals(PPrimitive.DOUBLE,
+                        PPrimitive.STRING.provider()
+                                         .descriptor());
+        assertNotEquals(PPrimitive.STRING,
+                        PPrimitive.BINARY.provider()
+                                         .descriptor());
+        assertNotEquals(PPrimitive.BINARY,
+                        PPrimitive.BOOL.provider()
+                                       .descriptor());
     }
 }

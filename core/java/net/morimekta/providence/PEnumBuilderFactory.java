@@ -23,8 +23,7 @@ package net.morimekta.providence;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class PEnumBuilderFactory<T extends PEnumValue<T>>
-        implements PBuilderFactory<T> {
+public abstract class PEnumBuilderFactory<T extends PEnumValue<T>> implements PBuilderFactory<T> {
     @Override
     public abstract PEnumBuilder<T> builder();
 }

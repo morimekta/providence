@@ -23,16 +23,16 @@ import net.morimekta.providence.PType;
 
 /**
  * Descriptor interface for value type V.
- *
+ * <p/>
  * Note that V is specified by type even though the PDescriptor interface has
  * no methods requiring that type.
  */
 @SuppressWarnings("unused")
 public interface PDescriptor<V> {
     /**
-     * The package name is derived form the .thrift file name that is
-     * parsed or if read from serialized format is explicit. Note that
-     * there may be package name conflicts globally.
+     * The package name is derived form the .thrift file name that is parsed or
+     * if read from serialized format is explicit. Note that there may be
+     * package name conflicts globally.
      *
      * @return The package of the type. If empty the type is not in any
      *         namespace.
@@ -47,8 +47,7 @@ public interface PDescriptor<V> {
     String getName();
 
     /**
-     * This will return the qualifying name of the type given package
-     * context.
+     * This will return the qualifying name of the type given package context.
      *
      * @return The name of the type. Including package if not matching with
      *         packageName.

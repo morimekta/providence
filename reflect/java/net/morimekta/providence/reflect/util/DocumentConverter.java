@@ -19,26 +19,30 @@
 
 package net.morimekta.providence.reflect.util;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import net.morimekta.providence.descriptor.*;
-import net.morimekta.providence.model.Declaration;
-import net.morimekta.providence.reflect.contained.CEnum;
-import net.morimekta.providence.reflect.contained.CUnionDescriptor;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.model.EnumType;
 import net.morimekta.providence.model.EnumValue;
 import net.morimekta.providence.model.StructType;
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CEnum;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CExceptionDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
+import net.morimekta.providence.reflect.contained.CUnionDescriptor;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Stein Eldar Johnsen
@@ -67,18 +71,14 @@ public class DocumentConverter {
                 EnumType enumType = decl.getDeclEnum();
 
                 int nextValue = PEnumDescriptor.DEFAULT_FIRST_VALUE;
-                CEnumDescriptor type =
-                        new CEnumDescriptor(enumType.getComment(),
-                                             document.getPackage(),
-                                             enumType.getName());
+                CEnumDescriptor type = new CEnumDescriptor(enumType.getComment(),
+                                                           document.getPackage(),
+                                                           enumType.getName());
                 List<CEnum> values = new LinkedList<>();
                 for (EnumValue value : enumType.getValues()) {
                     int v = value.hasValue() ? value.getValue() : nextValue;
                     nextValue = v + 1;
-                    values.add(new CEnum(value.getComment(),
-                                          value.getValue(),
-                                          value.getName(),
-                                          type));
+                    values.add(new CEnum(value.getComment(), value.getValue(), value.getName(), type));
                 }
                 type.setValues(values);
                 declaredTypes.add(type);
@@ -95,25 +95,24 @@ public class DocumentConverter {
                 switch (structType.getVariant()) {
                     case STRUCT:
                         type = new CStructDescriptor(structType.getComment(),
-                                                      document.getPackage(),
-                                                      structType.getName(),
-                                                      fields);
-                        break;
-                    case UNION:
-                        type = new CUnionDescriptor(structType.getComment(),
                                                      document.getPackage(),
                                                      structType.getName(),
                                                      fields);
                         break;
+                    case UNION:
+                        type = new CUnionDescriptor(structType.getComment(),
+                                                    document.getPackage(),
+                                                    structType.getName(),
+                                                    fields);
+                        break;
                     case EXCEPTION:
                         type = new CExceptionDescriptor(structType.getComment(),
-                                                         document.getPackage(),
-                                                         structType.getName(),
-                                                         fields);
+                                                        document.getPackage(),
+                                                        structType.getName(),
+                                                        fields);
                         break;
                     default:
-                        throw new IllegalArgumentException("Unhandled struct type " +
-                                                           structType.getVariant());
+                        throw new IllegalArgumentException("Unhandled struct type " + structType.getVariant());
                 }
                 declaredTypes.add(type);
                 mRegistry.putDeclaredType(type);
@@ -125,20 +124,24 @@ public class DocumentConverter {
                 constants.add(makeField(document.getPackage(), constant));
             }
             if (decl.hasDeclTypedef()) {
-                typedefs.put(decl.getDeclTypedef().getName(),
-                             decl.getDeclTypedef().getType());
-                mRegistry.putTypedef(decl.getDeclTypedef().getType(),
-                                     decl.getDeclTypedef().getName());
+                typedefs.put(decl.getDeclTypedef()
+                                 .getName(),
+                             decl.getDeclTypedef()
+                                 .getType());
+                mRegistry.putTypedef(decl.getDeclTypedef()
+                                         .getType(),
+                                     decl.getDeclTypedef()
+                                         .getName());
             }
         }
 
         return new CDocument(document.getComment(),
-                              document.getPackage(),
-                              document.getNamespaces(),
-                              getIncludes(document),
-                              typedefs,
-                              declaredTypes,
-                              constants);
+                             document.getPackage(),
+                             document.getNamespaces(),
+                             getIncludes(document),
+                             typedefs,
+                             declaredTypes,
+                             constants);
     }
 
     private List<String> getIncludes(ThriftDocument document) {
@@ -157,19 +160,16 @@ public class DocumentConverter {
         PDescriptorProvider type = mRegistry.getProvider(field.getType(), pkg);
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
-            defaultValue = new ConstProvider(mRegistry,
-                                             field.getType(),
-                                             pkg,
-                                             field.getDefaultValue());
+            defaultValue = new ConstProvider(mRegistry, field.getType(), pkg, field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        CField made = new CField<>(
-                field.getComment(),
-                field.getKey(),
-                PRequirement.valueOf(field.getRequirement().getName()),
-                field.getName(),
-                type,
-                defaultValue);
+        CField made = new CField<>(field.getComment(),
+                                   field.getKey(),
+                                   PRequirement.valueOf(field.getRequirement()
+                                                             .getName()),
+                                   field.getName(),
+                                   type,
+                                   defaultValue);
         return made;
     }
 }

@@ -19,15 +19,14 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 
 /**
  * The definition of a thrift exception.
  */
-public abstract class PExceptionDescriptor<T extends PMessage<T>, F extends PField>
-        extends PStructDescriptor<T, F> {
+public abstract class PExceptionDescriptor<T extends PMessage<T>, F extends PField> extends PStructDescriptor<T, F> {
     public PExceptionDescriptor(String comment,
                                 String packageName,
                                 String name,

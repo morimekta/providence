@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.util;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PUnion;
@@ -28,6 +27,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
@@ -38,9 +38,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Pretty printer that can print message content for easily reading
- * and debugging. This is a write only format used in stringifying
- * messages.
+ * Pretty printer that can print message content for easily reading and
+ * debugging. This is a write only format used in stringifying messages.
  *
  * @author Stein Eldar Johnsen
  * @since 25.08.15
@@ -60,16 +59,11 @@ public class PPrettyPrinter {
         this(INDENT, SPACE, NEWLINE, SEP);
     }
 
-    public PPrettyPrinter(String indent,
-                          String space,
-                          String newline) {
+    public PPrettyPrinter(String indent, String space, String newline) {
         this(indent, space, newline, SEP);
     }
 
-    public PPrettyPrinter(String indent,
-                          String space,
-                          String newline,
-                          String sep) {
+    public PPrettyPrinter(String indent, String space, String newline, String sep) {
         mIndent = indent;
         mSpace = space;
         mNewline = newline;
@@ -89,7 +83,7 @@ public class PPrettyPrinter {
     }
 
     private void appendMessage(IndentedPrintWriter builder, PMessage<?> message) {
-        PStructDescriptor<?,?> type = message.descriptor();
+        PStructDescriptor<?, ?> type = message.descriptor();
 
         builder.append("{")
                .begin();
@@ -108,10 +102,11 @@ public class PPrettyPrinter {
             boolean first = true;
             for (PField<?> field : type.getFields()) {
                 if (message.has(field.getKey())) {
-                    if (first)
+                    if (first) {
                         first = false;
-                    else
+                    } else {
                         builder.append(mSep);
+                    }
                     Object o = message.get(field.getKey());
 
                     builder.appendln(field.getName())
@@ -193,7 +188,8 @@ public class PPrettyPrinter {
             try {
                 jw.value((String) o);
                 jw.flush();
-            } catch (JsonException e) {}
+            } catch (JsonException e) {
+            }
         } else if (o instanceof Binary) {
             writer.format("b64(%s)", ((Binary) o).toBase64());
         } else if (o instanceof Boolean) {
@@ -212,7 +208,8 @@ public class PPrettyPrinter {
                 writer.print(d.doubleValue());
             }
         } else {
-            throw new IllegalArgumentException("Unknown primitive type class " + o.getClass().getSimpleName());
+            throw new IllegalArgumentException("Unknown primitive type class " + o.getClass()
+                                                                                  .getSimpleName());
         }
     }
 }

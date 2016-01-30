@@ -36,8 +36,8 @@ class JsonContext {
     }
 
     public final Mode   mode;
-    public Expect expect;
-    public int    num;
+    public       Expect expect;
+    public       int    num;
 
     public JsonContext(Mode mode) {
         this.mode = mode;

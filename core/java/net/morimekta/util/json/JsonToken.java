@@ -29,21 +29,25 @@ import java.util.Objects;
  */
 public class JsonToken extends Slice {
     public enum Type {
-        SYMBOL,   // on of []{},:
-        NUMBER,   // numerical
-        LITERAL,  // quoted literal
-        TOKEN,    // static token.
+        // on of []{},:
+        SYMBOL,
+        // numerical
+        NUMBER,
+        // quoted literal
+        LITERAL,
+        // static token.
+        TOKEN,
     }
 
-    public static final byte[] kNull = new byte[]{'n', 'u', 'l', 'l'};
-    public static final byte[] kTrue = new byte[]{'t', 'r', 'u', 'e'};
+    public static final byte[] kNull  = new byte[]{'n', 'u', 'l', 'l'};
+    public static final byte[] kTrue  = new byte[]{'t', 'r', 'u', 'e'};
     public static final byte[] kFalse = new byte[]{'f', 'a', 'l', 's', 'e'};
 
     public static final char kListStartChar = '[';
-    public static final char kListEndChar = ']';
-    public static final char kListSepChar = ',';
-    public static final char kMapStartChar = '{';
-    public static final char kMapEndChar = '}';
+    public static final char kListEndChar   = ']';
+    public static final char kListSepChar   = ',';
+    public static final char kMapStartChar  = '{';
+    public static final char kMapEndChar    = '}';
     public static final char kKeyValSepChar = ':';
 
     public final Type type;
@@ -111,6 +115,7 @@ public class JsonToken extends Slice {
 
     /**
      * Get the whole slice as a string.
+     *
      * @return Slice decoded as UTF_8 string.
      */
     public String decodeJsonLiteral() {
@@ -176,21 +181,19 @@ public class JsonToken extends Slice {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || !(o instanceof JsonToken)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o instanceof JsonToken)) {
+            return false;
+        }
         JsonToken other = (JsonToken) o;
 
-        return super.equals(o) &&
-               Objects.equals(lineNo, other.lineNo);
+        return super.equals(o) && Objects.equals(lineNo, other.lineNo);
     }
 
     @Override
     public String toString() {
-        return String.format("%s('%s',%d:%d-%d)",
-                             type.toString(),
-                             asString(),
-                             lineNo,
-                             linePos,
-                             linePos + length());
+        return String.format("%s('%s',%d:%d-%d)", type.toString(), asString(), lineNo, linePos, linePos + length());
     }
 }

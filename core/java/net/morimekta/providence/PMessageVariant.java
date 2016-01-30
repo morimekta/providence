@@ -36,9 +36,12 @@ public enum PMessageVariant {
 
     public static PMessageVariant fromName(String name) {
         switch (name) {
-            case "struct": return STRUCT;
-            case "union": return UNION;
-            case "exception": return EXCEPTION;
+            case "struct":
+                return STRUCT;
+            case "union":
+                return UNION;
+            case "exception":
+                return EXCEPTION;
         }
         return null;
     }

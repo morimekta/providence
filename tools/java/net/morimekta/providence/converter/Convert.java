@@ -19,15 +19,16 @@
 
 package net.morimekta.providence.converter;
 
+import net.morimekta.console.FormatString;
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.mio.PMessageReader;
+import net.morimekta.providence.mio.PMessageWriter;
+import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.mio.PMessageWriter;
-import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.console.FormatString;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -71,7 +72,8 @@ public class Convert {
 
             loader.load(definition);
 
-            PDeclaredDescriptor tmpDesc = loader.getRegistry().getDescriptor(mOpts.mType, null);
+            PDeclaredDescriptor tmpDesc = loader.getRegistry()
+                                                .getDescriptor(mOpts.mType, null);
             if (tmpDesc == null) {
                 throw new CmdLineException(cli, new FormatString("Unknown type: %s"), mOpts.mType);
             }
@@ -79,7 +81,7 @@ public class Convert {
                 throw new CmdLineException(cli, new FormatString("Not a message type: "), mOpts.mType);
             }
 
-            PStructDescriptor<?,?> desc = (PStructDescriptor<?,?>) tmpDesc;
+            PStructDescriptor<?, ?> desc = (PStructDescriptor<?, ?>) tmpDesc;
             PMessageReader input = mOpts.getInput(cli, desc);
             PMessageWriter output = mOpts.getOutput(cli);
 
@@ -103,12 +105,15 @@ public class Convert {
             System.err.println();
             if (e.getLine() != null) {
                 System.err.format("Error at line %d, pos %d-%d: %s\n" +
-                                  "    %s\n" +
+                                  "    %s\n"                          +
                                   "    %s%c\n",
-                                  e.getLineNo(), e.getPos(), e.getPos() + e.getLen(),
+                                  e.getLineNo(),
+                                  e.getPos(),
+                                  e.getPos() + e.getLen(),
                                   e.getLocalizedMessage(),
                                   e.getLine(),
-                                  Strings.times("~", e.getPos()), '^');
+                                  Strings.times("~", e.getPos()),
+                                  '^');
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }

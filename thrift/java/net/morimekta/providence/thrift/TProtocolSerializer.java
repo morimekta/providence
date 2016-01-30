@@ -74,8 +74,7 @@ class TProtocolSerializer extends PSerializer {
     }
 
     @Override
-    public int serialize(OutputStream output, PMessage<?> message)
-            throws IOException, PSerializeException {
+    public int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -119,8 +118,7 @@ class TProtocolSerializer extends PSerializer {
     }
 
     @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> definition)
-            throws IOException, PSerializeException {
+    public <T> T deserialize(InputStream input, PDescriptor<T> definition) throws IOException, PSerializeException {
         T ret;
         try {
             TTransport transport = new TIOStreamTransport(input);
@@ -136,11 +134,10 @@ class TProtocolSerializer extends PSerializer {
         return ret;
     }
 
-    protected <T> T read(TProtocol protocol, PDescriptor<T> descriptor)
-            throws TException, PSerializeException {
+    protected <T> T read(TProtocol protocol, PDescriptor<T> descriptor) throws TException, PSerializeException {
         switch (descriptor.getType()) {
             case MESSAGE:
-                T ret = cast((Object) readMessage(protocol, (PStructDescriptor<?,?>) descriptor));
+                T ret = cast((Object) readMessage(protocol, (PStructDescriptor<?, ?>) descriptor));
                 return ret;
             default:
                 protocol.readStructBegin();
@@ -156,17 +153,20 @@ class TProtocolSerializer extends PSerializer {
         }
     }
 
-    protected void write(PMessage<?> message, TProtocol protocol)
-            throws TException, PSerializeException {
-        PStructDescriptor<?,?> type = message.descriptor();
+    protected void write(PMessage<?> message, TProtocol protocol) throws TException, PSerializeException {
+        PStructDescriptor<?, ?> type = message.descriptor();
 
-        protocol.writeStructBegin(new TStruct(message.descriptor().getQualifiedName(null)));
+        protocol.writeStructBegin(new TStruct(message.descriptor()
+                                                     .getQualifiedName(null)));
 
         for (PField<?> field : type.getFields()) {
-            if (!message.has(field.getKey())) continue;
+            if (!message.has(field.getKey())) {
+                continue;
+            }
 
-            protocol.writeFieldBegin(new TField(
-                    field.getName(), getFieldType(field.getDescriptor()), (short) field.getKey()));
+            protocol.writeFieldBegin(new TField(field.getName(),
+                                                getFieldType(field.getDescriptor()),
+                                                (short) field.getKey()));
 
             writeTypedValue(message.get(field.getKey()), field.getDescriptor(), protocol);
 
@@ -177,11 +177,12 @@ class TProtocolSerializer extends PSerializer {
         protocol.writeStructEnd();
     }
 
-    protected <T extends PMessage<T>> T readMessage(TProtocol protocol, PStructDescriptor<T,?> descriptor)
+    protected <T extends PMessage<T>> T readMessage(TProtocol protocol, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, TException {
         TField f;
 
-        PMessageBuilder<T> builder = descriptor.factory().builder();
+        PMessageBuilder<T> builder = descriptor.factory()
+                                               .builder();
         protocol.readStructBegin();  // ignored.
         while ((f = protocol.readFieldBegin()) != null) {
             if (f.type == PType.STOP.id) {
@@ -205,7 +206,8 @@ class TProtocolSerializer extends PSerializer {
             if (f.type != getFieldType(field.getDescriptor())) {
                 throw new PSerializeException("Incompatible serialized type " + PType.findById(f.type) +
                                               " for field " + field.getName() +
-                                              ", expected " + field.getDescriptor().getType());
+                                              ", expected " + field.getDescriptor()
+                                                                   .getType());
             }
 
             Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
@@ -225,7 +227,8 @@ class TProtocolSerializer extends PSerializer {
         return builder.build();
     }
 
-    protected <T> T readTypedValue(byte tType, PDescriptor<T> type, TProtocol protocol) throws TException, PSerializeException {
+    protected <T> T readTypedValue(byte tType, PDescriptor<T> type, TProtocol protocol)
+            throws TException, PSerializeException {
         switch (tType) {
             case TType.BOOL:
                 return cast(protocol.readBool());
@@ -236,7 +239,8 @@ class TProtocolSerializer extends PSerializer {
             case TType.I32:
                 if (PType.ENUM == type.getType()) {
                     PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
-                    PEnumBuilder<?> eb = et.factory().builder();
+                    PEnumBuilder<?> eb = et.factory()
+                                           .builder();
                     int value = protocol.readI32();
                     eb.setByValue(value);
                     if (!eb.isValid()) {
@@ -258,7 +262,7 @@ class TProtocolSerializer extends PSerializer {
                 }
                 return cast(protocol.readString());
             case TType.STRUCT:
-                return cast((Object) readMessage(protocol, (PStructDescriptor<?,?>) type));
+                return cast((Object) readMessage(protocol, (PStructDescriptor<?, ?>) type));
             case TType.LIST:
                 TList listInfo = protocol.readListBegin();
                 PList<?> lDesc = (PList<?>) type;
@@ -285,11 +289,11 @@ class TProtocolSerializer extends PSerializer {
                 return cast(set);
             case TType.MAP:
                 TMap mapInfo = protocol.readMapBegin();
-                PMap<?,?> mDesc = (PMap<?,?>) type;
+                PMap<?, ?> mDesc = (PMap<?, ?>) type;
                 PDescriptor mkDesc = mDesc.keyDescriptor();
                 PDescriptor miDesc = mDesc.itemDescriptor();
 
-                Map<Object,Object> map = new LinkedHashMap<>();
+                Map<Object, Object> map = new LinkedHashMap<>();
                 for (int i = 0; i < mapInfo.size; ++i) {
                     Object key = readTypedValue(mapInfo.keyType, mkDesc, protocol);
                     Object val = readTypedValue(mapInfo.valueType, miDesc, protocol);
@@ -375,7 +379,9 @@ class TProtocolSerializer extends PSerializer {
     }
 
     protected byte getFieldType(PDescriptor type) throws PSerializeException {
-        if (type == null) throw new PSerializeException("No type!");
+        if (type == null) {
+            throw new PSerializeException("No type!");
+        }
         return type.getType().id;
     }
 }

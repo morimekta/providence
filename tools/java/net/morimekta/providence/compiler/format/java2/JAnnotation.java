@@ -36,28 +36,29 @@ public class JAnnotation {
     private static final Pattern COMPACT_RE    = Pattern.compile("[@][Cc]ompact\\b", Pattern.MULTILINE);
 
     public static boolean isDeprecated(PField<?> field) {
-        return field.getComment() != null &&
-               DEPRECATED_RE.matcher(field.getComment()).find();
+        return field.getComment() != null && DEPRECATED_RE.matcher(field.getComment())
+                                                          .find();
     }
 
     public static boolean isDeprecated(JField field) {
-        return field.hasComment() &&
-               DEPRECATED_RE.matcher(field.comment()).find();
+        return field.hasComment() && DEPRECATED_RE.matcher(field.comment())
+                                                  .find();
     }
 
     public static boolean isDeprecated(PDeclaredDescriptor<?> type) {
-        return type.getComment() != null &&
-               DEPRECATED_RE.matcher(type.getComment()).find();
+        return type.getComment() != null && DEPRECATED_RE.matcher(type.getComment())
+                                                         .find();
     }
 
     public static boolean isDeprecated(PEnumValue<?> value) {
-        return value.getComment() != null &&
-               DEPRECATED_RE.matcher(value.getComment()).find();
+        return value.getComment() != null && DEPRECATED_RE.matcher(value.getComment())
+                                                          .find();
     }
 
     public static boolean isCompact(PDeclaredDescriptor<?> type) {
         return type instanceof PStructDescriptor &&
                type.getComment() != null &&
-               COMPACT_RE.matcher(type.getComment()).find();
+               COMPACT_RE.matcher(type.getComment())
+                         .find();
     }
 }

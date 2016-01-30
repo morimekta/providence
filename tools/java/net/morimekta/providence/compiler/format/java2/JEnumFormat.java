@@ -75,7 +75,11 @@ public class JEnumFormat {
                     writer.appendln(JAnnotation.DEPRECATED);
                 }
             } */
-            writer.formatln("%s(%d, \"%s\"),", v.getName().toUpperCase(), v.getValue(), v.getName());
+            writer.formatln("%s(%d, \"%s\"),",
+                            v.getName()
+                             .toUpperCase(),
+                            v.getValue(),
+                            v.getName());
         }
         writer.appendln(';')
               .newline();
@@ -125,7 +129,10 @@ public class JEnumFormat {
               .begin();
         for (PEnumValue<?> value : type.getValues()) {
             writer.formatln("case %d: return %s.%s;",
-                            value.getValue(), simpleClass, value.getName().toUpperCase());
+                            value.getValue(),
+                            simpleClass,
+                            value.getName()
+                                 .toUpperCase());
         }
         writer.appendln("default: return null;")
               .end()
@@ -143,7 +150,10 @@ public class JEnumFormat {
               .begin();
         for (PEnumValue<?> value : type.getValues()) {
             writer.formatln("case \"%s\": return %s.%s;",
-                            value.getName(), simpleClass, value.getName().toUpperCase());
+                            value.getName(),
+                            simpleClass,
+                            value.getName()
+                                 .toUpperCase());
         }
         writer.appendln("default: return null;")
               .end()
@@ -201,7 +211,9 @@ public class JEnumFormat {
               .appendln("public _Descriptor() {")
               .begin()
               .formatln("super(null, \"%s\", \"%s\", new _Factory());",
-                        type.getPackageName(), type.getName(), simpleClass)
+                        type.getPackageName(),
+                        type.getName(),
+                        simpleClass)
               .end()
               .appendln('}')
               .newline()

@@ -19,31 +19,29 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PDescriptor;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PDescriptor;
-
 /**
  * Thrift serializers are stateless injectable implementation classes that
  * transforms messages to binary stream (serializes), or binary stream to
- * messages (deserializes). Since the serializer is state-less it should also be
- * inherently thread safe (including not needing any synchronized methods.
+ * messages (deserializes). Since the serializer is state-less it should also
+ * be inherently thread safe (including not needing any synchronized methods.
  *
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public abstract class PSerializer {
-    public abstract int serialize(OutputStream output, PMessage<?> message)
-            throws IOException, PSerializeException;
+    public abstract int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException;
 
     public abstract <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
             throws IOException, PSerializeException;
 
-    public abstract <T> T deserialize(InputStream input,
-                                      PDescriptor<T> descriptor)
+    public abstract <T> T deserialize(InputStream input, PDescriptor<T> descriptor)
             throws IOException, PSerializeException;
 
     @SuppressWarnings("unchecked")

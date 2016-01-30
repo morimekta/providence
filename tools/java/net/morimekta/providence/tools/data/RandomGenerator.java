@@ -20,6 +20,7 @@ public class RandomGenerator {
 
     /**
      * Generate a random string containing UTC characters.
+     *
      * @param size Number of characters in the string.
      * @return The random string.
      */
@@ -40,8 +41,8 @@ public class RandomGenerator {
                     out[i] = (char) c;
                 } else {
                     c = random.nextInt(1 << 16);
-                    if(c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448) ||
-                            !Character.isValidCodePoint(c)) {
+                    if (c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448) ||
+                        !Character.isValidCodePoint(c)) {
                         out[i] = '?';
                     } else {
                         out[i] = (char) c;
@@ -54,6 +55,7 @@ public class RandomGenerator {
 
     /**
      * Generate a random name-like string.
+     *
      * @param size Number of characters in the string.
      * @return The random string.
      */

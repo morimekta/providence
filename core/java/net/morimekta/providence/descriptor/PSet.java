@@ -19,16 +19,15 @@
 
 package net.morimekta.providence.descriptor;
 
-import java.util.Set;
-
 import net.morimekta.providence.PType;
+
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class PSet<I>
-        extends PContainer<I, Set<I>> {
+public class PSet<I> extends PContainer<I, Set<I>> {
     public PSet(PDescriptorProvider<I> itemType) {
         super(itemType);
     }
@@ -54,13 +53,13 @@ public class PSet<I>
             return false;
         }
         PSet<?> other = (PSet<?>) o;
-        return other.itemDescriptor().equals(itemDescriptor());
+        return other.itemDescriptor()
+                    .equals(itemDescriptor());
     }
 
     @Override
     public int hashCode() {
-        return PSet.class.hashCode() +
-               itemDescriptor().hashCode();
+        return PSet.class.hashCode() + itemDescriptor().hashCode();
     }
 
     public static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemType) {

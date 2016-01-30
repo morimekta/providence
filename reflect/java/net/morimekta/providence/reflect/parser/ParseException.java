@@ -19,10 +19,10 @@
 
 package net.morimekta.providence.reflect.parser;
 
-import java.io.IOException;
-
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
+
+import java.io.IOException;
 
 /**
  * @author Stein Eldar Johnsen
@@ -86,8 +86,7 @@ public class ParseException extends Exception {
                                  getPos(),
                                  getLine());
         } else {
-            return String.format("ParseException(%s)",
-                                 getLocalizedMessage());
+            return String.format("ParseException(%s)", getLocalizedMessage());
         }
     }
 }

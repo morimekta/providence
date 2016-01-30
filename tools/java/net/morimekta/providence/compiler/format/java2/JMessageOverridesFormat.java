@@ -44,7 +44,8 @@ public class JMessageOverridesFormat {
               .appendln("public boolean isCompact() {")
               .begin();
 
-        if (message.descriptor().isCompactible()) {
+        if (message.descriptor()
+                   .isCompactible()) {
             writer.appendln("boolean missing = false;");
 
             boolean hasCheck = false;
@@ -93,8 +94,7 @@ public class JMessageOverridesFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            writer.formatln("case %d: return %s();",
-                            field.id(), field.getter());
+            writer.formatln("case %d: return %s();", field.id(), field.getter());
         }
 
         writer.appendln("default: return null;")
@@ -114,14 +114,11 @@ public class JMessageOverridesFormat {
 
         for (JField field : message.fields()) {
             if (field.container()) {
-                writer.formatln("case %d: return %s() > 0;",
-                                field.id(), field.counter());
+                writer.formatln("case %d: return %s() > 0;", field.id(), field.counter());
             } else if (field.alwaysPresent() && !message.isUnion()) {
-                writer.formatln("case %d: return true;",
-                                field.id());
+                writer.formatln("case %d: return true;", field.id());
             } else {
-                writer.formatln("case %d: return %s();",
-                                field.id(), field.presence());
+                writer.formatln("case %d: return %s();", field.id(), field.presence());
             }
         }
 
@@ -142,13 +139,11 @@ public class JMessageOverridesFormat {
 
         for (JField field : message.fields()) {
             if (field.container()) {
-                writer.formatln("case %d: return %s();",
-                                field.id(), field.counter());
+                writer.formatln("case %d: return %s();", field.id(), field.counter());
             } else if (field.alwaysPresent() && !message.isUnion()) {
                 writer.formatln("case %d: return 1;", field.id());
             } else {
-                writer.formatln("case %d: return %s() ? 1 : 0;",
-                                field.id(), field.presence());
+                writer.formatln("case %d: return %s() ? 1 : 0;", field.id(), field.presence());
             }
         }
 
@@ -165,7 +160,8 @@ public class JMessageOverridesFormat {
               .appendln("public boolean equals(Object o) {")
               .begin()
               .formatln("if (o == null || !(o instanceof %s)) return false;", message.instanceType());
-        if (message.fields().size() > 0) {
+        if (message.fields()
+                   .size() > 0) {
             boolean first = true;
             writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
                   .appendln("return ");
@@ -174,9 +170,9 @@ public class JMessageOverridesFormat {
                 first = false;
             }
             for (JField field : message.fields()) {
-                if (first)
+                if (first) {
                     first = false;
-                else {
+                } else {
                     writer.append(" &&")
                           .appendln("       ");
                 }
@@ -227,7 +223,9 @@ public class JMessageOverridesFormat {
         writer.appendln("@Override")
               .appendln("public String toString() {")
               .begin()
-              .formatln("return \"%s\" + asString();", message.descriptor().getQualifiedName(null))
+              .formatln("return \"%s\" + asString();",
+                        message.descriptor()
+                               .getQualifiedName(null))
               .end()
               .appendln('}')
               .newline();
@@ -404,13 +402,17 @@ public class JMessageOverridesFormat {
                         writer.formatln("return %s.compareTo(other.%s);", field.member(), field.member());
                         break;
                     case ENUM:
-                        writer.formatln("return Integer.compare(%s.getValue(), other.%s.getValue());", field.member(), field.member());
+                        writer.formatln("return Integer.compare(%s.getValue(), other.%s.getValue());",
+                                        field.member(),
+                                        field.member());
                         break;
                     case SET:
                     case LIST:
                     case MAP:
                         // containers aren't really comparable, just make some consistent comparison.
-                        writer.formatln("return Integer.compare(%s.hashCode(), other.%s.hashCode());", field.member(), field.member());
+                        writer.formatln("return Integer.compare(%s.hashCode(), other.%s.hashCode());",
+                                        field.member(),
+                                        field.member());
                         break;
                 }
 
@@ -426,7 +428,9 @@ public class JMessageOverridesFormat {
                 writer.newline();
 
                 if (!field.alwaysPresent()) {
-                    writer.formatln("c = Boolean.compare(%s != null, other.%s != null);", field.member(), field.member())
+                    writer.formatln("c = Boolean.compare(%s != null, other.%s != null);",
+                                    field.member(),
+                                    field.member())
                           .appendln("if (c != 0) return c;")
                           .formatln("if (%s != null) {", field.member())
                           .begin();
@@ -456,12 +460,16 @@ public class JMessageOverridesFormat {
                         writer.formatln("c = %s.compareTo(other.%s);", field.member(), field.member());
                         break;
                     case ENUM:
-                        writer.formatln("c = Integer.compare(%s.getValue(), %s.getValue());", field.member(), field.member());
+                        writer.formatln("c = Integer.compare(%s.getValue(), %s.getValue());",
+                                        field.member(),
+                                        field.member());
                         break;
                     case SET:
                     case LIST:
                     case MAP:
-                        writer.formatln("c = Integer.compare(%s.hashCode(), other.%s.hashCode());", field.member(), field.member());
+                        writer.formatln("c = Integer.compare(%s.hashCode(), other.%s.hashCode());",
+                                        field.member(),
+                                        field.member());
                         break;
                 }
                 writer.appendln("if (c != 0) return c;");

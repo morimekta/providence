@@ -19,24 +19,23 @@
 
 package net.morimekta.providence.mio;
 
-import java.io.File;
-import java.io.IOException;
-
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.mio.utils.Sequence;
 import net.morimekta.providence.serializer.PSerializer;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * An output stream that counts the number of bytes written.
  */
-public class PSequenceMessageWriter<M extends PMessage<M>>
-        implements PMessageWriter<M> {
+public class PSequenceMessageWriter<M extends PMessage<M>> implements PMessageWriter<M> {
     private static final int DEFAULT_CUTOFF_SIZE = 1_000_000_000;  // <1 gigabyte.
 
     private final PSerializer mSerializer;
     private final int         mFileCutoffSize;
 
-    private Sequence mSequence;
+    private Sequence          mSequence;
     private File              mCurrent;
     private PMessageWriter<M> mWriter;
     private int               mCurrentSize;

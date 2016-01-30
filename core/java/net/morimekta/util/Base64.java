@@ -28,7 +28,7 @@ public class Base64 {
     public static String encode(byte[] bytes) {
         return DatatypeConverter.printBase64Binary(bytes);
     }
-    
+
     public static byte[] decode(String str) {
         return DatatypeConverter.parseBase64Binary(str);
     }

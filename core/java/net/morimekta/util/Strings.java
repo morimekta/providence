@@ -38,15 +38,18 @@ public class Strings {
      * Join set of strings with delimiter.
      *
      * @param delimiter The delimiter.
-     * @param strings The strings to join.
+     * @param strings   The strings to join.
      * @return The joined string.
      */
     public static String join(String delimiter, String... strings) {
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (String string : strings) {
-            if (first) first = false;
-            else builder.append(delimiter);
+            if (first) {
+                first = false;
+            } else {
+                builder.append(delimiter);
+            }
             builder.append(string);
         }
         return builder.toString();
@@ -56,15 +59,18 @@ public class Strings {
      * Join array with delimiter.
      *
      * @param delimiter The delimiter.
-     * @param chars The char array to join.
+     * @param chars     The char array to join.
      * @return The joined string.
      */
     public static String join(String delimiter, char... chars) {
         StringBuilder builder = new StringBuilder(chars.length + (delimiter.length() * chars.length));
         boolean first = true;
         for (char string : chars) {
-            if (first) first = false;
-            else builder.append(delimiter);
+            if (first) {
+                first = false;
+            } else {
+                builder.append(delimiter);
+            }
             builder.append(string);
         }
         return builder.toString();
@@ -74,15 +80,18 @@ public class Strings {
      * Join collection with delimiter.
      *
      * @param delimiter The delimiter.
-     * @param strings The string collection to join.
+     * @param strings   The string collection to join.
      * @return The joined string.
      */
     public static String join(String delimiter, Collection<String> strings) {
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (String string : strings) {
-            if (first) first = false;
-            else builder.append(delimiter);
+            if (first) {
+                first = false;
+            } else {
+                builder.append(delimiter);
+            }
             builder.append(string);
         }
         return builder.toString();
@@ -95,7 +104,8 @@ public class Strings {
      * @return True if key is an integer.
      */
     public static boolean isInteger(String key) {
-        return INT.matcher(key).matches();
+        return INT.matcher(key)
+                  .matches();
     }
 
     /**
@@ -103,7 +113,6 @@ public class Strings {
      *
      * @param is The input stream to read.
      * @return The resulting string.
-     * @throws IOException
      */
     public static String readString(InputStream is) throws IOException {
         return readString(new Utf8StreamReader(is), '\0');
@@ -112,10 +121,9 @@ public class Strings {
     /**
      * Read next string from input stream.
      *
-     * @param is The input stream to read.
+     * @param is   The input stream to read.
      * @param term Terminator character.
      * @return The string up until, but not including the terminator.
-     * @throws IOException
      */
     public static String readString(InputStream is, String term) throws IOException {
         return readString(new Utf8StreamReader(is), term);
@@ -127,7 +135,6 @@ public class Strings {
      *
      * @param is The input stream to read.
      * @return The string up until, but not including the terminator.
-     * @throws IOException
      */
     public static String readString(Reader is) throws IOException {
         return readString(is, '\0');
@@ -136,10 +143,9 @@ public class Strings {
     /**
      * Read next string from input stream.
      *
-     * @param is The reader to read characters from.
+     * @param is   The reader to read characters from.
      * @param term Terminator character.
      * @return The string up until, but not including the terminator.
-     * @throws IOException
      */
     public static String readString(Reader is, char term) throws IOException {
         CharArrayWriter baos = new CharArrayWriter();
@@ -147,7 +153,9 @@ public class Strings {
         int ch_int;
         while ((ch_int = is.read()) >= 0) {
             final char ch = (char) ch_int;
-            if (ch == term) break;
+            if (ch == term) {
+                break;
+            }
             baos.write(ch);
         }
 
@@ -157,10 +165,9 @@ public class Strings {
     /**
      * Read next string from input stream.
      *
-     * @param is The reader to read characters from.
+     * @param is   The reader to read characters from.
      * @param term Terminator character.
      * @return The string up until, but not including the terminator.
-     * @throws IOException
      */
     public static String readString(Reader is, String term) throws IOException {
         CharArrayWriter baos = new CharArrayWriter();
@@ -172,7 +179,8 @@ public class Strings {
             baos.write(ch);
             if (ch == last && baos.size() >= term.length()) {
                 String tmp = baos.toString();
-                if (tmp.substring(tmp.length() - term.length()).equals(term)) {
+                if (tmp.substring(tmp.length() - term.length())
+                       .equals(term)) {
                     return tmp.substring(0, tmp.length() - term.length());
                 }
             }
@@ -184,7 +192,7 @@ public class Strings {
     /**
      * Multiply a string N times.
      *
-     * @param s The string to multiply.
+     * @param s   The string to multiply.
      * @param num N
      * @return The result.
      */
@@ -201,7 +209,7 @@ public class Strings {
      * tha name is split on '_' chars, and joined with each part capitalized.
      *
      * @param prefix The prefix.
-     * @param name The name to camel-case.
+     * @param name   The name to camel-case.
      * @return theCamelCasedName
      */
     public static String camelCase(String prefix, String name) {
@@ -210,19 +218,21 @@ public class Strings {
 
         String[] parts = name.split("[-._]");
         for (String part : parts) {
-            if (part.isEmpty()) continue;
+            if (part.isEmpty()) {
+                continue;
+            }
             builder.append(capitalize(part));
         }
         return builder.toString();
     }
 
     /**
-     * Format a prefixed name as c_case. The prefix is kept verbatim, while
-     * the name has a '_' character inserted before each upper-case letter,
-     * not including the first character. Then the whole thing is lower-cased.
+     * Format a prefixed name as c_case. The prefix is kept verbatim, while the
+     * name has a '_' character inserted before each upper-case letter, not
+     * including the first character. Then the whole thing is lower-cased.
      *
      * @param prefix The prefix.
-     * @param name The name to c-case.
+     * @param name   The name to c-case.
      * @param suffix The suffix.
      * @return the_c_cased_name
      */
@@ -253,14 +263,14 @@ public class Strings {
     }
 
     /**
-     * Format a prefixed name as c_case. The prefix is kept verbatim, while
-     * the name has a '_' character inserted before each upper-case letter,
-     * not including the first character. Then the whole thing is lower-cased.
-     *
+     * Format a prefixed name as c_case. The prefix is kept verbatim, while the
+     * name has a '_' character inserted before each upper-case letter, not
+     * including the first character. Then the whole thing is lower-cased.
+     * <p/>
      * Note that this will mangle upper-case abbreviations.
      *
      * @param prefix The prefix.
-     * @param name The name to c-case.
+     * @param name   The name to c-case.
      * @return the_c_cased_name
      */
     public static String c_case(String prefix, String name) {
@@ -268,6 +278,7 @@ public class Strings {
     }
 
     public static String capitalize(String string) {
-        return string.substring(0, 1).toUpperCase() + string.substring(1);
+        return string.substring(0, 1)
+                     .toUpperCase() + string.substring(1);
     }
 }

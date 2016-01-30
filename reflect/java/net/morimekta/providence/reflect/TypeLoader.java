@@ -26,8 +26,16 @@ import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.util.DocumentConverter;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * @author Stein Eldar Johnsen
@@ -36,52 +44,44 @@ import java.util.*;
 public class TypeLoader {
     private final TypeRegistry mRegistry;
 
-    private final DocumentConverter mConverter;
-    private final Parser mParser;
+    private final DocumentConverter           mConverter;
+    private final Parser                      mParser;
     private final Map<String, ThriftDocument> mLoadedDocuments;
     private final Collection<File>            mIncludes;
 
     /**
      * Construct a type loader for file types matches with the given parser.
      *
-     * @param includes List of files with include path roots. For includes search these in order.
+     * @param includes List of files with include path roots. For includes
+     *                 search these in order.
      * @param parser   The thrift file parser.
      */
-    public TypeLoader(Collection<File> includes,
-                      Parser parser) {
-        this(includes,
-             parser,
-             new TypeRegistry());
+    public TypeLoader(Collection<File> includes, Parser parser) {
+        this(includes, parser, new TypeRegistry());
     }
 
     /**
      * Intermediate constructor.
      *
-     * @param includes List of files with include path roots. For includes search these in order.
+     * @param includes List of files with include path roots. For includes
+     *                 search these in order.
      * @param parser   The thrift file parser.
      * @param registry Type registry to keep parsed types in.
      */
-    private TypeLoader(Collection<File> includes,
-                       Parser parser,
-                       TypeRegistry registry) {
-        this(includes,
-             parser,
-             registry,
-             new DocumentConverter(registry));
+    private TypeLoader(Collection<File> includes, Parser parser, TypeRegistry registry) {
+        this(includes, parser, registry, new DocumentConverter(registry));
     }
 
     /**
      * Constructor with injected functionality.
      *
-     * @param includes  List of files with include path roots. For includes search these in order.
+     * @param includes  List of files with include path roots. For includes
+     *                  search these in order.
      * @param parser    The thrift file parser.
      * @param registry  The type registry.
      * @param converter The document converter
      */
-    protected TypeLoader(Collection<File> includes,
-                         Parser parser,
-                         TypeRegistry registry,
-                         DocumentConverter converter) {
+    protected TypeLoader(Collection<File> includes, Parser parser, TypeRegistry registry, DocumentConverter converter) {
         mIncludes = includes;
         mParser = parser;
         mRegistry = registry;
@@ -99,9 +99,6 @@ public class TypeLoader {
 
     /**
      * Load a thrift definition from file including all it's dependencies.
-     *
-     * @param file
-     * @throws IOException
      */
     public CDocument load(File file) throws IOException, ParseException {
         file = file.getCanonicalFile();
@@ -109,8 +106,8 @@ public class TypeLoader {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
         }
         if (file.isDirectory()) {
-            throw new IllegalArgumentException("Unable to load thrift definition from directory: " +
-                                               file.getCanonicalPath());
+            throw new IllegalArgumentException(
+                    "Unable to load thrift definition from directory: " + file.getCanonicalPath());
         }
 
         CDocument cdoc = mRegistry.getDocument(file.getCanonicalPath());

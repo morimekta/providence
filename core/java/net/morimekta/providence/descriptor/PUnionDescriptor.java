@@ -19,15 +19,14 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 
 /**
  * The definition of a thrift union.
  */
-public abstract class PUnionDescriptor<T extends PMessage<T>, F extends PField>
-        extends PStructDescriptor<T, F> {
+public abstract class PUnionDescriptor<T extends PMessage<T>, F extends PField> extends PStructDescriptor<T, F> {
     public PUnionDescriptor(String comment,
                             String packageName,
                             String name,

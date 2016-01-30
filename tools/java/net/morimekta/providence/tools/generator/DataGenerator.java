@@ -1,14 +1,14 @@
 package net.morimekta.providence.tools.generator;
 
-import net.morimekta.providence.tools.data.RandomGenerator;
-import net.morimekta.providence.tools.data.MessageGenerator;
+import net.morimekta.console.FormatString;
 import net.morimekta.providence.serializer.PBinarySerializer;
 import net.morimekta.providence.serializer.PJsonSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.tools.data.MessageGenerator;
+import net.morimekta.providence.tools.data.RandomGenerator;
 import net.morimekta.test.providence.Containers;
-import net.morimekta.console.FormatString;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -45,8 +45,7 @@ public class DataGenerator {
         json_pretty("json"),
         json("json"),
         binary("bin"),
-        binary_protocol("bin"),
-        ;
+        binary_protocol("bin"),;
 
         String suffix;
 
@@ -55,9 +54,9 @@ public class DataGenerator {
         }
     }
 
-    private final Options opts;
+    private final Options       opts;
     private final CmdLineParser parser;
-    private final Random rand;
+    private final Random        rand;
 
     public DataGenerator(Options opts, CmdLineParser parser) {
         this.opts = opts;
@@ -103,7 +102,10 @@ public class DataGenerator {
                     serializer = new PJsonSerializer(PJsonSerializer.IdType.ID);
                     break;
                 case json_pretty:
-                    serializer = new PJsonSerializer(false, PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME, true);
+                    serializer = new PJsonSerializer(false,
+                                                     PJsonSerializer.IdType.NAME,
+                                                     PJsonSerializer.IdType.NAME,
+                                                     true);
                     break;
                 case binary_protocol:
                     serializer = new TBinaryProtocolSerializer();
@@ -129,8 +131,11 @@ public class DataGenerator {
 
             long timeMs = (end - start) / 1000000;
 
-            System.out.format(Locale.ENGLISH, "%20s:  %,7d kB in%6.2fs\n",
-                              f.name(), size / 1024, (double) timeMs / 1000);
+            System.out.format(Locale.ENGLISH,
+                              "%20s:  %,7d kB in%6.2fs\n",
+                              f.name(),
+                              size / 1024,
+                              (double) timeMs / 1000);
         }
     }
 
@@ -142,7 +147,7 @@ public class DataGenerator {
             parser.parseArgument(args);
             DataGenerator cmd = new DataGenerator(opts, parser);
             cmd.run();
-        } catch (PSerializeException |IOException|CmdLineException e) {
+        } catch (PSerializeException | IOException | CmdLineException e) {
             System.out.flush();
             System.err.println();
             e.printStackTrace();

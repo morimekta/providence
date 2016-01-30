@@ -19,6 +19,10 @@
 
 package net.morimekta.providence.mio;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,36 +30,15 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.providence.serializer.PSerializeException;
-
 /**
  * Write messages to a file in the format:
  * <p/>
- * [file-magic-start]
- * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
+ * [file-magic-start] ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
  */
-public class PRecordMessageWriter<M extends PMessage<M>>
-        implements PMessageWriter<M> {
-    protected static final byte[] kMagicFileStart    = new byte[] {
-            (byte) 0x74,
-            (byte) 0x21,
-            (byte) 0xF7,
-            (byte) 0x12
-    };
-    protected static final byte[] kMagicMessageStart = new byte[] {
-            (byte) 0x9A,
-            (byte) 0x33,
-            (byte) 0xA1,
-            (byte) 0x70
-    };
-    protected static final byte[] kMagicMessageEnd   = new byte[] {
-            (byte) 0x02,
-            (byte) 0x9A,
-            (byte) 0x51,
-            (byte) 0x5D
-    };
+public class PRecordMessageWriter<M extends PMessage<M>> implements PMessageWriter<M> {
+    protected static final byte[] kMagicFileStart    = new byte[]{(byte) 0x74, (byte) 0x21, (byte) 0xF7, (byte) 0x12};
+    protected static final byte[] kMagicMessageStart = new byte[]{(byte) 0x9A, (byte) 0x33, (byte) 0xA1, (byte) 0x70};
+    protected static final byte[] kMagicMessageEnd   = new byte[]{(byte) 0x02, (byte) 0x9A, (byte) 0x51, (byte) 0x5D};
 
     private final PSerializer mSerializer;
 
@@ -85,15 +68,16 @@ public class PRecordMessageWriter<M extends PMessage<M>>
                 }
                 mOutputStream.write(kMagicMessageStart);
                 written += kMagicMessageStart.length;
-                DigestOutputStream digestOutputStream = new DigestOutputStream(
-                        mOutputStream, MessageDigest.getInstance("sha-1"));
+                DigestOutputStream digestOutputStream = new DigestOutputStream(mOutputStream,
+                                                                               MessageDigest.getInstance("sha-1"));
                 written += mSerializer.serialize(digestOutputStream, message);
                 digestOutputStream.flush();
 
                 mOutputStream.write(kMagicMessageEnd);
                 written += kMagicMessageEnd.length;
 
-                byte[] digest = digestOutputStream.getMessageDigest().digest();
+                byte[] digest = digestOutputStream.getMessageDigest()
+                                                  .digest();
                 mOutputStream.write(digest);
                 written += digest.length;
 

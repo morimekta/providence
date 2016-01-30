@@ -36,8 +36,7 @@ import java.util.TreeMap;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnion
-        extends CMessage<CUnion> {
+public class CUnion extends CMessage<CUnion> {
     private final CUnionDescriptor mType;
 
     protected CUnion(Builder builder) {
@@ -55,9 +54,8 @@ public class CUnion
         return mType;
     }
 
-    public static class Builder
-            extends PMessageBuilder<CUnion> {
-        private final CUnionDescriptor mType;
+    public static class Builder extends PMessageBuilder<CUnion> {
+        private final CUnionDescriptor     mType;
         private final Map<Integer, Object> mFields;
 
         public Builder(CUnionDescriptor type) {

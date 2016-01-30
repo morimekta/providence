@@ -19,20 +19,19 @@
 
 package net.morimekta.providence.mio;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.providence.serializer.PSerializeException;
-
 /**
  * An output stream that counts the number of bytes written.
  */
-public class PFileMessageWriter<M extends PMessage<M>>
-        implements PMessageWriter<M> {
+public class PFileMessageWriter<M extends PMessage<M>> implements PMessageWriter<M> {
     private final PSerializer mSerializer;
     private final byte[]      mSeparator;
 

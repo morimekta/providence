@@ -34,17 +34,15 @@ import java.util.regex.Pattern;
  * @since 24.09.15
  */
 public class Token {
-    public static final Pattern RE_IDENTIFIER = Pattern.compile(
-            "[_a-zA-Z][_a-zA-Z0-9]*");
+    public static final Pattern RE_IDENTIFIER           = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
     public static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
             "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
-    public static final Pattern RE_INTEGER = Pattern.compile(
-            "-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+    public static final Pattern RE_INTEGER              = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
 
     private final String mToken;
-    private final int mLine;
-    private final int mPos;
-    private final int mLen;
+    private final int    mLine;
+    private final int    mPos;
+    private final int    mLen;
 
     public boolean startsLineComment() {
         return mToken.equals(Character.toString((char) Symbol.SHELL_COMMENT.c)) ||
@@ -89,17 +87,24 @@ public class Token {
     }
 
     public boolean isIdentifier() {
-        if (!RE_IDENTIFIER.matcher(mToken).matches()) return false;
+        if (!RE_IDENTIFIER.matcher(mToken)
+                          .matches()) {
+            return false;
+        }
         return true;
     }
 
     public boolean isQualifiedIdentifier() {
-        if (!RE_QUALIFIED_IDENTIFIER.matcher(mToken).matches()) return false;
+        if (!RE_QUALIFIED_IDENTIFIER.matcher(mToken)
+                                    .matches()) {
+            return false;
+        }
         return true;
     }
 
     public boolean isInteger() {
-        return RE_INTEGER.matcher(mToken).matches();
+        return RE_INTEGER.matcher(mToken)
+                         .matches();
     }
 
     public Symbol getSymbol() {
@@ -130,7 +135,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return String.format("Token('%s',%d:%d-%d)",
-                             mToken, mLine, mPos, mLen);
+        return String.format("Token('%s',%d:%d-%d)", mToken, mLine, mPos, mLen);
     }
 }

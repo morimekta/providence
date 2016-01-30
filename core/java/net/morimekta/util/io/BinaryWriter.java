@@ -57,7 +57,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param integer The number to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeByte(byte integer) throws IOException {
         out.write(integer);
@@ -69,7 +68,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param integer The number to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeShort(short integer) throws IOException {
         out.write(integer);
@@ -82,7 +80,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param integer The number to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeInt(int integer) throws IOException {
         out.write(integer);
@@ -97,7 +94,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param integer The number to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeLong(long integer) throws IOException {
         out.write((int) (integer));
@@ -116,7 +112,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param value The double value to writeBinary.
      * @return The number of bytes written.
-     * @throws IOException
      */
     public int writeDouble(double value) throws IOException {
         return writeLong(Double.doubleToLongBits(value));
@@ -127,7 +122,6 @@ public class BinaryWriter extends OutputStream {
      *
      * @param value Binary to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeBinary(Binary value) throws IOException {
         return value.write(out);
@@ -136,7 +130,6 @@ public class BinaryWriter extends OutputStream {
     /**
      * @param number Unsigned byte to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeUInt8(int number) throws IOException {
         out.write(number);
@@ -146,7 +139,6 @@ public class BinaryWriter extends OutputStream {
     /**
      * @param number Unsigned short to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeUInt16(int number) throws IOException {
         out.write(number);
@@ -157,7 +149,6 @@ public class BinaryWriter extends OutputStream {
     /**
      * @param number Unsigned short to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeUInt24(int number) throws IOException {
         out.write(number);
@@ -169,7 +160,6 @@ public class BinaryWriter extends OutputStream {
     /**
      * @param number Unsigned short to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeUInt32(int number) throws IOException {
         out.write(number);
@@ -181,48 +171,57 @@ public class BinaryWriter extends OutputStream {
 
     /**
      * @param number Unsigned integer to writeBinary.
-     * @param bytes Number of bytes to writeBinary.
+     * @param bytes  Number of bytes to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeUnsigned(int number, int bytes) throws IOException {
         switch (bytes) {
-            case 4: return writeUInt32(number);
-            case 3: return writeUInt24(number);
-            case 2: return writeUInt16(number);
-            case 1: return writeUInt8(number);
+            case 4:
+                return writeUInt32(number);
+            case 3:
+                return writeUInt24(number);
+            case 2:
+                return writeUInt16(number);
+            case 1:
+                return writeUInt8(number);
         }
         throw new IOException();
     }
 
     /**
      * @param number Signed integer to writeBinary.
-     * @param bytes Number of bytes to writeBinary.
+     * @param bytes  Number of bytes to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeSigned(int number, int bytes) throws IOException {
         switch (bytes) {
-            case 8: return writeLong(number);
-            case 4: return writeInt(number);
-            case 2: return writeShort((short) number);
-            case 1: return writeByte((byte) number);
+            case 8:
+                return writeLong(number);
+            case 4:
+                return writeInt(number);
+            case 2:
+                return writeShort((short) number);
+            case 1:
+                return writeByte((byte) number);
         }
         throw new IOException();
     }
 
     /**
      * @param number Signed integer to writeBinary.
-     * @param bytes Number of bytes to writeBinary.
+     * @param bytes  Number of bytes to writeBinary.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int writeSigned(long number, int bytes) throws IOException {
         switch (bytes) {
-            case 8: return writeLong(number);
-            case 4: return writeInt((int) number);
-            case 2: return writeShort((short) number);
-            case 1: return writeByte((byte) number);
+            case 8:
+                return writeLong(number);
+            case 4:
+                return writeInt((int) number);
+            case 2:
+                return writeShort((short) number);
+            case 1:
+                return writeByte((byte) number);
         }
         throw new IOException();
     }
@@ -230,8 +229,8 @@ public class BinaryWriter extends OutputStream {
     /**
      * Write a long number as zigzag encoded to the stream. The least
      * significant bit becomes the sign, and the actual value is mad absolute
-     * and shifted one bit. This makes it maximum compressed both when
-     * positive and negative.
+     * and shifted one bit. This makes it maximum compressed both when positive
+     * and negative.
      *
      * @param number The number to writeBinary.
      * @return Number of bytes written.
@@ -243,8 +242,8 @@ public class BinaryWriter extends OutputStream {
     /**
      * Write a long number as zigzag encoded to the stream. The least
      * significant bit becomes the sign, and the actual value is mad absolute
-     * and shifted one bit. This makes it maximum compressed both when
-     * positive and negative.
+     * and shifted one bit. This makes it maximum compressed both when positive
+     * and negative.
      *
      * @param number The number to writeBinary.
      * @return Number of bytes written.

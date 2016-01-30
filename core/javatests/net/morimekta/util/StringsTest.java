@@ -47,17 +47,17 @@ public class StringsTest {
 
     @Before
     public void setUp() {
-        mArray = new byte[] { '1', '2', '3' };
-        mArray_withNullbyte = new byte[] { '1', '2', '3', '\0' };
-        mArray_withEscaping = new byte[] { '1', '2', '3', '\t' };
-        mArray_withUtf8 = new byte[] { '1', '2', '3', (byte) 0xc3, (byte) 0xa1 };
+        mArray = new byte[]{'1', '2', '3'};
+        mArray_withNullbyte = new byte[]{'1', '2', '3', '\0'};
+        mArray_withEscaping = new byte[]{'1', '2', '3', '\t'};
+        mArray_withUtf8 = new byte[]{'1', '2', '3', (byte) 0xc3, (byte) 0xa1};
 
         mString = "123";
         mString_withEscaping = "123\t";
         mString_withUtf8 = "123á";
     }
 
-    private String TSU_readString(byte[] bytes) throws IOException{
+    private String TSU_readString(byte[] bytes) throws IOException {
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
         return Strings.readString(is);
     }
@@ -84,10 +84,7 @@ public class StringsTest {
 
     @Test
     public void testReadString_partialRead() throws IOException {
-        byte[] buffer = new byte[]{
-                'a', 'b', 'c', '\0',
-                'x', 'y', 'z'
-        };
+        byte[] buffer = new byte[]{'a', 'b', 'c', '\0', 'x', 'y', 'z'};
         // BufferedInputStream supports marks.
         InputStream is = new ByteArrayInputStream(buffer);
 
@@ -97,10 +94,7 @@ public class StringsTest {
 
     @Test
     public void testReadString_partialReadWithTerminator() throws IOException {
-        byte[] buffer = new byte[]{
-                'a', 'b', 'c', '\r', '\n',
-                'x', 'y', 'z'
-        };
+        byte[] buffer = new byte[]{'a', 'b', 'c', '\r', '\n', 'x', 'y', 'z'};
         // BufferedInputStream supports marks.
         InputStream is = new ByteArrayInputStream(buffer);
 
@@ -110,10 +104,7 @@ public class StringsTest {
 
     @Test
     public void testReadString_partialReader() throws IOException {
-        byte[] buffer = new byte[]{
-                'a', 'b', 'c', '\0',
-                'x', 'y', 'z'
-        };
+        byte[] buffer = new byte[]{'a', 'b', 'c', '\0', 'x', 'y', 'z'};
         // BufferedInputStream supports marks.
         Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
 
@@ -123,10 +114,7 @@ public class StringsTest {
 
     @Test
     public void testReadString_partialReaderWithTerminator() throws IOException {
-        byte[] buffer = new byte[]{
-                'a', 'b', 'c', '\r', '\n',
-                'x', 'y', 'z'
-        };
+        byte[] buffer = new byte[]{'a', 'b', 'c', '\r', '\n', 'x', 'y', 'z'};
         // BufferedInputStream supports marks.
         Reader is = new Utf8StreamReader(new ByteArrayInputStream(buffer));
 

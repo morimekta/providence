@@ -20,13 +20,12 @@
 package net.morimekta.providence.serializer;
 
 /**
- *
  * @author Stein Eldar Johnsen
  * @since 19.09.15
  */
 public class PSerializeException extends Exception {
     private final static long serialVersionUID = 1442914425369642982L;
-    
+
     public PSerializeException(String format, Object... args) {
         super(args.length == 0 ? format : String.format(format, args));
     }

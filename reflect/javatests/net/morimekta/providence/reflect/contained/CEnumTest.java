@@ -19,11 +19,11 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,16 +37,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class CEnumTest {
     private CEnumDescriptor mType;
-    private CEnum mValue3;
-    private CEnum mValue3_other;
-    private CEnum mValue5;
+    private CEnum           mValue3;
+    private CEnum           mValue3_other;
+    private CEnum           mValue5;
 
     @Before
     public void setUp() {
         List<CEnum> values = new LinkedList<>();
-        mType = new CEnumDescriptor("My comment",
-                                     "package",
-                                     "MyEnum");
+        mType = new CEnumDescriptor("My comment", "package", "MyEnum");
 
         values.add(new CEnum(null, 1, "ONE", mType));
         values.add(new CEnum(null, 2, "TWO", mType));
@@ -100,8 +98,10 @@ public class CEnumTest {
     @Test
     public void testBuilder() {
         assertFalse(new CEnum.Builder(mType).isValid());
-        assertTrue(new CEnum.Builder(mType).setByValue(3).isValid());
-        assertFalse(new CEnum.Builder(mType).setByValue(7).isValid());
+        assertTrue(new CEnum.Builder(mType).setByValue(3)
+                                           .isValid());
+        assertFalse(new CEnum.Builder(mType).setByValue(7)
+                                            .isValid());
 
         CEnum.Builder threeBuilder = new CEnum.Builder(mType).setByName("THREE");
         assertTrue(threeBuilder.isValid());

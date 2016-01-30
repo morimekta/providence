@@ -23,17 +23,17 @@ import net.morimekta.providence.PType;
 
 /**
  * Field descriptor. All struct variants contains a set of fields. This
- * interface describes the properties each field has. It is an interface
- * so the fields themselves may be implemented as an enum.
+ * interface describes the properties each field has. It is an interface so the
+ * fields themselves may be implemented as an enum.
  */
 public interface PField<V> {
     /**
-     * The type comment is the last block of comment written before
-     * the type declaration. Comments on the same line, after the
-     * declaration is ignored.
+     * The type comment is the last block of comment written before the type
+     * declaration. Comments on the same line, after the declaration is
+     * ignored.
      *
-     * @return The comment string containing all formatting (not
-     *         including the comment delimiter and the leading space.
+     * @return The comment string containing all formatting (not including the
+     *         comment delimiter and the leading space.
      */
     String getComment();
 

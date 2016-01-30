@@ -1,6 +1,7 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.test.providence.UnionFields;
+
 import org.junit.Test;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
@@ -17,7 +18,9 @@ import static org.junit.Assert.assertTrue;
 public class UnionTest {
     @Test
     public void testUnionFields_bool() {
-        UnionFields bl1 = UnionFields.builder().setBooleanValue(true).build();
+        UnionFields bl1 = UnionFields.builder()
+                                     .setBooleanValue(true)
+                                     .build();
         UnionFields bl2 = UnionFields.withBooleanValue(true);
         UnionFields bl3 = UnionFields.withBooleanValue(false);
 

@@ -56,7 +56,8 @@ public class ThriftParser implements Parser {
     public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
         ThriftDocument._Builder doc = ThriftDocument.builder();
 
-        doc.setPackage(name.replaceAll(".*/", "").replace(".thrift", ""));
+        doc.setPackage(name.replaceAll(".*/", "")
+                           .replace(".thrift", ""));
         List<String> includes = new LinkedList<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
 
@@ -80,14 +81,14 @@ public class ThriftParser implements Parser {
 
             Keyword keyword = Keyword.getByToken(token.getToken());
             if (keyword == null) {
-                throw new ParseException("Unexpected token \"" + token.getToken() + "\"",
-                                          tokenizer, token);
+                throw new ParseException("Unexpected token \"" + token.getToken() + "\"", tokenizer, token);
             }
             switch (keyword) {
                 case NAMESPACE:
                     if (hasDeclaration) {
                         throw new ParseException("Unexpected token 'namespace', expected type declaration",
-                                                  tokenizer, token);
+                                                 tokenizer,
+                                                 token);
                     }
                     if (comment != null && !hasHeader) {
                         doc.setComment(comment);
@@ -99,7 +100,8 @@ public class ThriftParser implements Parser {
                 case INCLUDE:
                     if (hasDeclaration) {
                         throw new ParseException("Unexpected token 'include', expected type declaration",
-                                                  tokenizer, token);
+                                                 tokenizer,
+                                                 token);
                     }
                     if (comment != null && !hasHeader) {
                         doc.setComment(comment);
@@ -118,7 +120,9 @@ public class ThriftParser implements Parser {
                     hasHeader = true;
                     hasDeclaration = true;
                     EnumType et = parseEnum(tokenizer, comment);
-                    declarations.add(Declaration.builder().setDeclEnum(et).build());
+                    declarations.add(Declaration.builder()
+                                                .setDeclEnum(et)
+                                                .build());
                     comment = null;
                     break;
                 case STRUCT:
@@ -127,26 +131,33 @@ public class ThriftParser implements Parser {
                     hasHeader = true;
                     hasDeclaration = true;
                     StructType st = parseStruct(tokenizer, token.getToken(), comment);
-                    declarations.add(Declaration.builder().setDeclStruct(st).build());
+                    declarations.add(Declaration.builder()
+                                                .setDeclStruct(st)
+                                                .build());
                     comment = null;
                     break;
                 case SERVICE:
                     hasHeader = true;
                     hasDeclaration = true;
                     ServiceType srv = parseService(tokenizer, comment);
-                    declarations.add(Declaration.builder().setDeclService(srv).build());
+                    declarations.add(Declaration.builder()
+                                                .setDeclService(srv)
+                                                .build());
                     comment = null;
                     break;
                 case CONST:
                     hasHeader = true;
                     hasDeclaration = true;
                     ThriftField cnst = parseConst(tokenizer, comment);
-                    declarations.add(Declaration.builder().setDeclConst(cnst).build());
+                    declarations.add(Declaration.builder()
+                                                .setDeclConst(cnst)
+                                                .build());
                     comment = null;
                     break;
                 default:
                     throw new ParseException("Unexpected token '" + token.getToken() + "', expected type declaration",
-                                              tokenizer, token);
+                                             tokenizer,
+                                             token);
             }
         }
 
@@ -168,8 +179,9 @@ public class ThriftParser implements Parser {
 
         Token sep = tokenizer.next();
         if (sep != null && sep.isSymbol()) {
-            if (!sep.getSymbol().equals(Symbol.LIST_SEPARATOR) &&
-                    !sep.getSymbol().equals(Symbol.ENTRY_SEPARATOR)) {
+            if (!sep.getSymbol()
+                    .equals(Symbol.LIST_SEPARATOR) && !sep.getSymbol()
+                                                          .equals(Symbol.ENTRY_SEPARATOR)) {
                 tokenizer.unshift(sep);
             }
         } else {
@@ -219,24 +231,28 @@ public class ThriftParser implements Parser {
     }
 
     private String parseLineComment(Tokenizer tokenizer, String comment) throws IOException {
-        String line = tokenizer.readUntil('\n').trim();
+        String line = tokenizer.readUntil('\n')
+                               .trim();
         if (comment != null) {
-             return comment + "\n" + line;
+            return comment + "\n" + line;
         }
         return line;
     }
 
     private String parseBlockComment(Tokenizer tokenizer) throws IOException {
-        String block = tokenizer.readUntil(Keyword.BLOCK_COMMENT_END.keyword).trim();
+        String block = tokenizer.readUntil(Keyword.BLOCK_COMMENT_END.keyword)
+                                .trim();
         String[] lines = block.split("\n");
         StringBuilder builder = new StringBuilder();
 
         Pattern re = RE_BLOCK_LINE;
         for (String line : lines) {
-            builder.append(re.matcher(line).replaceFirst(""));
+            builder.append(re.matcher(line)
+                             .replaceFirst(""));
             builder.append('\n');
         }
-        return builder.toString().trim();
+        return builder.toString()
+                      .trim();
     }
 
     private ServiceType parseService(Tokenizer tokenizer, String comment) throws IOException, ParseException {
@@ -253,7 +269,8 @@ public class ThriftParser implements Parser {
 
         Token token = tokenizer.expect("reading service method");
         while (true) {
-            if (token.isSymbol() && token.getSymbol().equals(Symbol.MAP_END)) {
+            if (token.isSymbol() && token.getSymbol()
+                                         .equals(Symbol.MAP_END)) {
                 break;
             }
 
@@ -271,14 +288,16 @@ public class ThriftParser implements Parser {
                 comment = null;
             }
 
-            if (token.getToken().equals(Keyword.ONEWAY.keyword)) {
+            if (token.getToken()
+                     .equals(Keyword.ONEWAY.keyword)) {
                 method.setOneWay(true);
                 token = tokenizer.expect("reading service method");
             }
             if (!token.isQualifiedIdentifier()) {
                 throw new ParseException(token.getToken() + " is not a valid type identifier.", tokenizer, token);
             }
-            if (!token.getToken().equals(Keyword.VOID.keyword)) {
+            if (!token.getToken()
+                      .equals(Keyword.VOID.keyword)) {
                 method.setReturnType(token.getToken());
             }
 
@@ -289,7 +308,8 @@ public class ThriftParser implements Parser {
 
             token = tokenizer.expect("reading method params");
             while (true) {
-                if (token.isSymbol() && token.getSymbol().equals(Symbol.PARAMS_END)) {
+                if (token.isSymbol() && token.getSymbol()
+                                             .equals(Symbol.PARAMS_END)) {
                     break;
                 }
 
@@ -322,8 +342,9 @@ public class ThriftParser implements Parser {
 
                 token = tokenizer.expect("reading method params");
                 if (token.isSymbol()) {
-                    if (token.getSymbol().equals(Symbol.LIST_SEPARATOR) ||
-                            token.getSymbol().equals(Symbol.ENTRY_SEPARATOR)) {
+                    if (token.getSymbol()
+                             .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
+                                                                    .equals(Symbol.ENTRY_SEPARATOR)) {
                         token = tokenizer.expect("reading method params");
                     }
                 }
@@ -331,8 +352,9 @@ public class ThriftParser implements Parser {
 
             token = tokenizer.expect("reading method params");
             if (token.isSymbol()) {
-                if (token.getSymbol().equals(Symbol.LIST_SEPARATOR) ||
-                    token.getSymbol().equals(Symbol.ENTRY_SEPARATOR)) {
+                if (token.getSymbol()
+                         .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
+                                                                .equals(Symbol.ENTRY_SEPARATOR)) {
 
                     service.addToMethods(method.build());
 
@@ -341,12 +363,14 @@ public class ThriftParser implements Parser {
                 }
             }
 
-            if (token.getToken().equals(Keyword.THROWS.keyword)) {
+            if (token.getToken()
+                     .equals(Keyword.THROWS.keyword)) {
                 tokenizer.expectSymbol(Symbol.PARAMS_BEGIN, "reading method exception begin");
 
                 token = tokenizer.expect("reading method exception begin");
                 while (true) {
-                    if (token.isSymbol() && token.getSymbol().equals(Symbol.PARAMS_END)) {
+                    if (token.isSymbol() && token.getSymbol()
+                                                 .equals(Symbol.PARAMS_END)) {
                         break;
                     }
 
@@ -382,8 +406,9 @@ public class ThriftParser implements Parser {
 
                     token = tokenizer.expect("reading method exception");
                     if (token.isSymbol()) {
-                        if (token.getSymbol().equals(Symbol.LIST_SEPARATOR) ||
-                            token.getSymbol().equals(Symbol.ENTRY_SEPARATOR)) {
+                        if (token.getSymbol()
+                                 .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
+                                                                        .equals(Symbol.ENTRY_SEPARATOR)) {
                             token = tokenizer.expect("reading method exception");
                         }
                     }
@@ -394,8 +419,9 @@ public class ThriftParser implements Parser {
 
             token = tokenizer.expect("reading service method");
             if (token.isSymbol()) {
-                if (token.getSymbol().equals(Symbol.LIST_SEPARATOR) ||
-                    token.getSymbol().equals(Symbol.ENTRY_SEPARATOR)) {
+                if (token.getSymbol()
+                         .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
+                                                                .equals(Symbol.ENTRY_SEPARATOR)) {
                     token = tokenizer.expect("reading service method");
                 }
             }
@@ -404,7 +430,7 @@ public class ThriftParser implements Parser {
         return service.build();
     }
 
-    public void parseNamespace(Tokenizer tokenizer, Map<String,String> namespaces) throws IOException, ParseException {
+    public void parseNamespace(Tokenizer tokenizer, Map<String, String> namespaces) throws IOException, ParseException {
         Token language = tokenizer.expectQualifiedIdentifier("parsing namespace language");
         Token namespace = tokenizer.expectQualifiedIdentifier("parsing namespace");
 
@@ -424,8 +450,7 @@ public class ThriftParser implements Parser {
             throw new ParseException("Unecpected end of file.");
         }
         if (!include.isLiteral()) {
-            throw new ParseException("Expected string literal for include",
-                    tokenizer, include);
+            throw new ParseException("Expected string literal for include", tokenizer, include);
         }
         includes.add(include.literalValue());
     }
@@ -469,7 +494,8 @@ public class ThriftParser implements Parser {
             }
 
             if (token.isSymbol()) {
-                if (token.getSymbol().equals(Symbol.MAP_END)) {
+                if (token.getSymbol()
+                         .equals(Symbol.MAP_END)) {
                     if (nextName != null) {
                         et.addToValues(EnumValue.builder()
                                                 .setComment(comment)
@@ -478,11 +504,15 @@ public class ThriftParser implements Parser {
                                                 .build());
                     }
                     break;
-                } else if (token.getSymbol().equals(Symbol.ENTRY_SEPARATOR) ||
-                           token.getSymbol().equals(Symbol.LIST_SEPARATOR)) {
+                } else if (token.getSymbol()
+                                .equals(Symbol.ENTRY_SEPARATOR) || token.getSymbol()
+                                                                        .equals(Symbol.LIST_SEPARATOR)) {
                     // [;,]
-                    if (nextName == null) throw new ParseException("Unexpected entry separator: '" + token.getToken() + "'",
-                                                                    tokenizer, token);
+                    if (nextName == null) {
+                        throw new ParseException("Unexpected entry separator: '" + token.getToken() + "'",
+                                                 tokenizer,
+                                                 token);
+                    }
 
                     et.addToValues(EnumValue.builder()
                                             .setComment(comment)
@@ -492,12 +522,14 @@ public class ThriftParser implements Parser {
                     comment = null;
                     nextName = null;
                     ++nextValue;
-                } else if (token.getSymbol().equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
+                } else if (token.getSymbol()
+                                .equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
                     // [=]
                     Token value = tokenizer.next();
                     if (!value.isInteger()) {
                         throw new ParseException("Expected numeric enum value, got " + value.getToken(),
-                                                  tokenizer, value);
+                                                 tokenizer,
+                                                 value);
                     }
                     nextValue = value.intValue();
                 }
@@ -513,15 +545,15 @@ public class ThriftParser implements Parser {
                 }
                 nextName = token.getToken();
             } else {
-                throw new ParseException("Unexpected token in enum: " + token.getToken(),
-                                          tokenizer, token);
+                throw new ParseException("Unexpected token in enum: " + token.getToken(), tokenizer, token);
             }
         }
 
         return et.build();
     }
 
-    private StructType parseStruct(Tokenizer tokenizer, String type, String comment) throws IOException, ParseException {
+    private StructType parseStruct(Tokenizer tokenizer, String type, String comment)
+            throws IOException, ParseException {
 
         StructType._Builder struct = StructType.builder();
         if (comment != null) {
@@ -535,8 +567,7 @@ public class ThriftParser implements Parser {
 
         Token id = tokenizer.expectIdentifier("parsing " + type + " identifier");
         if (!id.isIdentifier()) {
-            throw new ParseException("Struct name " + id.getToken() + " is not valid identifier",
-                                      tokenizer, id);
+            throw new ParseException("Struct name " + id.getToken() + " is not valid identifier", tokenizer, id);
         }
         struct.setName(id.getToken());
 
@@ -553,7 +584,8 @@ public class ThriftParser implements Parser {
             } else if (token.startsBlockComment()) {
                 comment = parseBlockComment(tokenizer);
                 continue;
-            } else if (token.isSymbol() && token.getSymbol().equals(Symbol.MAP_END)) {
+            } else if (token.isSymbol() && token.getSymbol()
+                                                .equals(Symbol.MAP_END)) {
                 // good end of definition.
                 break;
             }
@@ -570,14 +602,17 @@ public class ThriftParser implements Parser {
                 field.setKey(nextDefaultKey--);
             }
 
-            if (token.getToken().equals(Keyword.REQUIRED.keyword)) {
+            if (token.getToken()
+                     .equals(Keyword.REQUIRED.keyword)) {
                 if (union) {
                     throw new ParseException("Found required field in union. Not allowed. " + token.getToken(),
-                                             tokenizer, token);
+                                             tokenizer,
+                                             token);
                 }
                 field.setRequirement(Requirement.REQUIRED);
                 token = tokenizer.expect("parsing struct " + id.getToken());
-            } else if (token.getToken().equals(Keyword.OPTIONAL.keyword)) {
+            } else if (token.getToken()
+                            .equals(Keyword.OPTIONAL.keyword)) {
                 if (!union) {
                     // All union fields are default (not optional), regardless.
                     field.setRequirement(Requirement.OPTIONAL);
@@ -591,27 +626,28 @@ public class ThriftParser implements Parser {
             token = tokenizer.expect("parsing struct " + id.getToken());
             // get name... This is mandatory.
             if (!token.isIdentifier()) {
-                throw new ParseException("Expected name identifier, but found " + token.getToken(),
-                                          tokenizer, token);
+                throw new ParseException("Expected name identifier, but found " + token.getToken(), tokenizer, token);
             }
             field.setName(token.getToken());
 
             token = tokenizer.expect("parsing struct " + id.getToken());
-            if (token.isSymbol() && token.getSymbol().equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
+            if (token.isSymbol() && token.getSymbol()
+                                         .equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
                 field.setDefaultValue(parseValue(tokenizer));
                 token = tokenizer.expect("parsing struct " + id.getToken());
             }
 
-            if (token.isSymbol() && (
-                    token.getSymbol().equals(Symbol.LIST_SEPARATOR) ||
-                    token.getSymbol().equals(Symbol.ENTRY_SEPARATOR))) {
+            if (token.isSymbol() && (token.getSymbol()
+                                          .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
+                                                                                 .equals(Symbol.ENTRY_SEPARATOR))) {
                 token = tokenizer.expect("parsing struct " + id.getToken());
             }
 
             struct.addToFields(field.build());
             field = ThriftField.builder();
 
-            if (token.isSymbol() && token.getSymbol().equals(Symbol.MAP_END)) {
+            if (token.isSymbol() && token.getSymbol()
+                                         .equals(Symbol.MAP_END)) {
                 // end of definition.
                 break;
             }
@@ -630,7 +666,9 @@ public class ThriftParser implements Parser {
 
         String type = token.getToken();
         Keyword kw = Keyword.getByToken(type);
-        if (kw == null) return type;
+        if (kw == null) {
+            return type;
+        }
 
         if (kw.equals(Keyword.LIST) || kw.equals(Keyword.SET)) {
             tokenizer.expectSymbol(Symbol.GENERIC_START, "parsing " + kw + " type");

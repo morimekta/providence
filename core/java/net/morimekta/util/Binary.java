@@ -39,6 +39,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Convenience method to wrap a byte array into a byte sequence.
+     *
      * @param bytes Bytes to wrap.
      * @return The wrapped byte sequence.
      */
@@ -48,6 +49,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Convenience method to copy a byte array into a byte sequence.
+     *
      * @param bytes Bytes to wrap.
      * @return The wrapped byte sequence.
      */
@@ -57,9 +59,10 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Convenience method to copy a part of a byte array into a byte sequence.
+     *
      * @param bytes Bytes to wrap.
-     * @param off Offset in source bytes to start reading from.
-     * @param len Number of bytes to copy.
+     * @param off   Offset in source bytes to start reading from.
+     * @param len   Number of bytes to copy.
      * @return The wrapped byte sequence.
      */
     public static Binary copy(byte[] bytes, int off, int len) {
@@ -70,6 +73,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Get the length of the backing array.
+     *
      * @return Byte count.
      */
     public int length() {
@@ -78,6 +82,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Get a copy of the backing array.
+     *
      * @return The copy.
      */
     public byte[] get() {
@@ -88,6 +93,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Get a copy of the backing array.
+     *
      * @param into Target ro copy into.
      * @return Number of bytes written.
      */
@@ -99,6 +105,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Decode base64 string and wrap the result in a byte sequence.
+     *
      * @param base64 The string to decode.
      * @return The resulting sequence.
      */
@@ -109,6 +116,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Get the sequence encoded as base64.
+     *
      * @return The encoded string.
      */
     public String toBase64() {
@@ -122,7 +130,9 @@ public class Binary implements Comparable<Binary> {
      * @return The corresponding bytes.
      */
     public static Binary fromHexString(String hex) {
-        if (hex.length() % 2 != 0) throw new AssertionError("Wrong hex string length");
+        if (hex.length() % 2 != 0) {
+            throw new AssertionError("Wrong hex string length");
+        }
         final int len = hex.length() / 2;
         final byte[] out = new byte[len];
         for (int i = 0; i < len; ++i) {
@@ -155,7 +165,7 @@ public class Binary implements Comparable<Binary> {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < bytes.length; ++i) {
             builder.append(String.format("%02x", bytes[i]));
-            if (i % line_len == (line_len -1)) {
+            if (i % line_len == (line_len - 1)) {
                 builder.append('\n');
             }
         }
@@ -164,6 +174,7 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Get a byte buffer wrapping the binary data.
+     *
      * @return A byte buffer.
      */
     public ByteBuffer getByteBuffer() {
@@ -172,9 +183,11 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Read a binary buffer from input stream.
-     * @param in Input stream to read.
+     *
+     * @param in  Input stream to read.
      * @param len Number of bytes to read.
      * @return The read bytes.
+     *
      * @throws IOException If unable to read completely what's expected.
      */
     public static Binary read(InputStream in, int len) throws IOException {
@@ -182,7 +195,9 @@ public class Binary implements Comparable<Binary> {
         int pos = 0;
         while (pos < len) {
             int i = in.read(bytes, pos, len - pos);
-            if (i <= 0) throw new IOException("End of stream before complete buffer read.");
+            if (i <= 0) {
+                throw new IOException("End of stream before complete buffer read.");
+            }
             pos += i;
         }
         return wrap(bytes);
@@ -190,9 +205,9 @@ public class Binary implements Comparable<Binary> {
 
     /**
      * Write bytes to output stream.
+     *
      * @param out Stream to write to.
      * @return Number of bytes written.
-     * @throws IOException
      */
     public int write(OutputStream out) throws IOException {
         out.write(bytes);
@@ -201,8 +216,12 @@ public class Binary implements Comparable<Binary> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || !(o instanceof Binary)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o instanceof Binary)) {
+            return false;
+        }
         Binary other = (Binary) o;
 
         return Arrays.equals(bytes, other.bytes);
@@ -221,7 +240,9 @@ public class Binary implements Comparable<Binary> {
                 return bytes[i] > other.bytes[i] ? 1 : -1;
             }
         }
-        if (bytes.length == other.bytes.length) return 0;
+        if (bytes.length == other.bytes.length) {
+            return 0;
+        }
         return bytes.length > other.bytes.length ? 1 : -1;
     }
 

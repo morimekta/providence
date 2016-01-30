@@ -19,12 +19,12 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,9 +38,7 @@ public class CEnumDescriptorTest {
     @Before
     public void setUp() {
         List<CEnum> values = new LinkedList<>();
-        mType = new CEnumDescriptor("My comment",
-                                     "package",
-                                     "MyEnum");
+        mType = new CEnumDescriptor("My comment", "package", "MyEnum");
 
         values.add(new CEnum(null, 1, "ONE", mType));
         values.add(new CEnum(null, 2, "TWO", mType));

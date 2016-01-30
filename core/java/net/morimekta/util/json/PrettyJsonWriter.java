@@ -58,14 +58,16 @@ public class PrettyJsonWriter extends JsonWriter {
 
     @Override
     public PrettyJsonWriter endObject() throws JsonException {
-        mIndentedWriter.end().appendln();
+        mIndentedWriter.end()
+                       .appendln();
         super.endObject();
         return this;
     }
 
     @Override
     public PrettyJsonWriter endArray() throws JsonException {
-        mIndentedWriter.end().appendln();
+        mIndentedWriter.end()
+                       .appendln();
         super.endArray();
         return this;
     }

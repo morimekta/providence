@@ -19,12 +19,17 @@
 
 package net.morimekta.providence.reflect.util;
 
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PDescriptorProvider;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.reflect.contained.CDocument;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import net.morimekta.providence.descriptor.*;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.descriptor.PMap;
 
 /**
  * @author Stein Eldar Johnsen
@@ -33,7 +38,7 @@ import net.morimekta.providence.descriptor.PMap;
 public class TypeRegistry {
     private final Map<String, PDeclaredDescriptor<?>> mDeclaredTypes;
     private final Map<String, String>                 mTypedefs;
-    private final Map<String, CDocument>             mDocuments;
+    private final Map<String, CDocument>              mDocuments;
 
     public TypeRegistry() {
         mDeclaredTypes = new LinkedHashMap<>();
@@ -55,7 +60,8 @@ public class TypeRegistry {
 
     public CDocument getDocumentForPackage(String packageContext) {
         for (CDocument document : mDocuments.values()) {
-            if (document.getPackageName().equals(packageContext)) {
+            if (document.getPackageName()
+                        .equals(packageContext)) {
                 return document;
             }
         }
@@ -107,16 +113,14 @@ public class TypeRegistry {
     }
 
     /**
-     * Given a type name and a package context, fetches the type provider for
-     * the given type.
+     * Given a type name and a package context, fetches the type provider for the given type.
      *
      * @param typeName       Name of type, without any spaces.
      * @param packageContext The package context of the type.
      * @return The type provider.
      */
     @SuppressWarnings("unchecked")
-    public <T> PDescriptorProvider<T> getProvider(String typeName,
-                                                  final String packageContext) {
+    public <T> PDescriptorProvider<T> getProvider(String typeName, final String packageContext) {
         while (mTypedefs.containsKey(typeName)) {
             typeName = mTypedefs.get(typeName);
         }
@@ -129,7 +133,8 @@ public class TypeRegistry {
 
         // Collection types are a bit complex, so handle it here.
         if (typeName.startsWith("map<") && typeName.endsWith(">")) {
-            String[] parts = typeName.substring(4, typeName.length() - 1).split(",", 2);
+            String[] parts = typeName.substring(4, typeName.length() - 1)
+                                     .split(",", 2);
             if (parts.length != 2) {
                 throw new IllegalArgumentException(typeName + " is not a valid map descriptor, wrong number of types.");
             }

@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.compiler.format.thrift;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PContainer;
@@ -31,6 +30,7 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
@@ -42,8 +42,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Pretty printer for types. Generates content as close to the real thrift files
- * as possible.
+ * Pretty printer for types. Generates content as close to the real thrift
+ * files as possible.
  *
  * @author Stein Eldar Johnsen
  * @since 04.09.15
@@ -89,22 +89,23 @@ public class ThriftFormatter {
             appendBlockComment(builder, document.getComment(), first);
             first = false;
         }
-        if (document.getNamespaces().size() > 0) {
-            for (Entry<String, String> namespace : document.getNamespaces().entrySet()) {
+        if (document.getNamespaces()
+                    .size() > 0) {
+            for (Entry<String, String> namespace : document.getNamespaces()
+                                                           .entrySet()) {
                 if (first) {
-                    builder.format("namespace %s %s",
-                                   namespace.getKey(), namespace.getValue());
+                    builder.format("namespace %s %s", namespace.getKey(), namespace.getValue());
                     first = false;
                 } else {
-                    builder.formatln("namespace %s %s",
-                                     namespace.getKey(), namespace.getValue());
+                    builder.formatln("namespace %s %s", namespace.getKey(), namespace.getValue());
                 }
             }
             builder.newline();
         }
         // The file must have some namespace... So first checking is no longer needed.
 
-        if (document.getIncludes().size() > 0) {
+        if (document.getIncludes()
+                    .size() > 0) {
             for (String include : document.getIncludes()) {
                 builder.formatln("include \"%s.thrift\"", include);
             }
@@ -120,7 +121,7 @@ public class ThriftFormatter {
                     appendEnum(builder, (PEnumDescriptor<?>) type);
                     break;
                 case MESSAGE:
-                    appendStruct(builder, (PStructDescriptor<?,?>) type);
+                    appendStruct(builder, (PStructDescriptor<?, ?>) type);
                     break;
                 default:
                     throw new IllegalStateException("Document " +
@@ -133,13 +134,11 @@ public class ThriftFormatter {
 
         for (PField<?> constant : document.getConstants()) {
             builder.formatln("const %s %s = ",
-                             constant.getDescriptor().getQualifiedName(document.getPackageName()),
+                             constant.getDescriptor()
+                                     .getQualifiedName(document.getPackageName()),
                              constant.getName());
             JsonWriter json = new JsonWriter(builder);
-            appendTypedValue(json,
-                             constant.getDefaultValue(),
-                             constant.getDescriptor(),
-                             document.getPackageName());
+            appendTypedValue(json, constant.getDefaultValue(), constant.getDescriptor(), document.getPackageName());
             json.flush();
             // represent the actual value...
             builder.newline();
@@ -168,11 +167,15 @@ public class ThriftFormatter {
 
     // --- Declared Types
 
-    private void appendStruct(IndentedPrintWriter builder, PStructDescriptor<?,?> type) throws IOException, JsonException {
+    private void appendStruct(IndentedPrintWriter builder, PStructDescriptor<?, ?> type)
+            throws IOException, JsonException {
         if (type.getComment() != null) {
             appendBlockComment(builder, type.getComment(), false);
         }
-        builder.formatln("%s %s {", type.getVariant().getName(), type.getName())
+        builder.formatln("%s %s {",
+                         type.getVariant()
+                             .getName(),
+                         type.getName())
                .begin();
         for (PField<?> field : type.getFields()) {
             if (field.getComment() != null) {
@@ -183,7 +186,8 @@ public class ThriftFormatter {
                 builder.format("%s ", field.getRequirement().label);
             }
             builder.format("%s %s",
-                           field.getDescriptor().getQualifiedName(type.getPackageName()),
+                           field.getDescriptor()
+                                .getQualifiedName(type.getPackageName()),
                            field.getName());
             if (field.getDefaultValue() != null) {
                 builder.append(" = ");
@@ -191,7 +195,8 @@ public class ThriftFormatter {
                 appendTypedValue(json,
                                  field.getDefaultValue(),
                                  field.getDescriptor(),
-                                 field.getDescriptor().getPackageName());
+                                 field.getDescriptor()
+                                      .getPackageName());
                 json.flush();
             }
             builder.append(';');
@@ -227,17 +232,14 @@ public class ThriftFormatter {
     // --- Constant values.
 
     /**
-     *
      * @param writer
      * @param value
      * @param type
      * @param packageContext
      * @throws JsonException
      */
-    protected void appendTypedValue(JsonWriter writer,
-                                    Object value,
-                                    PDescriptor type,
-                                    String packageContext) throws IOException, JsonException {
+    protected void appendTypedValue(JsonWriter writer, Object value, PDescriptor type, String packageContext)
+            throws IOException, JsonException {
         switch (type.getType()) {
             case ENUM:
                 writer.valueLiteral(String.format("%s.%s", type.getQualifiedName(packageContext), value.toString()));
@@ -250,10 +252,7 @@ public class ThriftFormatter {
 
                 writer.array();
                 for (Object item : collection) {
-                    appendTypedValue(writer,
-                                     item,
-                                     cType.itemDescriptor(),
-                                     packageContext);
+                    appendTypedValue(writer, item, cType.itemDescriptor(), packageContext);
                 }
                 writer.endArray();
                 break;
@@ -264,10 +263,7 @@ public class ThriftFormatter {
                 writer.object();
                 for (Entry<Object, Object> entry : map.entrySet()) {
                     appendMapKey(writer, entry.getKey());
-                    appendTypedValue(writer,
-                                     entry.getValue(),
-                                     mType.itemDescriptor(),
-                                     packageContext);
+                    appendTypedValue(writer, entry.getValue(), mType.itemDescriptor(), packageContext);
                 }
                 writer.endObject();
                 break;
@@ -283,10 +279,10 @@ public class ThriftFormatter {
     private void appendMapKey(JsonWriter writer, Object key) throws IOException, JsonException {
         if (key instanceof PEnumValue<?>) {
             PEnumValue<?> ev = (PEnumValue<?>) key;
-            writer.keyLiteral(String.format(
-                    "%s.%s",
-                    ev.descriptor().getName(),
-                    ev.toString()));
+            writer.keyLiteral(String.format("%s.%s",
+                                            ev.descriptor()
+                                              .getName(),
+                                            ev.toString()));
         } else if (key instanceof Boolean) {
             writer.key((Boolean) key);
         } else if (key instanceof Byte) {
@@ -304,18 +300,18 @@ public class ThriftFormatter {
         } else if (key instanceof Binary) {
             writer.key((Binary) key);
         } else {
-            throw new IllegalArgumentException("No such primitive value type: " +
-                    key.getClass().getSimpleName());
+            throw new IllegalArgumentException("No such primitive value type: " + key.getClass()
+                                                                                     .getSimpleName());
         }
     }
 
     private void appendPrimitive(JsonWriter writer, Object value) throws IOException, JsonException {
         if (value instanceof PEnumValue<?>) {
             PEnumValue<?> ev = (PEnumValue<?>) value;
-            writer.valueLiteral(String.format(
-                    "%s.%s",
-                    ev.descriptor().getName(),
-                    ev.toString()));
+            writer.valueLiteral(String.format("%s.%s",
+                                              ev.descriptor()
+                                                .getName(),
+                                              ev.toString()));
         } else if (value instanceof Boolean) {
             writer.value((Boolean) value);
         } else if (value instanceof Byte) {
@@ -333,20 +329,19 @@ public class ThriftFormatter {
         } else if (value instanceof Binary) {
             writer.value((Binary) value);
         } else {
-            throw new IllegalArgumentException("No such primitive value type: " +
-                                               value.getClass().getSimpleName());
+            throw new IllegalArgumentException("No such primitive value type: " + value.getClass()
+                                                                                       .getSimpleName());
         }
     }
 
-    private void appendMessage(JsonWriter writer, PMessage<?> message, String packageContext) throws IOException, JsonException {
+    private void appendMessage(JsonWriter writer, PMessage<?> message, String packageContext)
+            throws IOException, JsonException {
         writer.object();
-        for (PField<?> field : message.descriptor().getFields()) {
+        for (PField<?> field : message.descriptor()
+                                      .getFields()) {
             if (message.has(field.getKey())) {
                 writer.key(field.getName());
-                appendTypedValue(writer,
-                                 message.get(field.getKey()),
-                                 field.getDescriptor(),
-                                 packageContext);
+                appendTypedValue(writer, message.get(field.getKey()), field.getDescriptor(), packageContext);
             }
         }
         writer.endObject();

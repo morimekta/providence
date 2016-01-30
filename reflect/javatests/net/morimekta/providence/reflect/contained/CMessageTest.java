@@ -19,10 +19,11 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.util.Binary;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,9 +43,9 @@ import static org.junit.Assert.assertTrue;
  * @since 05.09.15
  */
 public class CMessageTest {
-    TypeRegistry mRegistry;
+    TypeRegistry      mRegistry;
     CStructDescriptor mStructType;
-    CUnionDescriptor mUnionType;
+    CUnionDescriptor  mUnionType;
 
     @Before
     public void setUp() {
@@ -59,7 +60,12 @@ public class CMessageTest {
         fields.add(new CField<>(null, 6, PRequirement.OPTIONAL, "field_dbl", PPrimitive.DOUBLE.provider(), null));
         fields.add(new CField<>(null, 9998, PRequirement.OPTIONAL, "field_str", PPrimitive.STRING.provider(), null));
         fields.add(new CField<>(null, 9999, PRequirement.OPTIONAL, "field_bin", PPrimitive.BINARY.provider(), null));
-        fields.add(new CField<>(null, 32000, PRequirement.OPTIONAL, "field_a", mRegistry.getProvider("TypeA", "test"), null));
+        fields.add(new CField<>(null,
+                                32000,
+                                PRequirement.OPTIONAL,
+                                "field_a",
+                                mRegistry.getProvider("TypeA", "test"),
+                                null));
 
         mStructType = new CStructDescriptor(null, "test", "TypeA", fields);
         mUnionType = new CUnionDescriptor(null, "test", "TypeA", fields);
@@ -70,20 +76,20 @@ public class CMessageTest {
         mRegistry.putDeclaredType(mStructType);
 
         CStruct inner = mStructType.factory()
-                                    .builder()
-                                    .set(1, Boolean.TRUE)
-                                    .set(2, (byte) 8)
-                                    .set(65000, (short) 16)
-                                    .set(4, 32)
-                                    .set(5, Long.MAX_VALUE)
-                                    .set(6, 1234567890.09876)
-                                    .set(9998, "string")
-                                    .set(9999, Binary.wrap(new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 }))
-                                    .build();
+                                   .builder()
+                                   .set(1, Boolean.TRUE)
+                                   .set(2, (byte) 8)
+                                   .set(65000, (short) 16)
+                                   .set(4, 32)
+                                   .set(5, Long.MAX_VALUE)
+                                   .set(6, 1234567890.09876)
+                                   .set(9998, "string")
+                                   .set(9999, Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4}))
+                                   .build();
         CStruct outer = mStructType.factory()
-                                    .builder()
-                                    .set(32000, inner)
-                                    .build();
+                                   .builder()
+                                   .set(32000, inner)
+                                   .build();
 
         CStruct struct = (CStruct) outer.get(32000);
 
@@ -106,8 +112,7 @@ public class CMessageTest {
         assertEquals(Long.MAX_VALUE, struct.get(5));
         assertEquals(1234567890.09876, struct.get(6));
         assertEquals("string", struct.get(9998));
-        assertEquals(Binary.wrap(new byte[] { 9, 0, 8, 1, 7, 2, 6, 3, 5, 4 }),
-                     struct.get(9999));
+        assertEquals(Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4}), struct.get(9999));
 
         assertNull(struct.get(1234));
 
@@ -151,4 +156,5 @@ public class CMessageTest {
     @Test
     public void testEquals() {
         // ...
-    }}
+    }
+}

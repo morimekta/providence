@@ -30,8 +30,7 @@ import java.io.OutputStream;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class ThriftGenerator
-        extends Generator {
+public class ThriftGenerator extends Generator {
     public ThriftGenerator(FileManager manager) {
         super(manager);
     }
@@ -39,8 +38,7 @@ public class ThriftGenerator
     @Override
     public void generate(CDocument document) throws IOException {
         ThriftFormatter formatter = new ThriftFormatter();
-        OutputStream outputFile = getFileManager().create(
-                "", document.getPackageName() + ".thrift");
+        OutputStream outputFile = getFileManager().create("", document.getPackageName() + ".thrift");
         formatter.format(outputFile, document);
         getFileManager().finalize(outputFile);
     }

@@ -10,6 +10,7 @@ import java.util.List;
 public class ShardUtil {
     /**
      * Cheks if a name pattern is for a sharded file-set.
+     *
      * @param pattern File name pattern.
      * @return True if the file pattern matches sharding.
      */
@@ -32,7 +33,6 @@ public class ShardUtil {
     /**
      * From a file pattern like 'name@{shards}' calculates the pattern
      *
-     * @param pattern
      * @return List of file prefixes
      */
     public static List<String> prefixes(String pattern) {

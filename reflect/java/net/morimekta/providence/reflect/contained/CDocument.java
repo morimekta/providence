@@ -19,12 +19,12 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PField;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PField;
 
 /**
  * Contained document. It contains everything that is parsed out of a single

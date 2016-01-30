@@ -23,8 +23,7 @@ package net.morimekta.providence.descriptor;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class PPrimitiveProvider<T>
-        implements PDescriptorProvider<T> {
+public class PPrimitiveProvider<T> implements PDescriptorProvider<T> {
     private final PPrimitive<T> mType;
 
     public PPrimitiveProvider(PPrimitive<T> type) {

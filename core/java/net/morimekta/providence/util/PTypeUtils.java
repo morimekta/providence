@@ -51,34 +51,45 @@ public class PTypeUtils {
         }
     }
 
-
     public static String toString(Binary bytes) {
-        if (bytes == null) return NULL;
+        if (bytes == null) {
+            return NULL;
+        }
         return String.format("b64(%s)", bytes.toBase64());
     }
 
     public static String toString(Collection<?> collection) {
-        if (collection == null) return NULL;
+        if (collection == null) {
+            return NULL;
+        }
         StringBuilder builder = new StringBuilder();
         builder.append('[');
         boolean first = true;
         for (Object item : collection) {
-            if (first) first = false;
-            else builder.append(',');
+            if (first) {
+                first = false;
+            } else {
+                builder.append(',');
+            }
             builder.append(toString(item));
         }
         builder.append(']');
         return builder.toString();
     }
 
-    public static String toString(Map<?,?> map) {
-        if (map == null) return NULL;
+    public static String toString(Map<?, ?> map) {
+        if (map == null) {
+            return NULL;
+        }
         StringBuilder builder = new StringBuilder();
         builder.append('{');
         boolean first = true;
-        for (Map.Entry<?,?> entry : map.entrySet()) {
-            if (first) first = false;
-            else builder.append(',');
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(',');
+            }
             builder.append(toString(entry.getKey()))
                    .append(':')
                    .append(toString(entry.getValue()));
@@ -89,12 +100,11 @@ public class PTypeUtils {
 
     /**
      * Stringify a message.
-     *
-     * @param message
-     * @return
      */
     public static String toString(PMessage<?> message) {
-        if (message == null) return NULL;
+        if (message == null) {
+            return NULL;
+        }
         return message.asString();
     }
 
@@ -102,7 +112,7 @@ public class PTypeUtils {
         if (o == null) {
             return NULL;
         } else if (o instanceof Map) {
-            return toString((Map<?,?>) o);
+            return toString((Map<?, ?>) o);
         } else if (o instanceof Collection) {
             return toString((Collection<?>) o);
         } else if (o instanceof Binary) {
@@ -117,7 +127,9 @@ public class PTypeUtils {
     }
 
     public static boolean equals(Object v1, Object v2) {
-        if (v1 == v2) return true;
+        if (v1 == v2) {
+            return true;
+        }
         if ((v1 == null) != (v2 == null)) {
             return false; // only one is null
         } else if (v1 instanceof List && v2 instanceof List) {
@@ -182,30 +194,38 @@ public class PTypeUtils {
         if (object instanceof Map) {
             return hashCodeMap((Map<?, ?>) object);
         }
-        return object.getClass().hashCode() * object.hashCode();
+        return object.getClass()
+                     .hashCode() * object.hashCode();
     }
 
     public static boolean equalsQualifiedName(PDescriptor a, PDescriptor b) {
-        if ((a == null) != (b == null)) return false;
-        if (a == null) return true;
-        return a.getQualifiedName(null).equals(b.getQualifiedName(null));
+        if ((a == null) != (b == null)) {
+            return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        return a.getQualifiedName(null)
+                .equals(b.getQualifiedName(null));
     }
 
     private static <T> int hashCodeList(List<T> list) {
         int hash = List.class.hashCode();
         int i = 31;
         for (T t : list) {
-            hash ^= (++i * t.getClass().hashCode() * hashCode(t));
+            hash ^= (++i * t.getClass()
+                            .hashCode() * hashCode(t));
         }
         return hash;
     }
-    
+
     private static final String NULL = "null";
 
     private static <T> int hashCodeSet(Set<T> list) {
         int hash = Set.class.hashCode();
         for (T t : list) {
-            hash ^= t.getClass().hashCode() * hashCode(t);
+            hash ^= t.getClass()
+                     .hashCode() * hashCode(t);
         }
         return hash;
     }
@@ -220,14 +240,24 @@ public class PTypeUtils {
 
     private static <T extends PMessage<T>> int compare(T m1, T m2) {
         int c = 0;
-        c = m1.descriptor().getQualifiedName(null).compareTo(m2.descriptor().getQualifiedName(null));
-        if (c != 0) return c;
-        for (PField<?> field : m1.descriptor().getFields()) {
+        c = m1.descriptor()
+              .getQualifiedName(null)
+              .compareTo(m2.descriptor()
+                           .getQualifiedName(null));
+        if (c != 0) {
+            return c;
+        }
+        for (PField<?> field : m1.descriptor()
+                                 .getFields()) {
             c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
-            if (c != 0) return c;
+            if (c != 0) {
+                return c;
+            }
             if (m1.has(field.getKey())) {
                 c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
-                if (c != 0) return c;
+                if (c != 0) {
+                    return c;
+                }
             }
         }
         return 0;

@@ -43,7 +43,9 @@ public class JHeader {
     }
 
     public void include(String javaClass) {
-        if (javaClass == null) return;
+        if (javaClass == null) {
+            return;
+        }
         int pos = javaClass.lastIndexOf('.');
         if (pos > 0) {
             String pkg = javaClass.substring(0, pos);

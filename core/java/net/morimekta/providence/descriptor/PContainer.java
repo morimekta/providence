@@ -21,12 +21,11 @@ package net.morimekta.providence.descriptor;
 
 /**
  * Generic descriptor for a container type.
- *
+ * <p/>
  * See {@link PList}, {@link PSet} and {@link PMap} which specializes for each
  * type of container.
  */
-public abstract class PContainer<I, C>
-        implements PDescriptor<C> {
+public abstract class PContainer<I, C> implements PDescriptor<C> {
     private final PDescriptorProvider<I> itemDescriptorProvider;
 
     protected PContainer(PDescriptorProvider<I> provider) {

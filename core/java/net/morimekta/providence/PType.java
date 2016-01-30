@@ -32,16 +32,17 @@ public enum PType {
     I64(10, "i64"),
     DOUBLE(4, "double"),
     STRING(11, "string"),
-    BINARY(11, "binary"),  // encodes as string.
-    ENUM(8, "enum"),  // encodes as i32
+    // encodes as string.
+    BINARY(11, "binary"),
+    // encodes as i32
+    ENUM(8, "enum"),
     MESSAGE(12, "message"),
     MAP(13, "map"),
     SET(14, "set"),
-    LIST(15, "list"),
-    ;
+    LIST(15, "list"),;
 
     // Thrift serialized type ID number.
-    public final byte id;
+    public final byte   id;
     public final String name;
 
     PType(int typeId, String name) {
@@ -56,49 +57,82 @@ public enum PType {
 
     public static PType findById(byte id) {
         switch (id) {
-            case 0: return STOP;
-            case 1: return VOID;
-            case 2: return BOOL;
-            case 3: return BYTE;
-            case 4: return DOUBLE;
+            case 0:
+                return STOP;
+            case 1:
+                return VOID;
+            case 2:
+                return BOOL;
+            case 3:
+                return BYTE;
+            case 4:
+                return DOUBLE;
             // case 5:
-            case 6: return I16;
+            case 6:
+                return I16;
             // case 7:
-            case 8: return I32;
+            case 8:
+                // ENUM is same as I32.
+                return I32;
             // case 9:
-            case 10: return I64;
-            case 11: return STRING;
-            // BINARY is same as STRING.
-            case 12: return MESSAGE;
-            case 13: return MAP;
-            case 14: return SET;
-            case 15: return LIST;
-            // ENUM is same as I32.
-            default: return STOP;
+            case 10:
+                return I64;
+            case 11:
+                // BINARY is same as STRING.
+                return STRING;
+            case 12:
+                return MESSAGE;
+            case 13:
+                return MAP;
+            case 14:
+                return SET;
+            case 15:
+                return LIST;
+            default:
+                return STOP;
         }
     }
 
     public static PType findByName(String name) {
         switch (name) {
-            case "stop": return STOP;
-            case "void": return VOID;
-            case "bool": return BOOL;
-            case "byte": return BYTE;
-            case "double": return DOUBLE;
-            case "i8": return BYTE;
-            case "i16": return I16;
-            case "i32": return I32;
-            case "i64": return I64;
-            case "binary": return BINARY;
-            case "string": return STRING;
-            case "struct": return MESSAGE;
-            case "union": return MESSAGE;
-            case "exception": return MESSAGE;
-            case "map": return MAP;
-            case "set": return SET;
-            case "list": return LIST;
-            case "enum": return ENUM;
-            default: return STOP;
+            case "stop":
+                return STOP;
+            case "void":
+                return VOID;
+            case "bool":
+                return BOOL;
+            case "byte":
+                return BYTE;
+            case "double":
+                return DOUBLE;
+            case "i8":
+                return BYTE;
+            case "i16":
+                return I16;
+            case "i32":
+                return I32;
+            case "i64":
+                return I64;
+            case "binary":
+                return BINARY;
+            case "string":
+                return STRING;
+            case "struct":
+                return MESSAGE;
+            case "union":
+                return MESSAGE;
+            case "exception":
+                return MESSAGE;
+            case "map":
+                return MAP;
+            case "set":
+                return SET;
+            case "list":
+                return LIST;
+            case "enum":
+                return ENUM;
+            default:
+                return STOP;
         }
     }
 }

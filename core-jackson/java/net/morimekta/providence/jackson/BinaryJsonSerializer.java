@@ -19,11 +19,12 @@
 
 package net.morimekta.providence.jackson;
 
+import net.morimekta.util.Binary;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import net.morimekta.util.Binary;
 
 import java.io.IOException;
 
@@ -32,7 +33,8 @@ import java.io.IOException;
  */
 public class BinaryJsonSerializer extends JsonSerializer<Binary> {
     @Override
-    public void serialize(Binary value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(Binary value, JsonGenerator jgen, SerializerProvider provider)
+            throws IOException, JsonProcessingException {
         jgen.writeString(value.toBase64());
     }
 }

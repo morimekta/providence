@@ -19,25 +19,22 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PEnumBuilder;
+import net.morimekta.providence.PEnumBuilderFactory;
+import net.morimekta.providence.descriptor.PEnumDescriptor;
+
 import java.util.Iterator;
 import java.util.List;
 
-import net.morimekta.providence.PEnumBuilderFactory;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.PEnumBuilder;
-
 /**
  * Contained enum descriptor type.
- *
+ * <p/>
  * Also see {@link CEnum}.
  */
-public class CEnumDescriptor
-        extends PEnumDescriptor<CEnum> {
+public class CEnumDescriptor extends PEnumDescriptor<CEnum> {
     private CEnum[] values;
 
-    public CEnumDescriptor(String comment,
-                           String packageName,
-                           String name) {
+    public CEnumDescriptor(String comment, String packageName, String name) {
         super(comment, packageName, name, new _Factory());
         values = new CEnum[0];
         ((_Factory) factory()).setType(this);
@@ -57,7 +54,7 @@ public class CEnumDescriptor
     }
 
     @Override
-    public CEnum getValueById(int id)  {
+    public CEnum getValueById(int id) {
         for (CEnum value : getValues()) {
             if (value.getValue() == id) {
                 return value;
@@ -69,15 +66,15 @@ public class CEnumDescriptor
     @Override
     public CEnum getValueByName(String name) {
         for (CEnum value : getValues()) {
-            if (value.getName().equalsIgnoreCase(name)) {
+            if (value.getName()
+                     .equalsIgnoreCase(name)) {
                 return value;
             }
         }
         return null;
     }
 
-    private static class _Factory
-            extends PEnumBuilderFactory<CEnum> {
+    private static class _Factory extends PEnumBuilderFactory<CEnum> {
         private CEnumDescriptor mType;
 
         public void setType(CEnumDescriptor type) {

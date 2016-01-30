@@ -1,7 +1,7 @@
 package net.morimekta.providence.jackson;
 
-import net.morimekta.util.Binary;
 import net.morimekta.util.Base64;
+import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

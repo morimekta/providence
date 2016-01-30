@@ -1,8 +1,8 @@
 package net.morimekta.providence.mio;
 
-import java.io.IOException;
-
 import net.morimekta.providence.PMessage;
+
+import java.io.IOException;
 
 /**
  * Message writer interface.

@@ -19,6 +19,44 @@
 
 package net.morimekta.providence.converter;
 
+import net.morimekta.console.FormatString;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.mio.PFileMessageReader;
+import net.morimekta.providence.mio.PFileMessageWriter;
+import net.morimekta.providence.mio.PMessageReader;
+import net.morimekta.providence.mio.PMessageWriter;
+import net.morimekta.providence.mio.PRecordMessageReader;
+import net.morimekta.providence.mio.PSequenceMessageReader;
+import net.morimekta.providence.mio.PSequenceMessageWriter;
+import net.morimekta.providence.mio.PShardedMessageReader;
+import net.morimekta.providence.mio.utils.Sequence;
+import net.morimekta.providence.mio.utils.Shard;
+import net.morimekta.providence.mio.utils.ShardUtil;
+import net.morimekta.providence.reflect.parser.MessageParser;
+import net.morimekta.providence.reflect.parser.Parser;
+import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.serializer.PBinarySerializer;
+import net.morimekta.providence.serializer.PJsonSerializer;
+import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
+import net.morimekta.providence.util.PPrettyPrinter;
+import net.morimekta.util.io.CountingOutputStream;
+
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.OptionDef;
+import org.kohsuke.args4j.spi.EnumOptionHandler;
+import org.kohsuke.args4j.spi.Setter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,48 +66,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.mio.PMessageReader;
-import net.morimekta.providence.mio.utils.Sequence;
-import net.morimekta.providence.mio.utils.Shard;
-import net.morimekta.providence.thrift.*;
-import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.serializer.*;
-import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.providence.util.PPrettyPrinter;
-import net.morimekta.providence.mio.PFileMessageReader;
-import net.morimekta.providence.mio.PFileMessageWriter;
-import net.morimekta.providence.mio.PMessageWriter;
-import net.morimekta.providence.mio.PRecordMessageReader;
-import net.morimekta.providence.mio.PSequenceMessageReader;
-import net.morimekta.providence.mio.PSequenceMessageWriter;
-import net.morimekta.providence.mio.PShardedMessageReader;
-import net.morimekta.providence.mio.utils.ShardUtil;
-import net.morimekta.providence.thrift.TTupleProtocolSerializer;
-import net.morimekta.providence.reflect.parser.MessageParser;
-import net.morimekta.providence.reflect.parser.ThriftParser;
-import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.util.io.CountingOutputStream;
-import net.morimekta.console.FormatString;
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.OptionDef;
-import org.kohsuke.args4j.spi.EnumOptionHandler;
-import org.kohsuke.args4j.spi.Setter;
-
 /**
  * @author Stein Eldar Johnsen
  * @since 27.09.15
  */
 public class ConvertOptions {
     public static class FormatOptionHandler extends EnumOptionHandler<Format> {
-        public FormatOptionHandler(CmdLineParser parser,
-                                   OptionDef option,
-                                   Setter<Format> setter) {
+        public FormatOptionHandler(CmdLineParser parser, OptionDef option, Setter<Format> setter) {
             super(parser, option, setter, Format.class);
         }
 
@@ -107,7 +110,7 @@ public class ConvertOptions {
     }
 
     @Option(name = "--includes",
-            aliases = { "-I" },
+            aliases = {"-I"},
             metaVar = "dir",
             usage = "Include from directories")
     protected List<String> mIncludes = new LinkedList<>();
@@ -141,22 +144,22 @@ public class ConvertOptions {
     protected Format mOutFormat;
 
     @Option(name = "--shard",
-            aliases = { "-s" },
+            aliases = {"-s"},
             usage = "Output shard")
     protected int mShard;
 
     @Option(name = "--out",
-            aliases = { "-o" },
+            aliases = {"-o"},
             usage = "Output file pattern to write to.")
     protected String mOut;
 
     @Argument(metaVar = "file",
-            required = true,
-            usage = "Source file to read")
+              required = true,
+              usage = "Source file to read")
     protected String mFile;
 
     @Option(name = "--help",
-            aliases = { "-h", "-?" },
+            aliases = {"-h", "-?"},
             help = true,
             usage = "This help listing.")
     protected boolean mHelp;
@@ -187,7 +190,8 @@ public class ConvertOptions {
                     public int serialize(OutputStream output, PMessage<?> message)
                             throws IOException, PSerializeException {
                         CountingOutputStream out = new CountingOutputStream(output);
-                        out.write(new PPrettyPrinter().format(message).getBytes(StandardCharsets.UTF_8));
+                        out.write(new PPrettyPrinter().format(message)
+                                                      .getBytes(StandardCharsets.UTF_8));
                         out.write('\n');
                         out.flush();
                         return out.getByteCount();
@@ -315,7 +319,7 @@ public class ConvertOptions {
         }
     }
 
-    public PMessageReader<?> getInput(CmdLineParser cli, PStructDescriptor<?,?> descriptor) throws CmdLineException {
+    public PMessageReader<?> getInput(CmdLineParser cli, PStructDescriptor<?, ?> descriptor) throws CmdLineException {
         PSerializer serializer = getSerializer(cli, mInFormat);
         try {
 

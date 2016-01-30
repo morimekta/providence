@@ -18,7 +18,9 @@ public class RandomGeneratorTest {
 
     @Before
     public void setUp() {
-        random = new Random(Clock.systemUTC().instant().getNano());
+        random = new Random(Clock.systemUTC()
+                                 .instant()
+                                 .getNano());
         randomGenerator = new RandomGenerator(random);
     }
 

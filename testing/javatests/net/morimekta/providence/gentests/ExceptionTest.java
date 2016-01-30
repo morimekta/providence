@@ -1,8 +1,8 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.util.Binary;
 import net.morimekta.test.providence.ExceptionFields;
 import net.morimekta.test.providence.Value;
+import net.morimekta.util.Binary;
 
 import org.junit.Test;
 

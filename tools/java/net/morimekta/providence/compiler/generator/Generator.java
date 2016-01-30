@@ -41,8 +41,6 @@ public abstract class Generator {
 
     /**
      * Each compiler must implement this method.
-     *
-     * @param document
      */
     public abstract void generate(CDocument document) throws IOException, GeneratorException;
 }

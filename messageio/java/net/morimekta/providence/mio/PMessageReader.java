@@ -19,9 +19,9 @@
 
 package net.morimekta.providence.mio;
 
-import java.io.IOException;
-
 import net.morimekta.providence.PMessage;
+
+import java.io.IOException;
 
 /**
  * Read messages (in global order) from a set of files in the format:
@@ -37,8 +37,6 @@ public abstract class PMessageReader<T extends PMessage<T>> {
     /**
      * Close the reading stream. Does not interfere with ongoing reads, but
      * will stop the read loop if ongoing.
-     *
-     * @throws IOException
      */
     public abstract void close() throws IOException;
 
@@ -47,7 +45,6 @@ public abstract class PMessageReader<T extends PMessage<T>> {
      *
      * @param handler The message handler.
      * @return The number of messages handled.
-     * @throws IOException
      */
     public final int each(PMessageWriter<T> handler) throws IOException {
         int handledMessages = 0;

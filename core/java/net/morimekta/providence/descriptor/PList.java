@@ -19,16 +19,15 @@
 
 package net.morimekta.providence.descriptor;
 
-import java.util.List;
-
 import net.morimekta.providence.PType;
+
+import java.util.List;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class PList<I>
-        extends PContainer<I, List<I>> {
+public class PList<I> extends PContainer<I, List<I>> {
     public PList(PDescriptorProvider<I> itemType) {
         super(itemType);
     }
@@ -54,13 +53,13 @@ public class PList<I>
             return false;
         }
         PList<?> other = (PList<?>) o;
-        return other.itemDescriptor().equals(itemDescriptor());
+        return other.itemDescriptor()
+                    .equals(itemDescriptor());
     }
 
     @Override
     public int hashCode() {
-        return PList.class.hashCode() +
-               itemDescriptor().hashCode();
+        return PList.class.hashCode() + itemDescriptor().hashCode();
     }
 
     public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemType) {

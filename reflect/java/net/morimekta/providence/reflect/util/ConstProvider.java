@@ -19,31 +19,27 @@
 
 package net.morimekta.providence.reflect.util;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-
 import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.internal.ConstParser;
-import net.morimekta.providence.descriptor.PValueProvider;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class ConstProvider
-        implements PValueProvider<Object> {
+public class ConstProvider implements PValueProvider<Object> {
     private final TypeRegistry mRegistry;
-    private final String mTypeName;
-    private final String mPackageContext;
-    private final String mDefaultValue;
+    private final String       mTypeName;
+    private final String       mPackageContext;
+    private final String       mDefaultValue;
 
     private Object mParsedValue;
 
-    public ConstProvider(TypeRegistry registry,
-                         String typeName,
-                         String packageContext,
-                         String defaultValue) {
+    public ConstProvider(TypeRegistry registry, String typeName, String packageContext, String defaultValue) {
         mRegistry = registry;
         mTypeName = typeName;
         mPackageContext = packageContext;
@@ -56,7 +52,8 @@ public class ConstProvider
         if (mParsedValue == null) {
             ConstParser parser = new ConstParser();
             ByteArrayInputStream in = new ByteArrayInputStream(mDefaultValue.getBytes(StandardCharsets.UTF_8));
-            PDescriptor type = mRegistry.getProvider(mTypeName, mPackageContext).descriptor();
+            PDescriptor type = mRegistry.getProvider(mTypeName, mPackageContext)
+                                        .descriptor();
             try {
                 mParsedValue = parser.parse(in, type);
             } catch (ParseException e) {

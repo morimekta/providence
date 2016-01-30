@@ -19,25 +19,24 @@
 
 package net.morimekta.providence.mio;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.mio.utils.Sequence;
+import net.morimekta.providence.mio.utils.ShardUtil;
+import net.morimekta.providence.serializer.PSerializer;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.mio.utils.Sequence;
-import net.morimekta.providence.serializer.PSerializer;
-import net.morimekta.providence.mio.utils.ShardUtil;
 
 /**
  * Read messages (in global order) from a set of files in the format:
  * <p/>
  * {name}-{shard}-{seq}
  */
-public class PShardedMessageReader<T extends PMessage<T>>
-        extends PMessageReader<T> {
-    private final PSerializer mSerializer;
+public class PShardedMessageReader<T extends PMessage<T>> extends PMessageReader<T> {
+    private final PSerializer             mSerializer;
     private final PStructDescriptor<T, ?> mDescriptor;
     private final Queue<Sequence>         mQueue;
 
@@ -84,8 +83,6 @@ public class PShardedMessageReader<T extends PMessage<T>>
     /**
      * Close the reading stream. Does not interfere with ongoing reads, but
      * will stop the read loop if ongoing.
-     *
-     * @throws IOException
      */
     public void close() throws IOException {
         synchronized (this) {

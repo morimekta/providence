@@ -82,8 +82,7 @@ public class JsonException extends Exception {
                                  getLine(),
                                  Strings.times("-", linePos));
         } else {
-            return String.format("JsonException(%s)",
-                                 getLocalizedMessage());
+            return String.format("JsonException(%s)", getLocalizedMessage());
         }
     }
 }

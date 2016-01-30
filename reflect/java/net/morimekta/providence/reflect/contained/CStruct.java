@@ -38,9 +38,8 @@ import java.util.TreeMap;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public class CStruct
-        extends CMessage<CStruct> {
-    PStructDescriptor<CStruct,CField> mType;
+public class CStruct extends CMessage<CStruct> {
+    PStructDescriptor<CStruct, CField> mType;
 
     protected CStruct(Builder builder) {
         super(Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields)));
@@ -53,16 +52,15 @@ public class CStruct
     }
 
     @Override
-    public PStructDescriptor<CStruct,CField> descriptor() {
+    public PStructDescriptor<CStruct, CField> descriptor() {
         return mType;
     }
 
-    public static class Builder
-            extends PMessageBuilder<CStruct> {
-        private final PStructDescriptor<CStruct,CField> mType;
-        private final Map<Integer, Object>                mFields;
+    public static class Builder extends PMessageBuilder<CStruct> {
+        private final PStructDescriptor<CStruct, CField> mType;
+        private final Map<Integer, Object>               mFields;
 
-        public Builder(PStructDescriptor<CStruct,CField> type) {
+        public Builder(PStructDescriptor<CStruct, CField> type) {
             mType = type;
             mFields = new TreeMap<>();
         }

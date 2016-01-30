@@ -9,8 +9,8 @@ import java.util.Iterator;
  */
 public class Sequence implements Iterator<File> {
     private final String prefix;
-    private int mNextSequence;
-    private int mSequence;
+    private       int    mNextSequence;
+    private       int    mSequence;
 
     public Sequence(String prefix) {
         this.prefix = prefix;

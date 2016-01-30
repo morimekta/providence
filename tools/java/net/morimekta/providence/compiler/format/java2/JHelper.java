@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -30,6 +29,7 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.util.Binary;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +48,7 @@ import static net.morimekta.util.Strings.camelCase;
  *
  */
 public class JHelper {
-    public static String packageSeparator     = ".";
+    public static String packageSeparator = ".";
 
     private final TypeRegistry mRegistry;
 
@@ -194,14 +194,10 @@ public class JHelper {
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>",
-                                     Set.class.getSimpleName(),
-                                     getFieldType(sType.itemDescriptor()));
+                return String.format("%s<%s>", Set.class.getSimpleName(), getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>",
-                                     List.class.getSimpleName(),
-                                     getFieldType(lType.itemDescriptor()));
+                return String.format("%s<%s>", List.class.getSimpleName(), getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
                 return JUtils.getClassName((PDeclaredDescriptor<?>) type);
@@ -235,14 +231,10 @@ public class JHelper {
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>",
-                                     Set.class.getSimpleName(),
-                                     getFieldType(sType.itemDescriptor()));
+                return String.format("%s<%s>", Set.class.getSimpleName(), getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>",
-                                     List.class.getSimpleName(),
-                                     getFieldType(lType.itemDescriptor()));
+                return String.format("%s<%s>", List.class.getSimpleName(), getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
                 return JUtils.getClassName((PDeclaredDescriptor<?>) type);
@@ -272,7 +264,7 @@ public class JHelper {
                 PSet<?> sType = (PSet<?>) type;
                 return String.format("PSet.provider(%s)", getProviderName(sType.itemDescriptor()));
             case MAP:
-                PMap<?,?> mType = (PMap<?,?>) type;
+                PMap<?, ?> mType = (PMap<?, ?>) type;
                 return String.format("PMap.provider(%s,%s)",
                                      getProviderName(mType.keyDescriptor()),
                                      getProviderName(mType.itemDescriptor()));
@@ -280,7 +272,9 @@ public class JHelper {
                 if (!(type instanceof PPrimitive)) {
                     throw new IllegalArgumentException("Unhandled type group " + type.getType());
                 }
-                return String.format("PPrimitive.%s.provider()", type.getName().toUpperCase());
+                return String.format("PPrimitive.%s.provider()",
+                                     type.getName()
+                                         .toUpperCase());
         }
     }
 }

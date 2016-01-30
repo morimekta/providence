@@ -17,20 +17,17 @@ import java.util.ArrayList;
  * Convenience methods for reading providence messages from resources.
  */
 public class ProvidenceHelper {
-    public static <T extends PMessage<T>> T fromJsonResource(
-            String path, PDescriptor<T> descriptor)
+    public static <T extends PMessage<T>> T fromJsonResource(String path, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
         return fromResource(path, descriptor, new PJsonSerializer(true));
     }
 
-    public static <T extends PMessage<T>> ArrayList<T> arrayListFromJsonResource(
-            String path, PDescriptor<T> descriptor)
+    public static <T extends PMessage<T>> ArrayList<T> arrayListFromJsonResource(String path, PDescriptor<T> descriptor)
             throws PSerializeException, IOException {
         return arrayListFromResource(path, descriptor, new PJsonSerializer(true));
     }
 
-    public static <T extends PMessage<T>> T fromResource(
-            String path, PDescriptor<T> descriptor, PSerializer serializer)
+    public static <T extends PMessage<T>> T fromResource(String path, PDescriptor<T> descriptor, PSerializer serializer)
             throws PSerializeException, IOException {
         InputStream in = ProvidenceHelper.class.getResourceAsStream(path);
         if (in == null) {
@@ -39,8 +36,9 @@ public class ProvidenceHelper {
         return serializer.deserialize(new BufferedInputStream(in), descriptor);
     }
 
-    public static <T extends PMessage<T>> ArrayList<T> arrayListFromResource(
-            String path, PDescriptor<T> descriptor, PSerializer serializer)
+    public static <T extends PMessage<T>> ArrayList<T> arrayListFromResource(String path,
+                                                                             PDescriptor<T> descriptor,
+                                                                             PSerializer serializer)
             throws PSerializeException, IOException {
         InputStream in = ProvidenceHelper.class.getResourceAsStream(path);
         if (in == null) {
@@ -50,9 +48,13 @@ public class ProvidenceHelper {
         ArrayList<T> out = new ArrayList<>();
         while (true) {
             T item = serializer.deserialize(in, descriptor);
-            if (item == null) break;
+            if (item == null) {
+                break;
+            }
             out.add(item);
-            if (in.read() < 0) break;
+            if (in.read() < 0) {
+                break;
+            }
         }
         return out;
     }

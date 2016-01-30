@@ -1,6 +1,5 @@
 package net.morimekta.providence.gentests;
 
-import android.os.Parcel;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
@@ -8,7 +7,10 @@ import net.morimekta.test.number.Imaginary;
 import net.morimekta.test.providence.DefaultValues;
 import net.morimekta.test.providence.Value;
 import net.morimekta.util.Binary;
+
 import org.junit.Test;
+
+import android.os.Parcel;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertThat;
@@ -41,30 +43,27 @@ public class ParcelableTest {
     public void testCalculator() {
         Parcel parcel = Parcel.obtain();
 
-        Operation original = Operation
-                .builder()
-                .setOperator(Operator.MULTIPLY)
-                .addToOperands(
-                        Operand.builder()
-                               .setOperation(
-                                       Operation.builder()
-                                                .setOperator(Operator.ADD)
-                                                .addToOperands(Operand.builder()
-                                                                      .setNumber(1234)
-                                                                      .build(),
-                                                               Operand.builder()
-                                                                      .setNumber(4.321)
-                                                                      .build())
-                                                .build())
-                               .build())
-                .addToOperands(
-                        Operand.builder().setImaginary(
-                                Imaginary.builder()
-                                         .setV(1.7)
-                                         .setI(-2.0)
-                                         .build())
-                               .build())
-                .build();
+        Operation original = Operation.builder()
+                                      .setOperator(Operator.MULTIPLY)
+                                      .addToOperands(Operand.builder()
+                                                            .setOperation(Operation.builder()
+                                                                                   .setOperator(Operator.ADD)
+                                                                                   .addToOperands(Operand.builder()
+                                                                                                         .setNumber(1234)
+                                                                                                         .build(),
+                                                                                                  Operand.builder()
+                                                                                                         .setNumber(
+                                                                                                                 4.321)
+                                                                                                         .build())
+                                                                                   .build())
+                                                            .build())
+                                      .addToOperands(Operand.builder()
+                                                            .setImaginary(Imaginary.builder()
+                                                                                   .setV(1.7)
+                                                                                   .setI(-2.0)
+                                                                                   .build())
+                                                            .build())
+                                      .build();
 
         original.writeToParcel(parcel, 0);
         Operation copy = Operation.CREATOR.createFromParcel(parcel);

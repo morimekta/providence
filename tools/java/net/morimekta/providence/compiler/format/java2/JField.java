@@ -105,7 +105,7 @@ public class JField {
     }
 
     public String fieldEnum() {
-        return  c_case("", field.getName()).toUpperCase();
+        return c_case("", field.getName()).toUpperCase();
     }
 
     public String kDefault() {
@@ -113,8 +113,7 @@ public class JField {
     }
 
     public boolean hasDefault() {
-        return alwaysPresent() ||
-               field.hasDefaultValue();
+        return alwaysPresent() || field.hasDefaultValue();
     }
 
     public boolean isRequired() {

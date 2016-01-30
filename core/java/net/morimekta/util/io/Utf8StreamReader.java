@@ -29,19 +29,18 @@ import java.util.Locale;
  * Similar to java native {@link java.io.InputStreamReader}, but locked to
  * utf-8, and explicitly with no buffering whatsoever. It will only read one
  * byte at a time until it has a valid unicode char.
- *
+ * <p/>
  * In order to make this reader more efficient, rather wrap the input stream in
  * a BufferedInputStream, which can pass on any buffered bytes to later uses.
  * E.g.:
- *
- * <code>
+ * <p/>
+ * <pre>
  *     Reader reader = new Utf8StreamReader(new BufferedInputStream(in));
- * </code>
+ * </pre>
  */
-public class Utf8StreamReader
-        extends Reader {
+public class Utf8StreamReader extends Reader {
     private final InputStream in;
-    private final int[] buffer;
+    private final int[]       buffer;
 
     public Utf8StreamReader(InputStream in) {
         this.in = in;
@@ -53,8 +52,11 @@ public class Utf8StreamReader
         for (int i = 0; i < len; ++i) {
             final int r = in.read();
             if (r < 0) {
-                if (i == 0) return -1;
-                else return i;
+                if (i == 0) {
+                    return -1;
+                } else {
+                    return i;
+                }
             } else if (r < 0x80) {
                 cbuf[off + i] = (char) r;
             } else if ((r & 0xC0) == 0x80) {
@@ -118,11 +120,13 @@ public class Utf8StreamReader
                 break;
         }
         for (int i = 1; i < num; ++i) {
-            if (arr[i] == -1) throw new IOException("End of stream inside utf-8 encoded entity.");
+            if (arr[i] == -1) {
+                throw new IOException("End of stream inside utf-8 encoded entity.");
+            }
             if ((arr[i] & 0xC0) != 0x80) {
-                throw new UnsupportedEncodingException(
-                        String.format(Locale.ENGLISH,
-                                      "Unexpected non-entity utf-8 char in entity extra bytes: %2x", arr[i]));
+                throw new UnsupportedEncodingException(String.format(Locale.ENGLISH,
+                                                                     "Unexpected non-entity utf-8 char in entity extra bytes: %2x",
+                                                                     arr[i]));
             }
             cp = (cp << 6) | (arr[i] & 0x3f);
         }

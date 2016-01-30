@@ -27,12 +27,11 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
  * Contained enum value. This emulates enum values to used in thrift
  * reflection.
  */
-public class CEnum
-        implements PEnumValue<CEnum> {
-    private final int                     mValue;
-    private final String                  mName;
+public class CEnum implements PEnumValue<CEnum> {
+    private final int                    mValue;
+    private final String                 mName;
     private final PEnumDescriptor<CEnum> mType;
-    private final String                  mComment;
+    private final String                 mComment;
 
     public CEnum(String comment, int value, String name, PEnumDescriptor<CEnum> type) {
         mComment = comment;
@@ -67,8 +66,11 @@ public class CEnum
             return false;
         }
         CEnum other = (CEnum) o;
-        return other.descriptor().getQualifiedName(null).equals(mType.getQualifiedName(null)) &&
-               other.getName().equals(mName) &&
+        return other.descriptor()
+                    .getQualifiedName(null)
+                    .equals(mType.getQualifiedName(null)) &&
+               other.getName()
+                    .equals(mName) &&
                other.getValue() == mValue;
     }
 
@@ -82,8 +84,7 @@ public class CEnum
         return mName.toUpperCase();
     }
 
-    public static class Builder
-            extends PEnumBuilder<CEnum> {
+    public static class Builder extends PEnumBuilder<CEnum> {
         private final CEnumDescriptor mType;
 
         private CEnum mValue = null;

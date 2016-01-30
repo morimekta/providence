@@ -21,9 +21,11 @@ package net.morimekta.providence.descriptor;
 
 /**
  * Field requirement designation.
- *  - Default: Value is always present unless nullable. Not required for validity.
- *  - Optional: Value may always be missing.
- *  - Required: Value is always present unless nullable. Value required for validity.
+ * - Default: Value is always present unless nullable. Not required for
+ *   validity.
+ * - Optional: Value may always be missing.
+ * - Required: Value is always present unless nullable. Value required for
+ *   validity.
  */
 public enum PRequirement {
     DEFAULT(true, false, ""),
@@ -32,7 +34,7 @@ public enum PRequirement {
 
     public boolean fieldIsValueType;
     public boolean presenceRequired;
-    public String label;
+    public String  label;
 
     PRequirement(boolean value, boolean presence, String name) {
         fieldIsValueType = value;

@@ -83,11 +83,10 @@ public class JMessageBuilderFormat {
         }
         writer.newline();
         for (JField field : message.fields()) {
-            writer.formatln("private %s %s;",
-                            field.fieldType(),
-                            field.member());
+            writer.formatln("private %s %s;", field.fieldType(), field.member());
         }
-        if (message.fields().size() > 0) {
+        if (message.fields()
+                   .size() > 0) {
             writer.newline();
         }
     }
@@ -97,13 +96,13 @@ public class JMessageBuilderFormat {
               .appendln("public _Builder() {")
               .begin();
         if (!message.isUnion()) {
-            writer.formatln("optionals = new BitSet(%d);", message.fields().size());
+            writer.formatln("optionals = new BitSet(%d);",
+                            message.fields()
+                                   .size());
         }
         for (JField field : message.fields()) {
             if (field.container()) {
-                writer.formatln("%s = new %s<>();",
-                                field.member(),
-                                field.instanceType());
+                writer.formatln("%s = new %s<>();", field.member(), field.instanceType());
             } else if (field.alwaysPresent()) {
                 writer.formatln("%s = %s;", field.member(), field.kDefault());
             }
@@ -168,13 +167,12 @@ public class JMessageBuilderFormat {
             }
         }
         if (field.type() == PType.SET || field.type() == PType.LIST) {
-            PContainer<?,?> cType = (PContainer<?, ?>) field.getPField().getDescriptor();
+            PContainer<?, ?> cType = (PContainer<?, ?>) field.getPField()
+                                                             .getDescriptor();
             String iType = helper.getFieldType(cType.itemDescriptor());
-            writer.formatln("public _Builder %s(Collection<%s> value) {",
-                            field.setter(), iType);
+            writer.formatln("public _Builder %s(Collection<%s> value) {", field.setter(), iType);
         } else {
-            writer.formatln("public _Builder %s(%s value) {",
-                            field.setter(), field.valueType());
+            writer.formatln("public _Builder %s(%s value) {", field.setter(), field.valueType());
         }
         writer.begin();
 
@@ -214,13 +212,12 @@ public class JMessageBuilderFormat {
 
         switch (field.type()) {
             case MAP: {
-                PMap<?, ?> mType = (PMap<?, ?>) field.getPField().getDescriptor();
+                PMap<?, ?> mType = (PMap<?, ?>) field.getPField()
+                                                     .getDescriptor();
                 String mkType = helper.getValueType(mType.keyDescriptor());
                 String miType = helper.getValueType(mType.itemDescriptor());
 
-                writer.formatln("public _Builder %s(%s key, %s value) {",
-                                field.adder(),
-                                mkType, miType)
+                writer.formatln("public _Builder %s(%s key, %s value) {", field.adder(), mkType, miType)
                       .begin();
                 if (message.isUnion()) {
                     writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
@@ -237,12 +234,11 @@ public class JMessageBuilderFormat {
             }
             case SET:
             case LIST: {
-                PContainer<?, ?> lType = (PContainer<?, ?>) field.getPField().getDescriptor();
+                PContainer<?, ?> lType = (PContainer<?, ?>) field.getPField()
+                                                                 .getDescriptor();
                 String liType = helper.getValueType(lType.itemDescriptor());
 
-                writer.formatln("public _Builder %s(%s... values) {",
-                                field.adder(),
-                                liType)
+                writer.formatln("public _Builder %s(%s... values) {", field.adder(), liType)
                       .begin();
                 if (message.isUnion()) {
                     writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
@@ -265,8 +261,7 @@ public class JMessageBuilderFormat {
     }
 
     private void appendResetter(JMessage message, JField field) {
-        writer.formatln("public _Builder %s() {",
-                        field.resetter())
+        writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
 
         if (message.isUnion()) {
@@ -296,8 +291,7 @@ public class JMessageBuilderFormat {
               .appendln("switch (key) {")
               .begin();
         for (JField field : message.fields()) {
-            writer.formatln("case %d: %s((%s) value); break;",
-                            field.id(), field.setter(), field.valueType());
+            writer.formatln("case %d: %s((%s) value); break;", field.id(), field.setter(), field.valueType());
         }
         writer.end()
               .appendln('}')
@@ -315,10 +309,13 @@ public class JMessageBuilderFormat {
               .begin();
         for (JField field : message.fields()) {
             if (field.type() == PType.LIST || field.type() == PType.SET) {
-                PContainer<?,?> ct = (PContainer<?, ?>) field.getPField().getDescriptor();
+                PContainer<?, ?> ct = (PContainer<?, ?>) field.getPField()
+                                                              .getDescriptor();
                 PDescriptor<?> itype = ct.itemDescriptor();
                 writer.formatln("case %d: %s((%s) value); break;",
-                                field.id(), field.adder(), helper.getValueType(itype));
+                                field.id(),
+                                field.adder(),
+                                helper.getValueType(itype));
             }
         }
         writer.appendln("default: break;")
@@ -337,8 +334,7 @@ public class JMessageBuilderFormat {
               .appendln("switch (key) {")
               .begin();
         for (JField field : message.fields()) {
-            writer.formatln("case %d: %s(); break;",
-                            field.id(), field.resetter());
+            writer.formatln("case %d: %s(); break;", field.id(), field.resetter());
         }
         writer.end()
               .appendln('}')
@@ -360,10 +356,12 @@ public class JMessageBuilderFormat {
             boolean first = true;
             for (JField field : message.fields()) {
                 if (field.isRequired()) {
-                    if (first)
+                    if (first) {
                         first = false;
-                    else
-                        writer.append(" &&").appendln("");
+                    } else {
+                        writer.append(" &&")
+                              .appendln("");
+                    }
                     writer.format("optionals.get(%d)", field.index());
                 }
             }

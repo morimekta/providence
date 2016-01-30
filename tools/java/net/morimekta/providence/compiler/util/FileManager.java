@@ -42,8 +42,9 @@ public class FileManager {
     }
 
     protected String relativePath(String path, String name) {
-        if (path == null || path.isEmpty())
+        if (path == null || path.isEmpty()) {
             return name;
+        }
         return String.format("%s%c%s", path, File.separatorChar, name);
     }
 
@@ -58,7 +59,8 @@ public class FileManager {
             throw new IOException("File " + path + File.separator + name + " already created.");
         }
 
-        file.getParentFile().mkdirs();
+        file.getParentFile()
+            .mkdirs();
         file.createNewFile();
 
         mCreatedFiles.add(file.getCanonicalPath());

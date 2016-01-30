@@ -27,12 +27,10 @@ public class JAnnotationTest {
         deprecated = new TreeMap<>();
         deprecated.put("@deprecated", true);
         deprecated.put("@Deprecated", true);
-        deprecated.put("Something\n" +
-                       "@deprecated", true);
+        deprecated.put("Something\n" + "@deprecated", true);
         deprecated.put("@deprecated something", true);
         deprecated.put("@deprecated since 20150225, use HTTP request header instead", true);
-        deprecated.put("@deprecated\n" +
-                       "Something", true);
+        deprecated.put("@deprecated\n" + "Something", true);
         deprecated.put("Something", false);
         deprecated.put("Deprecated", false);
         deprecated.put("deprecated", false);
@@ -43,16 +41,23 @@ public class JAnnotationTest {
     public void testHasDeprecatedAnnotation() {
         for (Map.Entry<String, Boolean> entry : deprecated.entrySet()) {
             PDeclaredDescriptor descriptor = new PDeclaredDescriptor(entry.getKey(), "tmp", "name") {
-                @Override public PBuilderFactory factory() {
+                @Override
+                public PBuilderFactory factory() {
                     return null;
                 }
 
-                @Override public PType getType() {
+                @Override
+                public PType getType() {
                     return null;
                 }
             };
 
-            CField<?> field = new CField<>(entry.getKey(), 1, PRequirement.DEFAULT, "name", PPrimitive.BINARY.provider(), null);
+            CField<?> field = new CField<>(entry.getKey(),
+                                           1,
+                                           PRequirement.DEFAULT,
+                                           "name",
+                                           PPrimitive.BINARY.provider(),
+                                           null);
 
             assertEquals(entry.getValue(), JAnnotation.isDeprecated(descriptor));
             assertEquals(entry.getValue(), JAnnotation.isDeprecated(field));

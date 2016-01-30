@@ -49,8 +49,7 @@ import java.util.Map;
  * Compact binary serializer. This uses the most compact binary format
  * allowable.
  * <p/>
- * See data definition file <code>docs/fast-binary.md</code> for format
- * spec.
+ * See data definition file <code>docs/fast-binary.md</code> for format spec.
  */
 public class PFastBinarySerializer extends PSerializer {
     protected final boolean readStrict;
@@ -91,8 +90,7 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T> T deserialize(InputStream is, PDescriptor<T> descriptor)
-            throws PSerializeException, IOException {
+    public <T> T deserialize(InputStream is, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
         if (PType.MESSAGE == descriptor.getType()) {
             return cast((Object) readMessage(in, (PStructDescriptor<?, ?>) descriptor));
@@ -111,29 +109,25 @@ public class PFastBinarySerializer extends PSerializer {
     // --- MESSAGE ---
 
     /**
-     * @param out Writer to write to.
+     * @param out     Writer to write to.
      * @param message Message to write.
      * @return Number of bytes written.
+     *
      * @throws PSerializeException When serialization failed.
-     * @throws IOException When unable to write to stream as expected.
+     * @throws IOException         When unable to write to stream as expected.
      */
     protected int writeMessage(BinaryWriter out, PMessage<?> message) throws IOException, PSerializeException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                len += writeFieldValue(out,
-                                       field.getKey(),
-                                       field.getDescriptor(),
-                                       message.get(field.getKey()));
+                len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
             }
         } else {
-            for (PField<?> field : message.descriptor().getFields()) {
+            for (PField<?> field : message.descriptor()
+                                          .getFields()) {
                 if (message.has(field.getKey())) {
-                    len += writeFieldValue(out,
-                                           field.getKey(),
-                                           field.getDescriptor(),
-                                           message.get(field.getKey()));
+                    len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
                 }
             }
         }
@@ -142,15 +136,17 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     /**
-     * @param in The reader to read from.
+     * @param in         The reader to read from.
      * @param descriptor Descriptor of the message to read.
      * @return Message read.
+     *
      * @throws PSerializeException When deserialization failed.
-     * @throws IOException When unable to read from stream as expected.
+     * @throws IOException         When unable to read from stream as expected.
      */
-    private <T extends PMessage<T>> T readMessage(BinaryReader in, PStructDescriptor<T,?> descriptor)
+    private <T extends PMessage<T>> T readMessage(BinaryReader in, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.factory().builder();
+        PMessageBuilder<T> builder = descriptor.factory()
+                                               .builder();
         int tag;
         while ((tag = in.readIntVarint()) > 0) {
             int id = tag >>> 3;
@@ -224,11 +220,11 @@ public class PFastBinarySerializer extends PSerializer {
             case MAP: {
                 int len = out.writeVarint(key << 3 | COLLECTION);
 
-                Map<Object,Object> map = (Map<Object,Object>) value;
-                PMap<?,?> desc = (PMap<?,?>) descriptor;
+                Map<Object, Object> map = (Map<Object, Object>) value;
+                PMap<?, ?> desc = (PMap<?, ?>) descriptor;
 
                 len += out.writeVarint(map.size() * 2);
-                for (Map.Entry<Object,Object> entry : map.entrySet()) {
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     len += writeFieldValue(out, 1, desc.keyDescriptor(), entry.getKey());
                     len += writeFieldValue(out, 2, desc.itemDescriptor(), entry.getValue());
                 }
@@ -239,7 +235,7 @@ public class PFastBinarySerializer extends PSerializer {
                 int len = out.writeVarint(key << 3 | COLLECTION);
 
                 Collection<Object> coll = (Collection<Object>) value;
-                PContainer<?,?> desc = (PContainer<?,?>) descriptor;
+                PContainer<?, ?> desc = (PContainer<?, ?>) descriptor;
 
                 len += out.writeVarint(coll.size());
                 for (Object item : coll) {
@@ -259,6 +255,7 @@ public class PFastBinarySerializer extends PSerializer {
      * @param type       The encoded type.
      * @param descriptor The type descriptor to generate content for.
      * @return The field value, or null if no type.
+     *
      * @throws IOException If unable to read from stream or invalid field type.
      */
     @SuppressWarnings("unchecked")
@@ -274,12 +271,17 @@ public class PFastBinarySerializer extends PSerializer {
                     return null;
                 }
                 switch (descriptor.getType()) {
-                    case BYTE: return cast((byte) in.readIntZigzag());
-                    case I16: return cast((short) in.readIntZigzag());
-                    case I32: return cast((int) in.readIntZigzag());
-                    case I64: return cast(in.readLongZigzag());
+                    case BYTE:
+                        return cast((byte) in.readIntZigzag());
+                    case I16:
+                        return cast((short) in.readIntZigzag());
+                    case I32:
+                        return cast((int) in.readIntZigzag());
+                    case I64:
+                        return cast(in.readLongZigzag());
                     case ENUM: {
-                        PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory().builder();
+                        PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory()
+                                                                                   .builder();
                         builder.setByValue(in.readIntZigzag());
                         return cast(builder.build());
                     }
@@ -310,7 +312,7 @@ public class PFastBinarySerializer extends PSerializer {
                 }
             }
             case MESSAGE:
-                return cast((T) readMessage(in, (PStructDescriptor<?,?>) descriptor));
+                return cast((T) readMessage(in, (PStructDescriptor<?, ?>) descriptor));
             case COLLECTION:
                 if (descriptor == null) {
                     if (readStrict) {
@@ -322,11 +324,11 @@ public class PFastBinarySerializer extends PSerializer {
                     }
                     return null;
                 } else if (descriptor.getType() == PType.MAP) {
-                    PMap<?,?> ct = (PMap) descriptor;
+                    PMap<?, ?> ct = (PMap) descriptor;
                     PDescriptor<?> kt = ct.keyDescriptor();
                     PDescriptor<?> vt = ct.itemDescriptor();
 
-                    Map<Object,Object> out = new LinkedHashMap<>();
+                    Map<Object, Object> out = new LinkedHashMap<>();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i, ++i) {
                         Object key = readFieldValue(in, in.readIntVarint() & 0x07, kt);
@@ -338,9 +340,8 @@ public class PFastBinarySerializer extends PSerializer {
                     PContainer<?, ?> ct = (PContainer) descriptor;
                     PDescriptor<?> it = ct.itemDescriptor();
                     // TODO: Make sure I can always use LinkedList to reduce overhead.
-                    Collection<Object> out = descriptor.getType() == PType.SET ?
-                                             new LinkedHashSet<>() :
-                                             new LinkedList<>();
+                    Collection<Object> out =
+                            descriptor.getType() == PType.SET ? new LinkedHashSet<>() : new LinkedList<>();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i) {
                         int tag = in.readIntVarint();

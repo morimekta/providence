@@ -1,6 +1,7 @@
 package net.morimekta.providence.testing;
 
 import net.morimekta.providence.PMessage;
+
 import org.hamcrest.Matcher;
 
 /**

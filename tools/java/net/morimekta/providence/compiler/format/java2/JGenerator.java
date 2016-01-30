@@ -36,15 +36,12 @@ import java.io.OutputStream;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class JGenerator
-        extends Generator {
+public class JGenerator extends Generator {
     private final JOptions mOptions;
     TypeRegistry mRegistry;
     JHelper      mTypeHelper;
 
-    public JGenerator(FileManager manager,
-                      TypeRegistry registry,
-                      JOptions options) {
+    public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) {
         super(manager);
         mRegistry = registry;
         mOptions = options;
@@ -56,18 +53,17 @@ public class JGenerator
     @SuppressWarnings("resource")
     public void generate(CDocument document) throws IOException, GeneratorException {
         String javaPackage = JUtils.getJavaPackage(document);
-        JMessageFormat messageFormatter =
-                new JMessageFormat(mTypeHelper, mOptions);
-        JEnumFormat enumFormatter
-                = new JEnumFormat(mTypeHelper, mOptions);
+        JMessageFormat messageFormatter = new JMessageFormat(mTypeHelper, mOptions);
+        JEnumFormat enumFormatter = new JEnumFormat(mTypeHelper, mOptions);
 
         String path = JUtils.getPackageClassPath(javaPackage);
 
-        if (document.getConstants().size() > 0) {
+        if (document.getConstants()
+                    .size() > 0) {
             String file = mTypeHelper.getConstantsClassName(document) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
-                JConstantsFormat constFormat =  new JConstantsFormat(mTypeHelper, mOptions);
+                JConstantsFormat constFormat = new JConstantsFormat(mTypeHelper, mOptions);
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 constFormat.format(writer, document);
                 writer.flush();
@@ -83,7 +79,7 @@ public class JGenerator
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 switch (type.getType()) {
                     case MESSAGE:
-                        messageFormatter.format(writer, (PStructDescriptor<?,?>) type);
+                        messageFormatter.format(writer, (PStructDescriptor<?, ?>) type);
                         break;
                     case ENUM:
                         enumFormatter.format(writer, (PEnumDescriptor<?>) type);

@@ -19,11 +19,11 @@
 
 package net.morimekta.providence.mio;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.PSerializer;
 import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.util.Binary;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,12 +38,10 @@ import java.util.Arrays;
 /**
  * Read messages from a file in the format:
  * <p/>
- * [file-magic-start]
- * ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
+ * [file-magic-start] ([message-magic-start][message...][message-magic-end][message sha-1 hash]) *
  */
-public class PRecordMessageReader<T extends PMessage<T>>
-        extends PMessageReader<T> {
-    private final PSerializer mSerializer;
+public class PRecordMessageReader<T extends PMessage<T>> extends PMessageReader<T> {
+    private final PSerializer             mSerializer;
     private final PStructDescriptor<T, ?> mDescriptor;
 
     private File        mFile;
@@ -62,15 +60,14 @@ public class PRecordMessageReader<T extends PMessage<T>>
         try {
             synchronized (this) {
                 if (mInputStream == null) {
-                    if (mFile == null)
+                    if (mFile == null) {
                         return null;
+                    }
                     mInputStream = new FileInputStream(mFile);
                     if (!readMagic(PRecordMessageWriter.kMagicFileStart)) {
                         String file = mFile.getName();
                         close();
-                        throw new IOException(String.format(
-                                "%s is not a messageio formatted file.",
-                                file));
+                        throw new IOException(String.format("%s is not a messageio formatted file.", file));
                     }
                 }
                 // Verify message start magic.
@@ -89,23 +86,34 @@ public class PRecordMessageReader<T extends PMessage<T>>
                     close();
                     throw new IOException("Missing message end magic.");
                 }
-                byte[] digest = digestInputStream.getMessageDigest().digest();
+                byte[] digest = digestInputStream.getMessageDigest()
+                                                 .digest();
                 if (!readMagic(digest)) {
                     close();
                     throw new IOException(String.format(
                             "Message digest mismatch, message sha-1 \"%s\" not matching that on file.",
-                            Binary.wrap(digest).toHexString()));
+                            Binary.wrap(digest)
+                                  .toHexString()));
                 }
                 return message;
             }
         } catch (IOException e) {
-            try { close(); } catch (IOException e2) {}
+            try {
+                close();
+            } catch (IOException e2) {
+            }
             throw new IOException("Unable to read messageio file.", e);
         } catch (PSerializeException tse) {
-            try { close(); } catch (IOException e2) {}
+            try {
+                close();
+            } catch (IOException e2) {
+            }
             throw new IOException("Unable to deserialize message from file.", tse);
         } catch (NoSuchAlgorithmException e) {
-            try { close(); } catch (IOException e2) {}
+            try {
+                close();
+            } catch (IOException e2) {
+            }
             throw new IOException("Unable to verify message consistency.", e);
         }
     }
@@ -113,8 +121,6 @@ public class PRecordMessageReader<T extends PMessage<T>>
     /**
      * Close the reading stream. Does not interfere with ongoing reads, but
      * will stop the read loop if ongoing.
-     *
-     * @throws IOException
      */
     public void close() throws IOException {
         synchronized (this) {
@@ -134,8 +140,9 @@ public class PRecordMessageReader<T extends PMessage<T>>
         int read = 0;
         while (read < buffer.length) {
             int tmp = mInputStream.read(buffer, read, buffer.length - read);
-            if (tmp < 0)
+            if (tmp < 0) {
                 return false;
+            }
             read += tmp;
         }
         return Arrays.equals(buffer, magic);
@@ -145,12 +152,11 @@ public class PRecordMessageReader<T extends PMessage<T>>
      * Checks if a given file has the 'messageio record file magic prefix'.
      *
      * @param file File to check.
-     * @return
-     * @throws FileNotFoundException
      */
     public static boolean hasFileMagic(File file) throws FileNotFoundException {
-        if (file == null || !file.exists())
+        if (file == null || !file.exists()) {
             return false;
+        }
 
         FileInputStream fis = new FileInputStream(file);
         try {
@@ -158,8 +164,9 @@ public class PRecordMessageReader<T extends PMessage<T>>
             int read = 0;
             while (read < buffer.length) {
                 int tmp = fis.read(buffer, read, buffer.length - read);
-                if (tmp < 0)
+                if (tmp < 0) {
                     return false;
+                }
                 read += tmp;
             }
             return Arrays.equals(buffer, PRecordMessageWriter.kMagicFileStart);

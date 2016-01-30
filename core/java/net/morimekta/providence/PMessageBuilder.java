@@ -23,8 +23,7 @@ package net.morimekta.providence;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class PMessageBuilder<T extends PMessage<T>>
-        implements PBuilder<T> {
+public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder<T> {
     public abstract boolean isValid();
 
     public abstract PMessageBuilder<T> set(int key, Object value);

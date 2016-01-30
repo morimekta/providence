@@ -31,9 +31,10 @@ import java.io.InputStream;
 public interface Parser {
     /**
      * Parse input stream to document declaration model.
-     * 
+     *
      * @param in The stream to parse.
      * @return The declared document model.
+     *
      * @throws IOException When the stream was unreadable.
      */
     ThriftDocument parse(InputStream in, String name) throws IOException, ParseException;

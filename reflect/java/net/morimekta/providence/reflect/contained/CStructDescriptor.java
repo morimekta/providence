@@ -33,21 +33,17 @@ import java.util.regex.Pattern;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CStructDescriptor
-        extends PStructDescriptor<CStruct, CField> {
-    public static final Pattern COMPACT_RE = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
-    public static final int MAX_COMPACT_FIELDS = 5;
+public class CStructDescriptor extends PStructDescriptor<CStruct, CField> {
+    public static final Pattern COMPACT_RE         = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
+    public static final int     MAX_COMPACT_FIELDS = 5;
 
     private final CField[]             mFields;
     private final Map<Integer, CField> mFieldIdMap;
     private final Map<String, CField>  mFieldNameMap;
 
-    public CStructDescriptor(String comment,
-                             String packageName,
-                             String name,
-                             List<CField> fields) {
-        super(comment, packageName, name, new _Factory(),
-              false,  // overrides getter to avoid having to check fields types before it's converted.
+    public CStructDescriptor(String comment, String packageName, String name, List<CField> fields) {
+        super(comment, packageName, name, new _Factory(), false,
+              // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(comment, fields));
         ((_Factory) factory()).setType(this);
 
@@ -94,8 +90,7 @@ public class CStructDescriptor
         return true;
     }
 
-    private static class _Factory
-            extends PMessageBuilderFactory<CStruct> {
+    private static class _Factory extends PMessageBuilderFactory<CStruct> {
         private CStructDescriptor mType;
 
         public void setType(CStructDescriptor type) {
@@ -110,9 +105,11 @@ public class CStructDescriptor
     }
 
     private static boolean isCompactCompatible(String comment, List<CField> fields) {
-        if (comment == null)
+        if (comment == null) {
             return false;
-        if (!COMPACT_RE.matcher(comment).find()) {
+        }
+        if (!COMPACT_RE.matcher(comment)
+                       .find()) {
             return false;
         }
         if (fields.size() > MAX_COMPACT_FIELDS) {
@@ -127,7 +124,9 @@ public class CStructDescriptor
             if (hasOptional && field.getRequirement() == PRequirement.REQUIRED) {
                 return false;
             }
-            if (field.getRequirement() == PRequirement.OPTIONAL) hasOptional = true;
+            if (field.getRequirement() == PRequirement.OPTIONAL) {
+                hasOptional = true;
+            }
             next++;
         }
         return true;

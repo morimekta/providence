@@ -1,6 +1,5 @@
 package net.morimekta.providence.testing;
 
-import junit.framework.AssertionFailedError;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
@@ -11,6 +10,8 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
+
+import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
@@ -30,8 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stein Eldar Johnsen
  * @since 21.01.16.
  */
-public class MessageEq<T extends PMessage<T>>
-        extends BaseMatcher<T> {
+public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
     private final PMessage<T> expected;
 
     public MessageEq(PMessage<T> expected) {
@@ -40,8 +40,9 @@ public class MessageEq<T extends PMessage<T>>
 
     @Override
     public boolean matches(Object actual) {
-        if (expected == null)
+        if (expected == null) {
             return actual == null;
+        }
         if (!(actual instanceof PMessage)) {
             throw new AssertionFailedError("Item " + actual.toString() + " not a providence message.");
         }
@@ -71,8 +72,11 @@ public class MessageEq<T extends PMessage<T>>
                 mismatchDescription.appendText("[");
                 int i = 0;
                 for (String mismatch : mismatches) {
-                    if (first) first = false;
-                    else mismatchDescription.appendText(",");
+                    if (first) {
+                        first = false;
+                    } else {
+                        mismatchDescription.appendText(",");
+                    }
                     mismatchDescription.appendText("\n        ");
                     if (i >= 20) {
                         int remaining = mismatches.size() - i;
@@ -93,34 +97,36 @@ public class MessageEq<T extends PMessage<T>>
                                                                     LinkedList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
-        if (expected.descriptor().getVariant() == PMessageVariant.UNION) {
+        if (expected.descriptor()
+                    .getVariant() == PMessageVariant.UNION) {
             PUnion<?> eu = (PUnion) expected;
             PUnion<?> ac = (PUnion) actual;
 
-            if (!eu.unionField().equals(ac.unionField())) {
-                mismatches.add(String.format(
-                        "%s to have %s, but had %s",
-                        xPath,
-                        eu.unionField().getName(),
-                        ac.unionField().getName()));
+            if (!eu.unionField()
+                   .equals(ac.unionField())) {
+                mismatches.add(String.format("%s to have %s, but had %s",
+                                             xPath,
+                                             eu.unionField()
+                                               .getName(),
+                                             ac.unionField()
+                                               .getName()));
             }
         }
 
-        for (PField<?> field : expected.descriptor().getFields()) {
+        for (PField<?> field : expected.descriptor()
+                                       .getFields()) {
             int key = field.getKey();
             String fieldXPath = xPath.isEmpty() ? field.getName() : xPath + "." + field.getName();
 
             if (expected.has(key) != actual.has(key)) {
                 if (!expected.has(key)) {
-                    mismatches.add(String.format(
-                            "%s to be missing, but was %s",
-                            fieldXPath,
-                            toString(actual.get(field.getKey()))));
+                    mismatches.add(String.format("%s to be missing, but was %s",
+                                                 fieldXPath,
+                                                 toString(actual.get(field.getKey()))));
                 } else if (!actual.has(key)) {
-                    mismatches.add(String.format(
-                            "%s to be %s, but was missing",
-                            fieldXPath,
-                            toString(expected.get(field.getKey()))));
+                    mismatches.add(String.format("%s to be %s, but was missing",
+                                                 fieldXPath,
+                                                 toString(expected.get(field.getKey()))));
                 }
             } else if (!PTypeUtils.equals(expected.get(key), actual.get(key))) {
                 switch (field.getType()) {
@@ -132,32 +138,22 @@ public class MessageEq<T extends PMessage<T>>
                         break;
                     }
                     case LIST: {
-                        collectListMismatches(fieldXPath,
-                                              (List) expected.get(key),
-                                              (List) actual.get(key),
-                                              mismatches);
+                        collectListMismatches(fieldXPath, (List) expected.get(key), (List) actual.get(key), mismatches);
                         break;
                     }
                     case SET: {
-                        collectSetMismatches(fieldXPath,
-                                             (Set) expected.get(key),
-                                             (Set) actual.get(key),
-                                             mismatches);
+                        collectSetMismatches(fieldXPath, (Set) expected.get(key), (Set) actual.get(key), mismatches);
                         break;
                     }
                     case MAP: {
-                        collectMapMismatches(fieldXPath,
-                                             (Map) expected.get(key),
-                                             (Map) actual.get(key),
-                                             mismatches);
+                        collectMapMismatches(fieldXPath, (Map) expected.get(key), (Map) actual.get(key), mismatches);
                         break;
                     }
                     default: {
-                        mismatches.add(String.format(
-                                "%s was %s, expected %s",
-                                fieldXPath,
-                                toString(actual.get(field.getKey())),
-                                toString(expected.get(field.getKey()))));
+                        mismatches.add(String.format("%s was %s, expected %s",
+                                                     fieldXPath,
+                                                     toString(actual.get(field.getKey())),
+                                                     toString(expected.get(field.getKey()))));
                         break;
                     }
                 }
@@ -171,39 +167,34 @@ public class MessageEq<T extends PMessage<T>>
                                                       LinkedList<String> mismatches) {
         mismatches.addAll(actual.keySet()
                                 .stream()
-                                .filter(key -> !expected.keySet().contains(key))
-                                .map(key -> String.format(
-                                        "found unexpected entry (%s, %s) in %s",
-                                        Objects.toString(key),
-                                        toString(actual.get(key)),
-                                        xPath))
+                                .filter(key -> !expected.keySet()
+                                                        .contains(key))
+                                .map(key -> String.format("found unexpected entry (%s, %s) in %s",
+                                                          Objects.toString(key),
+                                                          toString(actual.get(key)),
+                                                          xPath))
                                 .collect(Collectors.toList()));
 
         for (K key : expected.keySet()) {
-            if (!actual.keySet().contains(key)) {
-                mismatches.add(String.format(
-                        "did not find entry (%s, %s) in in %s",
-                        toString(key),
-                        toString(expected.get(key)),
-                        xPath));
+            if (!actual.keySet()
+                       .contains(key)) {
+                mismatches.add(String.format("did not find entry (%s, %s) in in %s",
+                                             toString(key),
+                                             toString(expected.get(key)),
+                                             xPath));
             } else {
                 V exp = expected.get(key);
                 V act = actual.get(key);
                 if (!PTypeUtils.equals(exp, act)) {
                     // value differs.
-                    String keyedXPath = String.format("%s[%s]",
-                                                      xPath,
-                                                      toString(key));
+                    String keyedXPath = String.format("%s[%s]", xPath, toString(key));
                     if (exp == null || act == null) {
                         mismatches.add(String.format("%s was %s, should be %s",
                                                      keyedXPath,
                                                      toString(exp),
                                                      toString(act)));
                     } else if (act instanceof PMessage) {
-                        collectMismatches(keyedXPath,
-                                          (PMessage) exp,
-                                          (PMessage) act,
-                                          mismatches);
+                        collectMismatches(keyedXPath, (PMessage) exp, (PMessage) act, mismatches);
                     } else {
                         mismatches.add(String.format("%s was %s, should be %s",
                                                      keyedXPath,
@@ -222,23 +213,17 @@ public class MessageEq<T extends PMessage<T>>
         // order does NOT matter regardless of type. The only
         // errors are missing and unexpected values. Partial
         // matches are not checked.
-        mismatches.addAll(
-                actual.stream()
-                      .filter(item -> !expected.contains(item))
-                      .map(item -> String.format(
-                              "found unexpected set value %s in %s",
-                              toString(item),
-                              xPath))
-                      .collect(Collectors.toList()));
+        mismatches.addAll(actual.stream()
+                                .filter(item -> !expected.contains(item))
+                                .map(item -> String.format("found unexpected set value %s in %s",
+                                                           toString(item),
+                                                           xPath))
+                                .collect(Collectors.toList()));
 
-        mismatches.addAll(
-                expected.stream()
-                        .filter(item -> !actual.contains(item))
-                        .map(item -> String.format(
-                                "did not find value %s in %s",
-                                toString(item),
-                                xPath))
-                        .collect(Collectors.toList()));
+        mismatches.addAll(expected.stream()
+                                  .filter(item -> !actual.contains(item))
+                                  .map(item -> String.format("did not find value %s in %s", toString(item), xPath))
+                                  .collect(Collectors.toList()));
 
     }
 
@@ -273,23 +258,16 @@ public class MessageEq<T extends PMessage<T>>
                     handledItems.add(actualItem);
                     // replaced with new item, diff them normally.
                     if (actualItem instanceof PMessage) {
-                        collectMismatches(indexedXPath,
-                                          (PMessage) expectedItem,
-                                          (PMessage) actualItem,
-                                          mismatches);
+                        collectMismatches(indexedXPath, (PMessage) expectedItem, (PMessage) actualItem, mismatches);
                     } else {
-                        mismatches.add(String.format(
-                                "expected %s to be %s, but was %s",
-                                indexedXPath,
-                                toString(expectedItem),
-                                toString(actualItem)));
+                        mismatches.add(String.format("expected %s to be %s, but was %s",
+                                                     indexedXPath,
+                                                     toString(expectedItem),
+                                                     toString(actualItem)));
                     }
                 } else {
                     // the other item is reordered, so this is blindly inserted.
-                    mismatches.add(String.format(
-                            "missing item %s in %s",
-                            toString(expectedItem),
-                            indexedXPath));
+                    mismatches.add(String.format("missing item %s in %s", toString(expectedItem), indexedXPath));
                 }
             } else if (actualIndex != expectedIndex) {
                 reordering.add(String.format("%+d", actualIndex - expectedIndex));
@@ -300,21 +278,17 @@ public class MessageEq<T extends PMessage<T>>
         }
         for (int actualIndex = 0; actualIndex < actual.size(); ++actualIndex) {
             T actualItem = actual.get(actualIndex);
-            if (handledItems.contains(actualItem))
+            if (handledItems.contains(actualItem)) {
                 continue;
-            if (expected.contains(actualItem))
+            }
+            if (expected.contains(actualItem)) {
                 continue;
+            }
             String indexedXPath = String.format("%s[%d]", xPath, actualIndex);
-            mismatches.add(String.format(
-                    "unexpected item %s in %s",
-                    toString(actualItem),
-                    indexedXPath));
+            mismatches.add(String.format("unexpected item %s in %s", toString(actualItem), indexedXPath));
         }
         if (hasReorder) {
-            mismatches.add(String.format(
-                    "unexpected item ordering in %s: [%s]",
-                    xPath,
-                    Strings.join(",", reordering)));
+            mismatches.add(String.format("unexpected item ordering in %s: [%s]", xPath, Strings.join(",", reordering)));
         }
 
     }
@@ -325,19 +299,19 @@ public class MessageEq<T extends PMessage<T>>
         } else if (o instanceof PMessage) {
             return limitToString((PMessage) o);
         } else if (o instanceof PEnumValue) {
-            return ((PEnumValue) o).descriptor().getName() + "." + ((PEnumValue) o).getName();
+            return ((PEnumValue) o).descriptor()
+                                   .getName() + "." + ((PEnumValue) o).getName();
         } else if (o instanceof Map) {
-            return "{" + Strings.join(
-                    ",",
-                    ((Map<?, ?>) o).entrySet().stream()
-                                   .map(e -> toString(e.getKey()) + ":" + toString(e.getValue()))
-                                   .collect(Collectors.toList())) + "}";
+            return "{" + Strings.join(",",
+                                      ((Map<?, ?>) o).entrySet()
+                                                     .stream()
+                                                     .map(e -> toString(e.getKey()) + ":" + toString(e.getValue()))
+                                                     .collect(Collectors.toList())) + "}";
         } else if (o instanceof Collection) {
-            return "[" + Strings.join(
-                    ",",
-                    ((Collection<?>) o).stream()
-                                       .map(MessageEq::toString)
-                                       .collect(Collectors.toList())) + "]";
+            return "[" + Strings.join(",",
+                                      ((Collection<?>) o).stream()
+                                                         .map(MessageEq::toString)
+                                                         .collect(Collectors.toList())) + "]";
         } else if (o instanceof CharSequence) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonWriter writer = new JsonWriter(baos);
@@ -352,7 +326,8 @@ public class MessageEq<T extends PMessage<T>>
             int len = ((Binary) o).length();
             if (len > 65) {
                 return String.format("binary[%s...+%d]",
-                                     ((Binary) o).toHexString().substring(0, 50),
+                                     ((Binary) o).toHexString()
+                                                 .substring(0, 50),
                                      len - 50);
             } else {
                 return "binary[" + ((Binary) o).toHexString() + "]";

@@ -29,7 +29,8 @@ public enum Symbol {
 
     LIST_START('['),
     LIST_END(']'),
-    LIST_SEPARATOR(','),  // also valid as entry separator...
+    // also valid as entry separator...
+    LIST_SEPARATOR(','),
 
     MAP_START('{'),
     MAP_END('}'),
@@ -39,7 +40,8 @@ public enum Symbol {
     GENERIC_START('<'),
     GENERIC_END('>'),
 
-    ENTRY_SEPARATOR(';'),  // also valid as list separator...
+    // also valid as list separator...
+    ENTRY_SEPARATOR(';'),
 
     SHELL_COMMENT('#'),
     JAVA_COMMENT('/'),
@@ -55,14 +57,15 @@ public enum Symbol {
 
     public static Symbol valueOf(int b) {
         for (Symbol token : values()) {
-            if (token.c == b)
+            if (token.c == b) {
                 return token;
+            }
         }
         return null;
     }
 
     @Override
     public String toString() {
-        return new String(new byte[] { (byte) c });
+        return new String(new byte[]{(byte) c});
     }
 }

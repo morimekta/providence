@@ -22,6 +22,7 @@ package net.morimekta.providence.descriptor;
 import net.morimekta.providence.PBuilder;
 import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,8 +59,7 @@ public class PDeclaredDescriptorTest {
         assertSame(PType.STRING, mockType.getType());
     }
 
-    private static class MockDescriptor
-            extends PDeclaredDescriptor<String> {
+    private static class MockDescriptor extends PDeclaredDescriptor<String> {
         protected MockDescriptor() {
             super("comment", "test", "MockDescriptor");
         }

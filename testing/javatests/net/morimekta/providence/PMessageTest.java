@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class PMessageTest {
     private static Operation operation;
+
     @Before
     public void setUp() throws IOException, PSerializeException {
         synchronized (PMessageTest.class) {
@@ -49,9 +50,22 @@ public class PMessageTest {
 
     @Test
     public void testToString() throws IOException, PSerializeException {
-        assertEquals("calculator.Operand{imaginary:{v:1.7,i:-2}}", operation.getOperands().get(1).toString());
-        assertEquals("calculator.Operand{number:4.321}", operation.getOperands().get(0).getOperation().getOperands().get(1).toString());
-        assertEquals("calculator.Operation{operator:ADD,operands:[{number:1234},{number:4.321}]}", operation.getOperands().get(0).getOperation().toString());
+        assertEquals("calculator.Operand{imaginary:{v:1.7,i:-2}}",
+                     operation.getOperands()
+                              .get(1)
+                              .toString());
+        assertEquals("calculator.Operand{number:4.321}",
+                     operation.getOperands()
+                              .get(0)
+                              .getOperation()
+                              .getOperands()
+                              .get(1)
+                              .toString());
+        assertEquals("calculator.Operation{operator:ADD,operands:[{number:1234},{number:4.321}]}",
+                     operation.getOperands()
+                              .get(0)
+                              .getOperation()
+                              .toString());
         assertEquals("calculator.Operation{" +
                      "operator:MULTIPLY,operands:[" +
                      "{operation:{operator:ADD,operands:[{number:1234},{number:4.321}]}}," +
@@ -62,9 +76,15 @@ public class PMessageTest {
 
     @Test
     public void testEquals() {
-        Operand a = Operand.builder().setNumber(42).build();
-        Operand b = Operand.builder().setNumber(42).build();
-        Operand c = Operand.builder().setNumber(44).build();
+        Operand a = Operand.builder()
+                           .setNumber(42)
+                           .build();
+        Operand b = Operand.builder()
+                           .setNumber(42)
+                           .build();
+        Operand c = Operand.builder()
+                           .setNumber(44)
+                           .build();
 
         assertEquals(a, b);
         assertNotEquals(a, c);

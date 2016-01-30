@@ -19,16 +19,15 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
 
 /**
  * The definition of a thrift structure.
  */
-public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
-        extends PDeclaredDescriptor<T> {
+public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField> extends PDeclaredDescriptor<T> {
     private final PMessageBuilderFactory<T> mProvider;
     private final boolean                   mCompactible;
     private final boolean                   mSimple;
@@ -100,14 +99,16 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
         if (o == null || !(o instanceof PStructDescriptor)) {
             return false;
         }
-        PStructDescriptor<?,?> other = (PStructDescriptor<?,?>) o;
+        PStructDescriptor<?, ?> other = (PStructDescriptor<?, ?>) o;
         if (!getQualifiedName(null).equals(other.getQualifiedName(null)) ||
             !getVariant().equals(other.getVariant()) ||
             getFields().length != other.getFields().length) {
             return false;
         }
         for (PField<?> field : getFields()) {
-            if (!field.equals(other.getField(field.getKey()))) return false;
+            if (!field.equals(other.getField(field.getKey()))) {
+                return false;
+            }
         }
         return true;
     }

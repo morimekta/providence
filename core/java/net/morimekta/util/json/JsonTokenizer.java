@@ -128,19 +128,16 @@ public class JsonTokenizer {
                 lastByte = 0;
             } else if (lastByte == '\"') {
                 return nextString();
-            } else if (lastByte == '-' ||
-                       (lastByte >= '0' && lastByte <= '9')) {
+            } else if (lastByte == '-' || (lastByte >= '0' && lastByte <= '9')) {
                 return nextNumber();
-            } else if (
-                    lastByte == '[' || lastByte == ']' ||
-                    lastByte == '{' || lastByte == '}' ||
-                    lastByte == ':' || lastByte == ',') {
+            } else if (lastByte == '[' || lastByte == ']' ||
+                       lastByte == '{' || lastByte == '}' ||
+                       lastByte == ':' || lastByte == ',') {
                 return nextSymbol();
             } else if (lastByte < 32 ||
                        (127 <= lastByte && lastByte < 160) ||
                        (8192 <= lastByte && lastByte < 8448)) {
-                throw newParseException(String.format(
-                        "Illegal character in JSON structure: '\\u%04x'", lastByte));
+                throw newParseException(String.format("Illegal character in JSON structure: '\\u%04x'", lastByte));
             } else {
                 return nextToken();
             }
@@ -151,12 +148,7 @@ public class JsonTokenizer {
 
     private JsonToken nextSymbol() {
         lastByte = 0;
-        return new JsonToken(JsonToken.Type.SYMBOL,
-                             lineBuffer.array(),
-                             lineBuffer.position() - 1,
-                             1,
-                             line,
-                             linePos);
+        return new JsonToken(JsonToken.Type.SYMBOL, lineBuffer.array(), lineBuffer.position() - 1, 1, line, linePos);
     }
 
     private JsonToken nextToken() throws IOException {
@@ -176,12 +168,7 @@ public class JsonTokenizer {
             ++linePos;
         }
 
-        return new JsonToken(JsonToken.Type.TOKEN,
-                             lineBuffer.array(),
-                             startOffset,
-                             len,
-                             line,
-                             startPos);
+        return new JsonToken(JsonToken.Type.TOKEN, lineBuffer.array(), startOffset, len, line, startPos);
     }
 
     private JsonToken nextNumber() throws IOException {
@@ -206,12 +193,7 @@ public class JsonTokenizer {
             ++linePos;
         }
 
-        return new JsonToken(JsonToken.Type.NUMBER,
-                             lineBuffer.array(),
-                             startOffset,
-                             len,
-                             line,
-                             startPos);
+        return new JsonToken(JsonToken.Type.NUMBER, lineBuffer.array(), startOffset, len, line, startPos);
     }
 
     private JsonToken nextString() throws IOException, JsonException {
@@ -224,7 +206,7 @@ public class JsonTokenizer {
 
         boolean consolidated = false;
         boolean esc = false;
-        for (;;) {
+        for (; ; ) {
             if (lineBuffer.position() >= (lineBuffer.capacity() - 1)) {
                 stringBuffer.write(lineBuffer.array(), startOffset, lineBuffer.position() - startOffset);
                 startOffset = 0;
@@ -269,8 +251,9 @@ public class JsonTokenizer {
     }
 
     public String getLine(int line) throws IOException {
-        if (line < 1)
+        if (line < 1) {
             throw new IllegalArgumentException("Oops!!!");
+        }
         if (lines.size() >= line) {
             return lines.get(line - 1);
         } else {

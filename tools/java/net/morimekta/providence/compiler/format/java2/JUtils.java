@@ -33,8 +33,9 @@ import java.io.File;
  * @since 07.09.15
  */
 public class JUtils {
-    public static long generateSerialVersionUID(PStructDescriptor<?,?> type) {
-        String string = type.getVariant().getName() + " " + type.getQualifiedName(null);
+    public static long generateSerialVersionUID(PStructDescriptor<?, ?> type) {
+        String string = type.getVariant()
+                            .getName() + " " + type.getQualifiedName(null);
 
         long hash = 1125899906842597L; // prime
         final int len = string.length();
@@ -51,8 +52,7 @@ public class JUtils {
     public static String getJavaPackage(CDocument document) throws GeneratorException {
         String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
-            throw new GeneratorException("No java namespace for thrift package " +
-                                         document.getPackageName());
+            throw new GeneratorException("No java namespace for thrift package " + document.getPackageName());
         }
         return javaPackage;
     }

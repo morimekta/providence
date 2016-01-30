@@ -16,17 +16,15 @@ import java.util.Collection;
  * @since 08.01.16.
  */
 public class JConstantsFormat {
-    private static final String DBL_INDENT =
-            IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
+    private static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JOptions options;
-    private final JHelper helper;
+    private final JHelper  helper;
 
     public JConstantsFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }
-
 
     public void format(IndentedPrintWriter writer, CDocument document) throws GeneratorException {
         JValueFormat value = new JValueFormat(writer, options, helper);
@@ -48,17 +46,15 @@ public class JConstantsFormat {
                 case MESSAGE:
                     String name = c.getName();
                     String instance = helper.getValueType(c.getDescriptor());
-                    writer.formatln("public static final %s %s;",
-                                    helper.getValueType(c.getDescriptor()),
-                                    name)
+                    writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
                           .appendln("static {")
                           .begin()
-                          .formatln("%s._Builder builder = %s.builder();",
-                                    instance, instance);
+                          .formatln("%s._Builder builder = %s.builder();", instance, instance);
 
                     PMessage<?> message = (PMessage<?>) c.getDefaultValue();
                     int i = 0;
-                    for (PField<?> f : message.descriptor().getFields()) {
+                    for (PField<?> f : message.descriptor()
+                                              .getFields()) {
                         JField field = new JField(f, helper, i++);
                         if (message.has(f.getKey())) {
                             writer.formatln("builder.%s(", field.setter());
@@ -79,13 +75,10 @@ public class JConstantsFormat {
                     PContainer<?, ?> lDesc = (PContainer<?, ?>) c.getDescriptor();
                     PDescriptor<?> itemDesc = lDesc.itemDescriptor();
 
-                            writer.formatln("public static final %s %s;",
-                                    helper.getValueType(c.getDescriptor()),
-                                    name)
+                    writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
                           .appendln("static {")
                           .begin()
-                          .formatln("%s builder = new %s<>();",
-                                    instance, instance);
+                          .formatln("%s builder = new %s<>();", instance, instance);
 
                     @SuppressWarnings("unchecked")
                     Collection<Object> items = (Collection<Object>) c.getDefaultValue();
@@ -95,7 +88,8 @@ public class JConstantsFormat {
 
                         value.appendTypedValue(item, itemDesc);
 
-                        writer.end().append(");");
+                        writer.end()
+                              .append(");");
                     }
 
                     if (c.getType() == PType.LIST) {
@@ -109,9 +103,7 @@ public class JConstantsFormat {
                 case MAP:
                     break;
                 default:
-                    writer.formatln("public static final %s %s = ",
-                                    helper.getValueType(c.getDescriptor()),
-                                    c.getName())
+                    writer.formatln("public static final %s %s = ", helper.getValueType(c.getDescriptor()), c.getName())
                           .begin(DBL_INDENT);
                     value.appendTypedValue(c.getDefaultValue(), c.getDescriptor());
                     writer.append(';')
@@ -125,7 +117,8 @@ public class JConstantsFormat {
               .appendln('}');
     }
 
-    private void appendHeader(IndentedPrintWriter writer, JValueFormat value, CDocument document) throws GeneratorException {
+    private void appendHeader(IndentedPrintWriter writer, JValueFormat value, CDocument document)
+            throws GeneratorException {
         JHeader header = new JHeader(helper.getJavaPackage(document));
         for (PField field : document.getConstants()) {
             value.addTypeImports(header, field.getDescriptor());

@@ -15,11 +15,11 @@ import net.morimekta.test.providence.Value;
  * @since 21.01.16.
  */
 public class MessageGenerator {
-    public static final int KEY = 5;
-    public static final int DATA = 12;
-    public static final double FILL = 1.0;
-    public static final int MIN_ITEMS = 2;
-    public static final int MAX_ITEMS = 5;
+    public static final int    KEY       = 5;
+    public static final int    DATA      = 12;
+    public static final double FILL      = 1.0;
+    public static final int    MIN_ITEMS = 2;
+    public static final int    MAX_ITEMS = 5;
 
     private final RandomGenerator randomGenerator;
 

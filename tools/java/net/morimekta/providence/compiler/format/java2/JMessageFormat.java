@@ -53,20 +53,18 @@ import static net.morimekta.util.Strings.camelCase;
  * @since 20.09.15
  */
 public class JMessageFormat {
-    public static final String DBL_INDENT =
-            IndentedPrintWriter.INDENT +
-            IndentedPrintWriter.INDENT;
+    public static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JHelper  helper;
     private final JOptions options;
 
-    public JMessageFormat(JHelper helper,
-                          JOptions options) {
+    public JMessageFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }
 
-    public void format(IndentedPrintWriter writer, PStructDescriptor<?, ?> descriptor) throws GeneratorException, IOException {
+    public void format(IndentedPrintWriter writer, PStructDescriptor<?, ?> descriptor)
+            throws GeneratorException, IOException {
         JMessage message = new JMessage(descriptor, helper);
 
         JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
@@ -91,7 +89,8 @@ public class JMessageFormat {
         writer.appendln("@SuppressWarnings(\"unused\")")
               .formatln("public class %s", message.instanceType())
               .begin(DBL_INDENT);
-        if (message.variant().equals(PMessageVariant.EXCEPTION)) {
+        if (message.variant()
+                   .equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends PException");
         }
         writer.formatln("implements %s<%s>, Serializable, Comparable<%s>",
@@ -139,16 +138,20 @@ public class JMessageFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            String provider = helper.getProviderName(field.getPField().getDescriptor());
+            String provider = helper.getProviderName(field.getPField()
+                                                          .getDescriptor());
             String defValue = "null";
-            if (field.getPField().hasDefaultValue()) {
+            if (field.getPField()
+                     .hasDefaultValue()) {
                 defValue = String.format("new PDefaultValueProvider<>(%s)", field.kDefault());
             }
 
             writer.formatln("%s(%d, PRequirement.%s, \"%s\", %s, %s),",
                             field.fieldEnum(),
                             field.id(),
-                            field.getPField().getRequirement().name(),
+                            field.getPField()
+                                 .getRequirement()
+                                 .name(),
                             field.name(),
                             provider,
                             defValue);
@@ -224,8 +227,7 @@ public class JMessageFormat {
               .appendln("switch (key) {")
               .begin();
         for (JField field : message.fields()) {
-            writer.formatln("case %d: return _Field.%s;",
-                            field.id(), field.fieldEnum());
+            writer.formatln("case %d: return _Field.%s;", field.id(), field.fieldEnum());
         }
         writer.appendln("default: return null;")
               .end()
@@ -239,8 +241,7 @@ public class JMessageFormat {
               .appendln("switch (name) {")
               .begin();
         for (JField field : message.fields()) {
-            writer.formatln("case \"%s\": return _Field.%s;",
-                            field.name(), field.fieldEnum());
+            writer.formatln("case \"%s\": return _Field.%s;", field.name(), field.fieldEnum());
         }
         writer.end()
               .appendln('}')
@@ -294,15 +295,22 @@ public class JMessageFormat {
               .begin();
         if (message.isException() || message.isUnion()) {
             writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %s);",
-                            message.descriptor().getPackageName(),
-                            message.descriptor().getName(),
-                            message.descriptor().isSimple());
+                            message.descriptor()
+                                   .getPackageName(),
+                            message.descriptor()
+                                   .getName(),
+                            message.descriptor()
+                                   .isSimple());
         } else {
             writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %b, %b);",
-                            message.descriptor().getPackageName(),
-                            message.descriptor().getName(),
-                            message.descriptor().isSimple(),
-                            message.descriptor().isCompactible());
+                            message.descriptor()
+                                   .getPackageName(),
+                            message.descriptor()
+                                   .getName(),
+                            message.descriptor()
+                                   .isSimple(),
+                            message.descriptor()
+                                   .isCompactible());
         }
         writer.end()
               .appendln('}')
@@ -338,7 +346,9 @@ public class JMessageFormat {
               .appendln('}')
               .newline();
 
-        writer.formatln("private final static class _Provider extends %sProvider<%s,_Field> {", typeClass, message.instanceType())
+        writer.formatln("private final static class _Provider extends %sProvider<%s,_Field> {",
+                        typeClass,
+                        message.instanceType())
               .begin()
               .appendln("@Override")
               .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
@@ -370,13 +380,13 @@ public class JMessageFormat {
                 if (field.container()) {
                     writer.formatln("public int %s() {", field.counter())
                           .formatln("    return tUnionField == _Field.%s ? %s.size() : 0;",
-                                    field.fieldEnum(), field.member())
+                                    field.fieldEnum(),
+                                    field.member())
                           .appendln('}')
                           .newline();
                 } else if (field.alwaysPresent()) {
                     writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return tUnionField == _Field.%s;",
-                                    field.fieldEnum())
+                          .formatln("    return tUnionField == _Field.%s;", field.fieldEnum())
                           .appendln('}')
                           .newline();
                 } else {
@@ -420,12 +430,10 @@ public class JMessageFormat {
                     writer.appendln("@JsonSerialize(using = BinaryJsonSerializer.class) ");
                 }
             }
-            writer.formatln("public %s %s() {",
-                            field.valueType(),
-                            field.getter());
-            if (!field.container() && !field.alwaysPresent() && field.getPField().hasDefaultValue()) {
-                writer.formatln("    return %s() ? %s : %s;",
-                                field.presence(), field.member(), field.kDefault());
+            writer.formatln("public %s %s() {", field.valueType(), field.getter());
+            if (!field.container() && !field.alwaysPresent() && field.getPField()
+                                                                     .hasDefaultValue()) {
+                writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
             } else {
                 writer.formatln("    return %s;", field.member());
             }
@@ -446,8 +454,7 @@ public class JMessageFormat {
 
     private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage message) {
         for (JField field : message.fields()) {
-            writer.formatln("private final %s %s;",
-                            field.fieldType(), field.member());
+            writer.formatln("private final %s %s;", field.fieldType(), field.member());
         }
         if (message.isUnion()) {
             writer.newline()
@@ -468,25 +475,28 @@ public class JMessageFormat {
             for (JField field : message.fields()) {
                 switch (field.type()) {
                     case LIST:
-                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableList(new %s<>(builder.%s)) : null;",
-                                        field.member(),
-                                        field.fieldEnum(),
-                                        field.instanceType(),
-                                        field.member());
+                        writer.formatln(
+                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableList(new %s<>(builder.%s)) : null;",
+                                field.member(),
+                                field.fieldEnum(),
+                                field.instanceType(),
+                                field.member());
                         break;
                     case SET:
-                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableSet(new %s<>(builder.%s)) : null;",
-                                        field.member(),
-                                        field.fieldEnum(),
-                                        field.instanceType(),
-                                        field.member());
+                        writer.formatln(
+                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableSet(new %s<>(builder.%s)) : null;",
+                                field.member(),
+                                field.fieldEnum(),
+                                field.instanceType(),
+                                field.member());
                         break;
                     case MAP:
-                        writer.formatln("%s = tUnionField == _Field.%s ? Collections.unmodifiableMap(new %s<>(builder.%s)) : null;",
-                                        field.member(),
-                                        field.fieldEnum(),
-                                        field.instanceType(),
-                                        field.member());
+                        writer.formatln(
+                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableMap(new %s<>(builder.%s)) : null;",
+                                field.member(),
+                                field.fieldEnum(),
+                                field.instanceType(),
+                                field.member());
                         break;
                     default:
                         if (field.alwaysPresent()) {
@@ -559,7 +569,8 @@ public class JMessageFormat {
             if (options.jackson) {
                 writer.appendln("@JsonCreator");
             }
-            String spaces = message.instanceType().replaceAll("[\\S]", " ");
+            String spaces = message.instanceType()
+                                   .replaceAll("[\\S]", " ");
             writer.formatln("public %s(", message.instanceType())
                   .begin("        " + spaces);
             boolean first = true;
@@ -586,15 +597,21 @@ public class JMessageFormat {
                 switch (field.type()) {
                     case LIST:
                         writer.formatln("%s = Collections.unmodifiableList(new %s<>(%s));",
-                                        field.member(), field.instanceType(), field.param());
+                                        field.member(),
+                                        field.instanceType(),
+                                        field.param());
                         break;
                     case SET:
                         writer.formatln("%s = Collections.unmodifiableSet(new %s<>(%s));",
-                                        field.member(), field.instanceType(), field.param());
+                                        field.member(),
+                                        field.instanceType(),
+                                        field.param());
                         break;
                     case MAP:
                         writer.formatln("%s = Collections.unmodifiableMap(new %s<>(%s));",
-                                        field.member(), field.instanceType(), field.param());
+                                        field.member(),
+                                        field.instanceType(),
+                                        field.param());
                         break;
                     default:
                         writer.formatln("%s = %s;", field.member(), field.param());
@@ -643,8 +660,11 @@ public class JMessageFormat {
                 break;
         }
         for (JField field : message.fields()) {
-            values.addTypeImports(header, field.getPField().getDescriptor());
-            if (field.getPField().hasDefaultValue()) {
+            values.addTypeImports(header,
+                                  field.getPField()
+                                       .getDescriptor());
+            if (field.getPField()
+                     .hasDefaultValue()) {
                 header.include(PDefaultValueProvider.class.getName());
             }
             if (field.container() || field.type() == PType.DOUBLE) {

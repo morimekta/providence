@@ -45,7 +45,7 @@ public class Tokenizer {
 
     private final ArrayList<String> mLines;
     private       StringBuilder     mLineBuilder;
-    private Token mNextToken;
+    private       Token             mNextToken;
 
     public Tokenizer(InputStream in) throws IOException {
         mIn = new Utf8StreamReader(in);
@@ -71,7 +71,8 @@ public class Tokenizer {
     public void expectSymbol(Symbol symbol, String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw newParseException("Unexpected end of file, expected " + symbol + " while " + message);
-        } else if (mNextToken.isSymbol() && mNextToken.getSymbol().equals(symbol)) {
+        } else if (mNextToken.isSymbol() && mNextToken.getSymbol()
+                                                      .equals(symbol)) {
             mNextToken = null;
         } else {
             throw newParseException("Expected " + symbol + " but found " + mNextToken + " while " + message);
@@ -150,14 +151,12 @@ public class Tokenizer {
                     if (b == '/' || b == '*') {
                         builder.append((char) b);
                         return mkToken(builder, startPos);
-                    } else if (b < 32 || b >= 127){
-                        throw newParseException(String.format(
-                                "Invalid start of comment '\\x%x'. Must be '/*' or '//'",
-                                b));
+                    } else if (b < 32 || b >= 127) {
+                        throw newParseException(String.format("Invalid start of comment '\\x%x'. Must be '/*' or '//'",
+                                                              b));
                     } else {
-                        throw newParseException(String.format(
-                                "Invalid start of comment '/%c'. Must be '/*' or '//'",
-                                (char) b));
+                        throw newParseException(String.format("Invalid start of comment '/%c'. Must be '/*' or '//'",
+                                                              (char) b));
                     }
                 }
 
@@ -215,7 +214,9 @@ public class Tokenizer {
     }
 
     public String getLine(int line) throws IOException {
-        if (line < 1) throw new IllegalArgumentException("Oops!!!");
+        if (line < 1) {
+            throw new IllegalArgumentException("Oops!!!");
+        }
         if (mLines.size() >= line) {
             return mLines.get(line - 1);
         } else {
@@ -243,10 +244,7 @@ public class Tokenizer {
 
     private Token mkToken(StringBuilder builder, int startPos) {
         if (builder.length() > 0) {
-            return new Token(builder.toString(),
-                              mLine,
-                              startPos,
-                              mPos - startPos - 1);
+            return new Token(builder.toString(), mLine, startPos, mPos - startPos - 1);
         }
         return null;
     }

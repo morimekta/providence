@@ -19,30 +19,26 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageBuilderFactory;
+import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PStructDescriptor;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.PMessageVariant;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CExceptionDescriptor
-        extends PStructDescriptor<CException, CField> {
+public class CExceptionDescriptor extends PStructDescriptor<CException, CField> {
     private final CField[]             mFields;
     private final Map<Integer, CField> mFieldIdMap;
     private final Map<String, CField>  mFieldNameMap;
 
-    public CExceptionDescriptor(String comment,
-                                String packageName,
-                                String name,
-                                List<CField> fields) {
+    public CExceptionDescriptor(String comment, String packageName, String name, List<CField> fields) {
         super(comment, packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
@@ -97,8 +93,7 @@ public class CExceptionDescriptor
         return PMessageVariant.EXCEPTION;
     }
 
-    private static class _Factory
-            extends PMessageBuilderFactory<CException> {
+    private static class _Factory extends PMessageBuilderFactory<CException> {
         private CExceptionDescriptor mType;
 
         public void setType(CExceptionDescriptor type) {

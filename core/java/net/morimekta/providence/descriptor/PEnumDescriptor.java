@@ -27,17 +27,13 @@ import net.morimekta.providence.util.PTypeUtils;
 /**
  * The definition of a thrift enum.
  */
-public abstract class PEnumDescriptor<T extends PEnumValue<T>>
-        extends PDeclaredDescriptor<T> {
+public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclaredDescriptor<T> {
     // According to doc it's 1, but the current c++ compiler makes it 0...
     public static final int DEFAULT_FIRST_VALUE = 0;
 
     private final PEnumBuilderFactory<T> mProvider;
 
-    public PEnumDescriptor(String comment,
-                           String packageName,
-                           String name,
-                           PEnumBuilderFactory<T> provider) {
+    public PEnumDescriptor(String comment, String packageName, String name, PEnumBuilderFactory<T> provider) {
         super(comment, packageName, name);
         mProvider = provider;
     }

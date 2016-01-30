@@ -19,24 +19,23 @@
 
 package net.morimekta.providence.mio;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PSerializeException;
 import net.morimekta.providence.serializer.PSerializer;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Read messages (in global order) from a set of files in the format:
  * <p/>
  * {name}-{shard}-{seq}
  */
-public class PFileMessageReader<T extends PMessage<T>>
-        extends PMessageReader<T> {
-    private final PSerializer mSerializer;
+public class PFileMessageReader<T extends PMessage<T>> extends PMessageReader<T> {
+    private final PSerializer             mSerializer;
     private final PStructDescriptor<T, ?> mDescriptor;
 
     private File        mFile;
@@ -55,8 +54,9 @@ public class PFileMessageReader<T extends PMessage<T>>
         try {
             synchronized (this) {
                 if (mInputStream == null) {
-                    if (mFile == null)
+                    if (mFile == null) {
                         return null;
+                    }
                     mInputStream = new FileInputStream(mFile);
                 }
                 T message = mSerializer.deserialize(mInputStream, mDescriptor);
@@ -73,8 +73,6 @@ public class PFileMessageReader<T extends PMessage<T>>
     /**
      * Close the reading stream. Does not interfere with ongoing reads, but
      * will stop the read loop if ongoing.
-     *
-     * @throws IOException
      */
     public void close() throws IOException {
         synchronized (this) {

@@ -28,8 +28,7 @@ import java.util.Stack;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class IndentedPrintWriter
-        extends PrintWriter {
+public class IndentedPrintWriter extends PrintWriter {
     public final static String NEWLINE = "\n";
     public final static String INDENT  = "    ";
 
@@ -75,8 +74,9 @@ public class IndentedPrintWriter
     }
 
     public IndentedPrintWriter end() {
-        if (indents.isEmpty())
+        if (indents.isEmpty()) {
             throw new IllegalStateException("No indent to end");
+        }
         current = indents.pop();
         return this;
     }

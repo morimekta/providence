@@ -28,8 +28,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class Slice implements Comparable<Slice> {
     protected final byte[] fb;
-    protected final int off;
-    protected final int len;
+    protected final int    off;
+    protected final int    len;
 
     public Slice(byte[] fb, int off, int len) {
         this.fb = fb;
@@ -43,6 +43,7 @@ public class Slice implements Comparable<Slice> {
 
     /**
      * Get the whole slice as a string.
+     *
      * @return Slice decoded as UTF_8 string.
      */
     public final String asString() {
@@ -51,17 +52,22 @@ public class Slice implements Comparable<Slice> {
 
     public final Slice substring(int start, int end) {
         int l = end < 0 ? (len - start) + end : end - start;
-        if (l < 0 || l > (len - start)) throw new IllegalArgumentException();
+        if (l < 0 || l > (len - start)) {
+            throw new IllegalArgumentException();
+        }
         return new Slice(fb, off + start, l);
     }
 
     public final char charAt(int i) {
-        if (i < 0 || len <= i) throw new IllegalArgumentException();
+        if (i < 0 || len <= i) {
+            throw new IllegalArgumentException();
+        }
         return (char) fb[off + i];
     }
 
     /**
      * Get the whole slice as a simple integer.
+     *
      * @return Integer long value.
      */
     public final long parseInteger() {
@@ -88,6 +94,7 @@ public class Slice implements Comparable<Slice> {
 
     /**
      * Get the whole slice as a real number.
+     *
      * @return Real double value.
      */
     public final double parseDouble() {
@@ -99,9 +106,13 @@ public class Slice implements Comparable<Slice> {
     }
 
     public boolean strEquals(byte[] a, int aOff, int aLen) {
-        if (aLen != len) return false;
+        if (aLen != len) {
+            return false;
+        }
         for (int i = 0; i < len; ++i) {
-            if (a[aOff + i] != fb[off + i]) return false;
+            if (a[aOff + i] != fb[off + i]) {
+                return false;
+            }
         }
         return true;
     }
@@ -118,7 +129,8 @@ public class Slice implements Comparable<Slice> {
     }
 
     public boolean contains(byte[] a) {
-        pos: for (int i = off; i <= (off + len - a.length); ++i) {
+        pos:
+        for (int i = off; i <= (off + len - a.length); ++i) {
             for (int j = 0; j < a.length; ++j) {
                 if (a[j] != fb[off + i + j]) {
                     continue pos;
@@ -131,7 +143,9 @@ public class Slice implements Comparable<Slice> {
 
     public boolean contains(byte a) {
         for (int i = off; i < (off + len); ++i) {
-            if (fb[i] == a) return true;
+            if (fb[i] == a) {
+                return true;
+            }
         }
         return false;
     }
@@ -148,8 +162,12 @@ public class Slice implements Comparable<Slice> {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null || !(o instanceof Slice)) return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o instanceof Slice)) {
+            return false;
+        }
         Slice other = (Slice) o;
         return other.fb == fb &&
                other.off == off &&
@@ -158,13 +176,19 @@ public class Slice implements Comparable<Slice> {
 
     @Override
     public int compareTo(Slice o) {
-        if (o.off != off) return Integer.compare(off, o.off);
+        if (o.off != off) {
+            return Integer.compare(off, o.off);
+        }
         return Integer.compare(o.len, len);
     }
 
     private static int valueOfHex(byte b) {
-        if (b <= '9') return (b - '0');
-        if (b >= 'a') return (b - 'a') + 10;
+        if (b <= '9') {
+            return (b - '0');
+        }
+        if (b >= 'a') {
+            return (b - 'a') + 10;
+        }
         return (b - 'A') + 10;
     }
 }

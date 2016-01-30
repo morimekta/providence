@@ -19,29 +19,25 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnionDescriptor
-        extends PUnionDescriptor<CUnion, CField> {
+public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> {
     private final CField[]             mFields;
     private final Map<Integer, CField> mFieldIdMap;
     private final Map<String, CField>  mFieldNameMap;
 
-    public CUnionDescriptor(String comment,
-                            String packageName,
-                            String name,
-                            List<CField> fields) {
+    public CUnionDescriptor(String comment, String packageName, String name, List<CField> fields) {
         super(comment, packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
@@ -91,8 +87,7 @@ public class CUnionDescriptor
         return true;
     }
 
-    private static class _Factory
-            extends PMessageBuilderFactory<CUnion> {
+    private static class _Factory extends PMessageBuilderFactory<CUnion> {
         private CUnionDescriptor mType;
 
         public void setType(CUnionDescriptor type) {

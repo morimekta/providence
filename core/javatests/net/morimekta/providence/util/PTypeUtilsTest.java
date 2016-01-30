@@ -53,10 +53,10 @@ public class PTypeUtilsTest {
     Double  mDouble;
     Double  mDouble_eq;
     Double  mDouble_ne;
-    Binary mArray;
-    Binary mArray_eq;
-    Binary mArray_ne_content;
-    Binary mArray_ne_length;
+    Binary  mArray;
+    Binary  mArray_eq;
+    Binary  mArray_ne_content;
+    Binary  mArray_ne_length;
     String  mArray_string;
 
     @Before
@@ -71,10 +71,10 @@ public class PTypeUtilsTest {
         mDouble_ne = 1.2;
         mDouble_eq = 1.0;
 
-        mArray = Binary.wrap(new byte[] { '1', '2', '3' });
-        mArray_eq = Binary.wrap(new byte[] { '1', '2', '3' });
-        mArray_ne_content = Binary.wrap(new byte[] { '1', '2', '4' });
-        mArray_ne_length = Binary.wrap(new byte[] { '1', '2', '3', '4' });
+        mArray = Binary.wrap(new byte[]{'1', '2', '3'});
+        mArray_eq = Binary.wrap(new byte[]{'1', '2', '3'});
+        mArray_ne_content = Binary.wrap(new byte[]{'1', '2', '4'});
+        mArray_ne_length = Binary.wrap(new byte[]{'1', '2', '3', '4'});
         // Same content, but different type than the byte[].
         mArray_string = "123";
     }

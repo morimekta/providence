@@ -27,8 +27,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public interface PMessage<T extends PMessage<T>>
-        extends PValue<T> {
+public interface PMessage<T extends PMessage<T>> extends PValue<T> {
     /**
      * @param key The key of the field.
      * @return Whether the field is present.
@@ -66,10 +65,11 @@ public interface PMessage<T extends PMessage<T>>
 
     /**
      * Pure string representation of content. Does not contain type info.
+     *
      * @return String representation.
      */
     String asString();
 
     @Override
-    PStructDescriptor<T,?> descriptor();
+    PStructDescriptor<T, ?> descriptor();
 }

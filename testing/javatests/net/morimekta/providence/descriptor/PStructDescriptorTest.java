@@ -22,6 +22,7 @@ package net.morimekta.providence.descriptor;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.number.Imaginary;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +34,7 @@ import static org.junit.Assert.assertNotEquals;
  * @since 10.09.15.
  */
 public class PStructDescriptorTest {
-    PStructDescriptor<?,?> valueType;
+    PStructDescriptor<?, ?> valueType;
 
     @Before
     public void setUp() {
@@ -50,8 +51,12 @@ public class PStructDescriptorTest {
 
     @Test
     public void testEquals() {
-        assertEquals(Imaginary.kDescriptor, Imaginary.provider().descriptor());
-        assertEquals(Operation.kDescriptor, Operation.provider().descriptor());
+        assertEquals(Imaginary.kDescriptor,
+                     Imaginary.provider()
+                              .descriptor());
+        assertEquals(Operation.kDescriptor,
+                     Operation.provider()
+                              .descriptor());
 
         assertNotEquals(Operation.kDescriptor, Imaginary.kDescriptor);
     }

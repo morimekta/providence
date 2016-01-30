@@ -41,13 +41,31 @@ public class BinaryTest {
 
     @Test
     public void testHashCode() {
-        Assert.assertEquals(Binary.wrap(a1).hashCode(), Binary.wrap(a2).hashCode());
-        Assert.assertEquals(Binary.wrap(b1).hashCode(), Binary.wrap(b2).hashCode());
-        Assert.assertEquals(Binary.wrap(c1).hashCode(), Binary.wrap(c2).hashCode());
+        Assert.assertEquals(Binary.wrap(a1)
+                                  .hashCode(),
+                            Binary.wrap(a2)
+                                  .hashCode());
+        Assert.assertEquals(Binary.wrap(b1)
+                                  .hashCode(),
+                            Binary.wrap(b2)
+                                  .hashCode());
+        Assert.assertEquals(Binary.wrap(c1)
+                                  .hashCode(),
+                            Binary.wrap(c2)
+                                  .hashCode());
 
-        assertNotEquals(Binary.wrap(b1).hashCode(), Binary.wrap(a2).hashCode());
-        assertNotEquals(Binary.wrap(c1).hashCode(), Binary.wrap(b2).hashCode());
-        assertNotEquals(Binary.wrap(a1).hashCode(), Binary.wrap(c2).hashCode());
+        assertNotEquals(Binary.wrap(b1)
+                              .hashCode(),
+                        Binary.wrap(a2)
+                              .hashCode());
+        assertNotEquals(Binary.wrap(c1)
+                              .hashCode(),
+                        Binary.wrap(b2)
+                              .hashCode());
+        assertNotEquals(Binary.wrap(a1)
+                              .hashCode(),
+                        Binary.wrap(c2)
+                              .hashCode());
     }
 
     @Test
@@ -82,7 +100,9 @@ public class BinaryTest {
     public void testBase64() {
         String a = Base64.encode(a1);
 
-        assertEquals(a, Binary.wrap(a1).toBase64());
+        assertEquals(a,
+                     Binary.wrap(a1)
+                           .toBase64());
         assertEquals(Binary.wrap(a2), Binary.fromBase64(a));
     }
 }

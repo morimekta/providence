@@ -1,6 +1,5 @@
 package net.morimekta.providence.compiler.format.java2;
 
-import net.morimekta.util.Binary;
 import net.morimekta.providence.compiler.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -8,6 +7,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
@@ -20,7 +20,7 @@ import java.util.List;
  * @since 08.01.16.
  */
 public class JValueFormat {
-    private final JOptions options;
+    private final JOptions            options;
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
@@ -30,19 +30,18 @@ public class JValueFormat {
         this.helper = helper;
     }
 
-    public void appendDefaultConstants(List<JField> fields)
-            throws GeneratorException {
+    public void appendDefaultConstants(List<JField> fields) throws GeneratorException {
         boolean hasDefault = false;
         for (JField field : fields) {
             if (field.hasDefault()) {
                 Object defaultValue = helper.getDefaultValue(field.getPField());
                 if (defaultValue != null) {
                     hasDefault = true;
-                    writer.formatln("private final static %s %s = ",
-                                    field.valueType(),
-                                    field.kDefault())
+                    writer.formatln("private final static %s %s = ", field.valueType(), field.kDefault())
                           .begin(IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT);
-                    appendTypedValue(defaultValue, field.getPField().getDescriptor());
+                    appendTypedValue(defaultValue,
+                                     field.getPField()
+                                          .getDescriptor());
                     writer.append(';')
                           .end();
                 }
@@ -105,37 +104,40 @@ public class JValueFormat {
         }
     }
 
-    public void appendTypedValue(Object value,
-                                 PDescriptor<?> type)
-            throws GeneratorException {
+    public void appendTypedValue(Object value, PDescriptor<?> type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 writer.append(value.toString());
                 break;
             case BYTE:
-                writer.append("(byte)").append(value.toString());
+                writer.append("(byte)")
+                      .append(value.toString());
                 break;
             case I16:
-                writer.append("(short)").append(value.toString());
+                writer.append("(short)")
+                      .append(value.toString());
                 break;
             case I32:
                 writer.append(value.toString());
                 break;
             case I64:
-                writer.append(value.toString()).append("L");
+                writer.append(value.toString())
+                      .append("L");
                 break;
             case DOUBLE:
-                writer.append(value.toString()).append("d");
+                writer.append(value.toString())
+                      .append("d");
                 break;
             case BINARY:
                 writer.append("Binary.wrap(new byte[]{");
                 byte[] bytes = (byte[]) value;
                 boolean first = true;
                 for (byte b : bytes) {
-                    if (first)
+                    if (first) {
                         first = false;
-                    else
+                    } else {
                         writer.append(',');
+                    }
                     writer.format("0x%02x", b);
                 }
                 writer.append("})");

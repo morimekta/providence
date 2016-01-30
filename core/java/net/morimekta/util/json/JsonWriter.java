@@ -33,8 +33,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 19.10.15
  */
 public class JsonWriter {
-    public static final String kNull = "null";
-    public static final String kTrue = "true";
+    public static final String kNull  = "null";
+    public static final String kTrue  = "true";
     public static final String kFalse = "false";
 
     private final PrintWriter        writer;
@@ -78,17 +78,27 @@ public class JsonWriter {
     }
 
     public JsonWriter endObject() throws JsonException {
-        if (context == null) throw new JsonException("Ending object on closed writer.");
-        if (!context.map()) throw new JsonException("Unexpected end, not in object.");
-        if (context.value()) throw new JsonException("Expected map value but got end.");
+        if (context == null) {
+            throw new JsonException("Ending object on closed writer.");
+        }
+        if (!context.map()) {
+            throw new JsonException("Unexpected end, not in object.");
+        }
+        if (context.value()) {
+            throw new JsonException("Expected map value but got end.");
+        }
         writer.write('}');
         context = stack.pop();
         return this;
     }
 
     public JsonWriter endArray() throws JsonException {
-        if (context == null) throw new JsonException("Ending array on closed writer.");
-        if (!context.list()) throw new JsonException("Unexpected end, not in list.");
+        if (context == null) {
+            throw new JsonException("Ending array on closed writer.");
+        }
+        if (!context.list()) {
+            throw new JsonException("Unexpected end, not in list.");
+        }
         writer.write(']');
         context = stack.pop();
         return this;
@@ -159,7 +169,9 @@ public class JsonWriter {
     public JsonWriter key(CharSequence key) throws JsonException {
         startKey();
 
-        if (key == null) throw new JsonException("Expected map key, got null");
+        if (key == null) {
+            throw new JsonException("Expected map key, got null");
+        }
 
         writeQuoted(key);
         writer.write(':');
@@ -169,7 +181,9 @@ public class JsonWriter {
     public JsonWriter key(Binary key) throws JsonException {
         startKey();
 
-        if (key == null) throw new JsonException("Expected map key, got null");
+        if (key == null) {
+            throw new JsonException("Expected map key, got null");
+        }
 
         writer.write('\"');
         writer.write(key.toBase64());
@@ -181,7 +195,9 @@ public class JsonWriter {
     public JsonWriter keyLiteral(CharSequence key) throws JsonException {
         startKey();
 
-        if (key == null) throw new JsonException("Expected map key, got null");
+        if (key == null) {
+            throw new JsonException("Expected map key, got null");
+        }
 
         writer.write(key.toString());
         writer.write(':');
@@ -238,16 +254,20 @@ public class JsonWriter {
     public JsonWriter value(CharSequence value) throws JsonException {
         startValue();
 
-        if (value == null) writer.write(kNull);
-        else writeQuoted(value);
+        if (value == null) {
+            writer.write(kNull);
+        } else {
+            writeQuoted(value);
+        }
         return this;
     }
 
     public JsonWriter value(Binary value) throws JsonException {
         startValue();
 
-        if (value == null) writer.write(kNull);
-        else {
+        if (value == null) {
+            writer.write(kNull);
+        } else {
             writer.write('\"');
             writer.write(value.toBase64());
             writer.write('\"');
@@ -258,15 +278,24 @@ public class JsonWriter {
     public JsonWriter valueLiteral(CharSequence value) throws JsonException {
         startValue();
 
-        if (value == null) writer.write(kNull);
-        else writer.write(value.toString());
+        if (value == null) {
+            writer.write(kNull);
+        } else {
+            writer.write(value.toString());
+        }
         return this;
     }
 
     protected void startKey() throws JsonException {
-        if (context == null) throw new JsonException("Starting key on closed writer.");
-        if (!context.map()) throw new JsonException("Unexpected map key outside map.");
-        if (!context.key()) throw new JsonException("Unexpected map key, expected value or end");
+        if (context == null) {
+            throw new JsonException("Starting key on closed writer.");
+        }
+        if (!context.map()) {
+            throw new JsonException("Unexpected map key outside map.");
+        }
+        if (!context.key()) {
+            throw new JsonException("Unexpected map key, expected value or end");
+        }
 
         if (context.num > 0) {
             writer.write(',');
@@ -277,15 +306,19 @@ public class JsonWriter {
     }
 
     protected boolean startValue() throws JsonException {
-        if (context == null) throw new JsonException("Starting value on closed writer.");
-        if (context.key()) throw new JsonException("Unexpected map key, expected value.");
+        if (context == null) {
+            throw new JsonException("Starting value on closed writer.");
+        }
+        if (context.key()) {
+            throw new JsonException("Unexpected map key, expected value.");
+        }
         if (context.list()) {
             if (context.num > 0) {
                 writer.write(',');
             }
             ++context.num;
             return true;
-        } else if (context.map()){
+        } else if (context.map()) {
             context.expect = JsonContext.Expect.KEY;
         }
         return false;
@@ -293,13 +326,13 @@ public class JsonWriter {
 
     // Copied from org.json JSONObject.quote and modified for local use.
     private void writeQuoted(CharSequence string) {
-        if(string != null && string.length() != 0) {
+        if (string != null && string.length() != 0) {
             int len = string.length();
             writer.write('\"');
 
-            for(int i = 0; i < len; ++i) {
+            for (int i = 0; i < len; ++i) {
                 char c = string.charAt(i);
-                switch(c) {
+                switch (c) {
                     case '\b':
                         writer.write("\\b");
                         break;
@@ -321,7 +354,7 @@ public class JsonWriter {
                         writer.write(c);
                         break;
                     default:
-                        if(c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448) || !Character.isDefined(c)) {
+                        if (c < 32 || (127 <= c && c < 160) || (8192 <= c && c < 8448) || !Character.isDefined(c)) {
                             writer.format("\\u%04x", (int) c);
                         } else {
                             writer.write(c);

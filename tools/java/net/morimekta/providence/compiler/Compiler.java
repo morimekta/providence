@@ -26,6 +26,7 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -82,12 +83,15 @@ public class Compiler {
             e.printStackTrace();
             if (e.getLine() != null) {
                 System.err.format("Error at line %d, pos %d-%d: %s\n" +
-                                  "    %s\n" +
+                                  "    %s\n"                          +
                                   "    %s%c\n",
-                                  e.getLineNo(), e.getPos(), e.getPos() + e.getLen(),
+                                  e.getLineNo(),
+                                  e.getPos(),
+                                  e.getPos() + e.getLen(),
                                   e.getLocalizedMessage(),
                                   e.getLine(),
-                                  Strings.times("~", e.getPos()), '^');
+                                  Strings.times("~", e.getPos()),
+                                  '^');
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
