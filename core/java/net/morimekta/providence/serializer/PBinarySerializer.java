@@ -178,7 +178,7 @@ public class PBinarySerializer extends PSerializer {
             return null;
         }
 
-        int type_and_flag = in.readUInt8();
+        int type_and_flag = in.expectUInt8();
         if (type_and_flag < 0x10) {
             throw new PSerializeException(String.format("No type on field", id));
         }
@@ -187,7 +187,7 @@ public class PBinarySerializer extends PSerializer {
     }
 
     protected FieldInfo readEntryFieldInfo(BinaryReader in, int fieldId) throws IOException, PSerializeException {
-        int type_and_flag = in.readUInt8();
+        int type_and_flag = in.expectUInt8();
         if (type_and_flag < 0x10) {
             throw new PSerializeException("No type on entry.");
         }
@@ -229,7 +229,7 @@ public class PBinarySerializer extends PSerializer {
                 }
                 return null;
             case DataType.INTEGER:
-                Long number = in.readSigned(fieldInfo.getNumericBytes());
+                Long number = in.expectSigned(fieldInfo.getNumericBytes());
                 if (type != null) {
                     switch (type.getType()) {
                         case BYTE:
@@ -256,11 +256,11 @@ public class PBinarySerializer extends PSerializer {
                 }
                 return null;
             case DataType.DOUBLE:
-                return cast(in.readDouble());
+                return cast(in.expectDouble());
             case DataType.BINARY:
                 int bytes = fieldInfo.getArrayLengthBytes();
-                int length = in.readUnsigned(bytes);
-                byte[] binary = in.readBytes(length);
+                int length = in.expectUnsigned(bytes);
+                byte[] binary = in.expectBytes(length);
                 if (type != null) {
                     switch (type.getType()) {
                         case BINARY:
@@ -299,7 +299,7 @@ public class PBinarySerializer extends PSerializer {
                 }
 
                 final int lb = fieldInfo.getArrayLengthBytes();
-                final int size = in.readUnsigned(lb);
+                final int size = in.expectUnsigned(lb);
 
                 Map<Object, Object> out = new LinkedHashMap<>(size);
 
@@ -333,7 +333,7 @@ public class PBinarySerializer extends PSerializer {
                 }
 
                 final int lb = fieldInfo.getArrayLengthBytes();
-                final int size = in.readUnsigned(lb);
+                final int size = in.expectUnsigned(lb);
 
                 Collection<Object> out = type.getType()
                                              .equals(PType.LIST) ? new LinkedList<>() : new LinkedHashSet<>(size);

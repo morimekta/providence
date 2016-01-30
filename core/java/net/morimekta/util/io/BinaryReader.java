@@ -57,10 +57,24 @@ public class BinaryReader extends InputStream {
         while (off < out.length && (i = in.read(out, off, out.length - off)) > 0) {
             off += i;
         }
+        return off;
+    }
+
+    /**
+     * Read binary data from stream.
+     *
+     * @param out The output buffer to read into.
+     * @throws IOException If unable to fill the entire byte array.
+     */
+    public int expect(byte[] out) throws IOException {
+        int i, off = 0;
+        while (off < out.length && (i = in.read(out, off, out.length - off)) > 0) {
+            off += i;
+        }
         if (off < out.length) {
             throw new IOException();
         }
-        return out.length;
+        return off;
     }
 
     /**
@@ -82,10 +96,7 @@ public class BinaryReader extends InputStream {
         while (off < end && (i = in.read(out, off, len - off)) > 0) {
             off += i;
         }
-        if (off < end) {
-            throw new IOException();
-        }
-        return len;
+        return off;
     }
 
     @Override
@@ -98,7 +109,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no byte to read.
      */
-    public byte readByte() throws IOException {
+    public byte expectByte() throws IOException {
         int read = in.read();
         if (read < 0) {
             throw new IOException();
@@ -113,7 +124,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public short readShort() throws IOException {
+    public short expectShort() throws IOException {
         int b1 = in.read();
         if (b1 < 0) {
             throw new IOException();
@@ -132,7 +143,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public int readInt() throws IOException {
+    public int expectInt() throws IOException {
         int b1 = in.read();
         if (b1 < 0) {
             throw new IOException();
@@ -159,7 +170,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public long readLong() throws IOException {
+    public long expectLong() throws IOException {
         int b1 = in.read();
         if (b1 < 0) {
             throw new IOException();
@@ -203,8 +214,8 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong());
+    public double expectDouble() throws IOException {
+        return Double.longBitsToDouble(expectLong());
     }
 
     /**
@@ -213,8 +224,8 @@ public class BinaryReader extends InputStream {
      * @param bytes Number of bytes to read.
      * @return The binary wrapper.
      */
-    public Binary readBinary(int bytes) throws IOException {
-        return Binary.wrap(readBytes(bytes));
+    public Binary expectBinary(int bytes) throws IOException {
+        return Binary.wrap(expectBytes(bytes));
     }
 
     /**
@@ -223,9 +234,9 @@ public class BinaryReader extends InputStream {
      * @param bytes Number of bytes to read.
      * @return The binary wrapper.
      */
-    public byte[] readBytes(int bytes) throws IOException {
+    public byte[] expectBytes(final int bytes) throws IOException {
         byte[] out = new byte[bytes];
-        read(out, 0, bytes);
+        expect(out);
         return out;
     }
 
@@ -236,7 +247,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public int readUInt8() throws IOException {
+    public int expectUInt8() throws IOException {
         int read = in.read();
         if (read < 0) {
             throw new IOException();
@@ -251,7 +262,7 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public int readUInt16() throws IOException {
+    public int expectUInt16() throws IOException {
         int b1 = in.read();
         if (b1 < 0) {
             throw new IOException();
@@ -270,7 +281,26 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public int readUInt24() throws IOException {
+    public int readUInt16() throws IOException {
+        int b1 = in.read();
+        if (b1 < 0) {
+            return 0;
+        }
+        int b2 = in.read();
+        if (b2 < 0) {
+            throw new IOException();
+        }
+        return (b1 | b2 << 8);
+    }
+
+    /**
+     * Read an unsigned short from the input stream.
+     *
+     * @return The number read.
+     *
+     * @throws IOException If no number to read.
+     */
+    public int expectUInt24() throws IOException {
         int b1 = in.read();
         if (b1 < 0) {
             throw new IOException();
@@ -293,8 +323,8 @@ public class BinaryReader extends InputStream {
      *
      * @throws IOException If no number to read.
      */
-    public int readUInt32() throws IOException {
-        return readInt();
+    public int expectUInt32() throws IOException {
+        return expectInt();
     }
 
     /**
@@ -303,16 +333,16 @@ public class BinaryReader extends InputStream {
      * @param bytes Number of bytes to read.
      * @return The number read.
      */
-    public int readUnsigned(int bytes) throws IOException {
+    public int expectUnsigned(int bytes) throws IOException {
         switch (bytes) {
             case 4:
-                return readUInt32();
+                return expectUInt32();
             case 3:
-                return readUInt24();
+                return expectUInt24();
             case 2:
-                return readUInt16();
+                return expectUInt16();
             case 1:
-                return readUInt8();
+                return expectUInt8();
         }
         throw new IOException();
     }
@@ -323,16 +353,16 @@ public class BinaryReader extends InputStream {
      * @param bytes Number of bytes to read.
      * @return The number read.
      */
-    public long readSigned(int bytes) throws IOException {
+    public long expectSigned(int bytes) throws IOException {
         switch (bytes) {
             case 8:
-                return readLong();
+                return expectLong();
             case 4:
-                return readInt();
+                return expectInt();
             case 2:
-                return readShort();
+                return expectShort();
             case 1:
-                return readByte();
+                return expectByte();
         }
         throw new IOException();
     }
@@ -383,7 +413,7 @@ public class BinaryReader extends InputStream {
         int shift = 0;
         while (c) {
             shift += 7;
-            i = readUInt8();
+            i = expectUInt8();
             c = (i & 0x80) > 0;
             out |= ((i & 0x7f) << shift);
         }
@@ -410,7 +440,7 @@ public class BinaryReader extends InputStream {
         int shift = 0;
         while (c) {
             shift += 7;
-            i = readUInt8();
+            i = expectUInt8();
             c = (i & 0x80) > 0;
             out = out | ((long) i & 0x7f) << shift;
         }

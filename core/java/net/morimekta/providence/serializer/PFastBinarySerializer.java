@@ -291,10 +291,10 @@ public class PFastBinarySerializer extends PSerializer {
                 }
             }
             case FIXED_64:
-                return cast(in.readDouble());
+                return cast(in.expectDouble());
             case BINARY: {
                 int len = in.readIntVarint();
-                byte[] data = in.readBytes(len);
+                byte[] data = in.expectBytes(len);
                 if (descriptor != null) {
                     switch (descriptor.getType()) {
                         case STRING:

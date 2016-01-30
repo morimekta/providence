@@ -56,10 +56,10 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        assertEquals((byte) 1, reader.readByte());
-        assertEquals((byte) 0xff, reader.readByte());
-        assertEquals((byte) '\"', reader.readByte());
-        assertEquals((byte) 0, reader.readByte());
+        assertEquals((byte) 1, reader.expectByte());
+        assertEquals((byte) 0xff, reader.expectByte());
+        assertEquals((byte) '\"', reader.expectByte());
+        assertEquals((byte) 0, reader.expectByte());
     }
 
     @Test
@@ -72,10 +72,10 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        assertEquals((short) 1, reader.readShort());
-        assertEquals((short) 0xffff, reader.readShort());
-        assertEquals((short) -12345, reader.readShort());
-        assertEquals((short) 0, reader.readShort());
+        assertEquals((short) 1, reader.expectShort());
+        assertEquals((short) 0xffff, reader.expectShort());
+        assertEquals((short) -12345, reader.expectShort());
+        assertEquals((short) 0, reader.expectShort());
     }
 
     @Test
@@ -89,11 +89,11 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        assertEquals(1, reader.readInt());
-        assertEquals(0xdeadbeef, reader.readInt());
-        assertEquals(0xffffffff, reader.readInt());
-        assertEquals(-1234567890, reader.readInt());
-        assertEquals(0, reader.readInt());
+        assertEquals(1, reader.expectInt());
+        assertEquals(0xdeadbeef, reader.expectInt());
+        assertEquals(0xffffffff, reader.expectInt());
+        assertEquals(-1234567890, reader.expectInt());
+        assertEquals(0, reader.expectInt());
     }
 
     @Test
@@ -107,11 +107,11 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        assertEquals(1, reader.readLong());
-        assertEquals(0xdeadbeefcafebabeL, reader.readLong());
-        assertEquals(0xffffffffffffffffL, reader.readLong());
-        assertEquals(-1234567890123456789L, reader.readLong());
-        assertEquals(0, reader.readLong());
+        assertEquals(1, reader.expectLong());
+        assertEquals(0xdeadbeefcafebabeL, reader.expectLong());
+        assertEquals(0xffffffffffffffffL, reader.expectLong());
+        assertEquals(-1234567890123456789L, reader.expectLong());
+        assertEquals(0, reader.expectLong());
     }
 
     @Test
@@ -125,11 +125,11 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        assertEquals(1.0, reader.readDouble(), 0.0);
-        assertEquals(6.62607004E-34, reader.readDouble(), 0.0);
-        assertEquals(299792458, reader.readDouble(), 0.0);
-        assertEquals(-123456.123456, reader.readDouble(), 0.0);
-        assertEquals(0.0, reader.readDouble(), 0.0);
+        assertEquals(1.0, reader.expectDouble(), 0.0);
+        assertEquals(6.62607004E-34, reader.expectDouble(), 0.0);
+        assertEquals(299792458, reader.expectDouble(), 0.0);
+        assertEquals(-123456.123456, reader.expectDouble(), 0.0);
+        assertEquals(0.0, reader.expectDouble(), 0.0);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class BinaryIOTest {
 
         BinaryReader reader = getReader();
 
-        Binary read = reader.readBinary(bytes.length());
+        Binary read = reader.expectBinary(bytes.length());
 
         assertEquals(bytes, read);
     }

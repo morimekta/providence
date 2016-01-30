@@ -247,9 +247,9 @@ public class PProtoSerializer extends PSerializer {
                     if (strict) {
                         throw new PSerializeException("");
                     }
-                    in.readLong();
+                    in.expectLong();
                 } else if (descriptor.getType() == PType.DOUBLE) {
-                    return cast(in.readDouble());
+                    return cast(in.expectDouble());
                 } else {
                     throw new PSerializeException("invalid type for fixed_64 value " + descriptor);
                 }
@@ -257,7 +257,7 @@ public class PProtoSerializer extends PSerializer {
             }
             case BINARY: {
                 final int len = in.readIntVarint();
-                final byte[] bytes = in.readBytes(len);
+                final byte[] bytes = in.expectBytes(len);
                 if (descriptor != null) {
                     switch (descriptor.getType()) {
                         case STRING:
