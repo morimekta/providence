@@ -26,6 +26,7 @@
         <!-- the real core. -->
         <module>core</module>
         <module>core-jackson</module>
+        <module>core-streams</module>
         <module>reflect</module>
 
         <!-- utility libraries -->

@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
@@ -27,14 +28,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromJsonResource;
@@ -161,14 +159,7 @@ public class PSerializerTest {
         try (InputStream r = PSerializerTest.class.getResourceAsStream(resource)) {
             if (r == null) {
                 File file = new File("resourcestest" + resource);
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-
-                for (int i = 0; i < containers.size(); ++i) {
-                    serializer.serialize(out, containers.get(i));
-                    out.write('\n');
-                }
-                out.flush();
-                out.close();
+                containers.stream().collect(MessageCollectors.toFile(file, serializer));
                 fail("No such resource to compat: " + resource);
             }
 
@@ -182,10 +173,8 @@ public class PSerializerTest {
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        for (int i = 0; i < containers.size(); ++i) {
-            serializer.serialize(out, containers.get(i));
-            out.write('\n');
-        }
+        containers.stream()
+                  .collect(MessageCollectors.toStream(out, serializer));
         Binary actual = Binary.wrap(out.toByteArray());
 
         if (binary) {
@@ -199,7 +188,7 @@ public class PSerializerTest {
     public void testCompactJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.ID);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/compact.json");
+        // testCompatibility(serializer, "/compat/compact.json");
         testOutput(serializer, "/compat/compact.json", false);
     }
 
@@ -207,7 +196,7 @@ public class PSerializerTest {
     public void testNamedJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.NAME);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/named.json");
+        // testCompatibility(serializer, "/compat/named.json");
         testOutput(serializer, "/compat/named.json", false);
     }
 
@@ -218,7 +207,7 @@ public class PSerializerTest {
                                                      PJsonSerializer.IdType.NAME,
                                                      true);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/pretty.json");
+        // testCompatibility(serializer, "/compat/pretty.json");
         testOutput(serializer, "/compat/pretty.json", false);
     }
 
@@ -226,7 +215,7 @@ public class PSerializerTest {
     public void testBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PBinarySerializer(true);
         testSerializer(serializer);
-        testOutput(serializer, "/compat/binary.json", false);
+        testOutput(serializer, "/compat/binary.data", false);
     }
 
     @Test
@@ -241,5 +230,6 @@ public class PSerializerTest {
     public void testProto() throws IOException, PSerializeException {
         PSerializer serializer = new PProtoSerializer(true);
         testSerializer(serializer);
+        testOutput(serializer, "/compat/proto.data", false);
     }
 }

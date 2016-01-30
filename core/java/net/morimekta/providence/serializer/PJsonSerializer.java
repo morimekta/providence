@@ -94,6 +94,8 @@ import java.util.Map;
  * @since 25.08.15
  */
 public class PJsonSerializer extends PSerializer {
+    public static final byte[] STREAM_INITIATOR = {'{'};
+    public static final byte[] ENTRY_SEP        = {'\n'};
 
     public enum IdType {
         // print field and enums as numeric IDs and values.
@@ -132,6 +134,11 @@ public class PJsonSerializer extends PSerializer {
         this.idType = idType;
         this.enumType = enumType;
         this.pretty = pretty;
+    }
+
+    @Override
+    public byte[] streamInitiator() {
+        return STREAM_INITIATOR;
     }
 
     @Override

@@ -15,15 +15,17 @@
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
             <version>${providence.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-jackson</artifactId>
             <version>${providence.version}</version>
-            <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core-streams</artifactId>
+            <version>${providence.version}</version>
+        </dependency>
         <dependency>
             <groupId>net.morimekta</groupId>
             <artifactId>android-util</artifactId>

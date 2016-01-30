@@ -35,6 +35,7 @@ java_library(
     srcs = glob(["java/**/*.java"]),
     deps = [
         "//core",
+        "//core-streams",
         "//third-party:hamcrest-core",
         "//third-party:junit",
     ],
@@ -50,6 +51,7 @@ java_test(
         ":testing",
         "//core",
         "//core-jackson",
+        "//core-streams",
         "//third-party:android-util",
         "//third-party:jackson-annotations",
         "//third-party:jackson-core",

@@ -36,6 +36,10 @@ import java.io.OutputStream;
  * @since 25.08.15
  */
 public abstract class PSerializer {
+    public static final byte[] DEFAULT_STREAM_INITIATOR = {};
+    public static final byte[] DEFAULT_STREAM_TERMINATOR = {'\n'};
+    public static final byte[] DEFAULT_ENTRY_SEP = {'\n'};
+
     public abstract int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException;
 
     public abstract <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
@@ -43,6 +47,22 @@ public abstract class PSerializer {
 
     public abstract <T> T deserialize(InputStream input, PDescriptor<T> descriptor)
             throws IOException, PSerializeException;
+
+    public boolean streamInitiatorPartOfData() {
+        return true;
+    }
+
+    public byte[] streamInitiator() {
+        return DEFAULT_STREAM_INITIATOR;
+    }
+
+    public byte[] streamTerminator() {
+        return DEFAULT_STREAM_TERMINATOR;
+    }
+
+    public byte[] entrySeparator() {
+        return DEFAULT_ENTRY_SEP;
+    }
 
     @SuppressWarnings("unchecked")
     protected <T> T cast(Object o) {
