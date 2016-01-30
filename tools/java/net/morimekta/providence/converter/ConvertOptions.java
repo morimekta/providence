@@ -44,7 +44,6 @@ import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.util.PPrettyPrinter;
 import net.morimekta.util.io.CountingOutputStream;
 
-import com.sun.istack.internal.NotNull;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
 import org.kohsuke.args4j.Argument;
@@ -258,7 +257,7 @@ public class ConvertOptions {
         return mHelp;
     }
 
-    public void collectIncludes(@NotNull File dir, Map<String, File> includes) {
+    public void collectIncludes(File dir, Map<String, File> includes) {
         for (File file : dir.listFiles()) {
             if (file.isHidden()) {
                 continue;
