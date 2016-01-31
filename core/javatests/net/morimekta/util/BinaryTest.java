@@ -22,6 +22,7 @@ package net.morimekta.util;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -97,8 +98,8 @@ public class BinaryTest {
     }
 
     @Test
-    public void testBase64() {
-        String a = Base64.encode(a1);
+    public void testBase64() throws IOException {
+        String a = Base64.encodeBytes(a1);
 
         assertEquals(a,
                      Binary.wrap(a1)

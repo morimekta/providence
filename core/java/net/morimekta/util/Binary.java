@@ -109,7 +109,7 @@ public class Binary implements Comparable<Binary> {
      * @param base64 The string to decode.
      * @return The resulting sequence.
      */
-    public static Binary fromBase64(String base64) {
+    public static Binary fromBase64(String base64) throws IOException {
         byte[] arr = Base64.decode(base64);
         return new Binary(arr);
     }
@@ -120,7 +120,7 @@ public class Binary implements Comparable<Binary> {
      * @return The encoded string.
      */
     public String toBase64() {
-        return Base64.encode(bytes);
+        return Base64.encodeBytes(bytes);
     }
 
     /**

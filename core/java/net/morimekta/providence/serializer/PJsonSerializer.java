@@ -498,7 +498,11 @@ public class PJsonSerializer extends PSerializer {
                 case STRING:
                     return key;
                 case BINARY:
-                    return Binary.fromBase64(key);
+                    try {
+                        return Binary.fromBase64(key);
+                    } catch (IOException e) {
+                        throw new PSerializeException(e, "Unable to parse Base64 data.");
+                    }
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory()
                                                                        .builder();

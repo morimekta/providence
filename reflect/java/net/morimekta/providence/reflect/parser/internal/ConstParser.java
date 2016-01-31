@@ -301,7 +301,7 @@ public class ConstParser {
      * @param value The string to decode.
      * @return The decoded byte array.
      */
-    private byte[] parseBinary(String value) {
+    private byte[] parseBinary(String value) throws IOException {
         return Base64.decode(value);
     }
 }
