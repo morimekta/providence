@@ -169,7 +169,7 @@ public class SpeedTest {
         //  0.62    0.49 -  0.49   0.39  =   1.11   0.89
         binary_protocol("bin"),
         //  0.68    0.38 -  0.42   0.38  =   1.09   0.76
-        tuple_protocol("tuples"),;
+        tuple_protocol("tuples");
 
         String suffix;
 

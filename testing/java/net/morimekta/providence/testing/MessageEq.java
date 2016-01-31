@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             return actual == null;
         }
         if (!(actual instanceof PMessage)) {
-            throw new AssertionFailedError("Item " + actual.toString() + " not a providence message.");
+            throw new AssertionFailedError("Item " + actual.getClass().toString() + " not a providence message.");
         }
         return expected.equals(actual);
     }
@@ -170,7 +169,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
                                 .filter(key -> !expected.keySet()
                                                         .contains(key))
                                 .map(key -> String.format("found unexpected entry (%s, %s) in %s",
-                                                          Objects.toString(key),
+                                                          toString(key),
                                                           toString(actual.get(key)),
                                                           xPath))
                                 .collect(Collectors.toList()));
@@ -324,10 +323,10 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             }
         } else if (o instanceof Binary) {
             int len = ((Binary) o).length();
-            if (len > 65) {
+            if (len > 110) {
                 return String.format("binary[%s...+%d]",
                                      ((Binary) o).toHexString()
-                                                 .substring(0, 50),
+                                                 .substring(0, 100),
                                      len - 50);
             } else {
                 return "binary[" + ((Binary) o).toHexString() + "]";
@@ -345,9 +344,9 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
     }
 
     protected static String limitToString(PMessage<?> message) {
-        String tos = message == null ? "null" : message.toString();
-        if (tos.length() > 65) {
-            tos = tos.substring(0, 60) + "...}";
+        String tos = message == null ? "null" : message.asString();
+        if (tos.length() > 120) {
+            tos = tos.substring(0, 110) + "...}";
         }
 
         return tos;

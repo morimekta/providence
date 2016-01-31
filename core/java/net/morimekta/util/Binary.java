@@ -110,7 +110,7 @@ public class Binary implements Comparable<Binary> {
      * @return The resulting sequence.
      */
     public static Binary fromBase64(String base64) throws IOException {
-        byte[] arr = Base64.decode(base64);
+        byte[] arr = Base64.decode(base64, Base64.DONT_GUNZIP);
         return new Binary(arr);
     }
 

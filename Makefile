@@ -5,19 +5,12 @@ model:
 	# rm -rf ${PWD}/reflect/model/net
 	bazel run //tools:providence-compiler -- --gen java2 --options --containers=ORDERED --out ${PWD}/reflect/model ${PWD}/reflect/model/model.thrift
 
-resources:
-	mkdir -p ${PWD}/generated/java
-	mkdir -p ${PWD}/core/generated
-	bazel run //tools:providence-compiler -- --gen java2 --options --android:--jackson:--containers=SORTED --out ${PWD}/generated/java ${PWD}/testing/defs/*/*.thrift
-	bazel build //testing:thrift-idl
-	thrift --gen java:android -out ${PWD}/generated/java ${PWD}/bazel-genfiles/testing/thrift-idl.thrift
-
 data:
 	mkdir -p tmp/
-	bazel run //tools:data-generator -- --entries 10000 --out ${PWD}/generated/resources
+	bazel run //tools:data-generator -- --entries 20000 --out ${PWD}/tmp
 
 speedtest:
-	bazel run //tools:speed-test -- --entries 10000 ${PWD}/generated/resources
+	bazel run //tools:speed-test -- --entries 20000 ${PWD}/tmp
 
 # --- Under here is for installing the binaries.
 
