@@ -20,7 +20,7 @@ public class BinaryJsonDeserializerTest {
         BinaryJsonDeserializer deserializer = new BinaryJsonDeserializer();
 
         byte[] data = new byte[]{12, 34, 56, 78, 91, 23, 45, 67, 78, 90};
-        String encoded = "[\"" + Base64.encodeBytes(data) + "\"]";
+        String encoded = "[\"" + Base64.encodeToString(data) + "\"]";
 
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(encoded);

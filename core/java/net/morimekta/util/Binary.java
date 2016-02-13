@@ -22,6 +22,7 @@ package net.morimekta.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Locale;
@@ -30,7 +31,7 @@ import java.util.Locale;
  * Simplistic byte sequence wrapper with lots of convenience methods. Used to
  * wrap byte arrays for the binary data type.
  */
-public class Binary implements Comparable<Binary> {
+public class Binary implements Comparable<Binary>, Serializable {
     private final byte[] bytes;
 
     public Binary(byte[] bytes) {
@@ -110,7 +111,7 @@ public class Binary implements Comparable<Binary> {
      * @return The resulting sequence.
      */
     public static Binary fromBase64(String base64) throws IOException {
-        byte[] arr = Base64.decode(base64, Base64.DONT_GUNZIP);
+        byte[] arr = Base64.decode(base64);
         return new Binary(arr);
     }
 
@@ -120,7 +121,7 @@ public class Binary implements Comparable<Binary> {
      * @return The encoded string.
      */
     public String toBase64() {
-        return Base64.encodeBytes(bytes);
+        return Base64.encodeToString(bytes);
     }
 
     /**

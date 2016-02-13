@@ -99,7 +99,7 @@ public class BinaryTest {
 
     @Test
     public void testBase64() throws IOException {
-        String a = Base64.encodeBytes(a1);
+        String a = Base64.encodeToString(a1);
 
         assertEquals(a,
                      Binary.wrap(a1)
