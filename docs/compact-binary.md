@@ -1,6 +1,8 @@
 Compact Binary Format
 =====================
 
+## --- DEPRECATED! ---
+
 The compact binary serialization format is designed to be binary compact, which
 requires the deserializer to be pretty aware of the model structure to format
 data correctly. It is still self-describing, so unknown field can be skipped

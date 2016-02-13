@@ -3,6 +3,29 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <providence.version>0.0.1-SNAPSHOT</providence.version>
+    </properties>
+
+    <name>Providence Thrift Bridge</name>
+    <description>
+        Wrapping thrift TProtocols to use in serialization of providence
+        structures.
+    </description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/morimekta/providence.git</url>
+    </scm>
+
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
@@ -30,12 +53,18 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
+            <version>${providence.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-internal</artifactId>
             <version>${providence.version}</version>
             <scope>test</scope>
         </dependency>

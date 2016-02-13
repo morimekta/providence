@@ -8,9 +8,14 @@
         <providence.version>0.0.1-SNAPSHOT</providence.version>
     </properties>
 
-    <name>Providence Testing Utilities</name>
+    <name>Providence Internal</name>
     <description>
-        Helper libraries for testing and comparing providence structures.
+        Generated classes used internally mainly in testing.
+
+        net.morimekta.test.thrift.* Thrift generated files matching the same
+        files in net.morimekta.test.providence.*
+
+        The other files are providence generated files used in testing.
     </description>
 
     <licenses>
@@ -30,7 +35,7 @@
         <groupId>net.morimekta.providence</groupId>
         <version>${providence.version}</version>
     </parent>
-    <artifactId>providence-testing</artifactId>
+    <artifactId>providence-internal</artifactId>
 
     <dependencies>
         <dependency>
@@ -44,20 +49,9 @@
             <version>${providence.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core-streams</artifactId>
-            <version>${providence.version}</version>
-        </dependency>
-        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
             <version>${morimekta-utils.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -84,29 +78,10 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-internal</artifactId>
-            <version>${providence.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>java/</sourceDirectory>
-        <testSourceDirectory>javatests/</testSourceDirectory>
+        <sourceDirectory>target/generated-sources/</sourceDirectory>
         <testResources>
             <testResource>
                 <directory>resourcestest/</directory>
@@ -114,21 +89,49 @@
         </testResources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-source</id>
+                        <id>generate-providence-sources</id>
                         <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
                         <configuration>
-                            <sources>
-                                <source>target/generated-sources/</source>
-                            </sources>
+                            <tasks>
+                                <mkdir dir="target/generated-sources"/>
+                                <exec executable="pvdc">
+                                    <arg value="--gen"/>
+                                    <arg value="java2"/>
+                                    <arg value="--options"/>
+                                    <arg value="--android:--jackson:--containers=SORTED"/>
+                                    <arg value="--out"/>
+                                    <arg value="target/generated-sources"/>
+                                    <arg value="resources/*/*.thrift"/>
+                                </exec>
+                            </tasks>
+                            <sourceRoot>target/generated-sources</sourceRoot>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-thrift-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/generated-sources"/>
+                                <exec executable="thrift">
+                                    <arg value="--gen"/>
+                                    <arg value="java"/>
+                                    <arg value="--out"/>
+                                    <arg value="target/generated-sources"/>
+                                    <arg value="resources/test-thrift.thrift"/>
+                                </exec>
+                            </tasks>
+                            <sourceRoot>target/generated-sources</sourceRoot>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -139,6 +142,22 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
