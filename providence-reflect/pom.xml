@@ -84,9 +84,14 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>resources/</directory>
+            </resource>
+        </resources>
         <testResources>
             <testResource>
-                <directory>res/</directory>
+                <directory>resourcestest/</directory>
             </testResource>
         </testResources>
     </build>

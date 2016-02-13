@@ -75,6 +75,11 @@
             <version>${morimekta-utils.version}</version>
         </dependency>
         <dependency>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>console-util</artifactId>
+            <version>${morimekta-utils.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>${thrift.version}</version>

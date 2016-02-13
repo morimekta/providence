@@ -1,18 +1,3 @@
-java_library(
-    name = 'android-util',
-    exports = [
-        '@android-util-git//java',
-    ],
-    visibility = ['//visibility:public'],
-)
-
-exports_files(
-    glob(['LICENSE-*']),
-    visibility = ['//visibility:public'],
-)
-
-# --- AUTO_UPDATED AFTER THIS LINE ---
-
 # The following dependencies were calculated from:
 # /home/morimekta/src/providence/core-jackson/pom.xml
 # /home/morimekta/src/providence/core/pom.xml

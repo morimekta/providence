@@ -11,13 +11,13 @@ def gen_providence_source(name,
     native.genrule(
         name=name,
         cmd='TMP=$$(mktemp -d);' +
-            '$(location //tools:providence-compiler) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
+            '$(location //providence-tools:providence-compiler) --gen %s %s --out $$TMP $(SRCS);' % (gen, ' '.join(flags)) +
             '$(location //tools/jdk:jar) cf $@ -C $$TMP .;' +
             'rm -rf $$TMP',
         srcs=srcs,
         outs=['%s.%s' % (name, extension)],
         tools=[
-            '//tools:providence-compiler',
+            '//providence-tools:providence-compiler',
             '//tools/jdk:jar',
         ],
         local=1,
@@ -47,14 +47,14 @@ def java_providence(name,
         flags=flags,
         options=options,
     )
-    deps = ['//core:core']
+    deps = ['//providence-core']
     if '--android' in options:
       deps = deps + ['//third-party:android-util']
     if '--jackson' in options:
         deps = deps + [
+            '//providence-core-jackson',
             '//third-party:jackson-annotations',
             '//third-party:jackson-databind',
-            '//core-jackson',
         ]
     native.java_library(
         name=name,

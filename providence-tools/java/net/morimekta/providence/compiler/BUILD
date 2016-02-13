@@ -4,9 +4,9 @@ java_library(
         ["**/*.java"],
         exclude = ['Compiler.java']),
     deps = [
-        "//core:core",
-        "//reflect:reflect",
-        "//tools/java/net/morimekta/console",
+        "//providence-core",
+        "//providence-reflect",
+        "//third-party:console-util",
         "//third-party:args4j",
     ],
     visibility = ['//visibility:public'],

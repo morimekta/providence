@@ -35,6 +35,7 @@
         <mockito.version>1.10.17</mockito.version>
 
         <morimekta-utils.version>0.1-SNAPSHOT</morimekta-utils.version>
+        <providence.version>0.0.1-SNAPSHOT</providence.version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
@@ -45,18 +46,17 @@
 
     <modules>
         <!-- the real core. -->
-        <module>core</module>
-        <module>core-jackson</module>
-        <module>core-streams</module>
-        <module>reflect</module>
+        <module>providence-core</module>
+        <module>providence-core-jackson</module>
+        <module>providence-core-streams</module>
+        <module>providence-reflect</module>
 
         <!-- utility libraries -->
-        <module>thrift</module>
-        <module>messageio</module>
-        <module>testing</module>
-
+        <module>providence-thrift</module>
+        <module>providence-messageio</module>
+        <module>providence-testing</module>
         <!-- internal and utilities -->
         <module>providence-internal</module>
-        <module>tools</module>
+        <module>providence-tools</module>
     </modules>
 </project>
