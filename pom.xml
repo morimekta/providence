@@ -34,7 +34,7 @@
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.17</mockito.version>
 
-        <morimekta-utils.version>0.1-SNAPSHOT</morimekta-utils.version>
+        <morimekta_utils.version>0.1-SNAPSHOT</morimekta_utils.version>
         <providence.version>0.0.1-SNAPSHOT</providence.version>
     </properties>
 

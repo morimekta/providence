@@ -1,12 +1,12 @@
-load('release', 'release_jar')
-load('release', 'java_pkg_deb')
+load('/tools/build_defs/pvd/release', 'release_jar')
+load('/tools/build_defs/pvd/release', 'java_pkg_deb')
 
-release_jar('core', '//core')
-release_jar('core-jackson', '//core-jackson')
-release_jar('core-streams', '//core-streams')
-release_jar('reflect', '//reflect')
-release_jar('messageio', '//messageio')
-release_jar('thrift', '//thrift')
+release_jar('providence-core', '//providence-core')
+release_jar('providence-core-jackson', '//providence-core-jackson')
+release_jar('providence-core-streams', '//providence-core-streams')
+release_jar('providence-reflect', '//providence-reflect')
+release_jar('providence-messageio', '//providence-messageio')
+release_jar('providence-thrift', '//providence-thrift')
 
 java_pkg_deb(
     name = "providence-compiler-deb",

@@ -1,8 +1,5 @@
 git_repository(
-  name = 'android-util-git',
-  remote = 'https://github.com/morimekta/android-util.git',
-  commit = '97e14a2',
+  name = 'morimekta_utils',
+  remote = 'https://github.com/morimekta/utils.git',
+  commit = '9a8900d',
 )
-
-# --- AUTO_UPDATED AFTER THIS LINE ---
-

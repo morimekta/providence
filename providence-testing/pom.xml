@@ -28,7 +28,7 @@
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
-        <version>${providence.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>providence-testing</artifactId>
 
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
-            <version>${morimekta-utils.version}</version>
+            <version>${morimekta_utils.version}</version>
         </dependency>
 
         <dependency>

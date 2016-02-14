@@ -28,7 +28,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>${providence.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>providence-tools</artifactId>
 
@@ -72,12 +72,12 @@
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
-            <version>${morimekta-utils.version}</version>
+            <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
-            <version>${morimekta-utils.version}</version>
+            <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
