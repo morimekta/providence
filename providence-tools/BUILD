@@ -5,12 +5,11 @@ java_test(
         "//providence-core",
         "//providence-reflect",
         "//providence-testing",
-        "//providence-internal:providence-idl",
-        "//providence-tools/java/net/morimekta/console",
         "//providence-tools/java/net/morimekta/providence/compiler:compiler",
         "//providence-tools/java/net/morimekta/providence/converter:converter-main",
         "//providence-tools/java/net/morimekta/providence/tools/data",
-        "//third-party:junit",
+        "//third-party:junit_junit",
+        "//third-party:net_morimekta_utils_console_util",
     ],
     data = [
         ":speed-test",
@@ -19,7 +18,7 @@ java_test(
         ":providence-converter",
     ],
     resources = glob([ "resourcestest/**" ]),
-    resource_strip_prefix = "testing/resourcestest/",
+    resource_strip_prefix = "providence-tools/resourcestest/",
     # Ensures the binaries compile properly.
     size = 'small',
 )

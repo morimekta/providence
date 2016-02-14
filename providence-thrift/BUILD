@@ -1,30 +1,29 @@
 java_library(
-    name = "thrift",
+    name = "providence-thrift",
     srcs = glob(["java/**/*.java"]),
     deps = [
-        "//core:core",
-        "//third-party:libthrift",
+        "//providence-core",
+        "//third-party:org_apache_thrift_libthrift",
     ],
     visibility = ['//visibility:public'],
 )
-
 
 java_test(
     name = "javatests",
     srcs = glob(["javatests/**/*.java"]),
     deps = [
-        ":thrift",
-        "//testing",
-        "//testing:providence-idl",
-        "//testing:thrift-idl",
-        "//core",
-        "//third-party:libthrift",
-        "//third-party:slf4j-simple",
-        "//third-party:mockito-core",
-        "//third-party:junit",
+        ":providence-thrift",
+        "//providence-testing",
+        "//providence-internal:providence-idl",
+        "//providence-internal:thrift-idl",
+        "//providence-core",
+        "//third-party:org_apache_thrift_libthrift",
+        "//third-party:org_slf4j_slf4j_simple",
+        "//third-party:org_mockito_mockito_core",
+        "//third-party:junit_junit",
     ],
     resources = glob(["resourcestest/**"]),
-    resource_strip_prefix = "thrift/resourcestest/",
+    resource_strip_prefix = "providence-thrift/resourcestest/",
     size = 'small',
 )
 

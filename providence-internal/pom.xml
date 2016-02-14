@@ -82,11 +82,11 @@
 
     <build>
         <sourceDirectory>target/generated-sources/</sourceDirectory>
-        <testResources>
-            <testResource>
-                <directory>resourcestest/</directory>
-            </testResource>
-        </testResources>
+        <resources>
+            <resource>
+                <directory>resources/</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

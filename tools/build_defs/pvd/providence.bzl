@@ -49,12 +49,12 @@ def java_providence(name,
     )
     deps = ['//providence-core']
     if '--android' in options:
-      deps = deps + ['//third-party:android-util']
+      deps = deps + ['//third-party:net_morimekta_utils_android_util']
     if '--jackson' in options:
         deps = deps + [
             '//providence-core-jackson',
-            '//third-party:jackson-annotations',
-            '//third-party:jackson-databind',
+            "//third-party:com_fasterxml_jackson_core_jackson_annotations",
+            "//third-party:com_fasterxml_jackson_core_jackson_databind",
         ]
     native.java_library(
         name=name,

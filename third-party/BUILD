@@ -1,23 +1,23 @@
 java_library(
-    name = 'android_util',
+    name = 'net_morimekta_utils_android_util',
     exports = [
-        '@morimekta_utils//android-util',
+        '@net_morimekta_utils//android-util',
     ],
     visibility = ['//visibility:public'],
 )
 
 java_library(
-    name = 'console_util',
+    name = 'net_morimekta_utils_console_util',
     exports = [
-        '@morimekta_utils//console-util',
+        '@net_morimekta_utils//console-util',
     ],
     visibility = ['//visibility:public'],
 )
 
 java_library(
-    name = 'io_util',
+    name = 'net_morimekta_utils_io_util',
     exports = [
-        '@morimekta_utils//io-util',
+        '@net_morimekta_utils//io-util',
     ],
     visibility = ['//visibility:public'],
 )
@@ -71,106 +71,6 @@ java_library(
     exports = [
         "@junit_junit//jar",
         "@org_hamcrest_hamcrest_core//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_core",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_core//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_core_jackson",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_core_jackson//jar",
-        "@com_fasterxml_jackson_core_jackson_annotations//jar",
-        "@com_fasterxml_jackson_core_jackson_core//jar",
-        "@com_fasterxml_jackson_core_jackson_databind//jar",
-        "@net_morimekta_providence_providence_core//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_core_streams",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_core_streams//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_internal",
-    visibility = ["//visibility:public"],
-    testonly = 1,
-    exports = [
-        "@net_morimekta_providence_providence_internal//jar",
-        "@com_fasterxml_jackson_core_jackson_annotations//jar",
-        "@com_fasterxml_jackson_core_jackson_core//jar",
-        "@com_fasterxml_jackson_core_jackson_databind//jar",
-        "@net_morimekta_providence_providence_core//jar",
-        "@net_morimekta_providence_providence_core_jackson//jar",
-        "@net_morimekta_utils_android_util//jar",
-        "@org_apache_thrift_libthrift//jar",
-        "@org_slf4j_slf4j_api//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_messageio",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_messageio//jar",
-        "@net_morimekta_providence_providence_core//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_reflect",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_reflect//jar",
-        "@net_morimekta_providence_providence_core//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_testing",
-    visibility = ["//visibility:public"],
-    testonly = 1,
-    exports = [
-        "@net_morimekta_providence_providence_testing//jar",
-        "@com_fasterxml_jackson_core_jackson_annotations//jar",
-        "@com_fasterxml_jackson_core_jackson_core//jar",
-        "@com_fasterxml_jackson_core_jackson_databind//jar",
-        "@junit_junit//jar",
-        "@net_morimekta_providence_providence_core//jar",
-        "@net_morimekta_providence_providence_core_jackson//jar",
-        "@net_morimekta_providence_providence_core_streams//jar",
-        "@net_morimekta_utils_android_util//jar",
-        "@org_apache_thrift_libthrift//jar",
-        "@org_hamcrest_hamcrest_core//jar",
-        "@org_slf4j_slf4j_api//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_providence_providence_thrift",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_providence_providence_thrift//jar",
-        "@net_morimekta_providence_providence_core//jar",
-        "@org_apache_thrift_libthrift//jar",
-        "@org_slf4j_slf4j_api//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_utils_android_util",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_utils_android_util//jar",
-    ],
-)
-java_library(
-    name = "net_morimekta_utils_io_util",
-    visibility = ["//visibility:public"],
-    exports = [
-        "@net_morimekta_utils_io_util//jar",
     ],
 )
 java_library(

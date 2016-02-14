@@ -6,8 +6,9 @@ java_library(
     deps = [
         "//providence-core",
         "//providence-reflect",
-        "//third-party:console-util",
-        "//third-party:args4j",
+        "//providence-reflect:providence-model",
+        "//third-party:net_morimekta_utils_console_util",
+        "//third-party:args4j_args4j",
     ],
     visibility = ['//visibility:public'],
 )
@@ -17,9 +18,9 @@ java_library(
     srcs = ["Compiler.java"],
     deps = [
         ":compiler",
-        "//core:core",
-        "//reflect:reflect",
-        "//third-party:args4j",
+        "//providence-core",
+        "//providence-reflect",
+        "//third-party:args4j_args4j",
     ],
     visibility = ['//visibility:public'],
 )

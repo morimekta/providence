@@ -47,9 +47,9 @@ def java_thrift(name,
             srcs=srcs,
             flags=flags,
     )
-    deps = ['//third-party:libthrift']
+    deps = ['//third-party:org_apache_thrift_libthrift']
     if 'android' in flags:
-        deps = deps + ['//third-party:android-util']
+        deps = deps + ['//third-party:net_morimekta_utils_android_util']
     native.java_library(
             name=name,
             srcs=['__gen_%s' % name],

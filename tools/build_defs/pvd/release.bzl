@@ -8,7 +8,7 @@ def release_jar(name,
         name = name,
         cmd = 'cp $(SRCS) $(OUTS)',
         srcs = [target],
-        outs = ['%s-%s.jar' % (name, VERSION)],
+        outs = ['providence-%s-%s.jar' % (name, VERSION)],
     )
 
 def java_pkg_deb(name,

@@ -1,5 +1,5 @@
 git_repository(
-  name = 'morimekta_utils',
+  name = 'net_morimekta_utils',
   remote = 'https://github.com/morimekta/utils.git',
   commit = '9a8900d',
 )
@@ -80,86 +80,6 @@ maven_jar(
     name = "junit_junit",
     artifact = "junit:junit:4.12",
     sha1 = "2973d150c0dc1fefe998f834810d68f278ea58ec",
-)
-
-# net.morimekta.providence:providence-core-jackson:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-core-streams:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-internal:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-messageio:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-reflect:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_core",
-    artifact = "net.morimekta.providence:providence-core:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-internal:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_core_jackson",
-    artifact = "net.morimekta.providence:providence-core-jackson:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_core_streams",
-    artifact = "net.morimekta.providence:providence-core-streams:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_internal",
-    artifact = "net.morimekta.providence:providence-internal:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_messageio",
-    artifact = "net.morimekta.providence:providence-messageio:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_reflect",
-    artifact = "net.morimekta.providence:providence-reflect:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-thrift:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_testing",
-    artifact = "net.morimekta.providence:providence-testing:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_providence_providence_thrift",
-    artifact = "net.morimekta.providence:providence-thrift:0.0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-internal:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-testing:jar:0.0.1-SNAPSHOT
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_utils_android_util",
-    artifact = "net.morimekta.utils:android-util:0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_utils_console_util",
-    artifact = "net.morimekta.utils:console-util:0.1-SNAPSHOT",
-)
-
-# net.morimekta.providence:providence-core:jar:0.0.1-SNAPSHOT
-maven_jar(
-    name = "net_morimekta_utils_io_util",
-    artifact = "net.morimekta.utils:io-util:0.1-SNAPSHOT",
 )
 
 # net.morimekta.providence:providence-tools:jar:0.0.1-SNAPSHOT

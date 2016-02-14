@@ -1,16 +1,18 @@
 load('/tools/build_defs/pvd/release', 'release_jar')
 load('/tools/build_defs/pvd/release', 'java_pkg_deb')
 
-release_jar('providence-core', '//providence-core')
-release_jar('providence-core-jackson', '//providence-core-jackson')
-release_jar('providence-core-streams', '//providence-core-streams')
-release_jar('providence-reflect', '//providence-reflect')
-release_jar('providence-messageio', '//providence-messageio')
-release_jar('providence-thrift', '//providence-thrift')
+release_jar('core', '//providence-core')
+release_jar('core-jackson', '//providence-core-jackson')
+release_jar('core-streams', '//providence-core-streams')
+release_jar('reflect', '//providence-reflect')
+
+release_jar('messageio', '//providence-messageio')
+release_jar('thrift', '//providence-thrift')
+release_jar('testing', '//providence-testing')
 
 java_pkg_deb(
-    name = "providence-compiler-deb",
-    jar = "//tools:providence-compiler_deploy.jar",
+    name = "compiler-deb",
+    jar = "//providence-tools:providence-compiler_deploy.jar",
     description = "Source code compiler for providence.\n" +
                   "Compiles *.thrift and *.json definition files to providence source code.\n",
     package = "providence-compiler",
@@ -24,10 +26,10 @@ java_pkg_deb(
 )
 
 java_pkg_deb(
-    name = "providence-converter-deb",
+    name = "converter-deb",
     description = "Providence data converter.\n" +
                   "Converts data files from one format to another using providence definitions.\n",
-    jar = "//tools:providence-converter_deploy.jar",
+    jar = "//providence-tools:providence-converter_deploy.jar",
     package = "providence-converter",
     exe = "pvd",
 )
@@ -38,25 +40,30 @@ filegroup(
         ### libraries ###
         ':core',
         ':core-jackson',
-        ':messageio',
-        ':thrift',
+        ':core-streams',
         ':reflect',
+        ### extra utilities ###
+        ':messageio',
+        ':testing',
+        ':thrift',
         ### packages ###
-        ':providence-compiler-deb',
-        ':providence-converter-deb',
+        ':compiler-deb',
+        ':converter-deb',
     ]
 )
 
 test_suite(
     name = 'all_tests',
     tests = [
-        '//core:tests',
-        '//core-jackson:tests',
-        '//core-streams:tests',
-        '//messageio:tests',
-        '//reflect:tests',
-        '//testing:tests',
-        '//tools:tests',
-        '//thrift:tests',
+        '//providence-core:tests',
+        '//providence-core-jackson:tests',
+        '//providence-core-streams:tests',
+        '//providence-reflect:tests',
+
+        '//providence-messageio:tests',
+        '//providence-testing:tests',
+        '//providence-thrift:tests',
+
+        '//providence-tools:tests',
     ],
 )
