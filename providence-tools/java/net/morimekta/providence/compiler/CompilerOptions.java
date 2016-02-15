@@ -20,13 +20,13 @@
 package net.morimekta.providence.compiler;
 
 import net.morimekta.console.FormatString;
-import net.morimekta.providence.compiler.format.java2.JGenerator;
-import net.morimekta.providence.compiler.format.java2.JOptions;
-import net.morimekta.providence.compiler.format.json.JsonGenerator;
-import net.morimekta.providence.compiler.format.thrift.ThriftGenerator;
-import net.morimekta.providence.compiler.generator.Generator;
-import net.morimekta.providence.compiler.util.FakeFileManager;
-import net.morimekta.providence.compiler.util.FileManager;
+import net.morimekta.providence.generator.format.java.JGenerator;
+import net.morimekta.providence.generator.format.java.JOptions;
+import net.morimekta.providence.generator.format.json.JsonGenerator;
+import net.morimekta.providence.generator.format.thrift.ThriftGenerator;
+import net.morimekta.providence.generator.Generator;
+import net.morimekta.providence.generator.util.FakeFileManager;
+import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.Parser;
@@ -55,7 +55,7 @@ public class CompilerOptions {
     protected enum Language {
         thrift,
         json,
-        java2
+        java
     }
 
     @Option(name = "--out",
@@ -167,7 +167,7 @@ public class CompilerOptions {
                 return new ThriftGenerator(getFileManager(cli));
             case json:
                 return new JsonGenerator(getFileManager(cli), loader);
-            case java2:
+            case java:
                 JOptions options = new JOptions();
                 if (mOptions != null) {
                     CmdLineParser optParser = new CmdLineParser(options);

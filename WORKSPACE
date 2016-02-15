@@ -1,7 +1,7 @@
 git_repository(
   name = 'net_morimekta_utils',
   remote = 'https://github.com/morimekta/utils.git',
-  commit = '9a8900d',
+  commit = 'ad6e51b',
 )
 
 # --- generated dependencies below this line ---"

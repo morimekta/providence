@@ -19,8 +19,8 @@
 
 package net.morimekta.providence.compiler;
 
-import net.morimekta.providence.compiler.generator.Generator;
-import net.morimekta.providence.compiler.generator.GeneratorException;
+import net.morimekta.providence.generator.Generator;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;

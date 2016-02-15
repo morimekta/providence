@@ -5,6 +5,7 @@ java_test(
         "//providence-core",
         "//providence-reflect",
         "//providence-testing",
+        "//providence-tools-generator",
         "//providence-tools/java/net/morimekta/providence/compiler:compiler",
         "//providence-tools/java/net/morimekta/providence/converter:converter-main",
         "//providence-tools/java/net/morimekta/providence/tools/data",

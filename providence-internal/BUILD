@@ -21,3 +21,9 @@ java_thrift(
     ],
     visibility = ["//visibility:public"],
 )
+
+java_library(
+    name = "idl",
+    resources = glob(["resources/**"]),
+    resource_strip_prefix = "providence-internal/resources/",
+)

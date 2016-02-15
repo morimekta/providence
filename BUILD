@@ -64,6 +64,7 @@ test_suite(
         '//providence-testing:tests',
         '//providence-thrift:tests',
 
+        '//providence-tools-generator:tests',
         '//providence-tools:tests',
     ],
 )

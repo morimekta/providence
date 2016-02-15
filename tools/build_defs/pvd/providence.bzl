@@ -41,7 +41,7 @@ def java_providence(name,
                     visibility=[]):
     gen_providence_source(
         name='__gen_%s' % name,
-        gen='java2',
+        gen='java',
         extension='srcjar',
         srcs=srcs,
         flags=flags,

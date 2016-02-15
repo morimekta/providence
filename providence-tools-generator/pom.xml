@@ -8,9 +8,9 @@
         <providence.version>0.0.1-SNAPSHOT</providence.version>
     </properties>
 
-    <name>Providence Tools</name>
+    <name>Providence Tools : Generator</name>
     <description>
-        Providence core tools: Compiler and Converter.
+        Providence core tools: Code Generator
     </description>
 
     <licenses>
@@ -30,7 +30,7 @@
         <artifactId>providence</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>providence-tools</artifactId>
+    <artifactId>providence-tools-generator</artifactId>
 
     <dependencies>
         <dependency>
@@ -40,77 +40,27 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core-streams</artifactId>
-            <version>${providence.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
             <version>${providence.version}</version>
         </dependency>
         <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+            <version>${args4j.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
             <version>${providence.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-thrift</artifactId>
-            <version>${providence.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-messageio</artifactId>
-            <version>${providence.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-internal</artifactId>
             <version>${providence.version}</version>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-tools-generator</artifactId>
-            <version>${providence.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.morimekta.utils</groupId>
-            <artifactId>android-util</artifactId>
-            <version>${morimekta_utils.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.utils</groupId>
-            <artifactId>console-util</artifactId>
-            <version>${morimekta_utils.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-            <version>${thrift.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>args4j</groupId>
-            <artifactId>args4j</artifactId>
-            <version>2.32</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ini4j</groupId>
-            <artifactId>ini4j</artifactId>
-            <version>0.5.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

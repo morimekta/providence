@@ -6,6 +6,7 @@ java_library(
     deps = [
         "//providence-core",
         "//providence-reflect",
+        "//providence-tools-generator",
         "//third-party:net_morimekta_utils_console_util",
         "//third-party:args4j_args4j",
     ],
@@ -19,6 +20,7 @@ java_library(
         ":compiler",
         "//providence-core",
         "//providence-reflect",
+        "//providence-tools-generator",
         "//third-party:args4j_args4j",
     ],
     visibility = ['//visibility:public'],
