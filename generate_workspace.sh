@@ -81,7 +81,7 @@ then
     echo                                                    >> WORKSPACE
     echo "# --- generated dependencies below this line ---" >> WORKSPACE
     echo                                                    >> WORKSPACE
-echo
+else
     echo "# --- create a third-party/common.WORKSPACE file to add non-managed" > WORKSPACE
     echo "# --- third-party dependencies to this file."                       >> WORKSPACE
     echo                                                                      >> WORKSPACE
