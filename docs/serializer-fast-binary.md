@@ -81,3 +81,16 @@ Containers are encoded as a repeated set of fields, one for each value. In the
 case of maps, there are 2 values per entry, one for the key and one for the
 value, which also makes the length / size double that of the actual number of
 entries.
+
+Lists and sets are encoded the same way.
+
+`[$field-id << 3 | 0x06] [base-128 $length] [$length * [[$type] [$value]]]`
+
+Maps are a bit more complicated, so they are encoded like:
+
+`[$field-id << 3 | 0x06] [base-128 2 * $length] [$length * [[1 << 3 | $k-type] [$key] [2 << 3 | $v-type] [$value]]]`
+
+This way it will appear as a list of `2 * N` elements with alternating key and
+value types. The key and value IDs `1` and `2` are just for the case of
+debugging and testing. Since the key and values come alternatively it is 
+strictly not needed.
