@@ -24,8 +24,10 @@ little-endian encoded unto the stream.
 
 ### Base 128 Varints
 
-Most integer numbers are encoded with varint to ensure it uses a small
-wire footprint.
+Most integer numbers are encoded with [base-128](https://en.wikipedia.org/wiki/LEB128)
+varints to ensure it uses a small wire footprint. Unsigned integers are
+encoded directly with base-128, and signed are zigzag-encoded before
+base-128 encoding.
 
 ### Zigzag Encoded Integers
 

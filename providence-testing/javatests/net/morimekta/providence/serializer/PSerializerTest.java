@@ -157,7 +157,6 @@ public class PSerializerTest {
     public void testOutput(PSerializer serializer, String resource, boolean binary)
             throws IOException, PSerializeException {
         Binary expected;
-        URL url = PSerializerTest.class.getResource(resource);
         try (InputStream r = PSerializerTest.class.getResourceAsStream(resource)) {
             if (r == null) {
                 File file = new File("resourcestest" + resource);
@@ -222,7 +221,6 @@ public class PSerializerTest {
     }
 
     @Test
-    @Ignore("I just broke the format, and it won't re-generate the file...")
     public void testFastBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PFastBinarySerializer(true);
         testSerializer(serializer);
