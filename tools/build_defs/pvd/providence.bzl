@@ -47,7 +47,10 @@ def java_providence(name,
         flags=flags,
         options=options,
     )
-    deps = ['//providence-core']
+    deps = [
+        '//providence-core',
+        "//third-party:net_morimekta_utils_io_util",
+    ]
     if '--android' in options:
       deps = deps + ['//third-party:net_morimekta_utils_android_util']
     if '--jackson' in options:

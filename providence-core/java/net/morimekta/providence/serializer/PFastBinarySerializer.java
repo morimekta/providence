@@ -358,12 +358,12 @@ public class PFastBinarySerializer extends PSerializer {
         return null;
     }
 
-    protected static final int VARINT     = 0x00;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
-    protected static final int FIXED_64   = 0x01;  // -> double
-    protected static final int BINARY     = 0x02;  // -> varint len + binary data.
-    protected static final int MESSAGE    = 0x03;  // -> messages, terminated with field-ID 0.
-    protected static final int COLLECTION = 0x04;  // -> varint len + N * (tag + field).
-    // ----------------------  FIXED_32   = 0x05;
-    protected static final int NONE       = 0x06;  // 0, false, empty.
-    protected static final int TRUE       = 0x07;  // 1, true.
+    protected static final int NONE       = 0x00;  // 0, false, empty.
+    protected static final int TRUE       = 0x01;  // 1, true.
+    protected static final int VARINT     = 0x02;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
+    protected static final int FIXED_64   = 0x03;  // -> double
+    protected static final int BINARY     = 0x04;  // -> varint len + binary data.
+    protected static final int MESSAGE    = 0x05;  // -> messages, terminated with field-ID 0.
+    protected static final int COLLECTION = 0x06;  // -> varint len + N * (tag + field).
+    // ----------------------  UNUSED     = 0x07;
 }

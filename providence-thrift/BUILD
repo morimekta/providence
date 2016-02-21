@@ -3,6 +3,7 @@ java_library(
     srcs = glob(["java/**/*.java"]),
     deps = [
         "//providence-core",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:org_apache_thrift_libthrift",
     ],
     visibility = ['//visibility:public'],
@@ -17,6 +18,7 @@ java_test(
         "//providence-internal:providence-idl",
         "//providence-internal:thrift-idl",
         "//providence-core",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:org_apache_thrift_libthrift",
         "//third-party:org_slf4j_slf4j_simple",
         "//third-party:org_mockito_mockito_core",

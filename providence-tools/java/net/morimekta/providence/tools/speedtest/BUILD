@@ -8,6 +8,7 @@ java_library(
         "//providence-thrift",
         "//third-party:net_morimekta_utils_android_util",
         "//third-party:net_morimekta_utils_console_util",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:args4j_args4j",
         "//third-party:org_apache_commons_commons_math3",
         "//third-party:org_apache_thrift_libthrift",

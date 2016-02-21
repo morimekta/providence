@@ -5,6 +5,7 @@ java_library(
         "//providence-core",
         "//providence-reflect",
         "//third-party:args4j_args4j",
+        "//third-party:net_morimekta_utils_io_util",
     ],
     visibility = ["//visibility:public"],
 )

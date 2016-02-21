@@ -3,6 +3,7 @@ java_library(
     srcs = glob(["java/**/*.java"]),
     deps = [
         "//providence-core",
+        "//third-party:net_morimekta_utils_io_util",
     ],
     visibility = ["//visibility:public"],
 )

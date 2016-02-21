@@ -1,13 +1,14 @@
-Compact Json Format
-===================
+Json Serializer Format
+======================
 
 The compact JSON serialization format is designed to be a simple format to
 import / export data to and from other JSON based structures. It follows the
 JSON data standard, and does not contain any unnecessary info per field.
 
 There are two dimension variants when serializing the JSON:
- - Field ID type:   NAME vs ID.
- - Enum value type: NAME vs ID.
+
+- Field ID type:   NAME vs ID.
+- Enum value type: NAME vs ID.
 
 If field ID type is NAME the thrift field name will be used. Otherwise the
 string value of the ID will be used. E.g. "my_field" vs "4";
@@ -15,14 +16,17 @@ string value of the ID will be used. E.g. "my_field" vs "4";
 If enum value type is NAME the enum will be serialized based on the value name.
 Otherwise the value number will be used. E.g. "ENUM_VALUE" vs 5.
 
-Binary values are encoded as strings using ISO-8859-1 encoding.
+Binary values are encoded as strings using Base64 url safe encoding with no
+padding. Strings are encoded using UTF-8 encoding.
 
-Strings are encoded using UTF-8 encoding.
-
-# IDL - Data format
+## IDL - Data format
 
 ```
-MESSAGE     :== '{' (FIELD-SPEC ','?)* '}'
+MESSAGE     :== MESSAGE_OBJ | MESSAGE_ARR
+
+MESSAGE_OBJ :== '{' (FIELD-SPEC ','?)* '}'
+
+MESSAGE_ARR :== '[' (FIELD-VALUE ','?)* ']'
 
 FIELD-SPEC  :== '"' FIELD-ID '"' ':' FIELD-VALUE
 

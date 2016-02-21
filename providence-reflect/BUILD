@@ -19,6 +19,7 @@ java_test(
     deps = [
         ":providence-reflect",
         "//providence-core",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:junit_junit",
     ],
     resources = glob([ "resourcestest/**" ]),

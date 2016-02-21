@@ -4,28 +4,46 @@ Providence Serialization
 The `providence` project was made in order to make an immutable model java
 library for thrift. It is mostly separate from the thrift library, but can use
 the standard thrift protocols to serialize and serialize messages. It is mainly
-based on the Facebook / Apache `thrift` library, but with some limitations.
+based on the Facebook / Apache [thrift](https://thrift.apache.org/) library,
+but with some differences and limitations.
 
-# Documentation
+## Documentation
 
-* Compact [binary format](docs/compact-binary.md).
-* Compact [JSON format](docs/compact-json.md).
-* Generated [java code](docs/generated-java.md).
-* Testing [read & write speed](docs/speedtest.md).
+Documentation for the various parts and modules.
 
-# Setup
+* The [Generated Java Interface](docs/java-generated.md)
+* The [Java Libraries](docs/java-libraries.md)
+
+And documentation of the wire-formats
+
+* The [JSON format](docs/serializer-json.md)
+* The [Fast Binary format](docs/serializer-fast-binary.md)
+* The [Binary Format](docs/serialzer-binary.md).
+
+Old documentation (Out of date)
+
+* **DEPRECATED**: Compact [binary format](docs/backup/compact-binary.md). This
+  was the first binary format made for providence. It is not compatible with
+  anything special, and is neither very compact, not especially fast.
+* Generated [java code](docs/backup/generated-java.md). Don't look at this, it
+  is really out of date.
+* Testing [read & write speed](docs/backup/speedtest.md). Testing data used
+  during development to ensure the speed was up to standard with the original
+  thrift library.
+
+## Setup
 
 In order to compile thrift-j2, you need:
 
 - `bazel` Found at [bazel.io](https://bazel.io/) is used as primary build system.
 - `java` Is the compiler and runtime. I recommend using `openjdk8-jdk`.
-- `alien` Is used to generate RPM for release builds.
+- `maven` Is
 
 Bazel was chosen as build tool for it's good support for multiple binaries and
 projects within the same codebase. This project has at least 2 binaries
 (compiler and converter), and lots of JAR libraries to generate.
 
-## Ubuntu Linux Setup
+### Ubuntu Linux Setup
 
 Sadly there are no default APT package for buckbuild and android, so it has to
 be installed from source. The location does not matter, as long as it's
@@ -34,7 +52,7 @@ available in the PATH.
 ```
 # git clone git@github.com:morimekta/providence.git providence
 # cd providence
-# bazel build //...
+# bazel build //:release
 ```
 
 # Differences with Thrift

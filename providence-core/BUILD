@@ -12,6 +12,7 @@ java_test(
     srcs = glob(["javatests/**/*.java"]),
     deps = [
         ":providence-core",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:junit_junit",
     ],
     size = "small",

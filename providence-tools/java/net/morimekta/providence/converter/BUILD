@@ -7,6 +7,7 @@ java_library(
         "//providence-messageio",
         "//providence-thrift",
         "//providence-reflect",
+        "//third-party:net_morimekta_utils_io_util",
         "//third-party:net_morimekta_utils_console_util",
         "//third-party:args4j_args4j",
         "//third-party:org_ini4j_ini4j",
