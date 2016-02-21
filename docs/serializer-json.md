@@ -44,7 +44,61 @@ MAP-KEY     :== STRING | '"' (BOOLEAN | NUMBER) '"'
 
 STRING      :== CHAR*
 
-CHAR        :== BYTE = [0x20 .. 0x7E]
+CHAR        :== [0x20 .. 0x7E] | [0xC1 - 0xFD] [0x81 .. 0xBF]+
 
 NUMBER      :== [0-9]+ | ([0-9]+ | [0-9]* ('.' [0-9]+)) (('e' | 'E') '-'? [0-9]+)?
 ```
+
+## Compact messages
+
+Messages in providence are per default encoded as JSON objects. But in modes
+where Field-Name encoding mode is required, lists of many small messages with
+the same fields can have a huge overhead of field names.
+
+Compact messages is a concept made to be able to use way less space for small
+(compact) messages. The criteria for a message to be `compact` is:
+
+* The message fields must be continuously numbered for 1 .. N.
+* There cannot be a required field after a non-required field.
+* Maximum number of fields are `10`.
+
+Then runtime you can check if a message can be encoded as compact by calling
+`msg.isCompact()`. The extra requirements on runtime is:
+
+* The set fields must be in a continuous range of 1 .. N. So there cannot be a
+  set field after an unset field.
+  
+When encoding the message as `compact`, array notation is used instead of
+object notation. So the message of 62 significant bytes:
+
+```json
+{
+  "my_string": "my-string",
+  "my_number": 13579,
+  "my_boolean": false
+}
+```
+
+Can be encoded as 24 significant bytes instead:
+
+```json
+[
+  "my-string",
+  1357,
+  false
+]
+```
+
+The compact message notation works regardless of the Field-ID mode of the
+serializer.
+
+## Map Limitations
+
+Since map keys have to be encoded as strings in JSON, the JSON serializer
+will only accept primitive types, enums and so-called `simple` messages
+as map keys. A `simple` message is a message that:
+
+* No field is a container; list, set, map.
+* No field is a message; struct, union, exception.
+
+The actual content of the message is irrelevant when it comes to simplicity.
