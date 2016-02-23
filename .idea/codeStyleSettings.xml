@@ -33,6 +33,9 @@
           <option name="ANNOTATION_PARAMETER_WRAP" value="5" />
           <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
         </JavaCodeStyleSettings>
+        <MultiMarkdownCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="80" />
+        </MultiMarkdownCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

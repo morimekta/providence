@@ -11,6 +11,7 @@
 
 .idea/*
 .idea/!codeStyleSettings.xml
+!.idea/codeStyleSettings.xml
 *.iml
 
 bazel-*
