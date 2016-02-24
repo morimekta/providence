@@ -3,12 +3,12 @@ The Java Libraries
 
 Overview over the java libraries, and how to use them properly. Most of the
 library should **not** be used directly, only the generated interfaces.
-But some specific interfaces are
+But some specific interfaces are useful.
 
 ## Providence : Core
 
 The `providence-core` library has libraries to handle the messages themselves.
-With the exception of the Pserializer case class and implementations, you
+With the exception of the `PSerializer` class and implementations, you
 should usually not need to worry about the library parts themselves. The
 serializer interface has 3 noteworthy methods:
 
@@ -16,12 +16,12 @@ serializer interface has 3 noteworthy methods:
   serializer onto the output stream. Since the message is self-describing no
   descriptor is needed. It should return the number of bytes written.
 * `int serialize(OutputStream os, PDescriptor<T> t, T value)`: Serialize the
-  value described by the descriptor t onto the stream. Note that the
-  value type T and descriptor has to match, otherwise an exception
-  will be cast. It should return the number of bytes written.
-* `T deserialize(InputStream is, PDescriptor<T> t)`: Read an object of type
-  T with the descriptor t from the input stream. The object does not have to
-  be a Message, ant serializable type should work.
+  value described by the descriptor t onto the stream. Note that the value type
+  T and descriptor has to match, otherwise an exception will be cast. It should
+  return the number of bytes written.
+* `T deserialize(InputStream is, PDescriptor<T> t)`: Read an object of type T
+  with the descriptor t from the input stream. The object does not have to be a
+  Message, ant serializable type should work.
 
 The available serializers are as follows:
 
@@ -33,7 +33,7 @@ The available serializers are as follows:
 * **TJsonSerializer**: A general purpose JSON serializer. This should be able
   to read most generic JSON formats into providence structs that match with
   name to field type mapping.
-  
+
 It also contains a `PPrettyPrinter` class that similar to the serializers
 can serialize messages to an easy to read, and easy to compare (e.g. line by
 line) format. But it does not have any deserializer yet, so is not a full
@@ -41,8 +41,8 @@ serializer format (yet).
 
 **TODO(morimekta):** Make the PPrettyPrinter a full-fledged serializer with
 both serialization and deserialization. Note that it's OK if this is a slightly
-lossy deserialization, and not fast at all, as it is meant purely for testing
-and debugging.
+lossy serialization / deserialization, and not fast at all, as it is meant
+purely for testing and debugging.
 
 ## Providence : Core - Jackson
 
@@ -55,7 +55,8 @@ value support), and `jackson-databind` 2.x itself.
 This will annotate the generic constructor, and the field getters with
 jackson annotations to locate which values to read and handle as what.
 The resulting JSON should be compatible with the JSON serialization
-format, though is not as efficient for serialization / deserialization.
+format, though is not as efficient for serialization / deserialization
+as the PJsonSerializer.
 
 ## Providence : Core - Streams
 
@@ -72,13 +73,13 @@ at `providence-core-streams`. It contains convenience methods like:
 * `MessageStreams.resource(String r, PSerializer, s, PDescriptor d)`: Consume
   messages from the java resource using the given serializer one at a time
   onto the stream.
-* `MessageStreams.steram(InputStream in, PSerializer, s, PDescriptor d)`: Consume
+* `MessageStreams.stream(InputStream in, PSerializer, s, PDescriptor d)`: Consume
   messages from the input stream using the given serializer one at a time
   onto the stream.
 * `MessageCollectors.toFile(File f, PSerializer s)`: Collect messages and write
   them to file with the given serializer.
 * `MessageCollectors.toStream(OutputStream os, PSerializer s)`: Collect
-  messages and write them to the given output steram with the given serializer.
+  messages and write them to the given output stream with the given serializer.
 
 ## Providence : Reflect
 

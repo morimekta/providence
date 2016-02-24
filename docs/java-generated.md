@@ -22,7 +22,8 @@ methods are generated:
 
 ```java
 public class MyMessage {
-    // Simple scalar values have a getter and a presence check.
+    // Scalar values (all primitive / built-in types plus enums and messages)
+    // have a getter and a presence check.
 
     /**
      * The getter will return the default value if the field is not present.
@@ -33,18 +34,17 @@ public class MyMessage {
      * bool: false,
      * i8 - i64: 0
      * double: 0.0
-     * string, binary: null
      */
     public int getMyField();
 
     /**
-     * The present check will behave differently based on the presence
+     * The presence check will behave differently based on the presence
      * requirement to field type match. Required values always return true,
      * because in the built object, they are always present. Optional values
      * will return true if and only of the value was set in the builder.
      * And default values (no requirement indicator) will always be present
-     * if it's a scalar value, and behave as optional if non-scalar (string,
-     * binary, enum and message).
+     * if it's a primitive value, and behave as optional if non-primitive
+     * value (string, binary, enum and message).
      */
     public boolean hasMyField();
 
@@ -65,7 +65,7 @@ public class MyMessage {
      * (current): Not generated. And currently a container is only present
      * if it contains at least 1 entry.
      *
-     * The presence check will behave as a standard non-scalar presence check.
+     * The presence check will behave as a standard non-prmimitive scalar presence check.
      */
     public boolean hasMyContainer(); 
 
@@ -118,8 +118,8 @@ set of methods generated as field setters.
 // This is an inner class of MyMessage.
 public static class _Builder {
     /**
-     * The field setter will set the field value. For non-scalar values,
-     * setting it to null will be the same as clearing the field. Scalar
+     * The field setter will set the field value. For non-primitive values,
+     * setting it to null will be the same as clearing the field. Primitive
      * fields will only use the primitivy value type, and explicitly set
      * the value.
      */

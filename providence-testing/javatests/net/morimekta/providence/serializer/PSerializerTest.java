@@ -161,7 +161,7 @@ public class PSerializerTest {
             if (r == null) {
                 File file = new File("resourcestest" + resource);
                 containers.stream().collect(MessageCollectors.toFile(file, serializer));
-                fail("No such resource to compat: " + resource);
+                fail("No such resource to compare: " + resource);
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
