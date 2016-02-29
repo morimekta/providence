@@ -99,7 +99,7 @@
                                 <mkdir dir="target/generated-sources"/>
                                 <exec executable="pvdc">
                                     <arg value="--gen"/>
-                                    <arg value="java2"/>
+                                    <arg value="java"/>
                                     <arg value="--options"/>
                                     <arg value="--android:--jackson:--containers=SORTED"/>
                                     <arg value="--out"/>
