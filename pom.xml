@@ -36,7 +36,7 @@
 
         <args4j.version>2.32</args4j.version>
 
-        <morimekta_utils.version>0.1.0</morimekta_utils.version>
+        <morimekta_utils.version>0.2.0-SNAPSHOT</morimekta_utils.version>
         <providence.version>0.0.1-SNAPSHOT</providence.version>
     </properties>
 

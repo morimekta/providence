@@ -202,34 +202,31 @@ public class PJsonSerializer extends PSerializer {
         PMessageBuilder<T> builder = type.factory()
                                          .builder();
 
-        JsonToken token = tokenizer.expect("message key");
-        while (!token.isSymbol(JsonToken.kMapEndChar)) {
-            if (!token.isLiteral()) {
-                throw new JsonException("" + token + " is not a literal.", tokenizer, token);
-            }
-            String key = token.substring(1, -1)
-                              .asString();
-            PField<?> field;
-            if (Strings.isInteger(key)) {
-                field = type.getField(Integer.parseInt(key));
-            } else {
-                field = type.getField(key);
-            }
-            tokenizer.expectSymbol("message field key sep", JsonToken.kKeyValSepChar);
+        if (!tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
+            char sep = JsonToken.kMapStart;
+            while (sep != JsonToken.kMapEnd) {
+                JsonToken token = tokenizer.expect("parsing message key");
+                String key = token.substring(1, -1)
+                                  .asString();
+                PField<?> field;
+                if (Strings.isInteger(key)) {
+                    field = type.getField(Integer.parseInt(key));
+                } else {
+                    field = type.getField(key);
+                }
+                tokenizer.expectSymbol("parsing message field key sep", JsonToken.kKeyValSep);
 
-            if (field != null) {
-                Object value = parseTypedValue(tokenizer.expect("map value"), tokenizer, field.getDescriptor());
-                builder.set(field.getKey(), value);
-            } else if (readStrict) {
-                throw new PSerializeException("Unknown field " + key + " for type " + type.getQualifiedName(null));
-            } else {
-                consume(tokenizer.expect("consuming unknown message value"), tokenizer);
-            }
+                if (field != null) {
+                    Object value = parseTypedValue(tokenizer.expect("parsing message field value"), tokenizer, field.getDescriptor());
+                    builder.set(field.getKey(), value);
+                } else if (readStrict) {
+                    throw new PSerializeException("Unknown field " + key + " for type " + type.getQualifiedName(null));
+                } else {
+                    consume(tokenizer.expect("consuming unknown message value"), tokenizer);
+                }
 
-            if (tokenizer.expectSymbol("message entry separator", JsonToken.kMapEndChar, JsonToken.kListSepChar) == 0) {
-                break;
+                sep = tokenizer.expectSymbol("parsing message entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
             }
-            token = tokenizer.expect("message entry key.");
         }
 
         if (readStrict && !builder.isValid()) {
@@ -251,26 +248,24 @@ public class PJsonSerializer extends PSerializer {
             throws PSerializeException, IOException, JsonException {
         PMessageBuilder<T> builder = type.factory()
                                          .builder();
+        // compact message are not allowed to be empty.
 
         int i = 0;
-        JsonToken token = tokenizer.expect("list item");
-        while (!token.isSymbol(JsonToken.kListEndChar)) {
+        char sep = JsonToken.kListStart;
+        while (sep != JsonToken.kListEnd) {
             PField<?> field = type.getField(++i);
 
             if (field != null) {
-                Object value = parseTypedValue(token, tokenizer, field.getDescriptor());
+                Object value = parseTypedValue(tokenizer.expect("parsing compact message field value"), tokenizer, field.getDescriptor());
                 builder.set(i, value);
             } else if (readStrict) {
                 throw new PSerializeException("Compact Field ID " + (i) + " outside field spectrum for type " +
                                               type.getQualifiedName(null));
             } else {
-                consume(token, tokenizer);
+                consume(tokenizer.expect("consuming compact message field value"), tokenizer);
             }
 
-            if (tokenizer.expectSymbol("consuming list (sep)", JsonToken.kListEndChar, JsonToken.kListSepChar) == 0) {
-                break;
-            }
-            token = tokenizer.expect("consuming list item");
+            sep = tokenizer.expectSymbol("parsing compact message entry sep", JsonToken.kListEnd, JsonToken.kListSep);
         }
 
         if (readStrict && !builder.isValid()) {
@@ -282,30 +277,27 @@ public class PJsonSerializer extends PSerializer {
 
     private void consume(JsonToken token, JsonTokenizer tokenizer) throws IOException, JsonException {
         if (token.isSymbol()) {
-            if (token.charAt(0) == JsonToken.kListStartChar) {
-                token = tokenizer.expect("consuming list item.");
-                while (JsonToken.kListEndChar != token.charAt(0)) {
-                    consume(token, tokenizer);
-                    if (0 == tokenizer.expectSymbol("consuming list (sep)",
-                                                    JsonToken.kListEndChar,
-                                                    JsonToken.kListSepChar)) {
-                        break;
+            if (token.isSymbol(JsonToken.kListStart)) {
+                if (tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                    tokenizer.next();
+                } else {
+                    char sep = JsonToken.kListStart;
+                    while (sep != JsonToken.kListEnd) {
+                        consume(tokenizer.expect("consuming list item"), tokenizer);
+                        sep = tokenizer.expectSymbol("consuming list sep", JsonToken.kListEnd, JsonToken.kListSep);
                     }
-                    token = tokenizer.expect("consuming list item.");
                 }
-            } else if (token.charAt(0) == JsonToken.kMapStartChar) {
-                token = tokenizer.expect("consuming map key.");
-                while (JsonToken.kMapEndChar != token.charAt(0)) {
-                    if (!token.isLiteral()) {
-                        throw new JsonException("Unexpected map key format " + token, tokenizer, token);
+            } else if (token.isSymbol(JsonToken.kMapStart)) {
+                if (tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                    tokenizer.next();
+                } else {
+                    char sep = JsonToken.kMapStart;
+                    while (sep != JsonToken.kMapEnd) {
+                        tokenizer.expectString("consuming map key");
+                        tokenizer.expectSymbol("consuming map kv sep", JsonToken.kKeyValSep);
+                        consume(tokenizer.expect("consuming map value"), tokenizer);
+                        sep = tokenizer.expectSymbol("consuming map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
                     }
-                    tokenizer.expectSymbol("consuming map (kv)", JsonToken.kKeyValSepChar);
-                    consume(tokenizer.expect("consuming map value"), tokenizer);
-                    if (0 ==
-                        tokenizer.expectSymbol("consuming map (sep)", JsonToken.kMapEndChar, JsonToken.kListSepChar)) {
-                        break;
-                    }
-                    token = tokenizer.expect("consuming map key.");
                 }
             }
         }
@@ -348,7 +340,7 @@ public class PJsonSerializer extends PSerializer {
                     }
                     throw new PSerializeException("Not a valid long value: " + token.asString());
                 case DOUBLE:
-                    if (token.isReal()) {
+                    if (token.isNumber()) {
                         return cast(token.doubleValue());
                     }
                     throw new PSerializeException("Not a valid double value: " + token.asString());
@@ -380,9 +372,9 @@ public class PJsonSerializer extends PSerializer {
                     return cast(eb.build());
                 case MESSAGE: {
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) t;
-                    if (token.isSymbol(JsonToken.kMapStartChar)) {
+                    if (token.isSymbol(JsonToken.kMapStart)) {
                         return cast((Object) parseMessage(tokenizer, st));
-                    } else if (token.isSymbol(JsonToken.kListStartChar)) {
+                    } else if (token.isSymbol(JsonToken.kListStart)) {
                         if (st.isCompactible()) {
                             return cast((Object) parseCompactMessage(tokenizer, st));
                         } else {
@@ -395,67 +387,52 @@ public class PJsonSerializer extends PSerializer {
                 case MAP: {
                     PDescriptor<?> itemType = ((PMap<?, ?>) t).itemDescriptor();
                     PDescriptor<?> keyType = ((PMap<?, ?>) t).keyDescriptor();
-                    if (!token.isSymbol(JsonToken.kMapStartChar)) {
+                    if (!token.isSymbol(JsonToken.kMapStart)) {
                         throw new PSerializeException("Incompatible start of map " + token);
                     }
-
                     LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
 
-                    token = tokenizer.expect("Unexpected end of map");
-                    while (!token.isSymbol(JsonToken.kMapEndChar)) {
-                        if (!token.isLiteral()) {
-                            throw new JsonException("Unexpected map key format " + token + ", must be string.",
-                                                    tokenizer,
-                                                    token);
+                    if (!tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                        char sep = JsonToken.kMapStart;
+                        while (sep != JsonToken.kMapEnd) {
+                            Object key = parseMapKey(tokenizer.expectString("parsing map key")
+                                                              .decodeJsonLiteral(), keyType);
+                            tokenizer.expectSymbol("parsing map K/V sep", JsonToken.kKeyValSep);
+                            Object value = parseTypedValue(tokenizer.expect("parsing map value"), tokenizer, itemType);
+                            map.put(key, value);
+                            sep = tokenizer.expectSymbol("parsing map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
                         }
-                        tokenizer.expectSymbol("Map key-val separator", ':');
-
-                        map.put(parseMapKey(token.decodeJsonLiteral(), keyType),
-                                parseTypedValue(tokenizer.expect("Map value."), tokenizer, itemType));
-                        if (tokenizer.expectSymbol("parsing map content (sep).",
-                                                   JsonToken.kMapEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
-                            break;
-                        }
-                        token = tokenizer.expect("parsing map key.");
                     }
                     return cast(map);
                 }
                 case SET: {
                     PDescriptor<?> itemType = ((PSet<?>) t).itemDescriptor();
-                    if (!token.isSymbol(JsonToken.kListStartChar)) {
+                    if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
                     LinkedHashSet<Object> set = new LinkedHashSet<>();
-                    token = tokenizer.expect("List item.");
-                    while (!token.isSymbol(JsonToken.kListEndChar)) {
-                        set.add(parseTypedValue(token, tokenizer, itemType));
 
-                        if (tokenizer.expectSymbol("expected end of list or separator",
-                                                   JsonToken.kListEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
-                            break;
+                    if (!tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
+                        char sep = JsonToken.kListStart;
+                        while (sep != JsonToken.kListEnd) {
+                            set.add(parseTypedValue(tokenizer.expect("parsing set value"), tokenizer, itemType));
+                            sep = tokenizer.expectSymbol("parsing set entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
-                        token = tokenizer.expect("List item.");
                     }
                     return cast(set);
                 }
                 case LIST: {
                     PDescriptor itemType = ((PList<?>) t).itemDescriptor();
-                    if (!token.isSymbol(JsonToken.kListStartChar)) {
+                    if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
                     LinkedList<Object> list = new LinkedList<>();
-                    token = tokenizer.expect("List item.");
-                    while (!token.isSymbol(JsonToken.kListEndChar)) {
-                        list.add(parseTypedValue(token, tokenizer, itemType));
-
-                        if (tokenizer.expectSymbol("expected end of list or separator",
-                                                   JsonToken.kListEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
-                            break;
+                    if (!tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                        char sep = JsonToken.kListStart;
+                        while (sep != JsonToken.kListEnd) {
+                            list.add(parseTypedValue(tokenizer.expect("parsing list value"), tokenizer, itemType));
+                            sep = tokenizer.expectSymbol("parsing list entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
-                        token = tokenizer.expect("List item.");
                     }
                     return cast(list);
                 }
@@ -486,7 +463,7 @@ public class PJsonSerializer extends PSerializer {
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes()));
                         JsonToken token = tokenizer.next();
-                        if (!token.isReal() && !token.isInteger()) {
+                        if (!token.isNumber()) {
                             throw new PSerializeException(key + " is not a number");
                         }
                         return token.doubleValue();
@@ -525,7 +502,7 @@ public class PJsonSerializer extends PSerializer {
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
-                        tokenizer.expectSymbol("Message start", JsonToken.kMapStartChar);
+                        tokenizer.expectSymbol("Message start", JsonToken.kMapStart);
                         return cast(parseMessage(tokenizer, st));
                     } catch (IOException e) {
                         throw new PSerializeException(e, "Unable to tokenize map key: " + key);
