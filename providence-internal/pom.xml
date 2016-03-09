@@ -89,10 +89,25 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-tools-generator-maven-plugin</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+                <configuration>
+                    <inputFiles>
+                        <include>resources/*/*.thrift</include>
+                    </inputFiles>
+                    <outputDir>target/generated-sources</outputDir>
+                    <android>true</android>
+                    <jackson>true</jackson>
+                    <!-- We want sorted maps and sets for the tests. -->
+                    <containers>SORTED</containers>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-providence-sources</id>
+                        <id>generate-providence-sources-2</id>
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>

@@ -59,6 +59,8 @@
         <!-- internal and utilities -->
         <module>providence-internal</module>
         <module>providence-tools-generator</module>
+        <module>providence-tools-generator-testing</module>
+        <module>providence-tools-generator-maven-plugin</module>
         <module>providence-tools</module>
     </modules>
 </project>
