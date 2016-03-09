@@ -82,18 +82,18 @@ public class ConstParser {
                                          .builder();
 
         JsonToken token = tokenizer.expect("parsing message field id");
-        while (!token.isSymbol(JsonToken.kMapEndChar)) {
+        while (!token.isSymbol(JsonToken.kMapEnd)) {
             F field = type.getField(token.substring(1, -1)
                                          .asString());
             if (field == null) {
                 throw new JsonException("Not a valid field name: " + token.substring(1, -1));
             }
-            tokenizer.expectSymbol("", JsonToken.kKeyValSepChar);
+            tokenizer.expectSymbol("", JsonToken.kKeyValSep);
 
             builder.set(field.getKey(),
                         parseTypedValue(tokenizer.expect("parsing field value."), tokenizer, field.getDescriptor()));
 
-            if (tokenizer.expectSymbol("Message field separator.", JsonToken.kMapEndChar, JsonToken.kListSepChar) ==
+            if (tokenizer.expectSymbol("Message field separator.", JsonToken.kMapEnd, JsonToken.kListSep) ==
                 0) {
                 break;
             }
@@ -134,7 +134,7 @@ public class ConstParser {
                     }
                     throw new JsonException(token.asString() + " is not a valid long value.", tokenizer, token);
                 case DOUBLE:
-                    if (token.isInteger() || token.isReal()) {
+                    if (token.isInteger() || token.isDouble()) {
                         return token.doubleValue();
                     }
                     throw new JsonException(token.asString() + " is not a valid double value.", tokenizer, token);
@@ -166,7 +166,7 @@ public class ConstParser {
                     }
                     return ev;
                 case MESSAGE:
-                    if (token.isSymbol(JsonToken.kMapStartChar)) {
+                    if (token.isSymbol(JsonToken.kMapStart)) {
                         return parseMessage(tokenizer, (PStructDescriptor<?, ?>) valueType);
                     }
                     throw new JsonException("Not a valid message start.", tokenizer, token);
@@ -174,15 +174,15 @@ public class ConstParser {
                     PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
                     LinkedList<Object> list = new LinkedList<>();
 
-                    if (!token.isSymbol(JsonToken.kListStartChar)) {
+                    if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new JsonException("Not a valid list start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing list item.");
-                    while (!token.isSymbol(JsonToken.kListEndChar)) {
+                    while (!token.isSymbol(JsonToken.kListEnd)) {
                         list.add(parseTypedValue(token, tokenizer, itemType));
-                        if (                                                  tokenizer.expectSymbol("parsing list separator",
-                                                   JsonToken.kListEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
+                        if (tokenizer.expectSymbol("parsing list separator",
+                                                   JsonToken.kListEnd,
+                                                   JsonToken.kListSep) == 0) {
                             break;
                         }
                         token = tokenizer.expect("parsing list item.");
@@ -192,15 +192,15 @@ public class ConstParser {
                     itemType = ((PSet<?>) valueType).itemDescriptor();
                     HashSet<Object> set = new HashSet<>();
 
-                    if (!token.isSymbol(JsonToken.kListStartChar)) {
+                    if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new JsonException("Not a valid set list start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing set list item.");
-                    while (!token.isSymbol(JsonToken.kListEndChar)) {
+                    while (!token.isSymbol(JsonToken.kListEnd)) {
                         set.add(parseTypedValue(token, tokenizer, itemType));
                         if (                                                  tokenizer.expectSymbol("parsing list separator",
-                                                   JsonToken.kListEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
+                                                   JsonToken.kListEnd,
+                                                   JsonToken.kListSep) == 0) {
                             break;
                         }
                         token = tokenizer.expect("parsing set list item.");
@@ -212,11 +212,11 @@ public class ConstParser {
                     PDescriptor keyType = ((PMap<?, ?>) valueType).keyDescriptor();
                     HashMap<Object, Object> map = new HashMap<>();
 
-                    if (!token.isSymbol(JsonToken.kMapStartChar)) {
+                    if (!token.isSymbol(JsonToken.kMapStart)) {
                         throw new JsonException("Not a valid map start token.", tokenizer, token);
                     }
                     token = tokenizer.expect("parsing map key.");
-                    while (!token.isSymbol(JsonToken.kMapEndChar)) {
+                    while (!token.isSymbol(JsonToken.kMapEnd)) {
                         Object key;
                         if (token.isLiteral()) {
                             key = parsePrimitiveKey(token.decodeJsonLiteral(), keyType);
@@ -229,11 +229,11 @@ public class ConstParser {
                             key = parsePrimitiveKey(token.asString(), keyType);
                         }
 
-                        tokenizer.expectSymbol("parsing map (kv)", JsonToken.kKeyValSepChar);
+                        tokenizer.expectSymbol("parsing map (kv)", JsonToken.kKeyValSep);
                         map.put(key, parseTypedValue(tokenizer.expect("parsing map value."), tokenizer, itemType));
                         if (                                                  tokenizer.expectSymbol("parsing list separator",
-                                                   JsonToken.kMapEndChar,
-                                                   JsonToken.kListSepChar) == 0) {
+                                                   JsonToken.kMapEnd,
+                                                   JsonToken.kListSep) == 0) {
                             break;
                         }
                         token = tokenizer.expect("parsing map key.");
