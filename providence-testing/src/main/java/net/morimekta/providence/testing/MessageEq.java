@@ -308,9 +308,9 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
                                                      .collect(Collectors.toList())) + "}";
         } else if (o instanceof Collection) {
             return "[" + Strings.join(",",
-                                      ((Collection<?>) o).stream()
-                                                         .map(MessageEq::toString)
-                                                         .collect(Collectors.toList())) + "]";
+                                      (Collection<String>) ((Collection<?>) o).stream()
+                                                                              .map(MessageEq::toString)
+                                                                              .collect(Collectors.toList())) + "]";
         } else if (o instanceof CharSequence) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonWriter writer = new JsonWriter(baos);
