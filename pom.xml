@@ -54,11 +54,8 @@
         <!-- utility libraries -->
         <module>providence-reflect</module>
         <module>providence-testing</module>
-
-        <!-- internal and utilities -->
         <module>providence-internal</module>
-        <module>providence-tools-generator</module>
-        <module>providence-tools-generator-testing</module>
-        <module>providence-tools-generator-maven-plugin</module>
+        <module>providence-generator</module>
+        <module>providence-maven-plugin</module>
     </modules>
 </project>
