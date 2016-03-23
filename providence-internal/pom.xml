@@ -81,7 +81,7 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>target/generated-sources/</sourceDirectory>
+        <!-- sourceDirectory>target/generated-sources/</sourceDirectory -->
         <resources>
             <resource>
                 <directory>resources/</directory>

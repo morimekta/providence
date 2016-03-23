@@ -50,17 +50,15 @@
         <module>providence-core</module>
         <module>providence-core-jackson</module>
         <module>providence-core-streams</module>
-        <module>providence-reflect</module>
 
         <!-- utility libraries -->
-        <module>providence-thrift</module>
-        <module>providence-messageio</module>
+        <module>providence-reflect</module>
         <module>providence-testing</module>
+
         <!-- internal and utilities -->
         <module>providence-internal</module>
         <module>providence-tools-generator</module>
         <module>providence-tools-generator-testing</module>
         <module>providence-tools-generator-maven-plugin</module>
-        <module>providence-tools</module>
     </modules>
 </project>
