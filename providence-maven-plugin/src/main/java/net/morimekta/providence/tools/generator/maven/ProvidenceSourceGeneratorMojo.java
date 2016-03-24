@@ -16,8 +16,14 @@ package net.morimekta.providence.tools.generator.maven;
  * limitations under the License.
  */
 
+import net.morimekta.providence.generator.Generator;
+import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.JGenerator;
 import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.util.FileManager;
+import net.morimekta.providence.reflect.TypeLoader;
+import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.util.Strings;
@@ -29,31 +35,23 @@ import org.apache.maven.plugins.annotations.InstantiationStrategy;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
-import org.kohsuke.args4j.CmdLineException;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
- *
+ * mvn net.morimekta.providence:providence-maven-plugin:0.0.1-SNAPSHOT:generate-providence-sources -X
  */
 @Mojo(name = "generate-providence-sources",
       defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       instantiationStrategy = InstantiationStrategy.PER_LOOKUP)
 public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
-    /**
-     * Location of the output java source.
-     */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources",
-               required = true)
-    private File outputDir = null;
-
-    /**
-     * Location of the output java source.
-     */
-    @Parameter
-    private File[] includeDir = null;
-
     /**
      * Location of the output java source.
      */
@@ -66,19 +64,26 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
     @Parameter
     private boolean jackson = false;
 
+    /**
+     * Location of the output java source.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources",
+               required = true)
+    private File outputDir = null;
+
+    @Parameter(required = true)
+    private IncludeExcludeFileSelector inputFiles = null;
+
     @Parameter
-    private IncludeExcludeFileSelector inputFiles;
+    private IncludeExcludeFileSelector includeDirs = null;
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (!outputDir.exists()) {
             outputDir.mkdirs();
         }
-        FileManager fileManager = new FileManager(outputDir);
-        // Collections.addAll(includes, includeDir);
-
-        // Collections.addAll(inputFiles, files.);
-
-        Parser parser = new ThriftParser();
 
         JOptions options = new JOptions();
         if (containers != null) {
@@ -87,15 +92,74 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
         options.android = android;
         options.jackson = jackson;
 
-        getLog().error("--- Android :" + options.android);
-        getLog().error("--- Jackson :" + options.jackson);
-        getLog().error("--- Containers :" + options.containers);
-        getLog().error("--- IncludeFiles" + Strings.join(", ", inputFiles.getIncludes()));
-        getLog().error("--- ExcludeFiles" + Strings.join(", ", inputFiles.getExcludes()));
-    }
+        getLog().info("--- Android :" + options.android);
+        getLog().info("--- Jackson :" + options.jackson);
+        getLog().info("--- Containers :" + options.containers);
+        getLog().info("--- Root :" + project.getBasedir().getAbsolutePath());
 
-    public FileManager getFileManager() throws CmdLineException {
-        return new FileManager(outputDir);
-    }
 
+        TreeSet<File> inputs = new TreeSet<>();
+        TreeSet<File> includes = new TreeSet<>();
+
+        DirectoryScanner inputScanner = new DirectoryScanner();
+        inputScanner.setIncludes(inputFiles.getIncludes());
+        if (inputFiles.getExcludes() != null) {
+            inputScanner.setExcludes(inputFiles.getExcludes());
+        }
+        inputScanner.setBasedir(project.getBasedir());
+        inputScanner.scan();
+
+        for (String file : inputScanner.getIncludedFiles()) {
+            inputs.add(new File(project.getBasedir(), file));
+        }
+
+        getLog().info("--- Input Files:    " + Strings.join(", ", inputs));
+
+        if (includeDirs != null) {
+            DirectoryScanner includeScanner = new DirectoryScanner();
+            includeScanner.setIncludes(includeDirs.getIncludes());
+            if (includeDirs.getExcludes() != null) {
+                includeScanner.setExcludes(includeDirs.getExcludes());
+            }
+            includeScanner.setBasedir(project.getBasedir());
+            includeScanner.scan();
+            for (String dir : includeScanner.getIncludedDirectories()) {
+                includes.add(new File(project.getBasedir(), dir));
+            }
+
+            getLog().info("--- Included Dirs:  " + Strings.join(", ", includeScanner.getIncludedDirectories()));
+        } else {
+            includes.addAll(inputs.stream()
+                                  .map(File::getParentFile)
+                                  .collect(Collectors.toList()));
+        }
+
+        FileManager fileManager = new FileManager(outputDir);
+        Parser parser = new ThriftParser();
+        TypeLoader loader = new TypeLoader(includes, parser);
+
+        LinkedList<CDocument> documents = new LinkedList<>();
+
+        for (File in : inputs) {
+            try {
+                documents.add(loader.load(in));
+            } catch (IOException e) {
+                throw new MojoFailureException("Failed to read thrift file: " + in.getName(), e);
+            } catch (ParseException e) {
+                throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
+            }
+        }
+
+        Generator generator = new JGenerator(fileManager, loader.getRegistry(), options);
+
+        for (CDocument doc : documents) {
+            try {
+                generator.generate(doc);
+            } catch (IOException e) {
+                throw new MojoFailureException("Failed to write document: " + doc.getPackageName(), e);
+            } catch (GeneratorException e) {
+                throw new MojoFailureException("Failed to generate document: " + doc.getPackageName(), e);
+            }
+        }
+    }
 }

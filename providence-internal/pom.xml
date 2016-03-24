@@ -88,22 +88,32 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
+            <!-- -> <plugin>
                 <groupId>net.morimekta.providence</groupId>
-                <artifactId>providence-tools-generator-maven-plugin</artifactId>
+                <artifactId>providence-maven-plugin</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
-                <configuration>
-                    <inputFiles>
-                        <include>resources/*/*.thrift</include>
-                    </inputFiles>
-                    <outputDir>target/generated-sources</outputDir>
-                    <android>true</android>
-                    <jackson>true</jackson>
-                    <!-- We want sorted maps and sets for the tests. -->
-                    <containers>SORTED</containers>
-                </configuration>
-            </plugin>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-providence-sources</goal>
+                        </goals>
+                        <configuration>
+                            <inputFiles>
+                                <includes>
+                                    <include>resources/*/*.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-sources</outputDir>
+                            <android>true</android>
+                            <jackson>true</jackson>
+                            <containers>SORTED</containers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> <!- -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
@@ -153,7 +163,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -170,11 +179,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.8.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>net.morimekta.providence</groupId>
+                    <artifactId>providence-maven-plugin</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
