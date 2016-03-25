@@ -144,8 +144,12 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
             try {
                 documents.add(loader.load(in));
             } catch (IOException e) {
-                throw new MojoFailureException("Failed to read thrift file: " + in.getName(), e);
+                getLog().error(e.getMessage());
+                getLog().info(".---------------------.");
+                throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
             } catch (ParseException e) {
+                getLog().error(e.getMessage());
+                getLog().info(".---------------------.");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
             }
         }
@@ -156,8 +160,12 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
             try {
                 generator.generate(doc);
             } catch (IOException e) {
-                throw new MojoFailureException("Failed to write document: " + doc.getPackageName(), e);
+                getLog().error(e.getMessage());
+                getLog().info(".---------------------.");
+                throw new MojoExecutionException("Failed to write document: " + doc.getPackageName(), e);
             } catch (GeneratorException e) {
+                getLog().error(e.getMessage());
+                getLog().info(".---------------------.");
                 throw new MojoFailureException("Failed to generate document: " + doc.getPackageName(), e);
             }
         }

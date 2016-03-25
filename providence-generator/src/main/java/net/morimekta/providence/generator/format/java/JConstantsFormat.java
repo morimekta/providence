@@ -2,10 +2,10 @@ package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.util.io.IndentedPrintWriter;
 

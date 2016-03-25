@@ -88,7 +88,7 @@
             </resource>
         </resources>
         <plugins>
-            <!-- -> <plugin>
+            <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
@@ -111,23 +111,23 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> <!- -->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
-                    <execution>
+                    <!-- execution>
                         <id>generate-providence-sources-2</id>
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
                                 <mkdir dir="target/generated-sources"/>
                                 <exec executable="pvdc">
-                                    <arg value="--gen"/>
+                                    <arg value="-gen"/>
                                     <arg value="java2"/>
-                                    <arg value="--options"/>
-                                    <arg value="--android:--jackson:--containers=SORTED"/>
-                                    <arg value="--out"/>
+                                    <arg value="-options"/>
+                                    <arg value="-android:-jackson:-containers=SORTED"/>
+                                    <arg value="-out"/>
                                     <arg value="target/generated-sources"/>
                                     <arg value="resources/*/*.thrift"/>
                                 </exec>
@@ -137,7 +137,7 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
+                    </execution -->
                     <execution>
                         <id>generate-thrift-sources</id>
                         <phase>generate-sources</phase>

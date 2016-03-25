@@ -108,7 +108,7 @@ typedef double real
 struct DefaultValues {
     1:  bool          booleanValue = true;
     2:  byte          byteValue    = -125,
-    3:  i16           shortValue   = 0x1fb5
+    3:  i16           shortValue   = 13579
     4:  i32           integerValue = 1234567890;
     5:  i64           longValue    = 1234567891,
     6:  real          doubleValue  = 2.99792458e+8
