@@ -68,7 +68,11 @@ public class JGenerator extends Generator {
                 constFormat.format(writer, document);
                 writer.flush();
             } finally {
-                getFileManager().finalize(out);
+                try {
+                    getFileManager().finalize(out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
