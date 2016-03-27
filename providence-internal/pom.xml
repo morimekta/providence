@@ -81,7 +81,7 @@
     </dependencies>
 
     <build>
-        <!-- sourceDirectory>target/generated-sources/</sourceDirectory -->
+        <sourceDirectory>target/generated-sources/</sourceDirectory>
         <resources>
             <resource>
                 <directory>resources/</directory>
@@ -94,6 +94,7 @@
                 <version>0.0.1-SNAPSHOT</version>
                 <executions>
                     <execution>
+                        <id>generate-sources-for-test</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-providence-sources</goal>
@@ -110,53 +111,21 @@
                             <containers>SORTED</containers>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <!-- execution>
-                        <id>generate-providence-sources-2</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/generated-sources"/>
-                                <exec executable="pvdc">
-                                    <arg value="-gen"/>
-                                    <arg value="java2"/>
-                                    <arg value="-options"/>
-                                    <arg value="-android:-jackson:-containers=SORTED"/>
-                                    <arg value="-out"/>
-                                    <arg value="target/generated-sources"/>
-                                    <arg value="resources/*/*.thrift"/>
-                                </exec>
-                            </tasks>
-                            <sourceRoot>target/generated-sources</sourceRoot>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution -->
                     <execution>
-                        <id>generate-thrift-sources</id>
+                        <id>generate-model-sources</id>
                         <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target/generated-sources"/>
-                                <exec executable="thrift">
-                                    <arg value="--gen"/>
-                                    <arg value="java"/>
-                                    <arg value="--out"/>
-                                    <arg value="target/generated-sources"/>
-                                    <arg value="resources/test-thrift.thrift"/>
-                                </exec>
-                            </tasks>
-                            <sourceRoot>target/generated-sources</sourceRoot>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>generate-providence-sources</goal>
                         </goals>
+                        <configuration>
+                            <inputFiles>
+                                <includes>
+                                    <include>resources/model.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-sources</outputDir>
+                            <containers>ORDERED</containers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

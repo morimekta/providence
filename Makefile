@@ -2,8 +2,8 @@ INSTALL_DIR="${HOME}/.apps/lib/jars"
 BIN_DIR="${HOME}/.apps/bin"
 
 model:
-	# rm -rf ${PWD}/reflect/model/net
-	bazel run //tools:providence-compiler -- --gen java2 --options --containers=ORDERED --out ${PWD}/reflect/model ${PWD}/reflect/model/model.thrift
+    mvn package
+	java -jar  --gen java2 --options --containers=ORDERED --out ${PWD}/reflect/model ${PWD}/reflect/model/model.thrift
 
 data:
 	mkdir -p tmp/

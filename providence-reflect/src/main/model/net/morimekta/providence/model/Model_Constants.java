@@ -1,12 +1,8 @@
 package net.morimekta.providence.model;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PSet;
 
 /**
  * Reflective thrift IDL description.

@@ -18,12 +18,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>3.0</version>
@@ -34,7 +28,6 @@
             <version>3.4</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
@@ -45,17 +38,23 @@
             <artifactId>plexus-io</artifactId>
             <version>2.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-generator</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>3.0</version>
         </dependency>
     </dependencies>
 

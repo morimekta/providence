@@ -165,5 +165,5 @@ const set<string> kReservedWords = [
   // (java naming convention is typename safe):
   "class", "public", "protected", "private",
   "short", "int", "long", "unsigned", "float",
-  "for", "if", "while", "do", "else",
+  "for", "if", "while", "do", "else"
 ];

@@ -1,8 +1,5 @@
 package net.morimekta.providence.model;
 
-import java.io.Serializable;
-import java.util.Objects;
-
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PType;
@@ -14,6 +11,9 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
+
+import java.io.Serializable;
+import java.util.Objects;
 
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
 @SuppressWarnings("unused")

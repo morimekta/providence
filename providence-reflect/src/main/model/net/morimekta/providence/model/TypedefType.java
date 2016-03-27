@@ -1,9 +1,5 @@
 package net.morimekta.providence.model;
 
-import java.io.Serializable;
-import java.util.BitSet;
-import java.util.Objects;
-
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
@@ -16,6 +12,10 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
+
+import java.io.Serializable;
+import java.util.BitSet;
+import java.util.Objects;
 
 /** typedef <type> <name> */
 @SuppressWarnings("unused")
