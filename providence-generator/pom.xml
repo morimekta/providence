@@ -4,10 +4,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <providence.version>0.0.1-SNAPSHOT</providence.version>
-    </properties>
-
     <name>Providence Tools : Generator</name>
     <description>
         Providence core tools: Code Generator
@@ -28,7 +24,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <artifactId>providence-generator</artifactId>
 
@@ -36,12 +32,12 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>${providence.version}</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>${providence.version}</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>args4j</groupId>
