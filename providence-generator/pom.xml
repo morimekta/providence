@@ -4,9 +4,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Providence Tools : Generator</name>
+    <name>Providence Tools : Source Generator</name>
     <description>
-        Providence core tools: Code Generator
+        Source code generator main code base.
     </description>
 
     <licenses>

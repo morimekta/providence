@@ -8,6 +8,7 @@
         Providence is a port of Apache thrift that has some extra tooling, and
         different way of generating classes and serializing data.
     </description>
+    <url>http://www.github.com/morimekta/providence</url>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -21,8 +22,34 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <id>morimekta</id>
+            <name>Stein Eldar Johnsen</name>
+            <email>morimekta+utils@gmail.com</email>
+            <timezone>Europe/Oslo</timezone>
+            <roles>
+                <role>Maintainer</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <scm>
-        <url>https://github.com/morimekta/providence.git</url>
+        <url>https://github.com/morimekta/providence</url>
+        <developerConnection>scm:git:ssh://git@github.com/morimekta/providence.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>

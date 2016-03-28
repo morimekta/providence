@@ -10,7 +10,11 @@
     <artifactId>providence-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Providence Tools : Maven Source Generator Plugin</name>
+    <name>Providence Tools : Source Generator Maven Plugin</name>
+    <description>
+        Maven plugin for generating source code model objects from
+        thrift definitions using the providence libraries.
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
