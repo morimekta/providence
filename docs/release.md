@@ -13,6 +13,13 @@ Snapshot releases can be made directly from the `master` branch.
 
 Proper releases are done with a branch cut.
 
+#### Check for dependency updates
+
+* Run `mvn versions:display-dependency-updates` to see what has been updated of
+  dependencies. See if updates should be done. Usually it's better to depend on
+  newer versions, as you may drag in older versions into other projects that
+  misses features or has specific bugs.
+
 #### Making the release cut.
 
 * Create a branch called `release-x.y.z` from master at the desired commit.
