@@ -25,7 +25,6 @@ import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -158,7 +157,7 @@ public class PSerializerTest {
         Binary expected;
         try (InputStream r = PSerializerTest.class.getResourceAsStream(resource)) {
             if (r == null) {
-                File file = new File("resourcestest" + resource);
+                File file = new File("src/test/resources" + resource);
                 containers.stream().collect(MessageCollectors.toFile(file, serializer));
                 fail("No such resource to compare: " + resource);
             }
@@ -188,7 +187,7 @@ public class PSerializerTest {
     public void testCompactJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.ID);
         testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/compact.json");
+        testCompatibility(serializer, "/compat/compact.json");
         testOutput(serializer, "/compat/compact.json", false);
     }
 
@@ -196,7 +195,7 @@ public class PSerializerTest {
     public void testNamedJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.NAME);
         testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/named.json");
+        testCompatibility(serializer, "/compat/named.json");
         testOutput(serializer, "/compat/named.json", false);
     }
 
@@ -207,7 +206,7 @@ public class PSerializerTest {
                                                      PJsonSerializer.IdType.NAME,
                                                      true);
         testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/pretty.json");
+        testCompatibility(serializer, "/compat/pretty.json");
         testOutput(serializer, "/compat/pretty.json", false);
     }
 
@@ -215,7 +214,7 @@ public class PSerializerTest {
     public void testBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PBinarySerializer(true);
         testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/binary.data");
+        testCompatibility(serializer, "/compat/binary.data");
         testOutput(serializer, "/compat/binary.data", true);
     }
 
@@ -223,16 +222,7 @@ public class PSerializerTest {
     public void testFastBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PFastBinarySerializer(true);
         testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/fast-binary.data");
+        testCompatibility(serializer, "/compat/fast-binary.data");
         testOutput(serializer, "/compat/fast-binary.data", true);
-    }
-
-    @Test
-    @Ignore("Proto serialization format does not parse.")
-    public void testProto() throws IOException, PSerializeException {
-        PSerializer serializer = new PProtoSerializer(true);
-        testSerializer(serializer);
-        // testCompatibility(serializer, "/compat/proto.data");
-        testOutput(serializer, "/compat/proto.data", true);
     }
 }
