@@ -77,12 +77,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>target/generated-sources/</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>resources/</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
@@ -98,10 +92,9 @@
                         <configuration>
                             <inputFiles>
                                 <includes>
-                                    <include>resources/*/*.thrift</include>
+                                    <include>src/main/providence/*/*.thrift</include>
                                 </includes>
                             </inputFiles>
-                            <outputDir>target/generated-sources</outputDir>
                             <android>true</android>
                             <jackson>true</jackson>
                             <containers>SORTED</containers>
@@ -116,10 +109,10 @@
                         <configuration>
                             <inputFiles>
                                 <includes>
-                                    <include>resources/model.thrift</include>
+                                    <include>src/main/providence/model.thrift</include>
                                 </includes>
                             </inputFiles>
-                            <outputDir>target/generated-sources</outputDir>
+                            <outputDir>target/generated-sources/model</outputDir>
                             <containers>ORDERED</containers>
                         </configuration>
                     </execution>

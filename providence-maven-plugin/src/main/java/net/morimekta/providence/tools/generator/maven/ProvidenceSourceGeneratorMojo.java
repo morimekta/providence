@@ -58,6 +58,9 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "DEFAULT")
     private JOptions.Containers containers = JOptions.Containers.DEFAULT;
 
+    @Parameter(defaultValue = "compile")
+    private String scope = "compile";
+
     @Parameter
     private boolean android = false;
 
@@ -67,8 +70,7 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
     /**
      * Location of the output java source.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources",
-               required = true)
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence")
     private File outputDir = null;
 
     @Parameter(required = true)
@@ -85,6 +87,18 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
             outputDir.mkdirs();
         }
 
+        switch (scope.toLowerCase()) {
+            case "compile":
+                project.addCompileSourceRoot(outputDir.getPath());
+                break;
+            case "test":
+                project.addTestCompileSourceRoot(outputDir.getPath());
+                break;
+            default:
+                getLog().info("Invalid compile scope " + scope + ": Must be test or compile.");
+                throw new MojoExecutionException("Invalid compile scope " + scope + ": Must be test or compile.");
+        }
+
         JOptions options = new JOptions();
         if (containers != null) {
             options.containers = containers;
@@ -96,7 +110,6 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
         getLog().info("--- Jackson :" + options.jackson);
         getLog().info("--- Containers :" + options.containers);
         getLog().info("--- Root :" + project.getBasedir().getAbsolutePath());
-
 
         TreeSet<File> inputs = new TreeSet<>();
         TreeSet<File> includes = new TreeSet<>();
@@ -155,6 +168,7 @@ public class ProvidenceSourceGeneratorMojo extends AbstractMojo {
         }
 
         Generator generator = new JGenerator(fileManager, loader.getRegistry(), options);
+
 
         for (CDocument doc : documents) {
             try {

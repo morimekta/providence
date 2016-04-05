@@ -4,7 +4,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Providence Reflection</name>
+    <name>Providence Tools : Reflection</name>
     <description>
         Utilities for handling reflection of providence structures.
 
@@ -60,6 +60,11 @@
                 <version>1.10</version>
                 <executions>
                     <execution>
+                        <!--
+                          Adding the pre-generated model sources. It is done like this because
+                          otherwise we would get a circular dependency like:
+                          - reflection -> model -> maven-plugin -> reflection.
+                        -->
                         <id>add-source</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -73,25 +78,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources/</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources/</directory>
-            </testResource>
-        </testResources>
     </build>
 </project>

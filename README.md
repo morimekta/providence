@@ -25,7 +25,8 @@ And documentation of the wire-formats
 
 * The [JSON format](docs/serializer-json.md)
 * The [Fast Binary format](docs/serializer-fast-binary.md)
-* The [Binary Format](docs/serialzer-binary.md).
+* The [Binary Format](docs/serializer-binary.md). This should be compatible with
+  the thrift binary protocol (TBinaryProtocol) when serializing simple structs.
 
 Old documentation (Out of date)
 
@@ -40,7 +41,8 @@ Old documentation (Out of date)
 And additionally:
 
 * The [release](docs/release.md) process. This is mostly to compensate for my
-  own bad memory.
+  own bad memory.gts 1.8.0
+  
 
 ## Differences with Thrift
 
