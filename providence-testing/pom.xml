@@ -82,12 +82,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-internal</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -103,10 +97,52 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-maven-plugin</artifactId>
+                <version>0.0.2-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources-for-test</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <scope>test</scope>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/test/providence/**/*.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-test-sources/providence</outputDir>
+                            <android>true</android>
+                            <jackson>true</jackson>
+                            <containers>SORTED</containers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-model-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/main/providence/model.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-sources/model</outputDir>
+                            <containers>ORDERED</containers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
+                <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <excludePackageNames>net.morimekta.providence.model</excludePackageNames>
                 </configuration>
             </plugin>
         </plugins>

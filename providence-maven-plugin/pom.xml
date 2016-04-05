@@ -73,7 +73,7 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.4</version>
                 <configuration>
-                    <goalPrefix>generate-providence-sources</goalPrefix>
+                    <goalPrefix>providence</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
                 <executions>
@@ -90,13 +90,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
         </plugins>
     </build>

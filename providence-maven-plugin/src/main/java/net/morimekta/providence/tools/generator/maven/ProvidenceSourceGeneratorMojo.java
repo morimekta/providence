@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 /**
  * mvn net.morimekta.providence:providence-maven-plugin:0.0.1-SNAPSHOT:generate-providence-sources -X
  */
-@Mojo(name = "generate-providence-sources",
+@Mojo(name = "compile",
       defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       instantiationStrategy = InstantiationStrategy.PER_LOOKUP)
 public class ProvidenceSourceGeneratorMojo extends AbstractMojo {

@@ -87,7 +87,6 @@
         <!-- utility libraries -->
         <module>providence-reflect</module>
         <module>providence-testing</module>
-        <module>providence-internal</module>
         <module>providence-generator</module>
         <module>providence-maven-plugin</module>
     </modules>
