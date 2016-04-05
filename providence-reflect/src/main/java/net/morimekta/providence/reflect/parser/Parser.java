@@ -25,17 +25,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * Document parser interface.
  */
 public interface Parser {
     /**
      * Parse input stream to document declaration model.
      *
      * @param in The stream to parse.
+     * @param name The file name that is being parsed.
      * @return The declared document model.
-     *
      * @throws IOException When the stream was unreadable.
+     * @throws ParseException When the document could not be parsed.
      */
     ThriftDocument parse(InputStream in, String name) throws IOException, ParseException;
 }

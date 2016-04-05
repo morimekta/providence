@@ -32,12 +32,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Thrift type utilities.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Providence type utilities.
  */
 public class PTypeUtils {
+    /**
+     * Make a minimal printable string from a double value.
+     *
+     * @param d The double value.
+     * @return The string value.
+     */
     public static String toString(double d) {
         long l = (long) d;
         if (d == l) {
@@ -51,6 +54,12 @@ public class PTypeUtils {
         }
     }
 
+    /**
+     * Make a minimal printable string from a binary value.
+     *
+     * @param bytes The binary value.
+     * @return The string value.
+     */
     public static String toString(Binary bytes) {
         if (bytes == null) {
             return NULL;
@@ -58,6 +67,12 @@ public class PTypeUtils {
         return String.format("b64(%s)", bytes.toBase64());
     }
 
+    /**
+     * Make a printable string from a collection using the tools here.
+     *
+     * @param collection The collection to stringify.
+     * @return The collection string value.
+     */
     public static String toString(Collection<?> collection) {
         if (collection == null) {
             return NULL;
@@ -77,6 +92,12 @@ public class PTypeUtils {
         return builder.toString();
     }
 
+    /**
+     * Make a minimal printable string value from a typed map.
+     *
+     * @param map The map to stringify.
+     * @return The resulting string.
+     */
     public static String toString(Map<?, ?> map) {
         if (map == null) {
             return NULL;
@@ -100,6 +121,9 @@ public class PTypeUtils {
 
     /**
      * Stringify a message.
+     *
+     * @param message The message to stringify.
+     * @return The resulting message.
      */
     public static String toString(PMessage<?> message) {
         if (message == null) {
@@ -108,6 +132,12 @@ public class PTypeUtils {
         return message.asString();
     }
 
+    /**
+     * Make an object into a string using the typed tools here.
+     *
+     * @param o The object to stringify.
+     * @return The resulting string.
+     */
     public static String toString(Object o) {
         if (o == null) {
             return NULL;
@@ -126,6 +156,13 @@ public class PTypeUtils {
         }
     }
 
+    /**
+     * Check if two providence value objects are equal.
+     *
+     * @param v1 The first object.
+     * @param v2 The second object.
+     * @return True iff they are the same.
+     */
     public static boolean equals(Object v1, Object v2) {
         if (v1 == v2) {
             return true;
@@ -177,10 +214,23 @@ public class PTypeUtils {
         }
     }
 
+    /**
+     * Make a typed hashcode for providence message fields.
+     *
+     * @param field The field descriptor.
+     * @param object The field value.
+     * @return The hash code.
+     */
     public static int hashCode(PField<?> field, Object object) {
         return hashCode(field) * hashCode(object);
     }
 
+    /**
+     * Make a type-safe hash code for an object.
+     *
+     * @param object The object to hash.
+     * @return The hash code.
+     */
     public static int hashCode(Object object) {
         if (object == null) {
             return 1;
@@ -198,6 +248,14 @@ public class PTypeUtils {
                      .hashCode() * object.hashCode();
     }
 
+    /**
+     * Check if the two descriptors has the same qualified name, i..e
+     * symbolically represent the same type.
+     *
+     * @param a The first type.
+     * @param b The second type.
+     * @return If the two types are the same.
+     */
     public static boolean equalsQualifiedName(PDescriptor a, PDescriptor b) {
         if ((a == null) != (b == null)) {
             return false;
@@ -263,6 +321,14 @@ public class PTypeUtils {
         return 0;
     }
 
+    /**
+     * Compare two values to each other.
+     *
+     * @param o1 The first value.
+     * @param o2 The second value.
+     * @param <T> The object type.
+     * @return The compare value (-1, 0 or 1).
+     */
     public static <T extends Comparable<T>> int compare(T o1, T o2) {
         if (o1 == null || o2 == null) {
             return Boolean.compare(o1 != null, o2 != null);
@@ -285,8 +351,11 @@ public class PTypeUtils {
         } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
             return compare((PMessage) o1, (PMessage) o2);
         } else if (o2 instanceof Map && o2 instanceof Map) {
+            // Maps cannot be compared to each other.
         } else if (o2 instanceof Set && o2 instanceof Set) {
+            // Sets cannot be compared to each other.
         } else if (o2 instanceof List && o2 instanceof List) {
+            // Lists cannot be compared to each other.
         }
         return 0;
     }

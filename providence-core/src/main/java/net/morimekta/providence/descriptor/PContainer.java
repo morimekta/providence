@@ -21,7 +21,7 @@ package net.morimekta.providence.descriptor;
 
 /**
  * Generic descriptor for a container type.
- * <p/>
+ * <p>
  * See {@link PList}, {@link PSet} and {@link PMap} which specializes for each
  * type of container.
  */

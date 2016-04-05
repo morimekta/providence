@@ -44,16 +44,11 @@ import java.util.Map.Entry;
 /**
  * Pretty printer for types. Generates content as close to the real thrift
  * files as possible.
- *
- * @author Stein Eldar Johnsen
- * @since 04.09.15
  */
 public class ThriftFormatter {
     private static final String BLOCK_COMMENT_START = "/**";
     private static final String BLOCK_COMMENT_LINE  = " * ";
     private static final String BLOCK_COMMENT_END   = " */";
-
-    private static final String REQUIRED = "required";
 
     private final EnumValuePresence mEnumValuePresence;
 
@@ -231,14 +226,7 @@ public class ThriftFormatter {
 
     // --- Constant values.
 
-    /**
-     * @param writer
-     * @param value
-     * @param type
-     * @param packageContext
-     * @throws JsonException
-     */
-    protected void appendTypedValue(JsonWriter writer, Object value, PDescriptor type, String packageContext)
+    private void appendTypedValue(JsonWriter writer, Object value, PDescriptor type, String packageContext)
             throws IOException, JsonException {
         switch (type.getType()) {
             case ENUM:

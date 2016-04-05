@@ -24,8 +24,7 @@ import net.morimekta.providence.PType;
 import java.util.Set;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Descriptor for a set with item type.
  */
 public class PSet<I> extends PContainer<I, Set<I>> {
     public PSet(PDescriptorProvider<I> itemType) {

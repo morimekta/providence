@@ -25,8 +25,6 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import java.io.IOException;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
  */
 public abstract class Generator {
     private final FileManager mFileManager;
@@ -35,12 +33,19 @@ public abstract class Generator {
         mFileManager = manager;
     }
 
+    /**
+     * @return The local file manager.
+     */
     public final FileManager getFileManager() {
         return mFileManager;
     }
 
     /**
      * Each compiler must implement this method.
+     *
+     * @param document The document to generate files from.
+     * @throws IOException If a file could not be written.
+     * @throws GeneratorException If some part of the file code could not be generated (invalid content).
      */
     public abstract void generate(CDocument document) throws IOException, GeneratorException;
 }

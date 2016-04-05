@@ -46,6 +46,13 @@ public class TypeRegistry {
         mDocuments = new LinkedHashMap<>();
     }
 
+    /**
+     * Puts the given document into the registry.
+     *
+     * @param path File path the document was found.
+     * @param doc The contained document.
+     * @return True if the document was not already there.
+     */
     public boolean putDocument(String path, CDocument doc) {
         if (!mDocuments.containsKey(path)) {
             mDocuments.put(path, doc);
@@ -54,6 +61,12 @@ public class TypeRegistry {
         return false;
     }
 
+    /**
+     * Gets the document for a given file path.
+     *
+     * @param path The file path.
+     * @return The contained document, or null if not found.
+     */
     public CDocument getDocument(String path) {
         return mDocuments.get(path);
     }
@@ -73,6 +86,7 @@ public class TypeRegistry {
      *
      * @param name           Name of type, without any spaces.
      * @param packageContext The package context of the type.
+     * @param <T>            The described type.
      * @return The type provider.
      */
     @SuppressWarnings("unchecked")
@@ -92,6 +106,7 @@ public class TypeRegistry {
      * Put a declared type into the registry.
      *
      * @param declaredType The type to register.
+     * @param <T> The descriptor object type.
      */
     public <T> void putDeclaredType(PDeclaredDescriptor<T> declaredType) {
         String declaredTypeName = declaredType.getQualifiedName(null);
@@ -102,8 +117,10 @@ public class TypeRegistry {
     }
 
     /**
-     * @param typeName
-     * @param identifier
+     * Registers a typedef definition.
+     *
+     * @param typeName The typedef name to put.
+     * @param identifier The qualified name that the name represents.
      */
     public void putTypedef(String typeName, String identifier) {
         if (identifier == null || typeName == null) {
@@ -117,6 +134,7 @@ public class TypeRegistry {
      *
      * @param typeName       Name of type, without any spaces.
      * @param packageContext The package context of the type.
+     * @param <T>            The described type.
      * @return The type provider.
      */
     @SuppressWarnings("unchecked")
@@ -155,11 +173,6 @@ public class TypeRegistry {
         final String name = typeName;
 
         // Otherwise it's a declared type.
-        return new PDescriptorProvider<T>() {
-            @Override
-            public PDescriptor<T> descriptor() {
-                return (PDescriptor<T>) getDescriptor(name, packageContext);
-            }
-        };
+        return () -> (PDescriptor<T>) getDescriptor(name, packageContext);
     }
 }

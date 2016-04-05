@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Contained enum descriptor type.
- * <p/>
+ * <p>
  * Also see {@link CEnum}.
  */
 public class CEnumDescriptor extends PEnumDescriptor<CEnum> {

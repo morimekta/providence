@@ -23,8 +23,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 28.01.16.
+ * Helper class to create streams that read providence messages.
  */
 public class MessageStreams {
     /**
@@ -34,7 +33,10 @@ public class MessageStreams {
      *
      * @param file       The file to read.
      * @param descriptor The descriptor of the entry type of the file.
+     * @param <T>        The message type.
+     * @param <F>        The message field type.
      * @return The stream that reads the file.
+     * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
                                                                            PStructDescriptor<T, F> descriptor)
@@ -66,7 +68,10 @@ public class MessageStreams {
      * @param file       The file to read.
      * @param serializer The serializer to use.
      * @param descriptor The descriptor of the entry type of the file.
+     * @param <T>        The message type.
+     * @param <F>        The message field type.
      * @return The stream that reads the file.
+     * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
                                                                            PSerializer serializer,
@@ -94,7 +99,10 @@ public class MessageStreams {
      * @param resource   The file to read.
      * @param serializer The serializer to use.
      * @param descriptor The descriptor of the entry type of the file.
+     * @param <T>        The message type.
+     * @param <F>        The message field type.
      * @return The stream that reads the file.
+     * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> resource(String resource,
                                                                                PSerializer serializer,
@@ -117,6 +125,19 @@ public class MessageStreams {
                                                                    }), false);
     }
 
+    /**
+     * Read a input stream containing entries of a given type. Tries to detect the
+     * entry format of the file based on file magic. If not detected will try
+     * to use the default binary serializer format.
+     *
+     * @param in         The input stream to read.
+     * @param serializer The serializer to use.
+     * @param descriptor The descriptor of the entry type of the file.
+     * @param <T>        The message type.
+     * @param <F>        The message field type.
+     * @return The stream that reads the file.
+     * @throws IOException when unable to open the stream.
+     */
     public static <T extends PMessage<T>, F extends PField> Stream<T> stream(InputStream in,
                                                                              PSerializer serializer,
                                                                              PStructDescriptor<T, F> descriptor)
@@ -255,7 +276,7 @@ public class MessageStreams {
             }
         }
 
-        protected void close() {
+        void close() {
             if(closer != null) {
                 try {
                     closer.apply(in);

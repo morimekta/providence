@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * Compact binary serializer. This uses the most compact binary format
  * allowable.
- * <p/>
+ * <p>
  * See data definition file <code>docs/fast-binary.md</code> for format spec.
  */
 public class PFastBinarySerializer extends PSerializer {
@@ -63,6 +63,8 @@ public class PFastBinarySerializer extends PSerializer {
 
     /**
      * Construct a serializer instance.
+     *
+     * @param readStrict If serializer should fail on unknown input data.
      */
     public PFastBinarySerializer(boolean readStrict) {
         this.readStrict = readStrict;
@@ -108,15 +110,7 @@ public class PFastBinarySerializer extends PSerializer {
 
     // --- MESSAGE ---
 
-    /**
-     * @param out     Writer to write to.
-     * @param message Message to write.
-     * @return Number of bytes written.
-     *
-     * @throws PSerializeException When serialization failed.
-     * @throws IOException         When unable to write to stream as expected.
-     */
-    protected int writeMessage(BinaryWriter out, PMessage<?> message) throws IOException, PSerializeException {
+    private int writeMessage(BinaryWriter out, PMessage<?> message) throws IOException, PSerializeException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -135,14 +129,6 @@ public class PFastBinarySerializer extends PSerializer {
         return len + out.writeVarint(0);
     }
 
-    /**
-     * @param in         The reader to read from.
-     * @param descriptor Descriptor of the message to read.
-     * @return Message read.
-     *
-     * @throws PSerializeException When deserialization failed.
-     * @throws IOException         When unable to read from stream as expected.
-     */
     private <T extends PMessage<T>> T readMessage(BinaryReader in, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, IOException {
         PMessageBuilder<T> builder = descriptor.factory()
@@ -248,18 +234,8 @@ public class PFastBinarySerializer extends PSerializer {
         }
     }
 
-    /**
-     * Read a field value from stream.
-     *
-     * @param in         The stream to consume.
-     * @param type       The encoded type.
-     * @param descriptor The type descriptor to generate content for.
-     * @return The field value, or null if no type.
-     *
-     * @throws IOException If unable to read from stream or invalid field type.
-     */
     @SuppressWarnings("unchecked")
-    protected <T> T readFieldValue(BinaryReader in, int type, PDescriptor<T> descriptor)
+    private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor<T> descriptor)
             throws IOException, PSerializeException {
         switch (type) {
             case VARINT: {
@@ -276,7 +252,7 @@ public class PFastBinarySerializer extends PSerializer {
                     case I16:
                         return cast((short) in.readIntZigzag());
                     case I32:
-                        return cast((int) in.readIntZigzag());
+                        return cast(in.readIntZigzag());
                     case I64:
                         return cast(in.readLongZigzag());
                     case ENUM: {
@@ -312,7 +288,7 @@ public class PFastBinarySerializer extends PSerializer {
                 }
             }
             case MESSAGE:
-                return cast((T) readMessage(in, (PStructDescriptor<?, ?>) descriptor));
+                return cast(readMessage(in, (PStructDescriptor<?, ?>) descriptor));
             case COLLECTION:
                 if (descriptor == null) {
                     if (readStrict) {
@@ -358,12 +334,12 @@ public class PFastBinarySerializer extends PSerializer {
         return null;
     }
 
-    protected static final int NONE       = 0x00;  // 0, false, empty.
-    protected static final int TRUE       = 0x01;  // 1, true.
-    protected static final int VARINT     = 0x02;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
-    protected static final int FIXED_64   = 0x03;  // -> double
-    protected static final int BINARY     = 0x04;  // -> varint len + binary data.
-    protected static final int MESSAGE    = 0x05;  // -> messages, terminated with field-ID 0.
-    protected static final int COLLECTION = 0x06;  // -> varint len + N * (tag + field).
+    private static final int NONE       = 0x00;  // 0, false, empty.
+    private static final int TRUE       = 0x01;  // 1, true.
+    private static final int VARINT     = 0x02;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
+    private static final int FIXED_64   = 0x03;  // -> double
+    private static final int BINARY     = 0x04;  // -> varint len + binary data.
+    private static final int MESSAGE    = 0x05;  // -> messages, terminated with field-ID 0.
+    private static final int COLLECTION = 0x06;  // -> varint len + N * (tag + field).
     // ----------------------  UNUSED     = 0x07;
 }

@@ -49,7 +49,7 @@ import java.util.Set;
 /**
  * Compact binary serializer. This usesd a format that is as close the the default
  * thrift binary protocol as possible.
- * <p/>
+ * <p>
  * See data definition file <code>docs/serializer-binary.md</code> for format
  * spec.
  */
@@ -65,6 +65,8 @@ public class PBinarySerializer extends PSerializer {
 
     /**
      * Construct a serializer instance.
+     *
+     * @param strict If the serializer should fail on reading mismatched data.
      */
     public PBinarySerializer(boolean strict) {
         readStrict = strict;
@@ -191,6 +193,7 @@ public class PBinarySerializer extends PSerializer {
      * @param in        The stream to consume.
      * @param fieldInfo The field info about the content.
      * @param type      The type to generate content for.
+     * @param <T>       The field item type.
      * @return The field value, or null if no type.
      *
      * @throws IOException If unable to read from stream or invalid field type.

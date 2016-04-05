@@ -99,6 +99,11 @@ public class TypeLoader {
 
     /**
      * Load a thrift definition from file including all it's dependencies.
+     *
+     * @param file The file to load.
+     * @return The loaded contained document.
+     * @throws IOException If the file could not be read.
+     * @throws ParseException If the file could not be parsed.
      */
     public CDocument load(File file) throws IOException, ParseException {
         file = file.getCanonicalFile();
@@ -152,6 +157,9 @@ public class TypeLoader {
         return cdoc;
     }
 
+    /**
+     * @return The local registry.
+     */
     public TypeRegistry getRegistry() {
         return mRegistry;
     }

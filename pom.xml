@@ -168,6 +168,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:all</additionalparam>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

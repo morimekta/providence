@@ -24,8 +24,7 @@ import net.morimekta.providence.PType;
 import java.util.List;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Descriptor for a list with item type.
  */
 public class PList<I> extends PContainer<I, List<I>> {
     public PList(PDescriptorProvider<I> itemType) {

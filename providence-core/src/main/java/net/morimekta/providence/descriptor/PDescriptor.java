@@ -23,7 +23,7 @@ import net.morimekta.providence.PType;
 
 /**
  * Descriptor interface for value type V.
- * <p/>
+ * <p>
  * Note that V is specified by type even though the PDescriptor interface has
  * no methods requiring that type.
  */
@@ -49,8 +49,9 @@ public interface PDescriptor<V> {
     /**
      * This will return the qualifying name of the type given package context.
      *
+     * @param packageContext The package which the name should be referenced from.
      * @return The name of the type. Including package if not matching with
-     *         packageName.
+     *         packageContext.
      */
     String getQualifiedName(String packageContext);
 

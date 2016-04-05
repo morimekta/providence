@@ -24,8 +24,7 @@ import net.morimekta.providence.PType;
 import java.util.Map;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Descriptor for a map with key and item type.
  */
 public class PMap<K, V> extends PContainer<V, Map<K, V>> {
     private final PDescriptorProvider<K> mKeyDescriptor;

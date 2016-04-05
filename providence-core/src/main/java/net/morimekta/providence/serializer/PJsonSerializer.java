@@ -57,7 +57,7 @@ import java.util.Map;
  * Compact JSON serializer. This uses the most compact type-safe JSON format
  * allowable. There are two optional variants switching the struct field ID
  * between numeric ID and field name.
- * <p/>
+ * <p>
  * There is also the strict mode. If strict is OFF:
  * - Unknown enum values will be ignored (as field missing).
  * - Unknown fields will be ignored.
@@ -66,9 +66,8 @@ import java.util.Map;
  * - Unknown enum values will fail the deserialization.
  * - Unknown fields will fail the deserialization.
  * - Struct validity will fail both serialization and deserialization.
- * <p/>
+ * <p>
  * Format is like this:
- * <p/>
  * <pre>
  * {
  *     "id":value,
@@ -79,7 +78,7 @@ import java.util.Map;
  * </pre>
  * But without formatting spaces. The formatted JSON can be read normally.
  * Binary fields are base64 encoded.
- * <p/>
+ * <p>
  * This format supports 'compact' struct formatting. A compact struct is
  * formatted as a list with fields in order from 1 to N. E.g.:
  * <pre>
@@ -89,9 +88,6 @@ import java.util.Map;
  * <pre>
  * {"1":"tag","2":5,"3":6.45}
  * </pre>
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
 public class PJsonSerializer extends PSerializer {
     public static final byte[] STREAM_INITIATOR = {'{'};
@@ -142,6 +138,11 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
+    public byte[] entrySeparator() {
+        return ENTRY_SEP;
+    }
+
+    @Override
     public int serialize(OutputStream output, PMessage<?> message) throws PSerializeException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
@@ -189,15 +190,7 @@ public class PJsonSerializer extends PSerializer {
         }
     }
 
-    /**
-     * Parse JSON object as a message.
-     *
-     * @param tokenizer The object to parse.
-     * @param type      The message type.
-     * @param <T>       Message generic type.
-     * @return The parsed message.
-     */
-    protected <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
+    private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
             throws PSerializeException, JsonException, IOException {
         PMessageBuilder<T> builder = type.factory()
                                          .builder();
@@ -236,15 +229,7 @@ public class PJsonSerializer extends PSerializer {
         return builder.build();
     }
 
-    /**
-     * Parse JSON object as a message.
-     *
-     * @param tokenizer The object to parse.
-     * @param type      The message type.
-     * @param <T>       Message generic type.
-     * @return The parsed message.
-     */
-    protected <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
+    private <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
             throws PSerializeException, IOException, JsonException {
         PMessageBuilder<T> builder = type.factory()
                                          .builder();
@@ -304,7 +289,7 @@ public class PJsonSerializer extends PSerializer {
         // Otherwise it is a simple value. No need to consume.
     }
 
-    protected <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor<T> t)
+    private <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor<T> t)
             throws IOException, PSerializeException {
         if (token.isNull()) {
             return null;
@@ -373,10 +358,10 @@ public class PJsonSerializer extends PSerializer {
                 case MESSAGE: {
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) t;
                     if (token.isSymbol(JsonToken.kMapStart)) {
-                        return cast((Object) parseMessage(tokenizer, st));
+                        return cast(parseMessage(tokenizer, st));
                     } else if (token.isSymbol(JsonToken.kListStart)) {
                         if (st.isCompactible()) {
-                            return cast((Object) parseCompactMessage(tokenizer, st));
+                            return cast(parseCompactMessage(tokenizer, st));
                         } else {
                             throw new PSerializeException(
                                     st.getName() + " is not compatible for compact struct notation.");
@@ -446,7 +431,7 @@ public class PJsonSerializer extends PSerializer {
         throw new PSerializeException("Unhandled item type " + t.getQualifiedName(null));
     }
 
-    protected Object parseMapKey(String key, PDescriptor keyType) throws PSerializeException {
+    private Object parseMapKey(String key, PDescriptor keyType) throws PSerializeException {
         try {
             switch (keyType.getType()) {
                 case BOOL:
@@ -517,7 +502,7 @@ public class PJsonSerializer extends PSerializer {
         }
     }
 
-    protected void appendMessage(JsonWriter writer, PMessage<?> message) throws PSerializeException, JsonException {
+    private void appendMessage(JsonWriter writer, PMessage<?> message) throws PSerializeException, JsonException {
         PStructDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
@@ -561,7 +546,7 @@ public class PJsonSerializer extends PSerializer {
         }
     }
 
-    protected void appendTypedValue(JsonWriter writer, PDescriptor type, Object value)
+    private void appendTypedValue(JsonWriter writer, PDescriptor type, Object value)
             throws PSerializeException, JsonException {
         switch (type.getType()) {
             case MESSAGE:
@@ -606,7 +591,7 @@ public class PJsonSerializer extends PSerializer {
      * @param writer    The writer to add primitive key to.
      * @param primitive Primitive object to get map key value of.
      */
-    protected void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
+    private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(idType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
@@ -653,7 +638,7 @@ public class PJsonSerializer extends PSerializer {
      * @param writer    The JSON writer.
      * @param primitive The primitive instance.
      */
-    protected void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
+    private void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(enumType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());

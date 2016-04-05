@@ -26,7 +26,7 @@ import java.util.Objects;
 
 /**
  * Descriptors for primitive types.
- * <p/>
+ * <p>
  * These are the basic types used in the thrift structure except containers.
  */
 public class PPrimitive<T> implements PDescriptor<T> {
@@ -50,6 +50,11 @@ public class PPrimitive<T> implements PDescriptor<T> {
         mDefault = defValue;
     }
 
+    /**
+     * Get the descriptor provider for the primitive.
+     *
+     * @return The descriptor provider.
+     */
     public PPrimitiveProvider<T> provider() {
         return mProvider;
     }
@@ -89,10 +94,18 @@ public class PPrimitive<T> implements PDescriptor<T> {
         return Objects.hash(mType, mDefault);
     }
 
+    /**
+     * @return The default value for the primitive.
+     */
     public T getDefaultValue() {
         return mDefault;
     }
 
+    /**
+     * Find primitive by name.
+     * @param name The name of the primitive.
+     * @return The primitive descriptor.
+     */
     public static PPrimitive<?> findByName(String name) {
         switch (name) {
             case "void":
@@ -100,6 +113,7 @@ public class PPrimitive<T> implements PDescriptor<T> {
             case "bool":
                 return BOOL;
             case "byte":
+            case "i8":
                 return BYTE;
             case "i16":
                 return I16;
