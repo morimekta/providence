@@ -8,7 +8,6 @@
         <!-- 1.7 required for android support. -->
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <java.version>1.7</java.version>
     </properties>
 
     <name>Providence Core : Jackson</name>
@@ -25,7 +24,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/morimekta/providence.git</url>
+        <url>http://www.morimekta.net/providence/providence-core-jackson</url>
     </scm>
 
     <parent>
@@ -70,11 +69,9 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <artifactId>maven-site-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

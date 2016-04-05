@@ -18,7 +18,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/morimekta/providence.git</url>
+        <url>http://www.morimekta.net/providence/providence-testing</url>
     </scm>
 
     <parent>
@@ -99,4 +99,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
