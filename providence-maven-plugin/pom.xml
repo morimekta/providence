@@ -16,14 +16,6 @@
         thrift definitions using the providence libraries.
     </description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <scm>
-        <url>http://www.morimekta.net/providence/providence-maven-plugin</url>
-    </scm>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

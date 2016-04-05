@@ -8,7 +8,7 @@
         Providence is a port of Apache thrift that has some extra tooling, and
         different way of generating classes and serializing data.
     </description>
-    <url>http://www.github.com/morimekta/providence</url>
+    <url>http://www.morimekta.net/providence</url>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -47,7 +47,7 @@
     </developers>
 
     <scm>
-        <url>http://www.morimekta.net/providence</url>
+        <url>https://github.com/morimekta/providence</url>
         <developerConnection>scm:git:ssh://git@github.com/morimekta/providence.git</developerConnection>
         <tag>HEAD</tag>
     </scm>

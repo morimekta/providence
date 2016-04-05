@@ -17,10 +17,6 @@
         </license>
     </licenses>
 
-    <scm>
-        <url>http://www.morimekta.net/providence/providence-testing</url>
-    </scm>
-
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>

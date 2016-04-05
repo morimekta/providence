@@ -17,10 +17,6 @@
         </license>
     </licenses>
 
-    <scm>
-        <url>http://www.morimekta.net/providence/providence-generator</url>
-    </scm>
-
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
