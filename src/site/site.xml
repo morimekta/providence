@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.4.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.4.0
+                             http://maven.apache.org/xsd/decoration-1.4.0.xsd"
+         name="Providence">
+    <body>
+        <menu name="Docs" inherit="top">
+            <item href="index.html" name="Introduction" />
+
+            <item href="release.html" name="Release Process" />
+
+            <item href="serializer-binary.html" name="Serializer : Binary" />
+            <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
+            <item href="serializer-json.html" name="Serializer : JSON" />
+        </menu>
+
+        <menu name="Modules" inherit="top">
+
+            <item href="providence-core.html" name="Core" />
+            <item href="providence-core-jackson.html" name="Core : Jackson" />
+            <item href="providence-core-streams.html" name="Core : Streams" />
+            <item href="providence-reflect.html" name="Tools : Reflect" />
+            <item href="providence-generator.html" name="Tools : Generator" />
+            <item href="providence-maven-plugin.html" name="Tools : Maven Plugin" />
+            <item href="providence-testing.html" name="Testing" />
+
+        </menu>
+
+        <menu name="Extra" inherit="top">
+
+            <item href="providence-thrift.html" name="Providence Extra : Thrift Bridge" />
+
+        </menu>
+
+        <menu ref="reports"/>
+    </body>
+    <custom>
+        <fluidoSkin>
+            <gitHub>
+                <projectId>morimekta/providence</projectId>
+                <ribbonOrientation>right</ribbonOrientation>
+                <ribbonColor>black</ribbonColor>
+            </gitHub>
+        </fluidoSkin>
+    </custom>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.5</version>
+    </skin>
+</project>
