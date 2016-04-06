@@ -31,13 +31,18 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
+        <site>
+            <id>morimekta</id>
+            <name>Providence @ Morimekta</name>
+            <url>http://www.morimekta.net/providence</url>
+        </site>
     </distributionManagement>
 
     <developers>
         <developer>
             <id>morimekta</id>
             <name>Stein Eldar Johnsen</name>
-            <email>morimekta+utils@gmail.com</email>
+            <email>oss@morimekta.net</email>
             <timezone>Europe/Oslo</timezone>
             <roles>
                 <role>Maintainer</role>
@@ -195,21 +200,29 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <stagingDirectory>${project.basedir}/target/site</stagingDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <reporting>
-        <excludeDefaults>true</excludeDefaults>
         <outputDirectory>${project.build.directory}/site</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.9</version>
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>javadoc</report>
-                            <report>aggregate</report>
+                            <report>license</report>
+                            <report>dependencies</report>
+                            <report>project-team</report>
                         </reports>
                     </reportSet>
                 </reportSets>

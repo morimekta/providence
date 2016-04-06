@@ -14,21 +14,10 @@
 !.idea/codeStyleSettings.xml
 *.iml
 
-bazel-*
-
-generated*/
-generated*
-
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-pom.xml.versionsBackup
+pom.xml.*
 
-tmp/
-tmp
-lib/
-lib
-out/
-out
 target/
 target
