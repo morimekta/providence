@@ -23,6 +23,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.model.EnumType;
 import net.morimekta.providence.model.EnumValue;
+import net.morimekta.providence.model.Model_Constants;
 import net.morimekta.providence.model.Requirement;
 import net.morimekta.providence.model.ServiceMethod;
 import net.morimekta.providence.model.ServiceType;
@@ -31,10 +32,9 @@ import net.morimekta.providence.model.StructVariant;
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.model.TypedefType;
-import net.morimekta.providence.reflect.parser.internal.Keyword;
-import net.morimekta.providence.reflect.parser.internal.Symbol;
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
+import net.morimekta.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,12 +79,12 @@ public class ThriftParser implements Parser {
                 continue;
             }
 
-            Keyword keyword = Keyword.getByToken(token.getToken());
-            if (keyword == null) {
-                throw new ParseException("Unexpected token \"" + token.getToken() + "\"", tokenizer, token);
+            String id = token.asString();
+            if (!Model_Constants.kThriftKeywords.contains(id)) {
+                throw new ParseException("Unexpected token \'" + token.asString() + "\'", tokenizer, token);
             }
-            switch (keyword) {
-                case NAMESPACE:
+            switch (id) {
+                case "namespace":
                     if (hasDeclaration) {
                         throw new ParseException("Unexpected token 'namespace', expected type declaration",
                                                  tokenizer,
@@ -97,7 +97,7 @@ public class ThriftParser implements Parser {
                     hasHeader = true;
                     parseNamespace(tokenizer, namespaces);
                     break;
-                case INCLUDE:
+                case "include":
                     if (hasDeclaration) {
                         throw new ParseException("Unexpected token 'include', expected type declaration",
                                                  tokenizer,
@@ -110,13 +110,13 @@ public class ThriftParser implements Parser {
                     hasHeader = true;
                     parseIncludes(tokenizer, includes);
                     break;
-                case TYPEDEF:
+                case "typedef":
                     hasHeader = true;
                     hasDeclaration = true;
                     parseTypedef(tokenizer, comment, declarations);
                     comment = null;
                     break;
-                case ENUM:
+                case "enum":
                     hasHeader = true;
                     hasDeclaration = true;
                     EnumType et = parseEnum(tokenizer, comment);
@@ -125,18 +125,18 @@ public class ThriftParser implements Parser {
                                                 .build());
                     comment = null;
                     break;
-                case STRUCT:
-                case UNION:
-                case EXCEPTION:
+                case "struct":
+                case "union":
+                case "exception":
                     hasHeader = true;
                     hasDeclaration = true;
-                    StructType st = parseStruct(tokenizer, token.getToken(), comment);
+                    StructType st = parseStruct(tokenizer, token.asString(), comment);
                     declarations.add(Declaration.builder()
                                                 .setDeclStruct(st)
                                                 .build());
                     comment = null;
                     break;
-                case SERVICE:
+                case "service":
                     hasHeader = true;
                     hasDeclaration = true;
                     ServiceType srv = parseService(tokenizer, comment);
@@ -145,7 +145,7 @@ public class ThriftParser implements Parser {
                                                 .build());
                     comment = null;
                     break;
-                case CONST:
+                case "const":
                     hasHeader = true;
                     hasDeclaration = true;
                     ThriftField cnst = parseConst(tokenizer, comment);
@@ -155,7 +155,7 @@ public class ThriftParser implements Parser {
                     comment = null;
                     break;
                 default:
-                    throw new ParseException("Unexpected token '" + token.getToken() + "', expected type declaration",
+                    throw new ParseException("Unexpected token '" + token.asString() + "', expected type declaration",
                                              tokenizer,
                                              token);
             }
@@ -173,32 +173,28 @@ public class ThriftParser implements Parser {
         String type = parseType(tokenizer, token);
         Token id = tokenizer.expectIdentifier("parsing const identifier");
 
-        tokenizer.expectSymbol(Symbol.MAP_ENTRY_VALUE_SEP, "parsing const identifier");
+        tokenizer.expectSymbol("parsing const identifier", Token.kFieldValueSep);
 
         String value = parseValue(tokenizer);
 
         Token sep = tokenizer.next();
-        if (sep != null && sep.isSymbol()) {
-            if (!sep.getSymbol()
-                    .equals(Symbol.LIST_SEPARATOR) && !sep.getSymbol()
-                                                          .equals(Symbol.ENTRY_SEPARATOR)) {
+        if (sep != null) {
+            if (!sep.isSymbol(Token.kLineSep1) && !sep.isSymbol(Token.kLineSep2)) {
                 tokenizer.unshift(sep);
             }
-        } else {
-            tokenizer.unshift(sep);
         }
 
         return ThriftField.builder()
                           .setComment(comment)
                           .setKey(-1)
-                          .setName(id.getToken())
+                          .setName(id.asString())
                           .setType(type)
                           .setDefaultValue(value)
                           .build();
     }
 
     private String parseValue(Tokenizer tokenizer) throws IOException, ParseException {
-        Stack<Symbol> enclosures = new Stack<>();
+        Stack<Character> enclosures = new Stack<>();
         StringBuilder builder = new StringBuilder();
         while (true) {
             Token token = tokenizer.expect("Parsing const value.");
@@ -209,21 +205,16 @@ public class ThriftParser implements Parser {
             } else if (token.startsLineComment()) {
                 parseLineComment(tokenizer, null);  // ignore
                 continue;
-            } else if (token.isSymbol()) {
-                Symbol ct = token.getSymbol();
-                if (ct.equals(Symbol.SHELL_COMMENT)) {
-                    parseLineComment(tokenizer, null);  // ignore
-                    continue;
-                } else if (ct.equals(Symbol.MAP_START)) {
-                    enclosures.push(Symbol.MAP_END);
-                } else if (ct.equals(Symbol.LIST_START)) {
-                    enclosures.push(Symbol.LIST_END);
-                } else if (enclosures.size() > 0 && ct.equals(enclosures.peek())) {
-                    enclosures.pop();
-                }
+            } else if (token.isSymbol(Token.kMessageStart)) {
+                enclosures.push(Token.kMessageEnd);
+            } else if (token.isSymbol(Token.kListStart)) {
+                enclosures.push(Token.kListEnd);
+            } else if ((token.isSymbol(Token.kMessageEnd) || token.isSymbol(Token.kListEnd)) &&
+                       enclosures.peek().equals(token.charAt(0))) {
+                enclosures.pop();
             }
 
-            builder.append(token.getToken());
+            builder.append(token.asString());
             if (enclosures.isEmpty()) {
                 return builder.toString();
             }
@@ -231,8 +222,7 @@ public class ThriftParser implements Parser {
     }
 
     private String parseLineComment(Tokenizer tokenizer, String comment) throws IOException {
-        String line = tokenizer.readUntil('\n')
-                               .trim();
+        String line = Strings.readString(tokenizer, "\n").trim();
         if (comment != null) {
             return comment + "\n" + line;
         }
@@ -240,8 +230,7 @@ public class ThriftParser implements Parser {
     }
 
     private String parseBlockComment(Tokenizer tokenizer) throws IOException {
-        String block = tokenizer.readUntil(Keyword.BLOCK_COMMENT_END.keyword)
-                                .trim();
+        String block = Strings.readString(tokenizer, new String(Token.kBlockCommentEnd)).trim();
         String[] lines = block.split("\n");
         StringBuilder builder = new StringBuilder();
 
@@ -263,18 +252,20 @@ public class ThriftParser implements Parser {
             comment = null;
         }
         Token identifier = tokenizer.expectIdentifier("parsing service identifier");
-        service.setName(identifier.getToken());
+        service.setName(identifier.asString());
 
-        tokenizer.expectSymbol(Symbol.MAP_START, "reading service start");
+        if (tokenizer.peek().strEquals(Token.kExtends)) {
+            tokenizer.next();
+            service.setExtend(tokenizer.expectQualifiedIdentifier("service extending identifier").asString());
+        }
 
-        Token token = tokenizer.expect("reading service method");
+        tokenizer.expectSymbol("reading service start", Token.kMessageStart);
+
         while (true) {
-            if (token.isSymbol() && token.getSymbol()
-                                         .equals(Symbol.MAP_END)) {
+            Token token = tokenizer.expect("reading service method");
+            if (token.isSymbol(Token.kMessageEnd)) {
                 break;
-            }
-
-            if (token.startsLineComment()) {
+            } else if (token.startsLineComment()) {
                 comment = parseLineComment(tokenizer, comment);
                 continue;
             } else if (token.startsBlockComment()) {
@@ -288,32 +279,23 @@ public class ThriftParser implements Parser {
                 comment = null;
             }
 
-            if (token.getToken()
-                     .equals(Keyword.ONEWAY.keyword)) {
+            if (token.strEquals(Token.kOneway)) {
                 method.setOneWay(true);
                 token = tokenizer.expect("reading service method");
             }
-            if (!token.isQualifiedIdentifier()) {
-                throw new ParseException(token.getToken() + " is not a valid type identifier.", tokenizer, token);
-            }
-            if (!token.getToken()
-                      .equals(Keyword.VOID.keyword)) {
-                method.setReturnType(token.getToken());
+
+            if (!token.strEquals(Token.kVoid)) {
+                method.setReturnType(parseType(tokenizer, token));
             }
 
-            token = tokenizer.expectIdentifier("reading method name");
-            method.setName(token.getToken());
+            method.setName(tokenizer.expectIdentifier("reading method name").asString());
 
-            tokenizer.expectSymbol(Symbol.PARAMS_BEGIN, "reading method params begin");
-
-            token = tokenizer.expect("reading method params");
+            tokenizer.expectSymbol("reading method params begin", Token.kParamsStart);
             while (true) {
-                if (token.isSymbol() && token.getSymbol()
-                                             .equals(Symbol.PARAMS_END)) {
+                token = tokenizer.expect("reading method params");
+                if (token.isSymbol(Token.kParamsEnd)) {
                     break;
-                }
-
-                if (token.startsLineComment()) {
+                } else if (token.startsLineComment()) {
                     comment = parseLineComment(tokenizer, comment);
                     continue;
                 } else if (token.startsBlockComment()) {
@@ -328,53 +310,47 @@ public class ThriftParser implements Parser {
                 }
 
                 if (token.isInteger()) {
-                    field.setKey(token.intValue());
-                    tokenizer.expectSymbol(Symbol.MAP_KEY_ENTRY_SEP, "reading method params (:)");
+                    field.setKey((int) token.parseInteger());
+                    tokenizer.expectSymbol("reading method params (:)", Token.kFieldIdSep);
                     token = tokenizer.expect("reading method param type");
                 }
 
                 field.setType(parseType(tokenizer, token));
+                field.setName(tokenizer.expectIdentifier("reading method param name")
+                                       .asString());
 
-                token = tokenizer.expectIdentifier("reading method params");
-                field.setName(token.getToken());
+                // Annotations.
+                if (tokenizer.peek("reading method param annotation")
+                             .isSymbol(Token.kParamsStart)) {
+                    tokenizer.next();
+                    char sep = Token.kParamsStart;
+                    while (sep != Token.kParamsEnd) {
+                        token = tokenizer.expectQualifiedIdentifier("annotation name");
+                        String name = token.asString();
+                        tokenizer.expectSymbol("", Token.kFieldValueSep);
+                        Token value = tokenizer.expectStringLiteral("annotation value");
+
+                        field.putInAnnotations(name, value.decodeLiteral());
+
+                        sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                    }
+                }
 
                 method.addToParams(field.build());
+            }  // for each param
+            comment = null;
 
-                token = tokenizer.expect("reading method params");
-                if (token.isSymbol()) {
-                    if (token.getSymbol()
-                             .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
-                                                                    .equals(Symbol.ENTRY_SEPARATOR)) {
-                        token = tokenizer.expect("reading method params");
-                    }
-                }
-            }
+            if (tokenizer.peek("parsing method exceptions")
+                         .strEquals(Token.kThrows)) {
+                tokenizer.next();
+                tokenizer.expectSymbol("parsing method exceptions", Token.kParamsStart);
 
-            token = tokenizer.expect("reading method params");
-            if (token.isSymbol()) {
-                if (token.getSymbol()
-                         .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
-                                                                .equals(Symbol.ENTRY_SEPARATOR)) {
-
-                    service.addToMethods(method.build());
-
-                    token = tokenizer.expect("reading method params");
-                    continue;
-                }
-            }
-
-            if (token.getToken()
-                     .equals(Keyword.THROWS.keyword)) {
-                tokenizer.expectSymbol(Symbol.PARAMS_BEGIN, "reading method exception begin");
-
-                token = tokenizer.expect("reading method exception begin");
                 while (true) {
-                    if (token.isSymbol() && token.getSymbol()
-                                                 .equals(Symbol.PARAMS_END)) {
-                        break;
-                    }
+                    token = tokenizer.expect("parsing method exception");
 
-                    if (token.startsLineComment()) {
+                    if (token.isSymbol(Token.kParamsEnd)) {
+                        break;
+                    } else if (token.startsLineComment()) {
                         comment = parseLineComment(tokenizer, comment);
                         continue;
                     } else if (token.startsBlockComment()) {
@@ -389,43 +365,68 @@ public class ThriftParser implements Parser {
                     }
 
                     if (token.isInteger()) {
-                        field.setKey(token.intValue());
-                        tokenizer.expectSymbol(Symbol.MAP_KEY_ENTRY_SEP, "reading method exception (:)");
+                        field.setKey((int) token.parseInteger());
+                        tokenizer.expectSymbol("reading method exception (:)", Token.kFieldIdSep);
                         token = tokenizer.expect("reading method exception type");
                     }
 
-                    if (!token.isIdentifier()) {
-                        throw new ParseException("Expected exception type identifier.", tokenizer, token);
-                    }
-                    field.setType(token.getToken());
+                    field.setType(parseType(tokenizer, token));
+                    field.setName(tokenizer.expectIdentifier("reading method exception name")
+                                           .asString());
 
-                    token = tokenizer.expectIdentifier("reading method exception");
-                    field.setName(token.getToken());
+                    // Annotations.
+                    if (tokenizer.peek("reading method exception annotation")
+                                 .isSymbol(Token.kParamsStart)) {
+                        tokenizer.next();
+                        char sep = Token.kParamsStart;
+                        while (sep != Token.kParamsEnd) {
+                            token = tokenizer.expectQualifiedIdentifier("exception annotation name");
+                            String name = token.asString();
+                            tokenizer.expectSymbol("", Token.kFieldValueSep);
+                            Token value = tokenizer.expectStringLiteral("exception annotation value");
+
+                            field.putInAnnotations(name, value.decodeLiteral());
+
+                            sep = tokenizer.expectSymbol("exception annotation sep",
+                                                         Token.kParamsEnd,
+                                                         Token.kLineSep1,
+                                                         Token.kLineSep2);
+                        }
+                    }
 
                     method.addToExceptions(field.build());
 
-                    token = tokenizer.expect("reading method exception");
-                    if (token.isSymbol()) {
-                        if (token.getSymbol()
-                                 .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
-                                                                        .equals(Symbol.ENTRY_SEPARATOR)) {
-                            token = tokenizer.expect("reading method exception");
-                        }
+                    token = tokenizer.peek("reading method params");
+                    if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                        tokenizer.next();
                     }
                 }
+            }
+
+            token = tokenizer.peek("");
+            // Method Annotations.
+            if (token.isSymbol(Token.kParamsStart)) {
+                tokenizer.next();
+                char sep = Token.kParamsStart;
+                while (sep != Token.kParamsEnd) {
+                    token = tokenizer.expectQualifiedIdentifier("annotation name");
+                    String name = token.asString();
+                    tokenizer.expectSymbol("", Token.kFieldValueSep);
+                    Token value = tokenizer.expectStringLiteral("annotation value");
+
+                    method.putInAnnotations(name, value.decodeLiteral());
+
+                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                }
+                token = tokenizer.peek("reading method params");
             }
 
             service.addToMethods(method.build());
 
-            token = tokenizer.expect("reading service method");
-            if (token.isSymbol()) {
-                if (token.getSymbol()
-                         .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
-                                                                .equals(Symbol.ENTRY_SEPARATOR)) {
-                    token = tokenizer.expect("reading service method");
-                }
+            if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                tokenizer.next();
             }
-        }
+        }  // for each method-line
 
         return service.build();
     }
@@ -434,122 +435,103 @@ public class ThriftParser implements Parser {
         Token language = tokenizer.expectQualifiedIdentifier("parsing namespace language");
         Token namespace = tokenizer.expectQualifiedIdentifier("parsing namespace");
 
-        if (!language.isIdentifier()) {
-            throw new ParseException("Namespace language not valid identifier: '" + language.getToken() + "'");
+        if (!language.isQualifiedIdentifier()) {
+            throw new ParseException("Namespace language not valid identifier: '" + language.asString() + "'");
         }
         if (!namespace.isQualifiedIdentifier()) {
-            throw new ParseException("Namespace not valid: '" + namespace.getToken() + "'");
+            throw new ParseException("Namespace not valid: '" + namespace.asString() + "'");
         }
 
-        namespaces.put(language.getToken(), namespace.getToken());
+        namespaces.put(language.asString(), namespace.asString());
     }
 
     public void parseIncludes(Tokenizer tokenizer, List<String> includes) throws IOException, ParseException {
-        Token include = tokenizer.next();
-        if (include == null) {
-            throw new ParseException("Unecpected end of file.");
-        }
-        if (!include.isLiteral()) {
-            throw new ParseException("Expected string literal for include", tokenizer, include);
-        }
-        includes.add(include.literalValue());
+        Token include = tokenizer.expectStringLiteral("include file");
+        includes.add(include.substring(1, -1).asString());
     }
 
     private void parseTypedef(Tokenizer tokenizer, String comment, List<Declaration> declarations)
             throws IOException, ParseException {
-        Token token = tokenizer.expect("parsing typedef type.");
-        String type = parseType(tokenizer, token);
+        String type = parseType(tokenizer, tokenizer.expect("parsing typedef type."));
         Token id = tokenizer.expectIdentifier("parsing typedef identifier.");
 
         TypedefType typedef = TypedefType.builder()
                                          .setComment(comment)
                                          .setType(type)
-                                         .setName(id.getToken())
+                                         .setName(id.asString())
                                          .build();
-        declarations.add(Declaration.builder()
-                                    .setDeclTypedef(typedef)
-                                    .build());
+        declarations.add(Declaration.withDeclTypedef(typedef));
     }
 
     public EnumType parseEnum(Tokenizer tokenizer, String comment) throws IOException, ParseException {
-        Token id = tokenizer.expectIdentifier("parsing enum identifier");
+        String id = tokenizer.expectIdentifier("parsing enum identifier").asString();
 
-        EnumType._Builder et = EnumType.builder();
+        EnumType._Builder etb = EnumType.builder();
         if (comment != null) {
-            et.setComment(comment);
+            etb.setComment(comment);
             comment = null;
         }
-        et.setName(id.getToken());
+        etb.setName(id);
 
         int nextValue = PEnumDescriptor.DEFAULT_FIRST_VALUE;
-        String nextName = null;
-        while (true) {
-            Token token = tokenizer.expect("parsing enum " + id.getToken());
-            if (token.startsLineComment()) {
-                comment = parseLineComment(tokenizer, comment);
-                continue;
-            } else if (token.startsBlockComment()) {
-                comment = parseBlockComment(tokenizer);
-                continue;
-            }
 
-            if (token.isSymbol()) {
-                if (token.getSymbol()
-                         .equals(Symbol.MAP_END)) {
-                    if (nextName != null) {
-                        et.addToValues(EnumValue.builder()
-                                                .setComment(comment)
-                                                .setName(nextName)
-                                                .setValue(nextValue)
-                                                .build());
-                    }
+        tokenizer.expectSymbol("parsing enum " + id, Token.kMessageStart);
+
+        if (!tokenizer.peek("").isSymbol(Token.kMessageEnd)) {
+            while (true) {
+                Token token = tokenizer.expect("parsing enum " + id);
+                if (token.isSymbol(Token.kMessageEnd)) {
                     break;
-                } else if (token.getSymbol()
-                                .equals(Symbol.ENTRY_SEPARATOR) || token.getSymbol()
-                                                                        .equals(Symbol.LIST_SEPARATOR)) {
-                    // [;,]
-                    if (nextName == null) {
-                        throw new ParseException("Unexpected entry separator: '" + token.getToken() + "'",
-                                                 tokenizer,
-                                                 token);
+                } else if (token.startsLineComment()) {
+                    comment = parseLineComment(tokenizer, comment);
+                } else if (token.startsBlockComment()) {
+                    comment = parseBlockComment(tokenizer);
+                } else if (token.isIdentifier()) {
+                    EnumValue._Builder evb = EnumValue.builder();
+                    evb.setName(token.asString());
+
+                    int value = nextValue++;
+                    if (tokenizer.peek("parsing enum " + id)
+                                 .isSymbol(Token.kFieldValueSep)) {
+                        tokenizer.next();
+                        Token v = tokenizer.expectInteger("");
+                        value = (int) v.parseInteger();
+                        nextValue = value + 1;
                     }
 
-                    et.addToValues(EnumValue.builder()
-                                            .setComment(comment)
-                                            .setName(nextName)
-                                            .setValue(nextValue)
-                                            .build());
-                    comment = null;
-                    nextName = null;
-                    ++nextValue;
-                } else if (token.getSymbol()
-                                .equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
-                    // [=]
-                    Token value = tokenizer.next();
-                    if (!value.isInteger()) {
-                        throw new ParseException("Expected numeric enum value, got " + value.getToken(),
-                                                 tokenizer,
-                                                 value);
+                    evb.setValue(value);
+
+                    // Enum value annotations.
+                    if (tokenizer.peek("parsing enum " + id)
+                                 .isSymbol(Token.kParamsStart)) {
+                        tokenizer.next();
+                        char sep2 = Token.kParamsStart;
+                        while (sep2 != Token.kParamsEnd) {
+                            token = tokenizer.expectQualifiedIdentifier("annotation name");
+                            String name = token.asString();
+                            tokenizer.expectSymbol("", Token.kFieldValueSep);
+                            Token val = tokenizer.expectStringLiteral("annotation value");
+
+                            evb.putInAnnotations(name, val.decodeLiteral());
+
+                            sep2 = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                        }
                     }
-                    nextValue = value.intValue();
+
+                    etb.addToValues(evb.build());
+
+                    // Optional separator...
+                    token = tokenizer.peek("parsing enum " + id);
+                    if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                        tokenizer.next();
+                    }
+                } else {
+                    throw new ParseException("Unexpected token while parsing enum " + id + ": " + token.asString());
                 }
-            } else if (token.isIdentifier()) {
-                if (nextName != null) {
-                    et.addToValues(EnumValue.builder()
-                                            .setComment(comment)
-                                            .setName(nextName)
-                                            .setValue(nextValue)
-                                            .build());
-                    comment = null;
-                    ++nextValue;
-                }
-                nextName = token.getToken();
-            } else {
-                throw new ParseException("Unexpected token in enum: " + token.getToken(), tokenizer, token);
             }
-        }
+        } // if has values.
 
-        return et.build();
+        return etb.build();
     }
 
     private StructType parseStruct(Tokenizer tokenizer, String type, String comment)
@@ -562,139 +544,144 @@ public class ThriftParser implements Parser {
         }
         boolean union = type.equals("union");
         if (!type.equals("struct")) {
-            struct.setVariant(StructVariant.valueOf(type.toUpperCase()));
+            struct.setVariant(StructVariant.forName(type.toUpperCase()));
         }
 
         Token id = tokenizer.expectIdentifier("parsing " + type + " identifier");
         if (!id.isIdentifier()) {
-            throw new ParseException("Struct name " + id.getToken() + " is not valid identifier", tokenizer, id);
+            throw new ParseException("Struct name " + id.asString() + " is not valid identifier", tokenizer, id);
         }
-        struct.setName(id.getToken());
+        struct.setName(id.asString());
 
+        // Unsigned short max value.
         int nextDefaultKey = (1 << 16) - 1;
 
-        tokenizer.expectSymbol(Symbol.MAP_START, "parsing struct " + id.getToken());
+        tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kMessageStart);
 
-        ThriftField._Builder field = ThriftField.builder();
         while (true) {
-            Token token = tokenizer.expect("parsing struct " + id.getToken());
-            if (token.startsLineComment()) {
+            Token token = tokenizer.expect("parsing struct " + id.asString());
+            if (token.isSymbol(Token.kMessageEnd)) {
+                break;
+            } else if (token.startsLineComment()) {
                 comment = parseLineComment(tokenizer, comment);
                 continue;
             } else if (token.startsBlockComment()) {
                 comment = parseBlockComment(tokenizer);
                 continue;
-            } else if (token.isSymbol() && token.getSymbol()
-                                                .equals(Symbol.MAP_END)) {
-                // good end of definition.
-                break;
             }
 
+            ThriftField._Builder field = ThriftField.builder();
             field.setComment(comment);
             comment = null;
 
             if (token.isInteger()) {
-                field.setKey(token.intValue());
-                tokenizer.expectSymbol(Symbol.MAP_KEY_ENTRY_SEP, "parsing struct " + id.getToken());
-                token = tokenizer.expect("parsing struct " + id.getToken());
+                field.setKey((int) token.parseInteger());
+                tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kFieldIdSep);
+                token = tokenizer.expect("parsing struct " + id.asString());
             } else {
                 // TODO(steineldar): Maybe disallow for consistency?
                 field.setKey(nextDefaultKey--);
             }
 
-            if (token.getToken()
-                     .equals(Keyword.REQUIRED.keyword)) {
+            if (token.strEquals(Token.kRequired)) {
                 if (union) {
-                    throw new ParseException("Found required field in union. Not allowed. " + token.getToken(),
+                    throw new ParseException("Found required field in union. Not allowed. " + token.asString(),
                                              tokenizer,
                                              token);
                 }
                 field.setRequirement(Requirement.REQUIRED);
-                token = tokenizer.expect("parsing struct " + id.getToken());
-            } else if (token.getToken()
-                            .equals(Keyword.OPTIONAL.keyword)) {
+                token = tokenizer.expect("parsing struct " + id.asString());
+            } else if (token.strEquals(Token.kOptional)) {
                 if (!union) {
-                    // All union fields are default (not optional), regardless.
+                    // All union fields are optional regardless.
                     field.setRequirement(Requirement.OPTIONAL);
                 }
-                token = tokenizer.expect("parsing struct " + id.getToken());
+                token = tokenizer.expect("parsing struct " + id.asString());
             }
 
             // Get type.... This is mandatory.
             field.setType(parseType(tokenizer, token));
 
-            token = tokenizer.expect("parsing struct " + id.getToken());
-            // get name... This is mandatory.
-            if (!token.isIdentifier()) {
-                throw new ParseException("Expected name identifier, but found " + token.getToken(), tokenizer, token);
-            }
-            field.setName(token.getToken());
+            field.setName(tokenizer.expectIdentifier("parsing struct " + id.asString()).asString());
 
-            token = tokenizer.expect("parsing struct " + id.getToken());
-            if (token.isSymbol() && token.getSymbol()
-                                         .equals(Symbol.MAP_ENTRY_VALUE_SEP)) {
+            token = tokenizer.peek("");
+
+            // Default value
+            if (token.isSymbol(Token.kFieldValueSep)) {
+                tokenizer.next();
                 field.setDefaultValue(parseValue(tokenizer));
-                token = tokenizer.expect("parsing struct " + id.getToken());
+                token = tokenizer.peek("");
             }
 
-            if (token.isSymbol() && (token.getSymbol()
-                                          .equals(Symbol.LIST_SEPARATOR) || token.getSymbol()
-                                                                                 .equals(Symbol.ENTRY_SEPARATOR))) {
-                token = tokenizer.expect("parsing struct " + id.getToken());
+            // annotation
+            if (token.isSymbol(Token.kParamsStart)) {
+                tokenizer.next();
+                char sep = token.charAt(0);
+                while (sep != Token.kParamsEnd) {
+                    token = tokenizer.expectQualifiedIdentifier("annotation name");
+                    String name = token.asString();
+                    tokenizer.expectSymbol("", Token.kFieldValueSep);
+                    Token val = tokenizer.expectStringLiteral("annotation value");
+
+                    field.putInAnnotations(name, val.decodeLiteral());
+
+                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                }
+                token = tokenizer.peek("");
             }
 
             struct.addToFields(field.build());
-            field = ThriftField.builder();
 
-            if (token.isSymbol() && token.getSymbol()
-                                         .equals(Symbol.MAP_END)) {
-                // end of definition.
-                break;
+            if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                tokenizer.next();
             }
+        }
 
-            // new entry or comment.
-            tokenizer.unshift(token);
+        Token token = tokenizer.peek();
+        if (token.isSymbol(Token.kParamsStart)) {
+            tokenizer.next();
+            char sep = token.charAt(0);
+            while (sep != Token.kParamsEnd) {
+                token = tokenizer.expectQualifiedIdentifier("annotation name");
+                String name = token.asString();
+                tokenizer.expectSymbol("", Token.kFieldValueSep);
+                Token val = tokenizer.expectStringLiteral("annotation value");
+
+                struct.putInAnnotations(name, val.decodeLiteral());
+
+                sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+            }
         }
 
         return struct.build();
     }
 
-    public String parseType(Tokenizer tokenizer, Token token) throws IOException, ParseException {
+    private String parseType(Tokenizer tokenizer, Token token) throws IOException, ParseException {
         if (!token.isQualifiedIdentifier()) {
-            throw new ParseException("Expected type identifier but found " + token, tokenizer, token);
+            throw new ParseException(tokenizer, token, "Expected type identifier but found " + token);
         }
 
-        String type = token.getToken();
-        Keyword kw = Keyword.getByToken(type);
-        if (kw == null) {
-            return type;
+        String type = token.asString();
+        switch (type) {
+            case "list":
+            case "set": {
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
+                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"));
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+
+                return String.format("%s<%s>", type, item);
+            }
+            case "map": {
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
+                String key = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " key type"));
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"));
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+
+                return String.format("%s<%s,%s>", type, key, item);
+            }
+            default:
+                return type;
         }
-
-        if (kw.equals(Keyword.LIST) || kw.equals(Keyword.SET)) {
-            tokenizer.expectSymbol(Symbol.GENERIC_START, "parsing " + kw + " type");
-
-            token = tokenizer.expect("parsing " + kw + " type");
-            String itemType = parseType(tokenizer, token);
-
-            tokenizer.expectSymbol(Symbol.GENERIC_END, "parsing " + kw + " type");
-
-            return String.format("%s<%s>", type, itemType);
-        } else if (kw.equals(Keyword.MAP)) {
-            tokenizer.expectSymbol(Symbol.GENERIC_START, "parsing " + kw + " type");
-
-            token = tokenizer.expect("parsing " + kw + " type");
-            String keyType = parseType(tokenizer, token);
-
-            tokenizer.expectSymbol(Symbol.LIST_SEPARATOR, "parsing " + kw + " type");
-
-            token = tokenizer.expect("parsing " + kw + " type");
-            String itemType = parseType(tokenizer, token);
-
-            tokenizer.expectSymbol(Symbol.GENERIC_END, "parsing " + kw + " type");
-
-            return String.format("%s<%s,%s>", type, keyType, itemType);
-        }
-
-        return type;
     }
 }

@@ -19,122 +19,202 @@
 
 package net.morimekta.providence.reflect.parser.internal;
 
-import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.util.json.JsonException;
-import net.morimekta.util.json.JsonToken;
-import net.morimekta.util.json.JsonTokenizer;
+import net.morimekta.util.Slice;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 24.09.15
+ * Thrift token. Returned from the thrift tokenizer for each real "token".
  */
-public class Token {
-    public static final Pattern RE_IDENTIFIER           = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
-    public static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
-            "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
-    public static final Pattern RE_INTEGER              = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+public class Token extends Slice {
+    // Various symbols.
+    public static final char kMessageStart  = '{';
+    public static final char kMessageEnd    = '}';
+    public static final char kFieldIdSep    = ':';
+    public static final char kFieldValueSep = '=';
+    public static final char kParamsStart   = '(';
+    public static final char kParamsEnd     = ')';
+    public static final char kGenericStart  = '<';
+    public static final char kGenericEnd    = '>';
 
-    private final String mToken;
-    private final int    mLine;
-    private final int    mPos;
-    private final int    mLen;
+    public static final char kLineSep1 = ',';
+    public static final char kLineSep2 = ';';
+
+    // Not really 'symbols'.
+    public static final char kLiteralEscape      = '\\';
+    public static final char kLiteralQuote       = '\'';
+    public static final char kLiteralDoubleQuote = '\"';
+    public static final char kListStart  = '[';
+    public static final char kListEnd    = ']';
+    public static final char kJavaCommentStart   = '/';
+    public static final char kShellComment       = '#';
+
+    public static final String kSymbols = "{}:=()<>,;#[]";
+
+    public static final byte[] kJavaComment       = new byte[]{'/', '/'};
+    public static final byte[] kBlockCommentStart = new byte[]{'/', '*'};
+    public static final byte[] kBlockCommentEnd   = new byte[]{'*', '/'};
+
+    // Keyword constants.
+    // -- header
+    public static final byte[] kInclude   = new byte[]{'i', 'n', 'c', 'l', 'u', 'd', 'e'};
+    public static final byte[] kNamespace = new byte[]{'n', 'a', 'm', 'e', 's', 'p', 'a', 'c', 'e'};
+
+    // -- types
+    public static final byte[] kEnum      = new byte[]{'e', 'n', 'u', 'm'};
+    public static final byte[] kStruct    = new byte[]{'s', 't', 'r', 'u', 'c', 't'};
+    public static final byte[] kUnion     = new byte[]{'u', 'n', 'i', 'o', 'n'};
+    public static final byte[] kException = new byte[]{'e', 'x', 'c', 'e', 'p', 't', 'i', 'o', 'n'};
+    public static final byte[] kService   = new byte[]{'s', 'e', 'r', 'v', 'i', 'c', 'e'};
+    public static final byte[] kConst     = new byte[]{'c', 'o', 'n', 's', 't'};
+    public static final byte[] kTypedef   = new byte[]{'t', 'y', 'p', 'e', 'd', 'e', 'f'};
+
+    // -- modifiers
+    public static final byte[] kRequired = new byte[]{'r', 'e', 'q', 'u', 'i', 'r', 'e', 'd'};
+    public static final byte[] kOptional = new byte[]{'o', 'p', 't', 'i', 'o', 'n', 'a', 'l'};
+    public static final byte[] kOneway   = new byte[]{'o', 'n', 'e', 'w', 'a', 'y'};
+    public static final byte[] kThrows   = new byte[]{'t', 'h', 'r', 'o', 'w', 's'};
+    public static final byte[] kExtends  = new byte[]{'e', 'x', 't', 'e', 'n', 'd', 's'};
+    public static final byte[] kVoid     = new byte[]{'v', 'o', 'i', 'd'};
+
+    // -- primitives
+    public static final byte[] kBool   = new byte[]{'b', 'o', 'o', 'l'};
+    public static final byte[] kByte   = new byte[]{'b', 'y', 't', 'e'};
+    public static final byte[] kI8     = new byte[]{'i', '8'};
+    public static final byte[] kI16    = new byte[]{'i', '1', '6'};
+    public static final byte[] kI32    = new byte[]{'i', '3', '2'};
+    public static final byte[] kI64    = new byte[]{'i', '6', '4'};
+    public static final byte[] kDouble = new byte[]{'d', 'o', 'u', 'b', 'l', 'e'};
+    public static final byte[] kString = new byte[]{'s', 't', 'r', 'i', 'n', 'g'};
+    public static final byte[] kBinary = new byte[]{'b', 'i', 'n', 'a', 'r', 'y'};
+
+    // -- containers
+    public static final byte[] kList = new byte[]{'l', 'i', 's', 't'};
+    public static final byte[] kSet  = new byte[]{'s', 'e', 't'};
+    public static final byte[] kMap  = new byte[]{'m', 'a', 'p'};
+
+    private static final Pattern RE_IDENTIFIER           = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
+            "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern RE_INTEGER              = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+
+    private final int lineNo;
+    private final int linePos;
+
+    public Token(byte[] fb, int off, int len, int lineNo, int linePos) {
+        super(fb, off, len);
+        this.lineNo = lineNo;
+        this.linePos = linePos;
+    }
+
+    public int getLineNo() {
+        return lineNo;
+    }
+
+    public int getLinePos() {
+        return linePos;
+    }
 
     public boolean startsLineComment() {
-        return mToken.equals(Character.toString((char) Symbol.SHELL_COMMENT.c)) ||
-               mToken.equals(Keyword.JAVA_LINE_COMMENT_START.keyword);
+        return isSymbol(kShellComment) || strEquals(kJavaComment);
     }
 
     public boolean startsBlockComment() {
-        return mToken.equals(Keyword.BLOCK_COMMENT_START.keyword);
+        return strEquals(kBlockCommentStart);
     }
 
-    public Token(String token, int line, int pos, int len) {
-        mToken = token;
-        mLine = line;
-        mPos = pos;
-        mLen = len;
+    public boolean isSymbol(char symbol) {
+        return len == 1 && fb[off] == symbol;
     }
 
-    public String getToken() {
-        return mToken;
-    }
-
-    public int getLine() {
-        return mLine;
-    }
-
-    public int getPos() {
-        return mPos;
-    }
-
-    public int getLen() {
-        return mLen;
-    }
-
-    public boolean isSymbol() {
-        return mLen == 1 && Symbol.valueOf(mToken.charAt(0)) != null;
-    }
-
-    public boolean isLiteral() {
-        return (mToken.length() > 1 &&
-                mToken.charAt(0) == '\"' &&
-                mToken.charAt(mToken.length() - 1) == '\"');
+    public boolean isStringLiteral() {
+        return (length() > 1 &&
+                charAt(0) == '\"' &&
+                charAt(-1) == '\"');
     }
 
     public boolean isIdentifier() {
-        if (!RE_IDENTIFIER.matcher(mToken)
-                          .matches()) {
-            return false;
-        }
-        return true;
+        return RE_IDENTIFIER.matcher(asString())
+                            .matches();
     }
 
     public boolean isQualifiedIdentifier() {
-        if (!RE_QUALIFIED_IDENTIFIER.matcher(mToken)
-                                    .matches()) {
-            return false;
-        }
-        return true;
+        return RE_QUALIFIED_IDENTIFIER.matcher(asString())
+                                      .matches();
     }
 
     public boolean isInteger() {
-        return RE_INTEGER.matcher(mToken)
+        return RE_INTEGER.matcher(asString())
                          .matches();
     }
 
-    public Symbol getSymbol() {
-        return Symbol.valueOf(mToken.charAt(0));
-    }
+    /**
+     * Get the whole slice as a string.
+     *
+     * @return Slice decoded as UTF_8 string.
+     */
+    public String decodeLiteral() {
+        // This decodes the string from UTF_8 bytes.
+        String tmp = substring(1, -1).asString();
+        final int l = tmp.length();
+        StringBuilder out = new StringBuilder(l);
 
-    public String literalValue() throws ParseException {
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(mToken.getBytes(StandardCharsets.UTF_8));
-            JsonTokenizer tokenizer = new JsonTokenizer(bais);
-            JsonToken token = tokenizer.expect("parsing string literal.");
-            return token.decodeJsonLiteral();
-        } catch (JsonException e) {
-            throw new ParseException("Unable to parse string literal: " + mToken, e);
-        } catch (IOException e) {
-            throw new ParseException("Unable to read string literal: " + mToken, e);
-        }
-    }
+        boolean esc = false;
+        for (int i = 0; i < l; ++i) {
+            if (esc) {
+                esc = false;
 
-    public int intValue() {
-        if (mToken.startsWith("0x")) {
-            return Integer.parseInt(mToken.substring(2), 16);
-        } else if (mToken.startsWith("0") && mToken.length() > 1) {
-            return Integer.parseInt(mToken.substring(1), 8);
+                char ch = tmp.charAt(i);
+                switch (ch) {
+                    case 'b':
+                        out.append('\b');
+                        break;
+                    case 'f':
+                        out.append('\f');
+                        break;
+                    case 'n':
+                        out.append('\n');
+                        break;
+                    case 'r':
+                        out.append('\r');
+                        break;
+                    case 't':
+                        out.append('\t');
+                        break;
+                    case '\"':
+                    case '\'':
+                    case '\\':
+                        out.append(ch);
+                        break;
+                    case 'u':
+                        if (l < i + 5) {
+                            out.append('?');
+                        } else {
+                            String n = tmp.substring(i + 1, i + 5);
+                            try {
+                                int cp = Integer.parseInt(n, 16);
+                                out.append((char) cp);
+                            } catch (NumberFormatException e) {
+                                out.append('?');
+                            }
+                        }
+                        i += 4;  // skipping 4 more characters.
+                        break;
+                    default:
+                        out.append('?');
+                        break;
+                }
+            } else if (tmp.charAt(i) == '\\') {
+                esc = true;
+            } else {
+                out.append(tmp.charAt(i));
+            }
         }
-        return Integer.parseInt(mToken);
+        return out.toString();
     }
 
     @Override
     public String toString() {
-        return String.format("Token('%s',%d:%d-%d)", mToken, mLine, mPos, mLen);
+        return String.format("Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len);
     }
 }

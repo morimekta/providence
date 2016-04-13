@@ -19,7 +19,13 @@
 
 package net.morimekta.providence.reflect.parser;
 
+import net.morimekta.providence.model.ThriftDocument;
+
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Stein Eldar Johnsen
@@ -27,7 +33,13 @@ import org.junit.Test;
  */
 public class ThriftParserTest {
     @Test
-    public void testParse() {
+    public void testParse() throws IOException, ParseException {
+        ThriftParser parser = new ThriftParser();
 
+        ThriftDocument calculator = parser.parse(getClass().getResourceAsStream("/parser/calculator/calculator.thrift"),
+                                                 "calculator.thrift");
+
+        assertEquals("calculator", calculator.getPackage());
+        assertEquals(7, calculator.getDecl().size());
     }
 }

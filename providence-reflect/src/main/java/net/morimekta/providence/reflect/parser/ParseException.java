@@ -29,62 +29,53 @@ import java.io.IOException;
  * @since 24.09.15
  */
 public class ParseException extends Exception {
-    private final String mLine;
-    private final int    mLineNo;
-    private final int    mPos;
-    private final int    mLen;
+    private final String line;
+    private final Token token;
 
-    public ParseException(String message, Throwable cause) {
-        this(message, null, 0, 0, 0);
-        initCause(cause);
+    public ParseException(Throwable cause, String message, Object... params) {
+        super(String.format(message, params), cause);
+
+        line = null;
+        token = null;
     }
 
-    public ParseException(String message) {
-        this(message, null, 0, 0, 0);
+    public ParseException(String message, Object... params) {
+        super(String.format(message, params));
+
+        line = null;
+        token = null;
     }
 
-    public ParseException(String message, String line, int lineNo, int pos, int len) {
-        super(message);
+    public ParseException(String line, Token token, String message, Object... params) {
+        super(String.format(message, params));
 
-        mLine = line;
-        mLineNo = lineNo;
-        mPos = pos;
-        mLen = len;
+        this.line = line;
+        this.token = token;
     }
 
-    public ParseException(String message, Tokenizer tokenizer, Token token) throws IOException {
-        super(message);
+    public ParseException(Tokenizer tokenizer, Token token, String message, Object... params) throws IOException {
+        super(String.format(message, params));
 
-        mLine = tokenizer.getLine(token.getLine());
-        mLineNo = token.getLine();
-        mPos = token.getPos();
-        mLen = token.getLen();
+        this.line = tokenizer.getLine(token.getLineNo());
+        this.token = token;
+    }
+
+    public Token getToken() {
+        return token;
     }
 
     public String getLine() {
-        return mLine;
-    }
-
-    public int getLineNo() {
-        return mLineNo;
-    }
-
-    public int getPos() {
-        return mPos;
-    }
-
-    public int getLen() {
-        return mLen;
+        return line;
     }
 
     @Override
     public String toString() {
-        if (mLine != null) {
+        if (line != null && token != null) {
             return String.format("ParseException(%s,%d:%d,\"%s\")",
                                  getLocalizedMessage(),
-                                 getLineNo(),
-                                 getPos(),
-                                 getLine());
+                                 token.getLineNo(),
+                                 token.getLinePos(),
+                                 line);
         } else {
             return String.format("ParseException(%s)", getLocalizedMessage());
         }
