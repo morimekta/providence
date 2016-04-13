@@ -101,8 +101,8 @@ public enum StructVariant implements PEnumValue<StructVariant> {
     private static class _Factory
             extends PEnumBuilderFactory<StructVariant> {
         @Override
-        public _Builder builder() {
-            return new _Builder();
+        public StructVariant._Builder builder() {
+            return new StructVariant._Builder();
         }
     }
 

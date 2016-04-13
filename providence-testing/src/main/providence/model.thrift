@@ -32,6 +32,7 @@ struct EnumValue {
     1: string comment;
     2: required string name;
     3: i32 value;
+    4: map<string,string> annotations;
 }
 
 /**
@@ -43,6 +44,7 @@ struct EnumType {
     1: string comment;
     2: required string name;
     3: list<EnumValue> values;
+    4: map<string,string> annotations;
 }
 
 /**
@@ -82,6 +84,7 @@ struct ThriftField {
     4: required string type;
     5: required string name;
     6: string default_value;
+    7: map<string,string> annotations;
 }
 
 /**
@@ -94,6 +97,7 @@ struct StructType {
     2: StructVariant variant = StructVariant.STRUCT;
     3: required string name;
     4: list<ThriftField> fields;
+    5: map<string,string> annotations;
 }
 
 /**
@@ -106,6 +110,7 @@ struct ServiceMethod {
     4: required string name;
     5: list<ThriftField> params;
     6: list<ThriftField> exceptions;
+    7: map<string,string> annotations;
 }
 
 /**
@@ -118,6 +123,7 @@ struct ServiceType {
     2: required string name;
     3: string extend;
     4: list<ServiceMethod> methods;
+    5: map<string,string> annotations;
 }
 
 /**
@@ -147,23 +153,30 @@ struct ThriftDocument {
 }
 
 /**
- * Set of words not allowed to be used in identifiers.
+ * Set of words used in thrift IDL as specific meanings.
+ */
+const set<string> kThriftKeywords = [
+  // Primitive types.
+  "bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary",
+  // Containers
+  "list", "set", "map",
+  // Defined Types keywords.
+  "enum", "struct", "union", "exception", "const", "typedef", "service",
+  // Field modifiers
+  "required", "optional",
+  // Extra keywords related to services.
+  "extends", "throws", "oneway", "void"
+];
+
+/**
+ * Other words that are reserved for language compat reasons. E.g. to enable
+ * C++ classes to follow getter method naming convention to be raw field name
+ * (java naming convention is typename safe):
  *
  * For field names, const names, struct names, method name etc.
  */
 const set<string> kReservedWords = [
-  // Primitive types.
-  "bool", "byte", "i16", "i32", "i64", "double", "string", "binary",
-  // Containers
-  "list", "set", "map",
-  // Definition keywords.
-  "enum", "struct", "union", "exception", "const", "typedef",
-  "service", "extends", "throws", "oneway", "required", "optional",
-  "void",
-  // Other words that are reserved for language compat reasons. E.g. to enable
-  // C++ classes to follow getter method naming convention to be raw field name
-  // (java naming convention is typename safe):
   "class", "public", "protected", "private",
-  "short", "int", "long", "unsigned", "float",
+  "byte", "short", "int", "long", "unsigned", "float",
   "for", "if", "while", "do", "else"
 ];

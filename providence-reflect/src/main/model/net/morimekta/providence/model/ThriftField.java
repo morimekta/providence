@@ -8,14 +8,19 @@ import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
+import net.morimekta.providence.util.PTypeUtils;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -44,6 +49,7 @@ public class ThriftField
     private final String mType;
     private final String mName;
     private final String mDefaultValue;
+    private final Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -54,6 +60,7 @@ public class ThriftField
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
     }
 
     public ThriftField(String pComment,
@@ -61,13 +68,15 @@ public class ThriftField
                        Requirement pRequirement,
                        String pType,
                        String pName,
-                       String pDefaultValue) {
+                       String pDefaultValue,
+                       Map<String,String> pAnnotations) {
         mComment = pComment;
         mKey = pKey;
         mRequirement = pRequirement;
         mType = pType;
         mName = pName;
         mDefaultValue = pDefaultValue;
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -118,6 +127,14 @@ public class ThriftField
         return mDefaultValue;
     }
 
+    public int numAnnotations() {
+        return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public Map<String,String> getAnnotations() {
+        return mAnnotations;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -127,6 +144,7 @@ public class ThriftField
             case 4: return hasType();
             case 5: return hasName();
             case 6: return hasDefaultValue();
+            case 7: return numAnnotations() > 0;
             default: return false;
         }
     }
@@ -140,6 +158,7 @@ public class ThriftField
             case 4: return hasType() ? 1 : 0;
             case 5: return hasName() ? 1 : 0;
             case 6: return hasDefaultValue() ? 1 : 0;
+            case 7: return numAnnotations();
             default: return 0;
         }
     }
@@ -153,6 +172,7 @@ public class ThriftField
             case 4: return getType();
             case 5: return getName();
             case 6: return getDefaultValue();
+            case 7: return getAnnotations();
             default: return null;
         }
     }
@@ -176,7 +196,8 @@ public class ThriftField
                Objects.equals(mRequirement, other.mRequirement) &&
                Objects.equals(mType, other.mType) &&
                Objects.equals(mName, other.mName) &&
-               Objects.equals(mDefaultValue, other.mDefaultValue);
+               Objects.equals(mDefaultValue, other.mDefaultValue) &&
+               PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -189,7 +210,8 @@ public class ThriftField
                     _Field.REQUIREMENT, mRequirement,
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
-                    _Field.DEFAULT_VALUE, mDefaultValue);
+                    _Field.DEFAULT_VALUE, mDefaultValue,
+                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -240,6 +262,12 @@ public class ThriftField
             out.append("default_value:");
             out.append('\"').append(mDefaultValue).append('\"');
         }
+        if (numAnnotations() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("annotations:");
+            out.append(PTypeUtils.toString(mAnnotations));
+        }
         out.append('}');
         return out.toString();
     }
@@ -286,6 +314,13 @@ public class ThriftField
             if (c != 0) return c;
         }
 
+        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        if (c != 0) return c;
+        if (mAnnotations != null) {
+            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
         return 0;
     }
 
@@ -296,6 +331,7 @@ public class ThriftField
         TYPE(4, PRequirement.REQUIRED, "type", PPrimitive.STRING.provider(), null),
         NAME(5, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         DEFAULT_VALUE(6, PRequirement.DEFAULT, "default_value", PPrimitive.STRING.provider(), null),
+        ANNOTATIONS(7, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -362,6 +398,7 @@ public class ThriftField
                 case 4: return _Field.TYPE;
                 case 5: return _Field.NAME;
                 case 6: return _Field.DEFAULT_VALUE;
+                case 7: return _Field.ANNOTATIONS;
                 default: return null;
             }
         }
@@ -374,6 +411,7 @@ public class ThriftField
                 case "type": return _Field.TYPE;
                 case "name": return _Field.NAME;
                 case "default_value": return _Field.DEFAULT_VALUE;
+                case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -393,7 +431,7 @@ public class ThriftField
     private static class _Descriptor
             extends PStructDescriptor<ThriftField,_Field> {
         public _Descriptor() {
-            super(null, "model", "ThriftField", new _Factory(), true, false);
+            super(null, "model", "ThriftField", new _Factory(), false, false);
         }
 
         @Override
@@ -450,11 +488,13 @@ public class ThriftField
         private String mType;
         private String mName;
         private String mDefaultValue;
+        private Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(6);
+            optionals = new BitSet(7);
             mKey = kDefaultKey;
+            mAnnotations = new LinkedHashMap<>();
         }
 
         public _Builder(ThriftField base) {
@@ -481,6 +521,10 @@ public class ThriftField
             if (base.hasDefaultValue()) {
                 optionals.set(5);
                 mDefaultValue = base.mDefaultValue;
+            }
+            if (base.numAnnotations() > 0) {
+                optionals.set(6);
+                mAnnotations.putAll(base.mAnnotations);
             }
         }
 
@@ -544,6 +588,23 @@ public class ThriftField
             mDefaultValue = null;
             return this;
         }
+        public _Builder setAnnotations(Map<String,String> value) {
+            optionals.set(6);
+            mAnnotations.clear();
+            mAnnotations.putAll(value);
+            return this;
+        }
+        public _Builder putInAnnotations(String key, String value) {
+            optionals.set(6);
+            mAnnotations.put(key, value);
+            return this;
+        }
+
+        public _Builder clearAnnotations() {
+            optionals.set(6, false);
+            mAnnotations.clear();
+            return this;
+        }
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
@@ -554,6 +615,7 @@ public class ThriftField
                 case 4: setType((String) value); break;
                 case 5: setName((String) value); break;
                 case 6: setDefaultValue((String) value); break;
+                case 7: setAnnotations((Map<String,String>) value); break;
             }
             return this;
         }
@@ -575,6 +637,7 @@ public class ThriftField
                 case 4: clearType(); break;
                 case 5: clearName(); break;
                 case 6: clearDefaultValue(); break;
+                case 7: clearAnnotations(); break;
             }
             return this;
         }

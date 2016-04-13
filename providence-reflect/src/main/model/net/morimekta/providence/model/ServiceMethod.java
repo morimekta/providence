@@ -9,6 +9,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -20,8 +21,10 @@ import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
@@ -38,6 +41,7 @@ public class ServiceMethod
     private final String mName;
     private final List<ThriftField> mParams;
     private final List<ThriftField> mExceptions;
+    private final Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -48,6 +52,7 @@ public class ServiceMethod
         mName = builder.mName;
         mParams = Collections.unmodifiableList(new LinkedList<>(builder.mParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(builder.mExceptions));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
     }
 
     public ServiceMethod(String pComment,
@@ -55,13 +60,15 @@ public class ServiceMethod
                          String pReturnType,
                          String pName,
                          List<ThriftField> pParams,
-                         List<ThriftField> pExceptions) {
+                         List<ThriftField> pExceptions,
+                         Map<String,String> pAnnotations) {
         mComment = pComment;
         mOneWay = pOneWay;
         mReturnType = pReturnType;
         mName = pName;
         mParams = Collections.unmodifiableList(new LinkedList<>(pParams));
         mExceptions = Collections.unmodifiableList(new LinkedList<>(pExceptions));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -112,6 +119,14 @@ public class ServiceMethod
         return mExceptions;
     }
 
+    public int numAnnotations() {
+        return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public Map<String,String> getAnnotations() {
+        return mAnnotations;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -121,6 +136,7 @@ public class ServiceMethod
             case 4: return hasName();
             case 5: return numParams() > 0;
             case 6: return numExceptions() > 0;
+            case 7: return numAnnotations() > 0;
             default: return false;
         }
     }
@@ -134,6 +150,7 @@ public class ServiceMethod
             case 4: return hasName() ? 1 : 0;
             case 5: return numParams();
             case 6: return numExceptions();
+            case 7: return numAnnotations();
             default: return 0;
         }
     }
@@ -147,6 +164,7 @@ public class ServiceMethod
             case 4: return getName();
             case 5: return getParams();
             case 6: return getExceptions();
+            case 7: return getAnnotations();
             default: return null;
         }
     }
@@ -170,7 +188,8 @@ public class ServiceMethod
                Objects.equals(mReturnType, other.mReturnType) &&
                Objects.equals(mName, other.mName) &&
                PTypeUtils.equals(mParams, other.mParams) &&
-               PTypeUtils.equals(mExceptions, other.mExceptions);
+               PTypeUtils.equals(mExceptions, other.mExceptions) &&
+               PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -183,7 +202,8 @@ public class ServiceMethod
                     _Field.RETURN_TYPE, mReturnType,
                     _Field.NAME, mName,
                     _Field.PARAMS, PTypeUtils.hashCode(mParams),
-                    _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions));
+                    _Field.EXCEPTIONS, PTypeUtils.hashCode(mExceptions),
+                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -234,6 +254,12 @@ public class ServiceMethod
             out.append("exceptions:");
             out.append(PTypeUtils.toString(mExceptions));
         }
+        if (numAnnotations() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("annotations:");
+            out.append(PTypeUtils.toString(mAnnotations));
+        }
         out.append('}');
         return out.toString();
     }
@@ -280,6 +306,13 @@ public class ServiceMethod
             if (c != 0) return c;
         }
 
+        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        if (c != 0) return c;
+        if (mAnnotations != null) {
+            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
         return 0;
     }
 
@@ -290,6 +323,7 @@ public class ServiceMethod
         NAME(4, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         PARAMS(5, PRequirement.DEFAULT, "params", PList.provider(ThriftField.provider()), null),
         EXCEPTIONS(6, PRequirement.DEFAULT, "exceptions", PList.provider(ThriftField.provider()), null),
+        ANNOTATIONS(7, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -356,6 +390,7 @@ public class ServiceMethod
                 case 4: return _Field.NAME;
                 case 5: return _Field.PARAMS;
                 case 6: return _Field.EXCEPTIONS;
+                case 7: return _Field.ANNOTATIONS;
                 default: return null;
             }
         }
@@ -368,6 +403,7 @@ public class ServiceMethod
                 case "name": return _Field.NAME;
                 case "params": return _Field.PARAMS;
                 case "exceptions": return _Field.EXCEPTIONS;
+                case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -444,13 +480,15 @@ public class ServiceMethod
         private String mName;
         private List<ThriftField> mParams;
         private List<ThriftField> mExceptions;
+        private Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(6);
+            optionals = new BitSet(7);
             mOneWay = kDefaultOneWay;
             mParams = new LinkedList<>();
             mExceptions = new LinkedList<>();
+            mAnnotations = new LinkedHashMap<>();
         }
 
         public _Builder(ServiceMethod base) {
@@ -477,6 +515,10 @@ public class ServiceMethod
             if (base.numExceptions() > 0) {
                 optionals.set(5);
                 mExceptions.addAll(base.mExceptions);
+            }
+            if (base.numAnnotations() > 0) {
+                optionals.set(6);
+                mAnnotations.putAll(base.mAnnotations);
             }
         }
 
@@ -558,6 +600,23 @@ public class ServiceMethod
             mExceptions.clear();
             return this;
         }
+        public _Builder setAnnotations(Map<String,String> value) {
+            optionals.set(6);
+            mAnnotations.clear();
+            mAnnotations.putAll(value);
+            return this;
+        }
+        public _Builder putInAnnotations(String key, String value) {
+            optionals.set(6);
+            mAnnotations.put(key, value);
+            return this;
+        }
+
+        public _Builder clearAnnotations() {
+            optionals.set(6, false);
+            mAnnotations.clear();
+            return this;
+        }
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
@@ -568,6 +627,7 @@ public class ServiceMethod
                 case 4: setName((String) value); break;
                 case 5: setParams((List<ThriftField>) value); break;
                 case 6: setExceptions((List<ThriftField>) value); break;
+                case 7: setAnnotations((Map<String,String>) value); break;
             }
             return this;
         }
@@ -591,6 +651,7 @@ public class ServiceMethod
                 case 4: clearName(); break;
                 case 5: clearParams(); break;
                 case 6: clearExceptions(); break;
+                case 7: clearAnnotations(); break;
             }
             return this;
         }

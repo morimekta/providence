@@ -65,18 +65,18 @@ public class JHeader {
         writer.format("package %s;", mJavaPackage)
               .newline();
         // Order of imports:
+        //  - net.morimekta.providence.*
         //  - android.*
         //  - java.*
-        //  - net.morimekta.providence.*
         //  - *
         for (String include : includes) {
-            if (include.startsWith("java.")) {
+            if (include.startsWith("net.morimekta.providence.")) {
                 writer.formatln("import %s;", include);
                 done.add(include);
             }
         }
         if (done.size() > 0) {
-            writer.newline();
+            writer.append('\n');
             includes.removeAll(done);
             done.clear();
         }
@@ -92,13 +92,13 @@ public class JHeader {
             done.clear();
         }
         for (String include : includes) {
-            if (include.startsWith("net.morimekta.providence.")) {
+            if (include.startsWith("java.")) {
                 writer.formatln("import %s;", include);
                 done.add(include);
             }
         }
         if (done.size() > 0) {
-            writer.append('\n');
+            writer.newline();
             includes.removeAll(done);
             done.clear();
         }

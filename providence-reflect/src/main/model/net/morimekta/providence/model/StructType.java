@@ -9,6 +9,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -20,8 +21,10 @@ import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -40,6 +43,7 @@ public class StructType
     private final StructVariant mVariant;
     private final String mName;
     private final List<ThriftField> mFields;
+    private final Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -48,16 +52,19 @@ public class StructType
         mVariant = builder.mVariant;
         mName = builder.mName;
         mFields = Collections.unmodifiableList(new LinkedList<>(builder.mFields));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
     }
 
     public StructType(String pComment,
                       StructVariant pVariant,
                       String pName,
-                      List<ThriftField> pFields) {
+                      List<ThriftField> pFields,
+                      Map<String,String> pAnnotations) {
         mComment = pComment;
         mVariant = pVariant;
         mName = pName;
         mFields = Collections.unmodifiableList(new LinkedList<>(pFields));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -92,6 +99,14 @@ public class StructType
         return mFields;
     }
 
+    public int numAnnotations() {
+        return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public Map<String,String> getAnnotations() {
+        return mAnnotations;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -99,6 +114,7 @@ public class StructType
             case 2: return hasVariant();
             case 3: return hasName();
             case 4: return numFields() > 0;
+            case 5: return numAnnotations() > 0;
             default: return false;
         }
     }
@@ -110,6 +126,7 @@ public class StructType
             case 2: return hasVariant() ? 1 : 0;
             case 3: return hasName() ? 1 : 0;
             case 4: return numFields();
+            case 5: return numAnnotations();
             default: return 0;
         }
     }
@@ -121,6 +138,7 @@ public class StructType
             case 2: return getVariant();
             case 3: return getName();
             case 4: return getFields();
+            case 5: return getAnnotations();
             default: return null;
         }
     }
@@ -142,7 +160,8 @@ public class StructType
         return Objects.equals(mComment, other.mComment) &&
                Objects.equals(mVariant, other.mVariant) &&
                Objects.equals(mName, other.mName) &&
-               PTypeUtils.equals(mFields, other.mFields);
+               PTypeUtils.equals(mFields, other.mFields) &&
+               PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -153,7 +172,8 @@ public class StructType
                     _Field.COMMENT, mComment,
                     _Field.VARIANT, mVariant,
                     _Field.NAME, mName,
-                    _Field.FIELDS, PTypeUtils.hashCode(mFields));
+                    _Field.FIELDS, PTypeUtils.hashCode(mFields),
+                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -192,6 +212,12 @@ public class StructType
             out.append("fields:");
             out.append(PTypeUtils.toString(mFields));
         }
+        if (numAnnotations() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("annotations:");
+            out.append(PTypeUtils.toString(mAnnotations));
+        }
         out.append('}');
         return out.toString();
     }
@@ -228,6 +254,13 @@ public class StructType
             if (c != 0) return c;
         }
 
+        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        if (c != 0) return c;
+        if (mAnnotations != null) {
+            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
         return 0;
     }
 
@@ -236,6 +269,7 @@ public class StructType
         VARIANT(2, PRequirement.DEFAULT, "variant", StructVariant.provider(), new PDefaultValueProvider<>(kDefaultVariant)),
         NAME(3, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         FIELDS(4, PRequirement.DEFAULT, "fields", PList.provider(ThriftField.provider()), null),
+        ANNOTATIONS(5, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -300,6 +334,7 @@ public class StructType
                 case 2: return _Field.VARIANT;
                 case 3: return _Field.NAME;
                 case 4: return _Field.FIELDS;
+                case 5: return _Field.ANNOTATIONS;
                 default: return null;
             }
         }
@@ -310,6 +345,7 @@ public class StructType
                 case "variant": return _Field.VARIANT;
                 case "name": return _Field.NAME;
                 case "fields": return _Field.FIELDS;
+                case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -384,11 +420,13 @@ public class StructType
         private StructVariant mVariant;
         private String mName;
         private List<ThriftField> mFields;
+        private Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(4);
+            optionals = new BitSet(5);
             mFields = new LinkedList<>();
+            mAnnotations = new LinkedHashMap<>();
         }
 
         public _Builder(StructType base) {
@@ -409,6 +447,10 @@ public class StructType
             if (base.numFields() > 0) {
                 optionals.set(3);
                 mFields.addAll(base.mFields);
+            }
+            if (base.numAnnotations() > 0) {
+                optionals.set(4);
+                mAnnotations.putAll(base.mAnnotations);
             }
         }
 
@@ -461,6 +503,23 @@ public class StructType
             mFields.clear();
             return this;
         }
+        public _Builder setAnnotations(Map<String,String> value) {
+            optionals.set(4);
+            mAnnotations.clear();
+            mAnnotations.putAll(value);
+            return this;
+        }
+        public _Builder putInAnnotations(String key, String value) {
+            optionals.set(4);
+            mAnnotations.put(key, value);
+            return this;
+        }
+
+        public _Builder clearAnnotations() {
+            optionals.set(4, false);
+            mAnnotations.clear();
+            return this;
+        }
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
@@ -469,6 +528,7 @@ public class StructType
                 case 2: setVariant((StructVariant) value); break;
                 case 3: setName((String) value); break;
                 case 4: setFields((List<ThriftField>) value); break;
+                case 5: setAnnotations((Map<String,String>) value); break;
             }
             return this;
         }
@@ -489,6 +549,7 @@ public class StructType
                 case 2: clearVariant(); break;
                 case 3: clearName(); break;
                 case 4: clearFields(); break;
+                case 5: clearAnnotations(); break;
             }
             return this;
         }

@@ -94,8 +94,8 @@ public enum Requirement implements PEnumValue<Requirement> {
     private static class _Factory
             extends PEnumBuilderFactory<Requirement> {
         @Override
-        public _Builder builder() {
-            return new _Builder();
+        public Requirement._Builder builder() {
+            return new Requirement._Builder();
         }
     }
 

@@ -7,14 +7,19 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
+import net.morimekta.providence.util.PTypeUtils;
 
 import java.io.Serializable;
 import java.util.BitSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /** <name> (= <value>) */
@@ -28,6 +33,7 @@ public class EnumValue
     private final String mComment;
     private final String mName;
     private final int mValue;
+    private final Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -35,14 +41,17 @@ public class EnumValue
         mComment = builder.mComment;
         mName = builder.mName;
         mValue = builder.mValue;
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
     }
 
     public EnumValue(String pComment,
                      String pName,
-                     int pValue) {
+                     int pValue,
+                     Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
         mValue = pValue;
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -69,12 +78,21 @@ public class EnumValue
         return mValue;
     }
 
+    public int numAnnotations() {
+        return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public Map<String,String> getAnnotations() {
+        return mAnnotations;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
             case 1: return hasComment();
             case 2: return hasName();
             case 3: return true;
+            case 4: return numAnnotations() > 0;
             default: return false;
         }
     }
@@ -85,6 +103,7 @@ public class EnumValue
             case 1: return hasComment() ? 1 : 0;
             case 2: return hasName() ? 1 : 0;
             case 3: return 1;
+            case 4: return numAnnotations();
             default: return 0;
         }
     }
@@ -95,6 +114,7 @@ public class EnumValue
             case 1: return getComment();
             case 2: return getName();
             case 3: return getValue();
+            case 4: return getAnnotations();
             default: return null;
         }
     }
@@ -115,7 +135,8 @@ public class EnumValue
         EnumValue other = (EnumValue) o;
         return Objects.equals(mComment, other.mComment) &&
                Objects.equals(mName, other.mName) &&
-               Objects.equals(mValue, other.mValue);
+               Objects.equals(mValue, other.mValue) &&
+               PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -125,7 +146,8 @@ public class EnumValue
                     EnumValue.class,
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
-                    _Field.VALUE, mValue);
+                    _Field.VALUE, mValue,
+                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -158,6 +180,12 @@ public class EnumValue
             out.append("value:");
             out.append(Integer.toString(mValue));
         }
+        if (numAnnotations() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("annotations:");
+            out.append(PTypeUtils.toString(mAnnotations));
+        }
         out.append('}');
         return out.toString();
     }
@@ -183,6 +211,13 @@ public class EnumValue
         c = Integer.compare(mValue, other.mValue);
         if (c != 0) return c;
 
+        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        if (c != 0) return c;
+        if (mAnnotations != null) {
+            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
         return 0;
     }
 
@@ -190,6 +225,7 @@ public class EnumValue
         COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
         NAME(2, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         VALUE(3, PRequirement.DEFAULT, "value", PPrimitive.I32.provider(), null),
+        ANNOTATIONS(4, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -253,6 +289,7 @@ public class EnumValue
                 case 1: return _Field.COMMENT;
                 case 2: return _Field.NAME;
                 case 3: return _Field.VALUE;
+                case 4: return _Field.ANNOTATIONS;
                 default: return null;
             }
         }
@@ -262,6 +299,7 @@ public class EnumValue
                 case "comment": return _Field.COMMENT;
                 case "name": return _Field.NAME;
                 case "value": return _Field.VALUE;
+                case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -281,7 +319,7 @@ public class EnumValue
     private static class _Descriptor
             extends PStructDescriptor<EnumValue,_Field> {
         public _Descriptor() {
-            super(null, "model", "EnumValue", new _Factory(), true, false);
+            super(null, "model", "EnumValue", new _Factory(), false, false);
         }
 
         @Override
@@ -335,11 +373,13 @@ public class EnumValue
         private String mComment;
         private String mName;
         private int mValue;
+        private Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(3);
+            optionals = new BitSet(4);
             mValue = kDefaultValue;
+            mAnnotations = new LinkedHashMap<>();
         }
 
         public _Builder(EnumValue base) {
@@ -355,6 +395,10 @@ public class EnumValue
             }
             optionals.set(2);
             mValue = base.mValue;
+            if (base.numAnnotations() > 0) {
+                optionals.set(3);
+                mAnnotations.putAll(base.mAnnotations);
+            }
         }
 
         public _Builder setComment(String value) {
@@ -387,6 +431,23 @@ public class EnumValue
             mValue = kDefaultValue;
             return this;
         }
+        public _Builder setAnnotations(Map<String,String> value) {
+            optionals.set(3);
+            mAnnotations.clear();
+            mAnnotations.putAll(value);
+            return this;
+        }
+        public _Builder putInAnnotations(String key, String value) {
+            optionals.set(3);
+            mAnnotations.put(key, value);
+            return this;
+        }
+
+        public _Builder clearAnnotations() {
+            optionals.set(3, false);
+            mAnnotations.clear();
+            return this;
+        }
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
@@ -394,6 +455,7 @@ public class EnumValue
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
                 case 3: setValue((int) value); break;
+                case 4: setAnnotations((Map<String,String>) value); break;
             }
             return this;
         }
@@ -412,6 +474,7 @@ public class EnumValue
                 case 1: clearComment(); break;
                 case 2: clearName(); break;
                 case 3: clearValue(); break;
+                case 4: clearAnnotations(); break;
             }
             return this;
         }

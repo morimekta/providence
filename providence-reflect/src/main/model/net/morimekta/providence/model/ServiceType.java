@@ -8,6 +8,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -19,8 +20,10 @@ import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -37,6 +40,7 @@ public class ServiceType
     private final String mName;
     private final String mExtend;
     private final List<ServiceMethod> mMethods;
+    private final Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -45,16 +49,19 @@ public class ServiceType
         mName = builder.mName;
         mExtend = builder.mExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(builder.mMethods));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
     }
 
     public ServiceType(String pComment,
                        String pName,
                        String pExtend,
-                       List<ServiceMethod> pMethods) {
+                       List<ServiceMethod> pMethods,
+                       Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
         mExtend = pExtend;
         mMethods = Collections.unmodifiableList(new LinkedList<>(pMethods));
+        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -89,6 +96,14 @@ public class ServiceType
         return mMethods;
     }
 
+    public int numAnnotations() {
+        return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public Map<String,String> getAnnotations() {
+        return mAnnotations;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -96,6 +111,7 @@ public class ServiceType
             case 2: return hasName();
             case 3: return hasExtend();
             case 4: return numMethods() > 0;
+            case 5: return numAnnotations() > 0;
             default: return false;
         }
     }
@@ -107,6 +123,7 @@ public class ServiceType
             case 2: return hasName() ? 1 : 0;
             case 3: return hasExtend() ? 1 : 0;
             case 4: return numMethods();
+            case 5: return numAnnotations();
             default: return 0;
         }
     }
@@ -118,6 +135,7 @@ public class ServiceType
             case 2: return getName();
             case 3: return getExtend();
             case 4: return getMethods();
+            case 5: return getAnnotations();
             default: return null;
         }
     }
@@ -139,7 +157,8 @@ public class ServiceType
         return Objects.equals(mComment, other.mComment) &&
                Objects.equals(mName, other.mName) &&
                Objects.equals(mExtend, other.mExtend) &&
-               PTypeUtils.equals(mMethods, other.mMethods);
+               PTypeUtils.equals(mMethods, other.mMethods) &&
+               PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -150,7 +169,8 @@ public class ServiceType
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.EXTEND, mExtend,
-                    _Field.METHODS, PTypeUtils.hashCode(mMethods));
+                    _Field.METHODS, PTypeUtils.hashCode(mMethods),
+                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -189,6 +209,12 @@ public class ServiceType
             out.append("methods:");
             out.append(PTypeUtils.toString(mMethods));
         }
+        if (numAnnotations() > 0) {
+            if (!first) out.append(',');
+            first = false;
+            out.append("annotations:");
+            out.append(PTypeUtils.toString(mAnnotations));
+        }
         out.append('}');
         return out.toString();
     }
@@ -225,6 +251,13 @@ public class ServiceType
             if (c != 0) return c;
         }
 
+        c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
+        if (c != 0) return c;
+        if (mAnnotations != null) {
+            c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
         return 0;
     }
 
@@ -233,6 +266,7 @@ public class ServiceType
         NAME(2, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
         EXTEND(3, PRequirement.DEFAULT, "extend", PPrimitive.STRING.provider(), null),
         METHODS(4, PRequirement.DEFAULT, "methods", PList.provider(ServiceMethod.provider()), null),
+        ANNOTATIONS(5, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -297,6 +331,7 @@ public class ServiceType
                 case 2: return _Field.NAME;
                 case 3: return _Field.EXTEND;
                 case 4: return _Field.METHODS;
+                case 5: return _Field.ANNOTATIONS;
                 default: return null;
             }
         }
@@ -307,6 +342,7 @@ public class ServiceType
                 case "name": return _Field.NAME;
                 case "extend": return _Field.EXTEND;
                 case "methods": return _Field.METHODS;
+                case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
         }
@@ -381,11 +417,13 @@ public class ServiceType
         private String mName;
         private String mExtend;
         private List<ServiceMethod> mMethods;
+        private Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(4);
+            optionals = new BitSet(5);
             mMethods = new LinkedList<>();
+            mAnnotations = new LinkedHashMap<>();
         }
 
         public _Builder(ServiceType base) {
@@ -406,6 +444,10 @@ public class ServiceType
             if (base.numMethods() > 0) {
                 optionals.set(3);
                 mMethods.addAll(base.mMethods);
+            }
+            if (base.numAnnotations() > 0) {
+                optionals.set(4);
+                mAnnotations.putAll(base.mAnnotations);
             }
         }
 
@@ -458,6 +500,23 @@ public class ServiceType
             mMethods.clear();
             return this;
         }
+        public _Builder setAnnotations(Map<String,String> value) {
+            optionals.set(4);
+            mAnnotations.clear();
+            mAnnotations.putAll(value);
+            return this;
+        }
+        public _Builder putInAnnotations(String key, String value) {
+            optionals.set(4);
+            mAnnotations.put(key, value);
+            return this;
+        }
+
+        public _Builder clearAnnotations() {
+            optionals.set(4, false);
+            mAnnotations.clear();
+            return this;
+        }
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
@@ -466,6 +525,7 @@ public class ServiceType
                 case 2: setName((String) value); break;
                 case 3: setExtend((String) value); break;
                 case 4: setMethods((List<ServiceMethod>) value); break;
+                case 5: setAnnotations((Map<String,String>) value); break;
             }
             return this;
         }
@@ -486,6 +546,7 @@ public class ServiceType
                 case 2: clearName(); break;
                 case 3: clearExtend(); break;
                 case 4: clearMethods(); break;
+                case 5: clearAnnotations(); break;
             }
             return this;
         }
