@@ -35,6 +35,7 @@ public class Model_Constants {
         builder.add("required");
         builder.add("i16");
         builder.add("map");
+        builder.add("include");
         builder.add("set");
         builder.add("void");
         builder.add("byte");
@@ -51,6 +52,7 @@ public class Model_Constants {
         builder.add("extends");
         builder.add("service");
         builder.add("binary");
+        builder.add("namespace");
         kThriftKeywords = Collections.unmodifiableSet(builder);
     }
 

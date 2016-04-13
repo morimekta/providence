@@ -156,6 +156,8 @@ struct ThriftDocument {
  * Set of words used in thrift IDL as specific meanings.
  */
 const set<string> kThriftKeywords = [
+  // File header.
+  "include", "namespace",
   // Primitive types.
   "bool", "byte", "i8", "i16", "i32", "i64", "double", "string", "binary",
   // Containers
