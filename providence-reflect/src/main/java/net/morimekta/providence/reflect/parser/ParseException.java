@@ -53,10 +53,16 @@ public class ParseException extends Exception {
         this.token = token;
     }
 
-    public ParseException(Tokenizer tokenizer, Token token, String message, Object... params) throws IOException {
+    public ParseException(Tokenizer tokenizer, Token token, String message, Object... params) {
         super(String.format(message, params));
 
-        this.line = tokenizer.getLine(token.getLineNo());
+        String line = null;
+        try {
+            line = tokenizer.getLine(token.getLineNo());
+        }  catch (IOException e) {
+            // Ignore.
+        }
+        this.line = line;
         this.token = token;
     }
 

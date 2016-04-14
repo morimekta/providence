@@ -400,6 +400,7 @@ public class Tokenizer extends InputStream {
                 }
             }
         }
+        Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
 
         // A number must be terminated correctly: End of stream, space, newline
         // or a symbol that may be after a value: ':', ',' ';' '}' ')'.
@@ -418,9 +419,9 @@ public class Tokenizer extends InputStream {
             if (Token.kSymbols.indexOf(lastByte) >= 0) {
                 unread();
             }
-            return new Token(buffer, startOffset, len, lineNo, startLinePos);
+            return token;
         } else {
-            throw new ParseException("Wrongly terminated number: %c.", (char) lastByte);
+            throw new ParseException(this, token, "Wrongly terminated number: %c.", (char) lastByte);
         }
     }
 
@@ -433,7 +434,8 @@ public class Tokenizer extends InputStream {
         while ((r = read()) != -1) {
             if (r == '.') {
                 if (dot) {
-                    throw new ParseException("");
+                    Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
+                    throw new ParseException(this, token, "Identifier with double '..' at line %d pos %d", lineNo, startLinePos);
                 }
                 dot = true;
                 ++len;
@@ -452,6 +454,11 @@ public class Tokenizer extends InputStream {
             unread();
             break;
         }
+        Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
+
+        if (dot) {
+            throw new ParseException(this, token, "Identifier trailing with '.' at line %d pos &d", lineNo, startLinePos);
+        }
 
         if (r == -1 ||
             r == ' ' ||
@@ -460,14 +467,10 @@ public class Tokenizer extends InputStream {
             r == '\r' ||
             r == Token.kJavaCommentStart ||
             Token.kSymbols.indexOf(r) >= 0) {
-            return new Token(buffer, startOffset, len, lineNo, startLinePos);
+            return token;
         } else {
-            throw new ParseException("Wrongly terminated identifier: %c.", (char) r);
+            throw new ParseException(this, token, "Wrongly terminated identifier: %c.", (char) r);
         }
-    }
-
-    public void unshift(Token token) {
-        nextToken = token;
     }
 
     public String getLine(int line) throws IOException {
