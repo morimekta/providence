@@ -73,12 +73,13 @@ public class DocumentConverter {
                 int nextValue = PEnumDescriptor.DEFAULT_FIRST_VALUE;
                 CEnumDescriptor type = new CEnumDescriptor(enumType.getComment(),
                                                            document.getPackage(),
-                                                           enumType.getName());
+                                                           enumType.getName(),
+                                                           enumType.getAnnotations());
                 List<CEnum> values = new LinkedList<>();
                 for (EnumValue value : enumType.getValues()) {
                     int v = value.hasValue() ? value.getValue() : nextValue;
                     nextValue = v + 1;
-                    values.add(new CEnum(value.getComment(), value.getValue(), value.getName(), type));
+                    values.add(new CEnum(value.getComment(), value.getValue(), value.getName(), type, value.getAnnotations()));
                 }
                 type.setValues(values);
                 declaredTypes.add(type);
@@ -97,19 +98,22 @@ public class DocumentConverter {
                         type = new CStructDescriptor(structType.getComment(),
                                                      document.getPackage(),
                                                      structType.getName(),
-                                                     fields);
+                                                     fields,
+                                                     structType.getAnnotations());
                         break;
                     case UNION:
                         type = new CUnionDescriptor(structType.getComment(),
                                                     document.getPackage(),
                                                     structType.getName(),
-                                                    fields);
+                                                    fields,
+                                                    structType.getAnnotations());
                         break;
                     case EXCEPTION:
                         type = new CExceptionDescriptor(structType.getComment(),
                                                         document.getPackage(),
                                                         structType.getName(),
-                                                        fields);
+                                                        fields,
+                                                        structType.getAnnotations());
                         break;
                     default:
                         throw new IllegalArgumentException("Unhandled struct type " + structType.getVariant());
@@ -169,7 +173,8 @@ public class DocumentConverter {
                                                              .getName()),
                                    field.getName(),
                                    type,
-                                   defaultValue);
+                                   defaultValue,
+                                   field.getAnnotations());
         return made;
     }
 }

@@ -23,41 +23,76 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Contained enum value. This emulates enum values to used in thrift
  * reflection.
  */
-public class CEnum implements PEnumValue<CEnum> {
-    private final int                    mValue;
-    private final String                 mName;
-    private final PEnumDescriptor<CEnum> mType;
-    private final String                 mComment;
+public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
+    private final int                    value;
+    private final String                 name;
+    private final PEnumDescriptor<CEnum> type;
+    private final String                 comment;
+    private final Map<String, String>    annotations;
 
-    public CEnum(String comment, int value, String name, PEnumDescriptor<CEnum> type) {
-        mComment = comment;
-        mValue = value;
-        mName = name;
-        mType = type;
+    public CEnum(String comment,
+                 int value,
+                 String name,
+                 PEnumDescriptor<CEnum> type,
+                 Map<String, String> annotations) {
+        this.comment = comment;
+        this.value = value;
+        this.name = name;
+        this.type = type;
+        this.annotations = annotations;
     }
 
     @Override
     public String getComment() {
-        return mComment;
+        return comment;
     }
 
     @Override
     public int getValue() {
-        return mValue;
+        return value;
     }
 
     @Override
     public String getName() {
-        return mName;
+        return name;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
+        }
+        return null;
     }
 
     @Override
     public PEnumDescriptor<CEnum> descriptor() {
-        return mType;
+        return type;
     }
 
     @Override
@@ -68,20 +103,20 @@ public class CEnum implements PEnumValue<CEnum> {
         CEnum other = (CEnum) o;
         return other.descriptor()
                     .getQualifiedName(null)
-                    .equals(mType.getQualifiedName(null)) &&
+                    .equals(type.getQualifiedName(null)) &&
                other.getName()
-                    .equals(mName) &&
-               other.getValue() == mValue;
+                    .equals(name) &&
+               other.getValue() == value;
     }
 
     @Override
     public int compareTo(CEnum other) {
-        return Integer.compare(mValue, other.mValue);
+        return Integer.compare(value, other.value);
     }
 
     @Override
     public String toString() {
-        return mName.toUpperCase();
+        return name.toUpperCase();
     }
 
     public static class Builder extends PEnumBuilder<CEnum> {

@@ -21,6 +21,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilderFactory;
 
+import java.util.Set;
+
 /**
  * Descriptor for a declared type. A declared type is a value type that is
  * derived from a thrift definition.

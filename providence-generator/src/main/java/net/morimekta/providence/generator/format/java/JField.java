@@ -23,6 +23,7 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.generator.GeneratorException;
 
 import static net.morimekta.util.Strings.c_case;
 import static net.morimekta.util.Strings.camelCase;
@@ -137,11 +138,11 @@ public class JField {
                ((PPrimitive) field.getDescriptor()).getDefaultValue() != null;
     }
 
-    public String valueType() {
+    public String valueType() throws GeneratorException {
         return helper.getValueType(field.getDescriptor());
     }
 
-    public String fieldType() {
+    public String fieldType() throws GeneratorException {
         if (alwaysPresent()) {
             return valueType();
         }

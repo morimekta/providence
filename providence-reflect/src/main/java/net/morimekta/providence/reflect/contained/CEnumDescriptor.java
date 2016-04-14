@@ -23,20 +23,25 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Contained enum descriptor type.
  * <p>
  * Also see {@link CEnum}.
  */
-public class CEnumDescriptor extends PEnumDescriptor<CEnum> {
+public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotatedDescriptor {
     private CEnum[] values;
+    private Map<String, String> annotations;
 
-    public CEnumDescriptor(String comment, String packageName, String name) {
+    public CEnumDescriptor(String comment, String packageName, String name, Map<String, String> annotations) {
         super(comment, packageName, name, new _Factory());
-        values = new CEnum[0];
+        this.values = new CEnum[0];
+        this.annotations = annotations;
         ((_Factory) factory()).setType(this);
     }
 
@@ -70,6 +75,31 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> {
                      .equalsIgnoreCase(name)) {
                 return value;
             }
+        }
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
         }
         return null;
     }

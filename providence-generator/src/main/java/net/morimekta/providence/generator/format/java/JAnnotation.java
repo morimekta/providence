@@ -22,9 +22,7 @@ package net.morimekta.providence.generator.format.java;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-
-import java.util.regex.Pattern;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 
 /**
  *
@@ -32,33 +30,32 @@ import java.util.regex.Pattern;
 public class JAnnotation {
     public static final String DEPRECATED = "@Deprecated";
 
-    private static final Pattern DEPRECATED_RE = Pattern.compile("[@][Dd]eprecated\\b", Pattern.MULTILINE);
-    private static final Pattern COMPACT_RE    = Pattern.compile("[@][Cc]ompact\\b", Pattern.MULTILINE);
-
     public static boolean isDeprecated(PField<?> field) {
-        return field.getComment() != null && DEPRECATED_RE.matcher(field.getComment())
-                                                          .find();
+        if (field instanceof CAnnotatedDescriptor) {
+            return isDeprecated((CAnnotatedDescriptor) field);
+        }
+        return false;
     }
 
     public static boolean isDeprecated(JField field) {
-        return field.hasComment() && DEPRECATED_RE.matcher(field.comment())
-                                                  .find();
+        return isDeprecated(field.getPField());
     }
 
     public static boolean isDeprecated(PDeclaredDescriptor<?> type) {
-        return type.getComment() != null && DEPRECATED_RE.matcher(type.getComment())
-                                                         .find();
+        if (type instanceof CAnnotatedDescriptor) {
+            return isDeprecated((CAnnotatedDescriptor) type);
+        }
+        return false;
     }
 
     public static boolean isDeprecated(PEnumValue<?> value) {
-        return value.getComment() != null && DEPRECATED_RE.matcher(value.getComment())
-                                                          .find();
+        if (value instanceof CAnnotatedDescriptor) {
+            return isDeprecated((CAnnotatedDescriptor) value);
+        }
+        return false;
     }
 
-    public static boolean isCompact(PDeclaredDescriptor<?> type) {
-        return type instanceof PStructDescriptor &&
-               type.getComment() != null &&
-               COMPACT_RE.matcher(type.getComment())
-                         .find();
+    public static boolean isDeprecated(CAnnotatedDescriptor value) {
+        return value.hasAnnotation("deprecated");
     }
 }

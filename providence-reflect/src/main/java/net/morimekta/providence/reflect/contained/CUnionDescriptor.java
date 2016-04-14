@@ -24,27 +24,35 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> {
-    private final CField[]             mFields;
-    private final Map<Integer, CField> mFieldIdMap;
-    private final Map<String, CField>  mFieldNameMap;
+public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implements CAnnotatedDescriptor {
+    private final CField[]             fields;
+    private final Map<Integer, CField> fieldIdMap;
+    private final Map<String, CField>  fieldNameMap;
+    private final Map<String, String>  annotations;
 
-    public CUnionDescriptor(String comment, String packageName, String name, List<CField> fields) {
+    public CUnionDescriptor(String comment,
+                            String packageName,
+                            String name,
+                            List<CField> fields,
+                            Map<String, String> annotations) {
         super(comment, packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
         ((_Factory) factory()).setType(this);
 
-        mFields = fields.toArray(new CField[fields.size()]);
+        this.fields = fields.toArray(new CField[fields.size()]);
+        this.annotations = annotations;
 
         Map<Integer, CField> fieldIdMap = new LinkedHashMap<>();
         Map<String, CField> fieldNameMap = new LinkedHashMap<>();
@@ -52,23 +60,23 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> {
             fieldIdMap.put(field.getKey(), field);
             fieldNameMap.put(field.getName(), field);
         }
-        mFieldIdMap = fieldIdMap;
-        mFieldNameMap = fieldNameMap;
+        this.fieldIdMap = fieldIdMap;
+        this.fieldNameMap = fieldNameMap;
     }
 
     @Override
     public CField[] getFields() {
-        return mFields;
+        return fields;
     }
 
     @Override
     public CField getField(String name) {
-        return mFieldNameMap.get(name);
+        return fieldNameMap.get(name);
     }
 
     @Override
     public CField getField(int key) {
-        return mFieldIdMap.get(key);
+        return fieldIdMap.get(key);
     }
 
     @Override
@@ -85,6 +93,31 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> {
             }
         }
         return true;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
+        }
+        return null;
     }
 
     private static class _Factory extends PMessageBuilderFactory<CUnion> {

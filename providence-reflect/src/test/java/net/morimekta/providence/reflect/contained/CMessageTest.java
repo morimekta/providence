@@ -52,23 +52,24 @@ public class CMessageTest {
         mRegistry = new TypeRegistry();
 
         List<CField> fields = new LinkedList<>();
-        fields.add(new CField<>(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), null));
-        fields.add(new CField<>(null, 2, PRequirement.OPTIONAL, "field_8", PPrimitive.BYTE.provider(), null));
-        fields.add(new CField<>(null, 65000, PRequirement.OPTIONAL, "field_16", PPrimitive.I16.provider(), null));
-        fields.add(new CField<>(null, 4, PRequirement.OPTIONAL, "field_32", PPrimitive.I32.provider(), null));
-        fields.add(new CField<>(null, 5, PRequirement.OPTIONAL, "field_64", PPrimitive.I64.provider(), null));
-        fields.add(new CField<>(null, 6, PRequirement.OPTIONAL, "field_dbl", PPrimitive.DOUBLE.provider(), null));
-        fields.add(new CField<>(null, 9998, PRequirement.OPTIONAL, "field_str", PPrimitive.STRING.provider(), null));
-        fields.add(new CField<>(null, 9999, PRequirement.OPTIONAL, "field_bin", PPrimitive.BINARY.provider(), null));
+        fields.add(new CField<>(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), null, null));
+        fields.add(new CField<>(null, 2, PRequirement.OPTIONAL, "field_8", PPrimitive.BYTE.provider(), null, null));
+        fields.add(new CField<>(null, 65000, PRequirement.OPTIONAL, "field_16", PPrimitive.I16.provider(), null, null));
+        fields.add(new CField<>(null, 4, PRequirement.OPTIONAL, "field_32", PPrimitive.I32.provider(), null, null));
+        fields.add(new CField<>(null, 5, PRequirement.OPTIONAL, "field_64", PPrimitive.I64.provider(), null, null));
+        fields.add(new CField<>(null, 6, PRequirement.OPTIONAL, "field_dbl", PPrimitive.DOUBLE.provider(), null, null));
+        fields.add(new CField<>(null, 9998, PRequirement.OPTIONAL, "field_str", PPrimitive.STRING.provider(), null, null));
+        fields.add(new CField<>(null, 9999, PRequirement.OPTIONAL, "field_bin", PPrimitive.BINARY.provider(), null, null));
         fields.add(new CField<>(null,
                                 32000,
                                 PRequirement.OPTIONAL,
                                 "field_a",
                                 mRegistry.getProvider("TypeA", "test"),
+                                null,
                                 null));
 
-        mStructType = new CStructDescriptor(null, "test", "TypeA", fields);
-        mUnionType = new CUnionDescriptor(null, "test", "TypeA", fields);
+        mStructType = new CStructDescriptor(null, "test", "TypeA", fields, null);
+        mUnionType = new CUnionDescriptor(null, "test", "TypeA", fields, null);
     }
 
     @Test

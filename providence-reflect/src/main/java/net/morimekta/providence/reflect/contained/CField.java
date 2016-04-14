@@ -27,73 +27,104 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.util.PTypeUtils;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class CField<T> implements PField<T> {
-    private final String                 mComment;
-    private final int                    mKey;
-    private final PRequirement           mRequirement;
-    private final PDescriptorProvider<T> mTypeProvider;
-    private final String                 mName;
-    private final PValueProvider<T>      mDefaultValue;
+public class CField<T> implements PField<T>, CAnnotatedDescriptor {
+    private final String                 comment;
+    private final int                    key;
+    private final PRequirement           requirement;
+    private final PDescriptorProvider<T> typeProvider;
+    private final String                 name;
+    private final PValueProvider<T>      defaultValue;
+    private final Map<String, String>    annotations;
 
     public CField(String comment,
                   int key,
                   PRequirement requirement,
                   String name,
                   PDescriptorProvider<T> typeProvider,
-                  PValueProvider<T> defaultValue) {
-        mComment = comment;
-        mKey = key;
-        mRequirement = requirement;
-        mTypeProvider = typeProvider;
-        mName = name;
-        mDefaultValue = defaultValue;
+                  PValueProvider<T> defaultValue,
+                  Map<String, String> annotations) {
+        this.comment = comment;
+        this.key = key;
+        this.requirement = requirement;
+        this.typeProvider = typeProvider;
+        this.name = name;
+        this.defaultValue = defaultValue;
+        this.annotations = annotations;
     }
 
     @Override
     public String getComment() {
-        return mComment;
+        return comment;
     }
 
     @Override
     public int getKey() {
-        return mKey;
+        return key;
     }
 
     @Override
     public PRequirement getRequirement() {
-        return mRequirement;
+        return requirement;
     }
 
     @Override
     public PType getType() {
-        return mTypeProvider.descriptor()
-                            .getType();
+        return typeProvider.descriptor()
+                           .getType();
     }
 
     @Override
     public PDescriptor<T> getDescriptor() {
-        return mTypeProvider.descriptor();
+        return typeProvider.descriptor();
     }
 
     @Override
     public String getName() {
-        return mName;
+        return name;
     }
 
     @Override
     public boolean hasDefaultValue() {
-        return mDefaultValue != null;
+        return defaultValue != null;
     }
 
     @Override
     public T getDefaultValue() {
-        return hasDefaultValue() ? mDefaultValue.get() : null;
+        return hasDefaultValue() ? defaultValue.get() : null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
+        }
+        return null;
     }
 
     @Override
@@ -101,15 +132,15 @@ public class CField<T> implements PField<T> {
         StringBuilder builder = new StringBuilder();
         builder.append(PField.class.getSimpleName())
                .append('{')
-               .append(mKey)
+               .append(key)
                .append(": ");
-        if (mRequirement != PRequirement.DEFAULT) {
-            builder.append(mRequirement.label)
+        if (requirement != PRequirement.DEFAULT) {
+            builder.append(requirement.label)
                    .append(" ");
         }
         builder.append(getDescriptor().getQualifiedName(null))
                .append(" ")
-               .append(mName)
+               .append(name)
                .append("}");
 
         return builder.toString();
@@ -121,17 +152,17 @@ public class CField<T> implements PField<T> {
             return false;
         }
         CField<?> other = (CField<?>) o;
-        return mKey == other.mKey &&
-               mRequirement == other.mRequirement &&
+        return key == other.key &&
+               requirement == other.requirement &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
                PTypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
-               mName.equals(other.mName) &&
-               PTypeUtils.equals(mDefaultValue, other.mDefaultValue);
+               name.equals(other.name) &&
+               PTypeUtils.equals(defaultValue, other.defaultValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(CField.class, mKey, mRequirement, mName, getDefaultValue());
+        return Objects.hash(CField.class, key, requirement, name, getDefaultValue());
     }
 }

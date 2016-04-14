@@ -168,7 +168,7 @@ public class JHelper {
         }
     }
 
-    public String getValueType(PDescriptor type) {
+    public String getValueType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.TYPE.getSimpleName();
@@ -185,19 +185,23 @@ public class JHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return Binary.class.getSimpleName();
+                return Binary.class.getName();
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
                 return String.format("%s<%s,%s>",
-                                     Map.class.getSimpleName(),
+                                     Map.class.getName(),
                                      getFieldType(mType.keyDescriptor()),
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>", Set.class.getSimpleName(), getFieldType(sType.itemDescriptor()));
+                return String.format("%s<%s>",
+                                     Set.class.getName(),
+                                     getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>", List.class.getSimpleName(), getFieldType(lType.itemDescriptor()));
+                return String.format("%s<%s>",
+                                     List.class.getName(),
+                                     getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
                 return JUtils.getClassName((PDeclaredDescriptor<?>) type);

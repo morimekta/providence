@@ -53,56 +53,71 @@ public class CFieldTest {
                              PRequirement.DEFAULT,
                              "name",
                              PPrimitive.I32.provider(),
-                             new PDefaultValueProvider<>(4));
+                             new PDefaultValueProvider<>(4),
+                             null);
         fieldSame = new CField<>("comment",
                                  4,
                                  PRequirement.DEFAULT,
                                  "name",
                                  PPrimitive.I32.provider(),
-                                 new PDefaultValueProvider<>(4));
+                                 new PDefaultValueProvider<>(4),
+                                 null);
         fieldComment = new CField<>("tnemmoc",
                                     4,
                                     PRequirement.DEFAULT,
                                     "name",
                                     PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(4));
+                                    new PDefaultValueProvider<>(4),
+                                    null);
         fieldKey = new CField<>("comment",
                                 6,
                                 PRequirement.DEFAULT,
                                 "name",
                                 PPrimitive.I32.provider(),
-                                new PDefaultValueProvider<>(4));
+                                new PDefaultValueProvider<>(4),
+                                null);
         fieldRequired = new CField<>("comment",
                                      4,
                                      PRequirement.REQUIRED,
                                      "name",
                                      PPrimitive.I32.provider(),
-                                     new PDefaultValueProvider<>(4));
+                                     new PDefaultValueProvider<>(4),
+                                     null);
         fieldOptional = new CField<>("comment",
                                      4,
                                      PRequirement.OPTIONAL,
                                      "name",
                                      PPrimitive.I32.provider(),
-                                     new PDefaultValueProvider<>(4));
+                                     new PDefaultValueProvider<>(4),
+                                     null);
         fieldName = new CField<>("comment",
                                  4,
                                  PRequirement.DEFAULT,
                                  "eman",
                                  PPrimitive.I32.provider(),
-                                 new PDefaultValueProvider<>(4));
+                                 new PDefaultValueProvider<>(4),
+                                 null);
         fieldType = new CField<>("comment",
                                  4,
                                  PRequirement.DEFAULT,
                                  "name",
                                  PPrimitive.I64.provider(),
-                                 new PDefaultValueProvider<>(4L));
-        fieldNoDefault = new CField<>("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I64.provider(), null);
+                                 new PDefaultValueProvider<>(4L),
+                                 null);
+        fieldNoDefault = new CField<>("comment",
+                                      4,
+                                      PRequirement.DEFAULT,
+                                      "name",
+                                      PPrimitive.I64.provider(),
+                                      null,
+                                      null);
         fieldDefault = new CField<>("comment",
                                     4,
                                     PRequirement.DEFAULT,
                                     "name",
                                     PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(6));
+                                    new PDefaultValueProvider<>(6),
+                                    null);
     }
 
     @Test
@@ -171,7 +186,8 @@ public class CFieldTest {
                                     PRequirement.DEFAULT,
                                     "name",
                                     PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(4));
+                                    new PDefaultValueProvider<>(4),
+                                    null);
 
         assertEquals(fieldComment, field);
         assertEquals(fieldComment, fieldSame);

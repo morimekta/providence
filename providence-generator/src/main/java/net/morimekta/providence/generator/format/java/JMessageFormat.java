@@ -26,7 +26,6 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
-import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
@@ -39,6 +38,7 @@ import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -82,8 +82,8 @@ public class JMessageFormat {
         }
 
         if (options.jackson) {
-            writer.appendln("@JsonIgnoreProperties(ignoreUnknown = true)")
-                  .appendln("@JsonInclude(JsonInclude.Include.NON_EMPTY)");
+            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)")
+                  .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)");
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
@@ -91,14 +91,14 @@ public class JMessageFormat {
               .begin(DBL_INDENT);
         if (message.variant()
                    .equals(PMessageVariant.EXCEPTION)) {
-            writer.appendln("extends PException");
+            writer.appendln("extends " + PException.class.getName());
         }
-        writer.formatln("implements %s<%s>, Serializable, Comparable<%s>",
-                        message.isUnion() ? "PUnion" : "PMessage",
+        writer.formatln("implements %s<%s>, java.io.Serializable, Comparable<%s>",
+                        message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
                         message.instanceType(),
                         message.instanceType());
         if (options.android) {
-            writer.format(", Parcelable");
+            writer.format(", android.os.Parcelable");
         }
         writer.append(" {")
               .end()  // double indent.
@@ -134,7 +134,7 @@ public class JMessageFormat {
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) {
-        writer.appendln("public enum _Field implements PField {")
+        writer.formatln("public enum _Field implements %s {", PField.class.getName())
               .begin();
 
         for (JField field : message.fields()) {
@@ -143,12 +143,15 @@ public class JMessageFormat {
             String defValue = "null";
             if (field.getPField()
                      .hasDefaultValue()) {
-                defValue = String.format("new PDefaultValueProvider<>(%s)", field.kDefault());
+                defValue = String.format("new %s<>(%s)",
+                                         PDefaultValueProvider.class.getName(),
+                                         field.kDefault());
             }
 
-            writer.formatln("%s(%d, PRequirement.%s, \"%s\", %s, %s),",
+            writer.formatln("%s(%d, %s.%s, \"%s\", %s, %s),",
                             field.fieldEnum(),
                             field.id(),
+                            PRequirement.class.getName(),
                             field.getPField()
                                  .getRequirement()
                                  .name(),
@@ -160,13 +163,15 @@ public class JMessageFormat {
               .newline();
 
         writer.appendln("private final int mKey;")
-              .appendln("private final PRequirement mRequired;")
+              .formatln("private final %s mRequired;", PRequirement.class.getName())
               .appendln("private final String mName;")
-              .appendln("private final PDescriptorProvider<?> mTypeProvider;")
-              .appendln("private final PValueProvider<?> mDefaultValue;")
+              .formatln("private final %s<?> mTypeProvider;", PDescriptorProvider.class.getName())
+              .formatln("private final %s<?> mDefaultValue;", PValueProvider.class.getName())
               .newline()
-              .appendln(
-                      "_Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {")
+              .formatln("_Field(int key, %s required, String name, %s<?> typeProvider, %s<?> defaultValue) {",
+                        PRequirement.class.getName(),
+                        PDescriptorProvider.class.getName(),
+                        PValueProvider.class.getName())
               .begin()
               .appendln("mKey = key;")
               .appendln("mRequired = required;")
@@ -183,13 +188,16 @@ public class JMessageFormat {
               .appendln("public int getKey() { return mKey; }")
               .newline();
         writer.appendln("@Override")
-              .appendln("public PRequirement getRequirement() { return mRequired; }")
+              .formatln("public %s getRequirement() { return mRequired; }",
+                        PRequirement.class.getName())
               .newline();
         writer.appendln("@Override")
-              .appendln("public PType getType() { return getDescriptor().getType(); }")
+              .formatln("public %s getType() { return getDescriptor().getType(); }",
+                        PType.class.getName())
               .newline();
         writer.appendln("@Override")
-              .appendln("public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }")
+              .formatln("public %s<?> getDescriptor() { return mTypeProvider.descriptor(); }",
+                        PDescriptor.class.getName())
               .newline();
         writer.appendln("@Override")
               .appendln("public String getName() { return mName; }")
@@ -256,21 +264,25 @@ public class JMessageFormat {
 
     private void appendDescriptor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         String typeClass;
+        String providerClass;
         switch (message.variant()) {
             case STRUCT:
-                typeClass = PStructDescriptor.class.getSimpleName();
+                typeClass = PStructDescriptor.class.getName();
+                providerClass = PStructDescriptorProvider.class.getName();
                 break;
             case UNION:
-                typeClass = PUnionDescriptor.class.getSimpleName();
+                typeClass = PUnionDescriptor.class.getName();
+                providerClass = PUnionDescriptorProvider.class.getName();
                 break;
             case EXCEPTION:
-                typeClass = PExceptionDescriptor.class.getSimpleName();
+                typeClass = PExceptionDescriptor.class.getName();
+                providerClass = PExceptionDescriptorProvider.class.getName();
                 break;
             default:
                 throw new GeneratorException("Unable to determine type class for " + message.variant());
         }
 
-        writer.formatln("public static %sProvider<%s,_Field> provider() {", typeClass, message.instanceType())
+        writer.formatln("public static %s<%s,_Field> provider() {", providerClass, message.instanceType())
               .begin()
               .formatln("return new _Provider();")
               .end()
@@ -346,8 +358,8 @@ public class JMessageFormat {
               .appendln('}')
               .newline();
 
-        writer.formatln("private final static class _Provider extends %sProvider<%s,_Field> {",
-                        typeClass,
+        writer.formatln("private final static class _Provider extends %s<%s,_Field> {",
+                        providerClass,
                         message.instanceType())
               .begin()
               .appendln("@Override")
@@ -362,7 +374,9 @@ public class JMessageFormat {
 
         writer.appendln("private final static class _Factory")
               .begin()
-              .formatln("    extends PMessageBuilderFactory<%s> {", message.instanceType())
+              .formatln("    extends %s<%s> {",
+                        PMessageBuilderFactory.class.getName(),
+                        message.instanceType())
               .appendln("@Override")
               .appendln("public _Builder builder() {")
               .begin()
@@ -427,7 +441,8 @@ public class JMessageFormat {
             if (options.jackson) {
                 writer.formatln("@JsonProperty(\"%s\")", field.name());
                 if (field.binary()) {
-                    writer.appendln("@JsonSerialize(using = BinaryJsonSerializer.class) ");
+                    writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonSerialize(" +
+                                    "using = net.morimekta.providence.jackson.BinaryJsonSerializer.class) ");
                 }
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
@@ -452,7 +467,7 @@ public class JMessageFormat {
         }
     }
 
-    private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage message) {
+    private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         for (JField field : message.fields()) {
             writer.formatln("private final %s %s;", field.fieldType(), field.member());
         }
@@ -550,7 +565,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendCreateConstructor(IndentedPrintWriter writer, JMessage message) {
+    private void appendCreateConstructor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         if (message.isException()) {
             // TODO(steineldar): Handle constructing exception!
         } else if (message.isUnion()) {
@@ -637,7 +652,6 @@ public class JMessageFormat {
         header.include(PValueProvider.class.getName());
         header.include(PDescriptor.class.getName());
         header.include(Objects.class.getName());
-        header.include(Comparable.class.getName());
         if (!message.isUnion()) {
             header.include(BitSet.class.getName());
         }

@@ -22,9 +22,9 @@ package net.morimekta.providence.generator.format.java;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
-import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
@@ -49,11 +49,6 @@ public class JEnumFormat {
         header.include(PEnumDescriptor.class.getName());
         header.include(PEnumDescriptorProvider.class.getName());
 
-        if (options.jackson) {
-            header.include("com.fasterxml.jackson.annotation.JsonCreator");
-            header.include("com.fasterxml.jackson.annotation.JsonValue");
-        }
-
         header.format(writer);
 
         String simpleClass = helper.getInstanceClassName(type);
@@ -64,17 +59,19 @@ public class JEnumFormat {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
         }
-        writer.formatln("public enum %s implements PEnumValue<%s> {", simpleClass, simpleClass)
+        writer.formatln("public enum %s implements %s<%s> {",
+                        simpleClass,
+                        PEnumValue.class.getName(),
+                        simpleClass)
               .begin();
 
         for (PEnumValue<?> v : type.getValues()) {
-            /* TODO: The enum value comments are buggy. It attaches to a different enum that it should...
             if (v.getComment() != null) {
                 JUtils.appendBlockComment(writer, v.getComment());
                 if (JAnnotation.isDeprecated(v)) {
                     writer.appendln(JAnnotation.DEPRECATED);
                 }
-            } */
+            }
             writer.formatln("%s(%d, \"%s\"),",
                             v.getName()
                              .toUpperCase(),
@@ -112,7 +109,7 @@ public class JEnumFormat {
               .newline();
 
         if (options.jackson) {
-            writer.appendln("@JsonValue");
+            writer.appendln("@com.fasterxml.jackson.annotation.JsonValue");
         }
 
         writer.appendln("@Override")
@@ -142,7 +139,7 @@ public class JEnumFormat {
               .newline();
 
         if (options.jackson) {
-            writer.appendln("@JsonCreator");
+            writer.appendln("@com.fasterxml.jackson.annotation.JsonCreator");
         }
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()

@@ -21,6 +21,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
 
+import java.util.Set;
+
 /**
  * Field descriptor. All struct variants contains a set of fields. This
  * interface describes the properties each field has. It is an interface so the

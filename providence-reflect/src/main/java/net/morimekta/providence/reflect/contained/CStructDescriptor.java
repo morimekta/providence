@@ -24,30 +24,32 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CStructDescriptor extends PStructDescriptor<CStruct, CField> {
-    public static final Pattern COMPACT_RE         = Pattern.compile("^[@][Cc]ompact$", Pattern.MULTILINE);
-    public static final int     MAX_COMPACT_FIELDS = 5;
+public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CAnnotatedDescriptor {
+    public static final int     MAX_COMPACT_FIELDS = 10;
 
-    private final CField[]             mFields;
-    private final Map<Integer, CField> mFieldIdMap;
-    private final Map<String, CField>  mFieldNameMap;
+    private final CField[]             fields;
+    private final Map<Integer, CField> fieldIdMap;
+    private final Map<String, CField>  fieldNameMap;
+    private final Map<String, String>  annotations;
 
-    public CStructDescriptor(String comment, String packageName, String name, List<CField> fields) {
+    public CStructDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
         super(comment, packageName, name, new _Factory(), false,
               // overrides getter to avoid having to check fields types before it's converted.
-              isCompactCompatible(comment, fields));
+              isCompactCompatible(fields, annotations));
         ((_Factory) factory()).setType(this);
 
-        mFields = fields.toArray(new CField[fields.size()]);
+        this.fields = fields.toArray(new CField[fields.size()]);
+        this.annotations = annotations;
 
         Map<Integer, CField> fieldIdMap = new LinkedHashMap<>();
         Map<String, CField> fieldNameMap = new LinkedHashMap<>();
@@ -55,23 +57,48 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> {
             fieldIdMap.put(field.getKey(), field);
             fieldNameMap.put(field.getName(), field);
         }
-        mFieldIdMap = fieldIdMap;
-        mFieldNameMap = fieldNameMap;
+        this.fieldIdMap = fieldIdMap;
+        this.fieldNameMap = fieldNameMap;
     }
 
     @Override
     public CField[] getFields() {
-        return mFields;
+        return fields;
     }
 
     @Override
     public CField getField(String name) {
-        return mFieldNameMap.get(name);
+        return fieldNameMap.get(name);
     }
 
     @Override
     public CField getField(int key) {
-        return mFieldIdMap.get(key);
+        return fieldIdMap.get(key);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
+        }
+        return null;
     }
 
     @Override
@@ -104,12 +131,12 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> {
         }
     }
 
-    private static boolean isCompactCompatible(String comment, List<CField> fields) {
-        if (comment == null) {
+    private static boolean isCompactCompatible(List<CField> fields, Map<String, String> annotations) {
+        if (annotations == null) {
             return false;
         }
-        if (!COMPACT_RE.matcher(comment)
-                       .find()) {
+        if (!annotations.containsKey("json.compact") &&
+            !annotations.containsKey("compact")) {
             return false;
         }
         if (fields.size() > MAX_COMPACT_FIELDS) {

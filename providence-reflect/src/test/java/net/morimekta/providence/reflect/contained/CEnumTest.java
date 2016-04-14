@@ -44,14 +44,14 @@ public class CEnumTest {
     @Before
     public void setUp() {
         List<CEnum> values = new LinkedList<>();
-        mType = new CEnumDescriptor("My comment", "package", "MyEnum");
+        mType = new CEnumDescriptor("My comment", "package", "MyEnum", null);
 
-        values.add(new CEnum(null, 1, "ONE", mType));
-        values.add(new CEnum(null, 2, "TWO", mType));
-        values.add(new CEnum(null, 3, "THREE", mType));
-        values.add(new CEnum("Skipping stuff", 5, "FIVE", mType));
-        values.add(new CEnum(null, 6, "SIX", mType));
-        values.add(new CEnum("And more", 8, "EIGHT", mType));
+        values.add(new CEnum(null, 1, "ONE", mType, null));
+        values.add(new CEnum(null, 2, "TWO", mType, null));
+        values.add(new CEnum(null, 3, "THREE", mType, null));
+        values.add(new CEnum("Skipping stuff", 5, "FIVE", mType, null));
+        values.add(new CEnum(null, 6, "SIX", mType, null));
+        values.add(new CEnum("And more", 8, "EIGHT", mType, null));
 
         mType.setValues(values);
 

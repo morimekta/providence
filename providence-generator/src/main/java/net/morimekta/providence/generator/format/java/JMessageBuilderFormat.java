@@ -4,6 +4,7 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
@@ -19,7 +20,7 @@ public class JMessageBuilderFormat {
         this.helper = helper;
     }
 
-    public void appendBuilder(JMessage message) {
+    public void appendBuilder(JMessage message) throws GeneratorException {
         appendMutators();
 
         writer.appendln("public static class _Builder")
@@ -75,7 +76,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendFields(JMessage message) {
+    private void appendFields(JMessage message) throws GeneratorException {
         if (message.isUnion()) {
             writer.appendln("private _Field tUnionField;");
         } else {
@@ -159,7 +160,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendSetter(JMessage message, JField field) {
+    private void appendSetter(JMessage message, JField field) throws GeneratorException {
         if (field.hasComment()) {
             JUtils.appendBlockComment(writer, field.comment());
             if (JAnnotation.isDeprecated(field)) {
@@ -202,7 +203,7 @@ public class JMessageBuilderFormat {
               .appendln('}');
     }
 
-    private void appendAdder(JMessage message, JField field) {
+    private void appendAdder(JMessage message, JField field) throws GeneratorException {
         if (field.hasComment()) {
             JUtils.appendBlockComment(writer, field.comment());
             if (JAnnotation.isDeprecated(field)) {
@@ -283,7 +284,7 @@ public class JMessageBuilderFormat {
               .appendln('}');
     }
 
-    private void appendOverrideSetter(JMessage message) {
+    private void appendOverrideSetter(JMessage message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public _Builder set(int key, Object value) {")
               .begin()
@@ -301,7 +302,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendOverrideAdder(JMessage message) {
+    private void appendOverrideAdder(JMessage message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public _Builder addTo(int key, Object value) {")
               .begin()
