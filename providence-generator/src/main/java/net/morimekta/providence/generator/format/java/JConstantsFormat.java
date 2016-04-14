@@ -29,7 +29,8 @@ public class JConstantsFormat {
     public void format(IndentedPrintWriter writer, CDocument document) throws GeneratorException {
         JValueFormat value = new JValueFormat(writer, options, helper);
 
-        appendHeader(writer, value, document);
+        writer.format("package %s;", helper.getJavaPackage(document))
+              .newline();
 
         if (document.getComment() != null) {
             JUtils.appendBlockComment(writer, document.getComment());
@@ -93,9 +94,9 @@ public class JConstantsFormat {
                     }
 
                     if (c.getType() == PType.LIST) {
-                        writer.formatln("%s = Collections.unmodifiableList(builder);", name);
+                        writer.formatln("%s = java.util.Collections.unmodifiableList(builder);", name);
                     } else {
-                        writer.formatln("%s = Collections.unmodifiableSet(builder);", name);
+                        writer.formatln("%s = java.util.Collections.unmodifiableSet(builder);", name);
                     }
                     writer.end()
                           .appendln('}');
@@ -115,15 +116,5 @@ public class JConstantsFormat {
 
         writer.end()
               .appendln('}');
-    }
-
-    private void appendHeader(IndentedPrintWriter writer, JValueFormat value, CDocument document)
-            throws GeneratorException {
-        JHeader header = new JHeader(helper.getJavaPackage(document));
-        for (PField field : document.getConstants()) {
-            value.addTypeImports(header, field.getDescriptor());
-        }
-
-        header.format(writer);
     }
 }

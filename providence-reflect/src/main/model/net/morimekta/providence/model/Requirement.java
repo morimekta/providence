@@ -1,11 +1,5 @@
 package net.morimekta.providence.model;
 
-import net.morimekta.providence.PEnumBuilder;
-import net.morimekta.providence.PEnumBuilderFactory;
-import net.morimekta.providence.PEnumValue;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
-
 /** The requirement of the field. */
 public enum Requirement implements net.morimekta.providence.PEnumValue<Requirement> {
     DEFAULT(0, "DEFAULT"),

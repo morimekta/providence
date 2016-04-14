@@ -1,13 +1,5 @@
 package net.morimekta.providence.model;
 
-import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PSet;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
  * Reflective thrift IDL description.
  * <p/>
@@ -53,7 +45,7 @@ public class Model_Constants {
         builder.add("service");
         builder.add("binary");
         builder.add("namespace");
-        kThriftKeywords = Collections.unmodifiableSet(builder);
+        kThriftKeywords = java.util.Collections.unmodifiableSet(builder);
     }
 
     public static final java.util.Set<String> kReservedWords;
@@ -74,7 +66,7 @@ public class Model_Constants {
         builder.add("unsigned");
         builder.add("class");
         builder.add("if");
-        kReservedWords = Collections.unmodifiableSet(builder);
+        kReservedWords = java.util.Collections.unmodifiableSet(builder);
     }
 
 }

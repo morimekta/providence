@@ -1,28 +1,5 @@
 package net.morimekta.providence.model;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.PDefaultValueProvider;
-import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PDescriptorProvider;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptorProvider;
-import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
-
-import java.io.Serializable;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-
 /**
  * For fields:
  *   (<key>:)? (required|optional)? <type> <name> (= <default_value>)?

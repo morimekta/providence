@@ -53,57 +53,6 @@ public class JValueFormat {
         }
     }
 
-    public void addTypeImports(JHeader header, PDescriptor<?> descriptor) throws GeneratorException {
-        switch (descriptor.getType()) {
-            case ENUM:
-            case MESSAGE:
-                // Avoid never-ending recursion (with circular contained
-                // structs) by stopping on already included structs and enums.
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                break;
-            case LIST:
-                PContainer<?, ?> lType = (PContainer<?, ?>) descriptor;
-                header.include(java.util.Collection.class.getName());
-                header.include(java.util.Collections.class.getName());
-                header.include(PList.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                addTypeImports(header, lType.itemDescriptor());
-                break;
-            case SET:
-                PContainer<?, ?> sType = (PContainer<?, ?>) descriptor;
-                header.include(java.util.Collection.class.getName());
-                header.include(java.util.Collections.class.getName());
-                header.include(PSet.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                if (options.android) {
-                    header.include(ArrayList.class.getName());
-                }
-                addTypeImports(header, sType.itemDescriptor());
-                break;
-            case MAP:
-                PMap<?, ?> mType = (PMap<?, ?>) descriptor;
-                header.include(java.util.Collections.class.getName());
-                header.include(PMap.class.getName());
-                header.include(helper.getQualifiedInstanceClassName(descriptor));
-                header.include(helper.getQualifiedValueTypeName(descriptor));
-                header.include(helper.getQualifiedInstanceClassName(mType.itemDescriptor()));
-                header.include(helper.getQualifiedInstanceClassName(mType.keyDescriptor()));
-                addTypeImports(header, mType.keyDescriptor());
-                addTypeImports(header, mType.itemDescriptor());
-                break;
-            case BINARY:
-                header.include(PPrimitive.class.getName());
-                header.include(Binary.class.getName());
-                break;
-            default:
-                header.include(PPrimitive.class.getName());
-                break;
-        }
-    }
-
     public void appendTypedValue(Object value, PDescriptor<?> type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:

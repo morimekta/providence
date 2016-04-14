@@ -21,7 +21,6 @@ package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
@@ -39,12 +38,9 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
-import java.util.BitSet;
-import java.util.Objects;
 
 import static net.morimekta.util.Strings.camelCase;
 
@@ -583,7 +579,7 @@ public class JMessageFormat {
             }
         } else {
             if (options.jackson) {
-                writer.appendln("@JsonCreator");
+                writer.appendln("@com.fasterxml.jackson.annotation.JsonCreator");
             }
             String spaces = message.instanceType()
                                    .replaceAll("[\\S]", " ");
@@ -600,7 +596,7 @@ public class JMessageFormat {
                 if (options.jackson) {
                     writer.format("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
                     if (field.binary()) {
-                        writer.append("@JsonDeserialize(using = BinaryJsonDeserializer.class) ");
+                        writer.append("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
                     }
                 }
                 writer.format("%s %s", field.valueType(), field.param());
@@ -642,68 +638,8 @@ public class JMessageFormat {
 
     private void appendFileHeader(IndentedPrintWriter writer, JMessage message, JValueFormat values)
             throws GeneratorException, IOException {
-        JHeader header = new JHeader(helper.getJavaPackage(message.descriptor()));
-        header.include(java.io.Serializable.class.getName());
-        header.include(PMessageBuilder.class.getName());
-        header.include(PMessageBuilderFactory.class.getName());
-        header.include(PField.class.getName());
-        header.include(PType.class.getName());
-        header.include(PRequirement.class.getName());
-        header.include(PDescriptorProvider.class.getName());
-        header.include(PValueProvider.class.getName());
-        header.include(PDescriptor.class.getName());
-        header.include(Objects.class.getName());
-        if (!message.isUnion()) {
-            header.include(BitSet.class.getName());
-        }
-        switch (message.variant()) {
-            case STRUCT:
-                header.include(PMessage.class.getName());
-                header.include(PStructDescriptor.class.getName());
-                header.include(PStructDescriptorProvider.class.getName());
-                break;
-            case UNION:
-                header.include(PUnion.class.getName());
-                header.include(PUnionDescriptor.class.getName());
-                header.include(PUnionDescriptorProvider.class.getName());
-                break;
-            case EXCEPTION:
-                header.include(PMessage.class.getName());
-                header.include(PException.class.getName());
-                header.include(PExceptionDescriptor.class.getName());
-                header.include(PExceptionDescriptorProvider.class.getName());
-                break;
-        }
-        for (JField field : message.fields()) {
-            values.addTypeImports(header,
-                                  field.getPField()
-                                       .getDescriptor());
-            if (field.getPField()
-                     .hasDefaultValue()) {
-                header.include(PDefaultValueProvider.class.getName());
-            }
-            if (field.container() || field.type() == PType.DOUBLE) {
-                header.include(PTypeUtils.class.getName());
-            }
-            if (options.jackson && field.binary()) {
-                header.include("com.fasterxml.jackson.databind.annotation.JsonDeserialize");
-                header.include("com.fasterxml.jackson.databind.annotation.JsonSerialize");
-                header.include("net.morimekta.providence.jackson.BinaryJsonDeserializer");
-                header.include("net.morimekta.providence.jackson.BinaryJsonSerializer");
-            }
-        }
-        if (options.android) {
-            header.include("android.os.Parcel");
-            header.include("android.os.Parcelable");
-        }
-        if (options.jackson) {
-            header.include("com.fasterxml.jackson.annotation.JsonIgnore");
-            header.include("com.fasterxml.jackson.annotation.JsonIgnoreProperties");
-            header.include("com.fasterxml.jackson.annotation.JsonCreator");
-            header.include("com.fasterxml.jackson.annotation.JsonProperty");
-            header.include("com.fasterxml.jackson.annotation.JsonInclude");
-        }
-
-        header.format(writer);
+        writer.format("package %s;",
+                      helper.getJavaPackage(message.descriptor()))
+              .newline();
     }
 }
