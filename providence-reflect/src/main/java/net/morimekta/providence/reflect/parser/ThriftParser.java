@@ -81,7 +81,7 @@ public class ThriftParser implements Parser {
 
             String id = token.asString();
             if (!Model_Constants.kThriftKeywords.contains(id)) {
-                throw new ParseException("Unexpected token \'" + token.asString() + "\'", tokenizer, token);
+                throw new ParseException(tokenizer, token, "Unexpected token \'%s\'", token.asString());
             }
             switch (id) {
                 case "namespace":
@@ -177,11 +177,9 @@ public class ThriftParser implements Parser {
 
         String value = parseValue(tokenizer);
 
-        Token sep = tokenizer.next();
-        if (sep != null) {
-            if (!sep.isSymbol(Token.kLineSep1) && !sep.isSymbol(Token.kLineSep2)) {
-                tokenizer.unshift(sep);
-            }
+        Token sep = tokenizer.peek();
+        if (sep != null && (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2))) {
+            tokenizer.next();
         }
 
         return ThriftField.builder()
@@ -428,6 +426,23 @@ public class ThriftParser implements Parser {
             }
         }  // for each method-line
 
+        Token token = tokenizer.peek("");
+        // Method Annotations.
+        if (token.isSymbol(Token.kParamsStart)) {
+            tokenizer.next();
+            char sep = Token.kParamsStart;
+            while (sep != Token.kParamsEnd) {
+                token = tokenizer.expectQualifiedIdentifier("annotation name");
+                String name = token.asString();
+                tokenizer.expectSymbol("", Token.kFieldValueSep);
+                Token value = tokenizer.expectStringLiteral("annotation value");
+
+                service.putInAnnotations(name, value.decodeLiteral());
+
+                sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+            }
+        }
+
         return service.build();
     }
 
@@ -530,6 +545,22 @@ public class ThriftParser implements Parser {
                 }
             }
         } // if has values.
+
+        Token token = tokenizer.peek();
+        if (token != null && token.isSymbol(Token.kParamsStart)) {
+            tokenizer.next();
+            char sep = token.charAt(0);
+            while (sep != Token.kParamsEnd) {
+                token = tokenizer.expectQualifiedIdentifier("annotation name");
+                String name = token.asString();
+                tokenizer.expectSymbol("", Token.kFieldValueSep);
+                Token val = tokenizer.expectStringLiteral("annotation value");
+
+                etb.putInAnnotations(name, val.decodeLiteral());
+
+                sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+            }
+        }
 
         return etb.build();
     }
@@ -638,7 +669,7 @@ public class ThriftParser implements Parser {
         }
 
         Token token = tokenizer.peek();
-        if (token.isSymbol(Token.kParamsStart)) {
+        if (token != null && token.isSymbol(Token.kParamsStart)) {
             tokenizer.next();
             char sep = token.charAt(0);
             while (sep != Token.kParamsEnd) {
@@ -674,7 +705,7 @@ public class ThriftParser implements Parser {
             case "map": {
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
                 String key = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " key type"));
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+                tokenizer.expectSymbol("parsing " + type + " item type", Token.kLineSep1);
                 String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"));
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
 

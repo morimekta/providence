@@ -66,7 +66,7 @@ public class Tokenizer extends InputStream {
         } else {
             ++linePos;
         }
-        return ret;
+        return ret > 0 ? ret : 0x100 + ret;
     }
 
     /**
