@@ -1,11 +1,16 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
+
+import java.util.BitSet;
+import java.util.Collection;
 
 /**
  * @author Stein Eldar Johnsen
@@ -25,7 +30,9 @@ public class JMessageBuilderFormat {
 
         writer.appendln("public static class _Builder")
               .begin()
-              .formatln("    extends PMessageBuilder<%s> {", message.instanceType());
+              .formatln("    extends %s<%s> {",
+                        PMessageBuilder.class.getName(),
+                        message.instanceType());
 
         appendFields(message);
 
@@ -80,7 +87,8 @@ public class JMessageBuilderFormat {
         if (message.isUnion()) {
             writer.appendln("private _Field tUnionField;");
         } else {
-            writer.appendln("private BitSet optionals;");
+            writer.formatln("private %s optionals;",
+                            BitSet.class.getName());
         }
         writer.newline();
         for (JField field : message.fields()) {
@@ -92,12 +100,13 @@ public class JMessageBuilderFormat {
         }
     }
 
-    private void appendDefaultConstructor(JMessage message) {
+    private void appendDefaultConstructor(JMessage message) throws GeneratorException {
         writer.newline()
               .appendln("public _Builder() {")
               .begin();
         if (!message.isUnion()) {
-            writer.formatln("optionals = new BitSet(%d);",
+            writer.formatln("optionals = new %s(%d);",
+                            BitSet.class.getName(),
                             message.fields()
                                    .size());
         }
@@ -171,7 +180,8 @@ public class JMessageBuilderFormat {
             PContainer<?, ?> cType = (PContainer<?, ?>) field.getPField()
                                                              .getDescriptor();
             String iType = helper.getFieldType(cType.itemDescriptor());
-            writer.formatln("public _Builder %s(Collection<%s> value) {", field.setter(), iType);
+            writer.formatln("public _Builder %s(%s<%s> value) {",
+                            field.setter(), Collection.class.getName(), iType);
         } else {
             writer.formatln("public _Builder %s(%s value) {", field.setter(), field.valueType());
         }
@@ -416,7 +426,9 @@ public class JMessageBuilderFormat {
                 case MAP:
                 case SET:
                 case LIST:
-                    writer.formatln("       .append(PTypeUtils.toString(%s));", field.member());
+                    writer.formatln("       .append(%s.toString(%s));",
+                                    PTypeUtils.class.getName(),
+                                    field.member());
                     break;
                 case STRING:
                     writer.formatln("       .append(%s.toString());", field.member());

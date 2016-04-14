@@ -34,16 +34,16 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements PMessage<StructType>, Serializable, Comparable<StructType> {
+        implements net.morimekta.providence.PMessage<StructType>, java.io.Serializable, Comparable<StructType> {
     private final static long serialVersionUID = -7531050363059752370L;
 
-    private final static StructVariant kDefaultVariant = StructVariant.STRUCT;
+    private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;
 
     private final String mComment;
-    private final StructVariant mVariant;
+    private final net.morimekta.providence.model.StructVariant mVariant;
     private final String mName;
-    private final List<ThriftField> mFields;
-    private final Map<String,String> mAnnotations;
+    private final java.util.List<net.morimekta.providence.model.ThriftField> mFields;
+    private final java.util.Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -51,20 +51,20 @@ public class StructType
         mComment = builder.mComment;
         mVariant = builder.mVariant;
         mName = builder.mName;
-        mFields = Collections.unmodifiableList(new LinkedList<>(builder.mFields));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
+        mFields = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mFields));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
     }
 
     public StructType(String pComment,
-                      StructVariant pVariant,
+                      net.morimekta.providence.model.StructVariant pVariant,
                       String pName,
-                      List<ThriftField> pFields,
-                      Map<String,String> pAnnotations) {
+                      java.util.List<net.morimekta.providence.model.ThriftField> pFields,
+                      java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mVariant = pVariant;
         mName = pName;
-        mFields = Collections.unmodifiableList(new LinkedList<>(pFields));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
+        mFields = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pFields));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -79,7 +79,7 @@ public class StructType
         return mVariant != null;
     }
 
-    public StructVariant getVariant() {
+    public net.morimekta.providence.model.StructVariant getVariant() {
         return hasVariant() ? mVariant : kDefaultVariant;
     }
 
@@ -95,7 +95,7 @@ public class StructType
         return mFields != null ? mFields.size() : 0;
     }
 
-    public List<ThriftField> getFields() {
+    public java.util.List<net.morimekta.providence.model.ThriftField> getFields() {
         return mFields;
     }
 
@@ -103,7 +103,7 @@ public class StructType
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
 
-    public Map<String,String> getAnnotations() {
+    public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
@@ -157,23 +157,23 @@ public class StructType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof StructType)) return false;
         StructType other = (StructType) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mVariant, other.mVariant) &&
-               Objects.equals(mName, other.mName) &&
-               PTypeUtils.equals(mFields, other.mFields) &&
-               PTypeUtils.equals(mAnnotations, other.mAnnotations);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mVariant, other.mVariant) &&
+               java.util.Objects.equals(mName, other.mName) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mFields, other.mFields) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     StructType.class,
                     _Field.COMMENT, mComment,
                     _Field.VARIANT, mVariant,
                     _Field.NAME, mName,
-                    _Field.FIELDS, PTypeUtils.hashCode(mFields),
-                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
+                    _Field.FIELDS, net.morimekta.providence.util.PTypeUtils.hashCode(mFields),
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -210,13 +210,13 @@ public class StructType
             if (!first) out.append(',');
             first = false;
             out.append("fields:");
-            out.append(PTypeUtils.toString(mFields));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mFields));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(PTypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -264,21 +264,21 @@ public class StructType
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        VARIANT(2, PRequirement.DEFAULT, "variant", StructVariant.provider(), new PDefaultValueProvider<>(kDefaultVariant)),
-        NAME(3, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
-        FIELDS(4, PRequirement.DEFAULT, "fields", PList.provider(ThriftField.provider()), null),
-        ANNOTATIONS(5, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        VARIANT(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "variant", net.morimekta.providence.model.StructVariant.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultVariant)),
+        NAME(3, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        FIELDS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "fields", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.ThriftField.provider()), null),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -293,13 +293,13 @@ public class StructType
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -318,7 +318,7 @@ public class StructType
             builder.append("StructType._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -351,19 +351,19 @@ public class StructType
         }
     }
 
-    public static PStructDescriptorProvider<StructType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<StructType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<StructType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<StructType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<StructType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<StructType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<StructType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<StructType,_Field> {
         public _Descriptor() {
             super(null, "model", "StructType", new _Factory(), false, false);
         }
@@ -388,15 +388,15 @@ public class StructType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<StructType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<StructType,_Field> {
         @Override
-        public PStructDescriptor<StructType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<StructType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<StructType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<StructType> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -413,20 +413,20 @@ public class StructType
     }
 
     public static class _Builder
-            extends PMessageBuilder<StructType> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<StructType> {
+        private java.util.BitSet optionals;
 
         private String mComment;
-        private StructVariant mVariant;
+        private net.morimekta.providence.model.StructVariant mVariant;
         private String mName;
-        private List<ThriftField> mFields;
-        private Map<String,String> mAnnotations;
+        private java.util.List<net.morimekta.providence.model.ThriftField> mFields;
+        private java.util.Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(5);
-            mFields = new LinkedList<>();
-            mAnnotations = new LinkedHashMap<>();
+            optionals = new java.util.BitSet(5);
+            mFields = new java.util.LinkedList<>();
+            mAnnotations = new java.util.LinkedHashMap<>();
         }
 
         public _Builder(StructType base) {
@@ -464,7 +464,7 @@ public class StructType
             mComment = null;
             return this;
         }
-        public _Builder setVariant(StructVariant value) {
+        public _Builder setVariant(net.morimekta.providence.model.StructVariant value) {
             optionals.set(1);
             mVariant = value;
             return this;
@@ -484,15 +484,15 @@ public class StructType
             mName = null;
             return this;
         }
-        public _Builder setFields(Collection<ThriftField> value) {
+        public _Builder setFields(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
             optionals.set(3);
             mFields.clear();
             mFields.addAll(value);
             return this;
         }
-        public _Builder addToFields(ThriftField... values) {
+        public _Builder addToFields(net.morimekta.providence.model.ThriftField... values) {
             optionals.set(3);
-            for (ThriftField item : values) {
+            for (net.morimekta.providence.model.ThriftField item : values) {
                 mFields.add(item);
             }
             return this;
@@ -503,7 +503,7 @@ public class StructType
             mFields.clear();
             return this;
         }
-        public _Builder setAnnotations(Map<String,String> value) {
+        public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
@@ -525,10 +525,10 @@ public class StructType
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setComment((String) value); break;
-                case 2: setVariant((StructVariant) value); break;
+                case 2: setVariant((net.morimekta.providence.model.StructVariant) value); break;
                 case 3: setName((String) value); break;
-                case 4: setFields((List<ThriftField>) value); break;
-                case 5: setAnnotations((Map<String,String>) value); break;
+                case 4: setFields((java.util.List<net.morimekta.providence.model.ThriftField>) value); break;
+                case 5: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
         }
@@ -536,7 +536,7 @@ public class StructType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 4: addToFields((ThriftField) value); break;
+                case 4: addToFields((net.morimekta.providence.model.ThriftField) value); break;
                 default: break;
             }
             return this;

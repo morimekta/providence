@@ -7,7 +7,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 
 /** The requirement of the field. */
-public enum Requirement implements PEnumValue<Requirement> {
+public enum Requirement implements net.morimekta.providence.PEnumValue<Requirement> {
     DEFAULT(0, "DEFAULT"),
     OPTIONAL(1, "OPTIONAL"),
     REQUIRED(2, "REQUIRED"),
@@ -54,7 +54,7 @@ public enum Requirement implements PEnumValue<Requirement> {
         }
     }
 
-    public static class _Builder extends PEnumBuilder<Requirement> {
+    public static class _Builder extends net.morimekta.providence.PEnumBuilder<Requirement> {
         Requirement mValue;
 
         @Override
@@ -80,19 +80,19 @@ public enum Requirement implements PEnumValue<Requirement> {
         }
     }
 
-    public static final PEnumDescriptor<Requirement> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PEnumDescriptor<Requirement> kDescriptor;
 
     @Override
-    public PEnumDescriptor<Requirement> descriptor() {
+    public net.morimekta.providence.descriptor.PEnumDescriptor<Requirement> descriptor() {
         return kDescriptor;
     }
 
-    public static PEnumDescriptorProvider<Requirement> provider() {
-        return new PEnumDescriptorProvider<Requirement>(kDescriptor);
+    public static net.morimekta.providence.descriptor.PEnumDescriptorProvider<Requirement> provider() {
+        return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<Requirement>(kDescriptor);
     }
 
     private static class _Factory
-            extends PEnumBuilderFactory<Requirement> {
+            extends net.morimekta.providence.PEnumBuilderFactory<Requirement> {
         @Override
         public Requirement._Builder builder() {
             return new Requirement._Builder();
@@ -100,7 +100,7 @@ public enum Requirement implements PEnumValue<Requirement> {
     }
 
     private static class _Descriptor
-            extends PEnumDescriptor<Requirement> {
+            extends net.morimekta.providence.descriptor.PEnumDescriptor<Requirement> {
         public _Descriptor() {
             super(null, "model", "Requirement", new _Factory());
         }

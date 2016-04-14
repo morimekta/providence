@@ -133,7 +133,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) {
+    private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         writer.formatln("public enum _Field implements %s {", PField.class.getName())
               .begin();
 
@@ -218,7 +218,8 @@ public class JMessageFormat {
               .formatln("builder.append(\"%s._Field(\")", message.instanceType())
               .appendln("       .append(mKey)")
               .appendln("       .append(\": \");")
-              .appendln("if (mRequired != PRequirement.DEFAULT) {")
+              .formatln("if (mRequired != %s.DEFAULT) {",
+                        PRequirement.class.getName())
               .appendln("    builder.append(mRequired.label).append(\" \");")
               .appendln("}")
               .appendln("builder.append(getDescriptor().getQualifiedName(null))")
@@ -439,7 +440,7 @@ public class JMessageFormat {
                 }
             }
             if (options.jackson) {
-                writer.formatln("@JsonProperty(\"%s\")", field.name());
+                writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\")", field.name());
                 if (field.binary()) {
                     writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonSerialize(" +
                                     "using = net.morimekta.providence.jackson.BinaryJsonSerializer.class) ");
@@ -480,7 +481,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendBuilderConstructor(IndentedPrintWriter writer, JMessage message) {
+    private void appendBuilderConstructor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
         writer.formatln("private %s(_Builder builder) {", message.instanceType())
               .begin();
         if (message.isUnion()) {
@@ -491,7 +492,7 @@ public class JMessageFormat {
                 switch (field.type()) {
                     case LIST:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableList(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableList(new %s<>(builder.%s)) : null;",
                                 field.member(),
                                 field.fieldEnum(),
                                 field.instanceType(),
@@ -499,7 +500,7 @@ public class JMessageFormat {
                         break;
                     case SET:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableSet(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableSet(new %s<>(builder.%s)) : null;",
                                 field.member(),
                                 field.fieldEnum(),
                                 field.instanceType(),
@@ -507,7 +508,7 @@ public class JMessageFormat {
                         break;
                     case MAP:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? Collections.unmodifiableMap(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableMap(new %s<>(builder.%s)) : null;",
                                 field.member(),
                                 field.fieldEnum(),
                                 field.instanceType(),
@@ -537,19 +538,19 @@ public class JMessageFormat {
             for (JField field : message.fields()) {
                 switch (field.type()) {
                     case LIST:
-                        writer.formatln("%s = Collections.unmodifiableList(new %s<>(builder.%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableList(new %s<>(builder.%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.member());
                         break;
                     case SET:
-                        writer.formatln("%s = Collections.unmodifiableSet(new %s<>(builder.%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableSet(new %s<>(builder.%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.member());
                         break;
                     case MAP:
-                        writer.formatln("%s = Collections.unmodifiableMap(new %s<>(builder.%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableMap(new %s<>(builder.%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.member());
@@ -597,7 +598,7 @@ public class JMessageFormat {
                           .appendln();
                 }
                 if (options.jackson) {
-                    writer.format("@JsonProperty(\"%s\") ", field.name());
+                    writer.format("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
                     if (field.binary()) {
                         writer.append("@JsonDeserialize(using = BinaryJsonDeserializer.class) ");
                     }
@@ -611,19 +612,19 @@ public class JMessageFormat {
             for (JField field : message.fields()) {
                 switch (field.type()) {
                     case LIST:
-                        writer.formatln("%s = Collections.unmodifiableList(new %s<>(%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableList(new %s<>(%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.param());
                         break;
                     case SET:
-                        writer.formatln("%s = Collections.unmodifiableSet(new %s<>(%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableSet(new %s<>(%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.param());
                         break;
                     case MAP:
-                        writer.formatln("%s = Collections.unmodifiableMap(new %s<>(%s));",
+                        writer.formatln("%s = java.util.Collections.unmodifiableMap(new %s<>(%s));",
                                         field.member(),
                                         field.instanceType(),
                                         field.param());

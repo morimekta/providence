@@ -149,8 +149,8 @@ public class JField {
         return helper.getFieldType(field.getDescriptor());
     }
 
-    public String instanceType() {
-        return helper.getInstanceClassName(field.getDescriptor());
+    public String instanceType() throws GeneratorException {
+        return helper.getQualifiedInstanceClassName(field.getDescriptor());
     }
 
     public boolean hasComment() {

@@ -14,7 +14,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
  * UNION: No required fields. Only one field set to be valid.
  * EXCEPTION: No 'cause' field, 'message' field *must* be a string (java).
  */
-public enum StructVariant implements PEnumValue<StructVariant> {
+public enum StructVariant implements net.morimekta.providence.PEnumValue<StructVariant> {
     STRUCT(1, "STRUCT"),
     UNION(2, "UNION"),
     EXCEPTION(3, "EXCEPTION"),
@@ -61,7 +61,7 @@ public enum StructVariant implements PEnumValue<StructVariant> {
         }
     }
 
-    public static class _Builder extends PEnumBuilder<StructVariant> {
+    public static class _Builder extends net.morimekta.providence.PEnumBuilder<StructVariant> {
         StructVariant mValue;
 
         @Override
@@ -87,19 +87,19 @@ public enum StructVariant implements PEnumValue<StructVariant> {
         }
     }
 
-    public static final PEnumDescriptor<StructVariant> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PEnumDescriptor<StructVariant> kDescriptor;
 
     @Override
-    public PEnumDescriptor<StructVariant> descriptor() {
+    public net.morimekta.providence.descriptor.PEnumDescriptor<StructVariant> descriptor() {
         return kDescriptor;
     }
 
-    public static PEnumDescriptorProvider<StructVariant> provider() {
-        return new PEnumDescriptorProvider<StructVariant>(kDescriptor);
+    public static net.morimekta.providence.descriptor.PEnumDescriptorProvider<StructVariant> provider() {
+        return new net.morimekta.providence.descriptor.PEnumDescriptorProvider<StructVariant>(kDescriptor);
     }
 
     private static class _Factory
-            extends PEnumBuilderFactory<StructVariant> {
+            extends net.morimekta.providence.PEnumBuilderFactory<StructVariant> {
         @Override
         public StructVariant._Builder builder() {
             return new StructVariant._Builder();
@@ -107,7 +107,7 @@ public enum StructVariant implements PEnumValue<StructVariant> {
     }
 
     private static class _Descriptor
-            extends PEnumDescriptor<StructVariant> {
+            extends net.morimekta.providence.descriptor.PEnumDescriptor<StructVariant> {
         public _Descriptor() {
             super(null, "model", "StructVariant", new _Factory());
         }

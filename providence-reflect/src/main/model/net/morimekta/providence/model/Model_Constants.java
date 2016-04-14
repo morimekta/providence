@@ -23,9 +23,9 @@ import java.util.Set;
 public class Model_Constants {
     private Model_Constants() {}
 
-    public static final Set<String> kThriftKeywords;
+    public static final java.util.Set<String> kThriftKeywords;
     static {
-        LinkedHashSet builder = new LinkedHashSet<>();
+        java.util.LinkedHashSet builder = new java.util.LinkedHashSet<>();
         builder.add("struct");
         builder.add("exception");
         builder.add("bool");
@@ -56,9 +56,9 @@ public class Model_Constants {
         kThriftKeywords = Collections.unmodifiableSet(builder);
     }
 
-    public static final Set<String> kReservedWords;
+    public static final java.util.Set<String> kReservedWords;
     static {
-        LinkedHashSet builder = new LinkedHashSet<>();
+        java.util.LinkedHashSet builder = new java.util.LinkedHashSet<>();
         builder.add("private");
         builder.add("byte");
         builder.add("for");

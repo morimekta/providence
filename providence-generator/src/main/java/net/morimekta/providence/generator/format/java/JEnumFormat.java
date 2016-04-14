@@ -51,7 +51,7 @@ public class JEnumFormat {
 
         header.format(writer);
 
-        String simpleClass = helper.getInstanceClassName(type);
+        String simpleClass = JUtils.getClassName(type);
 
         if (type.getComment() != null) {
             JUtils.appendBlockComment(writer, type.getComment());
@@ -169,29 +169,39 @@ public class JEnumFormat {
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
-        String simpleClass = helper.getInstanceClassName(type);
+        String simpleClass = JUtils.getClassName(type);
 
-        writer.formatln("public static final PEnumDescriptor<%s> kDescriptor;", simpleClass)
+        writer.formatln("public static final %s<%s> kDescriptor;",
+                        PEnumDescriptor.class.getName(),
+                        simpleClass)
               .newline();
 
         writer.appendln("@Override")
-              .formatln("public PEnumDescriptor<%s> descriptor() {", simpleClass)
+              .formatln("public %s<%s> descriptor() {",
+                        PEnumDescriptor.class.getName(),
+                        simpleClass)
               .begin()
               .appendln("return kDescriptor;")
               .end()
               .appendln('}')
               .newline();
 
-        writer.formatln("public static PEnumDescriptorProvider<%s> provider() {", simpleClass)
+        writer.formatln("public static %s<%s> provider() {",
+                        PEnumDescriptorProvider.class.getName(),
+                        simpleClass)
               .begin()
-              .formatln("return new PEnumDescriptorProvider<%s>(kDescriptor);", simpleClass)
+              .formatln("return new %s<%s>(kDescriptor);",
+                        PEnumDescriptorProvider.class.getName(),
+                        simpleClass)
               .end()
               .appendln('}')
               .newline();
 
         writer.appendln("private static class _Factory")
               .begin()
-              .formatln("    extends PEnumBuilderFactory<%s> {", simpleClass)
+              .formatln("    extends %s<%s> {",
+                        PEnumBuilderFactory.class.getName(),
+                        simpleClass)
               .appendln("@Override")
               .formatln("public %s._Builder builder() {", simpleClass)
               .begin()
@@ -203,7 +213,9 @@ public class JEnumFormat {
               .newline();
 
         writer.appendln("private static class _Descriptor")
-              .formatln("        extends PEnumDescriptor<%s> {", simpleClass)
+              .formatln("        extends %s<%s> {",
+                        PEnumDescriptor.class.getName(),
+                        simpleClass)
               .begin()
               .appendln("public _Descriptor() {")
               .begin()
@@ -246,8 +258,10 @@ public class JEnumFormat {
     }
 
     protected void appendBuilder(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
-        String simpleClass = helper.getInstanceClassName(type);
-        writer.formatln("public static class _Builder extends PEnumBuilder<%s> {", simpleClass)
+        String simpleClass = JUtils.getClassName(type);
+        writer.formatln("public static class _Builder extends %s<%s> {",
+                        PEnumBuilder.class.getName(),
+                        simpleClass)
               .begin()
               .formatln("%s mValue;", simpleClass)
               .newline();

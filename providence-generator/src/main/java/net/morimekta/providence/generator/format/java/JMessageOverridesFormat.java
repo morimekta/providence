@@ -1,6 +1,9 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.util.PTypeUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
+
+import java.util.Objects;
 
 /**
  * @author Stein Eldar Johnsen
@@ -38,7 +41,7 @@ public class JMessageOverridesFormat {
 
     private void appendIsCompact(JMessage message) {
         if (options.jackson) {
-            writer.appendln("@JsonIgnore");
+            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
         }
         writer.appendln("@Override")
               .appendln("public boolean isCompact() {")
@@ -74,7 +77,7 @@ public class JMessageOverridesFormat {
 
     private void appendIsSimple() {
         if (options.jackson) {
-            writer.appendln("@JsonIgnore");
+            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
         }
         writer.appendln("@Override")
               .appendln("public boolean isSimple() {")
@@ -166,7 +169,8 @@ public class JMessageOverridesFormat {
             writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
                   .appendln("return ");
             if (message.isUnion()) {
-                writer.append("Objects.equals(tUnionField, other.tUnionField)");
+                writer.format("%s.equals(tUnionField, other.tUnionField)",
+                              Objects.class.getName());
                 first = false;
             }
             for (JField field : message.fields()) {
@@ -177,9 +181,11 @@ public class JMessageOverridesFormat {
                           .appendln("       ");
                 }
                 if (field.container()) {
-                    writer.format("PTypeUtils.equals(%s, other.%s)", field.member(), field.member());
+                    writer.format("%s.equals(%s, other.%s)", PTypeUtils.class.getName(), field.member(), field.member());
                 } else {
-                    writer.format("Objects.equals(%s, other.%s)", field.member(), field.member());
+                    writer.format("%s.equals(%s, other.%s)",
+                                  Objects.class.getName(),
+                                  field.member(), field.member());
                 }
             }
             writer.append(';');
@@ -197,13 +203,17 @@ public class JMessageOverridesFormat {
               .begin()
               .appendln("if (tHashCode == 0) {")
               .begin()
-              .appendln("tHashCode = Objects.hash(")
+              .formatln("tHashCode = %s.hash(",
+                        Objects.class.getName())
               .begin("        ")
               .formatln("%s.class", message.instanceType());
         for (JField field : message.fields()) {
             writer.append(",");
             if (field.container()) {
-                writer.formatln("_Field.%s, PTypeUtils.hashCode(%s)", field.fieldEnum(), field.member());
+                writer.formatln("_Field.%s, %s.hashCode(%s)",
+                                field.fieldEnum(),
+                                PTypeUtils.class.getName(),
+                                field.member());
             } else {
                 writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
             }
@@ -265,7 +275,7 @@ public class JMessageOverridesFormat {
                         writer.formatln("out.append(%s);", field.member());
                         break;
                     case DOUBLE:
-                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        writer.formatln("out.append(%s.toString(%s));", PTypeUtils.class.getName(), field.member());
                         break;
                     case STRING:
                         writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
@@ -282,7 +292,9 @@ public class JMessageOverridesFormat {
                     case SET:
                     case LIST:
                     case MAP:
-                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        writer.formatln("out.append(%s.toString(%s));",
+                                        PTypeUtils.class.getName(),
+                                        field.member());
                         break;
                 }
 
@@ -328,7 +340,9 @@ public class JMessageOverridesFormat {
                         writer.formatln("out.append(Long.toString(%s));", field.member());
                         break;
                     case DOUBLE:
-                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        writer.formatln("out.append(%s.toString(%s));",
+                                        PTypeUtils.class.getName(),
+                                        field.member());
                         break;
                     case STRING:
                         writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
@@ -345,7 +359,9 @@ public class JMessageOverridesFormat {
                     case SET:
                     case LIST:
                     case MAP:
-                        writer.formatln("out.append(PTypeUtils.toString(%s));", field.member());
+                        writer.formatln("out.append(%s.toString(%s));",
+                                        PTypeUtils.class.getName(),
+                                        field.member());
                         break;
                 }
 

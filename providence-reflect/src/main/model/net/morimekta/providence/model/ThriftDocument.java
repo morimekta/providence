@@ -29,35 +29,35 @@ import java.util.Objects;
 /** <namespace>* <include>* <declataion>* */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements PMessage<ThriftDocument>, Serializable, Comparable<ThriftDocument> {
+        implements net.morimekta.providence.PMessage<ThriftDocument>, java.io.Serializable, Comparable<ThriftDocument> {
     private final static long serialVersionUID = -5731994850994905187L;
 
     private final String mComment;
     private final String mPackage;
-    private final List<String> mIncludes;
-    private final Map<String,String> mNamespaces;
-    private final List<Declaration> mDecl;
+    private final java.util.List<String> mIncludes;
+    private final java.util.Map<String,String> mNamespaces;
+    private final java.util.List<net.morimekta.providence.model.Declaration> mDecl;
     
     private volatile int tHashCode;
 
     private ThriftDocument(_Builder builder) {
         mComment = builder.mComment;
         mPackage = builder.mPackage;
-        mIncludes = Collections.unmodifiableList(new LinkedList<>(builder.mIncludes));
-        mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mNamespaces));
-        mDecl = Collections.unmodifiableList(new LinkedList<>(builder.mDecl));
+        mIncludes = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mIncludes));
+        mNamespaces = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mNamespaces));
+        mDecl = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mDecl));
     }
 
     public ThriftDocument(String pComment,
                           String pPackage,
-                          List<String> pIncludes,
-                          Map<String,String> pNamespaces,
-                          List<Declaration> pDecl) {
+                          java.util.List<String> pIncludes,
+                          java.util.Map<String,String> pNamespaces,
+                          java.util.List<net.morimekta.providence.model.Declaration> pDecl) {
         mComment = pComment;
         mPackage = pPackage;
-        mIncludes = Collections.unmodifiableList(new LinkedList<>(pIncludes));
-        mNamespaces = Collections.unmodifiableMap(new LinkedHashMap<>(pNamespaces));
-        mDecl = Collections.unmodifiableList(new LinkedList<>(pDecl));
+        mIncludes = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pIncludes));
+        mNamespaces = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pNamespaces));
+        mDecl = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pDecl));
     }
 
     public boolean hasComment() {
@@ -83,7 +83,7 @@ public class ThriftDocument
     }
 
     /** include "<package>.thrift" */
-    public List<String> getIncludes() {
+    public java.util.List<String> getIncludes() {
         return mIncludes;
     }
 
@@ -92,7 +92,7 @@ public class ThriftDocument
     }
 
     /** namespace <key> <value> */
-    public Map<String,String> getNamespaces() {
+    public java.util.Map<String,String> getNamespaces() {
         return mNamespaces;
     }
 
@@ -100,7 +100,7 @@ public class ThriftDocument
         return mDecl != null ? mDecl.size() : 0;
     }
 
-    public List<Declaration> getDecl() {
+    public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
         return mDecl;
     }
 
@@ -154,23 +154,23 @@ public class ThriftDocument
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftDocument)) return false;
         ThriftDocument other = (ThriftDocument) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mPackage, other.mPackage) &&
-               PTypeUtils.equals(mIncludes, other.mIncludes) &&
-               PTypeUtils.equals(mNamespaces, other.mNamespaces) &&
-               PTypeUtils.equals(mDecl, other.mDecl);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mPackage, other.mPackage) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mIncludes, other.mIncludes) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mNamespaces, other.mNamespaces) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mDecl, other.mDecl);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     ThriftDocument.class,
                     _Field.COMMENT, mComment,
                     _Field.PACKAGE, mPackage,
-                    _Field.INCLUDES, PTypeUtils.hashCode(mIncludes),
-                    _Field.NAMESPACES, PTypeUtils.hashCode(mNamespaces),
-                    _Field.DECL, PTypeUtils.hashCode(mDecl));
+                    _Field.INCLUDES, net.morimekta.providence.util.PTypeUtils.hashCode(mIncludes),
+                    _Field.NAMESPACES, net.morimekta.providence.util.PTypeUtils.hashCode(mNamespaces),
+                    _Field.DECL, net.morimekta.providence.util.PTypeUtils.hashCode(mDecl));
         }
         return tHashCode;
     }
@@ -201,19 +201,19 @@ public class ThriftDocument
             if (!first) out.append(',');
             first = false;
             out.append("includes:");
-            out.append(PTypeUtils.toString(mIncludes));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mIncludes));
         }
         if (numNamespaces() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("namespaces:");
-            out.append(PTypeUtils.toString(mNamespaces));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mNamespaces));
         }
         if (numDecl() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("decl:");
-            out.append(PTypeUtils.toString(mDecl));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mDecl));
         }
         out.append('}');
         return out.toString();
@@ -261,21 +261,21 @@ public class ThriftDocument
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        PACKAGE(2, PRequirement.REQUIRED, "package", PPrimitive.STRING.provider(), null),
-        INCLUDES(3, PRequirement.DEFAULT, "includes", PList.provider(PPrimitive.STRING.provider()), null),
-        NAMESPACES(4, PRequirement.DEFAULT, "namespaces", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
-        DECL(5, PRequirement.DEFAULT, "decl", PList.provider(Declaration.provider()), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        PACKAGE(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "package", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        INCLUDES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "includes", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "namespaces", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        DECL(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.Declaration.provider()), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -290,13 +290,13 @@ public class ThriftDocument
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -315,7 +315,7 @@ public class ThriftDocument
             builder.append("ThriftDocument._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -348,19 +348,19 @@ public class ThriftDocument
         }
     }
 
-    public static PStructDescriptorProvider<ThriftDocument,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftDocument,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<ThriftDocument,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<ThriftDocument,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<ThriftDocument,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> {
         public _Descriptor() {
             super(null, "model", "ThriftDocument", new _Factory(), false, false);
         }
@@ -385,15 +385,15 @@ public class ThriftDocument
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<ThriftDocument,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftDocument,_Field> {
         @Override
-        public PStructDescriptor<ThriftDocument,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<ThriftDocument> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ThriftDocument> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -410,21 +410,21 @@ public class ThriftDocument
     }
 
     public static class _Builder
-            extends PMessageBuilder<ThriftDocument> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<ThriftDocument> {
+        private java.util.BitSet optionals;
 
         private String mComment;
         private String mPackage;
-        private List<String> mIncludes;
-        private Map<String,String> mNamespaces;
-        private List<Declaration> mDecl;
+        private java.util.List<String> mIncludes;
+        private java.util.Map<String,String> mNamespaces;
+        private java.util.List<net.morimekta.providence.model.Declaration> mDecl;
 
 
         public _Builder() {
-            optionals = new BitSet(5);
-            mIncludes = new LinkedList<>();
-            mNamespaces = new LinkedHashMap<>();
-            mDecl = new LinkedList<>();
+            optionals = new java.util.BitSet(5);
+            mIncludes = new java.util.LinkedList<>();
+            mNamespaces = new java.util.LinkedHashMap<>();
+            mDecl = new java.util.LinkedList<>();
         }
 
         public _Builder(ThriftDocument base) {
@@ -475,7 +475,7 @@ public class ThriftDocument
             return this;
         }
         /** include "<package>.thrift" */
-        public _Builder setIncludes(Collection<String> value) {
+        public _Builder setIncludes(java.util.Collection<String> value) {
             optionals.set(2);
             mIncludes.clear();
             mIncludes.addAll(value);
@@ -496,7 +496,7 @@ public class ThriftDocument
             return this;
         }
         /** namespace <key> <value> */
-        public _Builder setNamespaces(Map<String,String> value) {
+        public _Builder setNamespaces(java.util.Map<String,String> value) {
             optionals.set(3);
             mNamespaces.clear();
             mNamespaces.putAll(value);
@@ -514,15 +514,15 @@ public class ThriftDocument
             mNamespaces.clear();
             return this;
         }
-        public _Builder setDecl(Collection<Declaration> value) {
+        public _Builder setDecl(java.util.Collection<net.morimekta.providence.model.Declaration> value) {
             optionals.set(4);
             mDecl.clear();
             mDecl.addAll(value);
             return this;
         }
-        public _Builder addToDecl(Declaration... values) {
+        public _Builder addToDecl(net.morimekta.providence.model.Declaration... values) {
             optionals.set(4);
-            for (Declaration item : values) {
+            for (net.morimekta.providence.model.Declaration item : values) {
                 mDecl.add(item);
             }
             return this;
@@ -539,9 +539,9 @@ public class ThriftDocument
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setPackage((String) value); break;
-                case 3: setIncludes((List<String>) value); break;
-                case 4: setNamespaces((Map<String,String>) value); break;
-                case 5: setDecl((List<Declaration>) value); break;
+                case 3: setIncludes((java.util.List<String>) value); break;
+                case 4: setNamespaces((java.util.Map<String,String>) value); break;
+                case 5: setDecl((java.util.List<net.morimekta.providence.model.Declaration>) value); break;
             }
             return this;
         }
@@ -550,7 +550,7 @@ public class ThriftDocument
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 case 3: addToIncludes((String) value); break;
-                case 5: addToDecl((Declaration) value); break;
+                case 5: addToDecl((net.morimekta.providence.model.Declaration) value); break;
                 default: break;
             }
             return this;

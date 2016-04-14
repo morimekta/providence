@@ -33,14 +33,14 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements PMessage<ServiceType>, Serializable, Comparable<ServiceType> {
+        implements net.morimekta.providence.PMessage<ServiceType>, java.io.Serializable, Comparable<ServiceType> {
     private final static long serialVersionUID = 789757775761432238L;
 
     private final String mComment;
     private final String mName;
     private final String mExtend;
-    private final List<ServiceMethod> mMethods;
-    private final Map<String,String> mAnnotations;
+    private final java.util.List<net.morimekta.providence.model.ServiceMethod> mMethods;
+    private final java.util.Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -48,20 +48,20 @@ public class ServiceType
         mComment = builder.mComment;
         mName = builder.mName;
         mExtend = builder.mExtend;
-        mMethods = Collections.unmodifiableList(new LinkedList<>(builder.mMethods));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
+        mMethods = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mMethods));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
     }
 
     public ServiceType(String pComment,
                        String pName,
                        String pExtend,
-                       List<ServiceMethod> pMethods,
-                       Map<String,String> pAnnotations) {
+                       java.util.List<net.morimekta.providence.model.ServiceMethod> pMethods,
+                       java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
         mExtend = pExtend;
-        mMethods = Collections.unmodifiableList(new LinkedList<>(pMethods));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
+        mMethods = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pMethods));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -92,7 +92,7 @@ public class ServiceType
         return mMethods != null ? mMethods.size() : 0;
     }
 
-    public List<ServiceMethod> getMethods() {
+    public java.util.List<net.morimekta.providence.model.ServiceMethod> getMethods() {
         return mMethods;
     }
 
@@ -100,7 +100,7 @@ public class ServiceType
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
 
-    public Map<String,String> getAnnotations() {
+    public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
@@ -154,23 +154,23 @@ public class ServiceType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ServiceType)) return false;
         ServiceType other = (ServiceType) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mName, other.mName) &&
-               Objects.equals(mExtend, other.mExtend) &&
-               PTypeUtils.equals(mMethods, other.mMethods) &&
-               PTypeUtils.equals(mAnnotations, other.mAnnotations);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mName, other.mName) &&
+               java.util.Objects.equals(mExtend, other.mExtend) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mMethods, other.mMethods) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     ServiceType.class,
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.EXTEND, mExtend,
-                    _Field.METHODS, PTypeUtils.hashCode(mMethods),
-                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
+                    _Field.METHODS, net.morimekta.providence.util.PTypeUtils.hashCode(mMethods),
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -207,13 +207,13 @@ public class ServiceType
             if (!first) out.append(',');
             first = false;
             out.append("methods:");
-            out.append(PTypeUtils.toString(mMethods));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mMethods));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(PTypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -261,21 +261,21 @@ public class ServiceType
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        NAME(2, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
-        EXTEND(3, PRequirement.DEFAULT, "extend", PPrimitive.STRING.provider(), null),
-        METHODS(4, PRequirement.DEFAULT, "methods", PList.provider(ServiceMethod.provider()), null),
-        ANNOTATIONS(5, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        EXTEND(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.ServiceMethod.provider()), null),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -290,13 +290,13 @@ public class ServiceType
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -315,7 +315,7 @@ public class ServiceType
             builder.append("ServiceType._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -348,19 +348,19 @@ public class ServiceType
         }
     }
 
-    public static PStructDescriptorProvider<ServiceType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<ServiceType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<ServiceType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<ServiceType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> {
         public _Descriptor() {
             super(null, "model", "ServiceType", new _Factory(), false, false);
         }
@@ -385,15 +385,15 @@ public class ServiceType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<ServiceType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceType,_Field> {
         @Override
-        public PStructDescriptor<ServiceType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<ServiceType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ServiceType> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -410,20 +410,20 @@ public class ServiceType
     }
 
     public static class _Builder
-            extends PMessageBuilder<ServiceType> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<ServiceType> {
+        private java.util.BitSet optionals;
 
         private String mComment;
         private String mName;
         private String mExtend;
-        private List<ServiceMethod> mMethods;
-        private Map<String,String> mAnnotations;
+        private java.util.List<net.morimekta.providence.model.ServiceMethod> mMethods;
+        private java.util.Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(5);
-            mMethods = new LinkedList<>();
-            mAnnotations = new LinkedHashMap<>();
+            optionals = new java.util.BitSet(5);
+            mMethods = new java.util.LinkedList<>();
+            mAnnotations = new java.util.LinkedHashMap<>();
         }
 
         public _Builder(ServiceType base) {
@@ -481,15 +481,15 @@ public class ServiceType
             mExtend = null;
             return this;
         }
-        public _Builder setMethods(Collection<ServiceMethod> value) {
+        public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.ServiceMethod> value) {
             optionals.set(3);
             mMethods.clear();
             mMethods.addAll(value);
             return this;
         }
-        public _Builder addToMethods(ServiceMethod... values) {
+        public _Builder addToMethods(net.morimekta.providence.model.ServiceMethod... values) {
             optionals.set(3);
-            for (ServiceMethod item : values) {
+            for (net.morimekta.providence.model.ServiceMethod item : values) {
                 mMethods.add(item);
             }
             return this;
@@ -500,7 +500,7 @@ public class ServiceType
             mMethods.clear();
             return this;
         }
-        public _Builder setAnnotations(Map<String,String> value) {
+        public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
@@ -524,8 +524,8 @@ public class ServiceType
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
                 case 3: setExtend((String) value); break;
-                case 4: setMethods((List<ServiceMethod>) value); break;
-                case 5: setAnnotations((Map<String,String>) value); break;
+                case 4: setMethods((java.util.List<net.morimekta.providence.model.ServiceMethod>) value); break;
+                case 5: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
         }
@@ -533,7 +533,7 @@ public class ServiceType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 4: addToMethods((ServiceMethod) value); break;
+                case 4: addToMethods((net.morimekta.providence.model.ServiceMethod) value); break;
                 default: break;
             }
             return this;

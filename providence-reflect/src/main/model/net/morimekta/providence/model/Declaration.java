@@ -18,14 +18,14 @@ import java.util.Objects;
 /** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
 @SuppressWarnings("unused")
 public class Declaration
-        implements PUnion<Declaration>, Serializable, Comparable<Declaration> {
+        implements net.morimekta.providence.PUnion<Declaration>, java.io.Serializable, Comparable<Declaration> {
     private final static long serialVersionUID = -6998763195276182553L;
 
-    private final EnumType mDeclEnum;
-    private final TypedefType mDeclTypedef;
-    private final StructType mDeclStruct;
-    private final ServiceType mDeclService;
-    private final ThriftField mDeclConst;
+    private final net.morimekta.providence.model.EnumType mDeclEnum;
+    private final net.morimekta.providence.model.TypedefType mDeclTypedef;
+    private final net.morimekta.providence.model.StructType mDeclStruct;
+    private final net.morimekta.providence.model.ServiceType mDeclService;
+    private final net.morimekta.providence.model.ThriftField mDeclConst;
 
     private final _Field tUnionField;
     
@@ -41,23 +41,23 @@ public class Declaration
         mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
     }
 
-    public static Declaration withDeclEnum(EnumType value) {
+    public static Declaration withDeclEnum(net.morimekta.providence.model.EnumType value) {
         return new _Builder().setDeclEnum(value).build();
     }
 
-    public static Declaration withDeclTypedef(TypedefType value) {
+    public static Declaration withDeclTypedef(net.morimekta.providence.model.TypedefType value) {
         return new _Builder().setDeclTypedef(value).build();
     }
 
-    public static Declaration withDeclStruct(StructType value) {
+    public static Declaration withDeclStruct(net.morimekta.providence.model.StructType value) {
         return new _Builder().setDeclStruct(value).build();
     }
 
-    public static Declaration withDeclService(ServiceType value) {
+    public static Declaration withDeclService(net.morimekta.providence.model.ServiceType value) {
         return new _Builder().setDeclService(value).build();
     }
 
-    public static Declaration withDeclConst(ThriftField value) {
+    public static Declaration withDeclConst(net.morimekta.providence.model.ThriftField value) {
         return new _Builder().setDeclConst(value).build();
     }
 
@@ -65,7 +65,7 @@ public class Declaration
         return tUnionField == _Field.DECL_ENUM && mDeclEnum != null;
     }
 
-    public EnumType getDeclEnum() {
+    public net.morimekta.providence.model.EnumType getDeclEnum() {
         return mDeclEnum;
     }
 
@@ -73,7 +73,7 @@ public class Declaration
         return tUnionField == _Field.DECL_TYPEDEF && mDeclTypedef != null;
     }
 
-    public TypedefType getDeclTypedef() {
+    public net.morimekta.providence.model.TypedefType getDeclTypedef() {
         return mDeclTypedef;
     }
 
@@ -81,7 +81,7 @@ public class Declaration
         return tUnionField == _Field.DECL_STRUCT && mDeclStruct != null;
     }
 
-    public StructType getDeclStruct() {
+    public net.morimekta.providence.model.StructType getDeclStruct() {
         return mDeclStruct;
     }
 
@@ -89,7 +89,7 @@ public class Declaration
         return tUnionField == _Field.DECL_SERVICE && mDeclService != null;
     }
 
-    public ServiceType getDeclService() {
+    public net.morimekta.providence.model.ServiceType getDeclService() {
         return mDeclService;
     }
 
@@ -97,7 +97,7 @@ public class Declaration
         return tUnionField == _Field.DECL_CONST && mDeclConst != null;
     }
 
-    public ThriftField getDeclConst() {
+    public net.morimekta.providence.model.ThriftField getDeclConst() {
         return mDeclConst;
     }
 
@@ -156,18 +156,18 @@ public class Declaration
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Declaration)) return false;
         Declaration other = (Declaration) o;
-        return Objects.equals(tUnionField, other.tUnionField) &&
-               Objects.equals(mDeclEnum, other.mDeclEnum) &&
-               Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
-               Objects.equals(mDeclStruct, other.mDeclStruct) &&
-               Objects.equals(mDeclService, other.mDeclService) &&
-               Objects.equals(mDeclConst, other.mDeclConst);
+        return java.util.Objects.equals(tUnionField, other.tUnionField) &&
+               java.util.Objects.equals(mDeclEnum, other.mDeclEnum) &&
+               java.util.Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
+               java.util.Objects.equals(mDeclStruct, other.mDeclStruct) &&
+               java.util.Objects.equals(mDeclService, other.mDeclService) &&
+               java.util.Objects.equals(mDeclConst, other.mDeclConst);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     Declaration.class,
                     _Field.DECL_ENUM, mDeclEnum,
                     _Field.DECL_TYPEDEF, mDeclTypedef,
@@ -239,21 +239,21 @@ public class Declaration
         }
     }
 
-    public enum _Field implements PField {
-        DECL_ENUM(1, PRequirement.DEFAULT, "decl_enum", EnumType.provider(), null),
-        DECL_TYPEDEF(2, PRequirement.DEFAULT, "decl_typedef", TypedefType.provider(), null),
-        DECL_STRUCT(3, PRequirement.DEFAULT, "decl_struct", StructType.provider(), null),
-        DECL_SERVICE(4, PRequirement.DEFAULT, "decl_service", ServiceType.provider(), null),
-        DECL_CONST(5, PRequirement.DEFAULT, "decl_const", ThriftField.provider(), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        DECL_ENUM(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_enum", net.morimekta.providence.model.EnumType.provider(), null),
+        DECL_TYPEDEF(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_typedef", net.morimekta.providence.model.TypedefType.provider(), null),
+        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_struct", net.morimekta.providence.model.StructType.provider(), null),
+        DECL_SERVICE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_service", net.morimekta.providence.model.ServiceType.provider(), null),
+        DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_const", net.morimekta.providence.model.ThriftField.provider(), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -268,13 +268,13 @@ public class Declaration
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -293,7 +293,7 @@ public class Declaration
             builder.append("Declaration._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -326,19 +326,19 @@ public class Declaration
         }
     }
 
-    public static PUnionDescriptorProvider<Declaration,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Declaration,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PUnionDescriptor<Declaration,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PUnionDescriptor<Declaration,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PUnionDescriptor<Declaration,_Field> {
+            extends net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> {
         public _Descriptor() {
             super(null, "model", "Declaration", new _Factory(), false);
         }
@@ -363,15 +363,15 @@ public class Declaration
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PUnionDescriptorProvider<Declaration,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<Declaration,_Field> {
         @Override
-        public PUnionDescriptor<Declaration,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<Declaration> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Declaration> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -388,14 +388,14 @@ public class Declaration
     }
 
     public static class _Builder
-            extends PMessageBuilder<Declaration> {
+            extends net.morimekta.providence.PMessageBuilder<Declaration> {
         private _Field tUnionField;
 
-        private EnumType mDeclEnum;
-        private TypedefType mDeclTypedef;
-        private StructType mDeclStruct;
-        private ServiceType mDeclService;
-        private ThriftField mDeclConst;
+        private net.morimekta.providence.model.EnumType mDeclEnum;
+        private net.morimekta.providence.model.TypedefType mDeclTypedef;
+        private net.morimekta.providence.model.StructType mDeclStruct;
+        private net.morimekta.providence.model.ServiceType mDeclService;
+        private net.morimekta.providence.model.ThriftField mDeclConst;
 
 
         public _Builder() {
@@ -413,7 +413,7 @@ public class Declaration
             mDeclConst = base.mDeclConst;
         }
 
-        public _Builder setDeclEnum(EnumType value) {
+        public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
             tUnionField = _Field.DECL_ENUM;
             mDeclEnum = value;
             return this;
@@ -423,7 +423,7 @@ public class Declaration
             mDeclEnum = null;
             return this;
         }
-        public _Builder setDeclTypedef(TypedefType value) {
+        public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
@@ -433,7 +433,7 @@ public class Declaration
             mDeclTypedef = null;
             return this;
         }
-        public _Builder setDeclStruct(StructType value) {
+        public _Builder setDeclStruct(net.morimekta.providence.model.StructType value) {
             tUnionField = _Field.DECL_STRUCT;
             mDeclStruct = value;
             return this;
@@ -443,7 +443,7 @@ public class Declaration
             mDeclStruct = null;
             return this;
         }
-        public _Builder setDeclService(ServiceType value) {
+        public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
             mDeclService = value;
             return this;
@@ -453,7 +453,7 @@ public class Declaration
             mDeclService = null;
             return this;
         }
-        public _Builder setDeclConst(ThriftField value) {
+        public _Builder setDeclConst(net.morimekta.providence.model.ThriftField value) {
             tUnionField = _Field.DECL_CONST;
             mDeclConst = value;
             return this;
@@ -467,11 +467,11 @@ public class Declaration
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setDeclEnum((EnumType) value); break;
-                case 2: setDeclTypedef((TypedefType) value); break;
-                case 3: setDeclStruct((StructType) value); break;
-                case 4: setDeclService((ServiceType) value); break;
-                case 5: setDeclConst((ThriftField) value); break;
+                case 1: setDeclEnum((net.morimekta.providence.model.EnumType) value); break;
+                case 2: setDeclTypedef((net.morimekta.providence.model.TypedefType) value); break;
+                case 3: setDeclStruct((net.morimekta.providence.model.StructType) value); break;
+                case 4: setDeclService((net.morimekta.providence.model.ServiceType) value); break;
+                case 5: setDeclConst((net.morimekta.providence.model.ThriftField) value); break;
             }
             return this;
         }

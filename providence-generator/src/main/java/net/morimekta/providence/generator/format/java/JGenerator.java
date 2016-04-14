@@ -77,7 +77,7 @@ public class JGenerator extends Generator {
         }
 
         for (PDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
-            String file = mTypeHelper.getInstanceClassName(type) + ".java";
+            String file = JUtils.getClassName(type) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);

@@ -20,7 +20,7 @@ import java.util.Objects;
 /** typedef <type> <name> */
 @SuppressWarnings("unused")
 public class TypedefType
-        implements PMessage<TypedefType>, Serializable, Comparable<TypedefType> {
+        implements net.morimekta.providence.PMessage<TypedefType>, java.io.Serializable, Comparable<TypedefType> {
     private final static long serialVersionUID = 5431583053440540554L;
 
     private final String mComment;
@@ -111,15 +111,15 @@ public class TypedefType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mType, other.mType) &&
-               Objects.equals(mName, other.mName);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mType, other.mType) &&
+               java.util.Objects.equals(mName, other.mName);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     TypedefType.class,
                     _Field.COMMENT, mComment,
                     _Field.TYPE, mType,
@@ -188,19 +188,19 @@ public class TypedefType
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        TYPE(2, PRequirement.DEFAULT, "type", PPrimitive.STRING.provider(), null),
-        NAME(3, PRequirement.DEFAULT, "name", PPrimitive.STRING.provider(), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        TYPE(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        NAME(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -215,13 +215,13 @@ public class TypedefType
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -240,7 +240,7 @@ public class TypedefType
             builder.append("TypedefType._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -269,19 +269,19 @@ public class TypedefType
         }
     }
 
-    public static PStructDescriptorProvider<TypedefType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<TypedefType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<TypedefType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<TypedefType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<TypedefType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> {
         public _Descriptor() {
             super(null, "model", "TypedefType", new _Factory(), true, false);
         }
@@ -306,15 +306,15 @@ public class TypedefType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<TypedefType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<TypedefType,_Field> {
         @Override
-        public PStructDescriptor<TypedefType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<TypedefType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<TypedefType> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -331,8 +331,8 @@ public class TypedefType
     }
 
     public static class _Builder
-            extends PMessageBuilder<TypedefType> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<TypedefType> {
+        private java.util.BitSet optionals;
 
         private String mComment;
         private String mType;
@@ -340,7 +340,7 @@ public class TypedefType
 
 
         public _Builder() {
-            optionals = new BitSet(3);
+            optionals = new java.util.BitSet(3);
         }
 
         public _Builder(TypedefType base) {

@@ -116,7 +116,7 @@ public class JHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getInstanceClassName(PDescriptor type) {
+    public String getInstanceClassName(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.class.getSimpleName();
@@ -133,16 +133,16 @@ public class JHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return Binary.class.getSimpleName();
+                return Binary.class.getName();
             case MAP:
-                return mapClass.getSimpleName();
+                return mapClass.getName();
             case SET:
-                return setClass.getSimpleName();
+                return setClass.getName();
             case LIST:
-                return LinkedList.class.getSimpleName();
+                return LinkedList.class.getName();
             case ENUM:
             case MESSAGE:
-                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
+                return getQualifiedInstanceClassName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
@@ -204,12 +204,12 @@ public class JHelper {
                                      getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
-                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
+                return getQualifiedValueTypeName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public String getFieldType(PDescriptor type) {
+    public String getFieldType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 return Boolean.class.getSimpleName();
@@ -226,22 +226,22 @@ public class JHelper {
             case STRING:
                 return String.class.getSimpleName();
             case BINARY:
-                return Binary.class.getSimpleName();
+                return Binary.class.getName();
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
                 return String.format("%s<%s,%s>",
-                                     Map.class.getSimpleName(),
+                                     Map.class.getName(),
                                      getFieldType(mType.keyDescriptor()),
                                      getFieldType(mType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("%s<%s>", Set.class.getSimpleName(), getFieldType(sType.itemDescriptor()));
+                return String.format("%s<%s>", Set.class.getName(), getFieldType(sType.itemDescriptor()));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("%s<%s>", List.class.getSimpleName(), getFieldType(lType.itemDescriptor()));
+                return String.format("%s<%s>", List.class.getName(), getFieldType(lType.itemDescriptor()));
             case ENUM:
             case MESSAGE:
-                return JUtils.getClassName((PDeclaredDescriptor<?>) type);
+                return getQualifiedInstanceClassName((PDeclaredDescriptor<?>) type);
         }
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
@@ -256,29 +256,34 @@ public class JHelper {
         return null;
     }
 
-    public String getProviderName(PDescriptor type) {
+    public String getProviderName(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case ENUM:
             case MESSAGE:
-                return String.format("%s.provider()", getInstanceClassName(type));
+                return String.format("%s.provider()", getQualifiedInstanceClassName(type));
             case LIST:
                 PList<?> lType = (PList<?>) type;
-                return String.format("PList.provider(%s)", getProviderName(lType.itemDescriptor()));
+                return String.format("%s.provider(%s)",
+                                     PList.class.getName(),
+                                     getProviderName(lType.itemDescriptor()));
             case SET:
                 PSet<?> sType = (PSet<?>) type;
-                return String.format("PSet.provider(%s)", getProviderName(sType.itemDescriptor()));
+                return String.format("%s.provider(%s)",
+                                     PSet.class.getName(),
+                                     getProviderName(sType.itemDescriptor()));
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
-                return String.format("PMap.provider(%s,%s)",
+                return String.format("%s.provider(%s,%s)",
+                                     PMap.class.getName(),
                                      getProviderName(mType.keyDescriptor()),
                                      getProviderName(mType.itemDescriptor()));
             default:
                 if (!(type instanceof PPrimitive)) {
                     throw new IllegalArgumentException("Unhandled type group " + type.getType());
                 }
-                return String.format("PPrimitive.%s.provider()",
-                                     type.getName()
-                                         .toUpperCase());
+                return String.format("%s.%s.provider()",
+                                     PPrimitive.class.getName(),
+                                     type.getName().toUpperCase());
         }
     }
 }

@@ -37,19 +37,19 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 public class ThriftField
-        implements PMessage<ThriftField>, Serializable, Comparable<ThriftField> {
+        implements net.morimekta.providence.PMessage<ThriftField>, java.io.Serializable, Comparable<ThriftField> {
     private final static long serialVersionUID = 5114028868232611868L;
 
     private final static int kDefaultKey = 0;
-    private final static Requirement kDefaultRequirement = Requirement.DEFAULT;
+    private final static net.morimekta.providence.model.Requirement kDefaultRequirement = net.morimekta.providence.model.Requirement.DEFAULT;
 
     private final String mComment;
     private final int mKey;
-    private final Requirement mRequirement;
+    private final net.morimekta.providence.model.Requirement mRequirement;
     private final String mType;
     private final String mName;
     private final String mDefaultValue;
-    private final Map<String,String> mAnnotations;
+    private final java.util.Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
@@ -60,23 +60,23 @@ public class ThriftField
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
     }
 
     public ThriftField(String pComment,
                        int pKey,
-                       Requirement pRequirement,
+                       net.morimekta.providence.model.Requirement pRequirement,
                        String pType,
                        String pName,
                        String pDefaultValue,
-                       Map<String,String> pAnnotations) {
+                       java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mKey = pKey;
         mRequirement = pRequirement;
         mType = pType;
         mName = pName;
         mDefaultValue = pDefaultValue;
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -99,7 +99,7 @@ public class ThriftField
         return mRequirement != null;
     }
 
-    public Requirement getRequirement() {
+    public net.morimekta.providence.model.Requirement getRequirement() {
         return hasRequirement() ? mRequirement : kDefaultRequirement;
     }
 
@@ -131,7 +131,7 @@ public class ThriftField
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
 
-    public Map<String,String> getAnnotations() {
+    public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
@@ -191,19 +191,19 @@ public class ThriftField
     public boolean equals(Object o) {
         if (o == null || !(o instanceof ThriftField)) return false;
         ThriftField other = (ThriftField) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mKey, other.mKey) &&
-               Objects.equals(mRequirement, other.mRequirement) &&
-               Objects.equals(mType, other.mType) &&
-               Objects.equals(mName, other.mName) &&
-               Objects.equals(mDefaultValue, other.mDefaultValue) &&
-               PTypeUtils.equals(mAnnotations, other.mAnnotations);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mKey, other.mKey) &&
+               java.util.Objects.equals(mRequirement, other.mRequirement) &&
+               java.util.Objects.equals(mType, other.mType) &&
+               java.util.Objects.equals(mName, other.mName) &&
+               java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     ThriftField.class,
                     _Field.COMMENT, mComment,
                     _Field.KEY, mKey,
@@ -211,7 +211,7 @@ public class ThriftField
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
-                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -266,7 +266,7 @@ public class ThriftField
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(PTypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -324,23 +324,23 @@ public class ThriftField
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        KEY(2, PRequirement.REQUIRED, "key", PPrimitive.I32.provider(), null),
-        REQUIREMENT(3, PRequirement.DEFAULT, "requirement", Requirement.provider(), new PDefaultValueProvider<>(kDefaultRequirement)),
-        TYPE(4, PRequirement.REQUIRED, "type", PPrimitive.STRING.provider(), null),
-        NAME(5, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
-        DEFAULT_VALUE(6, PRequirement.DEFAULT, "default_value", PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        KEY(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "key", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        REQUIREMENT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "requirement", net.morimekta.providence.model.Requirement.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultRequirement)),
+        TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DEFAULT_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "default_value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -355,13 +355,13 @@ public class ThriftField
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -380,7 +380,7 @@ public class ThriftField
             builder.append("ThriftField._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -417,19 +417,19 @@ public class ThriftField
         }
     }
 
-    public static PStructDescriptorProvider<ThriftField,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftField,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<ThriftField,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<ThriftField,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<ThriftField,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> {
         public _Descriptor() {
             super(null, "model", "ThriftField", new _Factory(), false, false);
         }
@@ -454,15 +454,15 @@ public class ThriftField
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<ThriftField,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftField,_Field> {
         @Override
-        public PStructDescriptor<ThriftField,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<ThriftField> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ThriftField> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -479,22 +479,22 @@ public class ThriftField
     }
 
     public static class _Builder
-            extends PMessageBuilder<ThriftField> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<ThriftField> {
+        private java.util.BitSet optionals;
 
         private String mComment;
         private int mKey;
-        private Requirement mRequirement;
+        private net.morimekta.providence.model.Requirement mRequirement;
         private String mType;
         private String mName;
         private String mDefaultValue;
-        private Map<String,String> mAnnotations;
+        private java.util.Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(7);
+            optionals = new java.util.BitSet(7);
             mKey = kDefaultKey;
-            mAnnotations = new LinkedHashMap<>();
+            mAnnotations = new java.util.LinkedHashMap<>();
         }
 
         public _Builder(ThriftField base) {
@@ -548,7 +548,7 @@ public class ThriftField
             mKey = kDefaultKey;
             return this;
         }
-        public _Builder setRequirement(Requirement value) {
+        public _Builder setRequirement(net.morimekta.providence.model.Requirement value) {
             optionals.set(2);
             mRequirement = value;
             return this;
@@ -588,7 +588,7 @@ public class ThriftField
             mDefaultValue = null;
             return this;
         }
-        public _Builder setAnnotations(Map<String,String> value) {
+        public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
             mAnnotations.clear();
             mAnnotations.putAll(value);
@@ -611,11 +611,11 @@ public class ThriftField
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setKey((int) value); break;
-                case 3: setRequirement((Requirement) value); break;
+                case 3: setRequirement((net.morimekta.providence.model.Requirement) value); break;
                 case 4: setType((String) value); break;
                 case 5: setName((String) value); break;
                 case 6: setDefaultValue((String) value); break;
-                case 7: setAnnotations((Map<String,String>) value); break;
+                case 7: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
         }

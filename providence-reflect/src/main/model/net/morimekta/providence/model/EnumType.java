@@ -33,31 +33,31 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 public class EnumType
-        implements PMessage<EnumType>, Serializable, Comparable<EnumType> {
+        implements net.morimekta.providence.PMessage<EnumType>, java.io.Serializable, Comparable<EnumType> {
     private final static long serialVersionUID = 5720337451968926862L;
 
     private final String mComment;
     private final String mName;
-    private final List<EnumValue> mValues;
-    private final Map<String,String> mAnnotations;
+    private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;
+    private final java.util.Map<String,String> mAnnotations;
     
     private volatile int tHashCode;
 
     private EnumType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
-        mValues = Collections.unmodifiableList(new LinkedList<>(builder.mValues));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mAnnotations));
+        mValues = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mValues));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
     }
 
     public EnumType(String pComment,
                     String pName,
-                    List<EnumValue> pValues,
-                    Map<String,String> pAnnotations) {
+                    java.util.List<net.morimekta.providence.model.EnumValue> pValues,
+                    java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
-        mValues = Collections.unmodifiableList(new LinkedList<>(pValues));
-        mAnnotations = Collections.unmodifiableMap(new LinkedHashMap<>(pAnnotations));
+        mValues = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pValues));
+        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
     }
 
     public boolean hasComment() {
@@ -80,7 +80,7 @@ public class EnumType
         return mValues != null ? mValues.size() : 0;
     }
 
-    public List<EnumValue> getValues() {
+    public java.util.List<net.morimekta.providence.model.EnumValue> getValues() {
         return mValues;
     }
 
@@ -88,7 +88,7 @@ public class EnumType
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
 
-    public Map<String,String> getAnnotations() {
+    public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
 
@@ -139,21 +139,21 @@ public class EnumType
     public boolean equals(Object o) {
         if (o == null || !(o instanceof EnumType)) return false;
         EnumType other = (EnumType) o;
-        return Objects.equals(mComment, other.mComment) &&
-               Objects.equals(mName, other.mName) &&
-               PTypeUtils.equals(mValues, other.mValues) &&
-               PTypeUtils.equals(mAnnotations, other.mAnnotations);
+        return java.util.Objects.equals(mComment, other.mComment) &&
+               java.util.Objects.equals(mName, other.mName) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mValues, other.mValues) &&
+               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
     public int hashCode() {
         if (tHashCode == 0) {
-            tHashCode = Objects.hash(
+            tHashCode = java.util.Objects.hash(
                     EnumType.class,
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
-                    _Field.VALUES, PTypeUtils.hashCode(mValues),
-                    _Field.ANNOTATIONS, PTypeUtils.hashCode(mAnnotations));
+                    _Field.VALUES, net.morimekta.providence.util.PTypeUtils.hashCode(mValues),
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -184,13 +184,13 @@ public class EnumType
             if (!first) out.append(',');
             first = false;
             out.append("values:");
-            out.append(PTypeUtils.toString(mValues));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mValues));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(PTypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -231,20 +231,20 @@ public class EnumType
         return 0;
     }
 
-    public enum _Field implements PField {
-        COMMENT(1, PRequirement.DEFAULT, "comment", PPrimitive.STRING.provider(), null),
-        NAME(2, PRequirement.REQUIRED, "name", PPrimitive.STRING.provider(), null),
-        VALUES(3, PRequirement.DEFAULT, "values", PList.provider(EnumValue.provider()), null),
-        ANNOTATIONS(4, PRequirement.DEFAULT, "annotations", PMap.provider(PPrimitive.STRING.provider(),PPrimitive.STRING.provider()), null),
+    public enum _Field implements net.morimekta.providence.descriptor.PField {
+        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        VALUES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "values", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.EnumValue.provider()), null),
+        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
-        private final PRequirement mRequired;
+        private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final PDescriptorProvider<?> mTypeProvider;
-        private final PValueProvider<?> mDefaultValue;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, PRequirement required, String name, PDescriptorProvider<?> typeProvider, PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
@@ -259,13 +259,13 @@ public class EnumType
         public int getKey() { return mKey; }
 
         @Override
-        public PRequirement getRequirement() { return mRequired; }
+        public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public PType getType() { return getDescriptor().getType(); }
+        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -284,7 +284,7 @@ public class EnumType
             builder.append("EnumType._Field(")
                    .append(mKey)
                    .append(": ");
-            if (mRequired != PRequirement.DEFAULT) {
+            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
                 builder.append(mRequired.label).append(" ");
             }
             builder.append(getDescriptor().getQualifiedName(null))
@@ -315,19 +315,19 @@ public class EnumType
         }
     }
 
-    public static PStructDescriptorProvider<EnumType,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<EnumType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public PStructDescriptor<EnumType,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final PStructDescriptor<EnumType,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends PStructDescriptor<EnumType,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> {
         public _Descriptor() {
             super(null, "model", "EnumType", new _Factory(), false, false);
         }
@@ -352,15 +352,15 @@ public class EnumType
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends PStructDescriptorProvider<EnumType,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<EnumType,_Field> {
         @Override
-        public PStructDescriptor<EnumType,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends PMessageBuilderFactory<EnumType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<EnumType> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -377,19 +377,19 @@ public class EnumType
     }
 
     public static class _Builder
-            extends PMessageBuilder<EnumType> {
-        private BitSet optionals;
+            extends net.morimekta.providence.PMessageBuilder<EnumType> {
+        private java.util.BitSet optionals;
 
         private String mComment;
         private String mName;
-        private List<EnumValue> mValues;
-        private Map<String,String> mAnnotations;
+        private java.util.List<net.morimekta.providence.model.EnumValue> mValues;
+        private java.util.Map<String,String> mAnnotations;
 
 
         public _Builder() {
-            optionals = new BitSet(4);
-            mValues = new LinkedList<>();
-            mAnnotations = new LinkedHashMap<>();
+            optionals = new java.util.BitSet(4);
+            mValues = new java.util.LinkedList<>();
+            mAnnotations = new java.util.LinkedHashMap<>();
         }
 
         public _Builder(EnumType base) {
@@ -433,15 +433,15 @@ public class EnumType
             mName = null;
             return this;
         }
-        public _Builder setValues(Collection<EnumValue> value) {
+        public _Builder setValues(java.util.Collection<net.morimekta.providence.model.EnumValue> value) {
             optionals.set(2);
             mValues.clear();
             mValues.addAll(value);
             return this;
         }
-        public _Builder addToValues(EnumValue... values) {
+        public _Builder addToValues(net.morimekta.providence.model.EnumValue... values) {
             optionals.set(2);
-            for (EnumValue item : values) {
+            for (net.morimekta.providence.model.EnumValue item : values) {
                 mValues.add(item);
             }
             return this;
@@ -452,7 +452,7 @@ public class EnumType
             mValues.clear();
             return this;
         }
-        public _Builder setAnnotations(Map<String,String> value) {
+        public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(3);
             mAnnotations.clear();
             mAnnotations.putAll(value);
@@ -475,8 +475,8 @@ public class EnumType
             switch (key) {
                 case 1: setComment((String) value); break;
                 case 2: setName((String) value); break;
-                case 3: setValues((List<EnumValue>) value); break;
-                case 4: setAnnotations((Map<String,String>) value); break;
+                case 3: setValues((java.util.List<net.morimekta.providence.model.EnumValue>) value); break;
+                case 4: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
         }
@@ -484,7 +484,7 @@ public class EnumType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 3: addToValues((EnumValue) value); break;
+                case 3: addToValues((net.morimekta.providence.model.EnumValue) value); break;
                 default: break;
             }
             return this;

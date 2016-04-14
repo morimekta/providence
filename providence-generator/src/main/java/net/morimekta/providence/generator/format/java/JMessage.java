@@ -62,7 +62,7 @@ public class JMessage {
     }
 
     public String instanceType() {
-        return helper.getInstanceClassName(struct);
+        return JUtils.getClassName(struct);
     }
 
     public List<JField> fields() {
