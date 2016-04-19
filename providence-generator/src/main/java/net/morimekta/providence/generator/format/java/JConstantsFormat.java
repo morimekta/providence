@@ -1,7 +1,6 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -71,7 +70,8 @@ public class JConstantsFormat {
                 case LIST:
                 case SET:
                     name = c.getName();
-                    instance = helper.getInstanceClassName(c.getDescriptor());
+                    JField field = new JField(c, helper, 1);
+                    instance = helper.getInstanceClassName(c);
 
                     PContainer<?, ?> lDesc = (PContainer<?, ?>) c.getDescriptor();
                     PDescriptor<?> itemDesc = lDesc.itemDescriptor();
@@ -79,7 +79,9 @@ public class JConstantsFormat {
                     writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
                           .appendln("static {")
                           .begin()
-                          .formatln("%s builder = new %s<>();", instance, instance);
+                          .formatln("%s builder = new %s<>();",
+                                    field.builderFieldType(),
+                                    field.builderInstanceType());
 
                     @SuppressWarnings("unchecked")
                     Collection<Object> items = (Collection<Object>) c.getDefaultValue();
@@ -93,11 +95,7 @@ public class JConstantsFormat {
                               .append(");");
                     }
 
-                    if (c.getType() == PType.LIST) {
-                        writer.formatln("%s = java.util.Collections.unmodifiableList(builder);", name);
-                    } else {
-                        writer.formatln("%s = java.util.Collections.unmodifiableSet(builder);", name);
-                    }
+                    writer.formatln("%s = builder.build();", name);
                     writer.end()
                           .appendln('}');
                     break;

@@ -20,6 +20,7 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
@@ -57,5 +58,23 @@ public class JAnnotation {
 
     public static boolean isDeprecated(CAnnotatedDescriptor value) {
         return value.hasAnnotation("deprecated");
+    }
+
+    public static ContainerType containerType(PField<?> field) {
+        if (field instanceof CAnnotatedDescriptor) {
+            return containerType((CAnnotatedDescriptor) field);
+        }
+        return ContainerType.DEFAULT;
+    }
+
+    public static ContainerType containerType(JField field) {
+        return containerType(field.getPField());
+    }
+
+    public static ContainerType containerType(CAnnotatedDescriptor descriptor) {
+        if (descriptor.hasAnnotation("container")) {
+            return ContainerType.valueOf(descriptor.getAnnotation("container"));
+        }
+        return ContainerType.DEFAULT;
     }
 }

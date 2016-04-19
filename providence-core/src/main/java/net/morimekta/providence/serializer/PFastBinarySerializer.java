@@ -29,7 +29,9 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
@@ -40,9 +42,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -95,7 +94,7 @@ public class PFastBinarySerializer extends PSerializer {
     public <T> T deserialize(InputStream is, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
         if (PType.MESSAGE == descriptor.getType()) {
-            return cast((Object) readMessage(in, (PStructDescriptor<?, ?>) descriptor));
+            return cast(readMessage(in, (PStructDescriptor<?, ?>) descriptor));
         } else {
             // Assume it consists of a single field.
             int tag = in.readIntVarint();
@@ -300,30 +299,41 @@ public class PFastBinarySerializer extends PSerializer {
                     }
                     return null;
                 } else if (descriptor.getType() == PType.MAP) {
-                    PMap<?, ?> ct = (PMap) descriptor;
+                    PMap<Object, Object> ct = (PMap<Object, Object>) descriptor;
                     PDescriptor<?> kt = ct.keyDescriptor();
                     PDescriptor<?> vt = ct.itemDescriptor();
 
-                    Map<Object, Object> out = new LinkedHashMap<>();
+                    PMap.Builder<Object, Object> out = ct.builder();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i, ++i) {
                         Object key = readFieldValue(in, in.readIntVarint() & 0x07, kt);
                         Object value = readFieldValue(in, in.readIntVarint() & 0x07, vt);
                         out.put(key, value);
                     }
-                    return cast(out);
-                } else {
-                    PContainer<?, ?> ct = (PContainer) descriptor;
+                    return cast(out.build());
+                } else if (descriptor.getType() == PType.LIST) {
+                    PList<Object> ct = (PList<Object>) descriptor;
                     PDescriptor<?> it = ct.itemDescriptor();
-                    // TODO: Make sure I can always use LinkedList to reduce overhead.
-                    Collection<Object> out =
-                            descriptor.getType() == PType.SET ? new LinkedHashSet<>() : new LinkedList<>();
+                    PList.Builder<Object> out = ct.builder();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i) {
                         int tag = in.readIntVarint();
                         out.add(readFieldValue(in, tag & 0x07, it));
                     }
-                    return cast(out);
+                    return cast(out.build());
+                } else if (descriptor.getType() == PType.SET) {
+                    PSet<Object> ct = (PSet<Object>) descriptor;
+                    PDescriptor<?> it = ct.itemDescriptor();
+                    PSet.Builder<Object> out = ct.builder();
+                    final int len = in.readIntVarint();
+                    for (int i = 0; i < len; ++i) {
+                        int tag = in.readIntVarint();
+                        out.add(readFieldValue(in, tag & 0x07, it));
+                    }
+                    return cast(out.build());
+                } else {
+                    throw new PSerializeException("Type " + descriptor.getType() +
+                                                  " not compatible with collection data.");
                 }
             case NONE:
                 return cast(false);

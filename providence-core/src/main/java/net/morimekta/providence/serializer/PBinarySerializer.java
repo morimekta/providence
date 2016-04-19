@@ -25,24 +25,25 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
-import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -240,30 +241,29 @@ public class PBinarySerializer extends PSerializer {
             case MAP: {
                 PDescriptor keyType = null;
                 PDescriptor valueType = null;
+                PMap.Builder<Object, Object> out;
                 if (type != null) {
                     if (!type.getType()
                              .equals(PType.MAP)) {
                         throw new PSerializeException("Invalid type for map encoding: " + type);
                     }
 
-                    PMap<?, ?> mapType = (PMap<?, ?>) type;
+                    PMap<Object, Object> mapType = (PMap<Object, Object>) type;
                     keyType = mapType.keyDescriptor();
                     valueType = mapType.itemDescriptor();
+
+                    out = mapType.builder();
+                } else {
+                    out = new PMap.ImmutableMapBuilder<>();
                 }
 
                 final int size = in.expectUInt32();
 
-                Map<Object, Object> out = new LinkedHashMap<>(size);
-
                 FieldInfo entryInfo;
                 for (int i = 0; i < size; ++i) {
-                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
-                        throw new PSerializeException("Unexpected end of map stream.");
-                    }
+                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
                     Object key = readFieldValue(in, entryInfo, keyType);
-                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
-                        throw new PSerializeException("Unexpected end of map stream.");
-                    }
+                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
                     Object value = readFieldValue(in, entryInfo, valueType);
                     if (key != null && value != null) {
                         out.put(key, value);
@@ -271,23 +271,24 @@ public class PBinarySerializer extends PSerializer {
                         throw new PSerializeException("Null key or value in map.");
                     }
                 }
-                return cast(out);
+                return cast(out.build());
             }
             case SET: {
                 PDescriptor entryType = null;
+                PSet.Builder<Object> out;
                 if (type != null) {
-                    entryType = ((PContainer<?, ?>) type).itemDescriptor();
+                    PSet<Object> setType = (PSet<Object>) type;
+                    entryType = setType.itemDescriptor();
+                    out = setType.builder();
+                } else {
+                    out = new PSet.ImmutableSetBuilder<>();
                 }
 
                 final int size = in.expectUInt32();
 
-                Collection<Object> out = new LinkedHashSet<>(size);
-
                 FieldInfo entryInfo;
                 for (int i = 0; i < size; ++i) {
-                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
-                        throw new PSerializeException("Unexpected end of set.");
-                    }
+                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
                     Object key = readFieldValue(in, entryInfo, entryType);
                     if (key != null) {
                         out.add(key);
@@ -296,23 +297,24 @@ public class PBinarySerializer extends PSerializer {
                     }
                 }
 
-                return cast(out);
+                return cast(out.build());
             }
             case LIST: {
                 PDescriptor entryType = null;
+                PList.Builder<Object> out;
                 if (type != null) {
-                    entryType = ((PContainer<?, ?>) type).itemDescriptor();
+                    PList<Object> setType = (PList<Object>) type;
+                    entryType = setType.itemDescriptor();
+                    out = setType.builder();
+                } else {
+                    out = new PList.ImmutableListBuilder<>();
                 }
 
                 final int size = in.expectUInt32();
 
-                Collection<Object> out = new LinkedList<>();
-
                 FieldInfo entryInfo;
                 for (int i = 0; i < size; ++i) {
-                    if ((entryInfo = readEntryFieldInfo(in, fieldInfo.getId())) == null) {
-                        throw new PSerializeException("Unexpected end of list.");
-                    }
+                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
                     Object key = readFieldValue(in, entryInfo, entryType);
                     if (key != null) {
                         out.add(key);
@@ -321,7 +323,7 @@ public class PBinarySerializer extends PSerializer {
                     }
                 }
 
-                return cast(out);
+                return cast(out.build());
             }
             default:
                 throw new PSerializeException("unknown data type: " + fieldInfo.getType());

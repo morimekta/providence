@@ -48,9 +48,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -370,12 +367,13 @@ public class PJsonSerializer extends PSerializer {
                     throw new PSerializeException(token + " not parsable message start.");
                 }
                 case MAP: {
-                    PDescriptor<?> itemType = ((PMap<?, ?>) t).itemDescriptor();
-                    PDescriptor<?> keyType = ((PMap<?, ?>) t).keyDescriptor();
+                    PMap<Object, Object> mapType = (PMap<Object, Object>) t;
+                    PDescriptor<?> itemType = mapType.itemDescriptor();
+                    PDescriptor<?> keyType = mapType.keyDescriptor();
                     if (!token.isSymbol(JsonToken.kMapStart)) {
                         throw new PSerializeException("Incompatible start of map " + token);
                     }
-                    LinkedHashMap<Object, Object> map = new LinkedHashMap<>();
+                    PMap.Builder<Object, Object> map = mapType.builder();
 
                     if (!tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
                         char sep = JsonToken.kMapStart;
@@ -388,14 +386,14 @@ public class PJsonSerializer extends PSerializer {
                             sep = tokenizer.expectSymbol("parsing map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
                         }
                     }
-                    return cast(map);
+                    return cast(map.build());
                 }
                 case SET: {
                     PDescriptor<?> itemType = ((PSet<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
-                    LinkedHashSet<Object> set = new LinkedHashSet<>();
+                    PSet.Builder<Object> set = ((PSet<Object>) t).builder();
 
                     if (!tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
                         char sep = JsonToken.kListStart;
@@ -404,14 +402,14 @@ public class PJsonSerializer extends PSerializer {
                             sep = tokenizer.expectSymbol("parsing set entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
-                    return cast(set);
+                    return cast(set.build());
                 }
                 case LIST: {
                     PDescriptor itemType = ((PList<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
-                    LinkedList<Object> list = new LinkedList<>();
+                    PList.Builder<Object> list = ((PList<Object>) t).builder();
                     if (!tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
                         char sep = JsonToken.kListStart;
                         while (sep != JsonToken.kListEnd) {
@@ -419,7 +417,7 @@ public class PJsonSerializer extends PSerializer {
                             sep = tokenizer.expectSymbol("parsing list entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
-                    return cast(list);
+                    return cast(list.build());
                 }
             }
         } catch (JsonException je) {

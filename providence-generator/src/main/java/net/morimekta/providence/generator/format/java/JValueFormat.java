@@ -1,18 +1,11 @@
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.util.Binary;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -101,7 +94,7 @@ public class JValueFormat {
                 }
                 break;
             case ENUM:
-                writer.format("%s.%s", helper.getInstanceClassName(type), value.toString());
+                writer.format("%s.%s", helper.getValueType(type), value.toString());
                 break;
             case MESSAGE:
                 // writer.write("null");

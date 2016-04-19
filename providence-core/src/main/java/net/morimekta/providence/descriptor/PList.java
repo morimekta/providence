@@ -19,16 +19,25 @@
 
 package net.morimekta.providence.descriptor;
 
+import net.morimekta.providence.PBuilder;
+import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Descriptor for a list with item type.
  */
 public class PList<I> extends PContainer<I, List<I>> {
-    public PList(PDescriptorProvider<I> itemType) {
+    private final BuilderFactory<I> builderFactory;
+
+    public PList(PDescriptorProvider<I> itemType,
+                 BuilderFactory<I> builderFactory) {
         super(itemType);
+        this.builderFactory = builderFactory;
     }
 
     @Override
@@ -61,7 +70,65 @@ public class PList<I> extends PContainer<I, List<I>> {
         return PList.class.hashCode() + itemDescriptor().hashCode();
     }
 
-    public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemType) {
-        return new PContainerProvider<>(new PList<>(itemType));
+    public interface Builder<V> extends PBuilder<List<V>> {
+        void add(V value);
+        void addAll(Collection<V> items);
+        void clear();
+
+        @Override
+        List<V> build();
+    }
+
+    public interface BuilderFactory<I> extends PBuilderFactory<List<I>> {
+        @Override
+        Builder<I> builder();
+    }
+
+    public static class ImmutableListBuilder<I> implements Builder<I> {
+        private ImmutableList.Builder<I> builder;
+
+        public ImmutableListBuilder() {
+            builder = ImmutableList.builder();
+        }
+
+        @Override
+        public void add(I value) {
+            builder.add(value);
+        }
+
+        @Override
+        public void addAll(Collection<I> items) {
+            builder.addAll(items);
+        }
+
+        @Override
+        public void clear() {
+            builder = ImmutableList.builder();
+        }
+
+        @Override
+        public List<I> build() {
+            return builder.build();
+        }
+    }
+
+    @Override
+    public Builder<I> builder() {
+        return builderFactory.builder();
+    }
+
+    public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemDesc) {
+        BuilderFactory<I> factory = new BuilderFactory<I>() {
+            @Override
+            public Builder<I> builder() {
+                return new ImmutableListBuilder<>();
+            }
+        };
+        return provider(itemDesc, factory);
+    }
+
+    public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemDesc,
+                                                                        BuilderFactory<I> builderFactory) {
+        return new PContainerProvider<>(new PList<>(itemDesc, builderFactory));
     }
 }

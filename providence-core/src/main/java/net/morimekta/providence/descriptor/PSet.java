@@ -19,16 +19,28 @@
 
 package net.morimekta.providence.descriptor;
 
+import net.morimekta.providence.PBuilder;
+import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * Descriptor for a set with item type.
  */
 public class PSet<I> extends PContainer<I, Set<I>> {
-    public PSet(PDescriptorProvider<I> itemType) {
+    private final BuilderFactory<I> builderFactory;
+
+    public PSet(PDescriptorProvider<I> itemType,
+                BuilderFactory<I> builderFactory) {
         super(itemType);
+        this.builderFactory = builderFactory;
     }
 
     @Override
@@ -61,7 +73,141 @@ public class PSet<I> extends PContainer<I, Set<I>> {
         return PSet.class.hashCode() + itemDescriptor().hashCode();
     }
 
-    public static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemType) {
-        return new PContainerProvider<>(new PSet<>(itemType));
+    public interface Builder<I> extends PBuilder<Set<I>> {
+        void add(I value);
+        void addAll(Collection<I> items);
+        void clear();
+
+        @Override
+        Set<I> build();
+    }
+
+    public interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
+        @Override
+        Builder<I> builder();
+    }
+
+    public static class ImmutableSetBuilder<I> implements Builder<I> {
+        private ImmutableSet.Builder<I> builder;
+
+        public ImmutableSetBuilder() {
+            this.builder = ImmutableSet.builder();
+        }
+
+        @Override
+        public void add(I value) {
+            builder.add(value);
+        }
+
+        @Override
+        public void addAll(Collection<I> items) {
+            builder.addAll(items);
+        }
+
+        @Override
+        public void clear() {
+            builder = ImmutableSet.builder();
+        }
+
+        @Override
+        public Set<I> build() {
+            return builder.build();
+        }
+    }
+
+    public static class ImmutableSortedSetBuilder<I extends Comparable<I>> implements Builder<I> {
+        private ImmutableSortedSet.Builder<I> builder;
+
+        public ImmutableSortedSetBuilder() {
+            this.builder = ImmutableSortedSet.naturalOrder();
+        }
+
+        @Override
+        public void add(I value) {
+            builder.add(value);
+        }
+
+        @Override
+        public void addAll(Collection<I> items) {
+            builder.addAll(items);
+        }
+
+        @Override
+        public void clear() {
+            builder = ImmutableSortedSet.naturalOrder();
+        }
+
+        @Override
+        public Set<I> build() {
+            return builder.build();
+        }
+    }
+
+    public static class LinkedHashSetBuilder<I> implements Builder<I> {
+        private final LinkedHashSet<I> builder;
+
+        public LinkedHashSetBuilder() {
+            this.builder = new LinkedHashSet<>();
+        }
+
+        @Override
+        public void add(I value) {
+            builder.add(value);
+        }
+
+        @Override
+        public void addAll(Collection<I> items) {
+            builder.addAll(items);
+        }
+
+        @Override
+        public void clear() {
+            builder.clear();
+        }
+
+        @Override
+        public Set<I> build() {
+            return Collections.unmodifiableSet(builder);
+        }
+    }
+
+    @Override
+    public Builder<I> builder() {
+        return builderFactory.builder();
+    }
+
+    public static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemDesc) {
+        BuilderFactory<I> factory = new BuilderFactory<I>() {
+            @Override
+            public Builder<I> builder() {
+                return new ImmutableSetBuilder<>();
+            }
+        };
+        return provider(itemDesc, factory);
+    }
+
+    public static <I extends Comparable<I>> PContainerProvider<I, Set<I>, PSet<I>> sortedProvider(PDescriptorProvider<I> itemDesc) {
+        BuilderFactory<I> factory = new BuilderFactory<I>() {
+            @Override
+            public Builder<I> builder() {
+                return new ImmutableSortedSetBuilder<>();
+            }
+        };
+        return provider(itemDesc, factory);
+    }
+
+    public static <I extends Comparable<I>> PContainerProvider<I, Set<I>, PSet<I>> orderedProvider(PDescriptorProvider<I> itemDesc) {
+        BuilderFactory<I> factory = new BuilderFactory<I>() {
+            @Override
+            public Builder<I> builder() {
+                return new LinkedHashSetBuilder<>();
+            }
+        };
+        return provider(itemDesc, factory);
+    }
+
+    private static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemDesc,
+                                                                      BuilderFactory<I> builderFactory) {
+        return new PContainerProvider<>(new PSet<>(itemDesc, builderFactory));
     }
 }

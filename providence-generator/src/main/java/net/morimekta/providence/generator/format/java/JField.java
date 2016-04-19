@@ -21,9 +21,21 @@ package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 import static net.morimekta.util.Strings.c_case;
 import static net.morimekta.util.Strings.camelCase;
@@ -72,6 +84,10 @@ public class JField {
 
     public String member() {
         return camelCase("m", field.getName());
+    }
+
+    public String isSet() {
+        return camelCase("isSet", field.getName());
     }
 
     public String getter() {
@@ -132,6 +148,10 @@ public class JField {
         }
     }
 
+    public ContainerType containerType() {
+        return JAnnotation.containerType(this);
+    }
+
     public boolean alwaysPresent() {
         return field.getRequirement() != PRequirement.OPTIONAL &&
                field.getDescriptor() instanceof PPrimitive &&
@@ -150,7 +170,58 @@ public class JField {
     }
 
     public String instanceType() throws GeneratorException {
-        return helper.getQualifiedInstanceClassName(field.getDescriptor());
+        return helper.getInstanceClassName(field);
+    }
+
+    public String builderFieldType() throws GeneratorException  {
+        switch (field.getType()) {
+            case MAP: return PMap.Builder.class.getName().replace('$', '.');
+            case SET: return PSet.Builder.class.getName().replace('$', '.');
+            case LIST: return PList.Builder.class.getName().replace('$', '.');
+            default: return fieldType();
+        }
+    }
+
+    public String fieldInstanceType() throws GeneratorException  {
+        switch (field.getType()) {
+            case MAP:
+                switch (containerType()) {
+                    case DEFAULT: return ImmutableMap.class.getName().replace('$', '.');
+                    case SORTED: return ImmutableSortedMap.class.getName().replace('$', '.');
+                    case ORDERED: return LinkedHashMap.class.getName().replace('$', '.');
+                }
+            case SET:
+                switch (containerType()) {
+                    case DEFAULT: return ImmutableSet.class.getName().replace('$', '.');
+                    case SORTED: return ImmutableSortedSet.class.getName().replace('$', '.');
+                    case ORDERED: return LinkedHashSet.class.getName().replace('$', '.');
+                }
+            case LIST:
+                return ImmutableList.class.getName().replace('$', '.');
+            default:
+                return fieldType();
+        }
+    }
+
+    public String builderInstanceType() throws GeneratorException  {
+        switch (field.getType()) {
+            case MAP:
+                switch (containerType()) {
+                    case DEFAULT: return PMap.ImmutableMapBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PMap.ImmutableSortedMapBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PMap.LinkedHashMapBuilder.class.getName().replace('$', '.');
+                }
+            case SET:
+                switch (containerType()) {
+                    case DEFAULT: return PSet.ImmutableSetBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PSet.ImmutableSortedSetBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PSet.LinkedHashSetBuilder.class.getName().replace('$', '.');
+                }
+            case LIST:
+                return PList.ImmutableListBuilder.class.getName().replace('$', '.');
+            default:
+                return fieldType();
+        }
     }
 
     public boolean hasComment() {

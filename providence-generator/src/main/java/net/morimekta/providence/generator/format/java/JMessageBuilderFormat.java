@@ -44,6 +44,7 @@ public class JMessageBuilderFormat {
             if (field.container()) {
                 appendAdder(message, field);
             }
+            appendIsSet(message, field);
             appendResetter(message, field);
         }
 
@@ -92,7 +93,7 @@ public class JMessageBuilderFormat {
         }
         writer.newline();
         for (JField field : message.fields()) {
-            writer.formatln("private %s %s;", field.fieldType(), field.member());
+            writer.formatln("private %s %s;", field.builderFieldType(), field.member());
         }
         if (message.fields()
                    .size() > 0) {
@@ -112,7 +113,7 @@ public class JMessageBuilderFormat {
         }
         for (JField field : message.fields()) {
             if (field.container()) {
-                writer.formatln("%s = new %s<>();", field.member(), field.instanceType());
+                writer.formatln("%s = new %s<>();", field.member(), field.builderInstanceType());
             } else if (field.alwaysPresent()) {
                 writer.formatln("%s = %s;", field.member(), field.kDefault());
             }
@@ -269,6 +270,19 @@ public class JMessageBuilderFormat {
                 break;
             }
         }
+    }
+
+    private void appendIsSet(JMessage message, JField field) {
+        writer.formatln("public boolean %s() {", field.isSet())
+              .begin();
+
+        if (message.isUnion()) {
+            writer.formatln("return tUnionField == _Field.%s;", field.fieldEnum());
+        } else {
+            writer.formatln("return optionals.get(%d);", field.index());
+        }
+        writer.end()
+              .appendln('}');
     }
 
     private void appendResetter(JMessage message, JField field) {

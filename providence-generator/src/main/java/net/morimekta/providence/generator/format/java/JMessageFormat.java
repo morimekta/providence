@@ -41,6 +41,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static net.morimekta.util.Strings.camelCase;
 
@@ -488,26 +489,23 @@ public class JMessageFormat {
                 switch (field.type()) {
                     case LIST:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableList(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
                                 field.fieldEnum(),
-                                field.instanceType(),
                                 field.member());
                         break;
                     case SET:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableSet(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
                                 field.fieldEnum(),
-                                field.instanceType(),
                                 field.member());
                         break;
                     case MAP:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? java.util.Collections.unmodifiableMap(new %s<>(builder.%s)) : null;",
+                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
                                 field.fieldEnum(),
-                                field.instanceType(),
                                 field.member());
                         break;
                     default:
@@ -532,28 +530,14 @@ public class JMessageFormat {
                       .newline();
             }
             for (JField field : message.fields()) {
-                switch (field.type()) {
-                    case LIST:
-                        writer.formatln("%s = java.util.Collections.unmodifiableList(new %s<>(builder.%s));",
-                                        field.member(),
-                                        field.instanceType(),
-                                        field.member());
-                        break;
-                    case SET:
-                        writer.formatln("%s = java.util.Collections.unmodifiableSet(new %s<>(builder.%s));",
-                                        field.member(),
-                                        field.instanceType(),
-                                        field.member());
-                        break;
-                    case MAP:
-                        writer.formatln("%s = java.util.Collections.unmodifiableMap(new %s<>(builder.%s));",
-                                        field.member(),
-                                        field.instanceType(),
-                                        field.member());
-                        break;
-                    default:
-                        writer.formatln("%s = builder.%s;", field.member(), field.member());
-                        break;
+                if (field.container()) {
+                    writer.formatln("if (builder.%s()) {", field.isSet())
+                          .formatln("    %s = builder.%s.build();", field.member(), field.member())
+                          .appendln("} else {")
+                          .formatln("    %s = null;", field.member())
+                          .appendln('}');
+                } else {
+                    writer.formatln("%s = builder.%s;", field.member(), field.member());
                 }
             }
         }
@@ -574,7 +558,7 @@ public class JMessageFormat {
                       .begin()
                       .formatln("return new _Builder().%s(value).build();", field.setter())
                       .end()
-                      .appendln("}")
+                      .appendln('}')
                       .newline();
             }
         } else {
@@ -608,22 +592,52 @@ public class JMessageFormat {
             for (JField field : message.fields()) {
                 switch (field.type()) {
                     case LIST:
-                        writer.formatln("%s = java.util.Collections.unmodifiableList(new %s<>(%s));",
+                        writer.formatln("if (%s != null) {", field.param())
+                              .formatln("    %s = %s.copyOf(%s);",
                                         field.member(),
-                                        field.instanceType(),
-                                        field.param());
+                                        field.fieldInstanceType(),
+                                        field.param())
+                              .appendln("} else {")
+                              .formatln("    %s = null;", field.member())
+                              .appendln('}');
                         break;
                     case SET:
-                        writer.formatln("%s = java.util.Collections.unmodifiableSet(new %s<>(%s));",
-                                        field.member(),
-                                        field.instanceType(),
-                                        field.param());
+                        writer.formatln("if (%s != null) {", field.param())
+                              .begin();
+                        if (field.containerType() == ContainerType.ORDERED) {
+                            writer.formatln("%s = %s.unmodifiableSet(%s);",
+                                            field.member(),
+                                            Collections.class.getName(),
+                                            field.param());
+                        } else {
+                            writer.formatln("%s = %s.copyOf(%s);",
+                                            field.member(),
+                                            field.fieldInstanceType(),
+                                            field.param());
+                        }
+                        writer.end()
+                              .appendln("} else {")
+                              .formatln("    %s = null;", field.member())
+                              .appendln('}');
                         break;
                     case MAP:
-                        writer.formatln("%s = java.util.Collections.unmodifiableMap(new %s<>(%s));",
-                                        field.member(),
-                                        field.instanceType(),
-                                        field.param());
+                        writer.formatln("if (%s != null) {", field.param())
+                              .begin();
+                        if (field.containerType() == ContainerType.ORDERED) {
+                            writer.formatln("%s = %s.unmodifiableMap(%s);",
+                                            field.member(),
+                                            Collections.class.getName(),
+                                            field.param());
+                        } else {
+                            writer.formatln("%s = %s.copyOf(%s);",
+                                            field.member(),
+                                            field.fieldInstanceType(),
+                                            field.param());
+                        }
+                        writer.end()
+                              .appendln("} else {")
+                              .formatln("    %s = null;", field.member())
+                              .appendln('}');
                         break;
                     default:
                         writer.formatln("%s = %s;", field.member(), field.param());
