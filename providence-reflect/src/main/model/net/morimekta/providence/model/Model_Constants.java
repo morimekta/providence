@@ -17,7 +17,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kThriftKeywords;
     static {
-        java.util.LinkedHashSet builder = new java.util.LinkedHashSet<>();
+        net.morimekta.providence.descriptor.PSet.Builder builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
         builder.add("struct");
         builder.add("exception");
         builder.add("bool");
@@ -45,12 +45,12 @@ public class Model_Constants {
         builder.add("service");
         builder.add("binary");
         builder.add("namespace");
-        kThriftKeywords = java.util.Collections.unmodifiableSet(builder);
+        kThriftKeywords = builder.build();
     }
 
     public static final java.util.Set<String> kReservedWords;
     static {
-        java.util.LinkedHashSet builder = new java.util.LinkedHashSet<>();
+        net.morimekta.providence.descriptor.PSet.Builder builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
         builder.add("private");
         builder.add("byte");
         builder.add("for");
@@ -66,7 +66,7 @@ public class Model_Constants {
         builder.add("unsigned");
         builder.add("class");
         builder.add("if");
-        kReservedWords = java.util.Collections.unmodifiableSet(builder);
+        kReservedWords = builder.build();
     }
 
 }

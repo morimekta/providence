@@ -37,7 +37,11 @@ public class ThriftField
         mType = builder.mType;
         mName = builder.mName;
         mDefaultValue = builder.mDefaultValue;
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public ThriftField(String pComment,
@@ -53,7 +57,11 @@ public class ThriftField
         mType = pType;
         mName = pName;
         mDefaultValue = pDefaultValue;
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -465,13 +473,13 @@ public class ThriftField
         private String mType;
         private String mName;
         private String mDefaultValue;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(7);
             mKey = kDefaultKey;
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(ThriftField base) {
@@ -510,6 +518,9 @@ public class ThriftField
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -519,6 +530,9 @@ public class ThriftField
             optionals.set(1);
             mKey = value;
             return this;
+        }
+        public boolean isSetKey() {
+            return optionals.get(1);
         }
         public _Builder clearKey() {
             optionals.set(1, false);
@@ -530,6 +544,9 @@ public class ThriftField
             mRequirement = value;
             return this;
         }
+        public boolean isSetRequirement() {
+            return optionals.get(2);
+        }
         public _Builder clearRequirement() {
             optionals.set(2, false);
             mRequirement = null;
@@ -539,6 +556,9 @@ public class ThriftField
             optionals.set(3);
             mType = value;
             return this;
+        }
+        public boolean isSetType() {
+            return optionals.get(3);
         }
         public _Builder clearType() {
             optionals.set(3, false);
@@ -550,6 +570,9 @@ public class ThriftField
             mName = value;
             return this;
         }
+        public boolean isSetName() {
+            return optionals.get(4);
+        }
         public _Builder clearName() {
             optionals.set(4, false);
             mName = null;
@@ -559,6 +582,9 @@ public class ThriftField
             optionals.set(5);
             mDefaultValue = value;
             return this;
+        }
+        public boolean isSetDefaultValue() {
+            return optionals.get(5);
         }
         public _Builder clearDefaultValue() {
             optionals.set(5, false);
@@ -577,6 +603,9 @@ public class ThriftField
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(6);
+        }
         public _Builder clearAnnotations() {
             optionals.set(6, false);
             mAnnotations.clear();

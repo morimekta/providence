@@ -22,8 +22,16 @@ public class ServiceType
         mComment = builder.mComment;
         mName = builder.mName;
         mExtend = builder.mExtend;
-        mMethods = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mMethods));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetMethods()) {
+            mMethods = builder.mMethods.build();
+        } else {
+            mMethods = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public ServiceType(String pComment,
@@ -34,8 +42,16 @@ public class ServiceType
         mComment = pComment;
         mName = pName;
         mExtend = pExtend;
-        mMethods = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pMethods));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pMethods != null) {
+            mMethods = com.google.common.collect.ImmutableList.copyOf(pMethods);
+        } else {
+            mMethods = null;
+        }
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -390,14 +406,14 @@ public class ServiceType
         private String mComment;
         private String mName;
         private String mExtend;
-        private java.util.List<net.morimekta.providence.model.ServiceMethod> mMethods;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder mMethods;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(5);
-            mMethods = new java.util.LinkedList<>();
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(ServiceType base) {
@@ -430,6 +446,9 @@ public class ServiceType
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -440,6 +459,9 @@ public class ServiceType
             mName = value;
             return this;
         }
+        public boolean isSetName() {
+            return optionals.get(1);
+        }
         public _Builder clearName() {
             optionals.set(1, false);
             mName = null;
@@ -449,6 +471,9 @@ public class ServiceType
             optionals.set(2);
             mExtend = value;
             return this;
+        }
+        public boolean isSetExtend() {
+            return optionals.get(2);
         }
         public _Builder clearExtend() {
             optionals.set(2, false);
@@ -469,6 +494,9 @@ public class ServiceType
             return this;
         }
 
+        public boolean isSetMethods() {
+            return optionals.get(3);
+        }
         public _Builder clearMethods() {
             optionals.set(3, false);
             mMethods.clear();
@@ -486,6 +514,9 @@ public class ServiceType
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(4);
+        }
         public _Builder clearAnnotations() {
             optionals.set(4, false);
             mAnnotations.clear();

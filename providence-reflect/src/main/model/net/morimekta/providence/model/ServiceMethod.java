@@ -23,9 +23,21 @@ public class ServiceMethod
         mOneWay = builder.mOneWay;
         mReturnType = builder.mReturnType;
         mName = builder.mName;
-        mParams = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mParams));
-        mExceptions = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mExceptions));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetParams()) {
+            mParams = builder.mParams.build();
+        } else {
+            mParams = null;
+        }
+        if (builder.isSetExceptions()) {
+            mExceptions = builder.mExceptions.build();
+        } else {
+            mExceptions = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public ServiceMethod(String pComment,
@@ -39,9 +51,21 @@ public class ServiceMethod
         mOneWay = pOneWay;
         mReturnType = pReturnType;
         mName = pName;
-        mParams = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pParams));
-        mExceptions = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pExceptions));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pParams != null) {
+            mParams = com.google.common.collect.ImmutableList.copyOf(pParams);
+        } else {
+            mParams = null;
+        }
+        if (pExceptions != null) {
+            mExceptions = com.google.common.collect.ImmutableList.copyOf(pExceptions);
+        } else {
+            mExceptions = null;
+        }
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -451,17 +475,17 @@ public class ServiceMethod
         private boolean mOneWay;
         private String mReturnType;
         private String mName;
-        private java.util.List<net.morimekta.providence.model.ThriftField> mParams;
-        private java.util.List<net.morimekta.providence.model.ThriftField> mExceptions;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder mParams;
+        private net.morimekta.providence.descriptor.PList.Builder mExceptions;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(7);
             mOneWay = kDefaultOneWay;
-            mParams = new java.util.LinkedList<>();
-            mExceptions = new java.util.LinkedList<>();
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mExceptions = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(ServiceMethod base) {
@@ -500,6 +524,9 @@ public class ServiceMethod
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -509,6 +536,9 @@ public class ServiceMethod
             optionals.set(1);
             mOneWay = value;
             return this;
+        }
+        public boolean isSetOneWay() {
+            return optionals.get(1);
         }
         public _Builder clearOneWay() {
             optionals.set(1, false);
@@ -520,6 +550,9 @@ public class ServiceMethod
             mReturnType = value;
             return this;
         }
+        public boolean isSetReturnType() {
+            return optionals.get(2);
+        }
         public _Builder clearReturnType() {
             optionals.set(2, false);
             mReturnType = null;
@@ -529,6 +562,9 @@ public class ServiceMethod
             optionals.set(3);
             mName = value;
             return this;
+        }
+        public boolean isSetName() {
+            return optionals.get(3);
         }
         public _Builder clearName() {
             optionals.set(3, false);
@@ -549,6 +585,9 @@ public class ServiceMethod
             return this;
         }
 
+        public boolean isSetParams() {
+            return optionals.get(4);
+        }
         public _Builder clearParams() {
             optionals.set(4, false);
             mParams.clear();
@@ -568,6 +607,9 @@ public class ServiceMethod
             return this;
         }
 
+        public boolean isSetExceptions() {
+            return optionals.get(5);
+        }
         public _Builder clearExceptions() {
             optionals.set(5, false);
             mExceptions.clear();
@@ -585,6 +627,9 @@ public class ServiceMethod
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(6);
+        }
         public _Builder clearAnnotations() {
             optionals.set(6, false);
             mAnnotations.clear();

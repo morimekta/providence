@@ -348,6 +348,9 @@ public class TypedefType
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -358,6 +361,9 @@ public class TypedefType
             mType = value;
             return this;
         }
+        public boolean isSetType() {
+            return optionals.get(1);
+        }
         public _Builder clearType() {
             optionals.set(1, false);
             mType = null;
@@ -367,6 +373,9 @@ public class TypedefType
             optionals.set(2);
             mName = value;
             return this;
+        }
+        public boolean isSetName() {
+            return optionals.get(2);
         }
         public _Builder clearName() {
             optionals.set(2, false);

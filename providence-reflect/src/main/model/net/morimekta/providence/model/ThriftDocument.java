@@ -17,9 +17,21 @@ public class ThriftDocument
     private ThriftDocument(_Builder builder) {
         mComment = builder.mComment;
         mPackage = builder.mPackage;
-        mIncludes = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mIncludes));
-        mNamespaces = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mNamespaces));
-        mDecl = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mDecl));
+        if (builder.isSetIncludes()) {
+            mIncludes = builder.mIncludes.build();
+        } else {
+            mIncludes = null;
+        }
+        if (builder.isSetNamespaces()) {
+            mNamespaces = builder.mNamespaces.build();
+        } else {
+            mNamespaces = null;
+        }
+        if (builder.isSetDecl()) {
+            mDecl = builder.mDecl.build();
+        } else {
+            mDecl = null;
+        }
     }
 
     public ThriftDocument(String pComment,
@@ -29,9 +41,21 @@ public class ThriftDocument
                           java.util.List<net.morimekta.providence.model.Declaration> pDecl) {
         mComment = pComment;
         mPackage = pPackage;
-        mIncludes = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pIncludes));
-        mNamespaces = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pNamespaces));
-        mDecl = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pDecl));
+        if (pIncludes != null) {
+            mIncludes = com.google.common.collect.ImmutableList.copyOf(pIncludes);
+        } else {
+            mIncludes = null;
+        }
+        if (pNamespaces != null) {
+            mNamespaces = com.google.common.collect.ImmutableMap.copyOf(pNamespaces);
+        } else {
+            mNamespaces = null;
+        }
+        if (pDecl != null) {
+            mDecl = com.google.common.collect.ImmutableList.copyOf(pDecl);
+        } else {
+            mDecl = null;
+        }
     }
 
     public boolean hasComment() {
@@ -389,16 +413,16 @@ public class ThriftDocument
 
         private String mComment;
         private String mPackage;
-        private java.util.List<String> mIncludes;
-        private java.util.Map<String,String> mNamespaces;
-        private java.util.List<net.morimekta.providence.model.Declaration> mDecl;
+        private net.morimekta.providence.descriptor.PList.Builder mIncludes;
+        private net.morimekta.providence.descriptor.PMap.Builder mNamespaces;
+        private net.morimekta.providence.descriptor.PList.Builder mDecl;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(5);
-            mIncludes = new java.util.LinkedList<>();
-            mNamespaces = new java.util.LinkedHashMap<>();
-            mDecl = new java.util.LinkedList<>();
+            mIncludes = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
         }
 
         public _Builder(ThriftDocument base) {
@@ -432,6 +456,9 @@ public class ThriftDocument
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -442,6 +469,9 @@ public class ThriftDocument
             optionals.set(1);
             mPackage = value;
             return this;
+        }
+        public boolean isSetPackage() {
+            return optionals.get(1);
         }
         public _Builder clearPackage() {
             optionals.set(1, false);
@@ -464,6 +494,9 @@ public class ThriftDocument
             return this;
         }
 
+        public boolean isSetIncludes() {
+            return optionals.get(2);
+        }
         public _Builder clearIncludes() {
             optionals.set(2, false);
             mIncludes.clear();
@@ -483,6 +516,9 @@ public class ThriftDocument
             return this;
         }
 
+        public boolean isSetNamespaces() {
+            return optionals.get(3);
+        }
         public _Builder clearNamespaces() {
             optionals.set(3, false);
             mNamespaces.clear();
@@ -502,6 +538,9 @@ public class ThriftDocument
             return this;
         }
 
+        public boolean isSetDecl() {
+            return optionals.get(4);
+        }
         public _Builder clearDecl() {
             optionals.set(4, false);
             mDecl.clear();

@@ -20,8 +20,16 @@ public class EnumType
     private EnumType(_Builder builder) {
         mComment = builder.mComment;
         mName = builder.mName;
-        mValues = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mValues));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetValues()) {
+            mValues = builder.mValues.build();
+        } else {
+            mValues = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public EnumType(String pComment,
@@ -30,8 +38,16 @@ public class EnumType
                     java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
-        mValues = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pValues));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pValues != null) {
+            mValues = com.google.common.collect.ImmutableList.copyOf(pValues);
+        } else {
+            mValues = null;
+        }
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -356,14 +372,14 @@ public class EnumType
 
         private String mComment;
         private String mName;
-        private java.util.List<net.morimekta.providence.model.EnumValue> mValues;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder mValues;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(4);
-            mValues = new java.util.LinkedList<>();
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(EnumType base) {
@@ -392,6 +408,9 @@ public class EnumType
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -401,6 +420,9 @@ public class EnumType
             optionals.set(1);
             mName = value;
             return this;
+        }
+        public boolean isSetName() {
+            return optionals.get(1);
         }
         public _Builder clearName() {
             optionals.set(1, false);
@@ -421,6 +443,9 @@ public class EnumType
             return this;
         }
 
+        public boolean isSetValues() {
+            return optionals.get(2);
+        }
         public _Builder clearValues() {
             optionals.set(2, false);
             mValues.clear();
@@ -438,6 +463,9 @@ public class EnumType
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(3);
+        }
         public _Builder clearAnnotations() {
             optionals.set(3, false);
             mAnnotations.clear();

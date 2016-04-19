@@ -19,7 +19,11 @@ public class EnumValue
         mComment = builder.mComment;
         mName = builder.mName;
         mValue = builder.mValue;
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public EnumValue(String pComment,
@@ -29,7 +33,11 @@ public class EnumValue
         mComment = pComment;
         mName = pName;
         mValue = pValue;
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -351,13 +359,13 @@ public class EnumValue
         private String mComment;
         private String mName;
         private int mValue;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(4);
             mValue = kDefaultValue;
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(EnumValue base) {
@@ -384,6 +392,9 @@ public class EnumValue
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -394,6 +405,9 @@ public class EnumValue
             mName = value;
             return this;
         }
+        public boolean isSetName() {
+            return optionals.get(1);
+        }
         public _Builder clearName() {
             optionals.set(1, false);
             mName = null;
@@ -403,6 +417,9 @@ public class EnumValue
             optionals.set(2);
             mValue = value;
             return this;
+        }
+        public boolean isSetValue() {
+            return optionals.get(2);
         }
         public _Builder clearValue() {
             optionals.set(2, false);
@@ -421,6 +438,9 @@ public class EnumValue
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(3);
+        }
         public _Builder clearAnnotations() {
             optionals.set(3, false);
             mAnnotations.clear();

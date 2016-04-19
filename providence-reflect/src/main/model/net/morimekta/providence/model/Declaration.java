@@ -403,6 +403,9 @@ public class Declaration
             mDeclEnum = value;
             return this;
         }
+        public boolean isSetDeclEnum() {
+            return tUnionField == _Field.DECL_ENUM;
+        }
         public _Builder clearDeclEnum() {
             if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
             mDeclEnum = null;
@@ -412,6 +415,9 @@ public class Declaration
             tUnionField = _Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
+        }
+        public boolean isSetDeclTypedef() {
+            return tUnionField == _Field.DECL_TYPEDEF;
         }
         public _Builder clearDeclTypedef() {
             if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
@@ -423,6 +429,9 @@ public class Declaration
             mDeclStruct = value;
             return this;
         }
+        public boolean isSetDeclStruct() {
+            return tUnionField == _Field.DECL_STRUCT;
+        }
         public _Builder clearDeclStruct() {
             if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
             mDeclStruct = null;
@@ -433,6 +442,9 @@ public class Declaration
             mDeclService = value;
             return this;
         }
+        public boolean isSetDeclService() {
+            return tUnionField == _Field.DECL_SERVICE;
+        }
         public _Builder clearDeclService() {
             if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
             mDeclService = null;
@@ -442,6 +454,9 @@ public class Declaration
             tUnionField = _Field.DECL_CONST;
             mDeclConst = value;
             return this;
+        }
+        public boolean isSetDeclConst() {
+            return tUnionField == _Field.DECL_CONST;
         }
         public _Builder clearDeclConst() {
             if (tUnionField == _Field.DECL_CONST) tUnionField = null;

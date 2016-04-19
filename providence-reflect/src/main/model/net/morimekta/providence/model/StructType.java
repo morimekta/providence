@@ -24,8 +24,16 @@ public class StructType
         mComment = builder.mComment;
         mVariant = builder.mVariant;
         mName = builder.mName;
-        mFields = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(builder.mFields));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(builder.mAnnotations));
+        if (builder.isSetFields()) {
+            mFields = builder.mFields.build();
+        } else {
+            mFields = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public StructType(String pComment,
@@ -36,8 +44,16 @@ public class StructType
         mComment = pComment;
         mVariant = pVariant;
         mName = pName;
-        mFields = java.util.Collections.unmodifiableList(new java.util.LinkedList<>(pFields));
-        mAnnotations = java.util.Collections.unmodifiableMap(new java.util.LinkedHashMap<>(pAnnotations));
+        if (pFields != null) {
+            mFields = com.google.common.collect.ImmutableList.copyOf(pFields);
+        } else {
+            mFields = null;
+        }
+        if (pAnnotations != null) {
+            mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
     }
 
     public boolean hasComment() {
@@ -392,14 +408,14 @@ public class StructType
         private String mComment;
         private net.morimekta.providence.model.StructVariant mVariant;
         private String mName;
-        private java.util.List<net.morimekta.providence.model.ThriftField> mFields;
-        private java.util.Map<String,String> mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder mFields;
+        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(5);
-            mFields = new java.util.LinkedList<>();
-            mAnnotations = new java.util.LinkedHashMap<>();
+            mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         public _Builder(StructType base) {
@@ -432,6 +448,9 @@ public class StructType
             mComment = value;
             return this;
         }
+        public boolean isSetComment() {
+            return optionals.get(0);
+        }
         public _Builder clearComment() {
             optionals.set(0, false);
             mComment = null;
@@ -442,6 +461,9 @@ public class StructType
             mVariant = value;
             return this;
         }
+        public boolean isSetVariant() {
+            return optionals.get(1);
+        }
         public _Builder clearVariant() {
             optionals.set(1, false);
             mVariant = null;
@@ -451,6 +473,9 @@ public class StructType
             optionals.set(2);
             mName = value;
             return this;
+        }
+        public boolean isSetName() {
+            return optionals.get(2);
         }
         public _Builder clearName() {
             optionals.set(2, false);
@@ -471,6 +496,9 @@ public class StructType
             return this;
         }
 
+        public boolean isSetFields() {
+            return optionals.get(3);
+        }
         public _Builder clearFields() {
             optionals.set(3, false);
             mFields.clear();
@@ -488,6 +516,9 @@ public class StructType
             return this;
         }
 
+        public boolean isSetAnnotations() {
+            return optionals.get(4);
+        }
         public _Builder clearAnnotations() {
             optionals.set(4, false);
             mAnnotations.clear();
