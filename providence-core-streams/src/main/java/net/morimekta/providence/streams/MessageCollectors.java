@@ -31,6 +31,8 @@ public class MessageCollectors {
             try {
                 if(result.get() > 0) {
                     result.addAndGet(maybeWriteBytes(outputStream, serializer.entrySeparator()));
+                } else if (!serializer.streamInitiatorPartOfData()) {
+                    result.addAndGet(maybeWriteBytes(outputStream, serializer.streamInitiator()));
                 }
                 result.addAndGet(serializer.serialize(outputStream, t));
             } catch(PSerializeException e) {
@@ -60,6 +62,8 @@ public class MessageCollectors {
                 synchronized(outputStream) {
                     if(result.get() > 0) {
                         result.addAndGet(maybeWriteBytes(outputStream, serializer.entrySeparator()));
+                    } else if (!serializer.streamInitiatorPartOfData()) {
+                        result.addAndGet(maybeWriteBytes(outputStream, serializer.streamInitiator()));
                     }
                     result.addAndGet(serializer.serialize(outputStream, t));
                 }

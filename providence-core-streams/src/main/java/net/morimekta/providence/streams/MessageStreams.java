@@ -44,16 +44,19 @@ public class MessageStreams {
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 
         PSerializer serializer;
-        in.mark(16);
-        int r = in.read();
-        if (r < 0) {
-            throw new IOException("Unexpected end of stream.");
-        }
-        if (r == PJsonSerializer.DEFAULT_STREAM_INITIATOR[0]) {
+        if (file.getName().endsWith(".json")) {
             serializer = new PJsonSerializer(true);
-            in.reset();
         } else {
-            serializer = new PFastBinarySerializer(true);
+            in.mark(16);
+            int r = in.read();
+            if (r < 0) {
+                throw new IOException("Unexpected end of stream.");
+            }
+            if (r == PJsonSerializer.STREAM_INITIATOR[0]) {
+                serializer = new PJsonSerializer(true);
+            } else {
+                serializer = new PFastBinarySerializer(true);
+            }
             in.reset();
         }
 
@@ -78,9 +81,6 @@ public class MessageStreams {
                                                                            PStructDescriptor<T, F> descriptor)
             throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
-        if (!serializer.streamInitiatorPartOfData()) {
-            IOUtils.skipUntil(in, serializer.streamInitiator());
-        }
         return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, is -> {
             try {
                 is.close();
@@ -247,6 +247,11 @@ public class MessageStreams {
                 if(num > 0) {
                     if(!IOUtils.skipUntil(in, serializer.entrySeparator())) {
                         // no next entry found.
+                        close();
+                        return null;
+                    }
+                } else if (!serializer.streamInitiatorPartOfData()) {
+                    if (!IOUtils.skipUntil(in, serializer.streamInitiator())) {
                         close();
                         return null;
                     }
