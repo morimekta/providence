@@ -20,7 +20,8 @@
 package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,11 +41,11 @@ public abstract class PSerializer {
     public static final byte[] DEFAULT_STREAM_TERMINATOR = {'\n'};
     public static final byte[] DEFAULT_ENTRY_SEP = {'\n'};
 
-    public abstract int serialize(OutputStream output, PMessage<?> message)
-            throws IOException, PSerializeException;
+    public abstract <T extends PMessage<T>> int
+    serialize(OutputStream output, T message) throws IOException, PSerializeException;
 
-    public abstract <T> T deserialize(InputStream input, PDescriptor<T> descriptor)
-            throws IOException, PSerializeException;
+    public abstract <T extends PMessage<T>, TF extends PField> T
+    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, PSerializeException;
 
     public boolean streamInitiatorPartOfData() {
         return true;

@@ -140,7 +140,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
-    public int serialize(OutputStream output, PMessage<?> message) throws PSerializeException {
+    public <T extends PMessage<T>> int serialize(OutputStream output, T message) throws PSerializeException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
@@ -156,7 +156,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> type) throws PSerializeException {
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws PSerializeException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
             if (!tokenizer.hasNext()) {

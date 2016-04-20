@@ -71,8 +71,18 @@ public class PBinarySerializer extends PSerializer {
     }
 
     @Override
-    public int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException {
-        BinaryWriter writer = new BinaryWriter(output);
+    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, PSerializeException {
+        BinaryWriter writer = new BinaryWriter(os);
+        return writeMessage(writer, message);
+    }
+
+    @Override
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
+        BinaryReader reader = new BinaryReader(input);
+        return readMessage(reader, descriptor, true);
+    }
+
+    private <T extends PMessage<T>> int writeMessage(BinaryWriter writer, T message) throws IOException, PSerializeException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -92,21 +102,6 @@ public class PBinarySerializer extends PSerializer {
         // write 2 null-bytes (field ID 0).
         len += writer.writeUInt16(0);
         return len;
-    }
-
-    @Override
-    public <T> T deserialize(InputStream input, PDescriptor<T> descriptor) throws PSerializeException, IOException {
-        BinaryReader reader = new BinaryReader(input);
-        // Assume it consists of a single field.
-        if (PType.MESSAGE == descriptor.getType()) {
-            return cast(readMessage(reader, (PStructDescriptor<?, ?>) descriptor, true));
-        } else {
-            FieldInfo info = readFieldInfo(reader);
-            if (info == null) {
-                throw new PSerializeException("Unexpected end of stream.");
-            }
-            return readFieldValue(reader, info, descriptor);
-        }
     }
 
     private <T extends PMessage<T>> T readMessage(BinaryReader input,
@@ -376,7 +371,9 @@ public class PBinarySerializer extends PSerializer {
             return 1 + len;
         } else if (value instanceof PMessage) {
             out.writeByte(PType.MESSAGE.id);
-            return 1 + serialize(out, (PMessage<?>) value);
+            @SuppressWarnings("unchecked")
+            int len = writeMessage(out, (PMessage) value);
+            return len + 1;
         } else {
             throw new PSerializeException("");
         }

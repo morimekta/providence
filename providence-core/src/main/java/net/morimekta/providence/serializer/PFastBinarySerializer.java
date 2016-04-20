@@ -70,31 +70,20 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @Override
-    public int serialize(OutputStream os, PMessage<?> message) throws IOException, PSerializeException {
+    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, PSerializeException {
         BinaryWriter out = new BinaryWriter(os);
         return writeMessage(out, message);
     }
 
     @Override
-    public <T> T deserialize(InputStream is, PDescriptor<T> descriptor) throws PSerializeException, IOException {
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream is, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
-        if (PType.MESSAGE == descriptor.getType()) {
-            return cast(readMessage(in, (PStructDescriptor<?, ?>) descriptor));
-        } else {
-            // Assume it consists of a single field.
-            int tag = in.readIntVarint();
-            if (tag > 0) {
-                return readFieldValue(in, tag & 0x0f, descriptor);
-            } else if (readStrict) {
-                throw new PSerializeException("");
-            }
-            return null;
-        }
+        return readMessage(in, descriptor);
     }
 
     // --- MESSAGE ---
 
-    private int writeMessage(BinaryWriter out, PMessage<?> message) throws IOException, PSerializeException {
+    private <T extends PMessage<T>> int writeMessage(BinaryWriter out, T message) throws IOException, PSerializeException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -113,14 +102,14 @@ public class PFastBinarySerializer extends PSerializer {
         return len + out.writeVarint(0);
     }
 
-    private <T extends PMessage<T>> T readMessage(BinaryReader in, PStructDescriptor<T, ?> descriptor)
+    private <T extends PMessage<T>, TF extends PField> T readMessage(BinaryReader in, PStructDescriptor<T, TF> descriptor)
             throws PSerializeException, IOException {
         PMessageBuilder<T> builder = descriptor.builder();
         int tag;
         while ((tag = in.readIntVarint()) > 0) {
             int id = tag >>> 3;
             int type = tag & 0x07;
-            PField<?> field = descriptor.getField(id);
+            TF field = descriptor.getField(id);
             if (field != null) {
                 Object value = readFieldValue(in, type, field.getDescriptor());
                 builder.set(field.getKey(), value);
@@ -184,7 +173,7 @@ public class PFastBinarySerializer extends PSerializer {
             }
             case MESSAGE: {
                 int len = out.writeVarint(key << 3 | MESSAGE);
-                return len + writeMessage(out, (PMessage<?>) value);
+                return len + writeMessage(out, (PMessage) value);
             }
             case MAP: {
                 int len = out.writeVarint(key << 3 | COLLECTION);
