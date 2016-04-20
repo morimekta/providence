@@ -43,13 +43,13 @@ import static org.junit.Assert.assertTrue;
  * @since 05.09.15
  */
 public class CMessageTest {
-    TypeRegistry      mRegistry;
-    CStructDescriptor mStructType;
-    CUnionDescriptor  mUnionType;
+    TypeRegistry      registry;
+    CStructDescriptor structType;
+    CUnionDescriptor  unionType;
 
     @Before
     public void setUp() {
-        mRegistry = new TypeRegistry();
+        registry = new TypeRegistry();
 
         List<CField> fields = new LinkedList<>();
         fields.add(new CField<>(null, 1, PRequirement.OPTIONAL, "field_bool", PPrimitive.BOOL.provider(), null, null));
@@ -64,33 +64,31 @@ public class CMessageTest {
                                 32000,
                                 PRequirement.OPTIONAL,
                                 "field_a",
-                                mRegistry.getProvider("TypeA", "test"),
+                                registry.getProvider("TypeA", "test"),
                                 null,
                                 null));
 
-        mStructType = new CStructDescriptor(null, "test", "TypeA", fields, null);
-        mUnionType = new CUnionDescriptor(null, "test", "TypeA", fields, null);
+        structType = new CStructDescriptor(null, "test", "TypeA", fields, null);
+        unionType = new CUnionDescriptor(null, "test", "TypeA", fields, null);
     }
 
     @Test
     public void testStruct() {
-        mRegistry.putDeclaredType(mStructType);
+        registry.putDeclaredType(structType);
 
-        CStruct inner = mStructType.factory()
-                                   .builder()
-                                   .set(1, Boolean.TRUE)
-                                   .set(2, (byte) 8)
-                                   .set(65000, (short) 16)
-                                   .set(4, 32)
-                                   .set(5, Long.MAX_VALUE)
-                                   .set(6, 1234567890.09876)
-                                   .set(9998, "string")
-                                   .set(9999, Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4}))
-                                   .build();
-        CStruct outer = mStructType.factory()
-                                   .builder()
-                                   .set(32000, inner)
-                                   .build();
+        CStruct inner = structType.builder()
+                                  .set(1, Boolean.TRUE)
+                                  .set(2, (byte) 8)
+                                  .set(65000, (short) 16)
+                                  .set(4, 32)
+                                  .set(5, Long.MAX_VALUE)
+                                  .set(6, 1234567890.09876)
+                                  .set(9998, "string")
+                                  .set(9999, Binary.wrap(new byte[]{9, 0, 8, 1, 7, 2, 6, 3, 5, 4}))
+                                  .build();
+        CStruct outer = structType.builder()
+                                  .set(32000, inner)
+                                  .build();
 
         CStruct struct = (CStruct) outer.get(32000);
 

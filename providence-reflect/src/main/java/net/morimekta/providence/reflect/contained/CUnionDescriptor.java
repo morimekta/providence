@@ -49,7 +49,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
-        ((_Factory) factory()).setType(this);
+        ((_Factory) getFactoryInternal()).setType(this);
 
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;

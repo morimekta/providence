@@ -46,7 +46,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         super(comment, packageName, name, new _Factory(), false,
               // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(fields, annotations));
-        ((_Factory) factory()).setType(this);
+        ((_Factory) getFactoryInternal()).setType(this);
 
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;

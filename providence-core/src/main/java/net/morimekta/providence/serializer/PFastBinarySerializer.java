@@ -76,21 +76,6 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T> int serialize(OutputStream os, PDescriptor<T> descriptor, T value)
-            throws IOException, PSerializeException {
-        try {
-            BinaryWriter out = new BinaryWriter(os);
-            if (PType.MESSAGE == descriptor.getType()) {
-                return writeMessage(out, (PMessage<?>) value);
-            } else {
-                return writeFieldValue(out, 0, descriptor, value);
-            }
-        } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to write to stream");
-        }
-    }
-
-    @Override
     public <T> T deserialize(InputStream is, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
         if (PType.MESSAGE == descriptor.getType()) {
@@ -130,8 +115,7 @@ public class PFastBinarySerializer extends PSerializer {
 
     private <T extends PMessage<T>> T readMessage(BinaryReader in, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.factory()
-                                               .builder();
+        PMessageBuilder<T> builder = descriptor.builder();
         int tag;
         while ((tag = in.readIntVarint()) > 0) {
             int id = tag >>> 3;
@@ -255,8 +239,7 @@ public class PFastBinarySerializer extends PSerializer {
                     case I64:
                         return cast(in.readLongZigzag());
                     case ENUM: {
-                        PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).factory()
-                                                                                   .builder();
+                        PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).builder();
                         builder.setByValue(in.readIntZigzag());
                         return cast(builder.build());
                     }

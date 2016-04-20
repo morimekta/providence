@@ -42,7 +42,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
         super(comment, packageName, name, new _Factory());
         this.values = new CEnum[0];
         this.annotations = annotations;
-        ((_Factory) factory()).setType(this);
+        ((_Factory) getFactoryInternal()).setType(this);
     }
 
     public void setValues(List<CEnum> values) {

@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.descriptor;
 
+import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
@@ -31,11 +32,11 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
     // According to doc it's 1, but the current c++ compiler makes it 0...
     public static final int DEFAULT_FIRST_VALUE = 0;
 
-    private final PEnumBuilderFactory<T> mProvider;
+    private final PEnumBuilderFactory<T> factory;
 
     public PEnumDescriptor(String comment, String packageName, String name, PEnumBuilderFactory<T> provider) {
         super(comment, packageName, name);
-        mProvider = provider;
+        factory = provider;
     }
 
     @Override
@@ -61,8 +62,8 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
     public abstract T getValueByName(String name);
 
     @Override
-    public PEnumBuilderFactory<T> factory() {
-        return mProvider;
+    public PEnumBuilder<T> builder() {
+        return factory.builder();
     }
 
     @Override
@@ -89,5 +90,9 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
         }
 
         return true;
+    }
+
+    protected PEnumBuilderFactory<T> getFactoryInternal() {
+        return factory;
     }
 }

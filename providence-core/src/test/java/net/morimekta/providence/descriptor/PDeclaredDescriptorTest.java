@@ -20,14 +20,10 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
-import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -73,16 +69,11 @@ public class PDeclaredDescriptorTest {
         }
 
         @Override
-        public PBuilderFactory<String> factory() {
-            return new PBuilderFactory<String>() {
+        public PBuilder<String> builder() {
+            return new PBuilder<String>() {
                 @Override
-                public PBuilder<String> builder() {
-                    return new PBuilder<String>() {
-                        @Override
-                        public String build() {
-                            return "";
-                        }
-                    };
+                public String build() {
+                    return "";
                 }
             };
         }

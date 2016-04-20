@@ -156,23 +156,6 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
-    public <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
-            throws IOException, PSerializeException {
-        CountingOutputStream counter = new CountingOutputStream(output);
-        JsonWriter jsonWriter = new JsonWriter(counter);
-        try {
-            appendTypedValue(jsonWriter, descriptor, value);
-            jsonWriter.flush();
-            counter.flush();
-            return counter.getByteCount();
-        } catch (JsonException e) {
-            throw new PSerializeException(e, "Unable to serialize JSON");
-        } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to writeBinary to stream");
-        }
-    }
-
-    @Override
     public <T> T deserialize(InputStream input, PDescriptor<T> type) throws PSerializeException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
@@ -189,8 +172,7 @@ public class PJsonSerializer extends PSerializer {
 
     private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
             throws PSerializeException, JsonException, IOException {
-        PMessageBuilder<T> builder = type.factory()
-                                         .builder();
+        PMessageBuilder<T> builder = type.builder();
 
         if (!tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
             char sep = JsonToken.kMapStart;
@@ -228,8 +210,7 @@ public class PJsonSerializer extends PSerializer {
 
     private <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
             throws PSerializeException, IOException, JsonException {
-        PMessageBuilder<T> builder = type.factory()
-                                         .builder();
+        PMessageBuilder<T> builder = type.builder();
         // compact message are not allowed to be empty.
 
         int i = 0;
@@ -338,8 +319,7 @@ public class PJsonSerializer extends PSerializer {
                     }
                     throw new PSerializeException("Not a valid binary value: " + token.asString());
                 case ENUM:
-                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).factory()
-                                                                 .builder();
+                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).builder();
                     if (token.isInteger()) {
                         eb.setByValue(token.intValue());
                     } else if (token.isLiteral()) {
@@ -464,8 +444,7 @@ public class PJsonSerializer extends PSerializer {
                         throw new PSerializeException(e, "Unable to parse Base64 data.");
                     }
                 case ENUM:
-                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory()
-                                                                       .builder();
+                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
                     if (Strings.isInteger(key)) {
                         eb.setByValue(Integer.parseInt(key));
                     } else {

@@ -36,9 +36,6 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -98,22 +95,6 @@ public class PBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
-            throws IOException, PSerializeException {
-        try {
-            if (descriptor.getType()
-                          .equals(PType.MESSAGE)) {
-                return serialize(output, (PMessage<?>) value);
-            } else {
-                BinaryWriter writer = new BinaryWriter(output);
-                return writeFieldValue(writer, value);
-            }
-        } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to write to stream");
-        }
-    }
-
-    @Override
     public <T> T deserialize(InputStream input, PDescriptor<T> descriptor) throws PSerializeException, IOException {
         BinaryReader reader = new BinaryReader(input);
         // Assume it consists of a single field.
@@ -131,8 +112,7 @@ public class PBinarySerializer extends PSerializer {
     private <T extends PMessage<T>> T readMessage(BinaryReader input,
                                                   PStructDescriptor<T, ?> descriptor,
                                                   boolean nullable) throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.factory()
-                                               .builder();
+        PMessageBuilder<T> builder = descriptor.builder();
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
@@ -212,7 +192,7 @@ public class PBinarySerializer extends PSerializer {
                 int val = in.expectInt();
                 if (type instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
-                    PEnumBuilder<T> builder = (PEnumBuilder<T>) ((PEnumDescriptor<?>)type).factory().builder();
+                    PEnumBuilder<T> builder = (PEnumBuilder<T>) ((PEnumDescriptor<?>)type).builder();
                     builder.setByValue(val);
                     return cast(builder.build());
                 } else {

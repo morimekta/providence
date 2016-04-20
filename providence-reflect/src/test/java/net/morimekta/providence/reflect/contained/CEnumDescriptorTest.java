@@ -33,60 +33,59 @@ import static org.junit.Assert.assertEquals;
  * @since 05.09.15
  */
 public class CEnumDescriptorTest {
-    CEnumDescriptor mType;
+    CEnumDescriptor type;
 
     @Before
     public void setUp() {
         List<CEnum> values = new LinkedList<>();
-        mType = new CEnumDescriptor("My comment", "package", "MyEnum", null);
+        type = new CEnumDescriptor("My comment", "package", "MyEnum", null);
 
-        values.add(new CEnum(null, 1, "ONE", mType, null));
-        values.add(new CEnum(null, 2, "TWO", mType, null));
-        values.add(new CEnum(null, 3, "THREE", mType, null));
-        values.add(new CEnum("Skipping stuff", 5, "FIVE", mType, null));
-        values.add(new CEnum(null, 6, "SIX", mType, null));
-        values.add(new CEnum("And more", 8, "EIGHT", mType, null));
+        values.add(new CEnum(null, 1, "ONE", type, null));
+        values.add(new CEnum(null, 2, "TWO", type, null));
+        values.add(new CEnum(null, 3, "THREE", type, null));
+        values.add(new CEnum("Skipping stuff", 5, "FIVE", type, null));
+        values.add(new CEnum(null, 6, "SIX", type, null));
+        values.add(new CEnum("And more", 8, "EIGHT", type, null));
 
-        mType.setValues(values);
+        type.setValues(values);
     }
 
     @Test
     public void testEnum() {
-        assertEquals(6, mType.getValues().length);
+        assertEquals(6, type.getValues().length);
 
-        assertEquals("ONE", mType.getValues()[0].toString());
-        assertEquals("TWO", mType.getValues()[1].toString());
-        assertEquals("THREE", mType.getValues()[2].toString());
-        assertEquals("FIVE", mType.getValues()[3].toString());
-        assertEquals("SIX", mType.getValues()[4].toString());
-        assertEquals("EIGHT", mType.getValues()[5].toString());
+        assertEquals("ONE", type.getValues()[0].toString());
+        assertEquals("TWO", type.getValues()[1].toString());
+        assertEquals("THREE", type.getValues()[2].toString());
+        assertEquals("FIVE", type.getValues()[3].toString());
+        assertEquals("SIX", type.getValues()[4].toString());
+        assertEquals("EIGHT", type.getValues()[5].toString());
 
-        assertEquals("ONE", mType.getValues()[0].getName());
-        assertEquals("TWO", mType.getValues()[1].getName());
-        assertEquals("THREE", mType.getValues()[2].getName());
-        assertEquals("FIVE", mType.getValues()[3].getName());
-        assertEquals("SIX", mType.getValues()[4].getName());
-        assertEquals("EIGHT", mType.getValues()[5].getName());
+        assertEquals("ONE", type.getValues()[0].getName());
+        assertEquals("TWO", type.getValues()[1].getName());
+        assertEquals("THREE", type.getValues()[2].getName());
+        assertEquals("FIVE", type.getValues()[3].getName());
+        assertEquals("SIX", type.getValues()[4].getName());
+        assertEquals("EIGHT", type.getValues()[5].getName());
 
-        assertEquals(1, mType.getValues()[0].getValue());
-        assertEquals(2, mType.getValues()[1].getValue());
-        assertEquals(3, mType.getValues()[2].getValue());
-        assertEquals(5, mType.getValues()[3].getValue());
-        assertEquals(6, mType.getValues()[4].getValue());
-        assertEquals(8, mType.getValues()[5].getValue());
+        assertEquals(1, type.getValues()[0].getValue());
+        assertEquals(2, type.getValues()[1].getValue());
+        assertEquals(3, type.getValues()[2].getValue());
+        assertEquals(5, type.getValues()[3].getValue());
+        assertEquals(6, type.getValues()[4].getValue());
+        assertEquals(8, type.getValues()[5].getValue());
 
-        Assert.assertEquals("MyEnum", mType.getName());
-        Assert.assertEquals("MyEnum", mType.getQualifiedName("package"));
-        Assert.assertEquals("package.MyEnum", mType.getQualifiedName("other"));
+        Assert.assertEquals("MyEnum", type.getName());
+        Assert.assertEquals("MyEnum", type.getQualifiedName("package"));
+        Assert.assertEquals("package.MyEnum", type.getQualifiedName("other"));
     }
 
     @Test
     public void testProvider() {
         assertEquals(CEnum.class,
-                     mType.factory()
-                          .builder()
-                          .setByValue(1)
-                          .build()
-                          .getClass());
+                     type.builder()
+                         .setByValue(1)
+                         .build()
+                         .getClass());
     }
 }

@@ -40,9 +40,7 @@ public abstract class PSerializer {
     public static final byte[] DEFAULT_STREAM_TERMINATOR = {'\n'};
     public static final byte[] DEFAULT_ENTRY_SEP = {'\n'};
 
-    public abstract int serialize(OutputStream output, PMessage<?> message) throws IOException, PSerializeException;
-
-    public abstract <T> int serialize(OutputStream output, PDescriptor<T> descriptor, T value)
+    public abstract int serialize(OutputStream output, PMessage<?> message)
             throws IOException, PSerializeException;
 
     public abstract <T> T deserialize(InputStream input, PDescriptor<T> descriptor)

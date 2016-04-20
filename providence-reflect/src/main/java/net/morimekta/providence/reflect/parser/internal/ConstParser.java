@@ -78,8 +78,7 @@ public class ConstParser {
     private <T extends PMessage<T>, F extends PField> T parseMessage(JsonTokenizer tokenizer,
                                                                      PStructDescriptor<T, F> type)
             throws IOException, JsonException {
-        PMessageBuilder<T> builder = type.factory()
-                                         .builder();
+        PMessageBuilder<T> builder = type.builder();
 
         if (tokenizer.peek("checking for empty").isSymbol(JsonToken.kMapEnd)) {
             tokenizer.next();
@@ -152,8 +151,7 @@ public class ConstParser {
                 }
                 throw new JsonException("Not a valid binary value.", tokenizer, token);
             case ENUM: {
-                PEnumBuilder<?> eb = ((PEnumDescriptor<?>) valueType).factory()
-                                                                     .builder();
+                PEnumBuilder<?> eb = ((PEnumDescriptor<?>) valueType).builder();
                 String name = token.asString();
                 if (name.startsWith(valueType.getName())) {
                     name = name.substring(valueType.getName()
@@ -246,8 +244,7 @@ public class ConstParser {
     private Object parsePrimitiveKey(String key, PDescriptor keyType) throws IOException {
         switch (keyType.getType()) {
             case ENUM:
-                PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).factory()
-                                                                   .builder();
+                PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
                 if (Strings.isInteger(key)) {
                     return eb.setByValue(Integer.parseInt(key))
                              .build();

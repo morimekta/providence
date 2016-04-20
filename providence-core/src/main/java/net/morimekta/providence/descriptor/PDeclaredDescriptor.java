@@ -19,9 +19,7 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.providence.PBuilderFactory;
-
-import java.util.Set;
+import net.morimekta.providence.PBuilder;
 
 /**
  * Descriptor for a declared type. A declared type is a value type that is
@@ -78,5 +76,5 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor<T> {
      *
      * @return The type specific builder provider.
      */
-    public abstract PBuilderFactory<T> factory();
+    public abstract PBuilder<T> builder();
 }

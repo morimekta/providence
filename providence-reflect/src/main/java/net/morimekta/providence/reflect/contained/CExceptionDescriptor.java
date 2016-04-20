@@ -46,7 +46,7 @@ public class CExceptionDescriptor extends PStructDescriptor<CException, CField> 
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false, false);
-        ((_Factory) factory()).setType(this);
+        ((_Factory) getFactoryInternal()).setType(this);
 
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;

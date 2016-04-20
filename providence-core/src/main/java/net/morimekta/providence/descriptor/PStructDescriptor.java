@@ -20,6 +20,7 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
@@ -28,21 +29,21 @@ import net.morimekta.providence.PType;
  * The definition of a thrift structure.
  */
 public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField> extends PDeclaredDescriptor<T> {
-    private final PMessageBuilderFactory<T> mProvider;
-    private final boolean                   mCompactible;
-    private final boolean                   mSimple;
+    private final PMessageBuilderFactory<T> factory;
+    private final boolean                   compactible;
+    private final boolean                   simple;
 
     public PStructDescriptor(String comment,
                              String packageName,
                              String name,
-                             PMessageBuilderFactory<T> provider,
+                             PMessageBuilderFactory<T> factory,
                              boolean simple,
                              boolean compactible) {
         super(comment, packageName, name);
 
-        mProvider = provider;
-        mSimple = simple;
-        mCompactible = compactible;
+        this.factory = factory;
+        this.simple = simple;
+        this.compactible = compactible;
     }
 
     /**
@@ -67,14 +68,14 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
      *         format.
      */
     public boolean isCompactible() {
-        return mCompactible;
+        return compactible;
     }
 
     /**
      * @return True iff the struct is simple. A simple struct contains no containers, and no
      */
     public boolean isSimple() {
-        return mSimple;
+        return simple;
     }
 
     /**
@@ -90,8 +91,8 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
     }
 
     @Override
-    public PMessageBuilderFactory<T> factory() {
-        return mProvider;
+    public PMessageBuilder<T> builder() {
+        return factory.builder();
     }
 
     @Override
@@ -122,5 +123,13 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
             hash += field.hashCode();
         }
         return hash;
+    }
+
+    /**
+     * Get the actual builder factory instance. For contained structs only.
+     * @return The builder factory.
+     */
+    protected PMessageBuilderFactory<T> getFactoryInternal() {
+        return factory;
     }
 }
