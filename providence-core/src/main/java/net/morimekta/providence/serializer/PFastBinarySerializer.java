@@ -23,6 +23,8 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PContainer;
@@ -31,6 +33,8 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
@@ -43,6 +47,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Compact binary serializer. This uses the most compact binary format
@@ -76,9 +82,51 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @Override
+    public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
+            throws IOException, PSerializeException {
+        BinaryWriter out = new BinaryWriter(os);
+        byte[] method = call.getMethod().getBytes(UTF_8);
+        int len = out.writeUInt8(method.length);
+        len += method.length;
+        out.write(method);
+        len += out.writeUInt8(call.getType().key);
+        len += out.writeInt(call.getSequence());
+        len += writeMessage(out, call.getMessage());
+        return len;
+    }
+
+    @Override
     public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream is, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
         BinaryReader in = new BinaryReader(is);
         return readMessage(in, descriptor);
+    }
+
+    @Override
+    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
+            throws IOException, PSerializeException {
+        BinaryReader in = new BinaryReader(is);
+        // Max method name length: 255 chars.
+        int methodNameLen = in.expectUInt8();
+        String methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+        PServiceMethod method = service.getMethod(methodName);
+        if (method == null) {
+            throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+        }
+
+        int typeKey = in.expectUInt8();
+        PServiceCallType type = PServiceCallType.findByKey(typeKey);
+        if (type == null) {
+            throw new PSerializeException("Invalid call type " + typeKey);
+        }
+
+        int sequence = in.readIntVarint();
+
+        @SuppressWarnings("unchecked")
+        PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+
+        T message = readMessage(in, descriptor);
+
+        return new PServiceCall<>(methodName, type, sequence, message);
     }
 
     // --- MESSAGE ---

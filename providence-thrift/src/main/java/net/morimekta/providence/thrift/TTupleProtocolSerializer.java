@@ -4,6 +4,8 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
@@ -11,6 +13,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PSerializeException;
@@ -19,6 +23,8 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
 import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TMessage;
+import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
@@ -69,6 +75,27 @@ public class TTupleProtocolSerializer extends PSerializer {
     }
 
     @Override
+    public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
+            throws IOException, PSerializeException {
+        CountingOutputStream wrapper = new CountingOutputStream(output);
+        TTransport transport = new TIOStreamTransport(wrapper);
+        try {
+            TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
+            TMessage tm = new TMessage(call.getMethod(), (byte) call.getType().key, call.getSequence());
+
+            protocol.writeMessageBegin(tm);
+            writeMessage(call.getMessage(), protocol);
+            protocol.writeMessageEnd();
+
+            transport.flush();
+            wrapper.flush();
+            return wrapper.getByteCount();
+        } catch (TException e) {
+            throw new PSerializeException(e, e.getMessage());
+        }
+    }
+
+    @Override
     public <T extends PMessage<T>, TF extends PField> T
     deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, PSerializeException {
         try {
@@ -76,6 +103,38 @@ public class TTupleProtocolSerializer extends PSerializer {
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
 
             return readMessage(protocol, descriptor);
+        } catch (TTransportException e) {
+            throw new PSerializeException(e, "Unable to serialize into transport protocol");
+        } catch (TException e) {
+            throw new PSerializeException(e, "Transport exception in protocol");
+        }
+    }
+
+    @Override
+    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+            throws IOException, PSerializeException {
+        try {
+            TTransport transport = new TIOStreamTransport(input);
+            TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
+
+            TMessage tm = protocol.readMessageBegin();
+            PServiceMethod method = service.getMethod(tm.name);
+            if (method == null) {
+                throw new PSerializeException("No such method " + tm.name + " on " + service.getQualifiedName(null));
+            }
+
+            PServiceCallType type = PServiceCallType.findByKey(tm.type);
+            if (type == null) {
+                throw new PSerializeException("Unknown call type for id " + tm.type);
+            }
+            @SuppressWarnings("unchecked")
+            PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+
+            T message = readMessage(protocol, descriptor);
+
+            protocol.readMessageEnd();
+
+            return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
             throw new PSerializeException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {

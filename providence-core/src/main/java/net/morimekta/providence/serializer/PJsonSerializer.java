@@ -23,6 +23,8 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -30,6 +32,8 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
@@ -156,6 +160,30 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
+    public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
+            throws IOException, PSerializeException {
+        CountingOutputStream counter = new CountingOutputStream(output);
+        JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
+        try {
+            jsonWriter.array()
+                      .value(call.getMethod())
+                      .value(call.getType().key)
+                      .value(call.getSequence());
+
+            appendMessage(jsonWriter, call.getMessage());
+
+            jsonWriter.endArray()
+                      .flush();
+            counter.flush();
+            return counter.getByteCount();
+        } catch (JsonException e) {
+            throw new PSerializeException(e, "Unable to serialize JSON");
+        } catch (IOException e) {
+            throw new PSerializeException(e, "Unable to writeBinary to stream");
+        }
+    }
+
+    @Override
     public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws PSerializeException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
@@ -168,6 +196,55 @@ public class PJsonSerializer extends PSerializer {
         } catch (IOException e) {
             throw new PSerializeException(e, "Unable to read stream");
         }
+    }
+
+    @Override
+    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+            throws IOException, PSerializeException {
+        try {
+            JsonTokenizer tokenizer = new JsonTokenizer(input);
+            if (!tokenizer.hasNext()) {
+                return null;
+            }
+            return parseServiceCall(tokenizer, service);
+        } catch (JsonException e) {
+            throw new PSerializeException(e, "Unable to parse JSON");
+        } catch (IOException e) {
+            throw new PSerializeException(e, "Unable to read stream");
+        }
+    }
+
+    private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)
+            throws IOException, JsonException, PSerializeException {
+        tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
+
+        String methodName = tokenizer.expectString("Service call method").decodeJsonLiteral();
+        PServiceMethod method = service.getMethod(methodName);
+        if (method == null) {
+            throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+        }
+
+        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+        int typeKey = tokenizer.expectNumber("Service call type").intValue();
+        PServiceCallType type = PServiceCallType.findByKey(typeKey);
+        if (type == null) {
+            throw new PSerializeException("Service call type " + typeKey + " is not valid.");
+        }
+
+        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+        int sequence = tokenizer.expectNumber("Service call sequence").intValue();
+
+        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+        @SuppressWarnings("unchecked")
+        PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+        T message = parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
+
+        tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
+
+        return new PServiceCall<>(methodName, type, sequence, message);
     }
 
     private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
