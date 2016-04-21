@@ -90,6 +90,7 @@
         <module>providence-core-streams</module>
 
         <!-- utility libraries -->
+        <module>providence-thrift</module>
         <module>providence-reflect</module>
         <module>providence-testing</module>
         <module>providence-generator</module>
