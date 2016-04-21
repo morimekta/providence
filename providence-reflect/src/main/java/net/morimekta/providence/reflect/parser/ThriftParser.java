@@ -426,20 +426,22 @@ public class ThriftParser implements Parser {
             }
         }  // for each method-line
 
-        Token token = tokenizer.peek("");
-        // Method Annotations.
-        if (token.isSymbol(Token.kParamsStart)) {
-            tokenizer.next();
-            char sep = Token.kParamsStart;
-            while (sep != Token.kParamsEnd) {
-                token = tokenizer.expectQualifiedIdentifier("annotation name");
-                String name = token.asString();
-                tokenizer.expectSymbol("", Token.kFieldValueSep);
-                Token value = tokenizer.expectStringLiteral("annotation value");
+        Token token = tokenizer.peek();
+        if (token != null) {
+            if (token.isSymbol(Token.kParamsStart)) {
+                // Method Annotations.
+                tokenizer.next();
+                char sep = Token.kParamsStart;
+                while (sep != Token.kParamsEnd) {
+                    token = tokenizer.expectQualifiedIdentifier("annotation name");
+                    String name = token.asString();
+                    tokenizer.expectSymbol("", Token.kFieldValueSep);
+                    Token value = tokenizer.expectStringLiteral("annotation value");
 
-                service.putInAnnotations(name, value.decodeLiteral());
+                    service.putInAnnotations(name, value.decodeLiteral());
 
-                sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+                }
             }
         }
 

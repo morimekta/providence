@@ -32,17 +32,4 @@ public class JOptions {
     @Option(name = "--jackson",
             usage = "Add jackson-databind annotations to all classes.")
     public boolean jackson = false;
-
-    public enum Containers {
-        // HashSet, HashMap
-        DEFAULT,
-        // LinkedHashSet, LinkedHashMap
-        ORDERED,
-        // TreeSet, TreeMap
-        SORTED,
-    }
-
-    @Option(name = "--containers",
-            usage = "Type of containers.")
-    public Containers containers = Containers.DEFAULT;
 }
