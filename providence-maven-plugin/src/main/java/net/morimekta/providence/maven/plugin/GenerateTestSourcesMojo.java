@@ -34,7 +34,7 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
     /**
      * Location of the output java source.
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence")
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/providence")
     private File outputDir = null;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
