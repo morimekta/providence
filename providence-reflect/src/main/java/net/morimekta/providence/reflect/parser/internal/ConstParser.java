@@ -61,9 +61,9 @@ public class ConstParser {
             JsonTokenizer tokenizer = new JsonTokenizer(inputStream);
             return parseTypedValue(tokenizer.expect("const value"), tokenizer, type);
         } catch (JsonException e) {
-            throw new ParseException("Unable to parse JSON: ", e);
+            throw new ParseException(e, "Unable to parse JSON: ");
         } catch (IOException e) {
-            throw new ParseException("Unable to read JSON from input", e);
+            throw new ParseException(e, "Unable to read JSON from input");
         }
     }
 

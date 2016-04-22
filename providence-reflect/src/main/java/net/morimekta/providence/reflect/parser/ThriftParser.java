@@ -38,11 +38,14 @@ import net.morimekta.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
@@ -50,12 +53,24 @@ import java.util.regex.Pattern;
  * @since 07.09.15
  */
 public class ThriftParser implements Parser {
-    private final static Pattern RE_BLOCK_LINE = Pattern.compile("^([\\s]*[*])?[\\s]?");
+    private final static Pattern RE_BLOCK_LINE   = Pattern.compile("^([\\s]*[*])?[\\s]?");
+    private static final Pattern VALID_PACKAGE   = Pattern.compile(
+            "[-._a-zA-Z0-9]+");
+    private static final Pattern VALID_NAMESPACE = Pattern.compile(
+            "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern VALID_SDI_NAMESPACE = Pattern.compile(
+            "([_a-zA-Z][-_a-zA-Z0-9]*[.])*[_a-zA-Z][-_a-zA-Z0-9]*");
 
     @Override
     public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
         ThriftDocument._Builder doc = ThriftDocument.builder();
 
+        String packageName = name.replaceAll(".*/", "")
+                           .replace(".thrift", "");
+        if (!VALID_PACKAGE.matcher(packageName).matches()) {
+            throw new ParseException("Package name %s derived from filename %s is not valid.",
+                                     packageName, name);
+        }
         doc.setPackage(name.replaceAll(".*/", "")
                            .replace(".thrift", ""));
         List<String> includes = new LinkedList<>();
@@ -86,9 +101,8 @@ public class ThriftParser implements Parser {
             switch (id) {
                 case "namespace":
                     if (hasDeclaration) {
-                        throw new ParseException("Unexpected token 'namespace', expected type declaration",
-                                                 tokenizer,
-                                                 token);
+                        throw new ParseException(tokenizer, token,
+                                                 "Unexpected token 'namespace', expected type declaration");
                     }
                     if (comment != null && !hasHeader) {
                         doc.setComment(comment);
@@ -99,9 +113,8 @@ public class ThriftParser implements Parser {
                     break;
                 case "include":
                     if (hasDeclaration) {
-                        throw new ParseException("Unexpected token 'include', expected type declaration",
-                                                 tokenizer,
-                                                 token);
+                        throw new ParseException(tokenizer, token,
+                                                 "Unexpected token 'include', expected type declaration");
                     }
                     if (comment != null && !hasHeader) {
                         doc.setComment(comment);
@@ -155,9 +168,9 @@ public class ThriftParser implements Parser {
                     comment = null;
                     break;
                 default:
-                    throw new ParseException("Unexpected token '" + token.asString() + "', expected type declaration",
-                                             tokenizer,
-                                             token);
+                    throw new ParseException(tokenizer, token,
+                                             "Unexpected token '%s', expected type declaration",
+                                             token.asString());
             }
         }
 
@@ -258,6 +271,8 @@ public class ThriftParser implements Parser {
         }
 
         tokenizer.expectSymbol("reading service start", Token.kMessageStart);
+
+        Set<String> methodNames = new TreeSet<>();
 
         while (true) {
             Token token = tokenizer.expect("reading service method");
@@ -450,13 +465,23 @@ public class ThriftParser implements Parser {
 
     public void parseNamespace(Tokenizer tokenizer, Map<String, String> namespaces) throws IOException, ParseException {
         Token language = tokenizer.expectQualifiedIdentifier("parsing namespace language");
+        if (!language.isQualifiedIdentifier()) {
+            throw new ParseException(tokenizer, language,
+                                     "Namespace language not valid identifier: '%s'",
+                                     language.asString());
+        }
+        if (namespaces.containsKey(language.asString())) {
+            throw new ParseException(tokenizer, language,
+                                     "Namespace for %s already defined.",
+                                     language.asString());
+        }
+
         Token namespace = tokenizer.expectQualifiedIdentifier("parsing namespace");
 
-        if (!language.isQualifiedIdentifier()) {
-            throw new ParseException("Namespace language not valid identifier: '" + language.asString() + "'");
-        }
         if (!namespace.isQualifiedIdentifier()) {
-            throw new ParseException("Namespace not valid: '" + namespace.asString() + "'");
+            throw new ParseException(tokenizer, namespace,
+                                     "Namespace not valid: '%s'",
+                                     namespace.asString());
         }
 
         namespaces.put(language.asString(), namespace.asString());
@@ -543,7 +568,9 @@ public class ThriftParser implements Parser {
                         tokenizer.next();
                     }
                 } else {
-                    throw new ParseException("Unexpected token while parsing enum " + id + ": " + token.asString());
+                    throw new ParseException(tokenizer, token,
+                                             "Unexpected token while parsing enum %d: %s",
+                                             id, token.asString());
                 }
             }
         } // if has values.
@@ -569,7 +596,6 @@ public class ThriftParser implements Parser {
 
     private StructType parseStruct(Tokenizer tokenizer, String type, String comment)
             throws IOException, ParseException {
-
         StructType._Builder struct = StructType.builder();
         if (comment != null) {
             struct.setComment(comment);
@@ -591,6 +617,10 @@ public class ThriftParser implements Parser {
 
         tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kMessageStart);
 
+        Set<String> fieldNames = new HashSet<>();
+        Set<String> fieldNameVariants = new HashSet<>();
+        Set<Integer> fieldIds = new HashSet<>();
+
         while (true) {
             Token token = tokenizer.expect("parsing struct " + id.asString());
             if (token.isSymbol(Token.kMessageEnd)) {
@@ -608,7 +638,18 @@ public class ThriftParser implements Parser {
             comment = null;
 
             if (token.isInteger()) {
-                field.setKey((int) token.parseInteger());
+                int fId = (int) token.parseInteger();
+                if (fId < 1) {
+                    throw new ParseException("Negative field id " + fId + " not allowed.",
+                                             token, tokenizer);
+                }
+                if (fieldIds.contains(fId)) {
+                    throw new ParseException("Field id " + fId + " already exists in struct " + struct.build().getName(),
+                                             token, tokenizer);
+                }
+                fieldIds.add(fId);
+                field.setKey(fId);
+
                 tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kFieldIdSep);
                 token = tokenizer.expect("parsing struct " + id.asString());
             } else {
@@ -635,7 +676,20 @@ public class ThriftParser implements Parser {
             // Get type.... This is mandatory.
             field.setType(parseType(tokenizer, token));
 
-            field.setName(tokenizer.expectIdentifier("parsing struct " + id.asString()).asString());
+            Token name = tokenizer.expectIdentifier("parsing struct " + id.asString());
+            String fName = name.asString();
+            if (fieldNames.contains(name)) {
+                throw new ParseException("Field name " + fName + " already exists in struct " + struct.build().getName(),
+                                         token, tokenizer);
+            }
+            if (fieldNameVariants.contains(Strings.camelCase("get", fName))) {
+                throw new ParseException("Field name " + fName + " conflicts with existing field in struct " + struct.build().getName(),
+                                         token, tokenizer);
+            }
+            fieldNames.add(fName);
+            fieldNameVariants.add(Strings.camelCase("get", fName));
+
+            field.setName(fName);
 
             token = tokenizer.peek("");
 
@@ -652,11 +706,11 @@ public class ThriftParser implements Parser {
                 char sep = token.charAt(0);
                 while (sep != Token.kParamsEnd) {
                     token = tokenizer.expectQualifiedIdentifier("annotation name");
-                    String name = token.asString();
+                    String aName = token.asString();
                     tokenizer.expectSymbol("", Token.kFieldValueSep);
                     Token val = tokenizer.expectStringLiteral("annotation value");
 
-                    field.putInAnnotations(name, val.decodeLiteral());
+                    field.putInAnnotations(aName, val.decodeLiteral());
 
                     sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                 }

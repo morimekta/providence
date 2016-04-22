@@ -46,13 +46,6 @@ public class ParseException extends Exception {
         token = null;
     }
 
-    public ParseException(String line, Token token, String message, Object... params) {
-        super(String.format(message, params));
-
-        this.line = line;
-        this.token = token;
-    }
-
     public ParseException(Tokenizer tokenizer, Token token, String message, Object... params) {
         super(String.format(message, params));
 

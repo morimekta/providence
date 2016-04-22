@@ -25,9 +25,11 @@ import net.morimekta.providence.util.PPrettyPrinter;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
@@ -59,6 +61,7 @@ public class ThriftParserTest {
                      "  decl: [\n" +
                      "    {\n" +
                      "      decl_enum: {\n" +
+                     "        comment: \"Block comment on type.\",\n" +
                      "        name: \"Operator\",\n" +
                      "        values: [\n" +
                      "          {\n" +
@@ -86,15 +89,18 @@ public class ThriftParserTest {
                      "    },\n" +
                      "    {\n" +
                      "      decl_struct: {\n" +
+                     "        comment: \"Line comment on type.\",\n" +
                      "        variant: UNION,\n" +
                      "        name: \"Operand\",\n" +
                      "        fields: [\n" +
                      "          {\n" +
+                     "            comment: \"Double line\\ncomment on field.\",\n" +
                      "            key: 1,\n" +
                      "            type: \"Operation\",\n" +
                      "            name: \"operation\"\n" +
                      "          },\n" +
                      "          {\n" +
+                     "            comment: \"Block comment\\n - with formatting.\\nOn field.\",\n" +
                      "            key: 2,\n" +
                      "            type: \"double\",\n" +
                      "            name: \"number\"\n" +
@@ -151,6 +157,7 @@ public class ThriftParserTest {
                      "        name: \"Calculator\",\n" +
                      "        methods: [\n" +
                      "          {\n" +
+                     "            comment: \"Block comment on method.\",\n" +
                      "            one_way: false,\n" +
                      "            return_type: \"Operand\",\n" +
                      "            name: \"calculate\",\n" +
@@ -170,6 +177,7 @@ public class ThriftParserTest {
                      "            ]\n" +
                      "          },\n" +
                      "          {\n" +
+                     "            comment: \"line comment on method.\",\n" +
                      "            one_way: true,\n" +
                      "            name: \"iamalive\"\n" +
                      "          }\n" +
@@ -178,6 +186,7 @@ public class ThriftParserTest {
                      "    },\n" +
                      "    {\n" +
                      "      decl_const: {\n" +
+                     "        comment: \"Block comment on constant.\",\n" +
                      "        key: -1,\n" +
                      "        type: \"Operand\",\n" +
                      "        name: \"PI\",\n" +
@@ -186,6 +195,7 @@ public class ThriftParserTest {
                      "    },\n" +
                      "    {\n" +
                      "      decl_const: {\n" +
+                     "        comment: \"Line comment on constant.\",\n" +
                      "        key: -1,\n" +
                      "        type: \"set<Operator>\",\n" +
                      "        name: \"kComplexOperands\",\n" +
@@ -352,6 +362,29 @@ public class ThriftParserTest {
                      "    }\n" +
                      "  ]\n" +
                      "}", printer.format(annotations));
+    }
 
+    @Test
+    public void testParseExceptions() {
+        assertBadThrfit("Field name separatedName conflicts with existing field in struct T",
+                        "/failure/conflicting_field_name.thrift");
+        assertBadThrfit("Field id 1 already exists in struct T",
+                        "/failure/duplicate_field_id.thrift");
+        assertBadThrfit("Field name first conflicts with existing field in struct T",
+                        "/failure/duplicate_field_name.thrift");
+        assertBadThrfit("Identifier with double '..' at line 1 pos 15",
+                        "/failure/invalid_namespace.thrift");
+        assertBadThrfit("Unexpected token 'include', expected type declaration",
+                        "/failure/invalid_include.thrift");
+    }
+
+    private void assertBadThrfit(String message, String resource) {
+        try {
+            parser.parse(getClass().getResourceAsStream(resource),
+                         new File(resource).getName());
+            fail("No exception on bad thrift: " + resource);
+        } catch (ParseException|IOException e) {
+            assertEquals(message, e.getMessage());
+        }
     }
 }
