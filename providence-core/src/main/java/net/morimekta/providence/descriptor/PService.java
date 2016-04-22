@@ -13,12 +13,12 @@ public class PService {
     private final String name;
     private final String packageName;
     private final PServiceProvider extendsService;
-    private final Collection<PServiceMethod> methods;
+    private final Collection<? extends PServiceMethod> methods;
 
     public PService(String packageName,
              String name,
              PServiceProvider extendsService,
-             Collection<PServiceMethod> methods) {
+             Collection<? extends PServiceMethod> methods) {
         this.name = name;
         this.packageName = packageName;
         this.extendsService = extendsService;
@@ -47,7 +47,7 @@ public class PService {
         return extendsService.getService();
     }
 
-    public Collection<PServiceMethod> getMethods() {
+    public Collection<? extends PServiceMethod> getMethods() {
         return methods;
     }
 

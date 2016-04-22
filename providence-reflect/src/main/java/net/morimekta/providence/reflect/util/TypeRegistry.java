@@ -25,6 +25,8 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
 
@@ -36,14 +38,16 @@ import java.util.Map;
  * @since 07.09.15
  */
 public class TypeRegistry {
-    private final Map<String, PDeclaredDescriptor<?>> mDeclaredTypes;
-    private final Map<String, String>                 mTypedefs;
-    private final Map<String, CDocument>              mDocuments;
+    private final Map<String, PDeclaredDescriptor<?>> declaredTypes;
+    private final Map<String, String>                 typedefs;
+    private final Map<String, CDocument>              documents;
+    private final Map<String, PService>               services;
 
     public TypeRegistry() {
-        mDeclaredTypes = new LinkedHashMap<>();
-        mTypedefs = new LinkedHashMap<>();
-        mDocuments = new LinkedHashMap<>();
+        declaredTypes = new LinkedHashMap<>();
+        typedefs = new LinkedHashMap<>();
+        services = new LinkedHashMap<>();
+        documents = new LinkedHashMap<>();
     }
 
     /**
@@ -54,8 +58,8 @@ public class TypeRegistry {
      * @return True if the document was not already there.
      */
     public boolean putDocument(String path, CDocument doc) {
-        if (!mDocuments.containsKey(path)) {
-            mDocuments.put(path, doc);
+        if (!documents.containsKey(path)) {
+            documents.put(path, doc);
             return true;
         }
         return false;
@@ -68,11 +72,11 @@ public class TypeRegistry {
      * @return The contained document, or null if not found.
      */
     public CDocument getDocument(String path) {
-        return mDocuments.get(path);
+        return documents.get(path);
     }
 
     public CDocument getDocumentForPackage(String packageContext) {
-        for (CDocument document : mDocuments.values()) {
+        for (CDocument document : documents.values()) {
             if (document.getPackageName()
                         .equals(packageContext)) {
                 return document;
@@ -95,8 +99,8 @@ public class TypeRegistry {
         if (!name.contains(".") && packageContext != null) {
             declaredTypeName = packageContext + "." + name;
         }
-        if (mDeclaredTypes.containsKey(declaredTypeName)) {
-            return (T) mDeclaredTypes.get(declaredTypeName);
+        if (declaredTypes.containsKey(declaredTypeName)) {
+            return (T) declaredTypes.get(declaredTypeName);
         }
 
         throw new IllegalArgumentException("No such type \"" + name + "\" for package \"" + packageContext + "\"");
@@ -110,10 +114,10 @@ public class TypeRegistry {
      */
     public <T> void putDeclaredType(PDeclaredDescriptor<T> declaredType) {
         String declaredTypeName = declaredType.getQualifiedName(null);
-        if (mDeclaredTypes.containsKey(declaredTypeName)) {
+        if (declaredTypes.containsKey(declaredTypeName)) {
             throw new IllegalStateException("Type " + declaredTypeName + " already exists");
         }
-        mDeclaredTypes.put(declaredTypeName, declaredType);
+        declaredTypes.put(declaredTypeName, declaredType);
     }
 
     /**
@@ -126,7 +130,7 @@ public class TypeRegistry {
         if (identifier == null || typeName == null) {
             throw new IllegalArgumentException("NOOO!");
         }
-        mTypedefs.put(identifier, typeName);
+        typedefs.put(identifier, typeName);
     }
 
     /**
@@ -139,8 +143,8 @@ public class TypeRegistry {
      */
     @SuppressWarnings("unchecked")
     public <T> PDescriptorProvider<T> getProvider(String typeName, final String packageContext) {
-        while (mTypedefs.containsKey(typeName)) {
-            typeName = mTypedefs.get(typeName);
+        while (typedefs.containsKey(typeName)) {
+            typeName = typedefs.get(typeName);
         }
 
         // Prepend package context to name
@@ -174,5 +178,21 @@ public class TypeRegistry {
 
         // Otherwise it's a declared type.
         return () -> (PDescriptor<T>) getDescriptor(name, packageContext);
+    }
+
+    public void putService(PService service) {
+        if (service == null) {
+            throw new IllegalArgumentException("NOOOO!");
+        }
+        services.put(service.getQualifiedName(null), service);
+    }
+
+    public PServiceProvider getServiceProvider(String serviceName, final String packageContext) {
+        if (!serviceName.contains(".")) {
+            serviceName = packageContext + "." + serviceName;
+        }
+
+        final String finalServiceName = serviceName;
+        return () -> services.get(finalServiceName);
     }
 }

@@ -18,7 +18,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
     public CService(String packageName,
                     String name,
                     PServiceProvider extendsService,
-                    Collection<PServiceMethod> methods,
+                    Collection<? extends PServiceMethod> methods,
                     Map<String, String> annotations) {
         super(packageName, name, extendsService, methods);
         this.annotations = annotations;

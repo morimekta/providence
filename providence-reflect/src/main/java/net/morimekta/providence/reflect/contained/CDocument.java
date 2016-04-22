@@ -22,7 +22,9 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PField;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +34,14 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class CDocument {
-    private final String                       mComment;
-    private final String                       mPackageName;
-    private final List<String>                 mIncludes;
-    private final Map<String, String>          mNamespaces;
-    private final Map<String, String>          mTypedefs;
-    private final List<PDeclaredDescriptor<?>> mDeclaredTypes;
-    private final List<PField<?>>              mConstants;
+    private final String                       comment;
+    private final String                       packageName;
+    private final List<String>                 includes;
+    private final Map<String, String>          namespaces;
+    private final Map<String, String>          typedefs;
+    private final List<PDeclaredDescriptor<?>> declaredTypes;
+    private final List<CService>               services;
+    private final List<PField<?>>              constants;
 
     public CDocument(String comment,
                      String packageName,
@@ -46,48 +49,54 @@ public class CDocument {
                      List<String> includes,
                      Map<String, String> typedefs,
                      List<PDeclaredDescriptor<?>> declaredTypes,
+                     List<CService> services,
                      List<PField<?>> constants) {
-        mComment = comment;
-        mPackageName = packageName;
-        mNamespaces = Collections.unmodifiableMap(namespaces);
-        mIncludes = Collections.unmodifiableList(includes);
-        mTypedefs = Collections.unmodifiableMap(typedefs);
-        mDeclaredTypes = Collections.unmodifiableList(declaredTypes);
-        mConstants = Collections.unmodifiableList(constants);
+        this.comment = comment;
+        this.packageName = packageName;
+        this.namespaces = ImmutableMap.copyOf(namespaces);
+        this.includes = ImmutableList.copyOf(includes);
+        this.typedefs = ImmutableMap.copyOf(typedefs);
+        this.declaredTypes = ImmutableList.copyOf(declaredTypes);
+        this.services = ImmutableList.copyOf(services);
+        this.constants = ImmutableList.copyOf(constants);
     }
 
     public String getComment() {
-        return mComment;
+        return comment;
     }
 
     public String getPackageName() {
-        return mPackageName;
+        return packageName;
     }
 
     public List<String> getIncludes() {
-        return mIncludes;
+        return includes;
     }
 
     public Map<String, String> getNamespaces() {
-        return mNamespaces;
+        return namespaces;
     }
 
     public Map<String, String> getTypedefs() {
-        return mTypedefs;
+        return typedefs;
     }
 
     public List<PDeclaredDescriptor<?>> getDeclaredTypes() {
-        return mDeclaredTypes;
+        return declaredTypes;
+    }
+
+    public List<CService> getServices() {
+        return services;
     }
 
     public List<PField<?>> getConstants() {
-        return mConstants;
+        return constants;
     }
 
     // --- Extra methods.
 
     public String getNamespaceForLanguage(String language) {
-        return mNamespaces.get(language);
+        return namespaces.get(language);
     }
 
 }

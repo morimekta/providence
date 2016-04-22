@@ -16,10 +16,10 @@ public class CServiceMethod<
     private final PStructDescriptor<P, PF> requestType;
     private final PStructDescriptor<R, RF> responseType;
 
-    CServiceMethod(String name,
-                   boolean oneway,
-                   PStructDescriptor<P, PF> requestType,
-                   PStructDescriptor<R, RF> responseType) {
+    public CServiceMethod(String name,
+                          boolean oneway,
+                          PStructDescriptor<P, PF> requestType,
+                          PStructDescriptor<R, RF> responseType) {
         this.name = name;
         this.oneway = oneway;
         this.requestType = requestType;
