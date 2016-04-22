@@ -83,7 +83,7 @@ public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
     }
 
     @Override
-    public String getAnnotation(String name) {
+    public String getAnnotationValue(String name) {
         if (annotations != null) {
             return annotations.get(name);
         }

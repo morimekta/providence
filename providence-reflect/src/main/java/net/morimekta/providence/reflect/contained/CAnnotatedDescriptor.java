@@ -23,5 +23,5 @@ public interface CAnnotatedDescriptor {
      * @param name Name of annotation.
      * @return The annotation value.
      */
-    String getAnnotation(String name);
+    String getAnnotationValue(String name);
 }

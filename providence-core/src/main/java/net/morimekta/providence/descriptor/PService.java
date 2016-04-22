@@ -1,11 +1,13 @@
 package net.morimekta.providence.descriptor;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Descriptor for a single service method.
+ * Descriptor for a complete service.
  */
 public class PService {
     private final String name;
@@ -13,7 +15,7 @@ public class PService {
     private final PServiceProvider extendsService;
     private final Collection<PServiceMethod> methods;
 
-    PService(String packageName,
+    public PService(String packageName,
              String name,
              PServiceProvider extendsService,
              Collection<PServiceMethod> methods) {
@@ -21,6 +23,16 @@ public class PService {
         this.packageName = packageName;
         this.extendsService = extendsService;
         this.methods = methods;
+    }
+
+    public PService(String packageName,
+             String name,
+             PServiceProvider extendsService,
+             PServiceMethod[] methods) {
+        this.name = name;
+        this.packageName = packageName;
+        this.extendsService = extendsService;
+        this.methods = ImmutableList.copyOf(methods);
     }
 
     public String getPackageName() {

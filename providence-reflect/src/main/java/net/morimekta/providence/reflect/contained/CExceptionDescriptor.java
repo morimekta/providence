@@ -94,7 +94,7 @@ public class CExceptionDescriptor extends PStructDescriptor<CException, CField> 
     }
 
     @Override
-    public String getAnnotation(String name) {
+    public String getAnnotationValue(String name) {
         if (annotations != null) {
             return annotations.get(name);
         }

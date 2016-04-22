@@ -97,7 +97,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
     }
 
     @Override
-    public String getAnnotation(String name) {
+    public String getAnnotationValue(String name) {
         if (annotations != null) {
             return annotations.get(name);
         }
