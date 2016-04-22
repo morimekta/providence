@@ -114,6 +114,9 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <outputDir>target/generated-sources/model</outputDir>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
