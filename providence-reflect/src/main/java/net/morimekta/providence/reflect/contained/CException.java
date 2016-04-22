@@ -106,7 +106,7 @@ public class CException extends Throwable implements PMessage<CException> {
     }
 
     @Override
-    public boolean isCompact() {
+    public boolean compact() {
         if (!descriptor().isCompactible()) {
             return false;
         }
@@ -121,11 +121,6 @@ public class CException extends Throwable implements PMessage<CException> {
             }
         }
         return true;
-    }
-
-    @Override
-    public boolean isSimple() {
-        return descriptor().isSimple();
     }
 
     @Override

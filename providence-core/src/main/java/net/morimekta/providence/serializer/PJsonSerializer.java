@@ -572,7 +572,7 @@ public class PJsonSerializer extends PSerializer {
             }
             writer.endObject();
         } else {
-            if (message.isCompact()) {
+            if (message.compact()) {
                 writer.array();
                 for (PField<?> field : type.getFields()) {
                     if (message.has(field.getKey())) {
@@ -670,7 +670,7 @@ public class PJsonSerializer extends PSerializer {
             writer.key((Binary) primitive);
         } else if (primitive instanceof PMessage) {
             PMessage<?> message = (PMessage<?>) primitive;
-            if (!message.isSimple()) {
+            if (!message.descriptor().isSimple()) {
                 throw new PSerializeException("Only simple messages can be used as map keys. " +
                                               message.descriptor()
                                                      .getQualifiedName(null) + " is not.");

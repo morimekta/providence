@@ -27,8 +27,7 @@ public class JMessageOverridesFormat {
         appendCounter(message);
         appendGetter(message);
 
-        appendIsCompact(message);
-        appendIsSimple();
+        appendCompact(message);
 
         // Object
 
@@ -39,12 +38,12 @@ public class JMessageOverridesFormat {
         appendCompareTo(message);
     }
 
-    private void appendIsCompact(JMessage message) {
+    private void appendCompact(JMessage message) {
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
         }
         writer.appendln("@Override")
-              .appendln("public boolean isCompact() {")
+              .appendln("public boolean compact() {")
               .begin();
 
         if (message.descriptor()
@@ -73,20 +72,6 @@ public class JMessageOverridesFormat {
         writer.end()
               .appendln('}')
               .newline();
-    }
-
-    private void appendIsSimple() {
-        if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
-        }
-        writer.appendln("@Override")
-              .appendln("public boolean isSimple() {")
-              .begin()
-              .appendln("return descriptor().isSimple();")
-              .end()
-              .appendln('}')
-              .newline();
-
     }
 
     private void appendGetter(JMessage message) {

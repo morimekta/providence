@@ -56,12 +56,7 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T> {
     /**
      * @return If the message is compact.
      */
-    boolean isCompact();
-
-    /**
-     * @return If the message structure is simple.
-     */
-    boolean isSimple();
+    boolean compact();
 
     /**
      * Pure string representation of content. Does not contain type info.

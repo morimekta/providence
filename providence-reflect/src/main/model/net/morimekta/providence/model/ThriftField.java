@@ -163,13 +163,8 @@ public class ThriftField
     }
 
     @Override
-    public boolean isCompact() {
+    public boolean compact() {
         return false;
-    }
-
-    @Override
-    public boolean isSimple() {
-        return descriptor().isSimple();
     }
 
     @Override

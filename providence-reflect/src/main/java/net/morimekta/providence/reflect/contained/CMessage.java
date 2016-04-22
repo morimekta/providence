@@ -95,7 +95,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     }
 
     @Override
-    public boolean isCompact() {
+    public boolean compact() {
         if (!descriptor().isCompactible()) {
             return false;
         }
@@ -110,11 +110,6 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             }
         }
         return true;
-    }
-
-    // @Override
-    public boolean isSimple() {
-        return descriptor().isSimple();
     }
 
     @Override
