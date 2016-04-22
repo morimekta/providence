@@ -99,21 +99,13 @@
                 <executions>
                     <execution>
                         <id>generate-sources-for-test</id>
-                        <phase>generate-sources</phase>
+                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
                         <configuration>
-                            <scope>test</scope>
-                            <inputFiles>
-                                <includes>
-                                    <include>src/test/providence/**/*.thrift</include>
-                                </includes>
-                            </inputFiles>
-                            <outputDir>target/generated-test-sources/providence</outputDir>
                             <android>true</android>
                             <jackson>true</jackson>
-                            <containers>SORTED</containers>
                         </configuration>
                     </execution>
                     <execution>
@@ -122,15 +114,6 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <inputFiles>
-                                <includes>
-                                    <include>src/main/providence/model.thrift</include>
-                                </includes>
-                            </inputFiles>
-                            <outputDir>target/generated-sources/model</outputDir>
-                            <containers>ORDERED</containers>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -1,5 +1,3 @@
-package net.morimekta.providence.maven.plugin;
-
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
@@ -15,6 +13,7 @@ package net.morimekta.providence.maven.plugin;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package net.morimekta.providence.maven.plugin;
 
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
@@ -55,7 +54,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     private boolean jackson = false;
 
-    @Parameter(required = true)
+    @Parameter
     private IncludeExcludeFileSelector inputFiles = null;
 
     @Parameter

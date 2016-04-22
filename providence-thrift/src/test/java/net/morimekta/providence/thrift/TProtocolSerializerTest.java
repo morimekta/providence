@@ -237,7 +237,7 @@ public class TProtocolSerializerTest {
     }
 
     @Test
-    @Ignore("TSimpleJsonProtocl is write-only.")
+    @Ignore("TSimpleJsonProtocol is write-only.")
     public void testTSimpleJsonProtocol() throws IOException, PSerializeException, TException {
         testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
     }
