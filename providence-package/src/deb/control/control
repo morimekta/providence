@@ -1,0 +1,9 @@
+Package: providence
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Description: [[description]]
+Maintainer: Stein Eldar Johnsen (oss@morimekta.net)
+Distribution: development
+Depends: default-jre | java8-runtime
