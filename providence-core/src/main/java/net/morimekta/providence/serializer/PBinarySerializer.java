@@ -38,6 +38,8 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
+import net.morimekta.util.io.BigEndianBinaryReader;
+import net.morimekta.util.io.BigEndianBinaryWriter;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
 
@@ -78,14 +80,14 @@ public class PBinarySerializer extends PSerializer {
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, PSerializeException {
-        BinaryWriter writer = new BinaryWriter(os);
+        BinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
             throws IOException, PSerializeException {
-        BinaryWriter out = new BinaryWriter(os);
+        BinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
         int len = out.writeInt(method.length);
         len += method.length;
@@ -98,14 +100,14 @@ public class PBinarySerializer extends PSerializer {
 
     @Override
     public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
-        BinaryReader reader = new BinaryReader(input);
+        BinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
             throws IOException, PSerializeException {
-        BinaryReader in = new BinaryReader(is);
+        BinaryReader in = new BigEndianBinaryReader(is);
         // Max method name length: 255 chars.
         int methodNameLen = in.expectInt();
         String methodName = new String(in.expectBytes(methodNameLen), UTF_8);

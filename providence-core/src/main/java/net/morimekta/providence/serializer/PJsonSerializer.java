@@ -517,7 +517,7 @@ public class PJsonSerializer extends PSerializer {
                 case BINARY:
                     try {
                         return Binary.fromBase64(key);
-                    } catch (IOException e) {
+                    } catch (IllegalArgumentException e) {
                         throw new PSerializeException(e, "Unable to parse Base64 data.");
                     }
                 case ENUM:
@@ -528,15 +528,15 @@ public class PJsonSerializer extends PSerializer {
                         eb.setByName(key);
                     }
                     if (readStrict && !eb.isValid()) {
-                        throw new PSerializeException(
-                                key + " is not a valid enum value for " + keyType.getQualifiedName(null));
+                        throw new PSerializeException("%s is not a valid enum value for %s",
+                                                      key, keyType.getQualifiedName(null));
                     }
                     return eb.build();
                 case MESSAGE:
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
-                        throw new PSerializeException("Only simple structs can be used as map key. " +
-                                                      st.getQualifiedName(null) + " is not.");
+                        throw new PSerializeException("Only simple structs can be used as map key. %s is not.",
+                                                      st.getQualifiedName(null));
                     }
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
@@ -544,15 +544,15 @@ public class PJsonSerializer extends PSerializer {
                         tokenizer.expectSymbol("Message start", JsonToken.kMapStart);
                         return cast(parseMessage(tokenizer, st));
                     } catch (IOException e) {
-                        throw new PSerializeException(e, "Unable to tokenize map key: " + key);
+                        throw new PSerializeException(e, "Unable to tokenize map key: %s", key);
                     } catch (JsonException e) {
-                        throw new PSerializeException(e, "Unable to parse map key: " + key);
+                        throw new PSerializeException(e, "Unable to parse map key: %s", key);
                     }
                 default:
-                    throw new PSerializeException("Illegal key type: " + keyType.getType());
+                    throw new PSerializeException("Illegal key type: %s", keyType.getType());
             }
         } catch (NumberFormatException nfe) {
-            throw new PSerializeException(nfe, "Unable to parse numeric value " + key);
+            throw new PSerializeException(nfe, "Unable to parse numeric value %s", key);
         }
     }
 

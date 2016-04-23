@@ -191,16 +191,16 @@ public class PSerializerTest {
     public void testCompactJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.ID);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/compact.json");
         testOutput(serializer, "/compat/compact.json", false);
+        testCompatibility(serializer, "/compat/compact.json");
     }
 
     @Test
     public void testNamedJson() throws PSerializeException, IOException {
         PSerializer serializer = new PJsonSerializer(true, PJsonSerializer.IdType.NAME);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/named.json");
         testOutput(serializer, "/compat/named.json", false);
+        testCompatibility(serializer, "/compat/named.json");
     }
 
     @Test
@@ -210,23 +210,23 @@ public class PSerializerTest {
                                                      PJsonSerializer.IdType.NAME,
                                                      true);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/pretty.json");
         testOutput(serializer, "/compat/pretty.json", false);
+        testCompatibility(serializer, "/compat/pretty.json");
     }
 
     @Test
     public void testBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PBinarySerializer(true);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/binary.data");
         testOutput(serializer, "/compat/binary.data", true);
+        testCompatibility(serializer, "/compat/binary.data");
     }
 
     @Test
     public void testFastBinary() throws IOException, PSerializeException {
         PSerializer serializer = new PFastBinarySerializer(true);
         testSerializer(serializer);
-        testCompatibility(serializer, "/compat/fast-binary.data");
         testOutput(serializer, "/compat/fast-binary.data", true);
+        testCompatibility(serializer, "/compat/fast-binary.data");
     }
 }
