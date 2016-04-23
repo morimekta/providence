@@ -162,21 +162,21 @@ public class TProtocolSerializerTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // First write containers to bytes.
-        for (int i = 0; i < 10; ++i) {
-            if (i != 0) {
+        for (int i = 0; i < containers.size(); ++i) {
+            serializer.serialize(baos, containers.get(i));
+            if (!serializer.binaryProtocol()) {
                 baos.write('\n');
             }
-            serializer.serialize(baos, containers.get(i));
         }
 
         // Read back as providence to check simple Write-Read integrity.
         ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
-        for (int i = 0; i < 10; ++i) {
-            if (i != 0) {
-                assertEquals('\n', in.read());
-            }
+        for (int i = 0; i < containers.size(); ++i) {
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
             assertThat(back, messageEq(containers.get(i)));
+            if (!serializer.binaryProtocol()) {
+                assertEquals('\n', in.read());
+            }
         }
 
         // Read back with thrift to check compatibility.
@@ -189,11 +189,7 @@ public class TProtocolSerializerTest {
         TTransport outTrans = new TIOStreamTransport(baos);
         TProtocol outProt = factory.getProtocol(outTrans);
 
-        for (int i = 0; i < 10; ++i) {
-            if (i != 0) {
-                assertEquals('\n', in.read());
-                baos.write('\n');
-            }
+        for (int i = 0; i < containers.size(); ++i) {
             net.morimekta.test.thrift.Containers tc = new net.morimekta.test.thrift.Containers();
             tc.read(inProt);
 
@@ -201,16 +197,21 @@ public class TProtocolSerializerTest {
             assertConsistent("[" + i + "]", expected, tc);
 
             tc.write(outProt);
+
+            if (!serializer.binaryProtocol()) {
+                assertEquals('\n', in.read());
+                baos.write('\n');
+            }
         }
 
         // And read back from thrift again.
         in = new ByteArrayInputStream(baos.toByteArray());
-        for (int i = 0; i < 10; ++i) {
-            if (i != 0) {
-                assertEquals('\n', in.read());
-            }
+        for (int i = 0; i < containers.size(); ++i) {
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
             assertThat(back, messageEq(containers.get(i)));
+            if (!serializer.binaryProtocol()) {
+                assertEquals('\n', in.read());
+            }
         }
     }
 
@@ -225,8 +226,6 @@ public class TProtocolSerializerTest {
     }
 
     @Test
-    @Ignore("TTupleProtocol is pretty volatile in thrift-0.9.x, so " +
-            "0.9.1 and 0.9.3 seems to generate different encoding.")
     public void testTTupleProtocol() throws IOException, PSerializeException, TException {
         testRecoding(new TTupleProtocol.Factory(), new TTupleProtocolSerializer());
     }

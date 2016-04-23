@@ -4,15 +4,16 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
-import net.morimekta.providence.PType;
+import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
@@ -155,34 +156,84 @@ public class TTupleProtocolSerializer extends PSerializer {
 
     private void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, PSerializeException {
         PStructDescriptor<?, ?> descriptor = message.descriptor();
-        BitSet optionals = new BitSet();
-        PField<?>[] fields = descriptor.getFields();
-        for (int i = 0; i < fields.length; ++i) {
-            PField<?> fld = fields[i];
-            if (message.has(fld.getKey())) {
-                optionals.set(i);
+        if (descriptor.getVariant() == PMessageVariant.UNION) {
+            PField fld = ((PUnion<?>) message).unionField();
+            protocol.writeI16((short) fld.getKey());
+            writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
+        } else {
+            PField<?>[] fields = descriptor.getFields();
+            int numOptionals = countOptionals(fields);
+            BitSet optionals = new BitSet();
+            if (numOptionals > 0) {
+                int optionalPos = 0;
+                for (PField<?> fld : fields) {
+                    if (fld.getRequirement() != PRequirement.REQUIRED) {
+                        if (message.has(fld.getKey())) {
+                            optionals.set(optionalPos);
+                        }
+                        ++optionalPos;
+                    }
+                }
             }
-        }
-        protocol.writeBitSet(optionals, fields.length);
 
-        for (int i = 0; i < fields.length; ++i) {
-            PField<?> fld = fields[i];
-            if (optionals.get(i)) {
-                writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
+            boolean shouldWriteOptionals = true;
+            int optionalPos = 0;
+
+            for (PField<?> fld : fields) {
+                if (fld.getRequirement() == PRequirement.REQUIRED) {
+                    writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
+                } else {
+                    // Write the optionals bitset at the position of the first
+                    // non-required field.
+                    if (shouldWriteOptionals) {
+                        protocol.writeBitSet(optionals, numOptionals);
+                        shouldWriteOptionals = false;
+                    }
+                    if (optionals.get(optionalPos)) {
+                        writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
+                    }
+                    ++optionalPos;
+                }
             }
         }
     }
 
+    private int countOptionals(PField<?>[] fields) {
+        int numOptionals = 0;
+        for (PField<?> fld : fields) {
+            if (fld.getRequirement() != PRequirement.REQUIRED) {
+                ++numOptionals;
+            }
+        }
+        return numOptionals;
+    }
+
     private <T extends PMessage<T>> T readMessage(TTupleProtocol protocol, PStructDescriptor<T, ?> descriptor)
             throws PSerializeException, TException {
-        PField<?>[] fields = descriptor.getFields();
-        BitSet optionals = protocol.readBitSet(fields.length);
-
         PMessageBuilder<T> builder = descriptor.builder();
-        for (int i = 0; i < fields.length; ++i) {
-            if (optionals.get(i)) {
-                PField<?> fld = fields[i];
-                builder.set(fld.getKey(), readTypedValue(fld.getType().id, fld.getDescriptor(), protocol));
+
+        if (descriptor.getVariant() == PMessageVariant.UNION) {
+            int fieldId = protocol.readI16();
+            PField<?> fld = descriptor.getField(fieldId);
+            builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
+        } else {
+            PField<?>[] fields = descriptor.getFields();
+            int numOptionals = countOptionals(fields);
+
+            BitSet optionals = null;
+            int optionalPos = 0;
+            for (PField<?> fld : fields) {
+                if (fld.getRequirement() == PRequirement.REQUIRED) {
+                    builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
+                } else {
+                    if (optionals == null) {
+                        optionals = protocol.readBitSet(numOptionals);
+                    }
+                    if (optionals.get(optionalPos)) {
+                        builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
+                    }
+                    ++optionalPos;
+                }
             }
         }
 
@@ -193,9 +244,9 @@ public class TTupleProtocolSerializer extends PSerializer {
         return builder.build();
     }
 
-    private <T> T readTypedValue(byte tType, PDescriptor<T> type, TTupleProtocol protocol)
+    private <T> T readTypedValue(PDescriptor<T> type, TTupleProtocol protocol)
             throws TException, PSerializeException {
-        switch (PType.findById(tType)) {
+        switch (type.getType()) {
             case BOOL:
                 return cast(protocol.readBool());
             case BYTE:
@@ -203,29 +254,28 @@ public class TTupleProtocolSerializer extends PSerializer {
             case I16:
                 return cast(protocol.readI16());
             case I32:
-                if (PType.ENUM == type.getType()) {
-                    PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
-                    PEnumBuilder<?> eb = et.builder();
-                    final int value = protocol.readI32();
-                    eb.setByValue(value);
-                    if (readStrict && !eb.isValid()) {
-                        throw new PSerializeException("Invalid enum value " + value + " for " +
-                                                      et.getQualifiedName(null));
-                    }
-                    return cast(eb.build());
-                } else {
-                    return cast(protocol.readI32());
-                }
+                return cast(protocol.readI32());
             case I64:
                 return cast(protocol.readI64());
             case DOUBLE:
                 return cast(protocol.readDouble());
+            case BINARY: {
+                ByteBuffer buffer = protocol.readBinary();
+                return cast(Binary.wrap(buffer.array()));
+            }
             case STRING:
-                if (PPrimitive.BINARY == type) {
-                    ByteBuffer buffer = protocol.readBinary();
-                    return cast(Binary.wrap(buffer.array()));
-                }
                 return cast(protocol.readString());
+            case ENUM: {
+                PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
+                PEnumBuilder<?> eb = et.builder();
+                final int value = protocol.readI32();
+                eb.setByValue(value);
+                if (readStrict && !eb.isValid()) {
+                    throw new PSerializeException("Invalid enum value " + value + " for " +
+                                                  et.getQualifiedName(null));
+                }
+                return cast(eb.build());
+            }
             case MESSAGE:
                 return cast(readMessage(protocol, (PStructDescriptor<?, ?>) type));
             case LIST:
@@ -235,7 +285,7 @@ public class TTupleProtocolSerializer extends PSerializer {
 
                 PList.Builder<Object> list = lDesc.builder();
                 for (int i = 0; i < lSize; ++i) {
-                    list.add(readTypedValue(liDesc.getType().id, liDesc, protocol));
+                    list.add(readTypedValue(liDesc, protocol));
                 }
 
                 return cast(list.build());
@@ -246,7 +296,7 @@ public class TTupleProtocolSerializer extends PSerializer {
 
                 PSet.Builder<Object> set = sDesc.builder();
                 for (int i = 0; i < sSize; ++i) {
-                    set.add(readTypedValue(siDesc.getType().id, siDesc, protocol));
+                    set.add(readTypedValue(siDesc, protocol));
                 }
 
                 return cast(set.build());
@@ -258,15 +308,15 @@ public class TTupleProtocolSerializer extends PSerializer {
 
                 PMap.Builder<Object, Object> map = mDesc.builder();
                 for (int i = 0; i < mSize; ++i) {
-                    Object key = readTypedValue(mkDesc.getType().id, mkDesc, protocol);
-                    Object val = readTypedValue(miDesc.getType().id, miDesc, protocol);
+                    Object key = readTypedValue(mkDesc, protocol);
+                    Object val = readTypedValue(miDesc, protocol);
                     map.put(key, val);
                 }
 
                 protocol.readMapEnd();
                 return cast(map.build());
             default:
-                throw new PSerializeException("Unsupported protocol field type: " + tType);
+                throw new PSerializeException("Unsupported protocol field type: " + type.getType());
         }
     }
 
