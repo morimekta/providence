@@ -7,7 +7,10 @@ import org.apache.thrift.protocol.TSimpleJSONProtocol;
  * @since 24.10.15.
  */
 public class TSimpleJsonProtocolSerializer extends TProtocolSerializer {
+    public static final String MIME_TYPE = "application/json";
+
     public TSimpleJsonProtocolSerializer() {
-        super(false, new TSimpleJSONProtocol.Factory());
+        super(false, new TSimpleJSONProtocol.Factory(),
+              false, MIME_TYPE);
     }
 }

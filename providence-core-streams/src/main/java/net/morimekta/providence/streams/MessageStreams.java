@@ -26,6 +26,8 @@ import java.util.stream.StreamSupport;
  * Helper class to create streams that read providence messages.
  */
 public class MessageStreams {
+    static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
+
     /**
      * Read a file containing entries of a given type. Tries to detect the
      * entry format of the file based on file magic. If not detected will try
@@ -41,26 +43,13 @@ public class MessageStreams {
     public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
                                                                            PStructDescriptor<T, F> descriptor)
             throws IOException {
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-
         PSerializer serializer;
         if (file.getName().endsWith(".json")) {
             serializer = new PJsonSerializer(true);
         } else {
-            in.mark(16);
-            int r = in.read();
-            if (r < 0) {
-                throw new IOException("Unexpected end of stream.");
-            }
-            if (r == PJsonSerializer.STREAM_INITIATOR[0]) {
-                serializer = new PJsonSerializer(true);
-            } else {
-                serializer = new PFastBinarySerializer(true);
-            }
-            in.reset();
+            serializer = new PFastBinarySerializer(true);
         }
-
-        return stream(in, serializer, descriptor);
+        return file(file, serializer, descriptor);
     }
 
     /**
@@ -81,14 +70,7 @@ public class MessageStreams {
                                                                            PStructDescriptor<T, F> descriptor)
             throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
-        return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, is -> {
-            try {
-                is.close();
-                return null;
-            } catch(IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }), false);
+        return stream(in, serializer, descriptor);
     }
 
     /**
@@ -245,15 +227,12 @@ public class MessageStreams {
         public T read() {
             try {
                 if(num > 0) {
-                    if(!IOUtils.skipUntil(in, serializer.entrySeparator())) {
-                        // no next entry found.
-                        close();
-                        return null;
-                    }
-                } else if (!serializer.streamInitiatorPartOfData()) {
-                    if (!IOUtils.skipUntil(in, serializer.streamInitiator())) {
-                        close();
-                        return null;
+                    if (!serializer.binaryProtocol()) {
+                        if(!IOUtils.skipUntil(in, READABLE_ENTRY_SEP)) {
+                            // no next entry found.
+                            close();
+                            return null;
+                        }
                     }
                 }
                 // Try to check if there is a byte available. Since the

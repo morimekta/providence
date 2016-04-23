@@ -91,8 +91,7 @@ import java.util.Map;
  * </pre>
  */
 public class PJsonSerializer extends PSerializer {
-    public static final byte[] STREAM_INITIATOR = {'{'};
-    public static final byte[] ENTRY_SEP        = {'\n'};
+    public static final String MIME_TYPE = "application/vnd.morimekta.providence.json";
 
     public enum IdType {
         // print field and enums as numeric IDs and values.
@@ -131,16 +130,6 @@ public class PJsonSerializer extends PSerializer {
         this.idType = idType;
         this.enumType = enumType;
         this.pretty = pretty;
-    }
-
-    @Override
-    public byte[] streamInitiator() {
-        return STREAM_INITIATOR;
-    }
-
-    @Override
-    public byte[] entrySeparator() {
-        return ENTRY_SEP;
     }
 
     @Override
@@ -212,6 +201,16 @@ public class PJsonSerializer extends PSerializer {
         } catch (IOException e) {
             throw new PSerializeException(e, "Unable to read stream");
         }
+    }
+
+    @Override
+    public boolean binaryProtocol() {
+        return false;
+    }
+
+    @Override
+    public String mimeType() {
+        return MIME_TYPE;
     }
 
     private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)

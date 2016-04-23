@@ -24,7 +24,6 @@ import net.morimekta.util.io.CountingOutputStream;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
@@ -46,6 +45,8 @@ import java.util.Set;
  * protocols.
  */
 public class TTupleProtocolSerializer extends PSerializer {
+    public static final String MIME_TYPE = "application/vnd.apache.thrift.tuple";
+
     private final boolean          readStrict;
     private final TProtocolFactory protocolFactory;
 
@@ -140,6 +141,16 @@ public class TTupleProtocolSerializer extends PSerializer {
         } catch (TException e) {
             throw new PSerializeException(e, "Transport exception in protocol");
         }
+    }
+
+    @Override
+    public boolean binaryProtocol() {
+        return true;
+    }
+
+    @Override
+    public String mimeType() {
+        return MIME_TYPE;
     }
 
     private void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, PSerializeException {

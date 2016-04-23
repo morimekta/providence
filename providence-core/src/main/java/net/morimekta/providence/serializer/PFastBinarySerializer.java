@@ -57,6 +57,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * See data definition file <code>docs/fast-binary.md</code> for format spec.
  */
 public class PFastBinarySerializer extends PSerializer {
+    public static final String MIME_TYPE = "application/vnd.morimekta.providence.binary";
+
     protected final boolean readStrict;
 
     /**
@@ -127,6 +129,16 @@ public class PFastBinarySerializer extends PSerializer {
         T message = readMessage(in, descriptor);
 
         return new PServiceCall<>(methodName, type, sequence, message);
+    }
+
+    @Override
+    public boolean binaryProtocol() {
+        return true;
+    }
+
+    @Override
+    public String mimeType() {
+        return MIME_TYPE;
     }
 
     // --- MESSAGE ---

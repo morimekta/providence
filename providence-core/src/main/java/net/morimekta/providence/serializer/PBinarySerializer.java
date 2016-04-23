@@ -60,7 +60,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * spec.
  */
 public class PBinarySerializer extends PSerializer {
+    public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
+
+    private static final int VERSION_MASK = 0xffff0000;
+    private static final int VERSION_1    = 0x80010000;
+
     private final boolean readStrict;
+    private final boolean versioned;
 
     /**
      * Construct a serializer instance.
@@ -69,13 +75,28 @@ public class PBinarySerializer extends PSerializer {
         this(true);
     }
 
+    public PBinarySerializer(boolean readStrict) {
+        this(readStrict, false);
+    }
+
     /**
      * Construct a serializer instance.
      *
-     * @param strict If the serializer should fail on reading mismatched data.
+     * @param readStrict If the serializer should fail on reading mismatched data.
      */
-    public PBinarySerializer(boolean strict) {
-        readStrict = strict;
+    public PBinarySerializer(boolean readStrict, boolean versioned) {
+        this.readStrict = readStrict;
+        this.versioned = versioned;
+    }
+
+    @Override
+    public boolean binaryProtocol() {
+        return true;
+    }
+
+    @Override
+    public String mimeType() {
+        return MIME_TYPE;
     }
 
     @Override
@@ -89,10 +110,17 @@ public class PBinarySerializer extends PSerializer {
             throws IOException, PSerializeException {
         BinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
-        int len = out.writeInt(method.length);
-        len += method.length;
-        out.write(method);
-        len += out.writeByte((byte) call.getType().key);
+
+        int len = method.length;
+        if (versioned) {
+            len += out.writeInt(VERSION_1 | (byte) call.getType().key);
+            len += out.writeInt(method.length);
+            out.write(method);
+        } else {
+            len += out.writeInt(method.length);
+            out.write(method);
+            len += out.writeByte((byte) call.getType().key);
+        }
         len += out.writeInt(call.getSequence());
         len += writeMessage(out, call.getMessage());
         return len;
@@ -108,21 +136,43 @@ public class PBinarySerializer extends PSerializer {
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
             throws IOException, PSerializeException {
         BinaryReader in = new BigEndianBinaryReader(is);
-        // Max method name length: 255 chars.
+
         int methodNameLen = in.expectInt();
-        String methodName = new String(in.expectBytes(methodNameLen), UTF_8);
-        PServiceMethod method = service.getMethod(methodName);
-        if (method == null) {
-            throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+        int typeKey;
+        String methodName;
+        PServiceMethod method;
+        int sequence;
+        // Accept both "strict" read mode and non-strict.
+        // versioned
+        if (methodNameLen < 0) {
+            int version = methodNameLen & VERSION_MASK;
+            if (version == VERSION_1) {
+                typeKey = methodNameLen & 0xFF;
+                methodNameLen = in.expectInt();
+                methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+                method = service.getMethod(methodName);
+                sequence = in.expectInt();
+            } else {
+                throw new PSerializeException("Bad protocol version: %08x", version >>> 16);
+            }
+        } else {
+            if (readStrict) {
+                throw new PSerializeException("Missing protocol version");
+            }
+
+            methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+            method = service.getMethod(methodName);
+            if (method == null) {
+                throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+            }
+            typeKey = in.expectByte();
+            sequence = in.expectInt();
         }
 
-        int typeKey = in.expectByte();
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
         if (type == null) {
             throw new PSerializeException("Invalid call type " + typeKey);
         }
-
-        int sequence = in.expectInt();
 
         @SuppressWarnings("unchecked")
         PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();

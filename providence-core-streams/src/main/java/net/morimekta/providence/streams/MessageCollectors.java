@@ -35,12 +35,10 @@ public class MessageCollectors {
             }
         }, (outputStream, t) -> {
             try {
-                if(result.get() > 0) {
-                    result.addAndGet(maybeWriteBytes(outputStream, serializer.entrySeparator()));
-                } else if (!serializer.streamInitiatorPartOfData()) {
-                    result.addAndGet(maybeWriteBytes(outputStream, serializer.streamInitiator()));
-                }
                 result.addAndGet(serializer.serialize(outputStream, t));
+                if(!serializer.binaryProtocol()) {
+                    result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                }
             } catch(PSerializeException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
@@ -50,7 +48,6 @@ public class MessageCollectors {
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
-                result.addAndGet(maybeWriteBytes(outputStream, serializer.streamTerminator()));
                 outputStream.close();
             } catch(IOException e) {
                 e.printStackTrace();
@@ -66,12 +63,10 @@ public class MessageCollectors {
         return Collector.of(() -> new BufferedOutputStream(out), (outputStream, t) -> {
             try {
                 synchronized(outputStream) {
-                    if(result.get() > 0) {
-                        result.addAndGet(maybeWriteBytes(outputStream, serializer.entrySeparator()));
-                    } else if (!serializer.streamInitiatorPartOfData()) {
-                        result.addAndGet(maybeWriteBytes(outputStream, serializer.streamInitiator()));
-                    }
                     result.addAndGet(serializer.serialize(outputStream, t));
+                    if(!serializer.binaryProtocol()) {
+                        result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                    }
                 }
             } catch(PSerializeException e) {
                 e.printStackTrace();
@@ -82,7 +77,6 @@ public class MessageCollectors {
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
-                result.addAndGet(maybeWriteBytes(outputStream, serializer.streamTerminator()));
                 outputStream.flush();
             } catch(IOException e) {
                 e.printStackTrace();
@@ -98,7 +92,7 @@ public class MessageCollectors {
                 out.write(bytes);
             } catch(IOException e) {
                 e.printStackTrace();
-                return 0;
+                throw new UncheckedIOException(e);
             }
         }
         return bytes.length;

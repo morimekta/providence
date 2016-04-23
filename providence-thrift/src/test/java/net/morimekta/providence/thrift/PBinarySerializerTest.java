@@ -6,12 +6,8 @@ import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.test.providence.srv.Request;
-import net.morimekta.util.Strings;
-import net.morimekta.util.io.IOUtils;
 
-import org.apache.commons.codec.binary.Hex;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -42,6 +38,7 @@ public class PBinarySerializerTest {
             // Since these are immutable, we don't need to read for each test.
             if (containers == null) {
                 containers = arrayListFromJsonResource("/providence/test.json", Containers.kDescriptor);
+                assertEquals(10, containers.size());
             }
         }
     }
@@ -52,11 +49,9 @@ public class PBinarySerializerTest {
 
         // Providence client talks to thrift service.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         thrift.serialize(baos, request);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
         Request out = providence.deserialize(bais, Request.kDescriptor);
 
         assertThat(out, messageEq(request));
@@ -68,11 +63,9 @@ public class PBinarySerializerTest {
 
         // Providence client talks to thrift service.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         providence.serialize(baos, request);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
         Request out = thrift.deserialize(bais, Request.kDescriptor);
 
         assertThat(out, messageEq(request));
@@ -87,6 +80,9 @@ public class PBinarySerializerTest {
         List<Containers> out = MessageStreams.stream(bais, thrift, Containers.kDescriptor).collect(Collectors.toList());
 
         assertEquals(containers.size(), out.size());
+        for (int i = 0; i < containers.size(); ++i) {
+            assertThat(containers.get(i), messageEq(out.get(i)));
+        }
     }
 
     @Test
@@ -97,5 +93,8 @@ public class PBinarySerializerTest {
         List<Containers> out = MessageStreams.stream(bais, providence, Containers.kDescriptor).collect(Collectors.toList());
 
         assertEquals(containers.size(), out.size());
+        for (int i = 0; i < containers.size(); ++i) {
+            assertThat(containers.get(i), messageEq(out.get(i)));
+        }
     }
 }

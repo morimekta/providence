@@ -69,10 +69,25 @@ import java.util.Set;
 class TProtocolSerializer extends PSerializer {
     private final TProtocolFactory protocolFactory;
     private final boolean          readStrict;
+    private final boolean          binary;
+    private final String           mimeType;
 
-    public TProtocolSerializer(boolean readStrict, TProtocolFactory protocolFactory) {
+    public TProtocolSerializer(boolean readStrict, TProtocolFactory protocolFactory,
+                               boolean binary, String mimeType) {
         this.readStrict = readStrict;
         this.protocolFactory = protocolFactory;
+        this.binary = binary;
+        this.mimeType = mimeType;
+    }
+
+    @Override
+    public boolean binaryProtocol() {
+        return binary;
+    }
+
+    @Override
+    public String mimeType() {
+        return mimeType;
     }
 
     @Override

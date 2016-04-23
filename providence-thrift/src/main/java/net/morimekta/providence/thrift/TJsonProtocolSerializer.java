@@ -7,11 +7,14 @@ import org.apache.thrift.protocol.TJSONProtocol;
  * @since 24.10.15.
  */
 public class TJsonProtocolSerializer extends TProtocolSerializer {
+    public static final String MIME_TYPE = "application/vnd.apache.thrift.json";
+
     public TJsonProtocolSerializer() {
         this(true);
     }
 
     public TJsonProtocolSerializer(boolean readStrict) {
-        super(readStrict, new TJSONProtocol.Factory());
+        super(readStrict, new TJSONProtocol.Factory(),
+              false, MIME_TYPE);
     }
 }

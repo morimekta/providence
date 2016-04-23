@@ -39,10 +39,6 @@ import java.io.OutputStream;
  * @since 25.08.15
  */
 public abstract class PSerializer {
-    public static final byte[] DEFAULT_STREAM_INITIATOR = {};
-    public static final byte[] DEFAULT_STREAM_TERMINATOR = {'\n'};
-    public static final byte[] DEFAULT_ENTRY_SEP = {'\n'};
-
     public abstract <T extends PMessage<T>> int
     serialize(OutputStream output, T message) throws IOException, PSerializeException;
 
@@ -55,21 +51,9 @@ public abstract class PSerializer {
     public abstract <T extends PMessage<T>> PServiceCall<T>
     deserialize(InputStream input, PService service) throws IOException, PSerializeException;
 
-    public boolean streamInitiatorPartOfData() {
-        return true;
-    }
+    public abstract boolean binaryProtocol();
 
-    public byte[] streamInitiator() {
-        return DEFAULT_STREAM_INITIATOR;
-    }
-
-    public byte[] streamTerminator() {
-        return DEFAULT_STREAM_TERMINATOR;
-    }
-
-    public byte[] entrySeparator() {
-        return DEFAULT_ENTRY_SEP;
-    }
+    public abstract String mimeType();
 
     @SuppressWarnings("unchecked")
     protected <T> T cast(Object o) {
