@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 
@@ -20,12 +21,17 @@ import java.util.stream.Collector;
 public class MessageCollectors {
     public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toFile(File file,
                                                                                      PSerializer serializer) {
+        return toPath(file.toPath(), serializer);
+    }
+
+    public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toPath(Path file,
+                                                                                     PSerializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> {
             try {
-                return new BufferedOutputStream(new FileOutputStream(file));
+                return new BufferedOutputStream(new FileOutputStream(file.toFile()));
             } catch(IOException e) {
-                throw new UncheckedIOException("Unable to open " + file.getName(), e);
+                throw new UncheckedIOException("Unable to open " + file.getFileName(), e);
             }
         }, (outputStream, t) -> {
             try {
@@ -40,7 +46,7 @@ public class MessageCollectors {
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch(IOException e) {
                 e.printStackTrace();
-                throw new UncheckedIOException("Unable to write to " + file.getName(), e);
+                throw new UncheckedIOException("Unable to write to " + file.getFileName(), e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
@@ -48,7 +54,7 @@ public class MessageCollectors {
                 outputStream.close();
             } catch(IOException e) {
                 e.printStackTrace();
-                throw new UncheckedIOException("Unable to close " + file.getName(), e);
+                throw new UncheckedIOException("Unable to close " + file.getFileName(), e);
             }
             return result.get();
         });

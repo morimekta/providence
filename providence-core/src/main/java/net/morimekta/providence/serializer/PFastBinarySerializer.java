@@ -147,14 +147,14 @@ public class PFastBinarySerializer extends PSerializer {
             }
         }
         // write STOP field.
-        return len + out.writeVarint(0);
+        return len + out.writeVarint(STOP);
     }
 
     private <T extends PMessage<T>, TF extends PField> T readMessage(BinaryReader in, PStructDescriptor<T, TF> descriptor)
             throws PSerializeException, IOException {
         PMessageBuilder<T> builder = descriptor.builder();
         int tag;
-        while ((tag = in.readIntVarint()) > 0) {
+        while ((tag = in.readIntVarint()) > STOP) {
             int id = tag >>> 3;
             int type = tag & 0x07;
             TF field = descriptor.getField(id);
@@ -364,12 +364,12 @@ public class PFastBinarySerializer extends PSerializer {
         return null;
     }
 
-    private static final int NONE       = 0x00;  // 0, false, empty.
-    private static final int TRUE       = 0x01;  // 1, true.
-    private static final int VARINT     = 0x02;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
-    private static final int FIXED_64   = 0x03;  // -> double
-    private static final int BINARY     = 0x04;  // -> varint len + binary data.
-    private static final int MESSAGE    = 0x05;  // -> messages, terminated with field-ID 0.
-    private static final int COLLECTION = 0x06;  // -> varint len + N * (tag + field).
-    // ----------------------  UNUSED     = 0x07;
+    private static final int STOP       = 0x00;
+    private static final int NONE       = 0x01;  // 0, false, empty.
+    private static final int TRUE       = 0x02;  // 1, true.
+    private static final int VARINT     = 0x03;  // -> zigzag encoded base-128 number (byte, i16, i32, i64).
+    private static final int FIXED_64   = 0x04;  // -> double
+    private static final int BINARY     = 0x05;  // -> varint len + binary data.
+    private static final int MESSAGE    = 0x06;  // -> messages, terminated with field-ID 0.
+    private static final int COLLECTION = 0x07;  // -> varint len + N * (tag + field).
 }

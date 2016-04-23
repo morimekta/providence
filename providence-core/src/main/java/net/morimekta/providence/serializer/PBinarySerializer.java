@@ -27,6 +27,7 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
+import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -46,7 +47,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -135,31 +135,34 @@ public class PBinarySerializer extends PSerializer {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                len += writer.writeUInt16((short) field.getKey());
-                len += writeFieldValue(writer, message.get(field.getKey()));
+                len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
+                len += writeFieldValue(writer,
+                                       message.get(field.getKey()),
+                                       field.getDescriptor());
             }
         } else {
             for (PField<?> field : message.descriptor()
                                           .getFields()) {
                 if (message.has(field.getKey())) {
-                    len += writer.writeUInt16((short) field.getKey());
-                    len += writeFieldValue(writer, message.get(field.getKey()));
+                    len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
+                    len += writeFieldValue(writer,
+                                           message.get(field.getKey()),
+                                           field.getDescriptor());
                 }
             }
         }
-        // write 2 null-bytes (field ID 0).
-        len += writer.writeUInt16(0);
+        len += writer.writeUInt8(PType.STOP.id);
         return len;
     }
 
     private <T extends PMessage<T>> T readMessage(BinaryReader input,
                                                   PStructDescriptor<T, ?> descriptor,
                                                   boolean nullable) throws PSerializeException, IOException {
-        PMessageBuilder<T> builder = descriptor.builder();
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
         }
+        PMessageBuilder<T> builder = descriptor.builder();
         while (fieldInfo != null) {
             PField<?> field = descriptor.getField(fieldInfo.getId());
             if (field != null) {
@@ -200,15 +203,11 @@ public class PBinarySerializer extends PSerializer {
      * @return The field info or null.
      */
     private FieldInfo readFieldInfo(BinaryReader in) throws IOException, PSerializeException {
-        int id = in.readUInt16();
-        if (id == 0) {
+        byte type = in.expectByte();
+        if (type == PType.STOP.id) {
             return null;
         }
-        return new FieldInfo(id, in.expectByte());
-    }
-
-    private FieldInfo readEntryFieldInfo(BinaryReader in, int fieldId) throws IOException, PSerializeException {
-        return new FieldInfo(fieldId, in.expectByte());
+        return new FieldInfo(in.expectUInt16(), type);
     }
 
     /**
@@ -224,6 +223,11 @@ public class PBinarySerializer extends PSerializer {
      */
     private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor<T> type)
             throws IOException, PSerializeException {
+        if (type.getType().id != fieldInfo.getType()) {
+            if (readStrict) {
+                throw new PSerializeException("");
+            }
+        }
         switch (PType.findById(fieldInfo.getType())) {
             case BOOL:
                 return cast(in.expectByte() != 0);
@@ -231,6 +235,7 @@ public class PBinarySerializer extends PSerializer {
                 return cast(in.expectByte());
             case I16:
                 return cast(in.expectShort());
+            case ENUM:
             case I32:
                 int val = in.expectInt();
                 if (type instanceof PEnumDescriptor) {
@@ -259,9 +264,13 @@ public class PBinarySerializer extends PSerializer {
                     consumeMessage(in);
                     return null;
                 }
-                return cast(readMessage(in, (PStructDescriptor<?,?>) type, readStrict));
+                return cast(readMessage(in, (PStructDescriptor<?,?>) type, false));
             }
             case MAP: {
+                final byte keyT = in.expectByte();
+                final byte itemT = in.expectByte();
+                final int size = in.expectUInt32();
+
                 PDescriptor keyType = null;
                 PDescriptor valueType = null;
                 PMap.Builder<Object, Object> out;
@@ -280,14 +289,11 @@ public class PBinarySerializer extends PSerializer {
                     out = new PMap.ImmutableMapBuilder<>();
                 }
 
-                final int size = in.expectUInt32();
-
-                FieldInfo entryInfo;
+                FieldInfo keyInfo = new FieldInfo(1, keyT);
+                FieldInfo itemInfo = new FieldInfo(2, itemT);
                 for (int i = 0; i < size; ++i) {
-                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
-                    Object key = readFieldValue(in, entryInfo, keyType);
-                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
-                    Object value = readFieldValue(in, entryInfo, valueType);
+                    Object key = readFieldValue(in, keyInfo, keyType);
+                    Object value = readFieldValue(in, itemInfo, valueType);
                     if (key != null && value != null) {
                         out.put(key, value);
                     } else if (readStrict) {
@@ -297,6 +303,9 @@ public class PBinarySerializer extends PSerializer {
                 return cast(out.build());
             }
             case SET: {
+                final byte itemT = in.expectByte();
+                final int size = in.expectUInt32();
+
                 PDescriptor entryType = null;
                 PSet.Builder<Object> out;
                 if (type != null) {
@@ -307,12 +316,9 @@ public class PBinarySerializer extends PSerializer {
                     out = new PSet.ImmutableSetBuilder<>();
                 }
 
-                final int size = in.expectUInt32();
-
-                FieldInfo entryInfo;
+                FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
-                    Object key = readFieldValue(in, entryInfo, entryType);
+                    Object key = readFieldValue(in, itemInfo, entryType);
                     if (key != null) {
                         out.add(key);
                     } else if (readStrict) {
@@ -323,22 +329,22 @@ public class PBinarySerializer extends PSerializer {
                 return cast(out.build());
             }
             case LIST: {
+                final byte itemT = in.expectByte();
+                final int size = in.expectUInt32();
+
                 PDescriptor entryType = null;
                 PList.Builder<Object> out;
                 if (type != null) {
-                    PList<Object> setType = (PList<Object>) type;
-                    entryType = setType.itemDescriptor();
-                    out = setType.builder();
+                    PList<Object> listType = (PList<Object>) type;
+                    entryType = listType.itemDescriptor();
+                    out = listType.builder();
                 } else {
                     out = new PList.ImmutableListBuilder<>();
                 }
 
-                final int size = in.expectUInt32();
-
-                FieldInfo entryInfo;
+                FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    entryInfo = readEntryFieldInfo(in, fieldInfo.getId());
-                    Object key = readFieldValue(in, entryInfo, entryType);
+                    Object key = readFieldValue(in, itemInfo, entryType);
                     if (key != null) {
                         out.add(key);
                     } else if (readStrict) {
@@ -355,6 +361,12 @@ public class PBinarySerializer extends PSerializer {
 
     // --- WRITE METHODS ---
 
+    private int writeFieldSpec(BinaryWriter out, byte type, int key) throws IOException {
+        out.writeByte(type);
+        out.writeUInt16(key);
+        return 3;
+    }
+
     /**
      * Write a field value to stream.
      *
@@ -362,68 +374,66 @@ public class PBinarySerializer extends PSerializer {
      * @param value The value to write.
      * @return The number of bytes written.
      */
-    private int writeFieldValue(BinaryWriter out, Object value) throws IOException, PSerializeException {
-        if (value instanceof Boolean) {
-            out.writeByte(PType.BOOL.id);
-            return 1 + out.writeByte(((Boolean) value) ? (byte) 1 : (byte) 0);
-        } else if (value instanceof Byte) {
-            out.writeByte(PType.BYTE.id);
-            return 1 + out.writeByte((Byte) value);
-        } else if (value instanceof Short) {
-            out.writeByte(PType.I16.id);
-            return 1 + out.writeShort((Short) value);
-        } else if (value instanceof Integer) {
-            out.writeByte(PType.I32.id);
-            return 1 + out.writeInt((Integer) value);
-        } else if (value instanceof Long) {
-            out.writeByte(PType.I64.id);
-            return 1 + out.writeLong((Long) value);
-        } else if (value instanceof Double) {
-            out.writeByte(PType.DOUBLE.id);
-            return 1 + out.writeDouble((Double) value);
-        } else if (value instanceof Binary) {
-            out.writeByte(PType.BINARY.id);
-            Binary binary = (Binary) value;
-            int lenBytes = out.writeUInt32(binary.length());
-            return 1 + lenBytes + out.writeBinary(binary);
-        } else if (value instanceof CharSequence) {
-            out.writeByte(PType.STRING.id);
-            Binary binary = Binary.wrap(value.toString().getBytes(StandardCharsets.UTF_8));
-            int lenBytes = out.writeUInt32(binary.length());
-            return 1 + lenBytes + out.writeBinary(binary);
-        } else if (value instanceof PEnumValue) {
-            out.writeByte(PType.I32.id);
-            return 1 + out.writeInt(((PEnumValue<?>) value).getValue());
-        } else if (value instanceof Map) {
-            out.writeByte(PType.MAP.id);
-            @SuppressWarnings("unchecked")
-            Map<Object, Object> map = (Map<Object, Object>) value;
-            int len = out.writeUInt32(map.size());
-            for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                len += writeFieldValue(out, entry.getKey());
-                len += writeFieldValue(out, entry.getValue());
+    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor<?> descriptor) throws IOException, PSerializeException {
+        switch (descriptor.getType()) {
+            case BOOL:
+                return out.writeByte(((Boolean) value) ? (byte) 1 : (byte) 0);
+            case BYTE:
+                return out.writeByte((Byte) value);
+            case I16:
+                return out.writeShort((Short) value);
+            case I32:
+                return out.writeInt((Integer) value);
+            case I64:
+                return out.writeLong((Long) value);
+            case DOUBLE:
+                return out.writeDouble((Double) value);
+            case BINARY: {
+                Binary binary = (Binary) value;
+                int len = out.writeUInt32(binary.length());
+                return len + out.writeBinary(binary);
             }
-            return 1 + len;
-        } else if (value instanceof Collection) {
-            if (value instanceof Set) {
-                out.writeByte(PType.SET.id);
-            } else {
-                out.writeByte(PType.LIST.id);
+            case STRING: {
+                Binary binary = Binary.wrap(value.toString().getBytes(StandardCharsets.UTF_8));
+                int len = out.writeUInt32(binary.length());
+                return len + out.writeBinary(binary);
             }
-            @SuppressWarnings("unchecked")
-            Collection<Object> coll = (Collection<Object>) value;
-            int len = out.writeUInt32(coll.size());
-            for (Object item : coll) {
-                len += writeFieldValue(out, item);
+            case ENUM:
+                return out.writeInt(((PEnumValue<?>) value).getValue());
+            case MAP: {
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> map = (Map<Object, Object>) value;
+                PMap<?,?> pMap = (PMap<?, ?>) descriptor;
+                int len = out.writeByte(pMap.keyDescriptor().getType().id);
+                len += out.writeByte(pMap.itemDescriptor().getType().id);
+                len += out.writeUInt32(map.size());
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                    len += writeFieldValue(out, entry.getKey(), pMap.keyDescriptor());
+                    len += writeFieldValue(out, entry.getValue(), pMap.itemDescriptor());
+                }
+                return len;
             }
-            return 1 + len;
-        } else if (value instanceof PMessage) {
-            out.writeByte(PType.MESSAGE.id);
-            @SuppressWarnings("unchecked")
-            int len = writeMessage(out, (PMessage) value);
-            return len + 1;
-        } else {
-            throw new PSerializeException("");
+            case SET:
+            case LIST: {
+                @SuppressWarnings("unchecked")
+                Collection<Object> coll = (Collection<Object>) value;
+                PContainer<?,?> pSet = (PContainer<?, ?>) descriptor;
+
+                int len = out.writeByte(pSet.itemDescriptor().getType().id);
+                len += out.writeUInt32(coll.size());
+
+                for (Object item : coll) {
+                    len += writeFieldValue(out, item, pSet.itemDescriptor());
+                }
+                return len;
+            }
+            case MESSAGE: {
+                @SuppressWarnings("unchecked")
+                int size = writeMessage(out, (PMessage) value);
+                return size;
+            }
+            default:
+                throw new PSerializeException("");
         }
     }
 
@@ -441,7 +451,7 @@ public class PBinarySerializer extends PSerializer {
 
         @Override
         public String toString() {
-            return String.format("field(%d: %1x)", id, type);
+            return String.format("field(%d: %s)", id, PType.findById(type));
         }
 
         public int getId() {

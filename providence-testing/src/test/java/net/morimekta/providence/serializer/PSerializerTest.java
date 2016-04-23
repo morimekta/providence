@@ -158,6 +158,10 @@ public class PSerializerTest {
         try (InputStream r = PSerializerTest.class.getResourceAsStream(resource)) {
             if (r == null) {
                 File file = new File("src/test/resources" + resource);
+                File testing = new File("providence-testing");
+                if (testing.isDirectory()) {
+                    file = new File(testing, file.toString());
+                }
                 containers.stream().collect(MessageCollectors.toFile(file, serializer));
                 fail("No such resource to compare: " + resource);
             }
