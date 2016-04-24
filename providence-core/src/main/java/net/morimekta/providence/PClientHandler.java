@@ -1,5 +1,6 @@
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
@@ -19,5 +20,5 @@ public interface PClientHandler {
      * @throws SerializerException On serialization problems.
      */
     <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS>
-    handleCall(PServiceCall<RQ> call) throws IOException, SerializerException;
+    handleCall(PServiceCall<RQ> call, PService service) throws IOException, SerializerException;
 }

@@ -147,7 +147,7 @@ public class JServiceFormat {
                 writer.format("%s resp = ", PServiceCall.class.getName());
             }
 
-            writer.append("handler.handleCall(call);");
+            writer.format("handler.handleCall(call, %s.kDescriptor);", service.className());
 
             if (method.getResponseClass() != null) {
                 writer.formatln("%s msg = (%s) resp.getMessage();",
