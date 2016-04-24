@@ -1,5 +1,7 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PClient;
+import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
@@ -45,6 +47,8 @@ public class JServiceFormat {
 
         appendIface(writer, service);
 
+        appendClient(writer, service);
+
         appendProcessor(writer, service);
 
         appendDescriptor(writer, service);
@@ -56,6 +60,138 @@ public class JServiceFormat {
 
         writer.end()
               .appendln('}');
+    }
+
+    private void appendClient(IndentedPrintWriter writer, JService service) throws GeneratorException {
+        writer.appendln("public static class Client")
+              .formatln("        extends %s", PClient.class.getName())
+              .formatln("        implements Iface {")
+              .begin();
+
+        writer.formatln("private final %s handler;", PClientHandler.class.getName())
+              .newline();
+
+        writer.formatln("public Client(%s handler) {", PClientHandler.class.getName())
+              .appendln("    this.handler = handler;")
+              .appendln('}')
+              .newline();
+
+        boolean firstMethod = true;
+        for (JServiceMethod method : service.methods()) {
+            if (firstMethod) {
+                firstMethod = false;
+            } else {
+                writer.newline();
+            }
+
+            writer.appendln("@Override");
+
+            // Field ID 0 is the return type.
+            JField ret = method.getResponse();
+
+            writer.appendln("public ");
+            if (ret != null) {
+                writer.append(ret.valueType());
+            } else {
+                writer.append("void");
+            }
+
+            writer.format(" %s(", method.methodName())
+                  .begin("        ");
+
+            boolean first = true;
+            for (JField param : method.params()) {
+                if (first) {
+                    first = false;
+                } else {
+                    writer.append(",");
+                }
+                writer.formatln("%s %s", param.valueType(), param.param());
+            }
+
+            writer.end()
+                  .format(")")
+                  .formatln("        throws %s", IOException.class.getName())
+                  .begin(   "               ");
+
+            for (JField ex : method.exceptions()) {
+                writer.append(",");
+                writer.appendln(ex.instanceType());
+            }
+
+            writer.format(" {")
+                  .end()
+                  .begin()
+                  .appendln("try {")
+                  .begin();
+
+            writer.formatln("%s._Builder rq = %s.builder();", method.getRequestClass(), method.getRequestClass());
+
+            for (JField param : method.params()) {
+                writer.formatln("rq.%s(%s);", param.setter(), param.param());
+            }
+
+            String type = method.getMethod().isOneway()
+                          ? PServiceCallType.ONEWAY.name()
+                          : PServiceCallType.CALL.name();
+            writer.newline()
+                  .formatln("%s call = new %s(\"%s\", %s.%s, getNextSequenceId(), rq.build());",
+                            PServiceCall.class.getName(),
+                            PServiceCall.class.getName(),
+                            method.name(),
+                            PServiceCallType.class.getName(),
+                            type)
+                  .appendln();
+
+            if (method.getResponseClass() != null) {
+                writer.format("%s resp = ", PServiceCall.class.getName());
+            }
+
+            writer.append("handler.handleCall(call);");
+
+            if (method.getResponseClass() != null) {
+                writer.formatln("%s msg = (%s) resp.getMessage();",
+                                method.getResponseClass(), method.getResponseClass());
+
+                if (method.exceptions().length > 0) {
+                    writer.newline()
+                          .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
+                          .begin();
+
+                    writer.appendln("switch (msg.unionField()) {")
+                          .begin();
+
+                    for (JField ex : method.exceptions()) {
+                        writer.formatln("case %s:", ex.fieldEnum())
+                              .formatln("    throw msg.%s();", ex.getter());
+                    }
+
+                    writer.formatln("default: throw new %s(\"Unknown exception field: \" + msg.unionField().toString());",
+                                    IOException.class.getName())
+                          .end()
+                          .appendln('}');
+
+                    writer.end()
+                          .appendln("}");
+                }
+
+                if (method.getResponse() != null) {
+                    writer.newline()
+                          .formatln("return msg.%s();", method.getResponse().getter());
+                }
+            }
+
+            writer.end()
+                  .formatln("} catch (%s e) {", SerializerException.class.getName())
+                  .formatln("    throw new %s(e);", IOException.class.getName())
+                  .appendln('}')
+                  .end()
+                  .appendln('}');
+        }
+
+        writer.end()
+              .appendln('}')
+              .newline();
     }
 
     private void appendProcessor(IndentedPrintWriter writer, JService service) throws GeneratorException {
@@ -320,7 +456,6 @@ public class JServiceFormat {
                 JUtils.appendBlockComment(writer, method.getMethod().getComment());
             }
 
-            // Field ID 0 is the return type.
             JField ret = method.getResponse();
             if (ret != null) {
                 writer.appendln(ret.valueType());
