@@ -25,6 +25,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -58,6 +59,12 @@ public class JHelper {
     }
 
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {
+        String packageContext = type.getPackageName();
+        CDocument document = mRegistry.getDocumentForPackage(packageContext);
+        return JUtils.getJavaPackage(document);
+    }
+
+    public String getJavaPackage(PService type) throws GeneratorException {
         String packageContext = type.getPackageName();
         CDocument document = mRegistry.getDocumentForPackage(packageContext);
         return JUtils.getJavaPackage(document);

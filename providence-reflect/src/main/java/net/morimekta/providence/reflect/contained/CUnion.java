@@ -20,47 +20,68 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PType;
-import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.PUnion;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PSet;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnion extends CMessage<CUnion> {
-    private final CUnionDescriptor mType;
+public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
+    private final CUnionDescriptor descriptor;
+    private final CField           unionField;
 
-    protected CUnion(Builder builder) {
-        super(Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields)));
-        mType = builder.mType;
+    private CUnion(Builder builder) {
+        super(builder.getValueMap());
+        this.unionField = builder.field;
+        this.descriptor = builder.descriptor;
     }
 
     @Override
     public PMessageBuilder<CUnion> mutate() {
-        return new Builder(mType);
+        return new Builder(descriptor);
     }
 
     @Override
     public CUnionDescriptor descriptor() {
-        return mType;
+        return descriptor;
+    }
+
+    @Override
+    public CField unionField() {
+        return unionField;
     }
 
     public static class Builder extends PMessageBuilder<CUnion> {
-        private final CUnionDescriptor     mType;
-        private final Map<Integer, Object> mFields;
+        private final CUnionDescriptor descriptor;
 
-        public Builder(CUnionDescriptor type) {
-            mType = type;
-            mFields = new TreeMap<>();
+        private CField field;
+        private Object value;
+
+        public Builder(CUnionDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        private Map<Integer, Object> getValueMap() {
+            if (field == null) {
+                return ImmutableMap.of();
+            } else if (value == null) {
+                return ImmutableMap.of(field.getKey(), null);
+            } else {
+                switch (field.getType()) {
+                    case LIST:
+                        return ImmutableMap.of(field.getKey(), ((PList.Builder) this.value).build());
+                    case SET:
+                        return ImmutableMap.of(field.getKey(), ((PSet.Builder) this.value).build());
+                    default:
+                        return ImmutableMap.of(field.getKey(), this.value);
+                }
+            }
         }
 
         @Override
@@ -70,45 +91,53 @@ public class CUnion extends CMessage<CUnion> {
 
         @Override
         public boolean isValid() {
-            return mFields.size() == 1;
+            return field != null;
         }
 
         @Override
         public Builder set(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            CField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            mFields.clear();
-            if (value != null) {
-                mFields.put(field.getKey(), value);
-            }
+            this.field = field;
+            this.value = value;
             return this;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            CField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            if (value != null) {
-                if (field.getType() == PType.LIST) {
-                    @SuppressWarnings("unchecked")
-                    List<Object> list = (List<Object>) mFields.get(field.getKey());
-                    if (list == null) {
-                        list = new LinkedList<>();
-                        mFields.put(field.getKey(), list);
+            if (this.field != field || this.value == null) {
+                this.field = field;
+                switch (field.getType()) {
+                    case LIST: {
+                        PList lType = (PList) field.getDescriptor();
+                        this.value = lType.builder();
+                        break;
                     }
-                    list.add(value);
-                } else if (field.getType() == PType.SET) {
-                    @SuppressWarnings("unchecked")
-                    Set<Object> set = (Set<Object>) mFields.get(field.getKey());
-                    if (set == null) {
-                        set = new HashSet<>();
-                        mFields.put(field.getKey(), set);
+                    case SET: {
+                        PSet lType = (PSet) field.getDescriptor();
+                        this.value = lType.builder();
+                        break;
                     }
-                    set.add(value);
+                    default: {
+                        throw new IllegalArgumentException("Unable to accept addTo on non-list field " + field.getName());
+                    }
+                }
+            }
+            switch (field.getType()) {
+                case LIST: {
+                    ((PList.Builder) this.value).add(value);
+                    break;
+                }
+                case SET: {
+                    ((PList.Builder) this.value).add(value);
+                    break;
                 }
             }
             return this;
@@ -116,7 +145,8 @@ public class CUnion extends CMessage<CUnion> {
 
         @Override
         public Builder clear(int key) {
-            mFields.remove(key);
+            this.field = null;
+            this.value = null;
             return this;
         }
     }

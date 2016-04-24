@@ -25,9 +25,9 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableSortedMap;
+
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,30 +39,30 @@ import java.util.TreeMap;
  * @since 26.08.15
  */
 public class CStruct extends CMessage<CStruct> {
-    PStructDescriptor<CStruct, CField> mType;
+    PStructDescriptor<CStruct, CField> descriptor;
 
-    protected CStruct(Builder builder) {
-        super(Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields)));
-        mType = builder.mType;
+    private CStruct(Builder builder) {
+        super(ImmutableSortedMap.copyOf(builder.values));
+        descriptor = builder.descriptor;
     }
 
     @Override
     public PMessageBuilder<CStruct> mutate() {
-        return new Builder(mType);
+        return new Builder(descriptor);
     }
 
     @Override
     public PStructDescriptor<CStruct, CField> descriptor() {
-        return mType;
+        return descriptor;
     }
 
     public static class Builder extends PMessageBuilder<CStruct> {
-        private final PStructDescriptor<CStruct, CField> mType;
-        private final Map<Integer, Object>               mFields;
+        private final PStructDescriptor<CStruct, CField> descriptor;
+        private final Map<Integer, Object>               values;
 
         public Builder(PStructDescriptor<CStruct, CField> type) {
-            mType = type;
-            mFields = new TreeMap<>();
+            descriptor = type;
+            values = new TreeMap<>();
         }
 
         @Override
@@ -72,9 +72,9 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public boolean isValid() {
-            for (PField<?> field : mType.getFields()) {
+            for (PField<?> field : descriptor.getFields()) {
                 if (field.getRequirement() == PRequirement.REQUIRED) {
-                    if (!mFields.containsKey(field.getKey())) {
+                    if (!values.containsKey(field.getKey())) {
                         return false;
                     }
                 }
@@ -85,37 +85,37 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public Builder set(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            PField<?> field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
             if (value != null) {
-                mFields.put(field.getKey(), value);
+                values.put(field.getKey(), value);
             }
             return this;
         }
 
         @Override
         public Builder addTo(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            PField<?> field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
             if (value != null) {
                 if (field.getType() == PType.LIST) {
                     @SuppressWarnings("unchecked")
-                    List<Object> list = (List<Object>) mFields.get(field.getKey());
+                    List<Object> list = (List<Object>) values.get(field.getKey());
                     if (list == null) {
                         list = new LinkedList<>();
-                        mFields.put(field.getKey(), list);
+                        values.put(field.getKey(), list);
                     }
                     list.add(value);
                 } else if (field.getType() == PType.SET) {
                     @SuppressWarnings("unchecked")
-                    Set<Object> set = (Set<Object>) mFields.get(field.getKey());
+                    Set<Object> set = (Set<Object>) values.get(field.getKey());
                     if (set == null) {
                         set = new HashSet<>();
-                        mFields.put(field.getKey(), set);
+                        values.put(field.getKey(), set);
                     }
                     set.add(value);
                 }
@@ -125,7 +125,7 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public Builder clear(int key) {
-            mFields.remove(key);
+            values.remove(key);
             return this;
         }
     }

@@ -19,12 +19,15 @@
 
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
+
+import com.google.common.html.HtmlEscapers;
 
 import java.io.File;
 
@@ -49,6 +52,10 @@ public class JUtils {
         return Strings.camelCase("", type.getName());
     }
 
+    public static String getClassName(PService service) {
+        return Strings.camelCase("", service.getName());
+    }
+
     public static String getJavaPackage(CDocument document) throws GeneratorException {
         String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
@@ -63,7 +70,8 @@ public class JUtils {
     }
 
     public static void appendBlockComment(IndentedPrintWriter writer, String comment) {
-        String[] lines = comment.split("\n");
+        String escaped = HtmlEscapers.htmlEscaper().escape(comment);
+        String[] lines = escaped.split("\n");
         if (lines.length == 1) {
             writer.formatln("/** %s */", comment);
         } else {

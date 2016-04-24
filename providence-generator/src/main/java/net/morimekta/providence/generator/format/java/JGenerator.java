@@ -26,6 +26,7 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -39,31 +40,32 @@ import java.io.OutputStream;
 public class JGenerator extends Generator {
     private final JOptions mOptions;
     TypeRegistry mRegistry;
-    JHelper      mTypeHelper;
+    JHelper      helper;
 
     public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) {
         super(manager);
         mRegistry = registry;
         mOptions = options;
 
-        mTypeHelper = new JHelper(mRegistry, options);
+        helper = new JHelper(mRegistry, options);
     }
 
     @Override
     @SuppressWarnings("resource")
     public void generate(CDocument document) throws IOException, GeneratorException {
         String javaPackage = JUtils.getJavaPackage(document);
-        JMessageFormat messageFormatter = new JMessageFormat(mTypeHelper, mOptions);
-        JEnumFormat enumFormatter = new JEnumFormat(mTypeHelper, mOptions);
+        JMessageFormat messageFormatter = new JMessageFormat(helper, mOptions);
+        JEnumFormat    enumFormatter    = new JEnumFormat(helper, mOptions);
+        JServiceFormat serviceFormatter = new JServiceFormat(helper, mOptions, messageFormatter);
 
         String path = JUtils.getPackageClassPath(javaPackage);
 
         if (document.getConstants()
                     .size() > 0) {
-            String file = mTypeHelper.getConstantsClassName(document) + ".java";
+            String file = helper.getConstantsClassName(document) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
-                JConstantsFormat constFormat = new JConstantsFormat(mTypeHelper, mOptions);
+                JConstantsFormat constFormat = new JConstantsFormat(helper, mOptions);
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 constFormat.format(writer, document);
                 writer.flush();
@@ -81,6 +83,9 @@ public class JGenerator extends Generator {
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
+
+                appendFileHeader(writer, document);
+
                 switch (type.getType()) {
                     case MESSAGE:
                         messageFormatter.format(writer, (PStructDescriptor<?, ?>) type);
@@ -94,8 +99,37 @@ public class JGenerator extends Generator {
                 }
                 writer.flush();
             } finally {
-                getFileManager().finalize(out);
+                try {
+                    getFileManager().finalize(out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for (CService service : document.getServices()) {
+            String file = JUtils.getClassName(service) + ".java";
+            OutputStream out = getFileManager().create(path, file);
+            try {
+                IndentedPrintWriter writer = new IndentedPrintWriter(out);
+                appendFileHeader(writer, document);
+                serviceFormatter.format(writer, service);
+                writer.flush();
+            } finally {
+                try {
+                    getFileManager().finalize(out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
+
+    private void appendFileHeader(IndentedPrintWriter writer,
+                                  CDocument document)
+            throws GeneratorException, IOException {
+        writer.format("package %s;", helper.getJavaPackage(document))
+              .newline();
+    }
+
 }

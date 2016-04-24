@@ -69,8 +69,6 @@ public class JMessageFormat {
         JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper);
         JValueFormat values = new JValueFormat(writer, options, helper);
 
-        appendFileHeader(writer, message, values);
-
         if (descriptor.getComment() != null) {
             JUtils.appendBlockComment(writer, descriptor.getComment());
             if (JAnnotation.isDeprecated(descriptor)) {
@@ -648,12 +646,5 @@ public class JMessageFormat {
                   .appendln('}')
                   .newline();
         }
-    }
-
-    private void appendFileHeader(IndentedPrintWriter writer, JMessage message, JValueFormat values)
-            throws GeneratorException, IOException {
-        writer.format("package %s;",
-                      helper.getJavaPackage(message.descriptor()))
-              .newline();
     }
 }

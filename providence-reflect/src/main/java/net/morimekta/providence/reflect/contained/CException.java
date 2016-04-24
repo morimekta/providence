@@ -28,10 +28,10 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.PPrettyPrinter;
 import net.morimekta.providence.util.PTypeUtils;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +43,12 @@ import java.util.TreeMap;
  * @since 07.09.15
  */
 public class CException extends Throwable implements PMessage<CException> {
-    private final CExceptionDescriptor mType;
-    private final Map<Integer, Object> mFields;
+    private final CExceptionDescriptor descriptor;
+    private final Map<Integer, Object> values;
 
-    protected CException(Builder builder) {
-        mFields = Collections.unmodifiableMap(new LinkedHashMap<>(builder.mFields));
-        mType = builder.mType;
+    private CException(Builder builder) {
+        values = ImmutableMap.copyOf(builder.values);
+        descriptor = builder.descriptor;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CException extends Throwable implements PMessage<CException> {
             case SET:
                 return num(key) > 0;
             default:
-                return mFields.containsKey(key);
+                return values.containsKey(key);
         }
     }
 
@@ -77,15 +77,15 @@ public class CException extends Throwable implements PMessage<CException> {
         switch (field.getDescriptor()
                      .getType()) {
             case MAP:
-                Map<?, ?> value = (Map<?, ?>) mFields.get(key);
+                Map<?, ?> value = (Map<?, ?>) values.get(key);
                 return value == null ? 0 : value.size();
             case LIST:
             case SET:
-                Collection<?> collection = (Collection<?>) mFields.get(key);
+                Collection<?> collection = (Collection<?>) values.get(key);
                 return collection == null ? 0 : collection.size();
             default:
                 // Non container fields are either present or not.
-                return mFields.containsKey(key) ? 1 : 0;
+                return values.containsKey(key) ? 1 : 0;
         }
     }
 
@@ -93,7 +93,7 @@ public class CException extends Throwable implements PMessage<CException> {
     public Object get(int key) {
         PField<?> field = descriptor().getField(key);
         if (field != null) {
-            Object value = mFields.get(key);
+            Object value = values.get(key);
             if (value != null) {
                 return value;
             } else if (field.hasDefaultValue()) {
@@ -152,7 +152,7 @@ public class CException extends Throwable implements PMessage<CException> {
     @Override
     public int hashCode() {
         int hash = getClass().hashCode();
-        for (Map.Entry<Integer, Object> entry : mFields.entrySet()) {
+        for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField<?> field = descriptor().getField(entry.getKey());
             hash += PTypeUtils.hashCode(field, entry.getValue());
         }
@@ -176,21 +176,21 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public PMessageBuilder<CException> mutate() {
-        return new Builder(mType);
+        return new Builder(descriptor);
     }
 
     @Override
     public CExceptionDescriptor descriptor() {
-        return mType;
+        return descriptor;
     }
 
     public static class Builder extends PMessageBuilder<CException> {
-        private final CExceptionDescriptor mType;
-        private final Map<Integer, Object> mFields;
+        private final CExceptionDescriptor descriptor;
+        private final Map<Integer, Object> values;
 
         public Builder(CExceptionDescriptor type) {
-            mType = type;
-            mFields = new TreeMap<>();
+            descriptor = type;
+            values = new TreeMap<>();
         }
 
         @Override
@@ -200,42 +200,42 @@ public class CException extends Throwable implements PMessage<CException> {
 
         @Override
         public boolean isValid() {
-            return mFields.size() == 1;
+            return values.size() == 1;
         }
 
         @Override
         public Builder set(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            PField<?> field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
             if (value != null) {
-                mFields.put(field.getKey(), value);
+                values.put(field.getKey(), value);
             }
             return this;
         }
 
         @Override
         public Builder addTo(int key, Object value) {
-            PField<?> field = mType.getField(key);
+            PField<?> field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
             if (value != null) {
                 if (field.getType() == PType.LIST) {
                     @SuppressWarnings("unchecked")
-                    List<Object> list = (List<Object>) mFields.get(field.getKey());
+                    List<Object> list = (List<Object>) values.get(field.getKey());
                     if (list == null) {
                         list = new LinkedList<>();
-                        mFields.put(field.getKey(), list);
+                        values.put(field.getKey(), list);
                     }
                     list.add(value);
                 } else if (field.getType() == PType.SET) {
                     @SuppressWarnings("unchecked")
-                    Set<Object> set = (Set<Object>) mFields.get(field.getKey());
+                    Set<Object> set = (Set<Object>) values.get(field.getKey());
                     if (set == null) {
                         set = new HashSet<>();
-                        mFields.put(field.getKey(), set);
+                        values.put(field.getKey(), set);
                     }
                     set.add(value);
                 }
@@ -245,7 +245,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
         @Override
         public Builder clear(int key) {
-            mFields.remove(key);
+            values.remove(key);
             return this;
         }
     }

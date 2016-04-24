@@ -192,10 +192,12 @@ public class DocumentConverter {
                                                             null);
                         }
 
-                        CServiceMethod method = new CServiceMethod<>(sm.getName(),
-                                                                     sm.isOneWay(),
-                                                                     request,
-                                                                     response);
+                        CServiceMethod method = new CServiceMethod(sm.getComment(),
+                                                                   sm.getName(),
+                                                                   sm.isOneWay(),
+                                                                   request,
+                                                                   response,
+                                                                   sm.getAnnotations());
 
                         methodBuilder.add(method);
                     }
@@ -205,7 +207,8 @@ public class DocumentConverter {
                         extendsProvider = registry.getServiceProvider(serviceType.getExtend(), document.getPackage());
                     }
 
-                    CService service = new CService(document.getPackage(),
+                    CService service = new CService(serviceType.getComment(),
+                                                    document.getPackage(),
                                                     serviceType.getName(),
                                                     extendsProvider,
                                                     methodBuilder.build(),

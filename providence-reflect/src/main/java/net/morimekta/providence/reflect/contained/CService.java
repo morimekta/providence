@@ -1,7 +1,6 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
 import java.util.Collection;
@@ -14,14 +13,22 @@ import java.util.Set;
  */
 public class CService extends PService implements CAnnotatedDescriptor {
     private final Map<String, String> annotations;
+    private String comment;
 
-    public CService(String packageName,
+    public CService(String comment,
+                    String packageName,
                     String name,
                     PServiceProvider extendsService,
-                    Collection<? extends PServiceMethod> methods,
+                    Collection<CServiceMethod> methods,
                     Map<String, String> annotations) {
         super(packageName, name, extendsService, methods);
+        this.comment = comment;
         this.annotations = annotations;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<CServiceMethod> getMethods() {
+        return (Collection<CServiceMethod>) super.getMethods();
     }
 
     @Override
@@ -49,4 +56,8 @@ public class CService extends PService implements CAnnotatedDescriptor {
         return null;
     }
 
+    @Override
+    public String getComment() {
+        return comment;
+    }
 }

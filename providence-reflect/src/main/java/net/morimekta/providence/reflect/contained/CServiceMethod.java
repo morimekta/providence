@@ -1,29 +1,35 @@
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PServiceMethod;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Descriptor for a single service method.
  */
-public class CServiceMethod<
-        P extends PMessage<P>, PF extends PField,
-        R extends PMessage<R>, RF extends PField> implements PServiceMethod<P, PF, R, RF> {
-    private final String                   name;
-    private final boolean                  oneway;
-    private final PStructDescriptor<P, PF> requestType;
-    private final PStructDescriptor<R, RF> responseType;
+public class CServiceMethod implements PServiceMethod<CStruct, CField, CUnion, CField>,
+                                       CAnnotatedDescriptor {
+    private final String              name;
+    private final boolean             oneway;
+    private final CStructDescriptor   requestType;
+    private final CUnionDescriptor    responseType;
+    private final String              comment;
+    private final Map<String, String> annotations;
 
-    public CServiceMethod(String name,
+    public CServiceMethod(String comment,
+                          String name,
                           boolean oneway,
-                          PStructDescriptor<P, PF> requestType,
-                          PStructDescriptor<R, RF> responseType) {
+                          CStructDescriptor requestType,
+                          CUnionDescriptor responseType,
+                          Map<String, String> annotations) {
+        this.comment = comment;
         this.name = name;
         this.oneway = oneway;
         this.requestType = requestType;
         this.responseType = responseType;
+        this.annotations = annotations;
     }
 
     public String getName() {
@@ -34,11 +40,41 @@ public class CServiceMethod<
         return oneway;
     }
 
-    public PStructDescriptor<P, PF> getRequestType() {
+    public CStructDescriptor getRequestType() {
         return requestType;
     }
 
-    public PStructDescriptor<R, RF> getResponseType() {
+    public CUnionDescriptor getResponseType() {
         return responseType;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> getAnnotations() {
+        if (annotations != null) {
+            return annotations.keySet();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    @Override
+    public boolean hasAnnotation(String name) {
+        if (annotations != null) {
+            return annotations.containsKey(name);
+        }
+        return false;
+    }
+
+    @Override
+    public String getAnnotationValue(String name) {
+        if (annotations != null) {
+            return annotations.get(name);
+        }
+        return null;
+    }
+
+    @Override
+    public String getComment() {
+        return comment;
     }
 }

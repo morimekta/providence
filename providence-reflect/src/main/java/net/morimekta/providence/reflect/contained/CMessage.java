@@ -33,11 +33,11 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
-    protected final Map<Integer, Object> mFields;
+abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
+    private final Map<Integer, Object> values;
 
-    protected CMessage(Map<Integer, Object> fields) {
-        mFields = fields;
+    CMessage(Map<Integer, Object> fields) {
+        values = fields;
     }
 
     @Override
@@ -53,7 +53,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             case SET:
                 return num(key) > 0;
             default:
-                return mFields.containsKey(key);
+                return values.containsKey(key);
         }
     }
 
@@ -66,15 +66,15 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         switch (field.getDescriptor()
                      .getType()) {
             case MAP:
-                Map<?, ?> value = (Map<?, ?>) mFields.get(key);
+                Map<?, ?> value = (Map<?, ?>) values.get(key);
                 return value == null ? 0 : value.size();
             case LIST:
             case SET:
-                Collection<?> collection = (Collection<?>) mFields.get(key);
+                Collection<?> collection = (Collection<?>) values.get(key);
                 return collection == null ? 0 : collection.size();
             default:
                 // Non container fields are either present or not.
-                return mFields.containsKey(key) ? 1 : 0;
+                return values.containsKey(key) ? 1 : 0;
         }
     }
 
@@ -82,7 +82,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     public Object get(int key) {
         PField<?> field = descriptor().getField(key);
         if (field != null) {
-            Object value = mFields.get(key);
+            Object value = values.get(key);
             if (value != null) {
                 return value;
             } else if (field.hasDefaultValue()) {
@@ -141,7 +141,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     @Override
     public int hashCode() {
         int hash = getClass().hashCode();
-        for (Map.Entry<Integer, Object> entry : mFields.entrySet()) {
+        for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField<?> field = descriptor().getField(entry.getKey());
             hash += PTypeUtils.hashCode(field, entry.getValue());
         }

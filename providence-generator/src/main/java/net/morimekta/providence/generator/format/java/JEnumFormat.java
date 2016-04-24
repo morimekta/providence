@@ -41,9 +41,6 @@ public class JEnumFormat {
     }
 
     public void format(IndentedPrintWriter writer, PEnumDescriptor<?> type) throws GeneratorException {
-        writer.format("package %s;", helper.getJavaPackage(type))
-              .newline();
-
         String simpleClass = JUtils.getClassName(type);
 
         if (type.getComment() != null) {

@@ -16,9 +16,9 @@ public class PService {
     private final Collection<? extends PServiceMethod> methods;
 
     public PService(String packageName,
-             String name,
-             PServiceProvider extendsService,
-             Collection<? extends PServiceMethod> methods) {
+                    String name,
+                    PServiceProvider extendsService,
+                    Collection<? extends PServiceMethod> methods) {
         this.name = name;
         this.packageName = packageName;
         this.extendsService = extendsService;
