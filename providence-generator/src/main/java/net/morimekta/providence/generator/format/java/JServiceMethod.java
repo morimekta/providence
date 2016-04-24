@@ -7,6 +7,8 @@ import net.morimekta.util.Strings;
 
 import java.util.ArrayList;
 
+import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
+
 /**
  * Created by morimekta on 4/24/16.
  */
@@ -41,6 +43,17 @@ public class JServiceMethod {
 
     public String methodName() {
         return JUtils.camelCase(method.getName());
+    }
+
+    public String getRequestClass() {
+        return camelCase("", method.getRequestType().getName());
+    }
+
+    public String getResponseClass() {
+        if (method.getResponseType() != null) {
+            return camelCase("", method.getResponseType().getName());
+        }
+        return null;
     }
 
     public JField getResponse() {

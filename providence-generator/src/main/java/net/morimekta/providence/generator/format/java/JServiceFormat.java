@@ -1,6 +1,8 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PProcessor;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -9,11 +11,11 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.serializer.MessageReader;
 import net.morimekta.providence.serializer.MessageWriter;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
-
-import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
 
 /**
  * Created by morimekta on 4/24/16.
@@ -56,7 +58,7 @@ public class JServiceFormat {
               .appendln('}');
     }
 
-    private void appendProcessor(IndentedPrintWriter writer, JService service) {
+    private void appendProcessor(IndentedPrintWriter writer, JService service) throws GeneratorException {
         writer.formatln("public static class Processor implements %s {", PProcessor.class.getName())
               .begin()
               .appendln("private final Iface impl;");
@@ -67,11 +69,106 @@ public class JServiceFormat {
               .newline();
 
         writer.appendln("@Override")
-              .formatln("public boolean process(%s reader, %s writer) {",
+              .formatln("public boolean process(%s reader, %s writer) throws %s {",
                         MessageReader.class.getName(),
-                        MessageWriter.class.getName())
+                        MessageWriter.class.getName(),
+                        IOException.class.getName())
               .begin()
-              .appendln("return true;")
+              .appendln("try {")
+              .begin();
+
+        writer.formatln("%s type = %s.%s;",
+                        PServiceCallType.class.getName(),
+                        PServiceCallType.class.getName(),
+                        PServiceCallType.EXCEPTION.name());
+        writer.formatln("%s call = reader.read(%s.kDescriptor);",
+                        PServiceCall.class.getName(),
+                        service.className())
+              .newline()
+              .appendln("switch(call.getMethod()) {")
+              .begin();
+
+        for (JServiceMethod method : service.methods()) {
+            writer.formatln("case \"%s\": {", method.name())
+                  .begin();
+            if (method.getResponseClass() != null) {
+                writer.formatln("%s._Builder rsp = %s.builder();", method.getResponseClass(), method.getResponseClass());
+            }
+
+            if (method.exceptions().length > 0) {
+                writer.appendln("try {")
+                      .begin();
+            }
+
+            writer.formatln("%s req = (%s) call.getMessage();",
+                            method.getRequestClass(),
+                            method.getRequestClass());
+
+            String indent = "      " + Strings.times(" ", method.methodName().length());
+            if (method.getResponse() != null) {
+                writer.formatln("%s result =", method.getResponse().valueType());
+                writer.appendln("        ");
+                indent += "        ";
+            } else {
+                writer.appendln();
+            }
+
+            writer.format("impl.%s(", method.methodName())
+                  .begin(indent);
+
+            boolean first = true;
+            for (JField param : method.params()) {
+                if (first) {
+                    first = false;
+                } else {
+                    writer.append(',')
+                          .appendln();
+                }
+                writer.format("req.%s()", param.getter());
+            }
+            writer.end()
+                  .append(");");
+
+            if (method.getResponse() != null) {
+                writer.formatln("rsp.%s(result);", method.getResponse().setter());
+            }
+
+            writer.formatln("type = %s.%s;",
+                            PServiceCallType.class.getName(),
+                            PServiceCallType.REPLY.name());
+
+            if (method.exceptions().length > 0) {
+                writer.end();
+                for (JField ex : method.exceptions()) {
+                    writer.formatln("} catch (%s e) {", ex.instanceType())
+                          .begin()
+                          .formatln("rsp.%s(e);", ex.setter())
+                          .end();
+                }
+                writer.appendln('}');
+            }
+
+            if (method.getResponseClass() != null) {
+                writer.formatln("%s reply = new %s(call.getMethod(), type, call.getSequence(), rsp.build());",
+                                PServiceCall.class.getName(),
+                                PServiceCall.class.getName())
+                      .appendln("writer.write(reply);");
+            }
+
+            writer.formatln("break;")
+                  .end()
+                  .appendln('}');
+        }
+
+        writer.formatln("default: throw new %s(\"Method call not handled: \" + call.getMethod());", IOException.class.getName())
+              .end()
+              .appendln('}');
+
+        writer.appendln("return true;")
+              .end()
+              .formatln("} catch (%s se) {", SerializerException.class.getName())
+              .formatln("    throw new %s(se);", IOException.class.getName())
+              .appendln('}')
               .end()
               .appendln('}');
 
@@ -85,16 +182,15 @@ public class JServiceFormat {
               .begin();
 
         for (JServiceMethod method : service.methods()) {
-            String requestDesc = camelCase("", method.getMethod().getRequestType().getName());
-            String responseDesc = method.getMethod().getResponseType() == null
+            String responseDesc = method.getResponseClass() == null
                                   ? "null"
-                                  : camelCase("", method.getMethod().getResponseType().getName()) + ".kDescriptor";
+                                  : method.getResponseClass() + ".kDescriptor";
 
             writer.formatln("%s(\"%s\", %b, %s.kDescriptor, %s),",
                             method.constant(),
                             method.name(),
                             method.getMethod().isOneway(),
-                            requestDesc,
+                            method.getRequestClass(),
                             responseDesc);
         }
 
