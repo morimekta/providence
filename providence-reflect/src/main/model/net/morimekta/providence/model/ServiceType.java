@@ -1,8 +1,8 @@
 package net.morimekta.providence.model;
 
 /**
- * service (extends <extend>)? {
- *   (<method> [;,]?)*
+ * service (extends &lt;extend&gt;)? {
+ *   (&lt;method&gt; [;,]?)*
  * }
  */
 @SuppressWarnings("unused")

@@ -1,13 +1,12 @@
 /**
  * Reflective thrift IDL description.
- * <p/>
+ *
  * Comments are gathered before the start of the next statement.
- * <ul>
- *   <li> Line comments are accumulated with newline delimiter.
- *        Each line is individually trimmed. </li>
- *   <li> Block comments replace the entire comment.
- *        The first space after '*' on each line is ignored. </li>
- * <ul>
+ *
+ * - Line comments are accumulated with newline delimiter.
+ *   Each line is individually trimmed.
+ * - Block comments replace the entire comment.
+ *   The first space after '*' on each line is ignored.
  */
 namespace java net.morimekta.providence.model
 

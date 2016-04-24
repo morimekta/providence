@@ -412,7 +412,7 @@ public class ServiceMethod
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> {
         public _Descriptor() {
-            super( "model", "ServiceMethod", new _Factory(), false, false);
+            super("model", "ServiceMethod", new _Factory(), false, false);
         }
 
         @Override

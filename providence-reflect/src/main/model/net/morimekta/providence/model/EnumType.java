@@ -2,7 +2,7 @@ package net.morimekta.providence.model;
 
 /**
  * enum {
- *   (<value> ([;,])?)*
+ *   (&lt;value&gt; ([;,])?)*
  * }
  */
 @SuppressWarnings("unused")

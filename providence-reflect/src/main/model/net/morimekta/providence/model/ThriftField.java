@@ -2,15 +2,15 @@ package net.morimekta.providence.model;
 
 /**
  * For fields:
- *   (<key>:)? (required|optional)? <type> <name> (= <default_value>)?
+ *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
  * For const:
- *   const <type> <name> = <default_value>
+ *   const &lt;type&gt; &lt;name&gt; = &lt;default_value&gt;
  * 
  * Fields without key is assigned values ranging from 65335 and down (2^16-1)
- * in order of appearance. Because of the "in order of appearance" the field
+ * in order of appearance. Because of the &quot;in order of appearance&quot; the field
  * *must* be filled by the IDL parser.
  * 
- * Consts are always given the key '0'.
+ * Consts are always given the key &#39;0&#39;.
  */
 @SuppressWarnings("unused")
 public class ThriftField

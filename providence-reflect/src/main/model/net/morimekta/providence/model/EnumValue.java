@@ -297,7 +297,7 @@ public class EnumValue
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> {
         public _Descriptor() {
-            super( "model", "EnumValue", new _Factory(), false, false);
+            super("model", "EnumValue", new _Factory(), false, false);
         }
 
         @Override

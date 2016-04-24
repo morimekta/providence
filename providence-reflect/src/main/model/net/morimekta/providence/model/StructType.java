@@ -1,8 +1,8 @@
 package net.morimekta.providence.model;
 
 /**
- * <variant> {
- *   (<field> ([,;])?)*
+ * &lt;variant&gt; {
+ *   (&lt;field&gt; ([,;])?)*
  * }
  */
 @SuppressWarnings("unused")

@@ -164,7 +164,7 @@ public class JMessageFormat {
               .formatln("private final %s mRequired;", PRequirement.class.getName())
               .appendln("private final String mName;")
               .formatln("private final %s mTypeProvider;", PDescriptorProvider.class.getName())
-              .formatln("private final %s mDefaultValue;", PValueProvider.class.getName())
+              .formatln("private final %s<?> mDefaultValue;", PValueProvider.class.getName())
               .newline()
               .formatln("_Field(int key, %s required, String name, %s typeProvider, %s<?> defaultValue) {",
                         PRequirement.class.getName(),
