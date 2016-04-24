@@ -138,11 +138,9 @@ public class TypeRegistry {
      *
      * @param typeName       Name of type, without any spaces.
      * @param packageContext The package context of the type.
-     * @param <T>            The described type.
      * @return The type provider.
      */
-    @SuppressWarnings("unchecked")
-    public <T> PDescriptorProvider<T> getProvider(String typeName, final String packageContext) {
+    public PDescriptorProvider getProvider(String typeName, final String packageContext) {
         while (typedefs.containsKey(typeName)) {
             typeName = typedefs.get(typeName);
         }
@@ -150,7 +148,7 @@ public class TypeRegistry {
         // Prepend package context to name
         PPrimitive primitive = PPrimitive.findByName(typeName);
         if (primitive != null) {
-            return (PDescriptorProvider<T>) primitive.provider();
+            return primitive.provider();
         }
 
         // Collection types are a bit complex, so handle it here.
@@ -162,22 +160,22 @@ public class TypeRegistry {
             }
             String keyType = parts[0];
             String valueType = parts[1];
-            return (PDescriptorProvider<T>) PMap.provider(getProvider(keyType, packageContext),
-                                                          getProvider(valueType, packageContext));
+            return PMap.provider(getProvider(keyType, packageContext),
+                                 getProvider(valueType, packageContext));
         }
         if (typeName.startsWith("set<") && typeName.endsWith(">")) {
             String itemType = typeName.substring(4, typeName.length() - 1);
-            return (PDescriptorProvider<T>) PSet.provider(getProvider(itemType, packageContext));
+            return PSet.provider(getProvider(itemType, packageContext));
         }
         if (typeName.startsWith("list<") && typeName.endsWith(">")) {
             String itemType = typeName.substring(5, typeName.length() - 1);
-            return (PDescriptorProvider<T>) PList.provider(getProvider(itemType, packageContext));
+            return PList.provider(getProvider(itemType, packageContext));
         }
 
         final String name = typeName;
 
         // Otherwise it's a declared type.
-        return () -> (PDescriptor<T>) getDescriptor(name, packageContext);
+        return () -> (PDescriptor) getDescriptor(name, packageContext);
     }
 
     public void putService(PService service) {

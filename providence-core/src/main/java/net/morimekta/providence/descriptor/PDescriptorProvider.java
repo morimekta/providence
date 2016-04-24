@@ -25,9 +25,9 @@ package net.morimekta.providence.descriptor;
  * types initialize itself without requiring descriptor instances for the other
  * type be present yet.
  */
-public interface PDescriptorProvider<T> {
+public interface PDescriptorProvider {
     /**
      * @return The descriptor for the given type.
      */
-    PDescriptor<T> descriptor();
+    PDescriptor descriptor();
 }

@@ -6,6 +6,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class JConstantsFormat {
               .formatln("private %s() {}", helper.getConstantsClassName(document))
               .newline();
 
-        for (PField<?> c : document.getConstants()) {
+        for (CField c : document.getConstants()) {
             switch (c.getType()) {
                 case MESSAGE:
                     String name = c.getName();
@@ -53,9 +54,9 @@ public class JConstantsFormat {
 
                     PMessage<?> message = (PMessage<?>) c.getDefaultValue();
                     int i = 0;
-                    for (PField<?> f : message.descriptor()
-                                              .getFields()) {
-                        JField field = new JField(f, helper, i++);
+                    for (PField f : message.descriptor().getFields()) {
+                        CField cField = (CField) f;
+                        JField field = new JField(cField, helper, i++);
                         if (message.has(f.getKey())) {
                             writer.formatln("builder.%s(", field.setter());
                             value.appendTypedValue(message.get(f.getKey()), f.getDescriptor());
@@ -71,10 +72,9 @@ public class JConstantsFormat {
                 case SET:
                     name = c.getName();
                     JField field = new JField(c, helper, 1);
-                    instance = helper.getInstanceClassName(c);
 
-                    PContainer<?, ?> lDesc = (PContainer<?, ?>) c.getDescriptor();
-                    PDescriptor<?> itemDesc = lDesc.itemDescriptor();
+                    PContainer<?> lDesc = (PContainer<?>) c.getDescriptor();
+                    PDescriptor itemDesc = lDesc.itemDescriptor();
 
                     writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
                           .appendln("static {")

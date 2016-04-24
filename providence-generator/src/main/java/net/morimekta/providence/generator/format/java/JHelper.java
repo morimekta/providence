@@ -208,7 +208,7 @@ public class JHelper {
         throw new IllegalArgumentException("Unhandled type group" + type.getType());
     }
 
-    public Object getDefaultValue(PField<?> field) {
+    public Object getDefaultValue(PField field) {
         if (field.hasDefaultValue()) {
             return field.getDefaultValue();
         }

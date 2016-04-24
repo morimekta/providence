@@ -173,7 +173,7 @@ public class ConstParser {
                 throw new JsonException("Not a valid message start.", tokenizer, token);
             }
             case LIST: {
-                PDescriptor<?> itemType = ((PList<?>) valueType).itemDescriptor();
+                PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
                 LinkedList<Object> list = new LinkedList<>();
 
                 if (tokenizer.peek("checking for empty list")
@@ -190,7 +190,7 @@ public class ConstParser {
                 return list;
             }
             case SET: {
-                PDescriptor<?> itemType = ((PSet<?>) valueType).itemDescriptor();
+                PDescriptor itemType = ((PSet<?>) valueType).itemDescriptor();
                 HashSet<Object> set = new HashSet<>();
 
                 if (tokenizer.peek("checking for empty list")
@@ -206,8 +206,8 @@ public class ConstParser {
                 return set;
             }
             case MAP: {
-                PDescriptor<?> itemType = ((PMap<?, ?>) valueType).itemDescriptor();
-                PDescriptor<?> keyType = ((PMap<?, ?>) valueType).keyDescriptor();
+                PDescriptor itemType = ((PMap<?, ?>) valueType).itemDescriptor();
+                PDescriptor keyType = ((PMap<?, ?>) valueType).keyDescriptor();
 
                 HashMap<Object, Object> map = new HashMap<>();
 

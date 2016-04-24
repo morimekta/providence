@@ -35,89 +35,83 @@ import static org.junit.Assert.assertNotEquals;
  * @since 20.09.15
  */
 public class CFieldTest {
-    PField<?> field;
-    PField<?> fieldSame;
-    PField<?> fieldComment;
-    PField<?> fieldKey;
-    PField<?> fieldRequired;
-    PField<?> fieldOptional;
-    PField<?> fieldName;
-    PField<?> fieldType;
-    PField<?> fieldNoDefault;
-    PField<?> fieldDefault;
+    PField field;
+    PField fieldSame;
+    PField fieldComment;
+    PField fieldKey;
+    PField fieldRequired;
+    PField fieldOptional;
+    PField fieldName;
+    PField fieldType;
+    PField fieldNoDefault;
+    PField fieldDefault;
 
     @Before
     public void setUp() {
-        field = new CField<>("comment",
-                             4,
-                             PRequirement.DEFAULT,
-                             "name",
-                             PPrimitive.I32.provider(),
-                             new PDefaultValueProvider<>(4),
-                             null);
-        fieldSame = new CField<>("comment",
-                                 4,
-                                 PRequirement.DEFAULT,
-                                 "name",
-                                 PPrimitive.I32.provider(),
-                                 new PDefaultValueProvider<>(4),
-                                 null);
-        fieldComment = new CField<>("tnemmoc",
-                                    4,
-                                    PRequirement.DEFAULT,
-                                    "name",
-                                    PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(4),
-                                    null);
-        fieldKey = new CField<>("comment",
-                                6,
-                                PRequirement.DEFAULT,
-                                "name",
-                                PPrimitive.I32.provider(),
-                                new PDefaultValueProvider<>(4),
-                                null);
-        fieldRequired = new CField<>("comment",
-                                     4,
-                                     PRequirement.REQUIRED,
-                                     "name",
-                                     PPrimitive.I32.provider(),
-                                     new PDefaultValueProvider<>(4),
-                                     null);
-        fieldOptional = new CField<>("comment",
-                                     4,
-                                     PRequirement.OPTIONAL,
-                                     "name",
-                                     PPrimitive.I32.provider(),
-                                     new PDefaultValueProvider<>(4),
-                                     null);
-        fieldName = new CField<>("comment",
-                                 4,
-                                 PRequirement.DEFAULT,
-                                 "eman",
-                                 PPrimitive.I32.provider(),
-                                 new PDefaultValueProvider<>(4),
-                                 null);
-        fieldType = new CField<>("comment",
-                                 4,
-                                 PRequirement.DEFAULT,
-                                 "name",
-                                 PPrimitive.I64.provider(),
-                                 new PDefaultValueProvider<>(4L),
-                                 null);
-        fieldNoDefault = new CField<>("comment",
-                                      4,
-                                      PRequirement.DEFAULT,
-                                      "name",
-                                      PPrimitive.I64.provider(),
-                                      null,
-                                      null);
-        fieldDefault = new CField<>("comment",
-                                    4,
-                                    PRequirement.DEFAULT,
-                                    "name",
-                                    PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(6),
-                                    null);
+        field = new CField("comment",
+                           4,
+                           PRequirement.DEFAULT,
+                           "name",
+                           PPrimitive.I32.provider(),
+                           new PDefaultValueProvider<>(4),
+                           null);
+        fieldSame = new CField("comment",
+                               4,
+                               PRequirement.DEFAULT,
+                               "name",
+                               PPrimitive.I32.provider(),
+                               new PDefaultValueProvider<>(4),
+                               null);
+        fieldComment = new CField("tnemmoc",
+                                  4,
+                                  PRequirement.DEFAULT,
+                                  "name",
+                                  PPrimitive.I32.provider(),
+                                  new PDefaultValueProvider<>(4),
+                                  null);
+        fieldKey = new CField("comment",
+                              6,
+                              PRequirement.DEFAULT,
+                              "name",
+                              PPrimitive.I32.provider(),
+                              new PDefaultValueProvider<>(4),
+                              null);
+        fieldRequired = new CField("comment",
+                                   4,
+                                   PRequirement.REQUIRED,
+                                   "name",
+                                   PPrimitive.I32.provider(),
+                                   new PDefaultValueProvider<>(4),
+                                   null);
+        fieldOptional = new CField("comment",
+                                   4,
+                                   PRequirement.OPTIONAL,
+                                   "name",
+                                   PPrimitive.I32.provider(),
+                                   new PDefaultValueProvider<>(4),
+                                   null);
+        fieldName = new CField("comment",
+                               4,
+                               PRequirement.DEFAULT,
+                               "eman",
+                               PPrimitive.I32.provider(),
+                               new PDefaultValueProvider<>(4),
+                               null);
+        fieldType = new CField("comment",
+                               4,
+                               PRequirement.DEFAULT,
+                               "name",
+                               PPrimitive.I64.provider(),
+                               new PDefaultValueProvider<>(4L),
+                               null);
+        fieldNoDefault = new CField("comment", 4, PRequirement.DEFAULT, "name", PPrimitive.I64.provider(), null, null);
+        fieldDefault = new CField("comment",
+                                  4,
+                                  PRequirement.DEFAULT,
+                                  "name",
+                                  PPrimitive.I32.provider(),
+                                  new PDefaultValueProvider<>(6),
+                                  null);
     }
 
     @Test
@@ -181,13 +175,13 @@ public class CFieldTest {
         assertNotEquals(fieldDefault, fieldNoDefault);
 
         // Null comment.
-        fieldComment = new CField<>(null,
-                                    4,
-                                    PRequirement.DEFAULT,
-                                    "name",
-                                    PPrimitive.I32.provider(),
-                                    new PDefaultValueProvider<>(4),
-                                    null);
+        fieldComment = new CField(null,
+                                  4,
+                                  PRequirement.DEFAULT,
+                                  "name",
+                                  PPrimitive.I32.provider(),
+                                  new PDefaultValueProvider<>(4),
+                                  null);
 
         assertEquals(fieldComment, field);
         assertEquals(fieldComment, fieldSame);

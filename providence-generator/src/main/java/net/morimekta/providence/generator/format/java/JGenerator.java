@@ -26,7 +26,9 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -88,10 +90,10 @@ public class JGenerator extends Generator {
 
                 switch (type.getType()) {
                     case MESSAGE:
-                        messageFormatter.format(writer, (PStructDescriptor<?, ?>) type);
+                        messageFormatter.format(writer, (PStructDescriptor<?,?>) type);
                         break;
                     case ENUM:
-                        enumFormatter.format(writer, (PEnumDescriptor<?>) type);
+                        enumFormatter.format(writer, (CEnumDescriptor) type);
                         break;
                     default:
                         throw new GeneratorException("Unhandled declaration type.");

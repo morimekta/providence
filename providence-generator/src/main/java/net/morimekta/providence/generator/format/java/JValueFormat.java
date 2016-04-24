@@ -46,7 +46,7 @@ public class JValueFormat {
         }
     }
 
-    public void appendTypedValue(Object value, PDescriptor<?> type) throws GeneratorException {
+    public void appendTypedValue(Object value, PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case BOOL:
                 writer.append(value.toString());

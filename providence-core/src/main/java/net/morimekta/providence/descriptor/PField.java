@@ -28,17 +28,7 @@ import java.util.Set;
  * interface describes the properties each field has. It is an interface so the
  * fields themselves may be implemented as an enum.
  */
-public interface PField<V> {
-    /**
-     * The type comment is the last block of comment written before the type
-     * declaration. Comments on the same line, after the declaration is
-     * ignored.
-     *
-     * @return The comment string containing all formatting (not including the
-     *         comment delimiter and the leading space.
-     */
-    String getComment();
-
+public interface PField {
     /**
      * @return The field numeric ID or key.
      */
@@ -57,7 +47,7 @@ public interface PField<V> {
     /**
      * @return The type descriptor for the field data type.
      */
-    PDescriptor<V> getDescriptor();
+    PDescriptor getDescriptor();
 
     /**
      * @return The field name (original).
@@ -74,5 +64,5 @@ public interface PField<V> {
      *         where the field has an <b>implicit</b> default value, e.g.
      *         numerical types.
      */
-    V getDefaultValue();
+    Object getDefaultValue();
 }

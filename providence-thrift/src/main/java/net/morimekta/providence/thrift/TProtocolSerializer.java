@@ -180,7 +180,7 @@ class TProtocolSerializer extends PSerializer {
         protocol.writeStructBegin(new TStruct(message.descriptor()
                                                      .getQualifiedName(null)));
 
-        for (PField<?> field : type.getFields()) {
+        for (PField field : type.getFields()) {
             if (!message.has(field.getKey())) {
                 continue;
             }
@@ -209,7 +209,7 @@ class TProtocolSerializer extends PSerializer {
                 break;
             }
 
-            PField<?> field;
+            PField field;
             if (f.id != 0) {
                 field = descriptor.getField(f.id);
                 if (field == null) {
@@ -247,7 +247,7 @@ class TProtocolSerializer extends PSerializer {
         return builder.build();
     }
 
-    private <T> T readTypedValue(byte tType, PDescriptor<T> type, TProtocol protocol)
+    private <T> T readTypedValue(byte tType, PDescriptor type, TProtocol protocol)
             throws TException, PSerializeException {
         switch (tType) {
             case TType.BOOL:

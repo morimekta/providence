@@ -35,12 +35,15 @@ import java.util.Set;
  * Also see {@link CEnum}.
  */
 public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotatedDescriptor {
-    private CEnum[] values;
-    private Map<String, String> annotations;
+    private CEnum[]             values;
+
+    private final Map<String, String> annotations;
+    private final String              comment;
 
     public CEnumDescriptor(String comment, String packageName, String name, Map<String, String> annotations) {
-        super(comment, packageName, name, new _Factory());
+        super(packageName, name, new _Factory());
         this.values = new CEnum[0];
+        this.comment = comment;
         this.annotations = annotations;
         ((_Factory) getFactoryInternal()).setType(this);
     }
@@ -51,6 +54,11 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
         for (int i = 0; i < this.values.length; ++i) {
             this.values[i] = iter.next();
         }
+    }
+
+    @Override
+    public final String getComment() {
+        return comment;
     }
 
     @Override

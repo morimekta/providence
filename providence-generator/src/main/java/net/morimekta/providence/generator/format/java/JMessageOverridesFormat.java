@@ -38,7 +38,7 @@ public class JMessageOverridesFormat {
         appendCompareTo(message);
     }
 
-    private void appendCompact(JMessage message) {
+    private void appendCompact(JMessage<?> message) {
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
         }
@@ -74,7 +74,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendGetter(JMessage message) {
+    private void appendGetter(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public Object get(int key) {")
               .begin()
@@ -93,7 +93,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendPresence(JMessage message) {
+    private void appendPresence(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public boolean has(int key) {")
               .begin()
@@ -118,7 +118,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendCounter(JMessage message) {
+    private void appendCounter(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public int num(int key) {")
               .begin()
@@ -143,7 +143,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendEquals(JMessage message) {
+    private void appendEquals(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
               .begin()
@@ -182,7 +182,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendHashCode(JMessage message) {
+    private void appendHashCode(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public int hashCode() {")
               .begin()
@@ -214,7 +214,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendToString(JMessage message) {
+    private void appendToString(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public String toString() {")
               .begin()
@@ -226,7 +226,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendAsString(JMessage message) {
+    private void appendAsString(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public String asString() {")
               .begin()
@@ -362,7 +362,7 @@ public class JMessageOverridesFormat {
               .newline();
     }
 
-    private void appendCompareTo(JMessage message) {
+    private void appendCompareTo(JMessage<?> message) {
         writer.appendln("@Override")
               .formatln("public int compareTo(%s other) {", message.instanceType())
               .begin();

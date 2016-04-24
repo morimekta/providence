@@ -33,19 +33,19 @@ import java.util.Map;
 /**
  * Descriptor for a map with key and item type.
  */
-public class PMap<K, V> extends PContainer<V, Map<K, V>> {
-    private final PDescriptorProvider<K> keyDescriptor;
+public class PMap<K, V> extends PContainer<Map<K, V>> {
+    private final PDescriptorProvider keyDescriptor;
     private final BuilderFactory<K, V>   builderFactory;
 
-    public PMap(PDescriptorProvider<K> keyDesc,
-                PDescriptorProvider<V> itemDesc,
+    public PMap(PDescriptorProvider keyDesc,
+                PDescriptorProvider itemDesc,
                 BuilderFactory<K, V> builderFactory) {
         super(itemDesc);
         this.keyDescriptor = keyDesc;
         this.builderFactory = builderFactory;
     }
 
-    public PDescriptor<K> keyDescriptor() {
+    public PDescriptor keyDescriptor() {
         return keyDescriptor.descriptor();
     }
 
@@ -185,8 +185,8 @@ public class PMap<K, V> extends PContainer<V, Map<K, V>> {
         return builderFactory.builder();
     }
 
-    public static <K, V> PContainerProvider<V, Map<K, V>, PMap<K, V>> provider(PDescriptorProvider<K> keyDesc,
-                                                                               PDescriptorProvider<V> itemDesc) {
+    public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,
+                                                                            PDescriptorProvider itemDesc) {
         BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
             @Override
             public Builder<K, V> builder() {
@@ -196,8 +196,8 @@ public class PMap<K, V> extends PContainer<V, Map<K, V>> {
         return provider(keyDesc, itemDesc, factory);
     }
 
-    public static <K extends Comparable<K>, V> PContainerProvider<V, Map<K, V>, PMap<K, V>> sortedProvider(PDescriptorProvider<K> keyDesc,
-                                                                                                           PDescriptorProvider<V> itemDesc) {
+    public static <K extends Comparable<K>, V> PContainerProvider<Map<K, V>, PMap<K, V>> sortedProvider(PDescriptorProvider keyDesc,
+                                                                                                        PDescriptorProvider itemDesc) {
         BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
             @Override
             public Builder<K, V> builder() {
@@ -207,8 +207,8 @@ public class PMap<K, V> extends PContainer<V, Map<K, V>> {
         return provider(keyDesc, itemDesc, factory);
     }
 
-    public static <K, V> PContainerProvider<V, Map<K, V>, PMap<K, V>> orderedProvider(PDescriptorProvider<K> keyDesc,
-                                                                                      PDescriptorProvider<V> itemDesc) {
+    public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> orderedProvider(PDescriptorProvider keyDesc,
+                                                                                   PDescriptorProvider itemDesc) {
         BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
             @Override
             public Builder<K, V> builder() {
@@ -218,9 +218,9 @@ public class PMap<K, V> extends PContainer<V, Map<K, V>> {
         return provider(keyDesc, itemDesc, factory);
     }
 
-    public static <K, V> PContainerProvider<V, Map<K, V>, PMap<K, V>> provider(PDescriptorProvider<K> keyDesc,
-                                                                               PDescriptorProvider<V> itemDesc,
-                                                                               BuilderFactory<K, V> builderFactory) {
+    private static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,
+                                                                             PDescriptorProvider itemDesc,
+                                                                             BuilderFactory<K, V> builderFactory) {
         return new PContainerProvider<>(new PMap<>(keyDesc, itemDesc, builderFactory));
     }
 }

@@ -71,7 +71,7 @@ public class TProtocolSerializerTest {
 
             assertEquals(p_field.getKey(), t_field.getThriftFieldId());
         } else {
-            for (PField<?> field : providence.descriptor()
+            for (PField field : providence.descriptor()
                                              .getFields()) {
                 F thriftField = thrift.fieldForId(field.getKey());
 

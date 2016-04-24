@@ -226,19 +226,16 @@ public class EnumType
         private final int mKey;
         private final net.morimekta.providence.descriptor.PRequirement mRequired;
         private final String mName;
-        private final net.morimekta.providence.descriptor.PDescriptorProvider<?> mTypeProvider;
+        private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
         private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
 
-        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider<?> typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+        _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
             mKey = key;
             mRequired = required;
             mName = name;
             mTypeProvider = typeProvider;
             mDefaultValue = defaultValue;
         }
-
-        @Override
-        public String getComment() { return null; }
 
         @Override
         public int getKey() { return mKey; }
@@ -250,7 +247,7 @@ public class EnumType
         public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
 
         @Override
-        public net.morimekta.providence.descriptor.PDescriptor<?> getDescriptor() { return mTypeProvider.descriptor(); }
+        public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
         public String getName() { return mName; }
@@ -314,7 +311,7 @@ public class EnumType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> {
         public _Descriptor() {
-            super(null, "model", "EnumType", new _Factory(), false, false);
+            super("model", "EnumType", new _Factory(), false, false);
         }
 
         @Override

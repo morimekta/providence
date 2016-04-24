@@ -193,7 +193,7 @@ public class PBinarySerializer extends PSerializer {
                                        field.getDescriptor());
             }
         } else {
-            for (PField<?> field : message.descriptor()
+            for (PField field : message.descriptor()
                                           .getFields()) {
                 if (message.has(field.getKey())) {
                     len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
@@ -216,7 +216,7 @@ public class PBinarySerializer extends PSerializer {
         }
         PMessageBuilder<T> builder = descriptor.builder();
         while (fieldInfo != null) {
-            PField<?> field = descriptor.getField(fieldInfo.getId());
+            PField field = descriptor.getField(fieldInfo.getId());
             if (field != null) {
                 Object value = readFieldValue(input, fieldInfo, field.getDescriptor());
                 builder.set(field.getKey(), value);
@@ -273,7 +273,7 @@ public class PBinarySerializer extends PSerializer {
      *
      * @throws IOException If unable to read from stream or invalid field type.
      */
-    private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor<T> type)
+    private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
             throws IOException, PSerializeException {
         if (type.getType().id != fieldInfo.getType()) {
             if (readStrict) {
@@ -426,7 +426,7 @@ public class PBinarySerializer extends PSerializer {
      * @param value The value to write.
      * @return The number of bytes written.
      */
-    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor<?> descriptor) throws IOException, PSerializeException {
+    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException, PSerializeException {
         switch (descriptor.getType()) {
             case BOOL:
                 return out.writeByte(((Boolean) value) ? (byte) 1 : (byte) 0);
@@ -469,7 +469,7 @@ public class PBinarySerializer extends PSerializer {
             case LIST: {
                 @SuppressWarnings("unchecked")
                 Collection<Object> coll = (Collection<Object>) value;
-                PContainer<?,?> pSet = (PContainer<?, ?>) descriptor;
+                PContainer<?> pSet = (PContainer<?>) descriptor;
 
                 int len = out.writeByte(pSet.itemDescriptor().getType().id);
                 len += out.writeUInt32(coll.size());

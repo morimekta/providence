@@ -25,7 +25,7 @@ public class JMessageBuilderFormat {
         this.helper = helper;
     }
 
-    public void appendBuilder(JMessage message) throws GeneratorException {
+    public void appendBuilder(JMessage<?> message) throws GeneratorException {
         appendMutators();
 
         writer.appendln("public static class _Builder")
@@ -84,7 +84,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendFields(JMessage message) throws GeneratorException {
+    private void appendFields(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
             writer.appendln("private _Field tUnionField;");
         } else {
@@ -101,7 +101,7 @@ public class JMessageBuilderFormat {
         }
     }
 
-    private void appendDefaultConstructor(JMessage message) throws GeneratorException {
+    private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
         writer.newline()
               .appendln("public _Builder() {")
               .begin();
@@ -124,7 +124,7 @@ public class JMessageBuilderFormat {
 
     }
 
-    private void appendMutateConstructor(JMessage message) {
+    private void appendMutateConstructor(JMessage<?> message) {
         writer.formatln("public _Builder(%s base) {", message.instanceType())
               .begin()
               .appendln("this();")
@@ -178,7 +178,7 @@ public class JMessageBuilderFormat {
             }
         }
         if (field.type() == PType.SET || field.type() == PType.LIST) {
-            PContainer<?, ?> cType = (PContainer<?, ?>) field.getPField()
+            PContainer<?> cType = (PContainer<?>) field.getPField()
                                                              .getDescriptor();
             String iType = helper.getFieldType(cType.itemDescriptor());
             writer.formatln("public _Builder %s(%s<%s> value) {",
@@ -246,7 +246,7 @@ public class JMessageBuilderFormat {
             }
             case SET:
             case LIST: {
-                PContainer<?, ?> lType = (PContainer<?, ?>) field.getPField()
+                PContainer<?> lType = (PContainer<?>) field.getPField()
                                                                  .getDescriptor();
                 String liType = helper.getValueType(lType.itemDescriptor());
 
@@ -308,7 +308,7 @@ public class JMessageBuilderFormat {
               .appendln('}');
     }
 
-    private void appendOverrideSetter(JMessage message) throws GeneratorException {
+    private void appendOverrideSetter(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public _Builder set(int key, Object value) {")
               .begin()
@@ -326,7 +326,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendOverrideAdder(JMessage message) throws GeneratorException {
+    private void appendOverrideAdder(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public _Builder addTo(int key, Object value) {")
               .begin()
@@ -334,9 +334,9 @@ public class JMessageBuilderFormat {
               .begin();
         for (JField field : message.fields()) {
             if (field.type() == PType.LIST || field.type() == PType.SET) {
-                PContainer<?, ?> ct = (PContainer<?, ?>) field.getPField()
+                PContainer<?> ct = (PContainer<?>) field.getPField()
                                                               .getDescriptor();
-                PDescriptor<?> itype = ct.itemDescriptor();
+                PDescriptor itype = ct.itemDescriptor();
                 writer.formatln("case %d: %s((%s) value); break;",
                                 field.id(),
                                 field.adder(),
@@ -352,7 +352,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendOverrideResetter(JMessage message) {
+    private void appendOverrideResetter(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public _Builder clear(int key) {")
               .begin()
@@ -369,7 +369,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendOverrideIsValid(JMessage message) {
+    private void appendOverrideIsValid(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public boolean isValid() {")
               .begin();
@@ -401,7 +401,7 @@ public class JMessageBuilderFormat {
               .newline();
     }
 
-    private void appendCreateMessage(JMessage message) {
+    private void appendCreateMessage(JMessage<?> message) {
         writer.appendln("protected String createMessage() {")
               .begin()
               .appendln("StringBuilder builder = new StringBuilder();")

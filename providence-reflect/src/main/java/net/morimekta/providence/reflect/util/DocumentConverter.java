@@ -69,7 +69,7 @@ public class DocumentConverter {
      */
     public CDocument convert(ThriftDocument document) {
         ImmutableList.Builder<PDeclaredDescriptor<?>> declaredTypes = ImmutableList.builder();
-        ImmutableList.Builder<PField<?>> constants = ImmutableList.builder();
+        ImmutableList.Builder<CField> constants = ImmutableList.builder();
         ImmutableMap.Builder<String, String> typedefs = ImmutableMap.builder();
         ImmutableList.Builder<CService> services = ImmutableList.builder();
 
@@ -167,15 +167,15 @@ public class DocumentConverter {
                         if (!sm.isOneWay()) {
                             List<CField> rsFields = new LinkedList<>();
                             if (sm.getReturnType() != null) {
-                                PDescriptorProvider<?> type = registry.getProvider(sm.getReturnType(), document.getPackage());
+                                PDescriptorProvider type = registry.getProvider(sm.getReturnType(), document.getPackage());
 
-                                CField success = new CField<>(null,
-                                                              0,
-                                                              PRequirement.OPTIONAL,
-                                                              "___success",
-                                                              type,
-                                                              null,
-                                                              null);
+                                CField success = new CField(null,
+                                                            0,
+                                                            PRequirement.OPTIONAL,
+                                                            "___success",
+                                                            type,
+                                                            null,
+                                                            null);
                                 rsFields.add(success);
                             }
 
@@ -248,14 +248,14 @@ public class DocumentConverter {
             defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getDefaultValue());
         }
         @SuppressWarnings("unchecked")
-        CField made = new CField<>(field.getComment(),
-                                   field.getKey(),
-                                   PRequirement.valueOf(field.getRequirement()
-                                                             .getName()),
-                                   field.getName(),
-                                   type,
-                                   defaultValue,
-                                   field.getAnnotations());
+        CField made = new CField(field.getComment(),
+                                 field.getKey(),
+                                 PRequirement.valueOf(field.getRequirement()
+                                                           .getName()),
+                                 field.getName(),
+                                 type,
+                                 defaultValue,
+                                 field.getAnnotations());
         return made;
     }
 }

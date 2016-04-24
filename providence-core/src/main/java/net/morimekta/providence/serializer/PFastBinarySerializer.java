@@ -151,7 +151,7 @@ public class PFastBinarySerializer extends PSerializer {
                 len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
             }
         } else {
-            for (PField<?> field : message.descriptor()
+            for (PField field : message.descriptor()
                                           .getFields()) {
                 if (message.has(field.getKey())) {
                     len += writeFieldValue(out, field.getKey(), field.getDescriptor(), message.get(field.getKey()));
@@ -187,7 +187,7 @@ public class PFastBinarySerializer extends PSerializer {
     // --- FIELD VALUE ---
 
     @SuppressWarnings("unchecked")
-    private int writeFieldValue(BinaryWriter out, int key, PDescriptor<?> descriptor, Object value)
+    private int writeFieldValue(BinaryWriter out, int key, PDescriptor descriptor, Object value)
             throws IOException, PSerializeException {
         switch (descriptor.getType()) {
             case BOOL: {
@@ -253,7 +253,7 @@ public class PFastBinarySerializer extends PSerializer {
                 int len = out.writeVarint(key << 3 | COLLECTION);
 
                 Collection<Object> coll = (Collection<Object>) value;
-                PContainer<?, ?> desc = (PContainer<?, ?>) descriptor;
+                PContainer<?> desc = (PContainer<?>) descriptor;
 
                 len += out.writeVarint(coll.size());
                 for (Object item : coll) {
@@ -267,7 +267,7 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @SuppressWarnings("unchecked")
-    private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor<T> descriptor)
+    private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
             throws IOException, PSerializeException {
         switch (type) {
             case VARINT: {
@@ -332,8 +332,8 @@ public class PFastBinarySerializer extends PSerializer {
                     return null;
                 } else if (descriptor.getType() == PType.MAP) {
                     PMap<Object, Object> ct = (PMap<Object, Object>) descriptor;
-                    PDescriptor<?> kt = ct.keyDescriptor();
-                    PDescriptor<?> vt = ct.itemDescriptor();
+                    PDescriptor kt = ct.keyDescriptor();
+                    PDescriptor vt = ct.itemDescriptor();
 
                     PMap.Builder<Object, Object> out = ct.builder();
                     final int len = in.readIntVarint();
@@ -345,7 +345,7 @@ public class PFastBinarySerializer extends PSerializer {
                     return cast(out.build());
                 } else if (descriptor.getType() == PType.LIST) {
                     PList<Object> ct = (PList<Object>) descriptor;
-                    PDescriptor<?> it = ct.itemDescriptor();
+                    PDescriptor it = ct.itemDescriptor();
                     PList.Builder<Object> out = ct.builder();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i) {
@@ -355,7 +355,7 @@ public class PFastBinarySerializer extends PSerializer {
                     return cast(out.build());
                 } else if (descriptor.getType() == PType.SET) {
                     PSet<Object> ct = (PSet<Object>) descriptor;
-                    PDescriptor<?> it = ct.itemDescriptor();
+                    PDescriptor it = ct.itemDescriptor();
                     PSet.Builder<Object> out = ct.builder();
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i) {

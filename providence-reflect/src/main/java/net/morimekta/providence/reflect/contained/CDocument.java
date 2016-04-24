@@ -20,11 +20,11 @@
 package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PField;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -41,16 +41,16 @@ public class CDocument {
     private final Map<String, String>          typedefs;
     private final List<PDeclaredDescriptor<?>> declaredTypes;
     private final List<CService>               services;
-    private final List<PField<?>>              constants;
+    private final List<CField>              constants;
 
     public CDocument(String comment,
                      String packageName,
                      Map<String, String> namespaces,
-                     List<String> includes,
+                     Collection<String> includes,
                      Map<String, String> typedefs,
-                     List<PDeclaredDescriptor<?>> declaredTypes,
-                     List<CService> services,
-                     List<PField<?>> constants) {
+                     Collection<PDeclaredDescriptor<?>> declaredTypes,
+                     Collection<CService> services,
+                     Collection<CField> constants) {
         this.comment = comment;
         this.packageName = packageName;
         this.namespaces = ImmutableMap.copyOf(namespaces);
@@ -89,7 +89,7 @@ public class CDocument {
         return services;
     }
 
-    public List<PField<?>> getConstants() {
+    public List<CField> getConstants() {
         return constants;
     }
 

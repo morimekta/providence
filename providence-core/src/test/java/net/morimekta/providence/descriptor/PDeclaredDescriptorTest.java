@@ -60,7 +60,7 @@ public class PDeclaredDescriptorTest {
 
     private static class MockDescriptor extends PDeclaredDescriptor<String> {
         protected MockDescriptor() {
-            super("comment", "test", "MockDescriptor");
+            super("test", "MockDescriptor");
         }
 
         @Override

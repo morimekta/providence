@@ -1,10 +1,11 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
+import net.morimekta.providence.reflect.contained.CUnionDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
@@ -80,7 +81,7 @@ public class JServiceFormat {
             writer.format(" %s(", method.getName());
 
             boolean first = true;
-            for (PField param : method.getRequestType().getFields()) {
+            for (CField param : method.getRequestType().getFields()) {
                 if (first) {
                     first = false;
                 } else {
@@ -94,9 +95,9 @@ public class JServiceFormat {
             writer.format(")");
 
             if (method.getResponseType() != null) {
-                PStructDescriptor resp = method.getResponseType();
+                CUnionDescriptor resp = method.getResponseType();
                 first = true;
-                for (PField ex : resp.getFields()) {
+                for (CField ex : resp.getFields()) {
                     if (ex.getKey() != 0) {
                         if (first) {
                             first = false;

@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
+public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     private final Map<Integer, Object> values;
 
     CMessage(Map<Integer, Object> fields) {
@@ -42,7 +42,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public boolean has(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field == null) {
             return false;
         }
@@ -59,7 +59,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public int num(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field == null) {
             return 0;
         }
@@ -80,7 +80,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public Object get(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field != null) {
             Object value = values.get(key);
             if (value != null) {
@@ -100,7 +100,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             return false;
         }
         boolean missing = false;
-        for (PField<?> field : descriptor().getFields()) {
+        for (PField field : descriptor().getFields()) {
             if (has(field.getKey())) {
                 if (missing) {
                     return false;
@@ -126,7 +126,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             return false;
         }
 
-        for (PField<?> field : descriptor().getFields()) {
+        for (PField field : descriptor().getFields()) {
             int id = field.getKey();
             if (has(id) != other.has(id)) {
                 return false;
@@ -142,7 +142,7 @@ abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     public int hashCode() {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
-            PField<?> field = descriptor().getField(entry.getKey());
+            PField field = descriptor().getField(entry.getKey());
             hash += PTypeUtils.hashCode(field, entry.getValue());
         }
         return hash;

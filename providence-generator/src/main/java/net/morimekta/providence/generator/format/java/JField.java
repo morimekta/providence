@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CField;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,11 +45,11 @@ import static net.morimekta.util.Strings.camelCase;
  *
  */
 public class JField {
-    private final PField<?> field;
-    private final JHelper   helper;
-    private final int       index;
+    private final CField  field;
+    private final JHelper helper;
+    private final int     index;
 
-    public JField(PField<?> field, JHelper helper, int index) {
+    public JField(CField field, JHelper helper, int index) {
         this.field = field;
         this.helper = helper;
         this.index = index;
@@ -58,7 +59,7 @@ public class JField {
         return index;
     }
 
-    public PField<?> getPField() {
+    public PField getPField() {
         return field;
     }
 

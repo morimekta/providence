@@ -221,7 +221,7 @@ public class PTypeUtils {
      * @param object The field value.
      * @return The hash code.
      */
-    public static int hashCode(PField<?> field, Object object) {
+    public static int hashCode(PField field, Object object) {
         return hashCode(field) * hashCode(object);
     }
 
@@ -305,7 +305,7 @@ public class PTypeUtils {
         if (c != 0) {
             return c;
         }
-        for (PField<?> field : m1.descriptor()
+        for (PField field : m1.descriptor()
                                  .getFields()) {
             c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
             if (c != 0) {

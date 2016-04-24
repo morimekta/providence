@@ -38,6 +38,7 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -60,18 +61,20 @@ public class JMessageFormat {
         this.options = options;
     }
 
-    public void format(IndentedPrintWriter writer, PStructDescriptor<?, ?> descriptor)
+    public void format(IndentedPrintWriter writer, PStructDescriptor<?,?> descriptor)
             throws GeneratorException, IOException {
-        JMessage message = new JMessage(descriptor, helper);
+        @SuppressWarnings("unchecked")
+        JMessage<?> message = new JMessage(descriptor, helper);
 
         JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
         JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, options, helper);
         JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper);
         JValueFormat values = new JValueFormat(writer, options, helper);
 
-        if (descriptor.getComment() != null) {
-            JUtils.appendBlockComment(writer, descriptor.getComment());
-            if (JAnnotation.isDeprecated(descriptor)) {
+        CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
+        if (annotatedDescriptor.getComment() != null) {
+            JUtils.appendBlockComment(writer, annotatedDescriptor.getComment());
+            if (JAnnotation.isDeprecated(annotatedDescriptor)) {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
         }
@@ -128,7 +131,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendFieldEnum(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendFieldEnum(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         writer.formatln("public enum _Field implements %s {", PField.class.getName())
               .begin();
 
@@ -160,10 +163,10 @@ public class JMessageFormat {
         writer.appendln("private final int mKey;")
               .formatln("private final %s mRequired;", PRequirement.class.getName())
               .appendln("private final String mName;")
-              .formatln("private final %s<?> mTypeProvider;", PDescriptorProvider.class.getName())
-              .formatln("private final %s<?> mDefaultValue;", PValueProvider.class.getName())
+              .formatln("private final %s mTypeProvider;", PDescriptorProvider.class.getName())
+              .formatln("private final %s mDefaultValue;", PValueProvider.class.getName())
               .newline()
-              .formatln("_Field(int key, %s required, String name, %s<?> typeProvider, %s<?> defaultValue) {",
+              .formatln("_Field(int key, %s required, String name, %s typeProvider, %s<?> defaultValue) {",
                         PRequirement.class.getName(),
                         PDescriptorProvider.class.getName(),
                         PValueProvider.class.getName())
@@ -177,9 +180,6 @@ public class JMessageFormat {
               .appendln('}')
               .newline();
         writer.appendln("@Override")
-              .appendln("public String getComment() { return null; }")
-              .newline();
-        writer.appendln("@Override")
               .appendln("public int getKey() { return mKey; }")
               .newline();
         writer.appendln("@Override")
@@ -191,7 +191,7 @@ public class JMessageFormat {
                         PType.class.getName())
               .newline();
         writer.appendln("@Override")
-              .formatln("public %s<?> getDescriptor() { return mTypeProvider.descriptor(); }",
+              .formatln("public %s getDescriptor() { return mTypeProvider.descriptor(); }",
                         PDescriptor.class.getName())
               .newline();
         writer.appendln("@Override")
@@ -258,7 +258,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendDescriptor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendDescriptor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         String typeClass;
         String providerClass;
         switch (message.variant()) {
@@ -302,7 +302,7 @@ public class JMessageFormat {
               .appendln("public _Descriptor() {")
               .begin();
         if (message.isException() || message.isUnion()) {
-            writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %s);",
+            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %s);",
                             message.descriptor()
                                    .getPackageName(),
                             message.descriptor()
@@ -310,7 +310,7 @@ public class JMessageFormat {
                             message.descriptor()
                                    .isSimple());
         } else {
-            writer.formatln("super(null, \"%s\", \"%s\", new _Factory(), %b, %b);",
+            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b, %b);",
                             message.descriptor()
                                    .getPackageName(),
                             message.descriptor()
@@ -384,7 +384,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendFieldGetters(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendFieldGetters(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         for (JField field : message.fields()) {
             if (message.isUnion()) {
                 if (field.container()) {
@@ -463,7 +463,7 @@ public class JMessageFormat {
         }
     }
 
-    private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         for (JField field : message.fields()) {
             writer.formatln("private final %s %s;", field.fieldType(), field.member());
         }
@@ -476,7 +476,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendBuilderConstructor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendBuilderConstructor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         writer.formatln("private %s(_Builder builder) {", message.instanceType())
               .begin();
         if (message.isUnion()) {
@@ -544,7 +544,7 @@ public class JMessageFormat {
               .newline();
     }
 
-    private void appendCreateConstructor(IndentedPrintWriter writer, JMessage message) throws GeneratorException {
+    private void appendCreateConstructor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         if (message.isException()) {
             // TODO(steineldar): Handle constructing exception!
         } else if (message.isUnion()) {

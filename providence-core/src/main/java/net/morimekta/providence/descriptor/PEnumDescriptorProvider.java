@@ -24,7 +24,7 @@ import net.morimekta.providence.PEnumValue;
 /**
  * Provider for enum type descriptor.
  */
-public class PEnumDescriptorProvider<E extends PEnumValue<E>> implements PDescriptorProvider<E> {
+public class PEnumDescriptorProvider<E extends PEnumValue<E>> implements PDescriptorProvider {
     private final PEnumDescriptor<E> mType;
 
     public PEnumDescriptorProvider(PEnumDescriptor<E> type) {

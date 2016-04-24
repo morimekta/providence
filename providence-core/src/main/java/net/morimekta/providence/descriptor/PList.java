@@ -31,10 +31,10 @@ import java.util.List;
 /**
  * Descriptor for a list with item type.
  */
-public class PList<I> extends PContainer<I, List<I>> {
+public class PList<I> extends PContainer<List<I>> {
     private final BuilderFactory<I> builderFactory;
 
-    public PList(PDescriptorProvider<I> itemType,
+    public PList(PDescriptorProvider itemType,
                  BuilderFactory<I> builderFactory) {
         super(itemType);
         this.builderFactory = builderFactory;
@@ -117,7 +117,7 @@ public class PList<I> extends PContainer<I, List<I>> {
         return builderFactory.builder();
     }
 
-    public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemDesc) {
+    public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc) {
         BuilderFactory<I> factory = new BuilderFactory<I>() {
             @Override
             public Builder<I> builder() {
@@ -127,8 +127,8 @@ public class PList<I> extends PContainer<I, List<I>> {
         return provider(itemDesc, factory);
     }
 
-    public static <I> PContainerProvider<I, List<I>, PList<I>> provider(PDescriptorProvider<I> itemDesc,
-                                                                        BuilderFactory<I> builderFactory) {
+    public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc,
+                                                                     BuilderFactory<I> builderFactory) {
         return new PContainerProvider<>(new PList<>(itemDesc, builderFactory));
     }
 }

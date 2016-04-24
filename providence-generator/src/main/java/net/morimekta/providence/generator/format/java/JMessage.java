@@ -20,8 +20,9 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PMessageVariant;
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.providence.reflect.contained.CMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,17 +30,17 @@ import java.util.List;
 /**
  *
  */
-public class JMessage {
+public class JMessage<T extends CMessage<T>> {
     private final PStructDescriptor<?, ?> struct;
     private final JHelper                 helper;
     private final ArrayList<JField>       fields;
 
-    public JMessage(PStructDescriptor<?, ?> struct, JHelper helper) {
+    public JMessage(PStructDescriptor<T, CField> struct, JHelper helper) {
         this.struct = struct;
         this.helper = helper;
         this.fields = new ArrayList<>(struct.getFields().length);
 
-        PField<?>[] fields = struct.getFields();
+        CField[] fields = struct.getFields();
         for (int i = 0; i < fields.length; ++i) {
             this.fields.add(new JField(fields[i], helper, i));
         }

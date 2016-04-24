@@ -161,12 +161,12 @@ public class TTupleProtocolSerializer extends PSerializer {
             protocol.writeI16((short) fld.getKey());
             writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
         } else {
-            PField<?>[] fields = descriptor.getFields();
+            PField[] fields = descriptor.getFields();
             int numOptionals = countOptionals(fields);
             BitSet optionals = new BitSet();
             if (numOptionals > 0) {
                 int optionalPos = 0;
-                for (PField<?> fld : fields) {
+                for (PField fld : fields) {
                     if (fld.getRequirement() != PRequirement.REQUIRED) {
                         if (message.has(fld.getKey())) {
                             optionals.set(optionalPos);
@@ -179,7 +179,7 @@ public class TTupleProtocolSerializer extends PSerializer {
             boolean shouldWriteOptionals = true;
             int optionalPos = 0;
 
-            for (PField<?> fld : fields) {
+            for (PField fld : fields) {
                 if (fld.getRequirement() == PRequirement.REQUIRED) {
                     writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
                 } else {
@@ -198,9 +198,9 @@ public class TTupleProtocolSerializer extends PSerializer {
         }
     }
 
-    private int countOptionals(PField<?>[] fields) {
+    private int countOptionals(PField[] fields) {
         int numOptionals = 0;
-        for (PField<?> fld : fields) {
+        for (PField fld : fields) {
             if (fld.getRequirement() != PRequirement.REQUIRED) {
                 ++numOptionals;
             }
@@ -214,15 +214,15 @@ public class TTupleProtocolSerializer extends PSerializer {
 
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             int fieldId = protocol.readI16();
-            PField<?> fld = descriptor.getField(fieldId);
+            PField fld = descriptor.getField(fieldId);
             builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
         } else {
-            PField<?>[] fields = descriptor.getFields();
+            PField[] fields = descriptor.getFields();
             int numOptionals = countOptionals(fields);
 
             BitSet optionals = null;
             int optionalPos = 0;
-            for (PField<?> fld : fields) {
+            for (PField fld : fields) {
                 if (fld.getRequirement() == PRequirement.REQUIRED) {
                     builder.set(fld.getKey(), readTypedValue(fld.getDescriptor(), protocol));
                 } else {
@@ -244,7 +244,7 @@ public class TTupleProtocolSerializer extends PSerializer {
         return builder.build();
     }
 
-    private <T> T readTypedValue(PDescriptor<T> type, TTupleProtocol protocol)
+    private <T> T readTypedValue(PDescriptor type, TTupleProtocol protocol)
             throws TException, PSerializeException {
         switch (type.getType()) {
             case BOOL:

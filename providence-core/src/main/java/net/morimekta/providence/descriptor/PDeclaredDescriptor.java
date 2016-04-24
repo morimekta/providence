@@ -25,27 +25,13 @@ import net.morimekta.providence.PBuilder;
  * Descriptor for a declared type. A declared type is a value type that is
  * derived from a thrift definition.
  */
-public abstract class PDeclaredDescriptor<T> implements PDescriptor<T> {
-    private final String comment;
+public abstract class PDeclaredDescriptor<T> implements PDescriptor {
     private final String packageName;
     private final String name;
 
-    protected PDeclaredDescriptor(String comment, String packageName, String name) {
-        this.comment = comment;
+    protected PDeclaredDescriptor(String packageName, String name) {
         this.packageName = packageName;
         this.name = name;
-    }
-
-    /**
-     * The type comment is the last block of comment written before the type
-     * declaration. Comments on the same line, after the declaration is
-     * ignored.
-     *
-     * @return The comment string containing all formatting (not including the
-     * comment delimiter and the leading space.
-     */
-    public final String getComment() {
-        return comment;
     }
 
     @Override

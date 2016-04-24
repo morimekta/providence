@@ -16,11 +16,6 @@ public enum Requirement implements net.morimekta.providence.PEnumValue<Requireme
     }
 
     @Override
-    public String getComment() {
-        return null;
-    }
-
-    @Override
     public int getValue() {
         return mValue;
     }
@@ -96,7 +91,7 @@ public enum Requirement implements net.morimekta.providence.PEnumValue<Requireme
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<Requirement> {
         public _Descriptor() {
-            super(null, "model", "Requirement", new _Factory());
+            super("model", "Requirement", new _Factory());
         }
 
         @Override

@@ -53,7 +53,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public boolean has(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field == null) {
             return false;
         }
@@ -70,7 +70,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public int num(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field == null) {
             return 0;
         }
@@ -91,7 +91,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public Object get(int key) {
-        PField<?> field = descriptor().getField(key);
+        PField field = descriptor().getField(key);
         if (field != null) {
             Object value = values.get(key);
             if (value != null) {
@@ -111,7 +111,7 @@ public class CException extends Throwable implements PMessage<CException> {
             return false;
         }
         boolean missing = false;
-        for (PField<?> field : descriptor().getFields()) {
+        for (PField field : descriptor().getFields()) {
             if (has(field.getKey())) {
                 if (missing) {
                     return false;
@@ -137,7 +137,7 @@ public class CException extends Throwable implements PMessage<CException> {
             return false;
         }
 
-        for (PField<?> field : descriptor().getFields()) {
+        for (PField field : descriptor().getFields()) {
             int id = field.getKey();
             if (has(id) != other.has(id)) {
                 return false;
@@ -153,7 +153,7 @@ public class CException extends Throwable implements PMessage<CException> {
     public int hashCode() {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
-            PField<?> field = descriptor().getField(entry.getKey());
+            PField field = descriptor().getField(entry.getKey());
             hash += PTypeUtils.hashCode(field, entry.getValue());
         }
         return hash;
@@ -205,7 +205,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
         @Override
         public Builder set(int key, Object value) {
-            PField<?> field = descriptor.getField(key);
+            PField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
@@ -217,7 +217,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
         @Override
         public Builder addTo(int key, Object value) {
-            PField<?> field = descriptor.getField(key);
+            PField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }

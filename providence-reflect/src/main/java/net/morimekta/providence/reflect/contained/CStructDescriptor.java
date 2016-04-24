@@ -37,17 +37,19 @@ import java.util.Set;
 public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CAnnotatedDescriptor {
     public static final int     MAX_COMPACT_FIELDS = 10;
 
+    private final String               comment;
     private final CField[]             fields;
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
     private final Map<String, String>  annotations;
 
     public CStructDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
-        super(comment, packageName, name, new _Factory(), false,
+        super(packageName, name, new _Factory(), false,
               // overrides getter to avoid having to check fields types before it's converted.
               isCompactCompatible(fields, annotations));
         ((_Factory) getFactoryInternal()).setType(this);
 
+        this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;
 
@@ -59,6 +61,11 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         }
         this.fieldIdMap = fieldIdMap;
         this.fieldNameMap = fieldNameMap;
+    }
+
+    @Override
+    public final String getComment() {
+        return comment;
     }
 
     @Override

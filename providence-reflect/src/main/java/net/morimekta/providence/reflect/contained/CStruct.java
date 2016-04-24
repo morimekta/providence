@@ -23,7 +23,6 @@ import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableSortedMap;
 
@@ -39,7 +38,7 @@ import java.util.TreeMap;
  * @since 26.08.15
  */
 public class CStruct extends CMessage<CStruct> {
-    PStructDescriptor<CStruct, CField> descriptor;
+    CStructDescriptor descriptor;
 
     private CStruct(Builder builder) {
         super(ImmutableSortedMap.copyOf(builder.values));
@@ -52,17 +51,17 @@ public class CStruct extends CMessage<CStruct> {
     }
 
     @Override
-    public PStructDescriptor<CStruct, CField> descriptor() {
+    public CStructDescriptor descriptor() {
         return descriptor;
     }
 
     public static class Builder extends PMessageBuilder<CStruct> {
-        private final PStructDescriptor<CStruct, CField> descriptor;
-        private final Map<Integer, Object>               values;
+        private final CStructDescriptor    descriptor;
+        private final Map<Integer, Object> values;
 
-        public Builder(PStructDescriptor<CStruct, CField> type) {
-            descriptor = type;
-            values = new TreeMap<>();
+        public Builder(CStructDescriptor descriptor) {
+            this.descriptor = descriptor;
+            this.values = new TreeMap<>();
         }
 
         @Override
@@ -72,7 +71,7 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public boolean isValid() {
-            for (PField<?> field : descriptor.getFields()) {
+            for (PField field : descriptor.getFields()) {
                 if (field.getRequirement() == PRequirement.REQUIRED) {
                     if (!values.containsKey(field.getKey())) {
                         return false;
@@ -85,7 +84,7 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public Builder set(int key, Object value) {
-            PField<?> field = descriptor.getField(key);
+            PField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
@@ -97,7 +96,7 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         public Builder addTo(int key, Object value) {
-            PField<?> field = descriptor.getField(key);
+            PField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }

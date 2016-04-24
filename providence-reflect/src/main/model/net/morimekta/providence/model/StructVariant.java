@@ -23,11 +23,6 @@ public enum StructVariant implements net.morimekta.providence.PEnumValue<StructV
     }
 
     @Override
-    public String getComment() {
-        return null;
-    }
-
-    @Override
     public int getValue() {
         return mValue;
     }
@@ -103,7 +98,7 @@ public enum StructVariant implements net.morimekta.providence.PEnumValue<StructV
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PEnumDescriptor<StructVariant> {
         public _Descriptor() {
-            super(null, "model", "StructVariant", new _Factory());
+            super("model", "StructVariant", new _Factory());
         }
 
         @Override

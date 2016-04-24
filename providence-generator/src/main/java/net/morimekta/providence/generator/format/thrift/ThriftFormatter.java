@@ -28,8 +28,11 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CEnum;
+import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
@@ -113,10 +116,10 @@ public class ThriftFormatter {
         for (PDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
             switch (type.getType()) {
                 case ENUM:
-                    appendEnum(builder, (PEnumDescriptor<?>) type);
+                    appendEnum(builder, (CEnumDescriptor) type);
                     break;
                 case MESSAGE:
-                    appendStruct(builder, (PStructDescriptor<?, ?>) type);
+                    appendStruct(builder, (CStructDescriptor) type);
                     break;
                 default:
                     throw new IllegalStateException("Document " +
@@ -127,7 +130,7 @@ public class ThriftFormatter {
             builder.newline();
         }
 
-        for (PField<?> constant : document.getConstants()) {
+        for (PField constant : document.getConstants()) {
             builder.formatln("const %s %s = ",
                              constant.getDescriptor()
                                      .getQualifiedName(document.getPackageName()),
@@ -162,7 +165,7 @@ public class ThriftFormatter {
 
     // --- Declared Types
 
-    private void appendStruct(IndentedPrintWriter builder, PStructDescriptor<?, ?> type)
+    private void appendStruct(IndentedPrintWriter builder, CStructDescriptor type)
             throws IOException, JsonException {
         if (type.getComment() != null) {
             appendBlockComment(builder, type.getComment(), false);
@@ -172,7 +175,7 @@ public class ThriftFormatter {
                              .getName(),
                          type.getName())
                .begin();
-        for (PField<?> field : type.getFields()) {
+        for (CField field : type.getFields()) {
             if (field.getComment() != null) {
                 appendBlockComment(builder, field.getComment(), false);
             }
@@ -200,14 +203,14 @@ public class ThriftFormatter {
                .appendln('}');
     }
 
-    private void appendEnum(IndentedPrintWriter builder, PEnumDescriptor<?> type) throws IOException {
+    private void appendEnum(IndentedPrintWriter builder, CEnumDescriptor type) throws IOException {
         if (type.getComment() != null) {
             appendBlockComment(builder, type.getComment(), false);
         }
         builder.formatln("enum %s {", type.getName())
                .begin();
         int nextValue = mEnumValuePresence.equals(EnumValuePresence.FIRST) ? -1 : PEnumDescriptor.DEFAULT_FIRST_VALUE;
-        for (PEnumValue<?> value : type.getValues()) {
+        for (CEnum value : type.getValues()) {
             if (value.getComment() != null) {
                 appendBlockComment(builder, value.getComment(), false);
             }
@@ -234,7 +237,7 @@ public class ThriftFormatter {
                 break;
             case LIST:
             case SET:
-                PContainer<?, ?> cType = (PContainer<?, ?>) type;
+                PContainer<?> cType = (PContainer<?>) type;
                 @SuppressWarnings("unchecked")
                 Collection<Object> collection = (Collection<Object>) value;
 
@@ -325,7 +328,7 @@ public class ThriftFormatter {
     private void appendMessage(JsonWriter writer, PMessage<?> message, String packageContext)
             throws IOException, JsonException {
         writer.object();
-        for (PField<?> field : message.descriptor()
+        for (PField field : message.descriptor()
                                       .getFields()) {
             if (message.has(field.getKey())) {
                 writer.key(field.getName());

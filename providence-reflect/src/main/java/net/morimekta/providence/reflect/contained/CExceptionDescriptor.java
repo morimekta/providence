@@ -22,6 +22,7 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
@@ -35,19 +36,21 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CExceptionDescriptor extends PStructDescriptor<CException, CField> implements CAnnotatedDescriptor {
+public class CExceptionDescriptor extends PExceptionDescriptor<CException, CField> implements CAnnotatedDescriptor {
     private final CField[]             fields;
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
     private final Map<String, String>  annotations;
+    private final String               comment;
 
     public CExceptionDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
-        super(comment, packageName, name, new _Factory(),
+        super(packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
-              false, false);
+              false);
         ((_Factory) getFactoryInternal()).setType(this);
 
+        this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;
 
@@ -59,6 +62,11 @@ public class CExceptionDescriptor extends PStructDescriptor<CException, CField> 
         }
         this.fieldIdMap = fieldIdMap;
         this.fieldNameMap = fieldNameMap;
+    }
+
+    @Override
+    public final String getComment() {
+        return comment;
     }
 
     @Override
@@ -103,7 +111,7 @@ public class CExceptionDescriptor extends PStructDescriptor<CException, CField> 
 
     @Override
     public boolean isSimple() {
-        for (PField<?> field : getFields()) {
+        for (PField field : getFields()) {
             switch (field.getType()) {
                 case MAP:
                 case SET:

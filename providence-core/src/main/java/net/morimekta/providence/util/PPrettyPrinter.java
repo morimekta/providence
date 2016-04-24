@@ -89,7 +89,7 @@ public class PPrettyPrinter {
                .begin();
 
         if (message instanceof PUnion) {
-            PField<?> field = ((PUnion) message).unionField();
+            PField field = ((PUnion) message).unionField();
             if (field != null) {
                 Object o = message.get(field.getKey());
 
@@ -100,7 +100,7 @@ public class PPrettyPrinter {
             }
         } else {
             boolean first = true;
-            for (PField<?> field : type.getFields()) {
+            for (PField field : type.getFields()) {
                 if (message.has(field.getKey())) {
                     if (first) {
                         first = false;
@@ -128,7 +128,7 @@ public class PPrettyPrinter {
                 writer.append("[")
                       .begin();
 
-                PContainer<?, ?> containerType = (PContainer<?, ?>) descriptor;
+                PContainer<?> containerType = (PContainer<?>) descriptor;
                 Collection<?> collection = (Collection<?>) o;
 
                 boolean first = true;

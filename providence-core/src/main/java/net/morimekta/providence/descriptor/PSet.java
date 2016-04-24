@@ -34,10 +34,10 @@ import java.util.Set;
 /**
  * Descriptor for a set with item type.
  */
-public class PSet<I> extends PContainer<I, Set<I>> {
+public class PSet<I> extends PContainer<Set<I>> {
     private final BuilderFactory<I> builderFactory;
 
-    public PSet(PDescriptorProvider<I> itemType,
+    public PSet(PDescriptorProvider itemType,
                 BuilderFactory<I> builderFactory) {
         super(itemType);
         this.builderFactory = builderFactory;
@@ -176,7 +176,7 @@ public class PSet<I> extends PContainer<I, Set<I>> {
         return builderFactory.builder();
     }
 
-    public static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemDesc) {
+    public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
         BuilderFactory<I> factory = new BuilderFactory<I>() {
             @Override
             public Builder<I> builder() {
@@ -186,7 +186,7 @@ public class PSet<I> extends PContainer<I, Set<I>> {
         return provider(itemDesc, factory);
     }
 
-    public static <I extends Comparable<I>> PContainerProvider<I, Set<I>, PSet<I>> sortedProvider(PDescriptorProvider<I> itemDesc) {
+    public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> sortedProvider(PDescriptorProvider itemDesc) {
         BuilderFactory<I> factory = new BuilderFactory<I>() {
             @Override
             public Builder<I> builder() {
@@ -196,7 +196,7 @@ public class PSet<I> extends PContainer<I, Set<I>> {
         return provider(itemDesc, factory);
     }
 
-    public static <I extends Comparable<I>> PContainerProvider<I, Set<I>, PSet<I>> orderedProvider(PDescriptorProvider<I> itemDesc) {
+    public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> orderedProvider(PDescriptorProvider itemDesc) {
         BuilderFactory<I> factory = new BuilderFactory<I>() {
             @Override
             public Builder<I> builder() {
@@ -206,7 +206,7 @@ public class PSet<I> extends PContainer<I, Set<I>> {
         return provider(itemDesc, factory);
     }
 
-    private static <I> PContainerProvider<I, Set<I>, PSet<I>> provider(PDescriptorProvider<I> itemDesc,
+    private static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc,
                                                                       BuilderFactory<I> builderFactory) {
         return new PContainerProvider<>(new PSet<>(itemDesc, builderFactory));
     }

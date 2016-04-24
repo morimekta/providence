@@ -28,5 +28,5 @@ import net.morimekta.providence.descriptor.PField;
  * @since 25.08.15
  */
 public interface PUnion<T extends PUnion<T>> extends PMessage<T> {
-    PField<?> unionField();
+    PField unionField();
 }

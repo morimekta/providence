@@ -25,6 +25,8 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CEnum;
+import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
@@ -40,7 +42,7 @@ public class JEnumFormat {
         this.options = options;
     }
 
-    public void format(IndentedPrintWriter writer, PEnumDescriptor<?> type) throws GeneratorException {
+    public void format(IndentedPrintWriter writer, CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
 
         if (type.getComment() != null) {
@@ -55,7 +57,7 @@ public class JEnumFormat {
                         simpleClass)
               .begin();
 
-        for (PEnumValue<?> v : type.getValues()) {
+        for (CEnum v : type.getValues()) {
             if (v.getComment() != null) {
                 JUtils.appendBlockComment(writer, v.getComment());
                 if (JAnnotation.isDeprecated(v)) {
@@ -80,14 +82,6 @@ public class JEnumFormat {
               .appendln("mName = name;")
               .end()
               .appendln("}")
-              .newline();
-
-        writer.appendln("@Override")
-              .appendln("public String getComment() {")
-              .begin()
-              .appendln("return null;")
-              .end()
-              .appendln('}')
               .newline();
 
         writer.appendln("@Override")
@@ -209,7 +203,7 @@ public class JEnumFormat {
               .begin()
               .appendln("public _Descriptor() {")
               .begin()
-              .formatln("super(null, \"%s\", \"%s\", new _Factory());",
+              .formatln("super(\"%s\", \"%s\", new _Factory());",
                         type.getPackageName(),
                         type.getName(),
                         simpleClass)

@@ -34,8 +34,8 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
 
     private final PEnumBuilderFactory<T> factory;
 
-    public PEnumDescriptor(String comment, String packageName, String name, PEnumBuilderFactory<T> provider) {
-        super(comment, packageName, name);
+    public PEnumDescriptor(String packageName, String name, PEnumBuilderFactory<T> provider) {
+        super(packageName, name);
         factory = provider;
     }
 
@@ -77,8 +77,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
             return false;
         }
         PEnumDescriptor<?> other = (PEnumDescriptor<?>) o;
-        if (!PTypeUtils.equals(getComment(), other.getComment()) ||
-            !getQualifiedName(null).equals(other.getQualifiedName(null)) ||
+        if (!getQualifiedName(null).equals(other.getQualifiedName(null)) ||
             getValues().length != other.getValues().length) {
             return false;
         }

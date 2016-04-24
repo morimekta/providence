@@ -36,21 +36,21 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class CField<T> implements PField<T>, CAnnotatedDescriptor {
+public class CField implements PField, CAnnotatedDescriptor {
     private final String                 comment;
     private final int                    key;
     private final PRequirement           requirement;
-    private final PDescriptorProvider<T> typeProvider;
+    private final PDescriptorProvider typeProvider;
     private final String                 name;
-    private final PValueProvider<T>      defaultValue;
+    private final PValueProvider      defaultValue;
     private final Map<String, String>    annotations;
 
     public CField(String comment,
                   int key,
                   PRequirement requirement,
                   String name,
-                  PDescriptorProvider<T> typeProvider,
-                  PValueProvider<T> defaultValue,
+                  PDescriptorProvider typeProvider,
+                  PValueProvider defaultValue,
                   Map<String, String> annotations) {
         this.comment = comment;
         this.key = key;
@@ -83,7 +83,7 @@ public class CField<T> implements PField<T>, CAnnotatedDescriptor {
     }
 
     @Override
-    public PDescriptor<T> getDescriptor() {
+    public PDescriptor getDescriptor() {
         return typeProvider.descriptor();
     }
 
@@ -98,7 +98,7 @@ public class CField<T> implements PField<T>, CAnnotatedDescriptor {
     }
 
     @Override
-    public T getDefaultValue() {
+    public Object getDefaultValue() {
         return hasDefaultValue() ? defaultValue.get() : null;
     }
 
@@ -151,7 +151,7 @@ public class CField<T> implements PField<T>, CAnnotatedDescriptor {
         if (o == null || !(o instanceof CField)) {
             return false;
         }
-        CField<?> other = (CField<?>) o;
+        CField other = (CField) o;
         return key == other.key &&
                requirement == other.requirement &&
                // We cannot test that the types are deep-equals as it may have circular

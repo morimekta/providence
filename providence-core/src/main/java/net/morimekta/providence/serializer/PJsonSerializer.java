@@ -256,7 +256,7 @@ public class PJsonSerializer extends PSerializer {
                 JsonToken token = tokenizer.expect("parsing message key");
                 String key = token.substring(1, -1)
                                   .asString();
-                PField<?> field;
+                PField field;
                 if (Strings.isInteger(key)) {
                     field = type.getField(Integer.parseInt(key));
                 } else {
@@ -292,7 +292,7 @@ public class PJsonSerializer extends PSerializer {
         int i = 0;
         char sep = JsonToken.kListStart;
         while (sep != JsonToken.kListEnd) {
-            PField<?> field = type.getField(++i);
+            PField field = type.getField(++i);
 
             if (field != null) {
                 Object value = parseTypedValue(tokenizer.expect("parsing compact message field value"), tokenizer, field.getDescriptor());
@@ -343,7 +343,7 @@ public class PJsonSerializer extends PSerializer {
         // Otherwise it is a simple value. No need to consume.
     }
 
-    private <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor<T> t)
+    private <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
             throws IOException, PSerializeException {
         if (token.isNull()) {
             return null;
@@ -424,8 +424,8 @@ public class PJsonSerializer extends PSerializer {
                 }
                 case MAP: {
                     PMap<Object, Object> mapType = (PMap<Object, Object>) t;
-                    PDescriptor<?> itemType = mapType.itemDescriptor();
-                    PDescriptor<?> keyType = mapType.keyDescriptor();
+                    PDescriptor itemType = mapType.itemDescriptor();
+                    PDescriptor keyType = mapType.keyDescriptor();
                     if (!token.isSymbol(JsonToken.kMapStart)) {
                         throw new PSerializeException("Incompatible start of map " + token);
                     }
@@ -445,7 +445,7 @@ public class PJsonSerializer extends PSerializer {
                     return cast(map.build());
                 }
                 case SET: {
-                    PDescriptor<?> itemType = ((PSet<?>) t).itemDescriptor();
+                    PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new PSerializeException("Incompatible start of list " + token);
                     }
@@ -573,7 +573,7 @@ public class PJsonSerializer extends PSerializer {
         } else {
             if (message.compact()) {
                 writer.array();
-                for (PField<?> field : type.getFields()) {
+                for (PField field : type.getFields()) {
                     if (message.has(field.getKey())) {
                         appendTypedValue(writer, field.getDescriptor(), message.get(field.getKey()));
                     } else {
@@ -583,7 +583,7 @@ public class PJsonSerializer extends PSerializer {
                 writer.endArray();
             } else {
                 writer.object();
-                for (PField<?> field : type.getFields()) {
+                for (PField field : type.getFields()) {
                     if (message.has(field.getKey())) {
                         Object value = message.get(field.getKey());
                         if (IdType.ID.equals(idType)) {
@@ -624,8 +624,7 @@ public class PJsonSerializer extends PSerializer {
             case LIST:
                 writer.array();
 
-                PContainer<?, ?> containerType = (PContainer<?, ?>) type;
-
+                PContainer<?> containerType = (PContainer<?>) type;
                 Collection<?> collection = (Collection<?>) value;
 
                 for (Object i : collection) {

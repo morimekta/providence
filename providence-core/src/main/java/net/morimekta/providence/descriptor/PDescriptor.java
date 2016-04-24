@@ -28,7 +28,7 @@ import net.morimekta.providence.PType;
  * no methods requiring that type.
  */
 @SuppressWarnings("unused")
-public interface PDescriptor<V> {
+public interface PDescriptor {
     /**
      * The package name is derived form the .thrift file name that is parsed or
      * if read from serialized format is explicit. Note that there may be

@@ -25,11 +25,6 @@ package net.morimekta.providence;
  */
 public interface PEnumValue<T> extends PValue<T> {
     /**
-     * @return The enum value comment.
-     */
-    String getComment();
-
-    /**
      * @return The numeric value for the enum.
      */
     int getValue();

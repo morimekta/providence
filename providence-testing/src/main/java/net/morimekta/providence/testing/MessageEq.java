@@ -112,7 +112,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             }
         }
 
-        for (PField<?> field : expected.descriptor()
+        for (PField field : expected.descriptor()
                                        .getFields()) {
             int key = field.getKey();
             String fieldXPath = xPath.isEmpty() ? field.getName() : xPath + "." + field.getName();

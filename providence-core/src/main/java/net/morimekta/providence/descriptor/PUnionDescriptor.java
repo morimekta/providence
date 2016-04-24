@@ -27,12 +27,11 @@ import net.morimekta.providence.PMessageVariant;
  * The definition of a thrift union.
  */
 public abstract class PUnionDescriptor<T extends PMessage<T>, F extends PField> extends PStructDescriptor<T, F> {
-    public PUnionDescriptor(String comment,
-                            String packageName,
+    public PUnionDescriptor(String packageName,
                             String name,
                             PMessageBuilderFactory<T> provider,
                             boolean simple) {
-        super(comment, packageName, name, provider, simple, false);
+        super(packageName, name, provider, simple, false);
     }
 
     @Override

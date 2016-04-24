@@ -19,8 +19,6 @@
 
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.PEnumValue;
-import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 
@@ -30,7 +28,7 @@ import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 public class JAnnotation {
     public static final String DEPRECATED = "@Deprecated";
 
-    public static boolean isDeprecated(PField<?> field) {
+    public static boolean isDeprecated(PField field) {
         if (field instanceof CAnnotatedDescriptor) {
             return isDeprecated((CAnnotatedDescriptor) field);
         }
@@ -41,25 +39,11 @@ public class JAnnotation {
         return isDeprecated(field.getPField());
     }
 
-    public static boolean isDeprecated(PDeclaredDescriptor<?> type) {
-        if (type instanceof CAnnotatedDescriptor) {
-            return isDeprecated((CAnnotatedDescriptor) type);
-        }
-        return false;
-    }
-
-    public static boolean isDeprecated(PEnumValue<?> value) {
-        if (value instanceof CAnnotatedDescriptor) {
-            return isDeprecated((CAnnotatedDescriptor) value);
-        }
-        return false;
-    }
-
     public static boolean isDeprecated(CAnnotatedDescriptor value) {
         return value.hasAnnotation("deprecated");
     }
 
-    public static ContainerType containerType(PField<?> field) {
+    public static ContainerType containerType(PField field) {
         if (field instanceof CAnnotatedDescriptor) {
             return containerType((CAnnotatedDescriptor) field);
         }

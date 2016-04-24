@@ -39,18 +39,20 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
     private final Map<String, String>  annotations;
+    private final String               comment;
 
     public CUnionDescriptor(String comment,
                             String packageName,
                             String name,
                             List<CField> fields,
                             Map<String, String> annotations) {
-        super(comment, packageName, name, new _Factory(),
+        super(packageName, name, new _Factory(),
               // overrides isSimple instead to avoid having to check fields
               // types before it's converted.
               false);
         ((_Factory) getFactoryInternal()).setType(this);
 
+        this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;
 
@@ -62,6 +64,11 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         }
         this.fieldIdMap = fieldIdMap;
         this.fieldNameMap = fieldNameMap;
+    }
+
+    @Override
+    public final String getComment() {
+        return comment;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
 
     @Override
     public boolean isSimple() {
-        for (PField<?> field : getFields()) {
+        for (PField field : getFields()) {
             switch (field.getType()) {
                 case MAP:
                 case SET:

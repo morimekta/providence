@@ -33,13 +33,12 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
     private final boolean                   compactible;
     private final boolean                   simple;
 
-    public PStructDescriptor(String comment,
-                             String packageName,
+    public PStructDescriptor(String packageName,
                              String name,
                              PMessageBuilderFactory<T> factory,
                              boolean simple,
                              boolean compactible) {
-        super(comment, packageName, name);
+        super(packageName, name);
 
         this.factory = factory;
         this.simple = simple;
@@ -106,7 +105,7 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
             getFields().length != other.getFields().length) {
             return false;
         }
-        for (PField<?> field : getFields()) {
+        for (PField field : getFields()) {
             if (!field.equals(other.getField(field.getKey()))) {
                 return false;
             }
@@ -119,7 +118,7 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
         int hash = PStructDescriptor.class.hashCode() +
                    getQualifiedName(null).hashCode() +
                    getVariant().hashCode();
-        for (PField<?> field : getFields()) {
+        for (PField field : getFields()) {
             hash += field.hashCode();
         }
         return hash;

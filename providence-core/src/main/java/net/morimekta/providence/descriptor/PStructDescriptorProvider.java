@@ -26,7 +26,7 @@ import net.morimekta.providence.PMessage;
  * @since 25.08.15
  */
 public abstract class PStructDescriptorProvider<V extends PMessage<V>, F extends PField>
-        implements PDescriptorProvider<V> {
+        implements PDescriptorProvider {
     @Override
     public abstract PStructDescriptor<V, F> descriptor();
 }

@@ -20,7 +20,6 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
-import net.morimekta.util.Binary;
 
 import java.util.Objects;
 
@@ -29,24 +28,24 @@ import java.util.Objects;
  * <p>
  * These are the basic types used in the thrift structure except containers.
  */
-public class PPrimitive<T> implements PDescriptor<T> {
-    public static final PPrimitive<Void>    VOID   = new PPrimitive<>(PType.VOID, null);
-    public static final PPrimitive<Boolean> BOOL   = new PPrimitive<>(PType.BOOL, false);
-    public static final PPrimitive<Byte>    BYTE   = new PPrimitive<>(PType.BYTE, (byte) 0);
-    public static final PPrimitive<Short>   I16    = new PPrimitive<>(PType.I16, (short) 0);
-    public static final PPrimitive<Integer> I32    = new PPrimitive<>(PType.I32, 0);
-    public static final PPrimitive<Long>    I64    = new PPrimitive<>(PType.I64, (long) 0);
-    public static final PPrimitive<Double>  DOUBLE = new PPrimitive<>(PType.DOUBLE, 0.0);
-    public static final PPrimitive<String>  STRING = new PPrimitive<>(PType.STRING, null);
-    public static final PPrimitive<Binary>  BINARY = new PPrimitive<>(PType.BINARY, null);
+public class PPrimitive implements PDescriptor {
+    public static final PPrimitive VOID   = new PPrimitive(PType.VOID, null);
+    public static final PPrimitive BOOL   = new PPrimitive(PType.BOOL, false);
+    public static final PPrimitive BYTE   = new PPrimitive(PType.BYTE, (byte) 0);
+    public static final PPrimitive I16    = new PPrimitive(PType.I16, (short) 0);
+    public static final PPrimitive I32    = new PPrimitive(PType.I32, 0);
+    public static final PPrimitive I64    = new PPrimitive(PType.I64, (long) 0);
+    public static final PPrimitive DOUBLE = new PPrimitive(PType.DOUBLE, 0.0);
+    public static final PPrimitive STRING = new PPrimitive(PType.STRING, null);
+    public static final PPrimitive BINARY = new PPrimitive(PType.BINARY, null);
 
-    private final PPrimitiveProvider<T> mProvider;
-    private final PType                 mType;
-    private final T                     mDefault;
+    private final PPrimitiveProvider mProvider;
+    private final PType              mType;
+    private final Object             mDefault;
 
-    private PPrimitive(PType type, T defValue) {
+    private PPrimitive(PType type, Object defValue) {
         mType = type;
-        mProvider = new PPrimitiveProvider<>(this);
+        mProvider = new PPrimitiveProvider(this);
         mDefault = defValue;
     }
 
@@ -55,7 +54,7 @@ public class PPrimitive<T> implements PDescriptor<T> {
      *
      * @return The descriptor provider.
      */
-    public PPrimitiveProvider<T> provider() {
+    public PPrimitiveProvider provider() {
         return mProvider;
     }
 
@@ -97,7 +96,7 @@ public class PPrimitive<T> implements PDescriptor<T> {
     /**
      * @return The default value for the primitive.
      */
-    public T getDefaultValue() {
+    public Object getDefaultValue() {
         return mDefault;
     }
 
@@ -106,7 +105,7 @@ public class PPrimitive<T> implements PDescriptor<T> {
      * @param name The name of the primitive.
      * @return The primitive descriptor.
      */
-    public static PPrimitive<?> findByName(String name) {
+    public static PPrimitive findByName(String name) {
         switch (name) {
             case "void":
                 return VOID;
