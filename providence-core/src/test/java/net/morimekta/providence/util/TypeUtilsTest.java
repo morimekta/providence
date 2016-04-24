@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class PTypeUtilsTest {
+public class TypeUtilsTest {
     String  mString;
     String  mString_ne;
     String  mString_eq;
@@ -81,36 +81,36 @@ public class PTypeUtilsTest {
 
     @Test
     public void testEquals_simple_eq() {
-        assertTrue(PTypeUtils.equals(mString, mString_eq));
-        assertTrue(PTypeUtils.equals(mInteger, mInteger_eq));
-        assertTrue(PTypeUtils.equals(mDouble, mDouble_eq));
+        assertTrue(TypeUtils.equals(mString, mString_eq));
+        assertTrue(TypeUtils.equals(mInteger, mInteger_eq));
+        assertTrue(TypeUtils.equals(mDouble, mDouble_eq));
     }
 
     @Test
     public void testEquals_simple_ne() {
-        assertFalse(PTypeUtils.equals(mString, mString_ne));
-        assertFalse(PTypeUtils.equals(mInteger, mInteger_ne));
-        assertFalse(PTypeUtils.equals(mDouble, mDouble_ne));
+        assertFalse(TypeUtils.equals(mString, mString_ne));
+        assertFalse(TypeUtils.equals(mInteger, mInteger_ne));
+        assertFalse(TypeUtils.equals(mDouble, mDouble_ne));
     }
 
     @Test
     public void testEquals_simple_typesafe() {
         // They are all numerically '1', but of different types.
-        assertFalse(PTypeUtils.equals(mString, mInteger));
-        assertFalse(PTypeUtils.equals(mString, mDouble));
-        assertFalse(PTypeUtils.equals(mInteger, mDouble));
+        assertFalse(TypeUtils.equals(mString, mInteger));
+        assertFalse(TypeUtils.equals(mString, mDouble));
+        assertFalse(TypeUtils.equals(mInteger, mDouble));
     }
 
     @Test
     public void testEquals_simple_array() {
-        assertTrue(PTypeUtils.equals(mArray, mArray_eq));
+        assertTrue(TypeUtils.equals(mArray, mArray_eq));
 
-        assertFalse(PTypeUtils.equals(mArray, mArray_ne_length));
-        assertFalse(PTypeUtils.equals(mArray, mArray_ne_content));
-        assertFalse(PTypeUtils.equals(mArray_ne_length, mArray));
-        assertFalse(PTypeUtils.equals(mArray_ne_content, mArray));
-        assertFalse(PTypeUtils.equals(mArray, mArray_string));
-        assertFalse(PTypeUtils.equals(mArray_string, mArray));
+        assertFalse(TypeUtils.equals(mArray, mArray_ne_length));
+        assertFalse(TypeUtils.equals(mArray, mArray_ne_content));
+        assertFalse(TypeUtils.equals(mArray_ne_length, mArray));
+        assertFalse(TypeUtils.equals(mArray_ne_content, mArray));
+        assertFalse(TypeUtils.equals(mArray, mArray_string));
+        assertFalse(TypeUtils.equals(mArray_string, mArray));
     }
 
     @Test
@@ -127,18 +127,18 @@ public class PTypeUtilsTest {
         composite2.put(2, 2);
         composite2.put(1, "1");
 
-        assertTrue(PTypeUtils.equals(composite1, composite2));
-        assertTrue(PTypeUtils.equals(composite2, composite1));
+        assertTrue(TypeUtils.equals(composite1, composite2));
+        assertTrue(TypeUtils.equals(composite2, composite1));
 
         Map<Integer, Object> composite3 = new TreeMap<>(composite2);
 
-        assertTrue(PTypeUtils.equals(composite1, composite3));
-        assertTrue(PTypeUtils.equals(composite3, composite1));
+        assertTrue(TypeUtils.equals(composite1, composite3));
+        assertTrue(TypeUtils.equals(composite3, composite1));
 
         composite2.put(4, 2);
 
-        assertFalse(PTypeUtils.equals(composite1, composite2));
-        assertFalse(PTypeUtils.equals(composite2, composite1));
+        assertFalse(TypeUtils.equals(composite1, composite2));
+        assertFalse(TypeUtils.equals(composite2, composite1));
     }
 
     @Test
@@ -154,20 +154,20 @@ public class PTypeUtilsTest {
         composite2.add(2);
         composite2.add((short) 3);
 
-        assertTrue(PTypeUtils.equals(composite1, composite2));
-        assertTrue(PTypeUtils.equals(composite2, composite1));
+        assertTrue(TypeUtils.equals(composite1, composite2));
+        assertTrue(TypeUtils.equals(composite2, composite1));
 
         composite2.remove(2);
 
         // Different content (same plus extra).
-        assertFalse(PTypeUtils.equals(composite1, composite2));
-        assertFalse(PTypeUtils.equals(composite2, composite1));
+        assertFalse(TypeUtils.equals(composite1, composite2));
+        assertFalse(TypeUtils.equals(composite2, composite1));
 
         composite2.add(0, (short) 3);
 
         // Same content, but different order.
-        assertFalse(PTypeUtils.equals(composite1, composite2));
-        assertFalse(PTypeUtils.equals(composite2, composite1));
+        assertFalse(TypeUtils.equals(composite1, composite2));
+        assertFalse(TypeUtils.equals(composite2, composite1));
     }
 
     @Test
@@ -183,20 +183,20 @@ public class PTypeUtilsTest {
         composite2.add("2");
         composite2.add("1");
 
-        assertTrue(PTypeUtils.equals(composite1, composite2));
-        assertTrue(PTypeUtils.equals(composite2, composite1));
+        assertTrue(TypeUtils.equals(composite1, composite2));
+        assertTrue(TypeUtils.equals(composite2, composite1));
 
         composite2.remove("3");
 
         // Different content (same plus extra).
-        assertFalse(PTypeUtils.equals(composite1, composite2));
-        assertFalse(PTypeUtils.equals(composite2, composite1));
+        assertFalse(TypeUtils.equals(composite1, composite2));
+        assertFalse(TypeUtils.equals(composite2, composite1));
 
         composite2.add("3");
 
         // Same content, but different order.
-        assertTrue(PTypeUtils.equals(composite1, composite2));
-        assertTrue(PTypeUtils.equals(composite2, composite1));
+        assertTrue(TypeUtils.equals(composite1, composite2));
+        assertTrue(TypeUtils.equals(composite2, composite1));
     }
 
     @Test

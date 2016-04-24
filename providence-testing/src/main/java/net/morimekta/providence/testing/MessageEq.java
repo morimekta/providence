@@ -5,7 +5,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.util.TypeUtils;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
@@ -127,7 +127,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
                                                  fieldXPath,
                                                  toString(expected.get(field.getKey()))));
                 }
-            } else if (!PTypeUtils.equals(expected.get(key), actual.get(key))) {
+            } else if (!TypeUtils.equals(expected.get(key), actual.get(key))) {
                 switch (field.getType()) {
                     case MESSAGE: {
                         collectMismatches(fieldXPath,
@@ -184,7 +184,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             } else {
                 V exp = expected.get(key);
                 V act = actual.get(key);
-                if (!PTypeUtils.equals(exp, act)) {
+                if (!TypeUtils.equals(exp, act)) {
                     // value differs.
                     String keyedXPath = String.format("%s[%s]", xPath, toString(key));
                     if (exp == null || act == null) {
@@ -240,7 +240,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             handledItems.add(expectedItem);
 
             T actualItem = actual.size() > expectedIndex ? actual.get(expectedIndex) : null;
-            if (PTypeUtils.equals(expectedItem, actualItem)) {
+            if (TypeUtils.equals(expectedItem, actualItem)) {
                 continue;
             }
             int actualIndex = actual.indexOf(expectedItem);

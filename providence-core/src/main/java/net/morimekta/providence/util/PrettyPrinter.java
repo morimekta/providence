@@ -44,7 +44,7 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public class PPrettyPrinter {
+public class PrettyPrinter {
     private final static String INDENT  = "  ";
     private final static String SPACE   = " ";
     private final static String NEWLINE = "\n";
@@ -55,15 +55,15 @@ public class PPrettyPrinter {
     private final String mNewline;
     private final String mSep;
 
-    public PPrettyPrinter() {
+    public PrettyPrinter() {
         this(INDENT, SPACE, NEWLINE, SEP);
     }
 
-    public PPrettyPrinter(String indent, String space, String newline) {
+    public PrettyPrinter(String indent, String space, String newline) {
         this(indent, space, newline, SEP);
     }
 
-    public PPrettyPrinter(String indent, String space, String newline, String sep) {
+    public PrettyPrinter(String indent, String space, String newline, String sep) {
         mIndent = indent;
         mSpace = space;
         mNewline = newline;

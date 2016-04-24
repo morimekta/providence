@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.util.TypeUtils;
+
 /** <name> (= <value>) */
 @SuppressWarnings("unused")
 public class EnumValue
@@ -117,7 +119,7 @@ public class EnumValue
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mValue, other.mValue) &&
-               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
+               TypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class EnumValue
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, TypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -165,7 +167,7 @@ public class EnumValue
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
+            out.append(TypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();

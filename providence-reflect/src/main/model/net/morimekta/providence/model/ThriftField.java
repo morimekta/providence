@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.util.TypeUtils;
+
 /**
  * For fields:
  *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
@@ -177,7 +179,7 @@ public class ThriftField
                java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
-               net.morimekta.providence.util.PTypeUtils.equals(mAnnotations, other.mAnnotations);
+               TypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -191,7 +193,7 @@ public class ThriftField
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.PTypeUtils.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, TypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -246,7 +248,7 @@ public class ThriftField
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.PTypeUtils.toString(mAnnotations));
+            out.append(TypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();

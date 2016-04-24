@@ -25,7 +25,7 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.util.TypeUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -156,9 +156,9 @@ public class CField implements PField, CAnnotatedDescriptor {
                requirement == other.requirement &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
-               PTypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
+               TypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
                name.equals(other.name) &&
-               PTypeUtils.equals(defaultValue, other.defaultValue);
+               TypeUtils.equals(defaultValue, other.defaultValue);
     }
 
     @Override

@@ -1,11 +1,14 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CService;
+import net.morimekta.providence.serializer.MessageReader;
+import net.morimekta.providence.serializer.MessageWriter;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -40,6 +43,8 @@ public class JServiceFormat {
 
         appendIface(writer, service);
 
+        appendProcessor(writer, service);
+
         appendDescriptor(writer, service);
 
         appendStructs(writer, service);
@@ -49,6 +54,30 @@ public class JServiceFormat {
 
         writer.end()
               .appendln('}');
+    }
+
+    private void appendProcessor(IndentedPrintWriter writer, JService service) {
+        writer.formatln("public static class Processor implements %s {", PProcessor.class.getName())
+              .begin()
+              .appendln("private final Iface impl;");
+
+        writer.formatln("public Processor(Iface impl) {")
+              .appendln("    this.impl = impl;")
+              .appendln('}')
+              .newline();
+
+        writer.appendln("@Override")
+              .formatln("public boolean process(%s reader, %s writer) {",
+                        MessageReader.class.getName(),
+                        MessageWriter.class.getName())
+              .begin()
+              .appendln("return true;")
+              .end()
+              .appendln('}');
+
+        writer.end()
+              .appendln('}')
+              .newline();
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, JService service) throws GeneratorException {
@@ -177,10 +206,10 @@ public class JServiceFormat {
         if (service.getService().getExtendsService() != null) {
             CService other = (CService) service.getService().getExtendsService();
             inherits = "extends " + helper.getJavaPackage(other) + "." +
-                       new JService(other, helper).className() + ".IFace ";
+                       new JService(other, helper).className() + ".Iface ";
         }
 
-        writer.formatln("public interface IFace %s{", inherits)
+        writer.formatln("public interface Iface %s{", inherits)
               .begin();
 
         boolean firstMethod = true;
@@ -203,36 +232,31 @@ public class JServiceFormat {
                 writer.appendln("void");
             }
 
-            // Use the un-changed method name.
-            // TODO: change to use a camel-cased name.
-            writer.format(" %s(", method.methodName());
+            writer.format(" %s(", method.methodName())
+                  .begin("        ");
 
             boolean first = true;
             for (JField param : method.params()) {
                 if (first) {
                     first = false;
                 } else {
-                    writer.append(", ");
-                }
-                writer.format("%s %s", param.valueType(), param.param());
-            }
-
-            writer.format(")");
-
-            first = true;
-            for (JField ex : method.exceptions()) {
-                if (first) {
-                    first = false;
-                    writer.appendln("        throws ");
-                } else {
                     writer.append(",");
-                    writer.appendln("               ");
                 }
-
-                writer.append(ex.instanceType());
+                writer.formatln("%s %s", param.valueType(), param.param());
             }
 
-            writer.format(";");
+            writer.end()
+                  .format(")")
+                  .formatln("        throws %s", IOException.class.getName())
+                  .begin(   "               ");
+
+            for (JField ex : method.exceptions()) {
+                writer.append(",");
+                writer.appendln(ex.instanceType());
+            }
+
+            writer.format(";")
+                  .end();
         }
 
         writer.end()

@@ -20,8 +20,8 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import java.io.InputStream;
  * @since 07.09.15
  */
 public class MessageParser implements Parser {
-    private final PSerializer mSerializer;
+    private final Serializer mSerializer;
 
-    public MessageParser(PSerializer serializer) {
+    public MessageParser(Serializer serializer) {
         mSerializer = serializer;
     }
 
@@ -41,7 +41,7 @@ public class MessageParser implements Parser {
     public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
         try {
             return mSerializer.deserialize(in, ThriftDocument.kDescriptor);
-        } catch (PSerializeException tse) {
+        } catch (SerializerException tse) {
             throw new ParseException("Failed to deserialize definition file.", tse);
         }
     }

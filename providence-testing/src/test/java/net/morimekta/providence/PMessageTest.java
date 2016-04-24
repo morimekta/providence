@@ -19,7 +19,7 @@
 
 package net.morimekta.providence;
 
-import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.testing.ProvidenceHelper;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
@@ -40,7 +40,7 @@ public class PMessageTest {
     private static Operation operation;
 
     @Before
-    public void setUp() throws IOException, PSerializeException {
+    public void setUp() throws IOException, SerializerException {
         synchronized (PMessageTest.class) {
             if (operation == null) {
                 operation = ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
@@ -49,7 +49,7 @@ public class PMessageTest {
     }
 
     @Test
-    public void testToString() throws IOException, PSerializeException {
+    public void testToString() throws IOException, SerializerException {
         assertEquals("calculator.Operand{imaginary:{v:1.7,i:-2}}",
                      operation.getOperands()
                               .get(1)

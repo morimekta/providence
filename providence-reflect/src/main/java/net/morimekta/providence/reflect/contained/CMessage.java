@@ -23,8 +23,8 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PPrettyPrinter;
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.util.PrettyPrinter;
+import net.morimekta.providence.util.TypeUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -131,7 +131,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             if (has(id) != other.has(id)) {
                 return false;
             }
-            if (!PTypeUtils.equals(get(id), other.get(id))) {
+            if (!TypeUtils.equals(get(id), other.get(id))) {
                 return false;
             }
         }
@@ -143,14 +143,14 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField field = descriptor().getField(entry.getKey());
-            hash += PTypeUtils.hashCode(field, entry.getValue());
+            hash += TypeUtils.hashCode(field, entry.getValue());
         }
         return hash;
     }
 
     @Override
     public int compareTo(T other) {
-        return PTypeUtils.compare((T) this, other);
+        return TypeUtils.compare((T) this, other);
     }
 
     @Override
@@ -160,6 +160,6 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public String asString() {
-        return new PPrettyPrinter("", "", "").format(this);
+        return new PrettyPrinter("", "", "").format(this);
     }
 }

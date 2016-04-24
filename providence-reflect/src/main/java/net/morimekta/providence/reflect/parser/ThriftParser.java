@@ -301,7 +301,14 @@ public class ThriftParser implements Parser {
                 method.setReturnType(parseType(tokenizer, token));
             }
 
-            method.setName(tokenizer.expectIdentifier("reading method name").asString());
+            String name = tokenizer.expectIdentifier("reading method name").asString();
+            if (methodNames.contains(name) || methodNames.contains(Strings.camelCase("", name))) {
+                throw new ParseException("");
+            }
+            methodNames.add(name);
+            methodNames.add(Strings.camelCase("", name));
+
+            method.setName(name);
 
             tokenizer.expectSymbol("reading method params begin", Token.kParamsStart);
             while (true) {
@@ -339,7 +346,7 @@ public class ThriftParser implements Parser {
                     char sep = Token.kParamsStart;
                     while (sep != Token.kParamsEnd) {
                         token = tokenizer.expectQualifiedIdentifier("annotation name");
-                        String name = token.asString();
+                        name = token.asString();
                         tokenizer.expectSymbol("", Token.kFieldValueSep);
                         Token value = tokenizer.expectStringLiteral("annotation value");
 
@@ -347,6 +354,11 @@ public class ThriftParser implements Parser {
 
                         sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                     }
+                }
+
+                token = tokenizer.peek("reading method params");
+                if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                    tokenizer.next();
                 }
 
                 method.addToParams(field.build());
@@ -394,7 +406,7 @@ public class ThriftParser implements Parser {
                         char sep = Token.kParamsStart;
                         while (sep != Token.kParamsEnd) {
                             token = tokenizer.expectQualifiedIdentifier("exception annotation name");
-                            String name = token.asString();
+                            name = token.asString();
                             tokenizer.expectSymbol("", Token.kFieldValueSep);
                             Token value = tokenizer.expectStringLiteral("exception annotation value");
 
@@ -409,7 +421,7 @@ public class ThriftParser implements Parser {
 
                     method.addToExceptions(field.build());
 
-                    token = tokenizer.peek("reading method params");
+                    token = tokenizer.peek("reading method exceptions");
                     if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
                         tokenizer.next();
                     }
@@ -423,7 +435,7 @@ public class ThriftParser implements Parser {
                 char sep = Token.kParamsStart;
                 while (sep != Token.kParamsEnd) {
                     token = tokenizer.expectQualifiedIdentifier("annotation name");
-                    String name = token.asString();
+                    name = token.asString();
                     tokenizer.expectSymbol("", Token.kFieldValueSep);
                     Token value = tokenizer.expectStringLiteral("annotation value");
 

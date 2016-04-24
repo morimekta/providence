@@ -20,7 +20,7 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.util.PPrettyPrinter;
+import net.morimekta.providence.util.PrettyPrinter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,12 +36,12 @@ import static org.junit.Assert.fail;
  * @since 05.09.15
  */
 public class ThriftParserTest {
-    private PPrettyPrinter printer;
-    private ThriftParser parser;
+    private PrettyPrinter printer;
+    private ThriftParser  parser;
 
     @Before
     public void setUp() {
-        this.printer = new PPrettyPrinter();
+        this.printer = new PrettyPrinter();
         this.parser = new ThriftParser();
     }
 

@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class PPrettyPrinterTest {
+public class PrettyPrinterTest {
     private Operation mOperation;
     private String    mFormatted;
 
@@ -88,7 +88,7 @@ public class PPrettyPrinterTest {
 
     @Test
     public void testFormat() {
-        PPrettyPrinter printer = new PPrettyPrinter();
+        PrettyPrinter printer = new PrettyPrinter();
         assertEquals(mFormatted, printer.format(mOperation));
     }
 }

@@ -1,8 +1,8 @@
 package net.morimekta.providence.streams;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,12 +20,12 @@ import java.util.stream.Collector;
  */
 public class MessageCollectors {
     public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toFile(File file,
-                                                                                     PSerializer serializer) {
+                                                                                     Serializer serializer) {
         return toPath(file.toPath(), serializer);
     }
 
     public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toPath(Path file,
-                                                                                     PSerializer serializer) {
+                                                                                     Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> {
             try {
@@ -39,7 +39,7 @@ public class MessageCollectors {
                 if(!serializer.binaryProtocol()) {
                     result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
                 }
-            } catch(PSerializeException e) {
+            } catch(SerializerException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch(IOException e) {
@@ -58,7 +58,7 @@ public class MessageCollectors {
     }
 
     public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toStream(OutputStream out,
-                                                                                       PSerializer serializer) {
+                                                                                       Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> new BufferedOutputStream(out), (outputStream, t) -> {
             try {
@@ -68,7 +68,7 @@ public class MessageCollectors {
                         result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
                     }
                 }
-            } catch(PSerializeException e) {
+            } catch(SerializerException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch(IOException e) {

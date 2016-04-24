@@ -35,8 +35,8 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
@@ -66,7 +66,7 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 23.09.15
  */
-class TProtocolSerializer extends PSerializer {
+class TProtocolSerializer extends Serializer {
     private final TProtocolFactory protocolFactory;
     private final boolean          readStrict;
     private final boolean          binary;
@@ -92,7 +92,7 @@ class TProtocolSerializer extends PSerializer {
 
     @Override
     public <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, PSerializeException {
+    serialize(OutputStream output, T message) throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -102,13 +102,13 @@ class TProtocolSerializer extends PSerializer {
             wrapper.flush();
             return wrapper.getByteCount();
         } catch (TException e) {
-            throw new PSerializeException(e, e.getMessage());
+            throw new SerializerException(e, e.getMessage());
         }
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -123,28 +123,28 @@ class TProtocolSerializer extends PSerializer {
             wrapper.flush();
             return wrapper.getByteCount();
         } catch (TException e) {
-            throw new PSerializeException(e, e.getMessage());
+            throw new SerializerException(e, e.getMessage());
         }
     }
 
     @Override
     public <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, PSerializeException {
+    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TProtocol protocol = protocolFactory.getProtocol(transport);
 
             return readMessage(protocol, descriptor);
         } catch (TTransportException e) {
-            throw new PSerializeException(e, "Unable to serialize into transport protocol");
+            throw new SerializerException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {
-            throw new PSerializeException(e, "Transport exception in protocol");
+            throw new SerializerException(e, "Transport exception in protocol");
         }
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TProtocol protocol = protocolFactory.getProtocol(transport);
@@ -152,12 +152,12 @@ class TProtocolSerializer extends PSerializer {
             TMessage tm = protocol.readMessageBegin();
             PServiceMethod method = service.getMethod(tm.name);
             if (method == null) {
-                throw new PSerializeException("No such method " + tm.name + " on " + service.getQualifiedName(null));
+                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
             }
 
             PServiceCallType type = PServiceCallType.findByKey(tm.type);
             if (type == null) {
-                throw new PSerializeException("Unknown call type for id " + tm.type);
+                throw new SerializerException("Unknown call type for id " + tm.type);
             }
             @SuppressWarnings("unchecked")
             PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
@@ -168,13 +168,13 @@ class TProtocolSerializer extends PSerializer {
 
             return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
-            throw new PSerializeException(e, "Unable to serialize into transport protocol");
+            throw new SerializerException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {
-            throw new PSerializeException(e, "Transport exception in protocol");
+            throw new SerializerException(e, "Transport exception in protocol");
         }
     }
 
-    private void writeMessage(PMessage<?> message, TProtocol protocol) throws TException, PSerializeException {
+    private void writeMessage(PMessage<?> message, TProtocol protocol) throws TException, SerializerException {
         PStructDescriptor<?, ?> type = message.descriptor();
 
         protocol.writeStructBegin(new TStruct(message.descriptor()
@@ -199,7 +199,7 @@ class TProtocolSerializer extends PSerializer {
     }
 
     private <T extends PMessage<T>> T readMessage(TProtocol protocol, PStructDescriptor<T, ?> descriptor)
-            throws PSerializeException, TException {
+            throws SerializerException, TException {
         TField f;
 
         PMessageBuilder<T> builder = descriptor.builder();
@@ -213,18 +213,18 @@ class TProtocolSerializer extends PSerializer {
             if (f.id != 0) {
                 field = descriptor.getField(f.id);
                 if (field == null) {
-                    throw new PSerializeException("No such field " + f.id + " in " + descriptor.getQualifiedName(null));
+                    throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName(null));
                 }
             } else {
                 field = descriptor.getField(f.name);
                 if (field == null) {
-                    throw new PSerializeException(
+                    throw new SerializerException(
                             "No such field " + f.name + " in " + descriptor.getQualifiedName(null));
                 }
             }
 
             if (f.type != getFieldType(field.getDescriptor())) {
-                throw new PSerializeException("Incompatible serialized type " + PType.findById(f.type) +
+                throw new SerializerException("Incompatible serialized type " + PType.findById(f.type) +
                                               " for field " + field.getName() +
                                               ", expected " + field.getDescriptor()
                                                                    .getType());
@@ -232,7 +232,7 @@ class TProtocolSerializer extends PSerializer {
 
             Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
             if (value == null) {
-                throw new PSerializeException("Illegal null field value");
+                throw new SerializerException("Illegal null field value");
             }
             builder.set(field.getKey(), value);
 
@@ -241,14 +241,14 @@ class TProtocolSerializer extends PSerializer {
         protocol.readStructEnd();
 
         if (!builder.isValid() && readStrict) {
-            throw new PSerializeException("Read invalid message from protocol");
+            throw new SerializerException("Read invalid message from protocol");
         }
 
         return builder.build();
     }
 
     private <T> T readTypedValue(byte tType, PDescriptor type, TProtocol protocol)
-            throws TException, PSerializeException {
+            throws TException, SerializerException {
         switch (tType) {
             case TType.BOOL:
                 return cast(protocol.readBool());
@@ -263,7 +263,7 @@ class TProtocolSerializer extends PSerializer {
                     int value = protocol.readI32();
                     eb.setByValue(value);
                     if (!eb.isValid() && readStrict) {
-                        throw new PSerializeException("Invalid enum value " + value + " for " +
+                        throw new SerializerException("Invalid enum value " + value + " for " +
                                                       et.getQualifiedName(null));
                     }
                     return cast(eb.build());
@@ -322,12 +322,12 @@ class TProtocolSerializer extends PSerializer {
                 protocol.readMapEnd();
                 return cast(map.build());
             default:
-                throw new PSerializeException("Unsupported protocol field type: " + tType);
+                throw new SerializerException("Unsupported protocol field type: " + tType);
         }
     }
 
     private void writeTypedValue(Object item, PDescriptor type, TProtocol protocol)
-            throws TException, PSerializeException {
+            throws TException, SerializerException {
         switch (type.getType()) {
             case BOOL:
                 protocol.writeBool((Boolean) item);
@@ -397,9 +397,9 @@ class TProtocolSerializer extends PSerializer {
         }
     }
 
-    private byte getFieldType(PDescriptor type) throws PSerializeException {
+    private byte getFieldType(PDescriptor type) throws SerializerException {
         if (type == null) {
-            throw new PSerializeException("No type!");
+            throw new SerializerException("No type!");
         }
         return type.getType().id;
     }

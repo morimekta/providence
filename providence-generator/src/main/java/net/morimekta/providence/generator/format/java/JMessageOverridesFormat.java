@@ -1,6 +1,6 @@
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.util.TypeUtils;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Objects;
@@ -166,7 +166,7 @@ public class JMessageOverridesFormat {
                           .appendln("       ");
                 }
                 if (field.container()) {
-                    writer.format("%s.equals(%s, other.%s)", PTypeUtils.class.getName(), field.member(), field.member());
+                    writer.format("%s.equals(%s, other.%s)", TypeUtils.class.getName(), field.member(), field.member());
                 } else {
                     writer.format("%s.equals(%s, other.%s)",
                                   Objects.class.getName(),
@@ -197,7 +197,7 @@ public class JMessageOverridesFormat {
             if (field.container()) {
                 writer.formatln("_Field.%s, %s.hashCode(%s)",
                                 field.fieldEnum(),
-                                PTypeUtils.class.getName(),
+                                TypeUtils.class.getName(),
                                 field.member());
             } else {
                 writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
@@ -260,7 +260,7 @@ public class JMessageOverridesFormat {
                         writer.formatln("out.append(%s);", field.member());
                         break;
                     case DOUBLE:
-                        writer.formatln("out.append(%s.toString(%s));", PTypeUtils.class.getName(), field.member());
+                        writer.formatln("out.append(%s.toString(%s));", TypeUtils.class.getName(), field.member());
                         break;
                     case STRING:
                         writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
@@ -278,7 +278,7 @@ public class JMessageOverridesFormat {
                     case LIST:
                     case MAP:
                         writer.formatln("out.append(%s.toString(%s));",
-                                        PTypeUtils.class.getName(),
+                                        TypeUtils.class.getName(),
                                         field.member());
                         break;
                 }
@@ -326,7 +326,7 @@ public class JMessageOverridesFormat {
                         break;
                     case DOUBLE:
                         writer.formatln("out.append(%s.toString(%s));",
-                                        PTypeUtils.class.getName(),
+                                        TypeUtils.class.getName(),
                                         field.member());
                         break;
                     case STRING:
@@ -345,7 +345,7 @@ public class JMessageOverridesFormat {
                     case LIST:
                     case MAP:
                         writer.formatln("out.append(%s.toString(%s));",
-                                        PTypeUtils.class.getName(),
+                                        TypeUtils.class.getName(),
                                         field.member());
                         break;
                 }

@@ -25,8 +25,8 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,13 +36,13 @@ import java.io.OutputStream;
  * @since 22.09.15
  */
 public class JsonGenerator extends Generator {
-    private final TypeLoader      mLoader;
-    private final PJsonSerializer mSerializer;
+    private final TypeLoader     mLoader;
+    private final JsonSerializer mSerializer;
 
     public JsonGenerator(FileManager fileManager, TypeLoader loader) {
         super(fileManager);
         mLoader = loader;
-        mSerializer = new PJsonSerializer(PJsonSerializer.IdType.NAME, PJsonSerializer.IdType.NAME);
+        mSerializer = new JsonSerializer(JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class JsonGenerator extends Generator {
                 OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
                 try {
                     mSerializer.serialize(out, doc);
-                } catch (PSerializeException e) {
+                } catch (SerializerException e) {
                     throw new GeneratorException("Unable to serialize document.", e);
                 }
 

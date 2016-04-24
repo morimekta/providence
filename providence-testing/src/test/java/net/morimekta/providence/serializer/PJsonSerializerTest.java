@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
  */
 public class PJsonSerializerTest {
     @Test
-    public void testSerialize_compactStruct() throws PSerializeException {
+    public void testSerialize_compactStruct() throws SerializerException {
         CompactFields cat1 = CompactFields.builder()
                                           .setName("my_category")
                                           .setId(44)
@@ -48,7 +48,7 @@ public class PJsonSerializerTest {
                                           .build();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
+        JsonSerializer serializer = new JsonSerializer(JsonSerializer.IdType.NAME);
 
         String expectedOutput = "[\"my_category\",44]";
         int expectedLength = serializer.serialize(baos, cat1);
@@ -66,9 +66,9 @@ public class PJsonSerializerTest {
     }
 
     @Test
-    public void testDeserialize_compactStruct() throws PSerializeException {
+    public void testDeserialize_compactStruct() throws SerializerException {
         ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(UTF_8));
-        PJsonSerializer serializer = new PJsonSerializer(PJsonSerializer.IdType.NAME);
+        JsonSerializer serializer = new JsonSerializer(JsonSerializer.IdType.NAME);
 
         CompactFields category = serializer.deserialize(bais, CompactFields.kDescriptor);
 

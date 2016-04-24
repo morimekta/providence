@@ -90,7 +90,7 @@ import java.util.Map;
  * {"1":"tag","2":5,"3":6.45}
  * </pre>
  */
-public class PJsonSerializer extends PSerializer {
+public class JsonSerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.morimekta.providence.json";
 
     public enum IdType {
@@ -105,27 +105,27 @@ public class PJsonSerializer extends PSerializer {
     private final IdType  enumType;
     private final boolean pretty;
 
-    public PJsonSerializer() {
+    public JsonSerializer() {
         this(true, IdType.ID, IdType.ID, false);
     }
 
-    public PJsonSerializer(boolean strict) {
+    public JsonSerializer(boolean strict) {
         this(strict, IdType.ID, IdType.ID, false);
     }
 
-    public PJsonSerializer(IdType idType) {
+    public JsonSerializer(IdType idType) {
         this(true, idType, idType, false);
     }
 
-    public PJsonSerializer(boolean readStrict, IdType idType) {
+    public JsonSerializer(boolean readStrict, IdType idType) {
         this(readStrict, idType, idType, false);
     }
 
-    public PJsonSerializer(IdType idType, IdType enumType) {
+    public JsonSerializer(IdType idType, IdType enumType) {
         this(true, idType, enumType, false);
     }
 
-    public PJsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {
+    public JsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {
         this.readStrict = readStrict;
         this.idType = idType;
         this.enumType = enumType;
@@ -133,7 +133,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream output, T message) throws PSerializeException {
+    public <T extends PMessage<T>> int serialize(OutputStream output, T message) throws SerializerException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
@@ -142,15 +142,15 @@ public class PJsonSerializer extends PSerializer {
             counter.flush();
             return counter.getByteCount();
         } catch (JsonException e) {
-            throw new PSerializeException(e, "Unable to serialize JSON");
+            throw new SerializerException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to writeBinary to stream");
+            throw new SerializerException(e, "Unable to writeBinary to stream");
         }
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
@@ -166,14 +166,15 @@ public class PJsonSerializer extends PSerializer {
             counter.flush();
             return counter.getByteCount();
         } catch (JsonException e) {
-            throw new PSerializeException(e, "Unable to serialize JSON");
+            throw new SerializerException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to writeBinary to stream");
+            throw new SerializerException(e, "Unable to writeBinary to stream");
         }
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws PSerializeException {
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws
+                                                                                                                      SerializerException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
             if (!tokenizer.hasNext()) {
@@ -181,15 +182,15 @@ public class PJsonSerializer extends PSerializer {
             }
             return parseTypedValue(tokenizer.next(), tokenizer, type);
         } catch (JsonException e) {
-            throw new PSerializeException(e, "Unable to parse JSON");
+            throw new SerializerException(e, "Unable to parse JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to read stream");
+            throw new SerializerException(e, "Unable to read stream");
         }
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
             if (!tokenizer.hasNext()) {
@@ -197,9 +198,9 @@ public class PJsonSerializer extends PSerializer {
             }
             return parseServiceCall(tokenizer, service);
         } catch (JsonException e) {
-            throw new PSerializeException(e, "Unable to parse JSON");
+            throw new SerializerException(e, "Unable to parse JSON");
         } catch (IOException e) {
-            throw new PSerializeException(e, "Unable to read stream");
+            throw new SerializerException(e, "Unable to read stream");
         }
     }
 
@@ -214,13 +215,13 @@ public class PJsonSerializer extends PSerializer {
     }
 
     private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)
-            throws IOException, JsonException, PSerializeException {
+            throws IOException, JsonException, SerializerException {
         tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
 
         String methodName = tokenizer.expectString("Service call method").decodeJsonLiteral();
         PServiceMethod method = service.getMethod(methodName);
         if (method == null) {
-            throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
         }
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
@@ -228,7 +229,7 @@ public class PJsonSerializer extends PSerializer {
         int typeKey = tokenizer.expectNumber("Service call type").intValue();
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
         if (type == null) {
-            throw new PSerializeException("Service call type " + typeKey + " is not valid.");
+            throw new SerializerException("Service call type " + typeKey + " is not valid.");
         }
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
@@ -247,7 +248,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
-            throws PSerializeException, JsonException, IOException {
+            throws SerializerException, JsonException, IOException {
         PMessageBuilder<T> builder = type.builder();
 
         if (!tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
@@ -268,7 +269,7 @@ public class PJsonSerializer extends PSerializer {
                     Object value = parseTypedValue(tokenizer.expect("parsing message field value"), tokenizer, field.getDescriptor());
                     builder.set(field.getKey(), value);
                 } else if (readStrict) {
-                    throw new PSerializeException("Unknown field " + key + " for type " + type.getQualifiedName(null));
+                    throw new SerializerException("Unknown field " + key + " for type " + type.getQualifiedName(null));
                 } else {
                     consume(tokenizer.expect("consuming unknown message value"), tokenizer);
                 }
@@ -278,14 +279,14 @@ public class PJsonSerializer extends PSerializer {
         }
 
         if (readStrict && !builder.isValid()) {
-            throw new PSerializeException("Type " + type.getName() + " not properly populated");
+            throw new SerializerException("Type " + type.getName() + " not properly populated");
         }
 
         return builder.build();
     }
 
     private <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
-            throws PSerializeException, IOException, JsonException {
+            throws SerializerException, IOException, JsonException {
         PMessageBuilder<T> builder = type.builder();
         // compact message are not allowed to be empty.
 
@@ -298,7 +299,7 @@ public class PJsonSerializer extends PSerializer {
                 Object value = parseTypedValue(tokenizer.expect("parsing compact message field value"), tokenizer, field.getDescriptor());
                 builder.set(i, value);
             } else if (readStrict) {
-                throw new PSerializeException("Compact Field ID " + (i) + " outside field spectrum for type " +
+                throw new SerializerException("Compact Field ID " + (i) + " outside field spectrum for type " +
                                               type.getQualifiedName(null));
             } else {
                 consume(tokenizer.expect("consuming compact message field value"), tokenizer);
@@ -308,7 +309,7 @@ public class PJsonSerializer extends PSerializer {
         }
 
         if (readStrict && !builder.isValid()) {
-            throw new PSerializeException("Type " + type.getName() + " not properly populated");
+            throw new SerializerException("Type " + type.getName() + " not properly populated");
         }
 
         return builder.build();
@@ -344,7 +345,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     private <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         if (token.isNull()) {
             return null;
         }
@@ -357,43 +358,43 @@ public class PJsonSerializer extends PSerializer {
                     } else if (token.isInteger()) {
                         return cast(token.intValue() != 0);
                     }
-                    throw new PSerializeException("Not boolean value for token: " + token.asString());
+                    throw new SerializerException("Not boolean value for token: " + token.asString());
                 case BYTE:
                     if (token.isInteger()) {
                         return cast(token.byteValue());
                     }
-                    throw new PSerializeException("Not a valid byte value: " + token.asString());
+                    throw new SerializerException("Not a valid byte value: " + token.asString());
                 case I16:
                     if (token.isInteger()) {
                         return cast(token.shortValue());
                     }
-                    throw new PSerializeException("Not a valid short value: " + token.asString());
+                    throw new SerializerException("Not a valid short value: " + token.asString());
                 case I32:
                     if (token.isInteger()) {
                         return cast(token.intValue());
                     }
-                    throw new PSerializeException("Not a valid int value: " + token.asString());
+                    throw new SerializerException("Not a valid int value: " + token.asString());
                 case I64:
                     if (token.isInteger()) {
                         return cast(token.longValue());
                     }
-                    throw new PSerializeException("Not a valid long value: " + token.asString());
+                    throw new SerializerException("Not a valid long value: " + token.asString());
                 case DOUBLE:
                     if (token.isNumber()) {
                         return cast(token.doubleValue());
                     }
-                    throw new PSerializeException("Not a valid double value: " + token.asString());
+                    throw new SerializerException("Not a valid double value: " + token.asString());
                 case STRING:
                     if (token.isLiteral()) {
                         return cast(token.decodeJsonLiteral());
                     }
-                    throw new PSerializeException("Not a valid string value: " + token.asString());
+                    throw new SerializerException("Not a valid string value: " + token.asString());
                 case BINARY:
                     if (token.isLiteral()) {
                         return cast(Binary.fromBase64(token.substring(1, -1)
                                                            .asString()));
                     }
-                    throw new PSerializeException("Not a valid binary value: " + token.asString());
+                    throw new SerializerException("Not a valid binary value: " + token.asString());
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).builder();
                     if (token.isInteger()) {
@@ -402,10 +403,10 @@ public class PJsonSerializer extends PSerializer {
                         eb.setByName(token.substring(1, -1)
                                           .asString());
                     } else {
-                        throw new PSerializeException(token.toString() + " is not a enum value type");
+                        throw new SerializerException(token.toString() + " is not a enum value type");
                     }
                     if (readStrict && !eb.isValid()) {
-                        throw new PSerializeException(token.toString() + " is not a enum value");
+                        throw new SerializerException(token.toString() + " is not a enum value");
                     }
                     return cast(eb.build());
                 case MESSAGE: {
@@ -416,18 +417,18 @@ public class PJsonSerializer extends PSerializer {
                         if (st.isCompactible()) {
                             return cast(parseCompactMessage(tokenizer, st));
                         } else {
-                            throw new PSerializeException(
+                            throw new SerializerException(
                                     st.getName() + " is not compatible for compact struct notation.");
                         }
                     }
-                    throw new PSerializeException(token + " not parsable message start.");
+                    throw new SerializerException(token + " not parsable message start.");
                 }
                 case MAP: {
                     PMap<Object, Object> mapType = (PMap<Object, Object>) t;
                     PDescriptor itemType = mapType.itemDescriptor();
                     PDescriptor keyType = mapType.keyDescriptor();
                     if (!token.isSymbol(JsonToken.kMapStart)) {
-                        throw new PSerializeException("Incompatible start of map " + token);
+                        throw new SerializerException("Incompatible start of map " + token);
                     }
                     PMap.Builder<Object, Object> map = mapType.builder();
 
@@ -447,7 +448,7 @@ public class PJsonSerializer extends PSerializer {
                 case SET: {
                     PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new PSerializeException("Incompatible start of list " + token);
+                        throw new SerializerException("Incompatible start of list " + token);
                     }
                     PSet.Builder<Object> set = ((PSet<Object>) t).builder();
 
@@ -463,7 +464,7 @@ public class PJsonSerializer extends PSerializer {
                 case LIST: {
                     PDescriptor itemType = ((PList<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new PSerializeException("Incompatible start of list " + token);
+                        throw new SerializerException("Incompatible start of list " + token);
                     }
                     PList.Builder<Object> list = ((PList<Object>) t).builder();
                     if (!tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
@@ -477,15 +478,15 @@ public class PJsonSerializer extends PSerializer {
                 }
             }
         } catch (JsonException je) {
-            throw new PSerializeException(je, "Unable to parse type value.");
+            throw new SerializerException(je, "Unable to parse type value.");
         } catch (ClassCastException ce) {
-            throw new PSerializeException(ce, "Serialized type  not compatible with " + t.getQualifiedName(null));
+            throw new SerializerException(ce, "Serialized type  not compatible with " + t.getQualifiedName(null));
         }
 
-        throw new PSerializeException("Unhandled item type " + t.getQualifiedName(null));
+        throw new SerializerException("Unhandled item type " + t.getQualifiedName(null));
     }
 
-    private Object parseMapKey(String key, PDescriptor keyType) throws PSerializeException {
+    private Object parseMapKey(String key, PDescriptor keyType) throws SerializerException {
         try {
             switch (keyType.getType()) {
                 case BOOL:
@@ -503,13 +504,13 @@ public class PJsonSerializer extends PSerializer {
                         JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes()));
                         JsonToken token = tokenizer.next();
                         if (!token.isNumber()) {
-                            throw new PSerializeException(key + " is not a number");
+                            throw new SerializerException(key + " is not a number");
                         }
                         return token.doubleValue();
                     } catch (JsonException e) {
-                        throw new PSerializeException(e, "Unable to parse double from key \"" + key + "\"");
+                        throw new SerializerException(e, "Unable to parse double from key \"" + key + "\"");
                     } catch (IOException e) {
-                        throw new PSerializeException(e, "Unable to parse double from key \"" + key + "\" (IO)");
+                        throw new SerializerException(e, "Unable to parse double from key \"" + key + "\" (IO)");
                     }
                 case STRING:
                     return key;
@@ -517,7 +518,7 @@ public class PJsonSerializer extends PSerializer {
                     try {
                         return Binary.fromBase64(key);
                     } catch (IllegalArgumentException e) {
-                        throw new PSerializeException(e, "Unable to parse Base64 data.");
+                        throw new SerializerException(e, "Unable to parse Base64 data.");
                     }
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
@@ -527,14 +528,14 @@ public class PJsonSerializer extends PSerializer {
                         eb.setByName(key);
                     }
                     if (readStrict && !eb.isValid()) {
-                        throw new PSerializeException("%s is not a valid enum value for %s",
+                        throw new SerializerException("%s is not a valid enum value for %s",
                                                       key, keyType.getQualifiedName(null));
                     }
                     return eb.build();
                 case MESSAGE:
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
-                        throw new PSerializeException("Only simple structs can be used as map key. %s is not.",
+                        throw new SerializerException("Only simple structs can be used as map key. %s is not.",
                                                       st.getQualifiedName(null));
                     }
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
@@ -543,19 +544,19 @@ public class PJsonSerializer extends PSerializer {
                         tokenizer.expectSymbol("Message start", JsonToken.kMapStart);
                         return cast(parseMessage(tokenizer, st));
                     } catch (IOException e) {
-                        throw new PSerializeException(e, "Unable to tokenize map key: %s", key);
+                        throw new SerializerException(e, "Unable to tokenize map key: %s", key);
                     } catch (JsonException e) {
-                        throw new PSerializeException(e, "Unable to parse map key: %s", key);
+                        throw new SerializerException(e, "Unable to parse map key: %s", key);
                     }
                 default:
-                    throw new PSerializeException("Illegal key type: %s", keyType.getType());
+                    throw new SerializerException("Illegal key type: %s", keyType.getType());
             }
         } catch (NumberFormatException nfe) {
-            throw new PSerializeException(nfe, "Unable to parse numeric value %s", key);
+            throw new SerializerException(nfe, "Unable to parse numeric value %s", key);
         }
     }
 
-    private void appendMessage(JsonWriter writer, PMessage<?> message) throws PSerializeException, JsonException {
+    private void appendMessage(JsonWriter writer, PMessage<?> message) throws SerializerException, JsonException {
         PStructDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
@@ -600,7 +601,7 @@ public class PJsonSerializer extends PSerializer {
     }
 
     private void appendTypedValue(JsonWriter writer, PDescriptor type, Object value)
-            throws PSerializeException, JsonException {
+            throws SerializerException, JsonException {
         switch (type.getType()) {
             case MESSAGE:
                 PMessage<?> message = (PMessage<?>) value;
@@ -643,7 +644,7 @@ public class PJsonSerializer extends PSerializer {
      * @param writer    The writer to add primitive key to.
      * @param primitive Primitive object to get map key value of.
      */
-    private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
+    private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(idType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
@@ -669,7 +670,7 @@ public class PJsonSerializer extends PSerializer {
         } else if (primitive instanceof PMessage) {
             PMessage<?> message = (PMessage<?>) primitive;
             if (!message.descriptor().isSimple()) {
-                throw new PSerializeException("Only simple messages can be used as map keys. " +
+                throw new SerializerException("Only simple messages can be used as map keys. " +
                                               message.descriptor()
                                                      .getQualifiedName(null) + " is not.");
             }
@@ -679,7 +680,7 @@ public class PJsonSerializer extends PSerializer {
             json.flush();
             writer.key(new String(baos.toByteArray(), StandardCharsets.UTF_8));
         } else {
-            throw new PSerializeException("illegal simple type class " + primitive.getClass()
+            throw new SerializerException("illegal simple type class " + primitive.getClass()
                                                                                   .getSimpleName());
         }
     }
@@ -690,7 +691,7 @@ public class PJsonSerializer extends PSerializer {
      * @param writer    The JSON writer.
      * @param primitive The primitive instance.
      */
-    private void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, PSerializeException {
+    private void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(enumType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());
@@ -714,7 +715,7 @@ public class PJsonSerializer extends PSerializer {
         } else if (primitive instanceof Binary) {
             writer.value((Binary) primitive);
         } else {
-            throw new PSerializeException("illegal primitive type class " + primitive.getClass()
+            throw new SerializerException("illegal primitive type class " + primitive.getClass()
                                                                                      .getSimpleName());
         }
     }

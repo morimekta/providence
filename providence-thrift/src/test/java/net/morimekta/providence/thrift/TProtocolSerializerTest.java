@@ -5,8 +5,8 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
 
@@ -49,7 +49,7 @@ public class TProtocolSerializerTest {
     private static ArrayList<Containers> containers;
 
     @Before
-    public void setUp() throws PSerializeException, IOException {
+    public void setUp() throws SerializerException, IOException {
         synchronized (TProtocolSerializerTest.class) {
             // Since these are immutable, we don't need to read for each test.
             if (containers == null) {
@@ -155,8 +155,8 @@ public class TProtocolSerializerTest {
         }
     }
 
-    public void testRecoding(TProtocolFactory factory, PSerializer serializer)
-            throws IOException, PSerializeException, TException {
+    public void testRecoding(TProtocolFactory factory, Serializer serializer)
+            throws IOException, SerializerException, TException {
         assertEquals(10, containers.size());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -216,28 +216,28 @@ public class TProtocolSerializerTest {
     }
 
     @Test
-    public void testTBinaryProtocol() throws IOException, PSerializeException, TException {
+    public void testTBinaryProtocol() throws IOException, SerializerException, TException {
         testRecoding(new TBinaryProtocol.Factory(), new TBinaryProtocolSerializer());
     }
 
     @Test
-    public void testTCompactProtocol() throws IOException, PSerializeException, TException {
+    public void testTCompactProtocol() throws IOException, SerializerException, TException {
         testRecoding(new TCompactProtocol.Factory(), new TCompactProtocolSerializer());
     }
 
     @Test
-    public void testTTupleProtocol() throws IOException, PSerializeException, TException {
+    public void testTTupleProtocol() throws IOException, SerializerException, TException {
         testRecoding(new TTupleProtocol.Factory(), new TTupleProtocolSerializer());
     }
 
     @Test
-    public void testTJsonProtocol() throws IOException, PSerializeException, TException {
+    public void testTJsonProtocol() throws IOException, SerializerException, TException {
         testRecoding(new TJSONProtocol.Factory(), new TJsonProtocolSerializer());
     }
 
     @Test
     @Ignore("TSimpleJsonProtocol is write-only.")
-    public void testTSimpleJsonProtocol() throws IOException, PSerializeException, TException {
+    public void testTSimpleJsonProtocol() throws IOException, SerializerException, TException {
         testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
     }
 }

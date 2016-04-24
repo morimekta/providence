@@ -25,8 +25,8 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PPrettyPrinter;
-import net.morimekta.providence.util.PTypeUtils;
+import net.morimekta.providence.util.PrettyPrinter;
+import net.morimekta.providence.util.TypeUtils;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -142,7 +142,7 @@ public class CException extends Throwable implements PMessage<CException> {
             if (has(id) != other.has(id)) {
                 return false;
             }
-            if (PTypeUtils.equals(get(id), other.get(id))) {
+            if (TypeUtils.equals(get(id), other.get(id))) {
                 return false;
             }
         }
@@ -154,14 +154,14 @@ public class CException extends Throwable implements PMessage<CException> {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField field = descriptor().getField(entry.getKey());
-            hash += PTypeUtils.hashCode(field, entry.getValue());
+            hash += TypeUtils.hashCode(field, entry.getValue());
         }
         return hash;
     }
 
     @Override
     public int compareTo(CException other) {
-        return PTypeUtils.compare(this, other);
+        return TypeUtils.compare(this, other);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public String asString() {
-        return new PPrettyPrinter("", "", "").format(this);
+        return new PrettyPrinter("", "", "").format(this);
     }
 
     @Override

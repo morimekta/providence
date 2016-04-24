@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Providence type utilities.
  */
-public class PTypeUtils {
+public class TypeUtils {
     /**
      * Make a minimal printable string from a double value.
      *

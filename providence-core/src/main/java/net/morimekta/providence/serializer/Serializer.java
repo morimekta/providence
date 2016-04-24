@@ -38,18 +38,18 @@ import java.io.OutputStream;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public abstract class PSerializer {
+public abstract class Serializer {
     public abstract <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, PSerializeException;
+    serialize(OutputStream output, T message) throws IOException, SerializerException;
 
     public abstract <T extends PMessage<T>> int
-    serialize(OutputStream output, PServiceCall<T> call) throws IOException, PSerializeException;
+    serialize(OutputStream output, PServiceCall<T> call) throws IOException, SerializerException;
 
     public abstract <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, PSerializeException;
+    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException;
 
     public abstract <T extends PMessage<T>> PServiceCall<T>
-    deserialize(InputStream input, PService service) throws IOException, PSerializeException;
+    deserialize(InputStream input, PService service) throws IOException, SerializerException;
 
     public abstract boolean binaryProtocol();
 

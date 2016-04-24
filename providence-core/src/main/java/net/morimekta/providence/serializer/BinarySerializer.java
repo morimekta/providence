@@ -59,7 +59,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * See data definition file <code>docs/serializer-binary.md</code> for format
  * spec.
  */
-public class PBinarySerializer extends PSerializer {
+public class BinarySerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
 
     private static final int VERSION_MASK = 0xffff0000;
@@ -71,11 +71,11 @@ public class PBinarySerializer extends PSerializer {
     /**
      * Construct a serializer instance.
      */
-    public PBinarySerializer() {
+    public BinarySerializer() {
         this(true);
     }
 
-    public PBinarySerializer(boolean readStrict) {
+    public BinarySerializer(boolean readStrict) {
         this(readStrict, false);
     }
 
@@ -84,7 +84,7 @@ public class PBinarySerializer extends PSerializer {
      *
      * @param readStrict If the serializer should fail on reading mismatched data.
      */
-    public PBinarySerializer(boolean readStrict, boolean versioned) {
+    public BinarySerializer(boolean readStrict, boolean versioned) {
         this.readStrict = readStrict;
         this.versioned = versioned;
     }
@@ -100,14 +100,14 @@ public class PBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, PSerializeException {
+    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, SerializerException {
         BinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         BinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
 
@@ -127,14 +127,15 @@ public class PBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws
+                                                                                                                            SerializerException, IOException {
         BinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         BinaryReader in = new BigEndianBinaryReader(is);
 
         int methodNameLen = in.expectInt();
@@ -153,17 +154,17 @@ public class PBinarySerializer extends PSerializer {
                 method = service.getMethod(methodName);
                 sequence = in.expectInt();
             } else {
-                throw new PSerializeException("Bad protocol version: %08x", version >>> 16);
+                throw new SerializerException("Bad protocol version: %08x", version >>> 16);
             }
         } else {
             if (readStrict) {
-                throw new PSerializeException("Missing protocol version");
+                throw new SerializerException("Missing protocol version");
             }
 
             methodName = new String(in.expectBytes(methodNameLen), UTF_8);
             method = service.getMethod(methodName);
             if (method == null) {
-                throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
             }
             typeKey = in.expectByte();
             sequence = in.expectInt();
@@ -171,7 +172,7 @@ public class PBinarySerializer extends PSerializer {
 
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
         if (type == null) {
-            throw new PSerializeException("Invalid call type " + typeKey);
+            throw new SerializerException("Invalid call type " + typeKey);
         }
 
         @SuppressWarnings("unchecked")
@@ -182,7 +183,8 @@ public class PBinarySerializer extends PSerializer {
         return new PServiceCall<>(methodName, type, sequence, message);
     }
 
-    private <T extends PMessage<T>> int writeMessage(BinaryWriter writer, T message) throws IOException, PSerializeException {
+    private <T extends PMessage<T>> int writeMessage(BinaryWriter writer, T message) throws IOException,
+                                                                                            SerializerException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -209,7 +211,7 @@ public class PBinarySerializer extends PSerializer {
 
     private <T extends PMessage<T>> T readMessage(BinaryReader input,
                                                   PStructDescriptor<T, ?> descriptor,
-                                                  boolean nullable) throws PSerializeException, IOException {
+                                                  boolean nullable) throws SerializerException, IOException {
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
@@ -222,7 +224,7 @@ public class PBinarySerializer extends PSerializer {
                 builder.set(field.getKey(), value);
             } else {
                 if (readStrict) {
-                    throw new PSerializeException(
+                    throw new SerializerException(
                             "Unknown field " + fieldInfo.getId() + " for type" + descriptor.getQualifiedName(null));
                 }
                 readFieldValue(input, fieldInfo, null);
@@ -240,7 +242,7 @@ public class PBinarySerializer extends PSerializer {
      *
      * @param in Stream to read message from.
      */
-    private void consumeMessage(BinaryReader in) throws IOException, PSerializeException {
+    private void consumeMessage(BinaryReader in) throws IOException, SerializerException {
         FieldInfo fieldInfo;
         while ((fieldInfo = readFieldInfo(in)) != null) {
             readFieldValue(in, fieldInfo, null);
@@ -254,7 +256,7 @@ public class PBinarySerializer extends PSerializer {
      * @param in The stream to consume.
      * @return The field info or null.
      */
-    private FieldInfo readFieldInfo(BinaryReader in) throws IOException, PSerializeException {
+    private FieldInfo readFieldInfo(BinaryReader in) throws IOException, SerializerException {
         byte type = in.expectByte();
         if (type == PType.STOP.id) {
             return null;
@@ -274,10 +276,10 @@ public class PBinarySerializer extends PSerializer {
      * @throws IOException If unable to read from stream or invalid field type.
      */
     private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         if (type.getType().id != fieldInfo.getType()) {
             if (readStrict) {
-                throw new PSerializeException("");
+                throw new SerializerException("");
             }
         }
         switch (PType.findById(fieldInfo.getType())) {
@@ -329,7 +331,7 @@ public class PBinarySerializer extends PSerializer {
                 if (type != null) {
                     if (!type.getType()
                              .equals(PType.MAP)) {
-                        throw new PSerializeException("Invalid type for map encoding: " + type);
+                        throw new SerializerException("Invalid type for map encoding: " + type);
                     }
 
                     PMap<Object, Object> mapType = (PMap<Object, Object>) type;
@@ -349,7 +351,7 @@ public class PBinarySerializer extends PSerializer {
                     if (key != null && value != null) {
                         out.put(key, value);
                     } else if (readStrict) {
-                        throw new PSerializeException("Null key or value in map.");
+                        throw new SerializerException("Null key or value in map.");
                     }
                 }
                 return cast(out.build());
@@ -374,7 +376,7 @@ public class PBinarySerializer extends PSerializer {
                     if (key != null) {
                         out.add(key);
                     } else if (readStrict) {
-                        throw new PSerializeException("Null value in set.");
+                        throw new SerializerException("Null value in set.");
                     }
                 }
 
@@ -400,14 +402,14 @@ public class PBinarySerializer extends PSerializer {
                     if (key != null) {
                         out.add(key);
                     } else if (readStrict) {
-                        throw new PSerializeException("Null value in list.");
+                        throw new SerializerException("Null value in list.");
                     }
                 }
 
                 return cast(out.build());
             }
             default:
-                throw new PSerializeException("unknown data type: " + fieldInfo.getType());
+                throw new SerializerException("unknown data type: " + fieldInfo.getType());
         }
     }
 
@@ -426,7 +428,8 @@ public class PBinarySerializer extends PSerializer {
      * @param value The value to write.
      * @return The number of bytes written.
      */
-    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException, PSerializeException {
+    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException,
+                                                                                               SerializerException {
         switch (descriptor.getType()) {
             case BOOL:
                 return out.writeByte(((Boolean) value) ? (byte) 1 : (byte) 0);
@@ -485,7 +488,7 @@ public class PBinarySerializer extends PSerializer {
                 return size;
             }
             default:
-                throw new PSerializeException("");
+                throw new SerializerException("");
         }
     }
 

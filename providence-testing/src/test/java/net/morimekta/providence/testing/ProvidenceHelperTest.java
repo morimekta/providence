@@ -1,6 +1,6 @@
 package net.morimekta.providence.testing;
 
-import net.morimekta.providence.serializer.PSerializeException;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.calculator.Operator;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
  */
 public class ProvidenceHelperTest {
     @Test
-    public void testFromJsonResource_compact() throws PSerializeException, IOException {
+    public void testFromJsonResource_compact() throws SerializerException, IOException {
         Operation op = ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -50,7 +50,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testFromJsonResource_named() throws PSerializeException, IOException {
+    public void testFromJsonResource_named() throws SerializerException, IOException {
         Operation op = ProvidenceHelper.fromJsonResource("/json/calculator/named.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -79,7 +79,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testFromJsonResource_pretty() throws PSerializeException, IOException {
+    public void testFromJsonResource_pretty() throws SerializerException, IOException {
         Operation op = ProvidenceHelper.fromJsonResource("/json/calculator/pretty.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -108,7 +108,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testArrayListFromJsonResource() throws PSerializeException, IOException {
+    public void testArrayListFromJsonResource() throws SerializerException, IOException {
         List<Containers> pretty = ProvidenceHelper.arrayListFromJsonResource("/compat/pretty.json",
                                                                              Containers.kDescriptor);
         List<Containers> compact = ProvidenceHelper.arrayListFromJsonResource("/compat/compact.json",

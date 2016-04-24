@@ -23,7 +23,6 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
-import net.morimekta.providence.util.PTypeUtils;
 
 /**
  * The definition of a thrift enum.

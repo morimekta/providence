@@ -3,10 +3,10 @@ package net.morimekta.providence.streams;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.PFastBinarySerializer;
-import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.FastBinarySerializer;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.util.io.IOUtils;
 
 import java.io.BufferedInputStream;
@@ -43,11 +43,11 @@ public class MessageStreams {
     public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
                                                                            PStructDescriptor<T, F> descriptor)
             throws IOException {
-        PSerializer serializer;
+        Serializer serializer;
         if (file.getName().endsWith(".json")) {
-            serializer = new PJsonSerializer(true);
+            serializer = new JsonSerializer(true);
         } else {
-            serializer = new PFastBinarySerializer(true);
+            serializer = new FastBinarySerializer(true);
         }
         return file(file, serializer, descriptor);
     }
@@ -66,7 +66,7 @@ public class MessageStreams {
      * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
-                                                                           PSerializer serializer,
+                                                                           Serializer serializer,
                                                                            PStructDescriptor<T, F> descriptor)
             throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
@@ -87,7 +87,7 @@ public class MessageStreams {
      * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> resource(String resource,
-                                                                               PSerializer serializer,
+                                                                               Serializer serializer,
                                                                                PStructDescriptor<T, F> descriptor)
             throws IOException {
         InputStream in = MessageStreams.class.getResourceAsStream(resource);
@@ -121,7 +121,7 @@ public class MessageStreams {
      * @throws IOException when unable to open the stream.
      */
     public static <T extends PMessage<T>, F extends PField> Stream<T> stream(InputStream in,
-                                                                             PSerializer serializer,
+                                                                             Serializer serializer,
                                                                              PStructDescriptor<T, F> descriptor)
             throws IOException {
         return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, null), false);
@@ -205,13 +205,13 @@ public class MessageStreams {
             extends BaseMessageSpliterator<T> {
         private final InputStream             in;
         private final PStructDescriptor<T, F> descriptor;
-        private final PSerializer             serializer;
+        private final Serializer              serializer;
 
         private int                         num;
         private Function<InputStream, Void> closer;
 
         private StreamMessageSpliterator(InputStream in,
-                                         PSerializer serializer,
+                                         Serializer serializer,
                                          PStructDescriptor<T, F> descriptor,
                                          Function<InputStream, Void> closer) throws IOException {
             this.in = in;
@@ -251,7 +251,7 @@ public class MessageStreams {
                     close();
                 }
                 return out;
-            } catch(PSerializeException e) {
+            } catch(SerializerException e) {
                 throw new UncheckedIOException(new IOException(e));
             } catch(IOException e) {
                 throw new UncheckedIOException(e);

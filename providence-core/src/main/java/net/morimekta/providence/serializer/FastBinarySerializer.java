@@ -56,7 +56,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * <p>
  * See data definition file <code>docs/fast-binary.md</code> for format spec.
  */
-public class PFastBinarySerializer extends PSerializer {
+public class FastBinarySerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.morimekta.providence.binary";
 
     protected final boolean readStrict;
@@ -64,7 +64,7 @@ public class PFastBinarySerializer extends PSerializer {
     /**
      * Construct a serializer instance.
      */
-    public PFastBinarySerializer() {
+    public FastBinarySerializer() {
         this(false);
     }
 
@@ -73,19 +73,19 @@ public class PFastBinarySerializer extends PSerializer {
      *
      * @param readStrict If serializer should fail on unknown input data.
      */
-    public PFastBinarySerializer(boolean readStrict) {
+    public FastBinarySerializer(boolean readStrict) {
         this.readStrict = readStrict;
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, PSerializeException {
+    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, SerializerException {
         BinaryWriter out = new BinaryWriter(os);
         return writeMessage(out, message);
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         BinaryWriter out = new BinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
         int len = out.writeUInt8(method.length);
@@ -98,27 +98,28 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream is, PStructDescriptor<T, TF> descriptor) throws PSerializeException, IOException {
+    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream is, PStructDescriptor<T, TF> descriptor) throws
+                                                                                                                         SerializerException, IOException {
         BinaryReader in = new BinaryReader(is);
         return readMessage(in, descriptor);
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         BinaryReader in = new BinaryReader(is);
         // Max method name length: 255 chars.
         int methodNameLen = in.expectUInt8();
         String methodName = new String(in.expectBytes(methodNameLen), UTF_8);
         PServiceMethod method = service.getMethod(methodName);
         if (method == null) {
-            throw new PSerializeException("No such method " + methodName + " on " + service.getQualifiedName(null));
+            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
         }
 
         int typeKey = in.expectUInt8();
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
         if (type == null) {
-            throw new PSerializeException("Invalid call type " + typeKey);
+            throw new SerializerException("Invalid call type " + typeKey);
         }
 
         int sequence = in.readIntVarint();
@@ -143,7 +144,8 @@ public class PFastBinarySerializer extends PSerializer {
 
     // --- MESSAGE ---
 
-    private <T extends PMessage<T>> int writeMessage(BinaryWriter out, T message) throws IOException, PSerializeException {
+    private <T extends PMessage<T>> int writeMessage(BinaryWriter out, T message) throws IOException,
+                                                                                         SerializerException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -163,7 +165,7 @@ public class PFastBinarySerializer extends PSerializer {
     }
 
     private <T extends PMessage<T>, TF extends PField> T readMessage(BinaryReader in, PStructDescriptor<T, TF> descriptor)
-            throws PSerializeException, IOException {
+            throws SerializerException, IOException {
         PMessageBuilder<T> builder = descriptor.builder();
         int tag;
         while ((tag = in.readIntVarint()) > STOP) {
@@ -175,7 +177,7 @@ public class PFastBinarySerializer extends PSerializer {
                 builder.set(field.getKey(), value);
             } else {
                 if (readStrict) {
-                    throw new PSerializeException(
+                    throw new SerializerException(
                             "Unknown field " + id + " for type" + descriptor.getQualifiedName(null));
                 }
                 readFieldValue(in, tag, null);
@@ -188,7 +190,7 @@ public class PFastBinarySerializer extends PSerializer {
 
     @SuppressWarnings("unchecked")
     private int writeFieldValue(BinaryWriter out, int key, PDescriptor descriptor, Object value)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         switch (descriptor.getType()) {
             case BOOL: {
                 return out.writeVarint(key << 3 | ((Boolean) value ? TRUE : NONE));
@@ -262,18 +264,18 @@ public class PFastBinarySerializer extends PSerializer {
                 return len;
             }
             default:
-                throw new PSerializeException("");
+                throw new SerializerException("");
         }
     }
 
     @SuppressWarnings("unchecked")
     private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         switch (type) {
             case VARINT: {
                 if (descriptor == null) {
                     if (readStrict) {
-                        throw new PSerializeException("");
+                        throw new SerializerException("");
                     }
                     in.readLongVarint();
                     return null;
@@ -293,7 +295,7 @@ public class PFastBinarySerializer extends PSerializer {
                         return cast(builder.build());
                     }
                     default: {
-                        throw new PSerializeException("");
+                        throw new SerializerException("");
                     }
                 }
             }
@@ -309,11 +311,11 @@ public class PFastBinarySerializer extends PSerializer {
                         case BINARY:
                             return cast(Binary.wrap(data));
                         default:
-                            throw new PSerializeException("");
+                            throw new SerializerException("");
                     }
                 } else {
                     if (readStrict) {
-                        throw new PSerializeException("");
+                        throw new SerializerException("");
                     }
                     return null;
                 }
@@ -323,7 +325,7 @@ public class PFastBinarySerializer extends PSerializer {
             case COLLECTION:
                 if (descriptor == null) {
                     if (readStrict) {
-                        throw new PSerializeException("");
+                        throw new SerializerException("");
                     }
                     final int len = in.readIntVarint();
                     for (int i = 0; i < len; ++i) {
@@ -364,7 +366,7 @@ public class PFastBinarySerializer extends PSerializer {
                     }
                     return cast(out.build());
                 } else {
-                    throw new PSerializeException("Type " + descriptor.getType() +
+                    throw new SerializerException("Type " + descriptor.getType() +
                                                   " not compatible with collection data.");
                 }
             case NONE:

@@ -18,8 +18,8 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
@@ -45,7 +45,7 @@ import java.util.Set;
  * decided that this protocol should be written in a different way than other
  * protocols.
  */
-public class TTupleProtocolSerializer extends PSerializer {
+public class TTupleProtocolSerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.tuple";
 
     private final boolean          readStrict;
@@ -62,7 +62,7 @@ public class TTupleProtocolSerializer extends PSerializer {
 
     @Override
     public <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, PSerializeException {
+    serialize(OutputStream output, T message) throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -72,13 +72,13 @@ public class TTupleProtocolSerializer extends PSerializer {
             wrapper.flush();
             return wrapper.getByteCount();
         } catch (TException e) {
-            throw new PSerializeException(e, e.getMessage());
+            throw new SerializerException(e, e.getMessage());
         }
     }
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -93,28 +93,28 @@ public class TTupleProtocolSerializer extends PSerializer {
             wrapper.flush();
             return wrapper.getByteCount();
         } catch (TException e) {
-            throw new PSerializeException(e, e.getMessage());
+            throw new SerializerException(e, e.getMessage());
         }
     }
 
     @Override
     public <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, PSerializeException {
+    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
 
             return readMessage(protocol, descriptor);
         } catch (TTransportException e) {
-            throw new PSerializeException(e, "Unable to serialize into transport protocol");
+            throw new SerializerException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {
-            throw new PSerializeException(e, "Transport exception in protocol");
+            throw new SerializerException(e, "Transport exception in protocol");
         }
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws IOException, PSerializeException {
+            throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
@@ -122,12 +122,12 @@ public class TTupleProtocolSerializer extends PSerializer {
             TMessage tm = protocol.readMessageBegin();
             PServiceMethod method = service.getMethod(tm.name);
             if (method == null) {
-                throw new PSerializeException("No such method " + tm.name + " on " + service.getQualifiedName(null));
+                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
             }
 
             PServiceCallType type = PServiceCallType.findByKey(tm.type);
             if (type == null) {
-                throw new PSerializeException("Unknown call type for id " + tm.type);
+                throw new SerializerException("Unknown call type for id " + tm.type);
             }
             @SuppressWarnings("unchecked")
             PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
@@ -138,9 +138,9 @@ public class TTupleProtocolSerializer extends PSerializer {
 
             return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
-            throw new PSerializeException(e, "Unable to serialize into transport protocol");
+            throw new SerializerException(e, "Unable to serialize into transport protocol");
         } catch (TException e) {
-            throw new PSerializeException(e, "Transport exception in protocol");
+            throw new SerializerException(e, "Transport exception in protocol");
         }
     }
 
@@ -154,7 +154,7 @@ public class TTupleProtocolSerializer extends PSerializer {
         return MIME_TYPE;
     }
 
-    private void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, PSerializeException {
+    private void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, SerializerException {
         PStructDescriptor<?, ?> descriptor = message.descriptor();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             PField fld = ((PUnion<?>) message).unionField();
@@ -209,7 +209,7 @@ public class TTupleProtocolSerializer extends PSerializer {
     }
 
     private <T extends PMessage<T>> T readMessage(TTupleProtocol protocol, PStructDescriptor<T, ?> descriptor)
-            throws PSerializeException, TException {
+            throws SerializerException, TException {
         PMessageBuilder<T> builder = descriptor.builder();
 
         if (descriptor.getVariant() == PMessageVariant.UNION) {
@@ -238,14 +238,14 @@ public class TTupleProtocolSerializer extends PSerializer {
         }
 
         if (readStrict && !builder.isValid()) {
-            throw new PSerializeException("");
+            throw new SerializerException("");
         }
 
         return builder.build();
     }
 
     private <T> T readTypedValue(PDescriptor type, TTupleProtocol protocol)
-            throws TException, PSerializeException {
+            throws TException, SerializerException {
         switch (type.getType()) {
             case BOOL:
                 return cast(protocol.readBool());
@@ -271,7 +271,7 @@ public class TTupleProtocolSerializer extends PSerializer {
                 final int value = protocol.readI32();
                 eb.setByValue(value);
                 if (readStrict && !eb.isValid()) {
-                    throw new PSerializeException("Invalid enum value " + value + " for " +
+                    throw new SerializerException("Invalid enum value " + value + " for " +
                                                   et.getQualifiedName(null));
                 }
                 return cast(eb.build());
@@ -316,12 +316,12 @@ public class TTupleProtocolSerializer extends PSerializer {
                 protocol.readMapEnd();
                 return cast(map.build());
             default:
-                throw new PSerializeException("Unsupported protocol field type: " + type.getType());
+                throw new SerializerException("Unsupported protocol field type: " + type.getType());
         }
     }
 
     private void writeTypedValue(Object item, PDescriptor type, TTupleProtocol protocol)
-            throws TException, PSerializeException {
+            throws TException, SerializerException {
         switch (type.getType()) {
             case BOOL:
                 protocol.writeBool((Boolean) item);

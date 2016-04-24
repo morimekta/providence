@@ -3,9 +3,9 @@ package net.morimekta.providence.testing;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.PJsonSerializer;
-import net.morimekta.providence.serializer.PSerializeException;
-import net.morimekta.providence.serializer.PSerializer;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageStreams;
 
 import org.junit.Assert;
@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 public class ProvidenceHelper {
     public static <T extends PMessage<T>, TF extends PField> T
     fromJsonResource(String path, PStructDescriptor<T, TF> descriptor)
-            throws PSerializeException, IOException {
-        return fromResource(path, descriptor, new PJsonSerializer(true));
+            throws SerializerException, IOException {
+        return fromResource(path, descriptor, new JsonSerializer(true));
     }
 
     public static <T extends PMessage<T>, F extends PField> ArrayList<T>
     arrayListFromJsonResource(String path, PStructDescriptor<T, F> descriptor)
-            throws PSerializeException, IOException {
-        return arrayListFromResource(path, descriptor, new PJsonSerializer(true));
+            throws SerializerException, IOException {
+        return arrayListFromResource(path, descriptor, new JsonSerializer(true));
     }
 
     public static <T extends PMessage<T>, TF extends PField> T
-    fromResource(String path, PStructDescriptor<T, TF> descriptor, PSerializer serializer)
-            throws PSerializeException, IOException {
+    fromResource(String path, PStructDescriptor<T, TF> descriptor, Serializer serializer)
+            throws SerializerException, IOException {
         InputStream in = ProvidenceHelper.class.getResourceAsStream(path);
         if (in == null) {
             Assert.fail("Resource " + path + " does not exist.");
@@ -43,8 +43,8 @@ public class ProvidenceHelper {
     }
 
     public static <T extends PMessage<T>, F extends PField> ArrayList<T>
-    arrayListFromResource(String path, PStructDescriptor<T, F> descriptor, PSerializer serializer)
-            throws PSerializeException, IOException {
+    arrayListFromResource(String path, PStructDescriptor<T, F> descriptor, Serializer serializer)
+            throws SerializerException, IOException {
         return (ArrayList<T>) MessageStreams.resource(path, serializer, descriptor)
                                             .collect(Collectors.toList());
     }
