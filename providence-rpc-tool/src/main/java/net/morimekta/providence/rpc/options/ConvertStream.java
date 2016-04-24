@@ -1,4 +1,4 @@
-package net.morimekta.providence.converter.options;
+package net.morimekta.providence.rpc.options;
 
 import java.io.File;
 import java.nio.file.Path;

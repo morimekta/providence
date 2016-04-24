@@ -31,7 +31,7 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
-import net.morimekta.providence.serializer.PJsonSerializer;
+import net.morimekta.providence.serializer.JsonSerializer;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -40,6 +40,8 @@ import org.kohsuke.args4j.Option;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+
+import static net.morimekta.console.FormatString.except;
 
 /**
  * @author Stein Eldar Johnsen
@@ -64,14 +66,11 @@ public class CompilerOptions {
     protected SyntaxSpec syntax = SyntaxSpec.thrift;
 
     @Option(name = "--gen",
-            metaVar = "lang",
+            metaVar = "spec",
+            required = true,
+            handler = GeneratorOptionHandler.class,
             usage = "Generate files for this language spec.")
-    protected GeneratorSpec gen = GeneratorSpec.thrift;
-
-    @Option(name = "--options",
-            metaVar = "opt",
-            usage = "Colon ':' separated list of language specific options.")
-    protected String options = null;
+    protected GeneratorOptions gen;
 
     @Option(name = "--help",
             aliases = {"-?", "-h"},
@@ -145,27 +144,35 @@ public class CompilerOptions {
             case thrift:
                 return new ThriftParser();
             case json:
-                return new MessageParser(new PJsonSerializer());
+                return new MessageParser(new JsonSerializer());
             default:
                 throw new CmdLineException(cli, new FormatString("Unknown SLI syntax %s."), syntax.name());
         }
     }
 
     public Generator getGenerator(CmdLineParser cli, TypeLoader loader) throws CmdLineException {
-        switch (gen) {
+        switch (gen.generator) {
             case thrift:
                 return new ThriftGenerator(getFileManager(cli));
             case json:
                 return new JsonGenerator(getFileManager(cli), loader);
             case java:
                 JOptions options = new JOptions();
-                if (this.options != null) {
-                    CmdLineParser optParser = new CmdLineParser(options);
-                    optParser.parseArgument(this.options.split(":"));
+                for (String opt : this.gen.options) {
+                    switch (opt) {
+                        case "android":
+                            options.android = true;
+                            break;
+                        case "jackson":
+                            options.jackson = true;
+                            break;
+                        default:
+                            throw except(cli, "");
+                    }
                 }
                 return new JGenerator(getFileManager(cli), loader.getRegistry(), options);
             default:
-                throw new CmdLineException(cli, new FormatString("Unknown language %s."), gen.name());
+                throw except(cli, "Unknown language %s.", gen.generator.name());
         }
     }
 }

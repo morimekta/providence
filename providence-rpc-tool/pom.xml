@@ -4,10 +4,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Providence Tools : Compiler</name>
+    <name>Providence Tools : Remote Procedure Call</name>
     <description>
-        Providence source generator (compiler). Can generate providence source
-        files from .thrift definition files in various languages.
+        An RPC caller, should work somewhat similar to the providence-converter and curl,
+        but trying to call an RPC service in some fashion.
     </description>
 
     <licenses>
@@ -27,7 +27,7 @@
         <artifactId>providence-tools</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    <artifactId>providence-compiler</artifactId>
+    <artifactId>providence-rpc-tool</artifactId>
 
     <dependencies>
         <dependency>
@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-generator</artifactId>
+            <artifactId>providence-thrift</artifactId>
             <version>${providence.version}</version>
         </dependency>
 
@@ -60,6 +60,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>1.21.0</version>
         </dependency>
 
         <dependency>
@@ -89,7 +94,7 @@
     </dependencies>
 
     <build>
-        <finalName>providence-compiler</finalName>
+        <finalName>providence-rpc-tool</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -120,7 +125,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.morimekta.providence.compiler.Compiler</mainClass>
+                                    <mainClass>net.morimekta.providence.rpc.RPC</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

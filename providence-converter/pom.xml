@@ -20,7 +20,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/morimekta/providence-extra.git</url>
+        <url>https://github.com/morimekta/providence-tools.git</url>
     </scm>
 
     <parent>

@@ -28,6 +28,7 @@ import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.ParserProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,13 +47,24 @@ public class Compiler {
     }
 
     public void run(String... args) {
-        CmdLineParser cli = new CmdLineParser(mOpts);
+        ParserProperties props = ParserProperties
+                .defaults()
+                .withUsageWidth(120);
+        CmdLineParser cli = new CmdLineParser(mOpts, props);
         try {
             cli.parseArgument(args);
             if (mOpts.isHelp()) {
-                System.out.println("compiler --gen [language] file...");
+                System.out.println("pvdc [-I dir] [--out dir] --gen spec[:opt[,opt]*] file...");
+                System.out.println();
+                System.out.println("Example code to run:");
+                System.out.println("$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift");
                 System.out.println();
                 cli.printUsage(System.out);
+                System.out.println();
+                System.out.println("Available generators:");
+                for (GeneratorSpec generator : GeneratorSpec.values()) {
+                    System.out.println(String.format(" - %-10s : %s", generator.name(), generator.desc));
+                }
                 return;
             }
 

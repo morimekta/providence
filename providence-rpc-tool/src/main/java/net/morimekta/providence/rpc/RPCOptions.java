@@ -19,25 +19,29 @@
  * under the License.
  */
 
-package net.morimekta.providence.converter;
+package net.morimekta.providence.rpc;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.converter.options.ConvertStream;
-import net.morimekta.providence.converter.options.Format;
-import net.morimekta.providence.converter.options.PrettyPrintSerializer;
-import net.morimekta.providence.converter.options.StreamOptionHandler;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.apache.ApacheHttpTransport;
+import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
-import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.serializer.FastBinarySerializer;
-import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.streams.MessageCollectors;
-import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.thrift.*;
+import net.morimekta.providence.rpc.handler.FileMessageReader;
+import net.morimekta.providence.rpc.handler.FileMessageWriter;
+import net.morimekta.providence.rpc.handler.HttpClientHandler;
+import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
+import net.morimekta.providence.rpc.options.ConvertStream;
+import net.morimekta.providence.rpc.options.Format;
+import net.morimekta.providence.rpc.options.FormatOptionsHandler;
+import net.morimekta.providence.rpc.options.StreamOptionHandler;
+import net.morimekta.providence.serializer.*;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -46,14 +50,11 @@ import org.kohsuke.args4j.Option;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.morimekta.console.FormatString.except;
 
@@ -61,12 +62,12 @@ import static net.morimekta.console.FormatString.except;
  * Options used by the providence converter.
  */
 @SuppressWarnings("all")
-public class ConvertOptions {
-    @Option(name = "--include",
-            aliases = {"-I"},
-            metaVar = "dir",
-            usage = "Include from directories. Defaults to CWD.")
-    protected List<File> include = new LinkedList<>();
+public class RPCOptions {
+    @Option(name = "--help",
+            aliases = {"-h", "-?"},
+            help = true,
+            usage = "This help listing.")
+    protected boolean mHelp;
 
     @Option(name = "--in",
             aliases = {"-i"},
@@ -80,28 +81,49 @@ public class ConvertOptions {
             usage = "Output specification",
             metaVar = "spec",
             handler = StreamOptionHandler.class)
-    protected ConvertStream out = new ConvertStream(Format.pretty, null);
+    protected ConvertStream out = new ConvertStream(Format.pretty_json, null);
 
     @Option(name = "--strict",
             aliases = {"-S"},
             usage = "Read incoming messages strictly.")
     protected boolean strict = false;
 
-    @Argument(required = true,
-              metaVar = "type",
-              usage = "Qualified identifier name from definitions to use for parsing source file.")
-    protected String type;
+    @Option(name = "--include",
+            aliases = {"-I"},
+            metaVar = "dir",
+            usage = "Include from directories. Defaults to CWD.")
+    protected List<File> include = new LinkedList<>();
 
-    @Option(name = "--help",
-            aliases = {"-h", "-?"},
-            help = true,
-            usage = "This help listing.")
-    protected boolean mHelp;
+    @Option(name = "--service",
+            aliases = {"-s"},
+            required = true,
+            metaVar = "srv",
+            usage = "Qualified identifier name from definitions to use for parsing source file.")
+    protected String service;
+
+    @Option(name = "--format",
+            aliases = {"-f"},
+            metaVar = "fmt",
+            handler = FormatOptionsHandler.class,
+            usage = "Request RPC format")
+    protected Format format = Format.versioned_binary;
+
+    @Option(name = "--header",
+            aliases = {"-H"},
+            metaVar = "hdr",
+            usage = "Header to set on the request, K/V separated by ':'.")
+    protected List<String> headers = new LinkedList<>();
+
+    @Argument(required = true,
+              metaVar = "URL")
+    protected String endpoint;
 
     protected Serializer getSerializer(CmdLineParser cli, Format format) throws CmdLineException {
         switch (format) {
             case binary:
-                return new BinarySerializer(strict);
+                return new BinarySerializer(strict, false);
+            case versioned_binary:
+                return new BinarySerializer(strict, true);
             case json:
                 return new JsonSerializer(strict, JsonSerializer.IdType.ID);
             case named_json:
@@ -114,14 +136,10 @@ public class ConvertOptions {
                 return new TBinaryProtocolSerializer(strict);
             case json_protocol:
                 return new TJsonProtocolSerializer(strict);
-            case simple_json_protocol:
-                return new TSimpleJsonProtocolSerializer();
             case compact_protocol:
                 return new TCompactProtocolSerializer(strict);
             case tuple_protocol:
                 return new TTupleProtocolSerializer(strict);
-            case pretty:
-                return new PrettyPrintSerializer();
         }
 
         throw except(cli, "Unknown format %s", format.name());
@@ -150,9 +168,9 @@ public class ConvertOptions {
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> PStructDescriptor<T, F> getDefinition(CmdLineParser cli)
+    public PService getDefinition(CmdLineParser cli)
             throws CmdLineException, ParseException {
-        if (type.isEmpty()) {
+        if (service.isEmpty()) {
             throw except(cli, "Input type.");
         }
 
@@ -182,7 +200,7 @@ public class ConvertOptions {
                                        .map(File::getParentFile)
                                        .collect(Collectors.toList());
 
-        String namespace = type.substring(0, type.lastIndexOf("."));
+        String namespace = service.substring(0, service.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
         TypeLoader loader = new TypeLoader(rootSet, new ThriftParser());
@@ -193,19 +211,35 @@ public class ConvertOptions {
             throw except(cli, e.getLocalizedMessage());
         }
 
-        @SuppressWarnings("unchecked")
-        PStructDescriptor<T, F> descriptor = (PStructDescriptor) loader.getRegistry()
-                                                                       .getDescriptor(type, null);
-        if (descriptor == null) {
-            throw except(cli, "No available type for name %s", type);
+        PService srv = loader.getRegistry().getServiceProvider(service, null).getService();
+        if (srv == null) {
+            throw except(cli, "");
         }
 
-        return descriptor;
+        return srv;
     }
 
-    public <T extends PMessage<T>> Collector<T, OutputStream, Integer> getOutput(CmdLineParser cli)
+    public MessageReader getInput(CmdLineParser cli)
+            throws CmdLineException, ParseException {
+        Format fmt = Format.json;
+        File file = null;
+        if (in != null) {
+            fmt = in.format != null ? in.format : fmt;
+            file = in.file;
+        }
+
+        Serializer serializer = getSerializer(cli, fmt);
+        if (file != null) {
+            return new FileMessageReader(file, serializer);
+        } else {
+            BufferedInputStream is = new BufferedInputStream(System.in);
+            return new IOMessageReader(is, serializer);
+        }
+    }
+
+    public MessageWriter getOutput(CmdLineParser cli)
             throws CmdLineException, IOException {
-        Format fmt = Format.pretty;
+        Format fmt = Format.pretty_json;
         File file = null;
         if (out != null) {
             fmt = out.format != null ? out.format : fmt;
@@ -218,38 +252,27 @@ public class ConvertOptions {
                 throw except(cli, "%s exists and is not a file.", file.getAbsolutePath());
             }
 
-            return MessageCollectors.toFile(file, serializer);
+            return new FileMessageWriter(file, serializer);
         } else {
-            return MessageCollectors.toStream(System.out, serializer);
+            return new IOMessageWriter(System.out, serializer);
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> Stream<T> getInput(CmdLineParser cli)
-            throws CmdLineException, ParseException {
-        PStructDescriptor<T, F> descriptor = getDefinition(cli);
+    public PClientHandler getHandler(CmdLineParser cli) throws CmdLineException {
+        GenericUrl endpoint = new GenericUrl(this.endpoint);
+        Serializer serializer = getSerializer(cli, format);
 
-        Format fmt = Format.pretty;
-        File file = null;
-        if (in != null) {
-            fmt = in.format != null ? in.format : fmt;
-            file = in.file;
+        Map<String, String> hdrs = new HashMap<>();
+        for (String hdr : headers) {
+            String[] parts = hdr.split("[:]", 2);
+            if (parts.length != 2) {
+                throw except(cli, "Invalid headers param: " + hdr);
+            }
+            hdrs.put(parts[0].trim(), parts[1].trim());
         }
 
-        Serializer serializer = getSerializer(cli, fmt);
-        if (file != null) {
-            try {
-                return MessageStreams.file(file, serializer, descriptor);
-            } catch (IOException e) {
-                throw except(cli, "Unable to read file %s", file.getName());
-            }
-        } else {
-            BufferedInputStream is = new BufferedInputStream(System.in);
-            try {
-                return MessageStreams.stream(is, serializer, descriptor);
-            } catch (IOException e) {
-                throw except(cli, "Broken pipe");
-            }
-        }
+        HttpTransport transport = new ApacheHttpTransport();
+
+        return new HttpClientHandler(endpoint, transport.createRequestFactory(new SetHeadersInitializer(hdrs)), serializer);
     }
-
 }

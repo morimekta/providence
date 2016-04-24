@@ -71,6 +71,7 @@
     <modules>
         <module>providence-compiler</module>
         <module>providence-converter</module>
+        <module>providence-rpc-tool</module>
         <module>providence-package</module>
     </modules>
 

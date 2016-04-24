@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Providence Tools : Package</name>
-    <description>Providence tools. Contains the providence compiler (pvdc) and a providence data converter (pvd).</description>
+    <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), and an RPC tool (pvdrpc).</description>
 
     <licenses>
         <license>
@@ -35,6 +35,11 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-converter</artifactId>
+            <version>${providence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-rpc-tool</artifactId>
             <version>${providence.version}</version>
         </dependency>
     </dependencies>
@@ -93,6 +98,15 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>${project.basedir}/src/deb/bin/pvdrpc</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <src>${project.parent.basedir}/providence-compiler/target/providence-compiler.jar</src>
                                     <type>file</type>
                                     <mapper>
@@ -102,6 +116,14 @@
                                 </data>
                                 <data>
                                     <src>${project.parent.basedir}/providence-converter/target/providence-converter.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.parent.basedir}/providence-rpc-tool/target/providence-rpc-tool.jar</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
