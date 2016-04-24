@@ -4,26 +4,12 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
- * A writer helper class for matching a serializer with an output stream.
+ * An interface for writing messages and service calls.
  */
-public class MessageWriter {
-    private final OutputStream out;
-    private final Serializer   serializer;
+public interface MessageWriter {
+    <T extends PMessage<T>> int write(T message) throws IOException, SerializerException;
 
-    public MessageWriter(OutputStream out, Serializer serializer) {
-        this.out = out;
-        this.serializer = serializer;
-    }
-
-    public <T extends PMessage<T>> int write(T message) throws IOException, SerializerException {
-        return serializer.serialize(out, message);
-    }
-
-    public <T extends PMessage<T>> int write(PServiceCall<T> call) throws IOException, SerializerException {
-        return serializer.serialize(out, call);
-    }
-
+    <T extends PMessage<T>> int write(PServiceCall<T> call) throws IOException, SerializerException;
 }
