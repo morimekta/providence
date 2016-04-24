@@ -204,6 +204,59 @@ public class JField {
         }
     }
 
+    public String getProvider()  throws GeneratorException {
+        String container = field.getAnnotationValue("container");
+        String containerProvider = "provider";
+        if (container != null) {
+            ContainerType containerType = ContainerType.valueOf(container.toUpperCase());
+            if (containerType == null) {
+                throw new GeneratorException("Unknown container type: " + container);
+            }
+
+            switch (containerType) {
+                case DEFAULT:
+                    containerProvider = "provider";
+                    break;
+                case SORTED:
+                    containerProvider = "sortedProvider";
+                    break;
+                case ORDERED:
+                    containerProvider = "orderedProvider";
+                    break;
+            }
+        }
+
+        switch (field.getType()) {
+            case ENUM:
+            case MESSAGE:
+                return String.format("%s.provider()", helper.getFieldType(field.getDescriptor()));
+            case LIST:
+                PList<?> lType = (PList<?>) field.getDescriptor();
+                return String.format("%s.provider(%s)", PList.class.getName(), helper.getProviderName(lType.itemDescriptor()));
+            case SET:
+                PSet<?> sType = (PSet<?>) field.getDescriptor();
+                return String.format("%s.%s(%s)",
+                                     PSet.class.getName(),
+                                     containerProvider,
+                                     helper.getProviderName(sType.itemDescriptor()));
+            case MAP:
+                PMap<?, ?> mType = (PMap<?, ?>) field.getDescriptor();
+                return String.format("%s.%s(%s,%s)",
+                                     PMap.class.getName(),
+                                     containerProvider,
+                                     helper.getProviderName(mType.keyDescriptor()),
+                                     helper.getProviderName(mType.itemDescriptor()));
+            default:
+                if (!(field.getDescriptor() instanceof PPrimitive)) {
+                    throw new IllegalArgumentException("Unhandled type group " + field.getType());
+                }
+                return String.format("%s.%s.provider()",
+                                     PPrimitive.class.getName(),
+                                     field.getDescriptor().getName().toUpperCase());
+        }
+    }
+
+
     public String builderInstanceType() throws GeneratorException  {
         switch (field.getType()) {
             case MAP:

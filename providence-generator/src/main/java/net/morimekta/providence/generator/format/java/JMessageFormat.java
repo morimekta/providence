@@ -149,8 +149,7 @@ public class JMessageFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            String provider = helper.getProviderName(field.getPField()
-                                                          .getDescriptor());
+            String provider = field.getProvider();
             String defValue = "null";
             if (field.getPField()
                      .hasDefaultValue()) {

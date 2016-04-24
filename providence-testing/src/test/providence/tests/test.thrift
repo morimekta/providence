@@ -130,8 +130,8 @@ struct Containers {
 
     // all types as set<x>.
     11: optional set<bool> booleanSet;
-    12: optional set<byte> byteSet;
-    13: optional set<i16> shortSet;
+    12: optional set<byte> byteSet (container = "SORTED");
+    13: optional set<i16> shortSet (container = "ORDERED");
     14: optional set<i32> integerSet;
     15: optional set<i64> longSet;
     16: optional set<double> doubleSet;
@@ -140,8 +140,8 @@ struct Containers {
 
     // all types as map<x,x>.
     21: optional map<bool,bool> booleanMap;
-    22: optional map<byte,byte> byteMap;
-    23: optional map<i16,i16> shortMap;
+    22: optional map<byte,byte> byteMap (container = "SORTED");
+    23: optional map<i16,i16> shortMap (container = "ORDERED");
     24: optional map<i32,i32> integerMap;
     25: optional map<i64,i64> longMap;
     26: optional map<double,double> doubleMap;
