@@ -3,8 +3,6 @@ package net.morimekta.providence.descriptor;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Descriptor for a complete service.
@@ -44,26 +42,18 @@ public class PService {
     }
 
     public PService getExtendsService() {
-        return extendsService.getService();
+        if (extendsService != null) {
+            return extendsService.getService();
+        }
+        return null;
     }
 
     public Collection<? extends PServiceMethod> getMethods() {
         return methods;
     }
 
-    public Set<String> getMethodNames() {
-        Set<String> result = new TreeSet<>();
-        if (extendsService != null) {
-            result.addAll(extendsService.getService().getMethodNames());
-        }
-        for (PServiceMethod<?,?,?,?> method : methods) {
-            result.add(method.getName());
-        }
-        return result;
-    }
-
-    public PServiceMethod<?,?,?,?> getMethod(String name) {
-        for (PServiceMethod<?,?,?,?> method : methods) {
+    public PServiceMethod getMethod(String name) {
+        for (PServiceMethod method : methods) {
             if (method.getName().equals(name)) {
                 return method;
             }

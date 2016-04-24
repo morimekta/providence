@@ -3,6 +3,7 @@ package net.morimekta.providence.generator.format.java;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
+import net.morimekta.util.Strings;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,15 @@ public class JServiceMethod {
         return service;
     }
 
+    public String constant() {
+        return Strings.c_case("", method.getName()).toUpperCase();
+    }
+
     public String name() {
+        return method.getName();
+    }
+
+    public String methodName() {
         return JUtils.camelCase(method.getName());
     }
 

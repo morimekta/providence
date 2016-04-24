@@ -9,7 +9,8 @@ import java.util.Set;
 /**
  * Descriptor for a single service method.
  */
-public class CServiceMethod implements PServiceMethod<CStruct, CField, CUnion, CField>,
+@SuppressWarnings("unchecked")
+public class CServiceMethod implements PServiceMethod,
                                        CAnnotatedDescriptor {
     private final String              name;
     private final boolean             oneway;
@@ -32,18 +33,22 @@ public class CServiceMethod implements PServiceMethod<CStruct, CField, CUnion, C
         this.annotations = annotations;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public boolean isOneway() {
         return oneway;
     }
 
+    @Override
     public CStructDescriptor getRequestType() {
         return requestType;
     }
 
+    @Override
     public CUnionDescriptor getResponseType() {
         return responseType;
     }
