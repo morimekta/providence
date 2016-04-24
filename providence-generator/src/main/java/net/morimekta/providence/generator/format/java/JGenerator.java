@@ -20,7 +20,6 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
@@ -28,7 +27,6 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 

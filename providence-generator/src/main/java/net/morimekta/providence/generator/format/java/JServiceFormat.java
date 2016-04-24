@@ -1,12 +1,10 @@
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.contained.CServiceMethod;
-import net.morimekta.providence.reflect.contained.CUnionDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
+
+import java.io.IOException;
 
 /**
  * Created by morimekta on 4/24/16.
@@ -23,13 +21,16 @@ public class JServiceFormat {
     }
 
     @SuppressWarnings("unused")
-    public void format(IndentedPrintWriter writer, CService service) throws GeneratorException {
-        if (service.getComment() != null) {
-            JUtils.appendBlockComment(writer, service.getComment());
+    public void format(IndentedPrintWriter writer, CService cs) throws GeneratorException, IOException {
+        JService service = new JService(cs, helper);
+
+        if (cs.getComment() != null) {
+            JUtils.appendBlockComment(writer, cs.getComment());
         }
 
+
         writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s {", JUtils.getClassName(service))
+              .formatln("public class %s {", service.className())
               .begin();
 
         appendIface(writer, service);
@@ -37,80 +38,79 @@ public class JServiceFormat {
         appendStructs(writer, service);
 
         // private constructor should defeat instantiation.
-        writer.formatln("private %s() {}", JUtils.getClassName(service));
+        writer.formatln("private %s() {}", service.className());
 
         writer.end()
               .appendln('}');
     }
 
-    private void appendStructs(IndentedPrintWriter writer, CService service) {
+    private void appendStructs(IndentedPrintWriter writer, JService service) throws GeneratorException, IOException {
+        for (JServiceMethod method : service.methods()) {
+            JMessage<?> request = new JMessage<>(method.getMethod().getRequestType(), helper);
+            writer.formatln("// type --> %s", request.descriptor().getName());
 
+            messageFormat.format(writer, method.getMethod().getRequestType(), service.getService());
+
+            if (method.getMethod().getResponseType() != null) {
+                JMessage<?> response = new JMessage<>(method.getMethod().getResponseType(), helper);
+                writer.formatln("// type <-- %s", response.descriptor().getName());
+
+                messageFormat.format(writer, method.getMethod().getResponseType(), service.getService());
+            }
+        }
     }
 
-    private void appendIface(IndentedPrintWriter writer, CService service) throws GeneratorException {
+    private void appendIface(IndentedPrintWriter writer, JService service) throws GeneratorException {
         writer.appendln("public interface IFace {")
               .begin();
 
         boolean firstMethod = true;
-        for (CServiceMethod method : service.getMethods()) {
+        for (JServiceMethod method : service.methods()) {
             if (firstMethod) {
                 firstMethod = false;
             } else {
                 writer.newline();
             }
 
-            if (method.getComment() != null) {
-                JUtils.appendBlockComment(writer, method.getComment());
+            if (method.getMethod().getComment() != null) {
+                JUtils.appendBlockComment(writer, method.getMethod().getComment());
             }
 
             // Field ID 0 is the return type.
-            if (method.getResponseType() != null) {
-                PField ret = method.getResponseType()
-                                   .getField(0);
-                if (ret != null) {
-                    writer.appendln(helper.getValueType(ret.getDescriptor()));
-                } else {
-                    writer.appendln("void");
-                }
+            JField ret = method.getResponse();
+            if (ret != null) {
+                writer.appendln(ret.valueType());
             } else {
                 writer.appendln("void");
             }
 
             // Use the un-changed method name.
             // TODO: change to use a camel-cased name.
-            writer.format(" %s(", method.getName());
+            writer.format(" %s(", method.name());
 
             boolean first = true;
-            for (CField param : method.getRequestType().getFields()) {
+            for (JField param : method.params()) {
                 if (first) {
                     first = false;
                 } else {
                     writer.append(", ");
                 }
-                JField field = new JField(param, helper, param.getKey());
-
-                writer.format("%s %s", field.valueType(), field.param());
+                writer.format("%s %s", param.valueType(), param.param());
             }
 
             writer.format(")");
 
-            if (method.getResponseType() != null) {
-                CUnionDescriptor resp = method.getResponseType();
-                first = true;
-                for (CField ex : resp.getFields()) {
-                    if (ex.getKey() != 0) {
-                        if (first) {
-                            first = false;
-                            writer.appendln("    throws ");
-                        } else {
-                            writer.append(", ");
-                        }
-
-                        JField field = new JField(ex, helper, ex.getKey());
-
-                        writer.append(field.instanceType());
-                    }
+            first = true;
+            for (JField ex : method.exceptions()) {
+                if (first) {
+                    first = false;
+                    writer.appendln("        throws ");
+                } else {
+                    writer.append(",");
+                    writer.appendln("               ");
                 }
+
+                writer.append(ex.instanceType());
             }
 
             writer.format(";");

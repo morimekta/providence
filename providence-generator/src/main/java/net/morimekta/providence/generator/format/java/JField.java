@@ -38,8 +38,8 @@ import com.google.common.collect.ImmutableSortedSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
+import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
 import static net.morimekta.util.Strings.c_case;
-import static net.morimekta.util.Strings.camelCase;
 
 /**
  *

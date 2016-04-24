@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.util.Strings.camelCase;
+import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
 
 /**
  *

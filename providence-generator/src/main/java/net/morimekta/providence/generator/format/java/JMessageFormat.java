@@ -39,12 +39,13 @@ import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import static net.morimekta.util.Strings.camelCase;
+import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
 
 /**
  * @author Stein Eldar Johnsen
@@ -62,6 +63,13 @@ public class JMessageFormat {
     }
 
     public void format(IndentedPrintWriter writer, PStructDescriptor<?,?> descriptor)
+            throws GeneratorException, IOException {
+        format(writer, descriptor, null);
+    }
+
+    public void format(IndentedPrintWriter writer,
+                       PStructDescriptor<?,?> descriptor,
+                       CService containingService)
             throws GeneratorException, IOException {
         @SuppressWarnings("unchecked")
         JMessage<?> message = new JMessage(descriptor, helper);
@@ -84,8 +92,13 @@ public class JMessageFormat {
                   .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)");
         }
 
+        String mod = "";
+        if (containingService != null) {
+            mod = "static ";
+        }
+
         writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s", message.instanceType())
+              .formatln("public %sclass %s", mod, message.instanceType())
               .begin(DBL_INDENT);
         if (message.variant()
                    .equals(PMessageVariant.EXCEPTION)) {

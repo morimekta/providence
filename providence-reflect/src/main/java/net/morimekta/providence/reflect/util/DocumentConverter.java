@@ -159,7 +159,7 @@ public class DocumentConverter {
                         }
                         CStructDescriptor request = new CStructDescriptor(null,
                                                                           document.getPackage(),
-                                                                          serviceType.getName() + "." + sm.getName() + ".request",
+                                                                          sm.getName() + "___request",
                                                                           rqFields,
                                                                           null);
 
@@ -172,7 +172,7 @@ public class DocumentConverter {
                                 CField success = new CField(null,
                                                             0,
                                                             PRequirement.OPTIONAL,
-                                                            "___success",
+                                                            "success",
                                                             type,
                                                             null,
                                                             null);
@@ -187,7 +187,7 @@ public class DocumentConverter {
 
                             response = new CUnionDescriptor(null,
                                                             document.getPackage(),
-                                                            serviceType.getName() + "." + sm.getName() + ".response",
+                                                            sm.getName() + "___response",
                                                             rsFields,
                                                             null);
                         }

@@ -49,11 +49,11 @@ public class JUtils {
     }
 
     public static String getClassName(PDeclaredDescriptor<?> type) {
-        return Strings.camelCase("", type.getName());
+        return camelCase("", type.getName());
     }
 
     public static String getClassName(PService service) {
-        return Strings.camelCase("", service.getName());
+        return camelCase("", service.getName());
     }
 
     public static String getJavaPackage(CDocument document) throws GeneratorException {
@@ -81,5 +81,68 @@ public class JUtils {
             }
             writer.appendln(" */");
         }
+    }
+
+    /**
+     * Format a prefixed name as camelCase. The prefix is kept verbatim, while
+     * tha name is split on '_' chars, and joined with each part capitalized.
+     *
+     * @param name   The name to camel-case.
+     * @return theCamelCasedName
+     */
+    public static String camelCase(String name) {
+        StringBuilder builder = new StringBuilder();
+
+        String[] parts = name.split("[-._]");
+        boolean first = true;
+        int skipped = 0;
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                skipped++;
+                continue;
+            }
+            if (first) {
+                first = false;
+                builder.append(part);
+            } else if (skipped > 1) {
+                builder.append('_');
+                builder.append(part);
+            } else {
+                builder.append(Strings.capitalize(part));
+            }
+            skipped = 0;
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Format a prefixed name as camelCase. The prefix is kept verbatim, while
+     * tha name is split on '_' chars, and joined with each part capitalized.
+     *
+     * @param prefix The prefix.
+     * @param name   The name to camel-case.
+     * @return theCamelCasedName
+     */
+    public static String camelCase(String prefix, String name) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(prefix);
+
+        String[] parts = name.split("[-._]");
+        int skipped = 0;
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                skipped++;
+                continue;
+            }
+            if (skipped > 1) {
+                builder.append('_');
+                builder.append(part);
+            } else {
+                builder.append(Strings.capitalize(part));
+            }
+            skipped = 0;
+        }
+        return builder.toString();
     }
 }
