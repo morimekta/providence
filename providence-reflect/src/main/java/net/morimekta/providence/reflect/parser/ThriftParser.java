@@ -34,6 +34,7 @@ import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.model.TypedefType;
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
+import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.util.Strings;
 
 import java.io.IOException;
@@ -65,8 +66,7 @@ public class ThriftParser implements Parser {
     public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
         ThriftDocument._Builder doc = ThriftDocument.builder();
 
-        String packageName = name.replaceAll(".*/", "")
-                           .replace(".thrift", "");
+        String packageName = ReflectionUtils.packageFromName(name);
         if (!VALID_PACKAGE.matcher(packageName).matches()) {
             throw new ParseException("Package name %s derived from filename %s is not valid.",
                                      packageName, name);
@@ -501,6 +501,11 @@ public class ThriftParser implements Parser {
 
     public void parseIncludes(Tokenizer tokenizer, List<String> includes) throws IOException, ParseException {
         Token include = tokenizer.expectStringLiteral("include file");
+        String name = include.substring(1, -1).asString();
+        if (!ReflectionUtils.isThriftFile(name)) {
+            throw new ParseException(tokenizer, include,
+                                     "Include not valid for thrift files " + name);
+        }
         includes.add(include.substring(1, -1).asString());
     }
 
