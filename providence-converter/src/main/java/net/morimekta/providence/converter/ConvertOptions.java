@@ -31,13 +31,19 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.thrift.*;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -51,8 +57,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.morimekta.console.FormatString.except;
@@ -66,7 +73,7 @@ public class ConvertOptions {
             aliases = {"-I"},
             metaVar = "dir",
             usage = "Include from directories. Defaults to CWD.")
-    protected List<File> include = new LinkedList<>();
+    protected List<File> includes = new LinkedList<>();
 
     @Option(name = "--in",
             aliases = {"-i"},
@@ -131,21 +138,19 @@ public class ConvertOptions {
         return mHelp;
     }
 
-    public void collectIncludes(File dir, Map<String, File> includes) {
+    public void collectIncludes(File dir, Map<String, File> includes, CmdLineParser cli) throws CmdLineException {
+        if (!dir.exists()) {
+            throw except(cli, "No such include directory: " + dir.getPath());
+        }
+        if (!dir.isDirectory()) {
+            throw except(cli, "Not a directory: " + dir.getPath());
+        }
         for (File file : dir.listFiles()) {
             if (file.isHidden()) {
                 continue;
             }
-            if (file.isDirectory()) {
-                collectIncludes(file, includes);
-            } else {
-                if (file.canRead() && file.getName()
-                                          .endsWith(".thrift")) {
-                    String name = file.getName();
-                    name = name.substring(0, name.length() - 7);
-                    name = name.replaceAll("[-.]", "_");
-                    includes.put(name, file);
-                }
+            if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
+                includes.put(ReflectionUtils.packageFromName(file.getName()), file);
             }
         }
     }
@@ -157,30 +162,17 @@ public class ConvertOptions {
         }
 
         Map<String, File> includeMap = new HashMap<>();
-
-        if (include.isEmpty()) {
-            collectIncludes(new File("."), includeMap);
-        } else {
-            for (File inc : include) {
-                if (inc.isFile()) {
-                    if (inc.getName().endsWith(".thrift")) {
-                        String name = inc.getName();
-                        name = name.substring(0, name.length() - 7);
-                        name = name.replaceAll("[-.]", "_");
-                        includeMap.put(name, inc);
-                    } else {
-                        throw except(cli, "%s is not a thrift file.", inc.getName());
-                    }
-                } else if (inc.isDirectory()) {
-                    collectIncludes(inc, includeMap);
-                }
-            }
+        if (includes.isEmpty()) {
+            includes.add(new File("."));
+        }
+        for (File file : includes) {
+            collectIncludes(file, includeMap, cli);
         }
 
-        List<File> rootSet = includeMap.values()
-                                       .stream()
-                                       .map(File::getParentFile)
-                                       .collect(Collectors.toList());
+        Set<File> rootSet = new TreeSet<File>();
+        for (File file : includeMap.values()) {
+            rootSet.add(file.getParentFile());
+        }
 
         String namespace = type.substring(0, type.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
@@ -251,5 +243,4 @@ public class ConvertOptions {
             }
         }
     }
-
 }

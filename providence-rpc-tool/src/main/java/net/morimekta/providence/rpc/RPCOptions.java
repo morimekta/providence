@@ -21,14 +21,12 @@
 
 package net.morimekta.providence.rpc;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.rpc.handler.FileMessageReader;
 import net.morimekta.providence.rpc.handler.FileMessageWriter;
 import net.morimekta.providence.rpc.handler.HttpClientHandler;
@@ -37,11 +35,22 @@ import net.morimekta.providence.rpc.options.ConvertStream;
 import net.morimekta.providence.rpc.options.Format;
 import net.morimekta.providence.rpc.options.FormatOptionsHandler;
 import net.morimekta.providence.rpc.options.StreamOptionHandler;
-import net.morimekta.providence.serializer.*;
+import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.providence.serializer.FastBinarySerializer;
+import net.morimekta.providence.serializer.IOMessageReader;
+import net.morimekta.providence.serializer.IOMessageWriter;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.MessageReader;
+import net.morimekta.providence.serializer.MessageWriter;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
+
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.apache.ApacheHttpTransport;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -50,7 +59,12 @@ import org.kohsuke.args4j.Option;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static net.morimekta.console.FormatString.except;
 
@@ -156,30 +170,10 @@ public class RPCOptions {
             if (file.isHidden()) {
                 continue;
             }
-            if (file.isFile() && file.canRead() && isThriftFile(file.getName())) {
-                includes.put(namespaceFromFile(file), file);
+            if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
+                includes.put(ReflectionUtils.packageFromName(file.getName()), file);
             }
         }
-    }
-
-    private boolean isThriftFile(String name) {
-        return name.endsWith(".providence") ||
-                name.endsWith(".thrift") ||
-                name.endsWith(".thr") ||
-                name.endsWith(".thr");
-    }
-
-    private String namespaceFromFile(File file) {
-        String name = file.getName();
-        if (name.endsWith(".providence")) {
-            name = name.substring(0, name.length() - 11);
-        } else if (name.endsWith(".thrift")) {
-            name = name.substring(0, name.length() - 7);
-        } else if (name.endsWith(".thr") || name.endsWith(".pvd")) {
-            name = name.substring(0, name.length() - 4);
-        }
-
-        return name.replaceAll("[-.]", "_");
     }
 
     public PService getDefinition(CmdLineParser cli)

@@ -24,6 +24,7 @@ package net.morimekta.providence.converter;
 import net.morimekta.providence.converter.options.Format;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.util.Strings;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
@@ -41,12 +42,12 @@ import java.io.UncheckedIOException;
 public class Convert {
     private final ConvertOptions options;
 
-    private Convert() {
+    Convert() {
         options = new ConvertOptions();
     }
 
     @SuppressWarnings("unchecked")
-    private void run(String... args) {
+    void run(String... args) {
         ParserProperties props = ParserProperties
                 .defaults()
                 .withUsageWidth(120);
@@ -71,8 +72,6 @@ public class Convert {
 
             options.getInput(cli)
                    .collect(options.getOutput(cli));
-
-            System.exit(0);
             return;
         } catch (CmdLineException e) {
             System.out.flush();
@@ -109,7 +108,11 @@ public class Convert {
             System.err.print("I/O error: ");
             e.printStackTrace();
         }
-        System.exit(1);
+        exit(1);
+    }
+
+    protected void exit(int i) {
+        System.exit(i);
     }
 
     public static void main(String[] args) throws Throwable {
