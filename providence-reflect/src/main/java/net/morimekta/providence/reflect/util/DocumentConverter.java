@@ -215,6 +215,7 @@ public class DocumentConverter {
                                                     serviceType.getAnnotations());
 
                     services.add(service);
+                    registry.putService(service);
                 }
             }
         }
