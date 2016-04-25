@@ -30,26 +30,29 @@ import net.morimekta.providence.serializer.MessageReader;
 import net.morimekta.providence.serializer.MessageWriter;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
+
+import com.google.api.client.http.HttpResponseException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.time.Clock;
 
 public class RPC {
     private final RPCOptions options;
 
-    private RPC() {
+    protected RPC() {
         options = new RPCOptions();
     }
 
     @SuppressWarnings("unchecked")
-    private void run(String... args) {
-        ParserProperties props = ParserProperties
-                .defaults()
-                .withUsageWidth(120);
+    void run(String... args) {
+        ParserProperties props = ParserProperties.defaults()
+                                                 .withUsageWidth(120);
         CmdLineParser cli = new CmdLineParser(options, props);
+        Clock clock = Clock.systemUTC();
         try {
             cli.parseArgument(args);
             if (options.isHelp()) {
@@ -57,7 +60,8 @@ public class RPC {
                 System.out.println();
                 System.out.println("Example code to run:");
                 System.out.println("$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service");
-                System.out.println("$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service");
+                System.out.println(
+                        "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service");
                 System.out.println();
                 cli.printUsage(System.out);
                 System.out.println();
@@ -78,49 +82,61 @@ public class RPC {
 
             out.write(resp);
             return;
+        } catch (HttpResponseException e) {
+            System.err.println("Received " + e.getStatusMessage());
+            System.err.println(" - from: " + options.endpoint);
         } catch (CmdLineException e) {
-            System.out.flush();
-            System.err.println(e.getMessage());
-            cli.printSingleLineUsage(System.err);
+            if (e.getMessage()
+                 .length() > 0) {
+                System.err.println(e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
             System.err.println();
-            cli.printUsage(System.err);
-            System.err.println();
+            System.err.println("Run $ pvdrpc --help # for available options.");
         } catch (SerializerException e) {
             System.out.flush();
             System.err.println();
             System.err.println("Serialization error: " + e.getLocalizedMessage());
+            e.printStackTrace();
         } catch (ParseException e) {
             System.out.flush();
             System.err.println();
             if (e.getLine() != null) {
-                int lineNo = e.getToken().getLineNo();
-                int linePos = e.getToken().getLinePos();
-                int len = e.getToken().length();
+                int lineNo = e.getToken()
+                              .getLineNo();
+                int linePos = e.getToken()
+                               .getLinePos();
+                int len = e.getToken()
+                           .length();
 
-                System.err.format(
-                        "Error at line %d, pos %d-%d: %s\n" +
-                        "    %s\n"                          +
-                        "    %s%c\n",
-                        lineNo,
-                        linePos,
-                        linePos + len,
-                        e.getLocalizedMessage(),
-                        e.getLine(),
-                        Strings.times("~", linePos),
-                        '^');
+                System.err.format("Error at line %d, pos %d-%d: %s\n" +
+                                  "    %s\n" +
+                                  "    %s%c\n",
+                                  lineNo,
+                                  linePos,
+                                  linePos + len,
+                                  e.getLocalizedMessage(),
+                                  e.getLine(),
+                                  Strings.times("~", linePos),
+                                  '^');
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
         } catch (UncheckedIOException | IOException e) {
             System.out.flush();
-            System.err.println();
+            System.err.println(e.getClass().getName());
             System.err.print("I/O error: ");
             e.printStackTrace();
         }
-        System.exit(1);
+        exit(1);
     }
 
-    public static void main(String[] args) throws Throwable {
+    protected void exit(int i) {
+        System.exit(i);
+    }
+
+    public static void main(String[] args) {
         new RPC().run(args);
     }
 }

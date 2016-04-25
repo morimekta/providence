@@ -11,7 +11,7 @@ public class ConvertStream {
     // expected format.
     public final Format format;
     // If file is set: read / write file, otherwise use std in / out.
-    public final File file;
+    public final File   file;
 
     public ConvertStream(Format format, File file) {
         this.format = format;
@@ -29,8 +29,13 @@ public class ConvertStream {
             if (hasFormat) {
                 builder.append(',');
             }
-            Path pwd = Paths.get(".").toFile().getAbsoluteFile().toPath();
-            builder.append(file.toPath().relativize(pwd).toString());
+            Path pwd = Paths.get(".")
+                            .toFile()
+                            .getAbsoluteFile()
+                            .toPath();
+            builder.append(file.toPath()
+                               .relativize(pwd)
+                               .toString());
         } else if (!hasFormat) {
             builder.append("none");
         }

@@ -50,11 +50,7 @@ import org.kohsuke.args4j.Option;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static net.morimekta.console.FormatString.except;
 
@@ -91,8 +87,8 @@ public class RPCOptions {
     @Option(name = "--include",
             aliases = {"-I"},
             metaVar = "dir",
-            usage = "Include from directories. Defaults to CWD.")
-    protected List<File> include = new LinkedList<>();
+            usage = "Include from directories. Defaults to PWD.")
+    protected List<File> includes = new LinkedList<>();
 
     @Option(name = "--service",
             aliases = {"-s"},
@@ -149,23 +145,41 @@ public class RPCOptions {
         return mHelp;
     }
 
-    public void collectIncludes(File dir, Map<String, File> includes) {
+    public void collectIncludes(File dir, Map<String, File> includes, CmdLineParser cli) throws CmdLineException {
+        if (!dir.exists()) {
+            throw except(cli, "No such include directory: " + dir.getPath());
+        }
+        if (!dir.isDirectory()) {
+            throw except(cli, "Not a directory: " + dir.getPath());
+        }
         for (File file : dir.listFiles()) {
             if (file.isHidden()) {
                 continue;
             }
-            if (file.isDirectory()) {
-                collectIncludes(file, includes);
-            } else {
-                if (file.canRead() && file.getName()
-                                          .endsWith(".thrift")) {
-                    String name = file.getName();
-                    name = name.substring(0, name.length() - 7);
-                    name = name.replaceAll("[-.]", "_");
-                    includes.put(name, file);
-                }
+            if (file.isFile() && file.canRead() && isThriftFile(file.getName())) {
+                includes.put(namespaceFromFile(file), file);
             }
         }
+    }
+
+    private boolean isThriftFile(String name) {
+        return name.endsWith(".providence") ||
+                name.endsWith(".thrift") ||
+                name.endsWith(".thr") ||
+                name.endsWith(".thr");
+    }
+
+    private String namespaceFromFile(File file) {
+        String name = file.getName();
+        if (name.endsWith(".providence")) {
+            name = name.substring(0, name.length() - 11);
+        } else if (name.endsWith(".thrift")) {
+            name = name.substring(0, name.length() - 7);
+        } else if (name.endsWith(".thr") || name.endsWith(".pvd")) {
+            name = name.substring(0, name.length() - 4);
+        }
+
+        return name.replaceAll("[-.]", "_");
     }
 
     public PService getDefinition(CmdLineParser cli)
@@ -175,30 +189,17 @@ public class RPCOptions {
         }
 
         Map<String, File> includeMap = new HashMap<>();
-
-        if (include.isEmpty()) {
-            collectIncludes(new File("."), includeMap);
-        } else {
-            for (File inc : include) {
-                if (inc.isFile()) {
-                    if (inc.getName().endsWith(".thrift")) {
-                        String name = inc.getName();
-                        name = name.substring(0, name.length() - 7);
-                        name = name.replaceAll("[-.]", "_");
-                        includeMap.put(name, inc);
-                    } else {
-                        throw except(cli, "%s is not a thrift file.", inc.getName());
-                    }
-                } else if (inc.isDirectory()) {
-                    collectIncludes(inc, includeMap);
-                }
-            }
+        if (includes.isEmpty()) {
+            includes.add(new File("."));
+        }
+        for (File file : includes) {
+            collectIncludes(file, includeMap, cli);
         }
 
-        List<File> rootSet = includeMap.values()
-                                       .stream()
-                                       .map(File::getParentFile)
-                                       .collect(Collectors.toList());
+        Set<File> rootSet = new TreeSet<File>();
+        for (File file : includeMap.values()) {
+            rootSet.add(file.getParentFile());
+        }
 
         String namespace = service.substring(0, service.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");

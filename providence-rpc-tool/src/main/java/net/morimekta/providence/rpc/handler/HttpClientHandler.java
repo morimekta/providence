@@ -20,20 +20,19 @@ import java.io.IOException;
  */
 public class HttpClientHandler implements PClientHandler {
     private final HttpRequestFactory factory;
-    private final Serializer requestSerializer;
-    private final GenericUrl endpoint;
+    private final Serializer         requestSerializer;
+    private final GenericUrl         endpoint;
 
-    public HttpClientHandler(GenericUrl endpoint,
-                             HttpRequestFactory factory,
-                             Serializer requestSerializer) {
+    public HttpClientHandler(GenericUrl endpoint, HttpRequestFactory factory, Serializer requestSerializer) {
         this.endpoint = endpoint;
         this.factory = factory;
         this.requestSerializer = requestSerializer;
     }
 
     @Override
-    public <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS>
-    handleCall(PServiceCall<RQ> pServiceCall, PService service) throws IOException, SerializerException {
+    public <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS> handleCall(PServiceCall<RQ> pServiceCall,
+                                                                                          PService service)
+            throws IOException, SerializerException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         requestSerializer.serialize(baos, pServiceCall);
 
@@ -45,6 +44,7 @@ public class HttpClientHandler implements PClientHandler {
         Serializer responseSerializer = requestSerializer;
         if (response.getContentType() != null) {
             switch (response.getContentType()) {
+                case "application/x-thrift":
                 case BinarySerializer.MIME_TYPE:
                     if (!(responseSerializer instanceof BinarySerializer)) {
                         responseSerializer = new BinarySerializer();

@@ -18,19 +18,21 @@ public class FormatOptionsHandler extends OptionHandler<Format> {
 
     @Override
     public int parseArguments(Parameters params) throws CmdLineException {
-        String s = params.getParameter(0).replaceAll("-", "_");
+        String s = params.getParameter(0)
+                         .replaceAll("-", "_");
         Format value = null;
-        for (Format o : Format.values())
-            if(o.name().equalsIgnoreCase(s)) {
+        for (Format o : Format.values()) {
+            if (o.name()
+                 .equalsIgnoreCase(s)) {
                 value = o;
                 break;
             }
-
-        if(value==null) {
+        }
+        if (value == null) {
             if (option.isArgument()) {
                 throw new CmdLineException(owner, Messages.ILLEGAL_OPERAND, option.toString(), s);
             } else {
-                throw new CmdLineException(owner, Messages.ILLEGAL_OPERAND, params.getParameter(-1),s);
+                throw new CmdLineException(owner, Messages.ILLEGAL_OPERAND, params.getParameter(-1), s);
             }
         }
         setter.addValue(value);
