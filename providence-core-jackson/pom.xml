@@ -30,11 +30,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>io-util</artifactId>
+            <version>${morimekta_utils.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -51,6 +50,12 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
