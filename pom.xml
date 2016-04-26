@@ -58,7 +58,7 @@
 
         <args4j.version>2.33</args4j.version>
 
-        <providence.version>0.0.2-SNAPSHOT</providence.version>
+        <providence.version>0.0.2</providence.version>
         <morimekta_utils.version>0.2.1</morimekta_utils.version>
     </properties>
 

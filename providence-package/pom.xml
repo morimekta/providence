@@ -30,17 +30,17 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-compiler</artifactId>
-            <version>${providence.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-converter</artifactId>
-            <version>${providence.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-rpc-tool</artifactId>
-            <version>${providence.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
