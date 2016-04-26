@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.compiler;
 
+import net.morimekta.providence.compiler.options.Language;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -26,6 +27,7 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
@@ -34,46 +36,68 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 15.09.15
  */
 public class Compiler {
-    private final CompilerOptions mOpts;
+    private final CompilerOptions options;
 
     public Compiler() {
-        mOpts = new CompilerOptions();
+        options = new CompilerOptions();
     }
 
     public void run(String... args) {
         ParserProperties props = ParserProperties
                 .defaults()
                 .withUsageWidth(120);
-        CmdLineParser cli = new CmdLineParser(mOpts, props);
+        CmdLineParser cli = new CmdLineParser(options, props);
         try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/build.properties"));
+
             cli.parseArgument(args);
-            if (mOpts.isHelp()) {
-                System.out.println("pvdc [-I dir] [--out dir] --gen spec[:opt[,opt]*] file...");
+            if (options.isHelp()) {
+                System.out.println("Providence compiler - v" + properties.getProperty("build.version"));
+                System.out.println("Usage: pvdc [-I dir] [-o dir] generator[:opt[,opt]*] file...");
                 System.out.println();
-                System.out.println("Example code to run:");
-                System.out.println("$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift");
-                System.out.println();
-                cli.printUsage(System.out);
-                System.out.println();
-                System.out.println("Available generators:");
-                for (GeneratorSpec generator : GeneratorSpec.values()) {
-                    System.out.println(String.format(" - %-10s : %s", generator.name(), generator.desc));
+                if (options.help.generator != null) {
+                    System.out.format("%s : %s\n",
+                                      options.help.generator.name(),
+                                      options.help.generator.desc);
+                    System.out.println("Available options");
+                    System.out.println();
+                    switch (options.help.generator) {
+                        case java:
+                            System.out.println(" - android : Add android parcelable interface to model classes.");
+                            System.out.println(" - jackson : Add jackson 2 annotations to model classes.");
+                            break;
+                        default:
+                            System.out.println("None.");
+                            break;
+                    }
+                } else {
+                    System.out.println("Example code to run:");
+                    System.out.println("$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift");
+                    System.out.println();
+                    cli.printUsage(System.out);
+                    System.out.println();
+                    System.out.println("Available generators:");
+                    for (Language lang : Language.values()) {
+                        System.out.format(" - %-10s : %s\n", lang.name(), lang.desc);
+                    }
                 }
                 return;
             }
 
-            Parser parser = mOpts.getParser(cli);
-            List<File> includes = mOpts.getIncludes(cli);
-            List<File> input = mOpts.getInputFiles(cli);
+            Parser parser = options.getParser(cli);
+            List<File> includes = options.getIncludes(cli);
+            List<File> input = options.getInputFiles(cli);
 
             TypeLoader loader = new TypeLoader(includes, parser);
-            Generator generator = mOpts.getGenerator(cli, loader);
+            Generator generator = options.getGenerator(cli, loader);
 
             List<CDocument> docs = new LinkedList<>();
             for (File f : input) {
@@ -86,10 +110,15 @@ public class Compiler {
 
             return;
         } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-            System.err.println("compiler --gen [language] file...");
+            System.err.println("Usage: pvdc [-I dir] [-o dir] generator[:opt[,opt]*] file...");
+            if (e.getLocalizedMessage()
+                 .length() > 0) {
+                System.err.println(e.getLocalizedMessage());
+            } else {
+                e.printStackTrace();
+            }
             System.err.println();
-            cli.printUsage(System.err);
+            System.err.println("Run $ pvdc --help # for available options.");
         } catch (ParseException e) {
             e.printStackTrace();
             if (e.getToken() != null) {
@@ -117,7 +146,11 @@ public class Compiler {
             System.err.print("I/O error: ");
             e.printStackTrace();
         }
-        System.exit(1);
+        exit(1);
+    }
+
+    protected void exit(int i) {
+        System.exit(i);
     }
 
     public static void main(String[] args) throws Throwable {

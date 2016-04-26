@@ -20,6 +20,12 @@
 package net.morimekta.providence.compiler;
 
 import net.morimekta.console.FormatString;
+import net.morimekta.providence.compiler.options.GeneratorOptionHandler;
+import net.morimekta.providence.compiler.options.GeneratorOptions;
+import net.morimekta.providence.compiler.options.HelpOptionHandler;
+import net.morimekta.providence.compiler.options.HelpOptions;
+import net.morimekta.providence.compiler.options.Syntax;
+import net.morimekta.providence.compiler.options.SyntaxOptionHandler;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.format.java.JGenerator;
 import net.morimekta.providence.generator.format.java.JOptions;
@@ -32,6 +38,7 @@ import net.morimekta.providence.reflect.parser.MessageParser;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.serializer.JsonSerializer;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -50,6 +57,7 @@ import static net.morimekta.console.FormatString.except;
 @SuppressWarnings("all")
 public class CompilerOptions {
     @Option(name = "--out",
+            aliases = {"-o"},
             metaVar = "dir",
             usage = "Output directory.")
     protected String out = ".";
@@ -57,43 +65,46 @@ public class CompilerOptions {
     @Option(name = "--include",
             aliases = "-I",
             metaVar = "dir",
-            usage = "Include files in directory for imports.")
-    protected List<String> include = new LinkedList<>();
+            usage = "Allow includes of files in directory.")
+    protected List<String> includes = new LinkedList<>();
 
     @Option(name = "--syntax",
+            hidden = true,
             metaVar = "syntax",
+            handler = SyntaxOptionHandler.class,
             usage = "Input file syntax.")
-    protected SyntaxSpec syntax = SyntaxSpec.thrift;
-
-    @Option(name = "--gen",
-            metaVar = "spec",
-            required = true,
-            handler = GeneratorOptionHandler.class,
-            usage = "Generate files for this language spec.")
-    protected GeneratorOptions gen;
+    protected Syntax syntax = Syntax.thrift;
 
     @Option(name = "--help",
-            aliases = {"-?", "-h"},
+            aliases = {"-h", "-?"},
             help = true,
-            usage = "This help message.")
-    protected boolean help = false;
+            handler = HelpOptionHandler.class,
+            usage = "Show this help or about language.")
+    protected HelpOptions help = null;
+
+    @Argument(metaVar = "generator",
+              required = true,
+              handler = GeneratorOptionHandler.class,
+              usage = "Generate files for this language spec.")
+    protected GeneratorOptions gen;
 
     @Argument(metaVar = "file",
               required = true,
               multiValued = true,
-              usage = "Input files to compile.")
+              index = 1,
+              usage = "Files to compile.")
     protected List<String> files = new LinkedList<>();
 
     public CompilerOptions() {
     }
 
     public boolean isHelp() {
-        return help;
+        return help != null;
     }
 
     public List<File> getIncludes(CmdLineParser cli) throws CmdLineException {
         List<File> includes = new LinkedList<>();
-        for (String include : this.include) {
+        for (String include : this.includes) {
             File file = new File(include);
             if (!file.exists()) {
                 throw new CmdLineException(cli, new FormatString("Included dir %s does not exist."), include);
@@ -167,7 +178,7 @@ public class CompilerOptions {
                             options.jackson = true;
                             break;
                         default:
-                            throw except(cli, "");
+                            throw except(cli, "No such option for java generator: " + opt);
                     }
                 }
                 return new JGenerator(getFileManager(cli), loader.getRegistry(), options);

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,6 +25,7 @@ public class RPCFlagsTest {
     private int exitCode;
     private RPC rpc;
     private File thriftFile;
+    private String version;
 
     public String endpoint() {
         return "http://localhost:8080/test";
@@ -31,6 +33,10 @@ public class RPCFlagsTest {
 
     @Before
     public void setUp() throws IOException {
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/build.properties"));
+        version = properties.getProperty("build.version");
+
         temp = new TemporaryFolder();
         temp.create();
         thriftFile = temp.newFile("test.thrift");
@@ -69,7 +75,8 @@ public class RPCFlagsTest {
 
         assertEquals(0, exitCode);
         assertEquals(
-                "pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
+                "Providence RPC Tool - v" + version + "\n" +
+                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
@@ -106,6 +113,7 @@ public class RPCFlagsTest {
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
         assertEquals(
+                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
                 "Option \"--service (-s)\" is required\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n",
@@ -120,6 +128,7 @@ public class RPCFlagsTest {
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
         assertEquals(
+                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
                 "Argument \"URL\" is required\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n",
@@ -136,6 +145,7 @@ public class RPCFlagsTest {
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
         assertEquals(
+                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
                 "No such include directory: " + dir.getAbsolutePath() + "\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n", errContent.toString());

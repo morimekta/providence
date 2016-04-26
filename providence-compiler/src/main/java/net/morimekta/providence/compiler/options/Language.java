@@ -1,9 +1,9 @@
-package net.morimekta.providence.compiler;
+package net.morimekta.providence.compiler.options;
 
 /**
  * Which providence generator to use.
  */
-enum GeneratorSpec {
+public enum Language {
     java("Main java (1.7+) code generator."),
 
     // extras
@@ -13,7 +13,7 @@ enum GeneratorSpec {
 
     public final String desc;
 
-    GeneratorSpec(String desc) {
+    Language(String desc) {
         this.desc = desc;
     }
 }

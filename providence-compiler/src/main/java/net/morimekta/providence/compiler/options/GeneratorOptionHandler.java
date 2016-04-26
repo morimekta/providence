@@ -1,4 +1,4 @@
-package net.morimekta.providence.compiler;
+package net.morimekta.providence.compiler.options;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -22,29 +22,29 @@ public class GeneratorOptionHandler extends OptionHandler<GeneratorOptions> {
 
     @Override
     public int parseArguments(Parameters params) throws CmdLineException {
-        if (params.size() == 0) {
-            throw except(owner, "");
+        if (params.size() != 1) {
+            throw except(owner, "Only one generator spec allowed");
         }
 
-        GeneratorSpec generator = null;
+        Language generator = null;
         LinkedList<String> options = new LinkedList<>();
 
         String[] gen = params.getParameter(0).split("[:]", 2);
         if (gen.length > 2) {
-            throw except(owner, "");
+            throw except(owner, "Invalid generator spec, only one ':' allowed: " + params.getParameter(0));
         }
 
-        for (GeneratorSpec spec : GeneratorSpec.values()) {
+        for (Language spec : Language.values()) {
             if (gen[0].equalsIgnoreCase(spec.name())) {
                 generator = spec;
                 break;
             }
         }
         if (generator == null) {
-            throw except(owner, "Unknown language " + gen[0]);
+            throw except(owner, "Unknown output language " + gen[0]);
         }
 
-        if (gen.length > 1) {
+        if (gen.length == 2) {
             Collections.addAll(options, gen[1].split("[,]"));
         }
 

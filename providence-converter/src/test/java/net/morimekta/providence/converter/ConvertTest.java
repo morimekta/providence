@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,11 +31,16 @@ public class ConvertTest {
     private OutputStream errContent;
 
     private int     exitCode;
-    private Convert rpc;
+    private Convert convert;
     private File    thriftFile;
+    private String  version;
 
     @Before
     public void setUp() throws IOException {
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/build.properties"));
+        version = properties.getProperty("build.version");
+
         temp = new TemporaryFolder();
         temp.create();
         thriftFile = temp.newFile("test.thrift");
@@ -52,7 +58,7 @@ public class ConvertTest {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
-        rpc = new Convert() {
+        convert = new Convert() {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -69,10 +75,11 @@ public class ConvertTest {
 
     @Test
     public void testHelp() {
-        rpc.run("--help");
+        convert.run("--help");
 
         assertEquals(
-                "pvd [-i spec] [-o spec] [-I dir] [-S] type\n" +
+                "Providence Converter - v" + version + "\n" +
+                "Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvd -I thrift/ -s cal.Calculator\n" +
@@ -110,10 +117,10 @@ public class ConvertTest {
         }
         System.setIn(new ByteArrayInputStream(tmp.toByteArray()));
 
-        rpc.run("-I", temp.getRoot().getAbsolutePath(),
-                "-i", "binary",
-                "-o", "pretty_json",
-                "test.Containers");
+        convert.run("-I", temp.getRoot().getAbsolutePath(),
+                    "-i", "binary",
+                    "-o", "pretty_json",
+                    "test.Containers");
 
         tmp = new ByteArrayOutputStream();
         try (InputStream in = getClass().getResourceAsStream("/pretty.json")) {

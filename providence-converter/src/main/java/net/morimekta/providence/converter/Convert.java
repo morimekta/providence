@@ -31,6 +31,7 @@ import org.kohsuke.args4j.ParserProperties;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Properties;
 
 /**
  * Converter main class.
@@ -48,14 +49,17 @@ public class Convert {
 
     @SuppressWarnings("unchecked")
     void run(String... args) {
-        ParserProperties props = ParserProperties
-                .defaults()
-                .withUsageWidth(120);
+        ParserProperties props = ParserProperties.defaults()
+                                                 .withUsageWidth(120);
         CmdLineParser cli = new CmdLineParser(options, props);
         try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/build.properties"));
+
             cli.parseArgument(args);
             if (options.isHelp()) {
-                System.out.println("pvd [-i spec] [-o spec] [-I dir] [-S] type");
+                System.out.println("Providence Converter - v" + properties.getProperty("build.version"));
+                System.out.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
                 System.out.println();
                 System.out.println("Example code to run:");
                 System.out.println("$ cat call.json | pvd -I thrift/ -s cal.Calculator");
@@ -74,12 +78,15 @@ public class Convert {
                    .collect(options.getOutput(cli));
             return;
         } catch (CmdLineException e) {
-            System.out.flush();
-            System.err.println(e.getMessage());
-            cli.printSingleLineUsage(System.err);
+            System.err.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
+            if (e.getLocalizedMessage()
+                 .length() > 0) {
+                System.err.println(e.getLocalizedMessage());
+            } else {
+                e.printStackTrace();
+            }
             System.err.println();
-            cli.printUsage(System.err);
-            System.err.println();
+            System.err.println("Run $ pvd --help # for available options.");
         } catch (ParseException e) {
             System.out.flush();
             System.err.println();

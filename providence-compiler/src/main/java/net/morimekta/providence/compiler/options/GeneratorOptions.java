@@ -1,4 +1,4 @@
-package net.morimekta.providence.compiler;
+package net.morimekta.providence.compiler.options;
 
 import java.util.Collection;
 
@@ -7,10 +7,10 @@ import java.util.Collection;
  */
 public class GeneratorOptions {
     // expected format.
-    public final GeneratorSpec generator;
+    public final Language           generator;
     public final Collection<String> options;
 
-    public GeneratorOptions(GeneratorSpec generator, Collection<String> options) {
+    public GeneratorOptions(Language generator, Collection<String> options) {
         this.generator = generator;
         this.options = options;
     }

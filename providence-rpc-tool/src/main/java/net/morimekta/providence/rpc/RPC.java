@@ -35,10 +35,11 @@ import com.google.api.client.http.HttpResponseException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
+import org.omg.PortableServer.ServantRetentionPolicy;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.time.Clock;
+import java.util.Properties;
 
 public class RPC {
     private final RPCOptions options;
@@ -52,11 +53,14 @@ public class RPC {
         ParserProperties props = ParserProperties.defaults()
                                                  .withUsageWidth(120);
         CmdLineParser cli = new CmdLineParser(options, props);
-        Clock clock = Clock.systemUTC();
         try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/build.properties"));
+
             cli.parseArgument(args);
             if (options.isHelp()) {
-                System.out.println("pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
+                System.out.println("Providence RPC Tool - v" + properties.getProperty("build.version"));
+                System.out.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
                 System.out.println();
                 System.out.println("Example code to run:");
                 System.out.println("$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service");
@@ -86,9 +90,10 @@ public class RPC {
             System.err.println("Received " + e.getStatusMessage());
             System.err.println(" - from: " + options.endpoint);
         } catch (CmdLineException e) {
-            if (e.getMessage()
+            System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
+            if (e.getLocalizedMessage()
                  .length() > 0) {
-                System.err.println(e.getMessage());
+                System.err.println(e.getLocalizedMessage());
             } else {
                 e.printStackTrace();
             }
