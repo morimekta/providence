@@ -1,7 +1,11 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
+import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonWriter;
@@ -72,7 +76,7 @@ public class JValueFormat {
                 break;
             case BINARY:
                 writer.append("Binary.wrap(new byte[]{");
-                byte[] bytes = (byte[]) value;
+                byte[] bytes = ((Binary) value).get();
                 boolean first = true;
                 for (byte b : bytes) {
                     if (first) {
@@ -80,7 +84,7 @@ public class JValueFormat {
                     } else {
                         writer.append(',');
                     }
-                    writer.format("0x%02x", b);
+                    writer.format("(byte)%d", b);
                 }
                 writer.append("})");
                 break;
@@ -96,9 +100,23 @@ public class JValueFormat {
             case ENUM:
                 writer.format("%s.%s", helper.getValueType(type), value.toString());
                 break;
-            case MESSAGE:
-                // writer.write("null");
-                throw new GeneratorException("Message structs cannot have default values");
+            case MESSAGE: {
+                writer.format("%s.builder()", helper.getFieldType(type))
+                      .begin();
+                PMessage message = (PMessage) value;
+                int i = 0;
+                for (CField field : ((CStructDescriptor) type).getFields()) {
+                    JField fld = new JField(field, helper, i++);
+                    if (message.has(field.getKey())) {
+                        writer.formatln(".%s(", fld.setter());
+                        appendTypedValue(message.get(field.getKey()), field.getDescriptor());
+                        writer.append(")");
+                    }
+                }
+                writer.appendln(".build()")
+                      .end();
+                break;
+            }
             case MAP:
             case LIST:
             case SET:

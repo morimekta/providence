@@ -36,23 +36,23 @@ import java.io.OutputStream;
  * @since 22.09.15
  */
 public class JsonGenerator extends Generator {
-    private final TypeLoader     mLoader;
-    private final JsonSerializer mSerializer;
+    private final TypeLoader     typeLoader;
+    private final JsonSerializer serializer;
 
     public JsonGenerator(FileManager fileManager, TypeLoader loader) {
         super(fileManager);
-        mLoader = loader;
-        mSerializer = new JsonSerializer(JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME);
+        typeLoader = loader;
+        serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
     }
 
     @Override
     public void generate(CDocument document) throws IOException, GeneratorException {
-        for (ThriftDocument doc : mLoader.loadedDocuments()) {
+        for (ThriftDocument doc : typeLoader.loadedDocuments()) {
             if (doc.getPackage()
                    .equals(document.getPackageName())) {
                 OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
                 try {
-                    mSerializer.serialize(out, doc);
+                    serializer.serialize(out, doc);
                 } catch (SerializerException e) {
                     throw new GeneratorException("Unable to serialize document.", e);
                 }

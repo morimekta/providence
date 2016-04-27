@@ -71,15 +71,15 @@ public class PList<I> extends PContainer<List<I>> {
     }
 
     public interface Builder<V> extends PBuilder<List<V>> {
-        void add(V value);
-        void addAll(Collection<V> items);
-        void clear();
+        Builder<V> add(V value);
+        Builder<V> addAll(Collection<V> items);
+        Builder<V> clear();
 
         @Override
         List<V> build();
     }
 
-    public interface BuilderFactory<I> extends PBuilderFactory<List<I>> {
+    private interface BuilderFactory<I> extends PBuilderFactory<List<I>> {
         @Override
         Builder<I> builder();
     }
@@ -92,18 +92,21 @@ public class PList<I> extends PContainer<List<I>> {
         }
 
         @Override
-        public void add(I value) {
+        public ImmutableListBuilder<I> add(I value) {
             builder.add(value);
+            return this;
         }
 
         @Override
-        public void addAll(Collection<I> items) {
+        public ImmutableListBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public ImmutableListBuilder<I> clear() {
             builder = ImmutableList.builder();
+            return this;
         }
 
         @Override

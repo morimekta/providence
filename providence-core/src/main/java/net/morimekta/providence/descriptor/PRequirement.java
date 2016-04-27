@@ -41,26 +41,4 @@ public enum PRequirement {
         presenceRequired = presence;
         label = name;
     }
-
-    public static PRequirement forName(String label) {
-        switch (label) {
-            case "REQUIRED":
-                return REQUIRED;
-            case "OPTIONAL":
-                return OPTIONAL;
-            default:
-                return DEFAULT;
-        }
-    }
-
-    public static PRequirement forLabel(String label) {
-        switch (label) {
-            case "required":
-                return REQUIRED;
-            case "optional":
-                return OPTIONAL;
-            default:
-                return DEFAULT;
-        }
-    }
 }

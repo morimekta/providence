@@ -16,7 +16,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kThriftKeywords;
     static {
-        net.morimekta.providence.descriptor.PSet.Builder builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
+        net.morimekta.providence.descriptor.PSet.Builder<String> builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
         builder.add("struct");
         builder.add("exception");
         builder.add("bool");
@@ -49,7 +49,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kReservedWords;
     static {
-        net.morimekta.providence.descriptor.PSet.Builder builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
+        net.morimekta.providence.descriptor.PSet.Builder<String> builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
         builder.add("private");
         builder.add("byte");
         builder.add("for");

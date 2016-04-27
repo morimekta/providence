@@ -27,17 +27,17 @@ import java.io.IOException;
 /**
  */
 public abstract class Generator {
-    private final FileManager mFileManager;
+    private final FileManager fileManager;
 
     public Generator(FileManager manager) {
-        mFileManager = manager;
+        fileManager = manager;
     }
 
     /**
      * @return The local file manager.
      */
-    public final FileManager getFileManager() {
-        return mFileManager;
+    protected final FileManager getFileManager() {
+        return fileManager;
     }
 
     /**

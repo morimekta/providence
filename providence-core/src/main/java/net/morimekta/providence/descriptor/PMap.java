@@ -84,15 +84,15 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
     }
 
     public interface Builder<K, V> extends PBuilder<Map<K, V>> {
-        void put(K key, V value);
-        void putAll(Map<K, V> map);
-        void clear();
+        Builder<K, V> put(K key, V value);
+        Builder<K, V> putAll(Map<K, V> map);
+        Builder<K, V> clear();
 
         @Override
         Map<K, V> build();
     }
 
-    public interface BuilderFactory<K, V> extends PBuilderFactory<Map<K, V>> {
+    private interface BuilderFactory<K, V> extends PBuilderFactory<Map<K, V>> {
         Builder<K, V> builder();
     }
 
@@ -104,18 +104,21 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
         }
 
         @Override
-        public void put(K key, V value) {
+        public ImmutableMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
+            return this;
         }
 
         @Override
-        public void putAll(Map<K, V> map) {
+        public ImmutableMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public ImmutableMapBuilder<K, V> clear() {
             builder = ImmutableMap.builder();
+            return this;
         }
 
         @Override
@@ -132,18 +135,21 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
         }
 
         @Override
-        public void put(K key, V value) {
+        public ImmutableSortedMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
+            return this;
         }
 
         @Override
-        public void putAll(Map<K, V> map) {
+        public ImmutableSortedMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public ImmutableSortedMapBuilder<K, V> clear() {
             builder = ImmutableSortedMap.naturalOrder();
+            return this;
         }
 
         @Override
@@ -160,18 +166,21 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
         }
 
         @Override
-        public void put(K key, V value) {
+        public LinkedHashMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
+            return this;
         }
 
         @Override
-        public void putAll(Map<K, V> map) {
+        public LinkedHashMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public LinkedHashMapBuilder<K, V> clear() {
             builder.clear();
+            return this;
         }
 
         @Override

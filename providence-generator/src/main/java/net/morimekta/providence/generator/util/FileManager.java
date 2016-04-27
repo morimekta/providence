@@ -31,14 +31,14 @@ import java.util.Set;
  * @since 19.09.15
  */
 public class FileManager {
-    private final File mRoot;
+    private final File root;
 
-    private final Set<String> mCreatedFiles;
+    private final Set<String> generatedFiles;
 
     public FileManager(File root) {
-        mRoot = root;
+        this.root = root;
 
-        mCreatedFiles = new HashSet<>();
+        generatedFiles = new HashSet<>();
     }
 
     protected String relativePath(String path, String name) {
@@ -49,13 +49,13 @@ public class FileManager {
     }
 
     protected String absolutePath(String path, String name) throws IOException {
-        return new File(mRoot, relativePath(path, name)).getCanonicalPath();
+        return new File(root, relativePath(path, name)).getCanonicalPath();
     }
 
     public OutputStream create(String path, String name) throws IOException {
         File file = new File(absolutePath(path, name));
 
-        if (mCreatedFiles.contains(file.getCanonicalPath())) {
+        if (generatedFiles.contains(file.getCanonicalPath())) {
             throw new IOException("File " + path + File.separator + name + " already created.");
         }
 
@@ -63,7 +63,7 @@ public class FileManager {
             .mkdirs();
         file.createNewFile();
 
-        mCreatedFiles.add(file.getCanonicalPath());
+        generatedFiles.add(file.getCanonicalPath());
 
         return new FileOutputStream(file, false);
     }

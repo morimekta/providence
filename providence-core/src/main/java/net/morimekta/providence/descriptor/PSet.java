@@ -74,15 +74,15 @@ public class PSet<I> extends PContainer<Set<I>> {
     }
 
     public interface Builder<I> extends PBuilder<Set<I>> {
-        void add(I value);
-        void addAll(Collection<I> items);
-        void clear();
+        Builder<I> add(I value);
+        Builder<I> addAll(Collection<I> items);
+        Builder<I> clear();
 
         @Override
         Set<I> build();
     }
 
-    public interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
+    private interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
         @Override
         Builder<I> builder();
     }
@@ -95,18 +95,21 @@ public class PSet<I> extends PContainer<Set<I>> {
         }
 
         @Override
-        public void add(I value) {
+        public ImmutableSetBuilder<I> add(I value) {
             builder.add(value);
+            return this;
         }
 
         @Override
-        public void addAll(Collection<I> items) {
+        public ImmutableSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public ImmutableSetBuilder<I> clear() {
             builder = ImmutableSet.builder();
+            return this;
         }
 
         @Override
@@ -123,18 +126,21 @@ public class PSet<I> extends PContainer<Set<I>> {
         }
 
         @Override
-        public void add(I value) {
+        public ImmutableSortedSetBuilder<I> add(I value) {
             builder.add(value);
+            return this;
         }
 
         @Override
-        public void addAll(Collection<I> items) {
+        public ImmutableSortedSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public ImmutableSortedSetBuilder<I> clear() {
             builder = ImmutableSortedSet.naturalOrder();
+            return this;
         }
 
         @Override
@@ -151,18 +157,21 @@ public class PSet<I> extends PContainer<Set<I>> {
         }
 
         @Override
-        public void add(I value) {
+        public LinkedHashSetBuilder<I> add(I value) {
             builder.add(value);
+            return this;
         }
 
         @Override
-        public void addAll(Collection<I> items) {
+        public LinkedHashSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
+            return this;
         }
 
         @Override
-        public void clear() {
+        public LinkedHashSetBuilder<I> clear() {
             builder.clear();
+            return this;
         }
 
         @Override

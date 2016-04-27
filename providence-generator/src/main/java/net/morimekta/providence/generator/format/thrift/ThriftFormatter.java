@@ -53,7 +53,7 @@ public class ThriftFormatter {
     private static final String BLOCK_COMMENT_LINE  = " * ";
     private static final String BLOCK_COMMENT_END   = " */";
 
-    private final EnumValuePresence mEnumValuePresence;
+    private final EnumValuePresence enumValuePresence;
 
     public enum EnumValuePresence {
         ALWAYS,
@@ -66,7 +66,7 @@ public class ThriftFormatter {
     }
 
     public ThriftFormatter(EnumValuePresence presence) {
-        mEnumValuePresence = presence;
+        enumValuePresence = presence;
     }
 
     public void format(OutputStream out, CDocument document) {
@@ -209,13 +209,13 @@ public class ThriftFormatter {
         }
         builder.formatln("enum %s {", type.getName())
                .begin();
-        int nextValue = mEnumValuePresence.equals(EnumValuePresence.FIRST) ? -1 : PEnumDescriptor.DEFAULT_FIRST_VALUE;
+        int nextValue = enumValuePresence.equals(EnumValuePresence.FIRST) ? -1 : PEnumDescriptor.DEFAULT_FIRST_VALUE;
         for (CEnum value : type.getValues()) {
             if (value.getComment() != null) {
                 appendBlockComment(builder, value.getComment(), false);
             }
             builder.appendln(value.getName());
-            if (value.getValue() != nextValue || mEnumValuePresence.equals(EnumValuePresence.ALWAYS)) {
+            if (value.getValue() != nextValue || enumValuePresence.equals(EnumValuePresence.ALWAYS)) {
                 builder.format(" = %d", value.getValue());
                 nextValue = value.getValue() + 1;
             } else {
