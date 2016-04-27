@@ -16,56 +16,55 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kThriftKeywords;
     static {
-        net.morimekta.providence.descriptor.PSet.Builder<String> builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-        builder.add("struct");
-        builder.add("exception");
-        builder.add("bool");
-        builder.add("string");
-        builder.add("const");
-        builder.add("i32");
-        builder.add("required");
-        builder.add("i16");
-        builder.add("map");
-        builder.add("include");
-        builder.add("set");
-        builder.add("void");
-        builder.add("byte");
-        builder.add("i64");
-        builder.add("double");
-        builder.add("optional");
-        builder.add("union");
-        builder.add("list");
-        builder.add("throws");
-        builder.add("typedef");
-        builder.add("enum");
-        builder.add("oneway");
-        builder.add("i8");
-        builder.add("extends");
-        builder.add("service");
-        builder.add("binary");
-        builder.add("namespace");
-        kThriftKeywords = builder.build();
+        kThriftKeywords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+                .add("struct")
+                .add("exception")
+                .add("bool")
+                .add("string")
+                .add("const")
+                .add("i32")
+                .add("required")
+                .add("i16")
+                .add("map")
+                .add("include")
+                .add("set")
+                .add("void")
+                .add("byte")
+                .add("i64")
+                .add("double")
+                .add("optional")
+                .add("union")
+                .add("list")
+                .add("throws")
+                .add("typedef")
+                .add("enum")
+                .add("oneway")
+                .add("i8")
+                .add("extends")
+                .add("service")
+                .add("binary")
+                .add("namespace")
+                .build();
     }
 
     public static final java.util.Set<String> kReservedWords;
     static {
-        net.morimekta.providence.descriptor.PSet.Builder<String> builder = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-        builder.add("private");
-        builder.add("byte");
-        builder.add("for");
-        builder.add("do");
-        builder.add("float");
-        builder.add("while");
-        builder.add("int");
-        builder.add("long");
-        builder.add("public");
-        builder.add("protected");
-        builder.add("else");
-        builder.add("short");
-        builder.add("unsigned");
-        builder.add("class");
-        builder.add("if");
-        kReservedWords = builder.build();
+        kReservedWords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+                .add("private")
+                .add("byte")
+                .add("for")
+                .add("do")
+                .add("float")
+                .add("while")
+                .add("int")
+                .add("long")
+                .add("public")
+                .add("protected")
+                .add("else")
+                .add("short")
+                .add("unsigned")
+                .add("class")
+                .add("if")
+                .build();
     }
-
 }

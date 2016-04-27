@@ -1,7 +1,5 @@
 package net.morimekta.providence.model;
 
-import net.morimekta.providence.util.TypeUtils;
-
 /** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
 @SuppressWarnings("unused")
 public class ServiceMethod
@@ -181,9 +179,9 @@ public class ServiceMethod
                java.util.Objects.equals(mOneWay, other.mOneWay) &&
                java.util.Objects.equals(mReturnType, other.mReturnType) &&
                java.util.Objects.equals(mName, other.mName) &&
-               TypeUtils.equals(mParams, other.mParams) &&
-               TypeUtils.equals(mExceptions, other.mExceptions) &&
-               TypeUtils.equals(mAnnotations, other.mAnnotations);
+               net.morimekta.providence.util.TypeUtils.equals(mParams, other.mParams) &&
+               net.morimekta.providence.util.TypeUtils.equals(mExceptions, other.mExceptions) &&
+               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -195,9 +193,9 @@ public class ServiceMethod
                     _Field.ONE_WAY, mOneWay,
                     _Field.RETURN_TYPE, mReturnType,
                     _Field.NAME, mName,
-                    _Field.PARAMS, TypeUtils.hashCode(mParams),
-                    _Field.EXCEPTIONS, TypeUtils.hashCode(mExceptions),
-                    _Field.ANNOTATIONS, TypeUtils.hashCode(mAnnotations));
+                    _Field.PARAMS, net.morimekta.providence.util.TypeUtils.hashCode(mParams),
+                    _Field.EXCEPTIONS, net.morimekta.providence.util.TypeUtils.hashCode(mExceptions),
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -240,19 +238,19 @@ public class ServiceMethod
             if (!first) out.append(',');
             first = false;
             out.append("params:");
-            out.append(TypeUtils.toString(mParams));
+            out.append(net.morimekta.providence.util.TypeUtils.toString(mParams));
         }
         if (numExceptions() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("exceptions:");
-            out.append(TypeUtils.toString(mExceptions));
+            out.append(net.morimekta.providence.util.TypeUtils.toString(mExceptions));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();

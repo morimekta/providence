@@ -1,7 +1,5 @@
 package net.morimekta.providence.model;
 
-import net.morimekta.providence.util.TypeUtils;
-
 /**
  * service (extends &lt;extend&gt;)? {
  *   (&lt;method&gt; [;,]?)*
@@ -144,8 +142,8 @@ public class ServiceType
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mExtend, other.mExtend) &&
-               TypeUtils.equals(mMethods, other.mMethods) &&
-               TypeUtils.equals(mAnnotations, other.mAnnotations);
+               net.morimekta.providence.util.TypeUtils.equals(mMethods, other.mMethods) &&
+               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -156,8 +154,8 @@ public class ServiceType
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.EXTEND, mExtend,
-                    _Field.METHODS, TypeUtils.hashCode(mMethods),
-                    _Field.ANNOTATIONS, TypeUtils.hashCode(mAnnotations));
+                    _Field.METHODS, net.morimekta.providence.util.TypeUtils.hashCode(mMethods),
+                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -194,13 +192,13 @@ public class ServiceType
             if (!first) out.append(',');
             first = false;
             out.append("methods:");
-            out.append(TypeUtils.toString(mMethods));
+            out.append(net.morimekta.providence.util.TypeUtils.toString(mMethods));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
         }
         out.append('}');
         return out.toString();
