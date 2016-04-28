@@ -44,22 +44,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.javadoc.encoding>UTF-8</project.javadoc.encoding>
+        <project.reporting.inputEncoding>UTF-8</project.reporting.inputEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <guava.version>19.0</guava.version>
-        <slf4j.version>1.7.19</slf4j.version>
-        <thrift.version>0.9.3</thrift.version>
-        <jackson.version>2.7.3</jackson.version>
+        <!-- test dependencies -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.17</mockito.version>
 
+        <!-- compile dependencies -->
+        <guava.version>19.0</guava.version>
         <args4j.version>2.33</args4j.version>
+        <morimekta_utils.version>0.2.2</morimekta_utils.version>
 
         <providence.version>0.0.3-SNAPSHOT</providence.version>
-        <morimekta_utils.version>0.2.2</morimekta_utils.version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
