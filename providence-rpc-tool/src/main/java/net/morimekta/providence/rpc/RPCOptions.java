@@ -258,30 +258,39 @@ public class RPCOptions {
 
     public PClientHandler getHandler(CmdLineParser cli) throws CmdLineException {
         Serializer serializer = getSerializer(cli, format);
-        if (endpoint.startsWith("thrift://")) {
-            URI url = URI.create(endpoint);
-            if (url.getPort() < 1 ||
-                (url.getHost() == null || url.getHost().length() == 0) ||
-                (url.getFragment() != null && url.getFragment().length() > 0) ||
-                (url.getPath() != null && url.getPath().length() > 0)) {
-                throw except(cli, "Illegal thrift URI: " + endpoint);
-            }
-            return new SocketClientHandler(serializer, new InetSocketAddress(url.getHost(), url.getPort()));
-        } else {
-            GenericUrl url = new GenericUrl(endpoint);
-            Map<String, String> hdrs = new HashMap<>();
-            for (String hdr : headers) {
-                String[] parts = hdr.split("[:]", 2);
-                if (parts.length != 2) {
-                    throw except(cli, "Invalid headers param: " + hdr);
+        URI uri = URI.create(endpoint);
+        if (uri.getScheme() == null || uri.getScheme().length() == 0) {
+            throw except(cli, "No protocol on URI: " + endpoint);
+        }
+        switch (uri.getScheme()) {
+            case "thrift": {
+                if (uri.getPort() < 1 ||
+                    (uri.getHost() == null || uri.getHost().length() == 0) ||
+                    (uri.getFragment() != null && uri.getFragment().length() > 0) ||
+                    (uri.getPath() != null && uri.getPath().length() > 0)) {
+                    throw except(cli, "Illegal thrift URI: " + endpoint);
                 }
-                hdrs.put(parts[0].trim(), parts[1].trim());
+                return new SocketClientHandler(serializer, new InetSocketAddress(uri.getHost(), uri.getPort()));
             }
+            case "http":
+            case "https": {
+                GenericUrl url = new GenericUrl(endpoint);
+                Map<String, String> hdrs = new HashMap<>();
+                for (String hdr : headers) {
+                    String[] parts = hdr.split("[:]", 2);
+                    if (parts.length != 2) {
+                        throw except(cli, "Invalid headers param: " + hdr);
+                    }
+                    hdrs.put(parts[0].trim(), parts[1].trim());
+                }
 
-            HttpTransport transport = new ApacheHttpTransport();
-            return new HttpClientHandler(url,
-                                         transport.createRequestFactory(new SetHeadersInitializer(hdrs)),
-                                         serializer);
+                HttpTransport transport = new ApacheHttpTransport();
+                return new HttpClientHandler(url,
+                                             transport.createRequestFactory(new SetHeadersInitializer(hdrs)),
+                                             serializer);
+            }
+            default:
+                throw except(cli, "Unknown thrift protocol " + uri.getScheme());
         }
     }
 }
