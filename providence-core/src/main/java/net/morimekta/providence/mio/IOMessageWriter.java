@@ -1,7 +1,9 @@
-package net.morimekta.providence.serializer;
+package net.morimekta.providence.mio;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 import java.io.OutputStream;

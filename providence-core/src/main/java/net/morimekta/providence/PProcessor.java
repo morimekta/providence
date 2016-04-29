@@ -1,7 +1,7 @@
 package net.morimekta.providence;
 
-import net.morimekta.providence.serializer.MessageReader;
-import net.morimekta.providence.serializer.MessageWriter;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.mio.MessageWriter;
 
 import java.io.IOException;
 
