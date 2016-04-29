@@ -1,6 +1,7 @@
 package net.morimekta.providence.rpc;
 
 import net.morimekta.providence.rpc.util.NoLogging;
+import net.morimekta.providence.rpc.util.TestUtil;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -31,11 +32,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.ServerSocket;
 import java.nio.file.Files;
 
+import static net.morimekta.providence.rpc.util.TestUtil.findFreePort;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
-public class RPCThriftTest {
+public class RPCThriftHttpTest {
     @Rule
     public TemporaryFolder temp;
 
@@ -57,16 +57,6 @@ public class RPCThriftTest {
     private static int             port;
     private static MyService.Iface impl;
     private static Server          server;
-
-    public static int findFreePort() {
-        int port = -1;
-        try (ServerSocket socket = new ServerSocket(0)) {
-            port = socket.getLocalPort();
-        } catch (IOException e) {
-            fail("Unable to locate free port.");
-        }
-        return port;
-    }
 
     private static final String ENDPOINT = "test";
 

@@ -24,10 +24,10 @@ package net.morimekta.providence.rpc;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.rpc.options.Format;
-import net.morimekta.providence.serializer.MessageReader;
-import net.morimekta.providence.serializer.MessageWriter;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 
@@ -35,10 +35,10 @@ import com.google.api.client.http.HttpResponseException;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ParserProperties;
-import org.omg.PortableServer.ServantRetentionPolicy;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.ConnectException;
 import java.util.Properties;
 
 public class RPC {
@@ -86,6 +86,10 @@ public class RPC {
 
             out.write(resp);
             return;
+        } catch (ConnectException e) {
+            System.err.format("Unable to connect to %s: %s\n",
+                              options.endpoint,
+                              e.getMessage());
         } catch (HttpResponseException e) {
             System.err.println("Received " + e.getStatusMessage());
             System.err.println(" - from: " + options.endpoint);

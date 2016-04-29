@@ -23,25 +23,26 @@ package net.morimekta.providence.rpc;
 
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.mio.FileMessageReader;
+import net.morimekta.providence.mio.FileMessageWriter;
+import net.morimekta.providence.mio.IOMessageReader;
+import net.morimekta.providence.mio.IOMessageWriter;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
-import net.morimekta.providence.rpc.handler.FileMessageReader;
-import net.morimekta.providence.rpc.handler.FileMessageWriter;
 import net.morimekta.providence.rpc.handler.HttpClientHandler;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
+import net.morimekta.providence.rpc.handler.SocketClientHandler;
 import net.morimekta.providence.rpc.options.ConvertStream;
 import net.morimekta.providence.rpc.options.Format;
 import net.morimekta.providence.rpc.options.FormatOptionsHandler;
 import net.morimekta.providence.rpc.options.StreamOptionHandler;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
-import net.morimekta.providence.serializer.IOMessageReader;
-import net.morimekta.providence.serializer.IOMessageWriter;
 import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.providence.serializer.MessageReader;
-import net.morimekta.providence.serializer.MessageWriter;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
@@ -59,6 +60,8 @@ import org.kohsuke.args4j.Option;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -208,7 +211,7 @@ public class RPCOptions {
 
         PService srv = loader.getRegistry().getServiceProvider(service, null).getService();
         if (srv == null) {
-            throw except(cli, "");
+            throw except(cli, "Unknown service: " + service);
         }
 
         return srv;
@@ -254,20 +257,31 @@ public class RPCOptions {
     }
 
     public PClientHandler getHandler(CmdLineParser cli) throws CmdLineException {
-        GenericUrl endpoint = new GenericUrl(this.endpoint);
         Serializer serializer = getSerializer(cli, format);
-
-        Map<String, String> hdrs = new HashMap<>();
-        for (String hdr : headers) {
-            String[] parts = hdr.split("[:]", 2);
-            if (parts.length != 2) {
-                throw except(cli, "Invalid headers param: " + hdr);
+        if (endpoint.startsWith("thrift://")) {
+            URI url = URI.create(endpoint);
+            if (url.getPort() < 1 ||
+                (url.getHost() == null || url.getHost().length() == 0) ||
+                (url.getFragment() != null && url.getFragment().length() > 0) ||
+                (url.getPath() != null && url.getPath().length() > 0)) {
+                throw except(cli, "Illegal thrift URI: " + endpoint);
             }
-            hdrs.put(parts[0].trim(), parts[1].trim());
+            return new SocketClientHandler(serializer, new InetSocketAddress(url.getHost(), url.getPort()));
+        } else {
+            GenericUrl url = new GenericUrl(endpoint);
+            Map<String, String> hdrs = new HashMap<>();
+            for (String hdr : headers) {
+                String[] parts = hdr.split("[:]", 2);
+                if (parts.length != 2) {
+                    throw except(cli, "Invalid headers param: " + hdr);
+                }
+                hdrs.put(parts[0].trim(), parts[1].trim());
+            }
+
+            HttpTransport transport = new ApacheHttpTransport();
+            return new HttpClientHandler(url,
+                                         transport.createRequestFactory(new SetHeadersInitializer(hdrs)),
+                                         serializer);
         }
-
-        HttpTransport transport = new ApacheHttpTransport();
-
-        return new HttpClientHandler(endpoint, transport.createRequestFactory(new SetHeadersInitializer(hdrs)), serializer);
     }
 }
