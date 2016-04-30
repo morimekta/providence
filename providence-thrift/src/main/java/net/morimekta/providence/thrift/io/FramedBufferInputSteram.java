@@ -26,7 +26,7 @@ public class FramedBufferInputSteram extends InputStream {
 
     public FramedBufferInputSteram(ReadableByteChannel in) {
         this.in = in;
-        this.frameSizeBuffer = ByteBuffer.allocate(4);
+        this.frameSizeBuffer = ByteBuffer.allocate(Integer.BYTES);
         this.buffer = ByteBuffer.allocateDirect(MAX_BUFFER_SIZE);
         this.buffer.limit(0);
     }
@@ -74,12 +74,12 @@ public class FramedBufferInputSteram extends InputStream {
         frameSizeBuffer.rewind();
         frameSizeBuffer.limit(Integer.BYTES);
 
-        int i = 0;
-        while ((i += in.read(frameSizeBuffer)) > 0) {
-            if (i >= 4) break;
-        }
-        if (i < 4) {
+        in.read(frameSizeBuffer);
+        if (frameSizeBuffer.position() == 0) {
             return -1;
+        }
+        if (frameSizeBuffer.position() < Integer.BYTES) {
+            throw new IOException();
         }
 
         int frameSize = TFramedTransport.decodeFrameSize(frameSizeBuffer.array());
@@ -90,12 +90,13 @@ public class FramedBufferInputSteram extends InputStream {
         buffer.rewind();
         buffer.limit(frameSize);
 
-        i = 0;
-        while ((i += in.read(buffer)) > 0) {
-            if (i >= frameSize) break;
-            LOGGER.debug("still not enough:  "+ i + " of " + frameSize);
+        while (in.read(buffer) > 0) {
+            if (buffer.position() == frameSize) {
+                break;
+            }
+            LOGGER.debug("still not enough:  "+ buffer.position() + " of " + frameSize);
         }
-        if (i < frameSize) {
+        if (buffer.position() < frameSize) {
             throw new IOException();
         }
 

@@ -18,8 +18,9 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.ApplicationException;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
@@ -113,6 +114,7 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
             throws IOException, SerializerException {
         try {
@@ -120,16 +122,20 @@ public class TTupleProtocolSerializer extends Serializer {
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
 
             TMessage tm = protocol.readMessageBegin();
+
+            PServiceCallType type = PServiceCallType.findByKey(tm.type);
+            if (type == null) {
+                throw new SerializerException("Unknown call type for id " + tm.type);
+            } else if (type == PServiceCallType.EXCEPTION) {
+                ApplicationException exception = readMessage(protocol, ApplicationException.kDescriptor);
+                return new PServiceCall(tm.name, type, tm.seqid, exception);
+            }
+
             PServiceMethod method = service.getMethod(tm.name);
             if (method == null) {
                 throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
             }
 
-            PServiceCallType type = PServiceCallType.findByKey(tm.type);
-            if (type == null) {
-                throw new SerializerException("Unknown call type for id " + tm.type);
-            }
-            @SuppressWarnings("unchecked")
             PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
 
             T message = readMessage(protocol, descriptor);
