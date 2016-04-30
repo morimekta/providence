@@ -30,12 +30,10 @@ struct CompactFields {
     3: string label;
 } (compact = "")
 
-/*
 const list<CompactFields> kDefaultCompactFields = [
   {"name": "Tut-Ankh-Amon", "id": 1333, "label": "dead"},
   {"name": "Ramses II", "id": 1279}
 ];
-*/
 
 struct OptionalFields {
     1: optional bool booleanValue;
