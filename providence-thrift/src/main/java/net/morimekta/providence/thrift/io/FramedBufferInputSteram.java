@@ -38,7 +38,12 @@ public class FramedBufferInputSteram extends InputStream {
                 return -1;
             }
         }
-        return buffer.get();
+        return intValue(buffer.get());
+    }
+
+    private static int intValue(byte b) {
+        if (b < 0) return b + 0x100;
+        return b;
     }
 
     @Override
