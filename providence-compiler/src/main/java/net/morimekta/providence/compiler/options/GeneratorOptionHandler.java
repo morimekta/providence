@@ -22,8 +22,8 @@ public class GeneratorOptionHandler extends OptionHandler<GeneratorOptions> {
 
     @Override
     public int parseArguments(Parameters params) throws CmdLineException {
-        if (params.size() != 1) {
-            throw except(owner, "Only one generator spec allowed");
+        if (params.size() == 0) {
+            throw except(owner, "No generator spec given.");
         }
 
         Language generator = null;

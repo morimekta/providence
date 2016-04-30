@@ -82,16 +82,17 @@ public class CompilerOptions {
             usage = "Show this help or about language.")
     protected HelpOptions help = null;
 
-    @Argument(metaVar = "generator",
-              required = true,
-              handler = GeneratorOptionHandler.class,
-              usage = "Generate files for this language spec.")
+    @Option(name = "--gen",
+            aliases = {"-g"},
+            metaVar = "generator",
+            required = true,
+            handler = GeneratorOptionHandler.class,
+            usage = "Generate files for this language spec.")
     protected GeneratorOptions gen;
 
     @Argument(metaVar = "file",
               required = true,
               multiValued = true,
-              index = 1,
               usage = "Files to compile.")
     protected List<String> files = new LinkedList<>();
 

@@ -61,7 +61,7 @@ public class Compiler {
             cli.parseArgument(args);
             if (options.isHelp()) {
                 System.out.println("Providence compiler - v" + properties.getProperty("build.version"));
-                System.out.println("Usage: pvdc [-I dir] [-o dir] generator[:opt[,opt]*] file...");
+                System.out.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
                 System.out.println();
                 if (options.help.generator != null) {
                     System.out.format("%s : %s\n",
@@ -110,7 +110,7 @@ public class Compiler {
 
             return;
         } catch (CmdLineException e) {
-            System.err.println("Usage: pvdc [-I dir] [-o dir] generator[:opt[,opt]*] file...");
+            System.err.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
             if (e.getLocalizedMessage()
                  .length() > 0) {
                 System.err.println(e.getLocalizedMessage());
