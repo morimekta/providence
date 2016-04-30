@@ -4,6 +4,7 @@ import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -24,6 +25,10 @@ import static org.junit.Assert.assertEquals;
  * Test the providence converter (pvd) command.
  */
 public class ConvertTest {
+    private static InputStream defaultIn;
+    private static PrintStream defaultOut;
+    private static PrintStream defaultErr;
+
     @Rule
     public TemporaryFolder temp;
 
@@ -35,6 +40,13 @@ public class ConvertTest {
     private File    thriftFile;
     private String  version;
 
+    @BeforeClass
+    public static void setUpIO() {
+        defaultIn = System.in;
+        defaultOut = System.out;
+        defaultErr = System.err;
+    }
+
     @Before
     public void setUp() throws IOException {
         Properties properties = new Properties();
@@ -43,10 +55,10 @@ public class ConvertTest {
 
         temp = new TemporaryFolder();
         temp.create();
-        thriftFile = temp.newFile("test.thrift");
+        thriftFile = temp.newFile("cont.thrift");
 
         FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/test.thrift"), file);
+        IOUtils.copy(getClass().getResourceAsStream("/cont.thrift"), file);
         file.flush();
         file.close();
 
@@ -68,9 +80,9 @@ public class ConvertTest {
 
     @After
     public void tearDown() {
-        System.setErr(null);
-        System.setOut(null);
-        System.setIn(null);
+        System.setErr(defaultErr);
+        System.setOut(defaultOut);
+        System.setIn(defaultIn);
     }
 
     @Test
@@ -120,7 +132,7 @@ public class ConvertTest {
         convert.run("-I", temp.getRoot().getAbsolutePath(),
                     "-i", "binary",
                     "-o", "pretty_json",
-                    "test.Containers");
+                    "cont.Containers");
 
         tmp = new ByteArrayOutputStream();
         try (InputStream in = getClass().getResourceAsStream("/pretty.json")) {
