@@ -34,6 +34,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.rpc.handler.HttpClientHandler;
+import net.morimekta.providence.rpc.handler.NonblockingSocketClientHandler;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
 import net.morimekta.providence.rpc.handler.SocketClientHandler;
 import net.morimekta.providence.rpc.options.ConvertStream;
@@ -259,38 +260,44 @@ public class RPCOptions {
     public PClientHandler getHandler(CmdLineParser cli) throws CmdLineException {
         Serializer serializer = getSerializer(cli, format);
         URI uri = URI.create(endpoint);
-        if (uri.getScheme() == null || uri.getScheme().length() == 0) {
+        if (uri.getScheme() == null || uri.getScheme()
+                                          .length() == 0) {
             throw except(cli, "No protocol on URI: " + endpoint);
         }
-        switch (uri.getScheme()) {
-            case "thrift": {
-                if (uri.getPort() < 1 ||
+        if (uri.getScheme().startsWith("thrift")) {
+            if (    // Must have host and port.
+                    (uri.getPort() < 1) ||
                     (uri.getHost() == null || uri.getHost().length() == 0) ||
+                    // No path, query or fragment.
                     (uri.getFragment() != null && uri.getFragment().length() > 0) ||
+                    (uri.getQuery() != null && uri.getQuery().length() > 0) ||
                     (uri.getPath() != null && uri.getPath().length() > 0)) {
-                    throw except(cli, "Illegal thrift URI: " + endpoint);
-                }
-                return new SocketClientHandler(serializer, new InetSocketAddress(uri.getHost(), uri.getPort()));
+                throw except(cli, "Illegal thrift URI: " + endpoint);
             }
-            case "http":
-            case "https": {
-                GenericUrl url = new GenericUrl(endpoint);
-                Map<String, String> hdrs = new HashMap<>();
-                for (String hdr : headers) {
-                    String[] parts = hdr.split("[:]", 2);
-                    if (parts.length != 2) {
-                        throw except(cli, "Invalid headers param: " + hdr);
-                    }
-                    hdrs.put(parts[0].trim(), parts[1].trim());
-                }
 
-                HttpTransport transport = new ApacheHttpTransport();
-                return new HttpClientHandler(url,
-                                             transport.createRequestFactory(new SetHeadersInitializer(hdrs)),
-                                             serializer);
+            InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
+
+            switch (uri.getScheme()) {
+                case "thrift":
+                    return new SocketClientHandler(serializer, address);
+                case "thrift+nonblocking":
+                    return new NonblockingSocketClientHandler(serializer, address);
+                default:
+                    throw except(cli, "Unknown thrift protocol " + uri.getScheme());
             }
-            default:
-                throw except(cli, "Unknown thrift protocol " + uri.getScheme());
         }
+
+        GenericUrl url = new GenericUrl(endpoint);
+        Map<String, String> hdrs = new HashMap<>();
+        for (String hdr : headers) {
+            String[] parts = hdr.split("[:]", 2);
+            if (parts.length != 2) {
+                throw except(cli, "Invalid headers param: " + hdr);
+            }
+            hdrs.put(parts[0].trim(), parts[1].trim());
+        }
+
+        HttpTransport transport = new ApacheHttpTransport();
+        return new HttpClientHandler(url, transport.createRequestFactory(new SetHeadersInitializer(hdrs)), serializer);
     }
 }

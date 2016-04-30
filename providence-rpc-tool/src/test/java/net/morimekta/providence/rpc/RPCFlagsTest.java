@@ -3,6 +3,7 @@ package net.morimekta.providence.rpc;
 import net.morimekta.util.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -16,6 +17,10 @@ import static org.junit.Assert.assertEquals;
  * Created by morimekta on 4/25/16.
  */
 public class RPCFlagsTest {
+    private static InputStream defaultIn;
+    private static PrintStream defaultOut;
+    private static PrintStream defaultErr;
+
     @Rule
     public TemporaryFolder temp;
 
@@ -29,6 +34,13 @@ public class RPCFlagsTest {
 
     public String endpoint() {
         return "http://localhost:8080/test";
+    }
+
+    @BeforeClass
+    public static void setUpIO() {
+        defaultIn = System.in;
+        defaultOut = System.out;
+        defaultErr = System.err;
     }
 
     @Before
@@ -64,9 +76,9 @@ public class RPCFlagsTest {
 
     @After
     public void tearDown() {
-        System.setErr(null);
-        System.setOut(null);
-        System.setIn(null);
+        System.setErr(defaultErr);
+        System.setOut(defaultOut);
+        System.setIn(defaultIn);
     }
 
     @Test

@@ -10,9 +10,10 @@ import net.morimekta.util.io.IOUtils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TSimpleServer;
-import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
-public class RPCThriftSocketTest {
+public class RPCThriftNonblockingSocketTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
     private static PrintStream defaultErr;
@@ -58,16 +59,16 @@ public class RPCThriftSocketTest {
     private OutputStream outContent;
     private OutputStream errContent;
 
-    private static ExecutorService executor;
-    private static int             port;
+    private static ExecutorService      executor;
+    private static int                  port;
     private static MyService.Iface impl;
-    private static TServer         server;
+    private static TServer              server;
 
     private int             exitCode;
     private RPC             rpc;
 
     public String endpoint() {
-        return "thrift://localhost:" + port;
+        return "thrift+nonblocking://localhost:" + port;
     }
 
     @BeforeClass
@@ -81,14 +82,14 @@ public class RPCThriftSocketTest {
         port = findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
 
-        TServerSocket transport = new TServerSocket(port);
-        server = new TSimpleServer(
-                new TServer.Args(transport)
+        TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
+        server = new TNonblockingServer(
+                new TNonblockingServer.Args(transport)
                         .protocolFactory(new TBinaryProtocol.Factory())
                         .processor(new MyService.Processor<>(impl)));
+
         executor = Executors.newSingleThreadExecutor();
         executor.submit(server::serve);
-        Thread.sleep(1);
     }
 
     @Before

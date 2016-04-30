@@ -1,7 +1,6 @@
 package net.morimekta.providence.rpc;
 
 import net.morimekta.providence.rpc.util.NoLogging;
-import net.morimekta.providence.rpc.util.TestUtil;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -44,6 +43,10 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class RPCThriftHttpTest {
+    private static InputStream defaultIn;
+    private static PrintStream defaultOut;
+    private static PrintStream defaultErr;
+
     @Rule
     public TemporaryFolder temp;
 
@@ -67,6 +70,10 @@ public class RPCThriftHttpTest {
     @BeforeClass
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
+
+        defaultIn = System.in;
+        defaultOut = System.out;
+        defaultErr = System.err;
 
         port = findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
@@ -112,9 +119,9 @@ public class RPCThriftHttpTest {
 
     @After
     public void tearDown() throws Exception {
-        System.setErr(null);
-        System.setOut(null);
-        System.setIn(null);
+        System.setErr(defaultErr);
+        System.setOut(defaultOut);
+        System.setIn(defaultIn);
     }
 
     @AfterClass
@@ -143,7 +150,7 @@ public class RPCThriftHttpTest {
         assertEquals("[\n" +
                      "    \"test\",\n" +
                      "    2,\n" +
-                     "    0,\n" +
+                     "    44,\n" +
                      "    {\n" +
                      "        \"success\": {\n" +
                      "            \"text\": \"response\"\n" +
@@ -174,7 +181,7 @@ public class RPCThriftHttpTest {
                 endpoint());
 
         String out = new String(Files.readAllBytes(outFile.toPath()));
-        assertEquals("[\"test\",2,0,{\"0\":{\"1\":\"response\"}}]", out);
+        assertEquals("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]", out);
 
         assertEquals("", outContent.toString());
         assertEquals("", errContent.toString());
@@ -198,7 +205,7 @@ public class RPCThriftHttpTest {
         assertEquals("[\n" +
                      "    \"test\",\n" +
                      "    2,\n" +
-                     "    0,\n" +
+                     "    44,\n" +
                      "    {\n" +
                      "        \"f\": {\n" +
                      "            \"text\": \"failure\"\n" +
