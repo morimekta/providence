@@ -54,7 +54,8 @@
         <jetty.version>9.3.8.v20160314</jetty.version>
         <java.servlet.version>3.1.0</java.servlet.version>
         <thrift.version>0.9.3</thrift.version>
-        <slf4j.version>1.7.19</slf4j.version>
+        <logback.version>1.1.7</logback.version>
+        <slf4j.version>1.7.20</slf4j.version>
 
         <!-- test dependencies -->
         <junit.version>4.12</junit.version>
