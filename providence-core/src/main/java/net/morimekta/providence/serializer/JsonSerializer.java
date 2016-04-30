@@ -214,29 +214,38 @@ public class JsonSerializer extends Serializer {
         return MIME_TYPE;
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)
             throws IOException, JsonException, SerializerException {
         tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
 
         String methodName = tokenizer.expectString("Service call method").decodeJsonLiteral();
-        PServiceMethod method = service.getMethod(methodName);
-        if (method == null) {
-            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
-        }
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
         int typeKey = tokenizer.expectNumber("Service call type").intValue();
-        PServiceCallType type = PServiceCallType.findByKey(typeKey);
-        if (type == null) {
-            throw new SerializerException("Service call type " + typeKey + " is not valid.");
-        }
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
         int sequence = tokenizer.expectNumber("Service call sequence").intValue();
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+        PServiceCallType type = PServiceCallType.findByKey(typeKey);
+        if (type == null) {
+            throw new SerializerException("Service call type " + typeKey + " is not valid.");
+        } else if (type == PServiceCallType.EXCEPTION) {
+            ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"), tokenizer, ApplicationException.kDescriptor);
+
+            tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
+
+            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+        }
+
+        PServiceMethod method = service.getMethod(methodName);
+        if (method == null) {
+            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
+        }
 
         @SuppressWarnings("unchecked")
         PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();

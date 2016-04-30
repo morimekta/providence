@@ -134,6 +134,7 @@ public class BinarySerializer extends Serializer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
             throws IOException, SerializerException {
         BinaryReader in = new BigEndianBinaryReader(is);
@@ -141,8 +142,6 @@ public class BinarySerializer extends Serializer {
         int methodNameLen = in.expectInt();
         int typeKey;
         String methodName;
-        PServiceMethod method;
-        int sequence;
         // Accept both "strict" read mode and non-strict.
         // versioned
         if (methodNameLen < 0) {
@@ -151,28 +150,28 @@ public class BinarySerializer extends Serializer {
                 typeKey = methodNameLen & 0xFF;
                 methodNameLen = in.expectInt();
                 methodName = new String(in.expectBytes(methodNameLen), UTF_8);
-                method = service.getMethod(methodName);
-                sequence = in.expectInt();
             } else {
                 throw new SerializerException("Bad protocol version: %08x", version >>> 16);
             }
         } else {
-            if (readStrict) {
+            if (readStrict && versioned) {
                 throw new SerializerException("Missing protocol version");
             }
 
             methodName = new String(in.expectBytes(methodNameLen), UTF_8);
-            method = service.getMethod(methodName);
-            if (method == null) {
-                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
-            }
             typeKey = in.expectByte();
-            sequence = in.expectInt();
         }
+        int sequence = in.expectInt();
 
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
+        PServiceMethod method = service.getMethod(methodName);
         if (type == null) {
             throw new SerializerException("Invalid call type " + typeKey);
+        } else if (type == PServiceCallType.EXCEPTION) {
+            ApplicationException ex = readMessage(in, ApplicationException.kDescriptor, false);
+            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+        } else if (method == null) {
+            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
         }
 
         @SuppressWarnings("unchecked")

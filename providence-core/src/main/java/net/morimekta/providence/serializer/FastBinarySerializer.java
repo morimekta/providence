@@ -105,24 +105,28 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
             throws IOException, SerializerException {
         BinaryReader in = new BinaryReader(is);
         // Max method name length: 255 chars.
         int methodNameLen = in.expectUInt8();
         String methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+        int typeKey = in.expectUInt8();
+        int sequence = in.readIntVarint();
+
+        PServiceCallType type = PServiceCallType.findByKey(typeKey);
+        if (type == null) {
+            throw new SerializerException("Invalid call type " + typeKey);
+        } else if (type == PServiceCallType.EXCEPTION) {
+            ApplicationException ex = readMessage(in, ApplicationException.kDescriptor);
+            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+        }
+
         PServiceMethod method = service.getMethod(methodName);
         if (method == null) {
             throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
         }
-
-        int typeKey = in.expectUInt8();
-        PServiceCallType type = PServiceCallType.findByKey(typeKey);
-        if (type == null) {
-            throw new SerializerException("Invalid call type " + typeKey);
-        }
-
-        int sequence = in.readIntVarint();
 
         @SuppressWarnings("unchecked")
         PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();

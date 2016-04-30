@@ -4,15 +4,28 @@ package net.morimekta.providence;
  * Service method call type.
  */
 public enum PServiceCallType {
+    /**
+     * Call with parameter wrapper.
+     */
     CALL(1, true),
+    /**
+     * Reply with response wrapper with return value or exception.
+     */
     REPLY(2, false),
+    /**
+     * Reply with Application exception.
+     */
     EXCEPTION(3, false),
+    /**
+     * Call with parameter wrapper that does not want a reply (not even for
+     * exception).
+     */
     ONEWAY(4, true),
     ;
 
     /**
-     * Reue if the associated message is the method request struct. If false
-     * it is the message response struct.
+     * True if the associated message is the method request struct. If false
+     * it is the message response struct or application exception.
      */
     public final boolean request;
 
