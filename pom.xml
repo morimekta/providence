@@ -217,6 +217,7 @@
                 <artifactId>maven-site-plugin</artifactId>
                 <configuration>
                     <stagingDirectory>${project.basedir}/target/site</stagingDirectory>
+                    <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
         </plugins>

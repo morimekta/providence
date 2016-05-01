@@ -12,7 +12,7 @@ but with some differences and limitations.
 In order to compile providence, you need `java` and `javac` (I recommend
 `openjdk8-jdk`), and `maven` (3.3). Check out
 `git@github.com:morimekta/providence.git` and build with
-`mvn clean compile`.
+`mvn clean verify install`.
 
 ## Differences with Thrift
 
@@ -35,6 +35,38 @@ the same names when c_casing or camelCasing the name.
 
 There are also extra features added that the original Apache Thrift format does
 not support, or is only supported on very limited cases.
+
+#### Annotations
+
+Annotations are actually supported by the thrift compiler, but is not defined in
+the IDL. Annotations follow the syntax of:
+
+```
+ANNOTATIONS :== '(' ANNOTATION [[,;] ANNOTATION]* ')'
+
+ANNOTATION  :== IDENTIFIER '=' LITERAL
+```
+
+Which is put _after_ the actual definition, but _before_ any list separator. The
+annotation key can be *any* legal identifier, and the value can be any string
+literal. E.g.:
+
+```thrift
+struct MyStruct {
+  1: i32 something
+  (something.anno = "value")
+  2: i32 field (field.anno = "value");
+} (struct.anno = "value")
+```
+
+Annotations are there for the compiler only, and should not be saved in the
+generated code. Currently the recognized annotations are:
+ 
+* `compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
+* `container = "ORDERED"`: On fields with set or map type only, will replace the
+  default hash-based container with an order-preserving container.
+* `container = "SORTED"`: On fields with set or map type only, will replace the
+  default hash-based container with a sorted container.
 
 #### Circular containment
 
@@ -88,16 +120,13 @@ different serialization format that serializes the first M fields of the struct
 in order. E.g. in JSON a compact struct may be serialized as an array if (and
 only if).
 
-Messages will have a `isCompact()` method that determines if the message is
+Messages will have a `compact()` method that determines if the message is
 compact compatible for serialization. Descriptors will have a similar
-`compactible()` method which determines if the message can be deserialized with
+`isCompactible()` method which determines if the message can be deserialized with
 the compact format.
 
-This mimics the way thrift serializes service method calls, but in a way that
-is generic to all messages.
-
-To annotate a struct as compact, add the `@compact` annotation to the struct
-comment. This will still allow thrift compiler to parse the .thrift files.
+To make a struct compact, add the `compact = ""` annotation to the struct. This
+will still allow thrift compiler to parse the .thrift files.
 
 #### Simple Messages.
 
@@ -137,9 +166,11 @@ be part of the comments.
 
 ## Contributing
 
-Clone [this project](https://github.com/morimekta/providence), and create a
+You can send me an [email](mailto:oss@morimekta.net) to suggest a feature. Or
+you can make it yourself by cloning
+[the project](https://github.com/morimekta/providence), and create a
 [pull request](https://github.com/morimekta/providence/pulls) for your change.
 
-Make sure to name it properly, and describe chat the change does, and assign
-the request to [morimekta](https://github.com/morimekta). That should send me
+Make sure to name it properly, and describe what the change does, and assign
+the request to [@morimekta](https://github.com/morimekta). That should send me
 an email, so I know it's there and take care of it.

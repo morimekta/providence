@@ -32,3 +32,11 @@ Proper releases are done with a branch cut.
 * Go to [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
   and find the correct `Staging Repository`. Check that the content is correct and
   select `Release`, and confirm.
+
+#### Releasing the site
+
+* Run `# mvn clean verify site site:stage` in the release branch.
+* Check out the `gh-pages` branch.
+* Run `# cp -R target/site/* .`. Note that if some pages are removed, you need to
+  make sure the corresponding html pages or directories are removed too.
+* Commit and push.

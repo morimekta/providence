@@ -19,14 +19,19 @@ serializer interface has 3 noteworthy methods:
 
 The available serializers are as follows:
 
-* **TBinarySerializer**: **TBD** This class is to be replaced with a serializer
-  that replicates the TBinaryProtocol.
-* **TFastBinarySerializer**: A compact and efficient serialization format. The
+* **BinarySerializer**: A native providence version of the thrift's
+  **TBinaryProtocol** binary format. It should generate the same serialized
+  data as TBinaryProtocol, and be able to parse data back from the same. It is
+  the default serializer in the `pvdrpc` tool. See
+  [binary serializer spec](../serializer-binary.html) for details.
+* **FastBinarySerializer**: A compact and efficient serialization format. The
   serializer is designed to have a balance of computational and data
-  efficiency.
-* **TJsonSerializer**: A general purpose JSON serializer. This should be able
+  efficiency. See [fast binary serializer spec](../serializer-fast-binary.html)
+  for details.
+* **JsonSerializer**: A general purpose JSON serializer. This should be able
   to read most generic JSON formats into providence structs that match with
-  name to field type mapping.
+  name to field type mapping. See
+  [json serializer spec](../serializer-json.html) for details.
 
 It also contains a `PPrettyPrinter` class that similar to the serializers
 can serialize messages to an easy to read, and easy to compare (e.g. line by

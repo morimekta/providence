@@ -11,6 +11,7 @@
 
             <item href="index.html" name="Providence" />
             <item href="release.html" name="Release Process" />
+            <item href="downloads.html" name="Downloads" />
 
         </menu>
 
@@ -22,22 +23,18 @@
             <item href="providence-reflect/index.html" name="Tools : Reflect" />
             <item href="providence-generator/index.html" name="Tools : Generator" />
             <item href="providence-maven-plugin/index.html" name="Tools : Maven Plugin" />
-            <item href="providence-testing/index.html" name="Testing" />
+            <item href="providence-thrift/index.html" name="Utils: Thrift Bridge" />
+            <item href="providence-testing/index.html" name="Utils: Testing" />
 
         </menu>
 
         <menu name="Docs" inherit="top">
 
+            <item href="generated-java.html" name="Generated Java Code" />
+
             <item href="serializer-binary.html" name="Serializer : Binary" />
             <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
             <item href="serializer-json.html" name="Serializer : JSON" />
-
-            <item href="generated-java.html" name="Generated Java Code" />
-        </menu>
-
-        <menu name="Extra Modules" inherit="top">
-
-            <item href="providence-thrift.html" name="Thrift Bridge" />
 
         </menu>
 
