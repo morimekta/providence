@@ -85,7 +85,6 @@
         <!-- the real core. -->
         <module>providence-core</module>
         <module>providence-core-jackson</module>
-        <module>providence-core-streams</module>
 
         <!-- utility libraries -->
         <module>providence-thrift</module>

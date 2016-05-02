@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromJsonResource;
+import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

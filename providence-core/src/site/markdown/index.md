@@ -42,3 +42,22 @@ serializer format (yet).
 both serialization and deserialization. Note that it's OK if this is a slightly
 lossy serialization / deserialization, and not fast at all, as it is meant
 purely for testing and debugging.
+
+## Streams
+
+Convenience methods for creating java 8 streams from an input stream containing
+providence data.
+
+* `MessageStreams.file(File f, PSerializer s, PDescriptor d)`: Consume
+  messages from the file using the given serializer one at a time onto the
+  stream.
+* `MessageStreams.resource(String r, PSerializer, s, PDescriptor d)`: Consume
+  messages from the java resource using the given serializer one at a time
+  onto the stream.
+* `MessageStreams.stream(InputStream in, PSerializer, s, PDescriptor d)`: Consume
+  messages from the input stream using the given serializer one at a time
+  onto the stream.
+* `MessageCollectors.toFile(File f, PSerializer s)`: Collect messages and write
+  them to file with the given serializer.
+* `MessageCollectors.toStream(OutputStream os, PSerializer s)`: Collect
+  messages and write them to the given output stream with the given serializer.

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.morimekta.providence.testing.ProvidenceHelper.arrayListFromJsonResource;
+import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
