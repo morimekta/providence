@@ -34,9 +34,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.rpc.handler.HttpClientHandler;
-import net.morimekta.providence.rpc.handler.NonblockingSocketClientHandler;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
-import net.morimekta.providence.rpc.handler.SocketClientHandler;
 import net.morimekta.providence.rpc.options.ConvertStream;
 import net.morimekta.providence.rpc.options.Format;
 import net.morimekta.providence.rpc.options.FormatOptionsHandler;
@@ -49,6 +47,8 @@ import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
+import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
+import net.morimekta.providence.thrift.client.SocketClientHandler;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;

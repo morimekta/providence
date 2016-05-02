@@ -95,18 +95,13 @@ public class RPC {
             System.err.println(" - from: " + options.endpoint);
         } catch (CmdLineException e) {
             System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
-            if (e.getLocalizedMessage()
-                 .length() > 0) {
-                System.err.println(e.getLocalizedMessage());
-            } else {
-                e.printStackTrace();
-            }
+            System.err.println(e.getMessage());
             System.err.println();
             System.err.println("Run $ pvdrpc --help # for available options.");
         } catch (SerializerException e) {
             System.out.flush();
             System.err.println();
-            System.err.println("Serialization error: " + e.getLocalizedMessage());
+            System.err.println("Serialization error: " + e.getMessage());
             e.printStackTrace();
         } catch (ParseException e) {
             System.out.flush();
