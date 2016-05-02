@@ -8,6 +8,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
  */
 public class TBinaryProtocolSerializer extends TProtocolSerializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
+    public static final String ALT_MIME_TYPE = "application/x-thrift";
 
     public TBinaryProtocolSerializer() {
         this(true);

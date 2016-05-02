@@ -18,5 +18,11 @@ service MyService {
 
     Response test(1: Request request) throws (1: Failure f);
 
-    double test2(2: i64 a, 4: i8 late);
+    double test2(2: i64 a, 4: byte late);
+}
+
+service MyService2 {
+    Response testing(1: Request request) throws (1: Failure f);
+
+    double test2(2: i64 a, 4: byte late);
 }

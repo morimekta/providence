@@ -92,6 +92,7 @@ import java.util.Map;
  */
 public class JsonSerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.morimekta.providence.json";
+    public static final String JSON_MIME_TYPE = "application/json";
 
     public enum IdType {
         // print field and enums as numeric IDs and values.
