@@ -15,8 +15,8 @@ import java.io.InputStream;
  * A reader helper class for matching a serializer with an input stream.
  */
 public class IOMessageReader implements MessageReader {
-    private final InputStream in;
     private final Serializer  serializer;
+    private final InputStream in;
 
     public IOMessageReader(InputStream in, Serializer serializer) {
         this.in = in;
@@ -33,5 +33,10 @@ public class IOMessageReader implements MessageReader {
     public <T extends PMessage<T>> PServiceCall<T>
     read(PService service) throws IOException, SerializerException {
         return serializer.deserialize(in, service);
+    }
+
+    @Override
+    public void close() throws IOException {
+        in.close();
     }
 }

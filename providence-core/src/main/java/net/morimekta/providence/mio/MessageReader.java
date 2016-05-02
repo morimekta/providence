@@ -7,12 +7,13 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.SerializerException;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
  * An interface for reading messages and service calls.
  */
-public interface MessageReader {
+public interface MessageReader extends Closeable {
     <T extends PMessage<T>, TF extends PField> T read(PStructDescriptor<T, TF> descriptor)
             throws IOException, SerializerException;
 

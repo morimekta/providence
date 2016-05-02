@@ -49,26 +49,26 @@ public class MessageCollectors {
         return Collector.of(() -> {
             try {
                 return new BufferedOutputStream(new FileOutputStream(file.toFile()));
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new UncheckedIOException("Unable to open " + file.getFileName(), e);
             }
         }, (outputStream, t) -> {
             try {
                 result.addAndGet(serializer.serialize(outputStream, t));
-                if(!serializer.binaryProtocol()) {
+                if (!serializer.binaryProtocol()) {
                     result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
                 }
-            } catch(SerializerException e) {
+            } catch (SerializerException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Unable to write to " + file.getFileName(), e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
                 outputStream.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Unable to close " + file.getFileName(), e);
             }
@@ -81,23 +81,23 @@ public class MessageCollectors {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> new BufferedOutputStream(out), (outputStream, t) -> {
             try {
-                synchronized(outputStream) {
+                synchronized (outputStream) {
                     result.addAndGet(serializer.serialize(outputStream, t));
-                    if(!serializer.binaryProtocol()) {
+                    if (!serializer.binaryProtocol()) {
                         result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
                     }
                 }
-            } catch(SerializerException e) {
+            } catch (SerializerException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Broken pipe", e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
                 outputStream.flush();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException("Broken pipe", e);
             }
@@ -109,7 +109,7 @@ public class MessageCollectors {
         if(bytes.length > 0) {
             try {
                 out.write(bytes);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new UncheckedIOException(e);
             }

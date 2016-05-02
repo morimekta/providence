@@ -30,4 +30,8 @@ public class IOMessageWriter implements MessageWriter {
         return serializer.serialize(out, call);
     }
 
+    @Override
+    public void close() throws IOException {
+        out.close();
+    }
 }

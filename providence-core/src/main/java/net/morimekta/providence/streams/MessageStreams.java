@@ -43,7 +43,7 @@ import java.util.stream.StreamSupport;
  * Helper class to create streams that read providence messages.
  */
 public class MessageStreams {
-    static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
+    public static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
 
     /**
      * Read a file containing entries of a given type. Tries to detect the
@@ -84,7 +84,7 @@ public class MessageStreams {
                                                                                PStructDescriptor<T, F> descriptor)
             throws IOException {
         InputStream in = MessageStreams.class.getResourceAsStream(resource);
-        if(in == null) {
+        if (in == null) {
             throw new IOException("No such resource " + resource);
         }
         return StreamSupport.stream(new StreamMessageSpliterator<>(new BufferedInputStream(in),
@@ -94,7 +94,7 @@ public class MessageStreams {
                                                                        try {
                                                                            is.close();
                                                                            return null;
-                                                                       } catch(IOException e) {
+                                                                       } catch (IOException e) {
                                                                            throw new UncheckedIOException(e);
                                                                        }
                                                                    }), false);
@@ -126,7 +126,7 @@ public class MessageStreams {
         @Override
         public boolean tryAdvance(Consumer<? super T> action) {
             T message = read();
-            if(message != null) {
+            if (message != null) {
                 action.accept(message);
                 return true;
             }
@@ -136,7 +136,7 @@ public class MessageStreams {
         @Override
         public void forEachRemaining(Consumer<? super T> action) {
             T message;
-            while((message = read()) != null) {
+            while ((message = read()) != null) {
                 action.accept(message);
             }
         }
@@ -219,9 +219,9 @@ public class MessageStreams {
         @Override
         public T read() {
             try {
-                if(num > 0) {
+                if (num > 0) {
                     if (!serializer.binaryProtocol()) {
-                        if(!IOUtils.skipUntil(in, READABLE_ENTRY_SEP)) {
+                        if (!IOUtils.skipUntil(in, READABLE_ENTRY_SEP)) {
                             // no next entry found.
                             close();
                             return null;
@@ -236,17 +236,18 @@ public class MessageStreams {
                 // supported.
                 if (in.markSupported()) {
                     in.mark(2);
-                    if (in.read() < 0) return null;
+                    if (in.read() < 0)
+                        return null;
                     in.reset();
                 }
                 T out = serializer.deserialize(in, descriptor);
-                if(out == null) {
+                if (out == null) {
                     close();
                 }
                 return out;
-            } catch(SerializerException e) {
+            } catch (SerializerException e) {
                 throw new UncheckedIOException(new IOException(e));
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new UncheckedIOException(e);
             } finally {
                 ++num;
@@ -254,7 +255,7 @@ public class MessageStreams {
         }
 
         void close() {
-            if(closer != null) {
+            if (closer != null) {
                 try {
                     closer.apply(in);
                 } finally {

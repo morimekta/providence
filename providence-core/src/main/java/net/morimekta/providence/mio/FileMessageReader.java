@@ -11,6 +11,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -20,6 +21,7 @@ import java.io.InputStream;
 public class FileMessageReader implements MessageReader {
     private final File       file;
     private final Serializer serializer;
+
     private InputStream in;
 
     public FileMessageReader(File file, Serializer serializer) {
@@ -30,29 +32,29 @@ public class FileMessageReader implements MessageReader {
     @Override
     public <T extends PMessage<T>, TF extends PField> T read(PStructDescriptor<T, TF> descriptor)
             throws IOException, SerializerException {
-        InputStream in = this.in;
-        if (in == null) {
-            in = this.in = new BufferedInputStream(new FileInputStream(file));
-        }
-        return serializer.deserialize(in, descriptor);
+        return serializer.deserialize(getInputStream(), descriptor);
     }
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> read(PService service) throws IOException, SerializerException {
-        InputStream in = this.in;
-        if (in == null) {
-            in = this.in = new BufferedInputStream(new FileInputStream(file));
-        }
-        return serializer.deserialize(in, service);
+        return serializer.deserialize(getInputStream(), service);
     }
 
+    @Override
     public void close() throws IOException {
-        if (this.in != null) {
+        if (in != null) {
             try {
-                this.in.close();
+                in.close();
             } finally {
-                this.in = null;
+                in = null;
             }
         }
+    }
+
+    private InputStream getInputStream() throws FileNotFoundException {
+        if (in == null) {
+            in = new BufferedInputStream(new FileInputStream(file));
+        }
+        return in;
     }
 }
