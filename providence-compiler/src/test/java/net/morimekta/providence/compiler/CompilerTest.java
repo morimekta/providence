@@ -119,8 +119,11 @@ public class CompilerTest {
                      "java : Main java (1.7+) code generator.\n" +
                      "Available options\n" +
                      "\n" +
-                     " - android : Add android parcelable interface to model classes.\n" +
-                     " - jackson : Add jackson 2 annotations to model classes.\n",
+                     " - tiny    : Use the 'tiny' java variant with less methods and dependencies. But\n" +
+                     "             with little serialization support.\n" +
+                     " - jackson : Add jackson 2 annotations to model classes.\n" +
+                     " - android : Add android parcelable interface to model classes. Not compatible\n" +
+                     "             with 'tiny'.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);

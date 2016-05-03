@@ -71,8 +71,11 @@ public class Compiler {
                     System.out.println();
                     switch (options.help.generator) {
                         case java:
-                            System.out.println(" - android : Add android parcelable interface to model classes.");
+                            System.out.println(" - tiny    : Use the 'tiny' java variant with less methods and dependencies. But");
+                            System.out.println("             with little serialization support.");
                             System.out.println(" - jackson : Add jackson 2 annotations to model classes.");
+                            System.out.println(" - android : Add android parcelable interface to model classes. Not compatible");
+                            System.out.println("             with 'tiny'.");
                             break;
                         default:
                             System.out.println("None.");

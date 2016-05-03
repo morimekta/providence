@@ -29,6 +29,7 @@ import net.morimekta.providence.compiler.options.SyntaxOptionHandler;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.format.java.JGenerator;
 import net.morimekta.providence.generator.format.java.JOptions;
+import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.format.thrift.ThriftGenerator;
 import net.morimekta.providence.generator.util.FakeFileManager;
@@ -169,8 +170,9 @@ public class CompilerOptions {
             case json:
                 return new JsonGenerator(getFileManager(cli), loader);
             case java:
+                boolean tiny = false;
                 JOptions options = new JOptions();
-                for (String opt : this.gen.options) {
+                for (String opt : gen.options) {
                     switch (opt) {
                         case "android":
                             options.android = true;
@@ -178,9 +180,18 @@ public class CompilerOptions {
                         case "jackson":
                             options.jackson = true;
                             break;
+                        case "tiny":
+                            tiny = true;
+                            break;
                         default:
                             throw except(cli, "No such option for java generator: " + opt);
                     }
+                }
+                if (tiny) {
+                    if (options.android) {
+                        throw except(cli, "Java option 'tiny' is not compatible with 'android'.");
+                    }
+                    return new TinyGenerator(getFileManager(cli), loader.getRegistry(), options);
                 }
                 return new JGenerator(getFileManager(cli), loader.getRegistry(), options);
             default:
