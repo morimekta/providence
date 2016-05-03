@@ -62,6 +62,11 @@ public class JMessage<T extends CMessage<T>> {
         return struct.getVariant() == PMessageVariant.UNION;
     }
 
+    /**
+     * The short class name of the message.
+     *
+     * @return The class short name.
+     */
     public String instanceType() {
         return JUtils.getClassName(struct);
     }

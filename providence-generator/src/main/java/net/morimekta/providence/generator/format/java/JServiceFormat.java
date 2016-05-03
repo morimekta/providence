@@ -10,13 +10,13 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JService;
 import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.contained.CService;
@@ -45,7 +45,9 @@ public class JServiceFormat {
         JService service = new JService(cs, helper);
 
         if (cs.getComment() != null) {
-            JUtils.appendBlockComment(writer, cs.getComment());
+            new BlockCommentBuilder(writer)
+                    .comment(cs.getComment())
+                    .finish();
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
@@ -460,7 +462,9 @@ public class JServiceFormat {
             }
 
             if (method.getMethod().getComment() != null) {
-                JUtils.appendBlockComment(writer, method.getMethod().getComment());
+                new BlockCommentBuilder(writer)
+                        .comment(method.getMethod().getComment())
+                        .finish();
             }
 
             JField ret = method.getResponse();

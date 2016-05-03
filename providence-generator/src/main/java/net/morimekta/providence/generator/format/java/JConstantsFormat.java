@@ -6,10 +6,10 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -40,7 +40,9 @@ public class JConstantsFormat {
               .newline();
 
         if (document.getComment() != null) {
-            JUtils.appendBlockComment(writer, document.getComment());
+            new BlockCommentBuilder(writer)
+                    .comment(document.getComment())
+                    .finish();
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")

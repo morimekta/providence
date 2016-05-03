@@ -69,20 +69,6 @@ public class JUtils {
         return Strings.join(File.separator, parts);
     }
 
-    public static void appendBlockComment(IndentedPrintWriter writer, String comment) {
-        String escaped = HtmlEscapers.htmlEscaper().escape(comment);
-        String[] lines = escaped.split("\n");
-        if (lines.length == 1) {
-            writer.formatln("/** %s */", comment);
-        } else {
-            writer.appendln("/**");
-            for (String l : lines) {
-                writer.formatln(" * %s", l);
-            }
-            writer.appendln(" */");
-        }
-    }
-
     /**
      * Format a prefixed name as camelCase. The prefix is kept verbatim, while
      * tha name is split on '_' chars, and joined with each part capitalized.

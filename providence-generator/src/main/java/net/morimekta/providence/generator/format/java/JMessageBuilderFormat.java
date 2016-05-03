@@ -6,11 +6,12 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -22,16 +23,22 @@ import java.util.Collection;
  * @since 08.01.16.
  */
 public class JMessageBuilderFormat {
-    IndentedPrintWriter writer;
-    JHelper             helper;
+    private final JOptions            options;
+    private final IndentedPrintWriter writer;
+    private final JHelper             helper;
 
-    public JMessageBuilderFormat(IndentedPrintWriter writer, JHelper helper) {
+    public JMessageBuilderFormat(IndentedPrintWriter writer, JHelper helper, JOptions options) {
         this.writer = writer;
         this.helper = helper;
+        this.options = options;
     }
 
     public void appendBuilder(JMessage<?> message) throws GeneratorException {
         appendMutators();
+
+        if (options.jackson) {
+            writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
+        }
 
         writer.appendln("public static class _Builder")
               .begin()
@@ -176,10 +183,21 @@ public class JMessageBuilderFormat {
     }
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
-            JUtils.appendBlockComment(writer, field.comment());
-            if (JAnnotation.isDeprecated(field)) {
-                writer.appendln(JAnnotation.DEPRECATED);
+            comment.comment(field.comment())
+                   .newline();
+        }
+        comment.param_("value", "The new value")
+               .return_("The builder")
+               .finish();
+        if (JAnnotation.isDeprecated(field)) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
+        if (options.jackson) {
+            writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
+            if (field.binary()) {
+                writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
             }
         }
         if (field.type() == PType.SET || field.type() == PType.LIST) {
@@ -220,11 +238,22 @@ public class JMessageBuilderFormat {
     }
 
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
-            JUtils.appendBlockComment(writer, field.comment());
-            if (JAnnotation.isDeprecated(field)) {
-                writer.appendln(JAnnotation.DEPRECATED);
-            }
+            comment.comment(field.comment())
+                   .newline();
+        }
+        if (field.type() == PType.MAP) {
+            comment.param_("key", "The inserted key")
+                   .param_("value", "The inserted value");
+        } else {
+            comment.param_("values", "The added value");
+        }
+        comment.return_("The builder")
+               .finish();
+
+        if (JAnnotation.isDeprecated(field)) {
+            writer.appendln(JAnnotation.DEPRECATED);
         }
 
         switch (field.type()) {
@@ -297,7 +326,7 @@ public class JMessageBuilderFormat {
         if (message.isUnion()) {
             writer.formatln("if (tUnionField == _Field.%s) tUnionField = null;", field.fieldEnum());
         } else {
-            writer.formatln("optionals.set(%d, false);", field.index());
+            writer.formatln("optionals.clear(%d);", field.index());
         }
 
         if (field.container()) {

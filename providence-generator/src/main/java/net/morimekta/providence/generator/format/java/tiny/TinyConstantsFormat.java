@@ -6,6 +6,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.ContainerType;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
@@ -49,7 +50,9 @@ public class TinyConstantsFormat {
               .newline();
 
         if (document.getComment() != null) {
-            JUtils.appendBlockComment(writer, document.getComment());
+            new BlockCommentBuilder(writer)
+                    .comment(document.getComment())
+                    .finish();
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")

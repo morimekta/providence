@@ -22,6 +22,7 @@ package net.morimekta.providence.generator.format.java.tiny;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.ContainerType;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
@@ -59,20 +60,24 @@ public class TinyMessageFormat {
         JMessage<?> message = new JMessage(descriptor, helper);
 
         TinyMessageOverridesFormat overrides = new TinyMessageOverridesFormat(writer, options, helper);
-        TinyMessageBuilderFormat builder = new TinyMessageBuilderFormat(writer, helper);
+        TinyMessageBuilderFormat builder = new TinyMessageBuilderFormat(writer, helper, options);
         TinyValueFormat values = new TinyValueFormat(writer, options, helper);
 
         CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
         if (annotatedDescriptor.getComment() != null) {
-            JUtils.appendBlockComment(writer, annotatedDescriptor.getComment());
-            if (JAnnotation.isDeprecated(annotatedDescriptor)) {
-                writer.appendln(JAnnotation.DEPRECATED);
-            }
+            new BlockCommentBuilder(writer)
+                    .comment(annotatedDescriptor.getComment())
+                    .finish();
+        }
+        if (JAnnotation.isDeprecated(annotatedDescriptor)) {
+            writer.appendln(JAnnotation.DEPRECATED);
         }
 
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)")
-                  .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)");
+                  .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)")
+                  .appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(")
+                  .formatln("        builder = %s._Builder.class)", message.instanceType());
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
@@ -229,10 +234,12 @@ public class TinyMessageFormat {
             }
 
             if (field.hasComment()) {
-                JUtils.appendBlockComment(writer, field.comment());
-                if (JAnnotation.isDeprecated(field)) {
-                    writer.appendln(JAnnotation.DEPRECATED);
-                }
+                new BlockCommentBuilder(writer)
+                        .comment(field.comment())
+                        .finish();
+            }
+            if (JAnnotation.isDeprecated(field)) {
+                writer.appendln(JAnnotation.DEPRECATED);
             }
             if (options.jackson) {
                 writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\")", field.name());
@@ -355,9 +362,6 @@ public class TinyMessageFormat {
                       .newline();
             }
         } else {
-            if (options.jackson) {
-                writer.appendln("@com.fasterxml.jackson.annotation.JsonCreator");
-            }
             String spaces = message.instanceType()
                                    .replaceAll("[\\S]", " ");
             writer.formatln("public %s(", message.instanceType())
@@ -370,13 +374,6 @@ public class TinyMessageFormat {
                     writer.append(',')
                           .appendln();
                 }
-                if (options.jackson) {
-                    writer.format("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
-                    if (field.binary()) {
-                        writer.append("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
-                    }
-                }
-
                 writer.format("%s %s", field.valueType(), field.param());
             }
             writer.end()

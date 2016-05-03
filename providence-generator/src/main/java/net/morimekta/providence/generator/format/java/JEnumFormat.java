@@ -25,6 +25,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
@@ -50,11 +51,14 @@ public class JEnumFormat {
         String simpleClass = JUtils.getClassName(type);
 
         if (type.getComment() != null) {
-            JUtils.appendBlockComment(writer, type.getComment());
-            if (JAnnotation.isDeprecated(type)) {
-                writer.appendln(JAnnotation.DEPRECATED);
-            }
+            new BlockCommentBuilder(writer)
+                    .comment(type.getComment())
+                    .finish();
         }
+        if (JAnnotation.isDeprecated(type)) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
+
         writer.formatln("public enum %s implements %s<%s> {",
                         simpleClass,
                         PEnumValue.class.getName(),
@@ -63,10 +67,12 @@ public class JEnumFormat {
 
         for (CEnum v : type.getValues()) {
             if (v.getComment() != null) {
-                JUtils.appendBlockComment(writer, v.getComment());
-                if (JAnnotation.isDeprecated(v)) {
-                    writer.appendln(JAnnotation.DEPRECATED);
-                }
+                new BlockCommentBuilder(writer)
+                        .comment(type.getComment())
+                        .finish();
+            }
+            if (JAnnotation.isDeprecated(v)) {
+                writer.appendln(JAnnotation.DEPRECATED);
             }
             writer.formatln("%s(%d, \"%s\"),",
                             v.getName()
