@@ -65,7 +65,7 @@
         <!-- compile dependencies -->
         <guava.version>19.0</guava.version>
         <args4j.version>2.33</args4j.version>
-        <morimekta_utils.version>0.2.2</morimekta_utils.version>
+        <morimekta_utils.version>0.2.3-SNAPSHOT</morimekta_utils.version>
 
         <providence.version>0.0.3-SNAPSHOT</providence.version>
     </properties>
