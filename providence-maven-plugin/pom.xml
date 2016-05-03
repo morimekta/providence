@@ -45,6 +45,16 @@
 
         <dependency>
             <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-reflect</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator</artifactId>
             <version>0.0.3-SNAPSHOT</version>
         </dependency>
