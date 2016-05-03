@@ -34,11 +34,6 @@
             <version>0.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core-streams</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
             <version>${morimekta_utils.version}</version>

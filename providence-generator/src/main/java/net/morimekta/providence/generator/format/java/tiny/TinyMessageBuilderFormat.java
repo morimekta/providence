@@ -11,8 +11,8 @@ import net.morimekta.providence.generator.format.java.JField;
 import net.morimekta.providence.generator.format.java.JHelper;
 import net.morimekta.providence.generator.format.java.JMessage;
 import net.morimekta.providence.generator.format.java.JUtils;
-import net.morimekta.providence.jackson.LinkedHashMapBuilder;
-import net.morimekta.providence.jackson.LinkedHashSetBuilder;
+import net.morimekta.util.LinkedHashMapBuilder;
+import net.morimekta.util.LinkedHashSetBuilder;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 

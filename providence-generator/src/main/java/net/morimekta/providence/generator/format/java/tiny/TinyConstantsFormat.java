@@ -12,10 +12,10 @@ import net.morimekta.providence.generator.format.java.JField;
 import net.morimekta.providence.generator.format.java.JHelper;
 import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.JUtils;
-import net.morimekta.providence.jackson.LinkedHashMapBuilder;
-import net.morimekta.providence.jackson.LinkedHashSetBuilder;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.util.LinkedHashMapBuilder;
+import net.morimekta.util.LinkedHashSetBuilder;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;

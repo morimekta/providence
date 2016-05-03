@@ -20,7 +20,6 @@
 
             <item href="providence-core/index.html" name="Core" />
             <item href="providence-core-jackson/index.html" name="Core : Jackson" />
-            <item href="providence-core-streams/index.html" name="Core : Streams" />
             <item href="providence-reflect/index.html" name="Tools : Reflect" />
             <item href="providence-generator/index.html" name="Tools : Generator" />
             <item href="providence-maven-plugin/index.html" name="Tools : Maven Plugin" />
