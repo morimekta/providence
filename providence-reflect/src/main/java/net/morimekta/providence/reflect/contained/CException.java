@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -142,7 +143,7 @@ public class CException extends Throwable implements PMessage<CException> {
             if (has(id) != other.has(id)) {
                 return false;
             }
-            if (TypeUtils.equals(get(id), other.get(id))) {
+            if (Objects.equals(get(id), other.get(id))) {
                 return false;
             }
         }
@@ -154,7 +155,7 @@ public class CException extends Throwable implements PMessage<CException> {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField field = descriptor().getField(entry.getKey());
-            hash += TypeUtils.hashCode(field, entry.getValue());
+            hash ^= Objects.hash(field, entry.getValue());
         }
         return hash;
     }

@@ -82,7 +82,7 @@ public class Operation
         if (o == null || !(o instanceof Operation)) return false;
         Operation other = (Operation) o;
         return java.util.Objects.equals(mOperator, other.mOperator) &&
-               net.morimekta.providence.util.TypeUtils.equals(mOperands, other.mOperands);
+               java.util.Objects.equals(mOperands, other.mOperands);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class Operation
             tHashCode = java.util.Objects.hash(
                     Operation.class,
                     _Field.OPERATOR, mOperator,
-                    _Field.OPERANDS, net.morimekta.providence.util.TypeUtils.hashCode(mOperands));
+                    _Field.OPERANDS, mOperands);
         }
         return tHashCode;
     }
@@ -116,7 +116,7 @@ public class Operation
             if (!first) out.append(',');
             first = false;
             out.append("operands:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mOperands));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mOperands));
         }
         out.append('}');
         return out.toString();

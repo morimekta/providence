@@ -1,9 +1,9 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.test.calculator.Operand;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.calculator.Operator;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.calculator.Operand;
+import net.morimekta.test.providence.calculator.Operation;
+import net.morimekta.test.providence.calculator.Operator;
+import net.morimekta.test.providence.number.Imaginary;
 import net.morimekta.test.providence.DefaultValues;
 import net.morimekta.test.providence.Value;
 import net.morimekta.util.Binary;

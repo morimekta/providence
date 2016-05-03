@@ -256,7 +256,7 @@ public class ExceptionFields
             if (!first) out.append(',');
             first = false;
             out.append("doubleValue:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleValue));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleValue));
         }
         if (hasStringValue()) {
             if (!first) out.append(',');
@@ -758,7 +758,7 @@ public class ExceptionFields
                    .append(mLongValue);
             builder.append(',');
             builder.append("doubleValue:")
-                   .append(net.morimekta.providence.util.TypeUtils.toString(mDoubleValue));
+                   .append(net.morimekta.providence.util.TypeUtils.asString(mDoubleValue));
             if (mStringValue != null) {
                 builder.append(',');
                 builder.append("stringValue:")

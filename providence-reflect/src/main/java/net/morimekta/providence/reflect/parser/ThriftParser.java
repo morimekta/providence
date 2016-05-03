@@ -36,6 +36,7 @@ import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -233,7 +234,7 @@ public class ThriftParser implements Parser {
     }
 
     private String parseLineComment(Tokenizer tokenizer, String comment) throws IOException {
-        String line = Strings.readString(tokenizer, "\n").trim();
+        String line = IOUtils.readString(tokenizer, "\n").trim();
         if (comment != null) {
             return comment + "\n" + line;
         }
@@ -241,7 +242,7 @@ public class ThriftParser implements Parser {
     }
 
     private String parseBlockComment(Tokenizer tokenizer) throws IOException {
-        String block = Strings.readString(tokenizer, new String(Token.kBlockCommentEnd)).trim();
+        String block = IOUtils.readString(tokenizer, new String(Token.kBlockCommentEnd)).trim();
         String[] lines = block.split("\n");
         StringBuilder builder = new StringBuilder();
 

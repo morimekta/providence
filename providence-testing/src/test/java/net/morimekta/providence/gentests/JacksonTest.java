@@ -1,8 +1,8 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.test.providence.CompactFields;
-import net.morimekta.test.providence.DefaultValues;
-import net.morimekta.test.providence.Value;
+import net.morimekta.test.jackson.CompactFields;
+import net.morimekta.test.jackson.DefaultValues;
+import net.morimekta.test.jackson.Value;
 import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,9 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * Jackson serialization and seserialization testing.
@@ -107,7 +105,7 @@ public class JacksonTest {
 
         DefaultValues out = mapper.readValue(in, DefaultValues.class);
 
-        assertThat(out, messageEq(primitives));
+        assertEquals(out, primitives);
     }
 
     @Test
@@ -134,6 +132,6 @@ public class JacksonTest {
                                                               .constructCollectionType(ArrayList.class,
                                                                                        DefaultValues.class));
 
-        assertThat(out.get(0), messageEq(primitives));
+        assertEquals(out.get(0), primitives);
     }
 }

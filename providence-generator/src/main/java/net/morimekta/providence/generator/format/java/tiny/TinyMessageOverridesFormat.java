@@ -1,5 +1,9 @@
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.tiny;
 
+import net.morimekta.providence.generator.format.java.JField;
+import net.morimekta.providence.generator.format.java.JHelper;
+import net.morimekta.providence.generator.format.java.JMessage;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -9,25 +13,14 @@ import java.util.Objects;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class JMessageOverridesFormat {
+public class TinyMessageOverridesFormat {
     private final IndentedPrintWriter writer;
-    private final JOptions            options;
-    private final JHelper             helper;
 
-    public JMessageOverridesFormat(IndentedPrintWriter writer, JOptions options, JHelper helper) {
+    public TinyMessageOverridesFormat(IndentedPrintWriter writer, JOptions options, JHelper helper) {
         this.writer = writer;
-        this.options = options;
-        this.helper = helper;
     }
 
     public void appendOverrides(JMessage message) {
-        // PStructDescriptor
-
-        appendPresence(message);
-        appendCounter(message);
-        appendGetter(message);
-
-        appendCompact(message);
 
         // Object
 
@@ -36,111 +29,6 @@ public class JMessageOverridesFormat {
         appendToString(message);
         appendAsString(message);
         appendCompareTo(message);
-    }
-
-    private void appendCompact(JMessage<?> message) {
-        if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
-        }
-        writer.appendln("@Override")
-              .appendln("public boolean compact() {")
-              .begin();
-
-        if (message.descriptor()
-                   .isCompactible()) {
-            writer.appendln("boolean missing = false;");
-
-            boolean hasCheck = false;
-            for (JField field : message.fields()) {
-                if (!field.alwaysPresent()) {
-                    hasCheck = true;
-                    writer.formatln("if (%s()) {", field.presence())
-                          .appendln("    if (missing) return false;")
-                          .appendln("} else {")
-                          .appendln("    missing = true;")
-                          .appendln('}');
-                } else if (hasCheck) {
-                    writer.appendln("if (missing) return false;");
-                    hasCheck = false;
-                }
-            }
-
-            writer.appendln("return true;");
-        } else {
-            writer.appendln("return false;");
-        }
-        writer.end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendGetter(JMessage<?> message) {
-        writer.appendln("@Override")
-              .appendln("public Object get(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            writer.formatln("case %d: return %s();", field.id(), field.getter());
-        }
-
-        writer.appendln("default: return null;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendPresence(JMessage<?> message) {
-        writer.appendln("@Override")
-              .appendln("public boolean has(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s() > 0;", field.id(), field.counter());
-            } else if (field.alwaysPresent() && !message.isUnion()) {
-                writer.formatln("case %d: return true;", field.id());
-            } else {
-                writer.formatln("case %d: return %s();", field.id(), field.presence());
-            }
-        }
-
-        writer.appendln("default: return false;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendCounter(JMessage<?> message) {
-        writer.appendln("@Override")
-              .appendln("public int num(int key) {")
-              .begin()
-              .appendln("switch(key) {")
-              .begin();
-
-        for (JField field : message.fields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s();", field.id(), field.counter());
-            } else if (field.alwaysPresent() && !message.isUnion()) {
-                writer.formatln("case %d: return 1;", field.id());
-            } else {
-                writer.formatln("case %d: return %s() ? 1 : 0;", field.id(), field.presence());
-            }
-        }
-
-        writer.appendln("default: return 0;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
     }
 
     private void appendEquals(JMessage<?> message) {
@@ -165,17 +53,9 @@ public class JMessageOverridesFormat {
                     writer.append(" &&")
                           .appendln("       ");
                 }
-                if (field.container()) {
-                    writer.format("%s.equals(%s, other.%s)",
-                                  Objects.class.getName(),
-                                  field.member(),
-                                  field.member());
-                } else {
-                    writer.format("%s.equals(%s, other.%s)",
-                                  Objects.class.getName(),
-                                  field.member(),
-                                  field.member());
-                }
+                writer.format("%s.equals(%s, other.%s)",
+                              Objects.class.getName(),
+                              field.member(), field.member());
             }
             writer.append(';');
         } else {
@@ -224,8 +104,7 @@ public class JMessageOverridesFormat {
     }
 
     private void appendAsString(JMessage<?> message) {
-        writer.appendln("@Override")
-              .appendln("public String asString() {")
+        writer.appendln("public String asString() {")
               .begin()
               .appendln("StringBuilder out = new StringBuilder();")
               .appendln("out.append(\"{\");")

@@ -487,6 +487,6 @@ public class Tokenizer extends InputStream {
                 throw new IOException("Oops");
             }
         }
-        return Strings.readString(this, "\n");
+        return IOUtils.readString(this, "\n");
     }
 }

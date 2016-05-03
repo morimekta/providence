@@ -96,6 +96,23 @@
                 <version>0.0.3-SNAPSHOT</version>
                 <executions>
                     <execution>
+                        <id>generate-jsckson-sources-for-test</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <tiny>true</tiny>
+                            <jackson>true</jackson>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/test/jackson/**/*.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-test-sources/jackson</outputDir>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>generate-sources-for-test</id>
                         <phase>generate-test-sources</phase>
                         <goals>

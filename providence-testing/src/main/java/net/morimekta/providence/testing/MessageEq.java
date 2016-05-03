@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -127,7 +128,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
                                                  fieldXPath,
                                                  toString(expected.get(field.getKey()))));
                 }
-            } else if (!TypeUtils.equals(expected.get(key), actual.get(key))) {
+            } else if (!Objects.equals(expected.get(key), actual.get(key))) {
                 switch (field.getType()) {
                     case MESSAGE: {
                         collectMismatches(fieldXPath,
@@ -184,7 +185,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             } else {
                 V exp = expected.get(key);
                 V act = actual.get(key);
-                if (!TypeUtils.equals(exp, act)) {
+                if (!Objects.equals(exp, act)) {
                     // value differs.
                     String keyedXPath = String.format("%s[%s]", xPath, toString(key));
                     if (exp == null || act == null) {
@@ -240,7 +241,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
             handledItems.add(expectedItem);
 
             T actualItem = actual.size() > expectedIndex ? actual.get(expectedIndex) : null;
-            if (TypeUtils.equals(expectedItem, actualItem)) {
+            if (Objects.equals(expectedItem, actualItem)) {
                 continue;
             }
             int actualIndex = actual.indexOf(expectedItem);

@@ -28,6 +28,7 @@ import net.morimekta.providence.util.TypeUtils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Stein Eldar Johnsen
@@ -131,7 +132,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
             if (has(id) != other.has(id)) {
                 return false;
             }
-            if (!TypeUtils.equals(get(id), other.get(id))) {
+            if (!Objects.equals(get(id), other.get(id))) {
                 return false;
             }
         }
@@ -143,7 +144,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField field = descriptor().getField(entry.getKey());
-            hash += TypeUtils.hashCode(field, entry.getValue());
+            hash += Objects.hash(field, entry.getValue());
         }
         return hash;
     }

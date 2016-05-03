@@ -17,29 +17,19 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.tiny;
 
-import net.morimekta.providence.PException;
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
-import net.morimekta.providence.PType;
-import net.morimekta.providence.PUnion;
-import net.morimekta.providence.descriptor.PDefaultValueProvider;
-import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PDescriptorProvider;
-import net.morimekta.providence.descriptor.PExceptionDescriptor;
-import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptorProvider;
-import net.morimekta.providence.descriptor.PUnionDescriptor;
-import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
-import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.ContainerType;
+import net.morimekta.providence.generator.format.java.JAnnotation;
+import net.morimekta.providence.generator.format.java.JField;
+import net.morimekta.providence.generator.format.java.JHelper;
+import net.morimekta.providence.generator.format.java.JMessage;
+import net.morimekta.providence.generator.format.java.JOptions;
+import net.morimekta.providence.generator.format.java.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
-import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -51,33 +41,26 @@ import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
  * @author Stein Eldar Johnsen
  * @since 20.09.15
  */
-public class JMessageFormat {
+public class TinyMessageFormat {
     public static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JHelper  helper;
     private final JOptions options;
 
-    public JMessageFormat(JHelper helper, JOptions options) {
+    public TinyMessageFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }
 
-    public void format(IndentedPrintWriter writer, PStructDescriptor<?,?> descriptor)
-            throws GeneratorException, IOException {
-        format(writer, descriptor, null);
-    }
-
     public void format(IndentedPrintWriter writer,
-                       PStructDescriptor<?,?> descriptor,
-                       CService containingService)
+                       PStructDescriptor<?,?> descriptor)
             throws GeneratorException, IOException {
         @SuppressWarnings("unchecked")
         JMessage<?> message = new JMessage(descriptor, helper);
 
-        JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
-        JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, options, helper);
-        JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper);
-        JValueFormat values = new JValueFormat(writer, options, helper);
+        TinyMessageOverridesFormat overrides = new TinyMessageOverridesFormat(writer, options, helper);
+        TinyMessageBuilderFormat builder = new TinyMessageBuilderFormat(writer, helper);
+        TinyValueFormat values = new TinyValueFormat(writer, options, helper);
 
         CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
         if (annotatedDescriptor.getComment() != null) {
@@ -92,25 +75,15 @@ public class JMessageFormat {
                   .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)");
         }
 
-        String mod = "";
-        if (containingService != null) {
-            mod = "static ";
-        }
-
         writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public %sclass %s", mod, message.instanceType())
+              .formatln("public class %s", message.instanceType())
               .begin(DBL_INDENT);
         if (message.variant()
                    .equals(PMessageVariant.EXCEPTION)) {
-            writer.appendln("extends " + PException.class.getName());
+            writer.appendln("extends " + Exception.class.getName());
         }
-        writer.formatln("implements %s<%s>, java.io.Serializable, Comparable<%s>",
-                        message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
-                        message.instanceType(),
+        writer.formatln("implements java.io.Serializable, Comparable<%s>",
                         message.instanceType());
-        if (options.android) {
-            writer.format(", android.os.Parcelable");
-        }
         writer.append(" {")
               .end()  // double indent.
               .begin();
@@ -131,11 +104,6 @@ public class JMessageFormat {
         overrides.appendOverrides(message);
 
         appendFieldEnum(writer, message);
-        appendDescriptor(writer, message);
-
-        if (options.android) {
-            android.appendParcelable(message);
-        }
 
         builder.appendBuilder(message);
 
@@ -145,96 +113,42 @@ public class JMessageFormat {
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        writer.formatln("public enum _Field implements %s {", PField.class.getName())
+        writer.formatln("public enum _Field {")
               .begin();
 
         for (JField field : message.fields()) {
-            String provider = field.getProvider();
-            String defValue = "null";
-            if (field.getPField()
-                     .hasDefaultValue()) {
-                defValue = String.format("new %s<>(%s)",
-                                         PDefaultValueProvider.class.getName(),
-                                         field.kDefault());
-            }
-
-            writer.formatln("%s(%d, %s.%s, \"%s\", %s, %s),",
+            writer.formatln("%s(%d, \"%s\"),",
                             field.fieldEnum(),
                             field.id(),
-                            PRequirement.class.getName(),
-                            field.getPField()
-                                 .getRequirement()
-                                 .name(),
-                            field.name(),
-                            provider,
-                            defValue);
+                            field.name());
         }
         writer.appendln(';')
               .newline();
 
         writer.appendln("private final int mKey;")
-              .formatln("private final %s mRequired;", PRequirement.class.getName())
               .appendln("private final String mName;")
-              .formatln("private final %s mTypeProvider;", PDescriptorProvider.class.getName())
-              .formatln("private final %s<?> mDefaultValue;", PValueProvider.class.getName())
               .newline()
-              .formatln("_Field(int key, %s required, String name, %s typeProvider, %s<?> defaultValue) {",
-                        PRequirement.class.getName(),
-                        PDescriptorProvider.class.getName(),
-                        PValueProvider.class.getName())
+              .formatln("_Field(int key, String name) {")
               .begin()
               .appendln("mKey = key;")
-              .appendln("mRequired = required;")
               .appendln("mName = name;")
-              .appendln("mTypeProvider = typeProvider;")
-              .appendln("mDefaultValue = defaultValue;")
               .end()
               .appendln('}')
               .newline();
-        writer.appendln("@Override")
-              .appendln("public int getKey() { return mKey; }")
+        writer.appendln("public int getKey() { return mKey; }")
               .newline();
-        writer.appendln("@Override")
-              .formatln("public %s getRequirement() { return mRequired; }",
-                        PRequirement.class.getName())
-              .newline();
-        writer.appendln("@Override")
-              .formatln("public %s getType() { return getDescriptor().getType(); }",
-                        PType.class.getName())
-              .newline();
-        writer.appendln("@Override")
-              .formatln("public %s getDescriptor() { return mTypeProvider.descriptor(); }",
-                        PDescriptor.class.getName())
-              .newline();
-        writer.appendln("@Override")
-              .appendln("public String getName() { return mName; }")
-              .newline();
-        writer.appendln("@Override")
-              .appendln("public boolean hasDefaultValue() { return mDefaultValue != null; }")
-              .newline();
-        writer.appendln("@Override")
-              .appendln("public Object getDefaultValue() {")
-              .appendln("    return hasDefaultValue() ? mDefaultValue.get() : null;")
-              .appendln('}')
+        writer.appendln("public String getName() { return mName; }")
               .newline();
 
         writer.appendln("@Override")
               .appendln("public String toString() {")
-              .begin()
-              .appendln("StringBuilder builder = new StringBuilder();")
-              .formatln("builder.append(\"%s._Field(\")", message.instanceType())
-              .appendln("       .append(mKey)")
-              .appendln("       .append(\": \");")
-              .formatln("if (mRequired != %s.DEFAULT) {",
-                        PRequirement.class.getName())
-              .appendln("    builder.append(mRequired.label).append(\" \");")
-              .appendln("}")
-              .appendln("builder.append(getDescriptor().getQualifiedName(null))")
-              .appendln("       .append(' ')")
-              .appendln("       .append(mName)")
-              .appendln("       .append(')');")
-              .appendln("return builder.toString();")
-              .end()
+              .appendln("    StringBuilder builder = new StringBuilder();")
+              .formatln("    builder.append(\"%s._Field(\")", message.instanceType())
+              .appendln("           .append(mKey)")
+              .appendln("           .append(':')")
+              .appendln("           .append(mName)")
+              .appendln("           .append(')');")
+              .appendln("    return builder.toString();")
               .appendln('}')
               .newline();
 
@@ -245,9 +159,9 @@ public class JMessageFormat {
         for (JField field : message.fields()) {
             writer.formatln("case %d: return _Field.%s;", field.id(), field.fieldEnum());
         }
-        writer.appendln("default: return null;")
-              .end()
+        writer.end()
               .appendln('}')
+              .appendln("return null;")
               .end()
               .appendln('}')
               .newline();
@@ -266,132 +180,6 @@ public class JMessageFormat {
               .appendln('}');
 
         writer.end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendDescriptor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        String typeClass;
-        String providerClass;
-        switch (message.variant()) {
-            case STRUCT:
-                typeClass = PStructDescriptor.class.getName();
-                providerClass = PStructDescriptorProvider.class.getName();
-                break;
-            case UNION:
-                typeClass = PUnionDescriptor.class.getName();
-                providerClass = PUnionDescriptorProvider.class.getName();
-                break;
-            case EXCEPTION:
-                typeClass = PExceptionDescriptor.class.getName();
-                providerClass = PExceptionDescriptorProvider.class.getName();
-                break;
-            default:
-                throw new GeneratorException("Unable to determine type class for " + message.variant());
-        }
-
-        writer.formatln("public static %s<%s,_Field> provider() {", providerClass, message.instanceType())
-              .begin()
-              .formatln("return new _Provider();")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.appendln("@Override")
-              .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
-              .begin()
-              .appendln("return kDescriptor;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.formatln("public static final %s<%s,_Field> kDescriptor;", typeClass, message.instanceType())
-              .newline();
-
-        writer.formatln("private static class _Descriptor")
-              .formatln("        extends %s<%s,_Field> {", typeClass, message.instanceType())
-              .begin()
-              .appendln("public _Descriptor() {")
-              .begin();
-        if (message.isException() || message.isUnion()) {
-            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %s);",
-                            message.descriptor()
-                                   .getPackageName(),
-                            message.descriptor()
-                                   .getName(),
-                            message.descriptor()
-                                   .isSimple());
-        } else {
-            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b, %b);",
-                            message.descriptor()
-                                   .getPackageName(),
-                            message.descriptor()
-                                   .getName(),
-                            message.descriptor()
-                                   .isSimple(),
-                            message.descriptor()
-                                   .isCompactible());
-        }
-        writer.end()
-              .appendln('}')
-              .newline()
-              .appendln("@Override")
-              .appendln("public _Field[] getFields() {")
-              .begin()
-              .appendln("return _Field.values();")
-              .end()
-              .appendln('}')
-              .newline()
-              .appendln("@Override")
-              .appendln("public _Field getField(String name) {")
-              .begin()
-              .appendln("return _Field.forName(name);")
-              .end()
-              .appendln('}')
-              .newline()
-              .appendln("@Override")
-              .appendln("public _Field getField(int key) {")
-              .begin()
-              .appendln("return _Field.forKey(key);")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.formatln("static {", typeClass, message.instanceType())
-              .begin()
-              .appendln("kDescriptor = new _Descriptor();")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.formatln("private final static class _Provider extends %s<%s,_Field> {",
-                        providerClass,
-                        message.instanceType())
-              .begin()
-              .appendln("@Override")
-              .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
-              .begin()
-              .appendln("return kDescriptor;")
-              .end()
-              .appendln('}')
-              .end()
-              .appendln("}")
-              .newline();
-
-        writer.appendln("private final static class _Factory")
-              .begin()
-              .formatln("    extends %s<%s> {",
-                        PMessageBuilderFactory.class.getName(),
-                        message.instanceType())
-              .appendln("@Override")
-              .appendln("public _Builder builder() {")
-              .begin()
-              .appendln("return new _Builder();")
-              .end()
-              .appendln('}')
-              .end()
               .appendln('}')
               .newline();
     }
@@ -429,16 +217,12 @@ public class JMessageFormat {
                 }
                 if (field.alwaysPresent()) {
                     writer.formatln("public boolean %s() {", field.presence())
-                          .begin()
-                          .formatln("return true;")
-                          .end()
+                          .formatln("    return true;")
                           .appendln('}')
                           .newline();
                 } else {
                     writer.formatln("public boolean %s() {", field.presence())
-                          .begin()
-                          .formatln("return %s != null;", field.member())
-                          .end()
+                          .formatln("    return %s != null;", field.member())
                           .appendln('}')
                           .newline();
                 }
@@ -469,11 +253,8 @@ public class JMessageFormat {
         }
 
         if (message.isUnion()) {
-            writer.appendln("@Override")
-                  .appendln("public _Field unionField() {")
-                  .begin()
-                  .appendln("return tUnionField;")
-                  .end()
+            writer.appendln("public _Field unionField() {")
+                  .appendln("    return tUnionField;")
                   .appendln('}')
                   .newline();
         }
@@ -569,9 +350,7 @@ public class JMessageFormat {
                                 message.instanceType(),
                                 camelCase("with", field.name()),
                                 field.valueType())
-                      .begin()
-                      .formatln("return new _Builder().%s(value).build();", field.setter())
-                      .end()
+                      .formatln("    return new _Builder().%s(value).build();", field.setter())
                       .appendln('}')
                       .newline();
             }
@@ -597,6 +376,7 @@ public class JMessageFormat {
                         writer.append("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
                     }
                 }
+
                 writer.format("%s %s", field.valueType(), field.param());
             }
             writer.end()

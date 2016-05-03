@@ -105,13 +105,13 @@ public class Imaginary
         if (hasV()) {
             first = false;
             out.append("v:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mV));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mV));
         }
         if (hasI()) {
             if (!first) out.append(',');
             first = false;
             out.append("i:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mI));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mI));
         }
         out.append('}');
         return out.toString();

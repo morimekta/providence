@@ -828,36 +828,36 @@ public class Containers
     public boolean equals(Object o) {
         if (o == null || !(o instanceof Containers)) return false;
         Containers other = (Containers) o;
-        return net.morimekta.providence.util.TypeUtils.equals(mBooleanList, other.mBooleanList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mByteList, other.mByteList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mShortList, other.mShortList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mIntegerList, other.mIntegerList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mLongList, other.mLongList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mDoubleList, other.mDoubleList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mStringList, other.mStringList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mBinaryList, other.mBinaryList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mBooleanSet, other.mBooleanSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mByteSet, other.mByteSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mShortSet, other.mShortSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mIntegerSet, other.mIntegerSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mLongSet, other.mLongSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mDoubleSet, other.mDoubleSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mStringSet, other.mStringSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mBinarySet, other.mBinarySet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mBooleanMap, other.mBooleanMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mByteMap, other.mByteMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mShortMap, other.mShortMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mIntegerMap, other.mIntegerMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mLongMap, other.mLongMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mDoubleMap, other.mDoubleMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mStringMap, other.mStringMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mBinaryMap, other.mBinaryMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mEnumList, other.mEnumList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mEnumSet, other.mEnumSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mEnumMap, other.mEnumMap) &&
-               net.morimekta.providence.util.TypeUtils.equals(mMessageList, other.mMessageList) &&
-               net.morimekta.providence.util.TypeUtils.equals(mMessageSet, other.mMessageSet) &&
-               net.morimekta.providence.util.TypeUtils.equals(mMessageMap, other.mMessageMap) &&
+        return java.util.Objects.equals(mBooleanList, other.mBooleanList) &&
+               java.util.Objects.equals(mByteList, other.mByteList) &&
+               java.util.Objects.equals(mShortList, other.mShortList) &&
+               java.util.Objects.equals(mIntegerList, other.mIntegerList) &&
+               java.util.Objects.equals(mLongList, other.mLongList) &&
+               java.util.Objects.equals(mDoubleList, other.mDoubleList) &&
+               java.util.Objects.equals(mStringList, other.mStringList) &&
+               java.util.Objects.equals(mBinaryList, other.mBinaryList) &&
+               java.util.Objects.equals(mBooleanSet, other.mBooleanSet) &&
+               java.util.Objects.equals(mByteSet, other.mByteSet) &&
+               java.util.Objects.equals(mShortSet, other.mShortSet) &&
+               java.util.Objects.equals(mIntegerSet, other.mIntegerSet) &&
+               java.util.Objects.equals(mLongSet, other.mLongSet) &&
+               java.util.Objects.equals(mDoubleSet, other.mDoubleSet) &&
+               java.util.Objects.equals(mStringSet, other.mStringSet) &&
+               java.util.Objects.equals(mBinarySet, other.mBinarySet) &&
+               java.util.Objects.equals(mBooleanMap, other.mBooleanMap) &&
+               java.util.Objects.equals(mByteMap, other.mByteMap) &&
+               java.util.Objects.equals(mShortMap, other.mShortMap) &&
+               java.util.Objects.equals(mIntegerMap, other.mIntegerMap) &&
+               java.util.Objects.equals(mLongMap, other.mLongMap) &&
+               java.util.Objects.equals(mDoubleMap, other.mDoubleMap) &&
+               java.util.Objects.equals(mStringMap, other.mStringMap) &&
+               java.util.Objects.equals(mBinaryMap, other.mBinaryMap) &&
+               java.util.Objects.equals(mEnumList, other.mEnumList) &&
+               java.util.Objects.equals(mEnumSet, other.mEnumSet) &&
+               java.util.Objects.equals(mEnumMap, other.mEnumMap) &&
+               java.util.Objects.equals(mMessageList, other.mMessageList) &&
+               java.util.Objects.equals(mMessageSet, other.mMessageSet) &&
+               java.util.Objects.equals(mMessageMap, other.mMessageMap) &&
                java.util.Objects.equals(mRequiredFields, other.mRequiredFields) &&
                java.util.Objects.equals(mDefaultFields, other.mDefaultFields) &&
                java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
@@ -871,36 +871,36 @@ public class Containers
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
                     Containers.class,
-                    _Field.BOOLEAN_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mBooleanList),
-                    _Field.BYTE_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mByteList),
-                    _Field.SHORT_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mShortList),
-                    _Field.INTEGER_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mIntegerList),
-                    _Field.LONG_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mLongList),
-                    _Field.DOUBLE_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mDoubleList),
-                    _Field.STRING_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mStringList),
-                    _Field.BINARY_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mBinaryList),
-                    _Field.BOOLEAN_SET, net.morimekta.providence.util.TypeUtils.hashCode(mBooleanSet),
-                    _Field.BYTE_SET, net.morimekta.providence.util.TypeUtils.hashCode(mByteSet),
-                    _Field.SHORT_SET, net.morimekta.providence.util.TypeUtils.hashCode(mShortSet),
-                    _Field.INTEGER_SET, net.morimekta.providence.util.TypeUtils.hashCode(mIntegerSet),
-                    _Field.LONG_SET, net.morimekta.providence.util.TypeUtils.hashCode(mLongSet),
-                    _Field.DOUBLE_SET, net.morimekta.providence.util.TypeUtils.hashCode(mDoubleSet),
-                    _Field.STRING_SET, net.morimekta.providence.util.TypeUtils.hashCode(mStringSet),
-                    _Field.BINARY_SET, net.morimekta.providence.util.TypeUtils.hashCode(mBinarySet),
-                    _Field.BOOLEAN_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mBooleanMap),
-                    _Field.BYTE_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mByteMap),
-                    _Field.SHORT_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mShortMap),
-                    _Field.INTEGER_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mIntegerMap),
-                    _Field.LONG_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mLongMap),
-                    _Field.DOUBLE_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mDoubleMap),
-                    _Field.STRING_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mStringMap),
-                    _Field.BINARY_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mBinaryMap),
-                    _Field.ENUM_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mEnumList),
-                    _Field.ENUM_SET, net.morimekta.providence.util.TypeUtils.hashCode(mEnumSet),
-                    _Field.ENUM_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mEnumMap),
-                    _Field.MESSAGE_LIST, net.morimekta.providence.util.TypeUtils.hashCode(mMessageList),
-                    _Field.MESSAGE_SET, net.morimekta.providence.util.TypeUtils.hashCode(mMessageSet),
-                    _Field.MESSAGE_MAP, net.morimekta.providence.util.TypeUtils.hashCode(mMessageMap),
+                    _Field.BOOLEAN_LIST, java.util.Objects.hashCode(mBooleanList),
+                    _Field.BYTE_LIST, java.util.Objects.hashCode(mByteList),
+                    _Field.SHORT_LIST, java.util.Objects.hashCode(mShortList),
+                    _Field.INTEGER_LIST, java.util.Objects.hashCode(mIntegerList),
+                    _Field.LONG_LIST, java.util.Objects.hashCode(mLongList),
+                    _Field.DOUBLE_LIST, java.util.Objects.hashCode(mDoubleList),
+                    _Field.STRING_LIST, java.util.Objects.hashCode(mStringList),
+                    _Field.BINARY_LIST, java.util.Objects.hashCode(mBinaryList),
+                    _Field.BOOLEAN_SET, java.util.Objects.hashCode(mBooleanSet),
+                    _Field.BYTE_SET, java.util.Objects.hashCode(mByteSet),
+                    _Field.SHORT_SET, java.util.Objects.hashCode(mShortSet),
+                    _Field.INTEGER_SET, java.util.Objects.hashCode(mIntegerSet),
+                    _Field.LONG_SET, java.util.Objects.hashCode(mLongSet),
+                    _Field.DOUBLE_SET, java.util.Objects.hashCode(mDoubleSet),
+                    _Field.STRING_SET, java.util.Objects.hashCode(mStringSet),
+                    _Field.BINARY_SET, java.util.Objects.hashCode(mBinarySet),
+                    _Field.BOOLEAN_MAP, java.util.Objects.hashCode(mBooleanMap),
+                    _Field.BYTE_MAP, java.util.Objects.hashCode(mByteMap),
+                    _Field.SHORT_MAP, java.util.Objects.hashCode(mShortMap),
+                    _Field.INTEGER_MAP, java.util.Objects.hashCode(mIntegerMap),
+                    _Field.LONG_MAP, java.util.Objects.hashCode(mLongMap),
+                    _Field.DOUBLE_MAP, java.util.Objects.hashCode(mDoubleMap),
+                    _Field.STRING_MAP, java.util.Objects.hashCode(mStringMap),
+                    _Field.BINARY_MAP, java.util.Objects.hashCode(mBinaryMap),
+                    _Field.ENUM_LIST, java.util.Objects.hashCode(mEnumList),
+                    _Field.ENUM_SET, java.util.Objects.hashCode(mEnumSet),
+                    _Field.ENUM_MAP, java.util.Objects.hashCode(mEnumMap),
+                    _Field.MESSAGE_LIST, java.util.Objects.hashCode(mMessageList),
+                    _Field.MESSAGE_SET, java.util.Objects.hashCode(mMessageSet),
+                    _Field.MESSAGE_MAP, java.util.Objects.hashCode(mMessageMap),
                     _Field.REQUIRED_FIELDS, mRequiredFields,
                     _Field.DEFAULT_FIELDS, mDefaultFields,
                     _Field.OPTIONAL_FIELDS, mOptionalFields,
@@ -925,181 +925,181 @@ public class Containers
         if (numBooleanList() > 0) {
             first = false;
             out.append("booleanList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBooleanList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBooleanList));
         }
         if (numByteList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("byteList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mByteList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mByteList));
         }
         if (numShortList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("shortList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mShortList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mShortList));
         }
         if (numIntegerList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("integerList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mIntegerList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mIntegerList));
         }
         if (numLongList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("longList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mLongList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mLongList));
         }
         if (numDoubleList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("doubleList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleList));
         }
         if (numStringList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("stringList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mStringList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mStringList));
         }
         if (numBinaryList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("binaryList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBinaryList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBinaryList));
         }
         if (numBooleanSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("booleanSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBooleanSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBooleanSet));
         }
         if (numByteSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("byteSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mByteSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mByteSet));
         }
         if (numShortSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("shortSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mShortSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mShortSet));
         }
         if (numIntegerSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("integerSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mIntegerSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mIntegerSet));
         }
         if (numLongSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("longSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mLongSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mLongSet));
         }
         if (numDoubleSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("doubleSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleSet));
         }
         if (numStringSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("stringSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mStringSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mStringSet));
         }
         if (numBinarySet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("binarySet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBinarySet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBinarySet));
         }
         if (numBooleanMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("booleanMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBooleanMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBooleanMap));
         }
         if (numByteMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("byteMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mByteMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mByteMap));
         }
         if (numShortMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("shortMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mShortMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mShortMap));
         }
         if (numIntegerMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("integerMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mIntegerMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mIntegerMap));
         }
         if (numLongMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("longMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mLongMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mLongMap));
         }
         if (numDoubleMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("doubleMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleMap));
         }
         if (numStringMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("stringMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mStringMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mStringMap));
         }
         if (numBinaryMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("binaryMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mBinaryMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mBinaryMap));
         }
         if (numEnumList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("enumList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mEnumList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mEnumList));
         }
         if (numEnumSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("enumSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mEnumSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mEnumSet));
         }
         if (numEnumMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("enumMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mEnumMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mEnumMap));
         }
         if (numMessageList() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("messageList:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mMessageList));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mMessageList));
         }
         if (numMessageSet() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("messageSet:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mMessageSet));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mMessageSet));
         }
         if (numMessageMap() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("messageMap:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mMessageMap));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mMessageMap));
         }
         if (hasRequiredFields()) {
             if (!first) out.append(',');

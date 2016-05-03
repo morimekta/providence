@@ -24,9 +24,8 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
 
-import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,89 +34,7 @@ import java.util.Set;
  * Providence type utilities.
  */
 public class TypeUtils {
-    /**
-     * Make a minimal printable string from a double value.
-     *
-     * @param d The double value.
-     * @return The string value.
-     */
-    public static String toString(double d) {
-        long l = (long) d;
-        if (d == l) {
-            // actually an integer or long value.
-            return Long.toString(l);
-        } else if (d > ((10 << 9) - 1) || (1 / d) > (10 << 6)) {
-            // Scientific notation should be used.
-            return new DecimalFormat("0.#########E0").format(d);
-        } else {
-            return Double.toString(d);
-        }
-    }
-
-    /**
-     * Make a minimal printable string from a binary value.
-     *
-     * @param bytes The binary value.
-     * @return The string value.
-     */
-    public static String toString(Binary bytes) {
-        if (bytes == null) {
-            return NULL;
-        }
-        return String.format("b64(%s)", bytes.toBase64());
-    }
-
-    /**
-     * Make a printable string from a collection using the tools here.
-     *
-     * @param collection The collection to stringify.
-     * @return The collection string value.
-     */
-    public static String toString(Collection<?> collection) {
-        if (collection == null) {
-            return NULL;
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append('[');
-        boolean first = true;
-        for (Object item : collection) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(',');
-            }
-            builder.append(toString(item));
-        }
-        builder.append(']');
-        return builder.toString();
-    }
-
-    /**
-     * Make a minimal printable string value from a typed map.
-     *
-     * @param map The map to stringify.
-     * @return The resulting string.
-     */
-    public static String toString(Map<?, ?> map) {
-        if (map == null) {
-            return NULL;
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append('{');
-        boolean first = true;
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(',');
-            }
-            builder.append(toString(entry.getKey()))
-                   .append(':')
-                   .append(toString(entry.getValue()));
-        }
-        builder.append('}');
-        return builder.toString();
-    }
+    private static final String NULL = "null";
 
     /**
      * Stringify a message.
@@ -125,7 +42,7 @@ public class TypeUtils {
      * @param message The message to stringify.
      * @return The resulting message.
      */
-    public static String toString(PMessage<?> message) {
+    public static String asString(PMessage<?> message) {
         if (message == null) {
             return NULL;
         }
@@ -138,114 +55,14 @@ public class TypeUtils {
      * @param o The object to stringify.
      * @return The resulting string.
      */
-    public static String toString(Object o) {
+    public static String asString(Object o) {
         if (o == null) {
             return NULL;
-        } else if (o instanceof Map) {
-            return toString((Map<?, ?>) o);
-        } else if (o instanceof Collection) {
-            return toString((Collection<?>) o);
-        } else if (o instanceof Binary) {
-            return toString((Binary) o);
         } else if (o instanceof PMessage) {
-            return toString((PMessage<?>) o);
-        } else if (o instanceof Double) {
-            return toString(((Double) o).doubleValue());
+            return asString((PMessage<?>) o);
         } else {
-            return o.toString();
+            return Strings.asString(o);
         }
-    }
-
-    /**
-     * Check if two providence value objects are equal.
-     *
-     * @param v1 The first object.
-     * @param v2 The second object.
-     * @return True iff they are the same.
-     */
-    public static boolean equals(Object v1, Object v2) {
-        if (v1 == v2) {
-            return true;
-        }
-        if ((v1 == null) != (v2 == null)) {
-            return false; // only one is null
-        } else if (v1 instanceof List && v2 instanceof List) {
-            List<?> l1 = (List<?>) v1;
-            List<?> l2 = (List<?>) v2;
-            if (l1.size() != l2.size()) {
-                return false;
-            }
-            for (int i = 0; i < l1.size(); ++i) {
-                if (!equals(l1.get(i), l2.get(i))) {
-                    return false;
-                }
-            }
-            return true;
-        } else if (v1 instanceof Set && v2 instanceof Set) {
-            Set<?> s1 = (Set<?>) v1;
-            Set<?> s2 = (Set<?>) v2;
-            // Maps are equal-checked based on content only, so Tree vs
-            // LinkedHash vs Hash should not matter.
-            if (s1.size() != s2.size()) {
-                return false;
-            }
-            for (Object o : s1) {
-                if (!s2.contains(o)) {
-                    return false;
-                }
-            }
-            return true;
-        } else if (v1 instanceof Map && v2 instanceof Map) {
-            Map<?, ?> m1 = (Map<?, ?>) v1;
-            Map<?, ?> m2 = (Map<?, ?>) v2;
-            // Maps are equal-checked based on content only, so Tree vs
-            // LinkedHash vs Hash should not matter.
-            if (m1.size() != m2.size()) {
-                return false;
-            }
-            for (Object key : m1.keySet()) {
-                if (!equals(m1.get(key), m2.get(key))) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return v1.equals(v2);
-        }
-    }
-
-    /**
-     * Make a typed hashcode for providence message fields.
-     *
-     * @param field The field descriptor.
-     * @param object The field value.
-     * @return The hash code.
-     */
-    public static int hashCode(PField field, Object object) {
-        return hashCode(field) * hashCode(object);
-    }
-
-    /**
-     * Make a type-safe hash code for an object.
-     *
-     * @param object The object to hash.
-     * @return The hash code.
-     */
-    public static int hashCode(Object object) {
-        if (object == null) {
-            return 1;
-        }
-        if (object instanceof List) {
-            return hashCodeList((List<?>) object);
-        }
-        if (object instanceof Set) {
-            return hashCodeSet((Set<?>) object);
-        }
-        if (object instanceof Map) {
-            return hashCodeMap((Map<?, ?>) object);
-        }
-        return object.getClass()
-                     .hashCode() * object.hashCode();
     }
 
     /**
@@ -265,35 +82,6 @@ public class TypeUtils {
         }
         return a.getQualifiedName(null)
                 .equals(b.getQualifiedName(null));
-    }
-
-    private static <T> int hashCodeList(List<T> list) {
-        int hash = List.class.hashCode();
-        int i = 31;
-        for (T t : list) {
-            hash ^= (++i * t.getClass()
-                            .hashCode() * hashCode(t));
-        }
-        return hash;
-    }
-
-    private static final String NULL = "null";
-
-    private static <T> int hashCodeSet(Set<T> list) {
-        int hash = Set.class.hashCode();
-        for (T t : list) {
-            hash ^= t.getClass()
-                     .hashCode() * hashCode(t);
-        }
-        return hash;
-    }
-
-    private static <K, V> int hashCodeMap(Map<K, V> map) {
-        int hash = Map.class.hashCode();
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            hash ^= hashCode(entry.getKey()) * hashCode(entry.getValue());
-        }
-        return hash;
     }
 
     private static <T extends PMessage<T>> int compare(T m1, T m2) {
@@ -350,11 +138,11 @@ public class TypeUtils {
             return Integer.compare(((PEnumValue) o1).getValue(), ((PEnumValue) o2).getValue());
         } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
             return compare((PMessage) o1, (PMessage) o2);
-        } else if (o2 instanceof Map && o2 instanceof Map) {
+        } else if (o1 instanceof Map && o2 instanceof Map) {
             // Maps cannot be compared to each other.
-        } else if (o2 instanceof Set && o2 instanceof Set) {
+        } else if (o1 instanceof Set && o2 instanceof Set) {
             // Sets cannot be compared to each other.
-        } else if (o2 instanceof List && o2 instanceof List) {
+        } else if (o1 instanceof List && o2 instanceof List) {
             // Lists cannot be compared to each other.
         }
         return 0;

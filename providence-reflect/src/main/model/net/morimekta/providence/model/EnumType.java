@@ -126,8 +126,8 @@ public class EnumType
         EnumType other = (EnumType) o;
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mName, other.mName) &&
-               net.morimekta.providence.util.TypeUtils.equals(mValues, other.mValues) &&
-               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mValues, other.mValues) &&
+               java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -137,8 +137,8 @@ public class EnumType
                     EnumType.class,
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
-                    _Field.VALUES, net.morimekta.providence.util.TypeUtils.hashCode(mValues),
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
+                    _Field.VALUES, java.util.Objects.hashCode(mValues),
+                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -169,13 +169,13 @@ public class EnumType
             if (!first) out.append(',');
             first = false;
             out.append("values:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mValues));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mValues));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

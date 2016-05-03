@@ -277,7 +277,7 @@ public class DefaultValues
             if (!first) out.append(',');
             first = false;
             out.append("doubleValue:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleValue));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleValue));
         }
         if (hasStringValue()) {
             if (!first) out.append(',');

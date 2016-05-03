@@ -177,7 +177,7 @@ public class ThriftField
                java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
-               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ThriftField
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -246,7 +246,7 @@ public class ThriftField
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

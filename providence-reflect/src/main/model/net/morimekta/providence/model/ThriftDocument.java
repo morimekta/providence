@@ -149,9 +149,9 @@ public class ThriftDocument
         ThriftDocument other = (ThriftDocument) o;
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mPackage, other.mPackage) &&
-               net.morimekta.providence.util.TypeUtils.equals(mIncludes, other.mIncludes) &&
-               net.morimekta.providence.util.TypeUtils.equals(mNamespaces, other.mNamespaces) &&
-               net.morimekta.providence.util.TypeUtils.equals(mDecl, other.mDecl);
+               java.util.Objects.equals(mIncludes, other.mIncludes) &&
+               java.util.Objects.equals(mNamespaces, other.mNamespaces) &&
+               java.util.Objects.equals(mDecl, other.mDecl);
     }
 
     @Override
@@ -161,9 +161,9 @@ public class ThriftDocument
                     ThriftDocument.class,
                     _Field.COMMENT, mComment,
                     _Field.PACKAGE, mPackage,
-                    _Field.INCLUDES, net.morimekta.providence.util.TypeUtils.hashCode(mIncludes),
-                    _Field.NAMESPACES, net.morimekta.providence.util.TypeUtils.hashCode(mNamespaces),
-                    _Field.DECL, net.morimekta.providence.util.TypeUtils.hashCode(mDecl));
+                    _Field.INCLUDES, java.util.Objects.hashCode(mIncludes),
+                    _Field.NAMESPACES, java.util.Objects.hashCode(mNamespaces),
+                    _Field.DECL, java.util.Objects.hashCode(mDecl));
         }
         return tHashCode;
     }
@@ -194,19 +194,19 @@ public class ThriftDocument
             if (!first) out.append(',');
             first = false;
             out.append("includes:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mIncludes));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mIncludes));
         }
         if (numNamespaces() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("namespaces:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mNamespaces));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mNamespaces));
         }
         if (numDecl() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("decl:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mDecl));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mDecl));
         }
         out.append('}');
         return out.toString();

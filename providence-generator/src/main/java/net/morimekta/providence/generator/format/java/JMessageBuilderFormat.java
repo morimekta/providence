@@ -6,7 +6,7 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.util.TypeUtils;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
@@ -440,12 +440,12 @@ public class JMessageBuilderFormat {
                 case MAP:
                 case SET:
                 case LIST:
-                    writer.formatln("       .append(%s.toString(%s));",
-                                    TypeUtils.class.getName(),
+                    writer.formatln("       .append(%s.asString(%s));",
+                                    Strings.class.getName(),
                                     field.member());
                     break;
                 case STRING:
-                    writer.formatln("       .append(%s.toString());", field.member());
+                    writer.formatln("       .append(%s);", field.member());
                     break;
                 case BINARY:
                     writer.appendln("       .append(\"b64(\")")

@@ -297,7 +297,7 @@ public class UnionFields
             }
             case DOUBLE_VALUE: {
                 out.append("doubleValue:");
-                out.append(net.morimekta.providence.util.TypeUtils.toString(mDoubleValue));
+                out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleValue));
                 break;
             }
             case STRING_VALUE: {

@@ -30,6 +30,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>io-util</artifactId>
             <version>${morimekta_utils.version}</version>

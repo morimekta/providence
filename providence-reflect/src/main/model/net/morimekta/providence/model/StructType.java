@@ -144,8 +144,8 @@ public class StructType
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mVariant, other.mVariant) &&
                java.util.Objects.equals(mName, other.mName) &&
-               net.morimekta.providence.util.TypeUtils.equals(mFields, other.mFields) &&
-               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mFields, other.mFields) &&
+               java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -156,8 +156,8 @@ public class StructType
                     _Field.COMMENT, mComment,
                     _Field.VARIANT, mVariant,
                     _Field.NAME, mName,
-                    _Field.FIELDS, net.morimekta.providence.util.TypeUtils.hashCode(mFields),
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
+                    _Field.FIELDS, java.util.Objects.hashCode(mFields),
+                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -194,13 +194,13 @@ public class StructType
             if (!first) out.append(',');
             first = false;
             out.append("fields:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mFields));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mFields));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

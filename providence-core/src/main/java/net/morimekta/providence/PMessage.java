@@ -20,6 +20,7 @@
 package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.util.Stringable;
 
 /**
  * Base class for all messages.
@@ -27,7 +28,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public interface PMessage<T extends PMessage<T>> extends PValue<T> {
+public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
     /**
      * @param key The key of the field.
      * @return Whether the field is present.
@@ -63,6 +64,7 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T> {
      *
      * @return String representation.
      */
+    @Override
     String asString();
 
     @Override

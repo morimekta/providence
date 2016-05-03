@@ -117,7 +117,7 @@ public class EnumValue
         return java.util.Objects.equals(mComment, other.mComment) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mValue, other.mValue) &&
-               net.morimekta.providence.util.TypeUtils.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class EnumValue
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, net.morimekta.providence.util.TypeUtils.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
         }
         return tHashCode;
     }
@@ -165,7 +165,7 @@ public class EnumValue
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.toString(mAnnotations));
+            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

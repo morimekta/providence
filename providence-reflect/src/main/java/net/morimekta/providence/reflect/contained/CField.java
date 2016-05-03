@@ -158,7 +158,7 @@ public class CField implements PField, CAnnotatedDescriptor {
                // containment.
                TypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
                name.equals(other.name) &&
-               TypeUtils.equals(defaultValue, other.defaultValue);
+               Objects.equals(defaultValue, other.defaultValue);
     }
 
     @Override
