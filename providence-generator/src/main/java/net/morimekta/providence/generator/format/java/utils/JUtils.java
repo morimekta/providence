@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PService;

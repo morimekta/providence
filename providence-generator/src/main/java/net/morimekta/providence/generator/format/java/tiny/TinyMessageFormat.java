@@ -22,20 +22,20 @@ package net.morimekta.providence.generator.format.java.tiny;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.ContainerType;
-import net.morimekta.providence.generator.format.java.JAnnotation;
-import net.morimekta.providence.generator.format.java.JField;
-import net.morimekta.providence.generator.format.java.JHelper;
-import net.morimekta.providence.generator.format.java.JMessage;
-import net.morimekta.providence.generator.format.java.JOptions;
-import net.morimekta.providence.generator.format.java.JUtils;
+import net.morimekta.providence.generator.format.java.utils.ContainerType;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
+import net.morimekta.providence.generator.format.java.utils.JField;
+import net.morimekta.providence.generator.format.java.utils.JHelper;
+import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
+import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 
 /**
  * @author Stein Eldar Johnsen

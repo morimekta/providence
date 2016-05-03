@@ -1,5 +1,8 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.generator.format.java.utils.JField;
+import net.morimekta.providence.generator.format.java.utils.JHelper;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
@@ -7,7 +10,7 @@ import net.morimekta.util.Strings;
 
 import java.util.ArrayList;
 
-import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
+import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 
 /**
  * Created by morimekta on 4/24/16.

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 /**
  * Options class for java 2 generator.

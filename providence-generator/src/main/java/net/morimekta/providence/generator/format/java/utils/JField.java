@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
@@ -27,6 +27,9 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.ContainerType;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
+import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.reflect.contained.CField;
 
 import com.google.common.collect.ImmutableList;
@@ -38,7 +41,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
-import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
+import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 import static net.morimekta.util.Strings.c_case;
 
 /**

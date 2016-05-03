@@ -21,10 +21,10 @@ package net.morimekta.providence.generator.format.java.tiny;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.JAnnotation;
-import net.morimekta.providence.generator.format.java.JHelper;
-import net.morimekta.providence.generator.format.java.JOptions;
-import net.morimekta.providence.generator.format.java.JUtils;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
+import net.morimekta.providence.generator.format.java.utils.JHelper;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CEnum;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;

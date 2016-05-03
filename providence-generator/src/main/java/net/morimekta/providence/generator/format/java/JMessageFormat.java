@@ -38,6 +38,13 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.utils.ContainerType;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
+import net.morimekta.providence.generator.format.java.utils.JField;
+import net.morimekta.providence.generator.format.java.utils.JHelper;
+import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -45,7 +52,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import java.io.IOException;
 import java.util.Collections;
 
-import static net.morimekta.providence.generator.format.java.JUtils.camelCase;
+import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 
 /**
  * @author Stein Eldar Johnsen

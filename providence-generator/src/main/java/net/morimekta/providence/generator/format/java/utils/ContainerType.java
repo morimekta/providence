@@ -1,4 +1,4 @@
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 /**
  * Created by morimekta on 4/19/16.
