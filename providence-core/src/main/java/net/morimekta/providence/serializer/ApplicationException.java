@@ -360,7 +360,7 @@ public class ApplicationException
                 if (first) first = false;
                 else builder.append(',');
                 builder.append("message:")
-                       .append(mMessage.toString());
+                       .append(mMessage);
             }
             if (first) first = false;
             else builder.append(',');

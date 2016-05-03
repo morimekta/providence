@@ -139,7 +139,7 @@ public class Operand
             }
             case NUMBER: {
                 out.append("number:");
-                out.append(net.morimekta.providence.util.TypeUtils.asString(mNumber));
+                out.append(net.morimekta.util.Strings.asString(mNumber));
                 break;
             }
             case IMAGINARY: {

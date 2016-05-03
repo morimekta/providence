@@ -359,7 +359,7 @@ public class CalculateException
                 if (first) first = false;
                 else builder.append(',');
                 builder.append("message:")
-                       .append(mMessage.toString());
+                       .append(mMessage);
             }
             if (mOperation != null) {
                 if (first) first = false;

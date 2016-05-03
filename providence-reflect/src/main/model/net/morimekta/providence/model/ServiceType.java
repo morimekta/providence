@@ -82,12 +82,20 @@ public class ServiceType
         return mMethods != null ? mMethods.size() : 0;
     }
 
+    public boolean hasMethods() {
+        return mMethods != null;
+    }
+
     public java.util.List<net.morimekta.providence.model.ServiceMethod> getMethods() {
         return mMethods;
     }
 
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public boolean hasAnnotations() {
+        return mAnnotations != null;
     }
 
     public java.util.Map<String,String> getAnnotations() {
@@ -154,8 +162,8 @@ public class ServiceType
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
                     _Field.EXTEND, mExtend,
-                    _Field.METHODS, java.util.Objects.hashCode(mMethods),
-                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
+                    _Field.METHODS, mMethods,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
@@ -192,13 +200,13 @@ public class ServiceType
             if (!first) out.append(',');
             first = false;
             out.append("methods:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mMethods));
+            out.append(net.morimekta.util.Strings.asString(mMethods));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
+            out.append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

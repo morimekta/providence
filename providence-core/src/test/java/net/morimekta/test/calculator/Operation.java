@@ -41,6 +41,10 @@ public class Operation
         return mOperands != null ? mOperands.size() : 0;
     }
 
+    public boolean hasOperands() {
+        return mOperands != null;
+    }
+
     public java.util.List<net.morimekta.test.calculator.Operand> getOperands() {
         return mOperands;
     }
@@ -116,7 +120,7 @@ public class Operation
             if (!first) out.append(',');
             first = false;
             out.append("operands:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mOperands));
+            out.append(net.morimekta.util.Strings.asString(mOperands));
         }
         out.append('}');
         return out.toString();

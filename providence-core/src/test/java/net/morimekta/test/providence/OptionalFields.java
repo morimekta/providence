@@ -268,7 +268,7 @@ public class OptionalFields
             if (!first) out.append(',');
             first = false;
             out.append("doubleValue:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mDoubleValue));
+            out.append(net.morimekta.util.Strings.asString(mDoubleValue));
         }
         if (hasStringValue()) {
             if (!first) out.append(',');

@@ -84,12 +84,20 @@ public class StructType
         return mFields != null ? mFields.size() : 0;
     }
 
+    public boolean hasFields() {
+        return mFields != null;
+    }
+
     public java.util.List<net.morimekta.providence.model.ThriftField> getFields() {
         return mFields;
     }
 
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public boolean hasAnnotations() {
+        return mAnnotations != null;
     }
 
     public java.util.Map<String,String> getAnnotations() {
@@ -156,8 +164,8 @@ public class StructType
                     _Field.COMMENT, mComment,
                     _Field.VARIANT, mVariant,
                     _Field.NAME, mName,
-                    _Field.FIELDS, java.util.Objects.hashCode(mFields),
-                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
+                    _Field.FIELDS, mFields,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
@@ -194,13 +202,13 @@ public class StructType
             if (!first) out.append(',');
             first = false;
             out.append("fields:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mFields));
+            out.append(net.morimekta.util.Strings.asString(mFields));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
+            out.append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

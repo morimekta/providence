@@ -116,6 +116,10 @@ public class ThriftField
         return mAnnotations != null ? mAnnotations.size() : 0;
     }
 
+    public boolean hasAnnotations() {
+        return mAnnotations != null;
+    }
+
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
@@ -191,7 +195,7 @@ public class ThriftField
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.DEFAULT_VALUE, mDefaultValue,
-                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
@@ -246,7 +250,7 @@ public class ThriftField
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
+            out.append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

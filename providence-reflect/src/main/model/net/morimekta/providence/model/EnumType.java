@@ -70,12 +70,20 @@ public class EnumType
         return mValues != null ? mValues.size() : 0;
     }
 
+    public boolean hasValues() {
+        return mValues != null;
+    }
+
     public java.util.List<net.morimekta.providence.model.EnumValue> getValues() {
         return mValues;
     }
 
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public boolean hasAnnotations() {
+        return mAnnotations != null;
     }
 
     public java.util.Map<String,String> getAnnotations() {
@@ -137,8 +145,8 @@ public class EnumType
                     EnumType.class,
                     _Field.COMMENT, mComment,
                     _Field.NAME, mName,
-                    _Field.VALUES, java.util.Objects.hashCode(mValues),
-                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
+                    _Field.VALUES, mValues,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
@@ -169,13 +177,13 @@ public class EnumType
             if (!first) out.append(',');
             first = false;
             out.append("values:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mValues));
+            out.append(net.morimekta.util.Strings.asString(mValues));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
+            out.append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();

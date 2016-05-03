@@ -80,6 +80,10 @@ public class ThriftDocument
         return mIncludes != null ? mIncludes.size() : 0;
     }
 
+    public boolean hasIncludes() {
+        return mIncludes != null;
+    }
+
     /** include "<package>.thrift" */
     public java.util.List<String> getIncludes() {
         return mIncludes;
@@ -89,6 +93,10 @@ public class ThriftDocument
         return mNamespaces != null ? mNamespaces.size() : 0;
     }
 
+    public boolean hasNamespaces() {
+        return mNamespaces != null;
+    }
+
     /** namespace <key> <value> */
     public java.util.Map<String,String> getNamespaces() {
         return mNamespaces;
@@ -96,6 +104,10 @@ public class ThriftDocument
 
     public int numDecl() {
         return mDecl != null ? mDecl.size() : 0;
+    }
+
+    public boolean hasDecl() {
+        return mDecl != null;
     }
 
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
@@ -161,9 +173,9 @@ public class ThriftDocument
                     ThriftDocument.class,
                     _Field.COMMENT, mComment,
                     _Field.PACKAGE, mPackage,
-                    _Field.INCLUDES, java.util.Objects.hashCode(mIncludes),
-                    _Field.NAMESPACES, java.util.Objects.hashCode(mNamespaces),
-                    _Field.DECL, java.util.Objects.hashCode(mDecl));
+                    _Field.INCLUDES, mIncludes,
+                    _Field.NAMESPACES, mNamespaces,
+                    _Field.DECL, mDecl);
         }
         return tHashCode;
     }
@@ -194,19 +206,19 @@ public class ThriftDocument
             if (!first) out.append(',');
             first = false;
             out.append("includes:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mIncludes));
+            out.append(net.morimekta.util.Strings.asString(mIncludes));
         }
         if (numNamespaces() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("namespaces:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mNamespaces));
+            out.append(net.morimekta.util.Strings.asString(mNamespaces));
         }
         if (numDecl() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("decl:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mDecl));
+            out.append(net.morimekta.util.Strings.asString(mDecl));
         }
         out.append('}');
         return out.toString();

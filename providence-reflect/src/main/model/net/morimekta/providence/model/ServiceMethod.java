@@ -104,6 +104,10 @@ public class ServiceMethod
         return mParams != null ? mParams.size() : 0;
     }
 
+    public boolean hasParams() {
+        return mParams != null;
+    }
+
     public java.util.List<net.morimekta.providence.model.ThriftField> getParams() {
         return mParams;
     }
@@ -112,12 +116,20 @@ public class ServiceMethod
         return mExceptions != null ? mExceptions.size() : 0;
     }
 
+    public boolean hasExceptions() {
+        return mExceptions != null;
+    }
+
     public java.util.List<net.morimekta.providence.model.ThriftField> getExceptions() {
         return mExceptions;
     }
 
     public int numAnnotations() {
         return mAnnotations != null ? mAnnotations.size() : 0;
+    }
+
+    public boolean hasAnnotations() {
+        return mAnnotations != null;
     }
 
     public java.util.Map<String,String> getAnnotations() {
@@ -193,9 +205,9 @@ public class ServiceMethod
                     _Field.ONE_WAY, mOneWay,
                     _Field.RETURN_TYPE, mReturnType,
                     _Field.NAME, mName,
-                    _Field.PARAMS, java.util.Objects.hashCode(mParams),
-                    _Field.EXCEPTIONS, java.util.Objects.hashCode(mExceptions),
-                    _Field.ANNOTATIONS, java.util.Objects.hashCode(mAnnotations));
+                    _Field.PARAMS, mParams,
+                    _Field.EXCEPTIONS, mExceptions,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
     }
@@ -238,19 +250,19 @@ public class ServiceMethod
             if (!first) out.append(',');
             first = false;
             out.append("params:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mParams));
+            out.append(net.morimekta.util.Strings.asString(mParams));
         }
         if (numExceptions() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("exceptions:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mExceptions));
+            out.append(net.morimekta.util.Strings.asString(mExceptions));
         }
         if (numAnnotations() > 0) {
             if (!first) out.append(',');
             first = false;
             out.append("annotations:");
-            out.append(net.morimekta.providence.util.TypeUtils.asString(mAnnotations));
+            out.append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
