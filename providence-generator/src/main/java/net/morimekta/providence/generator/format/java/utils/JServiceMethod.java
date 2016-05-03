@@ -1,4 +1,4 @@
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;

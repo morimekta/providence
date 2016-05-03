@@ -1,8 +1,5 @@
 package net.morimekta.providence.generator.format.java.utils;
 
-import net.morimekta.providence.generator.format.java.JServiceMethod;
-import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
 

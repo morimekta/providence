@@ -15,6 +15,7 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JService;
+import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
