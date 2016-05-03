@@ -28,7 +28,7 @@ import net.morimekta.providence.compiler.options.Syntax;
 import net.morimekta.providence.compiler.options.SyntaxOptionHandler;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.format.java.JGenerator;
-import net.morimekta.providence.generator.format.java.JOptions;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.format.thrift.ThriftGenerator;
