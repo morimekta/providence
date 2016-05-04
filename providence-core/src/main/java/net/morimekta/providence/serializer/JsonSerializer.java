@@ -229,13 +229,6 @@ public class JsonSerializer extends Serializer {
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
         JsonToken callTypeToken = tokenizer.expect("Service call type");
-
-        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
-
-        int sequence = tokenizer.expectNumber("Service call sequence").intValue();
-
-        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
-
         PServiceCallType type;
         if (callTypeToken.isInteger()) {
             int typeKey = callTypeToken.byteValue();
@@ -250,8 +243,14 @@ public class JsonSerializer extends Serializer {
                 throw new SerializerException("Service call type " + typeName + " is not valid.");
             }
         } else {
-            throw new SerializerException("Invalid service call type token " + callTypeToken.type);
+            throw new SerializerException("Invalid service call type token " + callTypeToken.type.name());
         }
+
+        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+        int sequence = tokenizer.expectNumber("Service call sequence").intValue();
+
+        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
         if (type == PServiceCallType.EXCEPTION) {
             ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"), tokenizer, ApplicationException.kDescriptor);
