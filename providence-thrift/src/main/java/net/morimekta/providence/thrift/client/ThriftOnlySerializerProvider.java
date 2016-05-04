@@ -6,6 +6,8 @@ import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,9 @@ public class ThriftOnlySerializerProvider implements SerializerProvider {
         register(new BinarySerializer(), BinarySerializer.MIME_TYPE, TBinaryProtocolSerializer.ALT_MIME_TYPE);
         register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
         register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);
+        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
+        // Even though it's a write-only protocol.
+        register(new TSimpleJsonProtocolSerializer(), TSimpleJsonProtocolSerializer.MIME_TYPE);
     }
 
     @Override

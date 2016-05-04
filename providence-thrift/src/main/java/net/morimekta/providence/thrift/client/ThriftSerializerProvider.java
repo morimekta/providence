@@ -6,6 +6,7 @@ import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
 /**
  *
@@ -21,5 +22,6 @@ public class ThriftSerializerProvider extends DefaultSerializerProvider {
         register(getSerializer(BinarySerializer.MIME_TYPE), TBinaryProtocolSerializer.ALT_MIME_TYPE);
         register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);
         register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
+        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
     }
 }
