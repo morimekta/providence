@@ -115,7 +115,7 @@ public class NonblockingSocketClientHandlerTest {
 
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"success\": {\n" +
@@ -140,7 +140,7 @@ public class NonblockingSocketClientHandlerTest {
 
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"f\": {\n" +
@@ -165,7 +165,7 @@ public class NonblockingSocketClientHandlerTest {
 
         assertEquals("[\n" +
                      "    \"testing\",\n" +
-                     "    3,\n" +
+                     "    \"exception\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +

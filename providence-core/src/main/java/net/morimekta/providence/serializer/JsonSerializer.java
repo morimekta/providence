@@ -156,9 +156,13 @@ public class JsonSerializer extends Serializer {
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             jsonWriter.array()
-                      .value(call.getMethod())
-                      .value(call.getType().key)
-                      .value(call.getSequence());
+                      .value(call.getMethod());
+            if (enumType == IdType.ID) {
+                jsonWriter.value(call.getType().key);
+            } else {
+                jsonWriter.value(call.getType().toString());
+            }
+            jsonWriter.value(call.getSequence());
 
             appendMessage(jsonWriter, call.getMessage());
 
@@ -224,7 +228,7 @@ public class JsonSerializer extends Serializer {
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
-        int typeKey = tokenizer.expectNumber("Service call type").intValue();
+        JsonToken callTypeToken = tokenizer.expect("Service call type");
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
@@ -232,10 +236,24 @@ public class JsonSerializer extends Serializer {
 
         tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
-        PServiceCallType type = PServiceCallType.findByKey(typeKey);
-        if (type == null) {
-            throw new SerializerException("Service call type " + typeKey + " is not valid.");
-        } else if (type == PServiceCallType.EXCEPTION) {
+        PServiceCallType type;
+        if (callTypeToken.isInteger()) {
+            int typeKey = callTypeToken.byteValue();
+            type = PServiceCallType.findByKey(typeKey);
+            if (type == null) {
+                throw new SerializerException("Service call type " + typeKey + " is not valid.");
+            }
+        } else if (callTypeToken.isLiteral()) {
+            String typeName = callTypeToken.decodeJsonLiteral();
+            type = PServiceCallType.findByName(typeName);
+            if (type == null) {
+                throw new SerializerException("Service call type " + typeName + " is not valid.");
+            }
+        } else {
+            throw new SerializerException("Invalid service call type token " + callTypeToken.type);
+        }
+
+        if (type == PServiceCallType.EXCEPTION) {
             ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"), tokenizer, ApplicationException.kDescriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);

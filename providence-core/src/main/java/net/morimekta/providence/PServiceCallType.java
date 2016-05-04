@@ -40,12 +40,27 @@ public enum PServiceCallType {
         this.request = request;
     }
 
+    @Override
+    public  String toString() {
+        return name().toLowerCase();
+    }
+
     public static PServiceCallType findByKey(int key) {
         switch (key) {
             case 1: return CALL;
             case 2: return REPLY;
             case 3: return EXCEPTION;
             case 4: return ONEWAY;
+        }
+        return null;
+    }
+
+    public static PServiceCallType findByName(String key) {
+        switch (key) {
+            case "call": return CALL;
+            case "reply": return REPLY;
+            case "exception": return EXCEPTION;
+            case "oneway": return ONEWAY;
         }
         return null;
     }
