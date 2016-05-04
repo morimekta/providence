@@ -76,7 +76,7 @@ public class BinarySerializer extends Serializer {
     }
 
     public BinarySerializer(boolean readStrict) {
-        this(readStrict, false);
+        this(readStrict, true);
     }
 
     /**
