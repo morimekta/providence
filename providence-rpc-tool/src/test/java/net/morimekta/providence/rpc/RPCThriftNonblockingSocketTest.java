@@ -155,7 +155,7 @@ public class RPCThriftNonblockingSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"success\": {\n" +
@@ -214,7 +214,7 @@ public class RPCThriftNonblockingSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"f\": {\n" +
@@ -229,8 +229,8 @@ public class RPCThriftNonblockingSocketTest {
     public void testSimpleRequest_wrongMethod() throws IOException, TException, DecoderException {
         byte[] tmp = ("[\n" +
                       "    \"testing\",\n" +
-                      "    1,\n" +
-                      "    0,\n" +
+                      "    \"call\",\n" +
+                      "    44,\n" +
                       "    {\n" +
                       "        \"request\": {\n" +
                       "            \"text\": \"request\"\n" +
@@ -250,8 +250,8 @@ public class RPCThriftNonblockingSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"testing\",\n" +
-                     "    3,\n" +
-                     "    0,\n" +
+                     "    \"exception\",\n" +
+                     "    44,\n" +
                      "    {\n" +
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +
                      "        \"id\": 1\n" +

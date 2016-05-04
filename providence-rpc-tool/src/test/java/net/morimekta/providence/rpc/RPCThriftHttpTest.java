@@ -149,7 +149,7 @@ public class RPCThriftHttpTest {
 
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"success\": {\n" +
@@ -205,7 +205,7 @@ public class RPCThriftHttpTest {
 
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"f\": {\n" +

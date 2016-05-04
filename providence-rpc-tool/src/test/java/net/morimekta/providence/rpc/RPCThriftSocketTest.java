@@ -154,7 +154,7 @@ public class RPCThriftSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"success\": {\n" +
@@ -213,7 +213,7 @@ public class RPCThriftSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"test\",\n" +
-                     "    2,\n" +
+                     "    \"reply\",\n" +
                      "    44,\n" +
                      "    {\n" +
                      "        \"f\": {\n" +
@@ -228,7 +228,7 @@ public class RPCThriftSocketTest {
     public void testSimpleRequest_wrongMethod() throws IOException, TException, DecoderException {
         byte[] tmp = ("[\n" +
                       "    \"testing\",\n" +
-                      "    1,\n" +
+                      "    \"call\",\n" +
                       "    0,\n" +
                       "    {\n" +
                       "        \"request\": {\n" +
@@ -249,7 +249,7 @@ public class RPCThriftSocketTest {
         assertEquals("", errContent.toString());
         assertEquals("[\n" +
                      "    \"testing\",\n" +
-                     "    3,\n" +
+                     "    \"exception\",\n" +
                      "    0,\n" +
                      "    {\n" +
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +
