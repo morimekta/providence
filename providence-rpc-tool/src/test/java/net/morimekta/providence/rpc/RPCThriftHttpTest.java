@@ -156,7 +156,7 @@ public class RPCThriftHttpTest {
                      "            \"text\": \"response\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);
     }
@@ -212,7 +212,7 @@ public class RPCThriftHttpTest {
                      "            \"text\": \"failure\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);
     }

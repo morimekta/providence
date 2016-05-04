@@ -161,7 +161,7 @@ public class RPCThriftSocketTest {
                      "            \"text\": \"response\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 
@@ -220,7 +220,7 @@ public class RPCThriftSocketTest {
                      "            \"text\": \"failure\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 
@@ -255,7 +255,7 @@ public class RPCThriftSocketTest {
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +
                      "        \"id\": 1\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 

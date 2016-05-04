@@ -162,7 +162,7 @@ public class RPCThriftNonblockingSocketTest {
                      "            \"text\": \"response\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 
@@ -221,7 +221,7 @@ public class RPCThriftNonblockingSocketTest {
                      "            \"text\": \"failure\"\n" +
                      "        }\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 
@@ -256,7 +256,7 @@ public class RPCThriftNonblockingSocketTest {
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +
                      "        \"id\": 1\n" +
                      "    }\n" +
-                     "]", outContent.toString());
+                     "]\n", outContent.toString());
         assertEquals(0, exitCode);
     }
 
