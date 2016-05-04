@@ -24,6 +24,12 @@ public class ApplicationException
         mId = builder.mId;
     }
 
+    public ApplicationException(String message,
+                                ApplicationExceptionType type) {
+        this(builder().setMessage(message)
+                      .setId(type.getValue()));
+    }
+
     public boolean hasMessage() {
         return mMessage != null;
     }

@@ -1,16 +1,17 @@
 package net.morimekta.providence.thrift;
 
+import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
 
 /**
  * Created by morimekta on 5/2/16.
  */
-public class ThriftSerializerProvider implements SerializerProvider {
+public class ThriftSerializerProvider extends DefaultSerializerProvider {
     private final SerializerProvider baseProvider;
 
     public ThriftSerializerProvider() {
-        this(new SerializerProvider() {});
+        this(new DefaultSerializerProvider() {});
     }
 
     public ThriftSerializerProvider(SerializerProvider base) {

@@ -1,19 +1,19 @@
 package net.morimekta.providence.serializer;
 
 /**
- * Provider of serializers based on a string content type.
+ * Provider of serializers based on a string mime-type.
  */
 public interface SerializerProvider {
-    default Serializer getSerializer(String contentType) {
-        switch (contentType.toLowerCase()) {
-            case BinarySerializer.MIME_TYPE:
-                return new BinarySerializer();
-            case FastBinarySerializer.MIME_TYPE:
-                return new FastBinarySerializer();
-            case JsonSerializer.JSON_MIME_TYPE:
-            case JsonSerializer.MIME_TYPE:
-                return new JsonSerializer();
-        }
-        return null;
-    }
+    /**
+     * Get serializer for the given mime-type
+     *
+     * @param mimeType The mime-type to get serializer for.
+     * @return The serializer, or null if not found.
+     */
+    Serializer getSerializer(String mimeType);
+
+    /**
+     * @return The default serializer.
+     */
+    Serializer getDefault();
 }

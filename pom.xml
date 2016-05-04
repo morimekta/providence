@@ -66,6 +66,8 @@
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.19</mockito.version>
+        <jetty.version>9.3.8.v20160314</jetty.version>
+        <java.servlet.version>3.1.0</java.servlet.version>
 
         <!-- compile time dependencies -->
         <guava.version>19.0</guava.version>
@@ -73,6 +75,7 @@
         <thrift.version>0.9.3</thrift.version>
         <jackson.version>2.7.4</jackson.version>
         <args4j.version>2.33</args4j.version>
+        <google-http.version>1.21.0</google-http.version>
 
         <morimekta_utils.version>0.2.3</morimekta_utils.version>
     </properties>
@@ -87,6 +90,7 @@
         <!-- the real core. -->
         <module>providence-core</module>
         <module>providence-core-jackson</module>
+        <module>providence-core-client</module>
 
         <!-- utility libraries -->
         <module>providence-thrift</module>

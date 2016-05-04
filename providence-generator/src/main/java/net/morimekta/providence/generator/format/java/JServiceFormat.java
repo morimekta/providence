@@ -20,6 +20,8 @@ import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.contained.CService;
+import net.morimekta.providence.serializer.ApplicationException;
+import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -162,11 +164,20 @@ public class JServiceFormat {
                 writer.formatln("%s msg = (%s) resp.getMessage();",
                                 method.getResponseClass(), method.getResponseClass());
 
-                if (method.exceptions().length > 0) {
-                    writer.newline()
-                          .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
-                          .begin();
+                writer.newline()
+                      .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
+                      .formatln("    %s ex = (%s) resp.getMessage();",
+                                ApplicationException.class.getName(),
+                                ApplicationException.class.getName())
+                      .formatln("    throw new %s(ex.getMessage(), ex);",
+                                IOException.class.getName())
+                      .appendln('}');
 
+                if (method.exceptions().length > 0) {
+                    // In case there is no return value, and no exception,
+                    // the union field is not set.
+                    writer.appendln("if (msg.unionField() != null) {")
+                          .begin();
                     writer.appendln("switch (msg.unionField()) {")
                           .begin();
 
@@ -174,12 +185,8 @@ public class JServiceFormat {
                         writer.formatln("case %s:", ex.fieldEnum())
                               .formatln("    throw msg.%s();", ex.getter());
                     }
-
-                    writer.formatln("default: throw new %s(\"Unknown exception field: \" + msg.unionField().toString());",
-                                    IOException.class.getName())
-                          .end()
-                          .appendln('}');
-
+                    writer.end()
+                          .appendln("}");
                     writer.end()
                           .appendln("}");
                 }
@@ -222,10 +229,6 @@ public class JServiceFormat {
               .appendln("try {")
               .begin();
 
-        writer.formatln("%s type = %s.%s;",
-                        PServiceCallType.class.getName(),
-                        PServiceCallType.class.getName(),
-                        PServiceCallType.EXCEPTION.name());
         writer.formatln("%s call = reader.read(%s.kDescriptor);",
                         PServiceCall.class.getName(),
                         service.className())
@@ -278,10 +281,6 @@ public class JServiceFormat {
                 writer.formatln("rsp.%s(result);", method.getResponse().setter());
             }
 
-            writer.formatln("type = %s.%s;",
-                            PServiceCallType.class.getName(),
-                            PServiceCallType.REPLY.name());
-
             if (method.exceptions().length > 0) {
                 writer.end();
                 for (JField ex : method.exceptions()) {
@@ -294,9 +293,18 @@ public class JServiceFormat {
             }
 
             if (method.getResponseClass() != null) {
-                writer.formatln("%s reply = new %s(call.getMethod(), type, call.getSequence(), rsp.build());",
-                                PServiceCall.class.getName(),
+                String spaces = PServiceCall.class.getName().replaceAll("[\\S]", " ");
+                writer.formatln("%s reply =", PServiceCall.class.getName())
+                      .formatln("        new %s(call.getMethod(),",
                                 PServiceCall.class.getName())
+                      .formatln("            %s %s.%s,",
+                                spaces,
+                                PServiceCallType.class.getName(),
+                                PServiceCallType.REPLY.name())
+                      .formatln("            %s call.getSequence(),",
+                                spaces)
+                      .formatln("            %s rsp.build());",
+                                spaces)
                       .appendln("writer.write(reply);");
             }
 
@@ -305,14 +313,40 @@ public class JServiceFormat {
                   .appendln('}');
         }
 
-        writer.formatln("default: throw new %s(\"Method call not handled: \" + call.getMethod());", IOException.class.getName())
+        writer.appendln("default: {")
+              .begin()
+              .formatln("%s ex = new %s(\"Unknown method \\\"\" + call.getMethod() + \"\\\" on %s.\", %s.%s);",
+                        ApplicationException.class.getName(),
+                        ApplicationException.class.getName(),
+                        service.getService().getQualifiedName(null),
+                        ApplicationExceptionType.class.getName(),
+                        ApplicationExceptionType.UNKNOWN_METHOD.getName());
+
+        String spaces = PServiceCall.class.getName().replaceAll("[\\S]", " ");
+        writer.formatln("%s reply =", PServiceCall.class.getName())
+              .formatln("        new %s(call.getMethod(),",
+                        PServiceCall.class.getName())
+              .formatln("            %s %s.%s,",
+                        spaces,
+                        PServiceCallType.class.getName(),
+                        PServiceCallType.EXCEPTION.name())
+              .formatln("            %s call.getSequence(),",
+                        spaces)
+              .formatln("            %s ex);",
+                        spaces)
+              .appendln("writer.write(reply);");
+
+        writer.appendln("break;")
+              .end()
+              .appendln('}')
               .end()
               .appendln('}');
 
         writer.appendln("return true;")
               .end()
-              .formatln("} catch (%s se) {", SerializerException.class.getName())
-              .formatln("    throw new %s(se);", IOException.class.getName())
+              .formatln("} catch (%s e) {", SerializerException.class.getName())
+              .formatln("    throw new %s(e.getMessage(), e);",
+                        IOException.class.getName())
               .appendln('}')
               .end()
               .appendln('}');
