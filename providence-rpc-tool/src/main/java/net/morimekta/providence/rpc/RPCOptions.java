@@ -22,6 +22,7 @@
 package net.morimekta.providence.rpc;
 
 import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.mio.FileMessageReader;
 import net.morimekta.providence.mio.FileMessageWriter;
@@ -34,7 +35,6 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
-import net.morimekta.providence.rpc.handler.HttpClientHandler;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
 import net.morimekta.providence.rpc.options.ConvertStream;
 import net.morimekta.providence.rpc.options.Format;
@@ -44,15 +44,18 @@ import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.thrift.client.SocketClientHandler;
+import net.morimekta.providence.thrift.client.ThriftSerializerProvider;
 import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import org.kohsuke.args4j.Argument;
@@ -304,6 +307,7 @@ public class RPCOptions {
             }
         }
 
+
         GenericUrl url = new GenericUrl(endpoint);
         Map<String, String> hdrs = new HashMap<>();
         for (String hdr : headers) {
@@ -315,6 +319,8 @@ public class RPCOptions {
         }
 
         HttpTransport transport = new ApacheHttpTransport();
-        return new HttpClientHandler(url, transport.createRequestFactory(new SetHeadersInitializer(hdrs)), serializer);
+        HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs));
+        SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mimeType());
+        return new HttpClientHandler(url, factory, serializerProvider);
     }
 }

@@ -91,7 +91,7 @@ public class RPC {
                               options.endpoint,
                               e.getMessage());
         } catch (HttpResponseException e) {
-            System.err.println("Received " + e.getStatusMessage());
+            System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
             System.err.println(" - from: " + options.endpoint);
         } catch (CmdLineException e) {
             System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");

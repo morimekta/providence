@@ -180,11 +180,12 @@ public class RPCThriftHttpTest {
                 "-o", "json,file:" + outFile.getAbsolutePath(),
                 endpoint());
 
+        assertEquals("", outContent.toString());
+        assertEquals("", errContent.toString());
+
         String out = new String(Files.readAllBytes(outFile.toPath()));
         assertEquals("[\"test\",2,44,{\"0\":{\"1\":\"response\"}}]", out);
 
-        assertEquals("", outContent.toString());
-        assertEquals("", errContent.toString());
         assertEquals(0, exitCode);
     }
 
@@ -231,7 +232,7 @@ public class RPCThriftHttpTest {
                 endpoint() + "_does_not_exsist");
 
         assertEquals("", outContent.toString());
-        assertEquals("Received HTTP method POST is not supported by this URL\n" +
+        assertEquals("Received 405 HTTP method POST is not supported by this URL\n" +
                      " - from: http://localhost:" + port + "/test_does_not_exsist\n",
                      errContent.toString());
         assertEquals(1, exitCode);

@@ -44,12 +44,11 @@
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
             <version>${providence.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core-client</artifactId>
+            <version>${providence.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
