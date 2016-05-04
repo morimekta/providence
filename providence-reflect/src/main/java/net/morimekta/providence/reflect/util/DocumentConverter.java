@@ -22,7 +22,6 @@ package net.morimekta.providence.reflect.util;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -49,6 +48,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Stein Eldar Johnsen
@@ -98,8 +98,11 @@ public class DocumentConverter {
                     StructType structType = decl.getDeclStruct();
 
                     List<CField> fields = new LinkedList<>();
-                    for (ThriftField field : structType.getFields()) {
-                        fields.add(makeField(document.getPackage(), field));
+                    if (structType.hasFields()) {
+                        fields.addAll(structType.getFields()
+                                                .stream()
+                                                .map(field -> makeField(document.getPackage(), field))
+                                                .collect(Collectors.toList()));
                     }
                     PStructDescriptor<?, ?> type;
                     switch (structType.getVariant()) {

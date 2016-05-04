@@ -125,7 +125,7 @@ public class TypeLoader {
 
         LinkedList<File> queue = new LinkedList<>();
         for (String include : doc.getIncludes()) {
-            File location = new File(file.getParent(), include);
+            File location = new File(file.getParent(), include).getCanonicalFile();
             if (!location.exists()) {
                 for (File inc : mIncludes) {
                     File i = new File(inc, include);
@@ -135,8 +135,9 @@ public class TypeLoader {
                     }
                 }
             }
-            if (location.exists()) {
-                queue.add(location.getCanonicalFile());
+
+            if (location.exists() && !queue.contains(location)) {
+                queue.add(location);
             }
         }
 
@@ -145,7 +146,7 @@ public class TypeLoader {
 
         mLoadedDocuments.put(file.getCanonicalPath(), doc);
         for (File include : queue) {
-            if (!mLoadedDocuments.containsKey(include)) {
+            if (!mLoadedDocuments.containsKey(include.getCanonicalPath())) {
                 load(include);
             }
         }
