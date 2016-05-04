@@ -24,7 +24,7 @@
         <artifactId>providence-tools</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>providence</artifactId>
+    <artifactId>providence-package</artifactId>
 
     <dependencies>
         <dependency>
@@ -74,6 +74,7 @@
                             <goal>jdeb</goal>
                         </goals>
                         <configuration>
+                            <deb>[[buildDir]]/providence-[[version]]_all.[[extension]]</deb>
                             <verbose>true</verbose>
                             <snapshotExpand>true</snapshotExpand>
                             <snapshotEnv>USER</snapshotEnv>
