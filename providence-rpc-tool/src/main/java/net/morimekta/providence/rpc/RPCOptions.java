@@ -30,6 +30,7 @@ import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
+import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
@@ -49,6 +50,7 @@ import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.thrift.client.SocketClientHandler;
+import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
@@ -69,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static net.morimekta.console.FormatString.except;
 
@@ -205,6 +208,11 @@ public class RPCOptions {
         TypeLoader loader = new TypeLoader(rootSet, new ThriftParser());
 
         try {
+            if (!includeMap.containsKey(namespace)) {
+                throw new CmdLineException(cli, "No package " + namespace + " found in include path.\nFound: " +
+                                                Strings.join(", ", new TreeSet<Object>(includeMap.keySet())));
+            }
+
             loader.load(includeMap.get(namespace));
         } catch (IOException e) {
             throw except(cli, e.getLocalizedMessage());
@@ -212,7 +220,16 @@ public class RPCOptions {
 
         PService srv = loader.getRegistry().getServiceProvider(service, null).getService();
         if (srv == null) {
-            throw except(cli, "Unknown service: " + service);
+            CDocument document = loader.getRegistry().getDocumentForPackage(namespace);
+            Set<String> services = new TreeSet<>(
+                    document.getServices()
+                            .stream().map(s -> s.getQualifiedName(null))
+                            .collect(Collectors.toSet()));
+
+            throw except(cli,
+                         "Unknown service %s in %s.\nFound %s",
+                         service, namespace,
+                         services.size() == 0 ? "none" : Strings.join(", ", services));
         }
 
         return srv;
