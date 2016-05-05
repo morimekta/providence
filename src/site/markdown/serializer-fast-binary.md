@@ -57,6 +57,43 @@ and `(number << 1) ^ (number >> 63)` for i64. Decoding is done using
 that `>>` is an arithmetic shift (keeping the sign bit), while `>>>` is a
 logical shift (not keeping the sign bit).
 
+## Service Calls
+
+Service calls are encoded as a fixed 5-tuple of:
+
+1. base-128 varint of (method name length << 3 | call type). The call type
+   will determine the content of the message field.
+    - `call`, **1**: Method request wrapper.
+    - `reply`, **2**: Method response wrapper.
+    - `exception`, **3**: Application exception.
+    - `oneway`, **4**: Method request wrapper, but no reply expected.
+2. method name data (utf-8 encoded, of length from `1.`).
+4. base-128 varint sequence number.
+5. The method wrapper message or exception.
+
+The application exception is defined as:
+
+```thrift
+enum ApplicationExceptionType {
+  UNKNOWN                 =  0;
+  UNKNOWN_METHOD          =  1;
+  INVALID_MESSAGE_TYPE    =  2;
+  WRONG_METHOD_NAME       =  3;
+  BAD_SEQUENCE_ID         =  4;
+  MISSING_RESULT          =  5;
+  INTERNAL_ERROR          =  6;
+  PROTOCOL_ERROR          =  7;
+  INVALID_TRANSFORM       =  8;
+  INVALID_PROTOCOL        =  9;
+  UNSUPPORTED_CLIENT_TYPE = 10;
+}
+
+exception ApplicationException {
+    1: string message
+    2: ApplicationExceptionType id
+}
+```
+
 ## Message Encoding
 
 The message is encoded as a stream of fields, ending in a field with ID 0

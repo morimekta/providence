@@ -88,10 +88,9 @@ public class FastBinarySerializer extends Serializer {
             throws IOException, SerializerException {
         BinaryWriter out = new BinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
-        int len = out.writeUInt8(method.length);
+        int len = out.writeVarint(method.length << 3 | call.getType().key);
         len += method.length;
         out.write(method);
-        len += out.writeUInt8(call.getType().key);
         len += out.writeInt(call.getSequence());
         len += writeMessage(out, call.getMessage());
         return len;
@@ -110,9 +109,10 @@ public class FastBinarySerializer extends Serializer {
             throws IOException, SerializerException {
         BinaryReader in = new BinaryReader(is);
         // Max method name length: 255 chars.
-        int methodNameLen = in.expectUInt8();
-        String methodName = new String(in.expectBytes(methodNameLen), UTF_8);
-        int typeKey = in.expectUInt8();
+        int tag = in.readIntVarint();
+        int len = tag >>> 3;
+        int typeKey = tag & 0x07;
+        String methodName = new String(in.expectBytes(len), UTF_8);
         int sequence = in.readIntVarint();
 
         PServiceCallType type = PServiceCallType.findByKey(typeKey);
