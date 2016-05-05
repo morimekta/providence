@@ -196,18 +196,9 @@ public class JsonSerializer extends Serializer {
 
     @Override
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws IOException, SerializerException {
-        try {
-            JsonTokenizer tokenizer = new JsonTokenizer(input);
-            if (!tokenizer.hasNext()) {
-                return null;
-            }
-            return parseServiceCall(tokenizer, service);
-        } catch (JsonException e) {
-            throw new SerializerException(e, "Unable to parse JSON");
-        } catch (IOException e) {
-            throw new SerializerException(e, "Unable to read stream");
-        }
+            throws SerializerException {
+        JsonTokenizer tokenizer = new JsonTokenizer(input);
+        return parseServiceCall(tokenizer, service);
     }
 
     @Override
@@ -222,57 +213,81 @@ public class JsonSerializer extends Serializer {
 
     @SuppressWarnings("unchecked")
     private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)
-            throws IOException, JsonException, SerializerException {
-        tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
+            throws SerializerException {
+        PServiceCallType type = null;
+        String methodName = null;
+        int sequence = 0;
+        try {
+            tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
 
-        String methodName = tokenizer.expectString("Service call method").decodeJsonLiteral();
+            methodName = tokenizer.expectString("Service call method")
+                                  .decodeJsonLiteral();
 
-        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
-        JsonToken callTypeToken = tokenizer.expect("Service call type");
-        PServiceCallType type;
-        if (callTypeToken.isInteger()) {
-            int typeKey = callTypeToken.byteValue();
-            type = PServiceCallType.findByKey(typeKey);
-            if (type == null) {
-                throw new SerializerException("Service call type " + typeKey + " is not valid.");
+            JsonToken callTypeToken = tokenizer.expect("Service call type");
+            if (callTypeToken.isInteger()) {
+                int typeKey = callTypeToken.byteValue();
+                type = PServiceCallType.findByKey(typeKey);
+                if (type == null) {
+                    throw new SerializerException("Service call type " + typeKey + " is not valid.")
+                            .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                }
+            } else if (callTypeToken.isLiteral()) {
+                String typeName = callTypeToken.decodeJsonLiteral();
+                type = PServiceCallType.findByName(typeName);
+                if (type == null) {
+                    throw new SerializerException("Service call type " + typeName + " is not valid.")
+                            .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                }
+            } else {
+                throw new SerializerException("Invalid service call type token " + callTypeToken.asString())
+                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
             }
-        } else if (callTypeToken.isLiteral()) {
-            String typeName = callTypeToken.decodeJsonLiteral();
-            type = PServiceCallType.findByName(typeName);
-            if (type == null) {
-                throw new SerializerException("Service call type " + typeName + " is not valid.");
+
+            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+            sequence = tokenizer.expectNumber("Service call sequence")
+                                .intValue();
+
+            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+
+            if (type == PServiceCallType.EXCEPTION) {
+                ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"),
+                                                          tokenizer,
+                                                          ApplicationException.kDescriptor);
+
+                tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
+
+                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
             }
-        } else {
-            throw new SerializerException("Invalid service call type token " + callTypeToken.type.name());
-        }
 
-        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+            PServiceMethod method = service.getMethod(methodName);
+            if (method == null) {
+                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
+                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD);
+            }
 
-        int sequence = tokenizer.expectNumber("Service call sequence").intValue();
-
-        tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
-
-        if (type == PServiceCallType.EXCEPTION) {
-            ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"), tokenizer, ApplicationException.kDescriptor);
+            @SuppressWarnings("unchecked")
+            PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            T message = parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
-            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+            return new PServiceCall<>(methodName, type, sequence, message);
+        } catch (IOException | JsonException ie) {
+            throw new SerializerException(ie, ie.getMessage())
+                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+                    .setMethodName(methodName)
+                    .setCallType(type)
+                    .setSequenceNo(sequence);
+        } catch (SerializerException se) {
+            throw new SerializerException(se, se.getMessage())
+                    .setExceptionType(se.getExceptionType())
+                    .setMethodName(methodName)
+                    .setCallType(type)
+                    .setSequenceNo(sequence);
         }
-
-        PServiceMethod method = service.getMethod(methodName);
-        if (method == null) {
-            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
-        }
-
-        @SuppressWarnings("unchecked")
-        PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
-        T message = parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
-
-        tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
-
-        return new PServiceCall<>(methodName, type, sequence, message);
     }
 
     private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)

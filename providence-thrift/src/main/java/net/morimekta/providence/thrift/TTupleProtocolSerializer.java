@@ -19,6 +19,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.ApplicationException;
+import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Binary;
@@ -116,14 +117,16 @@ public class TTupleProtocolSerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws IOException, SerializerException {
+            throws SerializerException {
+        TMessage tm = null;
+        PServiceCallType type = null;
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
 
-            TMessage tm = protocol.readMessageBegin();
+            tm = protocol.readMessageBegin();
 
-            PServiceCallType type = PServiceCallType.findByKey(tm.type);
+            type = PServiceCallType.findByKey(tm.type);
             if (type == null) {
                 throw new SerializerException("Unknown call type for id " + tm.type);
             } else if (type == PServiceCallType.EXCEPTION) {
@@ -144,9 +147,17 @@ public class TTupleProtocolSerializer extends Serializer {
 
             return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
-            throw new SerializerException(e, "Unable to serialize into transport protocol");
+            throw new SerializerException(e, "Unable to serialize into transport protocol")
+                    .setExceptionType(ApplicationExceptionType.forValue(e.getType()))
+                    .setCallType(type)
+                    .setMethodName(tm != null ? tm.name : "")
+                    .setSequenceNo(tm != null ? tm.seqid : 0);
         } catch (TException e) {
-            throw new SerializerException(e, "Transport exception in protocol");
+            throw new SerializerException(e, "Transport exception in protocol")
+                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+                    .setCallType(type)
+                    .setMethodName(tm != null ? tm.name : "")
+                    .setSequenceNo(tm != null ? tm.seqid : 0);
         }
     }
 

@@ -136,50 +136,73 @@ public class BinarySerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
-            throws IOException, SerializerException {
+            throws SerializerException {
         BinaryReader in = new BigEndianBinaryReader(is);
-
-        int methodNameLen = in.expectInt();
-        int typeKey;
-        String methodName;
-        // Accept both "strict" read mode and non-strict.
-        // versioned
-        if (methodNameLen < 0) {
-            int version = methodNameLen & VERSION_MASK;
-            if (version == VERSION_1) {
-                typeKey = methodNameLen & 0xFF;
-                methodNameLen = in.expectInt();
-                methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+        String methodName = null;
+        int sequence = 0;
+        PServiceCallType type = null;
+        try {
+            int methodNameLen = in.expectInt();
+            int typeKey;
+            // Accept both "strict" read mode and non-strict.
+            // versioned
+            if (methodNameLen < 0) {
+                int version = methodNameLen & VERSION_MASK;
+                if (version == VERSION_1) {
+                    typeKey = methodNameLen & 0xFF;
+                    methodNameLen = in.expectInt();
+                    methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+                } else {
+                    throw new SerializerException("Bad protocol version: %08x", version >>> 16);
+                }
             } else {
-                throw new SerializerException("Bad protocol version: %08x", version >>> 16);
+                if (readStrict && versioned) {
+                    throw new SerializerException("Missing protocol version");
+                }
+
+                methodName = new String(in.expectBytes(methodNameLen), UTF_8);
+                typeKey = in.expectByte();
             }
-        } else {
-            if (readStrict && versioned) {
-                throw new SerializerException("Missing protocol version");
+            sequence = in.expectInt();
+
+            type = PServiceCallType.findByKey(typeKey);
+            PServiceMethod method = service.getMethod(methodName);
+            if (type == null) {
+                throw new SerializerException("Invalid call type " + typeKey)
+                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE)
+                        .setMethodName(methodName)
+                        .setSequenceNo(sequence);
+            } else if (type == PServiceCallType.EXCEPTION) {
+                ApplicationException ex = readMessage(in, ApplicationException.kDescriptor, false);
+                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+            } else if (method == null) {
+                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
+                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD)
+                        .setMethodName(methodName)
+                        .setCallType(type)
+                        .setSequenceNo(sequence);
             }
 
-            methodName = new String(in.expectBytes(methodNameLen), UTF_8);
-            typeKey = in.expectByte();
+            try {
+                @SuppressWarnings("unchecked")
+                PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+
+                T message = readMessage(in, descriptor, false);
+
+                return new PServiceCall<>(methodName, type, sequence, message);
+            } catch (SerializerException se) {
+                throw new SerializerException(se, se.getMessage())
+                        .setMethodName(methodName)
+                        .setCallType(type)
+                        .setSequenceNo(sequence);
+            }
+        } catch (IOException e) {
+            throw new SerializerException(e, e.getMessage())
+                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+                    .setMethodName(methodName)
+                    .setCallType(type)
+                    .setSequenceNo(sequence);
         }
-        int sequence = in.expectInt();
-
-        PServiceCallType type = PServiceCallType.findByKey(typeKey);
-        PServiceMethod method = service.getMethod(methodName);
-        if (type == null) {
-            throw new SerializerException("Invalid call type " + typeKey);
-        } else if (type == PServiceCallType.EXCEPTION) {
-            ApplicationException ex = readMessage(in, ApplicationException.kDescriptor, false);
-            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
-        } else if (method == null) {
-            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
-        }
-
-        @SuppressWarnings("unchecked")
-        PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
-
-        T message = readMessage(in, descriptor, false);
-
-        return new PServiceCall<>(methodName, type, sequence, message);
     }
 
     private <T extends PMessage<T>> int writeMessage(BinaryWriter writer, T message) throws IOException,

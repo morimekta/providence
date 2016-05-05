@@ -106,34 +106,55 @@ public class FastBinarySerializer extends Serializer {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
-            throws IOException, SerializerException {
-        BinaryReader in = new BinaryReader(is);
-        // Max method name length: 255 chars.
-        int tag = in.readIntVarint();
-        int len = tag >>> 3;
-        int typeKey = tag & 0x07;
-        String methodName = new String(in.expectBytes(len), UTF_8);
-        int sequence = in.readIntVarint();
+            throws SerializerException {
+        String methodName = null;
+        int sequence = 0;
+        PServiceCallType type = null;
+        try {
+            BinaryReader in = new BinaryReader(is);
+            // Max method name length: 255 chars.
+            int tag = in.readIntVarint();
+            int len = tag >>> 3;
+            int typeKey = tag & 0x07;
 
-        PServiceCallType type = PServiceCallType.findByKey(typeKey);
-        if (type == null) {
-            throw new SerializerException("Invalid call type " + typeKey);
-        } else if (type == PServiceCallType.EXCEPTION) {
-            ApplicationException ex = readMessage(in, ApplicationException.kDescriptor);
-            return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+            methodName = new String(in.expectBytes(len), UTF_8);
+            sequence = in.readIntVarint();
+            type = PServiceCallType.findByKey(typeKey);
+
+            if (type == null) {
+                throw new SerializerException("Invalid call type " + typeKey)
+                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+            } else if (type == PServiceCallType.EXCEPTION) {
+                ApplicationException ex = readMessage(in, ApplicationException.kDescriptor);
+                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+            }
+
+            PServiceMethod method = service.getMethod(methodName);
+            if (method == null) {
+                throw new SerializerException("No such method %s on %s",
+                                              methodName,
+                                              service.getQualifiedName(null))
+                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD);
+            }
+
+            @SuppressWarnings("unchecked")
+            PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+
+            T message = readMessage(in, descriptor);
+            return new PServiceCall<>(methodName, type, sequence, message);
+        } catch (IOException e) {
+            throw new SerializerException(e, e.getMessage())
+                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+                    .setCallType(type)
+                    .setMethodName(methodName)
+                    .setSequenceNo(sequence);
+        } catch (SerializerException e) {
+            throw new SerializerException(e, e.getMessage())
+                    .setExceptionType(e.getExceptionType())
+                    .setCallType(type)
+                    .setMethodName(methodName)
+                    .setSequenceNo(sequence);
         }
-
-        PServiceMethod method = service.getMethod(methodName);
-        if (method == null) {
-            throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null));
-        }
-
-        @SuppressWarnings("unchecked")
-        PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
-
-        T message = readMessage(in, descriptor);
-
-        return new PServiceCall<>(methodName, type, sequence, message);
     }
 
     @Override

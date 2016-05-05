@@ -34,9 +34,6 @@ import java.io.OutputStream;
  * transforms messages to binary stream (serializes), or binary stream to
  * messages (deserializes). Since the serializer is state-less it should also
  * be inherently thread safe (including not needing any synchronized methods.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
 public abstract class Serializer {
     public abstract <T extends PMessage<T>> int
@@ -49,7 +46,7 @@ public abstract class Serializer {
     deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException;
 
     public abstract <T extends PMessage<T>> PServiceCall<T>
-    deserialize(InputStream input, PService service) throws IOException, SerializerException;
+    deserialize(InputStream input, PService service) throws SerializerException;
 
     public abstract boolean binaryProtocol();
 
