@@ -276,12 +276,24 @@ public class BinarySerializer extends Serializer {
      */
     private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
             throws IOException, SerializerException {
-        if (type.getType().id != fieldInfo.getType()) {
+        if (type == null) {
             if (readStrict) {
-                throw new SerializerException("");
+                throw new SerializerException("Reading unknown field in strict mode.");
+            }
+        } else if (type.getType().id != fieldInfo.getType()) {
+            if (readStrict) {
+                throw new SerializerException("Mismatching field type in strict mode.");
+            } else {
+                // consume the content.
+                readFieldValue(in, fieldInfo, null);
+                // return 'null', which should clear the field value.
+                return null;
             }
         }
+
         switch (PType.findById(fieldInfo.getType())) {
+            case VOID:
+                return cast(Boolean.FALSE);
             case BOOL:
                 return cast(in.expectByte() != 0);
             case BYTE:
@@ -291,7 +303,7 @@ public class BinarySerializer extends Serializer {
             case ENUM:
             case I32:
                 int val = in.expectInt();
-                if (type instanceof PEnumDescriptor) {
+                if (type != null && type instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
                     PEnumBuilder<T> builder = (PEnumBuilder<T>) ((PEnumDescriptor<?>)type).builder();
                     builder.setByValue(val);
@@ -307,7 +319,7 @@ public class BinarySerializer extends Serializer {
             case BINARY:
                 int len = in.expectUInt32();
                 byte[] data = in.expectBytes(len);
-                if (type.getType() == PType.STRING) {
+                if (type != null && type.getType() == PType.STRING) {
                     return cast(new String(data, StandardCharsets.UTF_8));
                 } else {
                     return cast(Binary.wrap(data));
@@ -333,6 +345,7 @@ public class BinarySerializer extends Serializer {
                         throw new SerializerException("Invalid type for map encoding: " + type);
                     }
 
+                    @SuppressWarnings("unchecked")
                     PMap<Object, Object> mapType = (PMap<Object, Object>) type;
                     keyType = mapType.keyDescriptor();
                     valueType = mapType.itemDescriptor();
@@ -362,6 +375,7 @@ public class BinarySerializer extends Serializer {
                 PDescriptor entryType = null;
                 PSet.Builder<Object> out;
                 if (type != null) {
+                    @SuppressWarnings("unchecked")
                     PSet<Object> setType = (PSet<Object>) type;
                     entryType = setType.itemDescriptor();
                     out = setType.builder();
@@ -388,6 +402,7 @@ public class BinarySerializer extends Serializer {
                 PDescriptor entryType = null;
                 PList.Builder<Object> out;
                 if (type != null) {
+                    @SuppressWarnings("unchecked")
                     PList<Object> listType = (PList<Object>) type;
                     entryType = listType.itemDescriptor();
                     out = listType.builder();

@@ -63,14 +63,14 @@ The message is encoded as a stream of fields, ending in a field with ID 0
 (type ignored), combined with a 3-bit field type. Note that the field type
 only describes which *wire format* the value is encoded as.
 
-* **0x00 = NONE**: No value; Boolean false ( *bool* ).
-* **0x01 = TRUE**: No value; Boolean true ( *bool* ).
-* **0x02 = VARINT**: Zigzag encoded base-128 number ( *byte*, *i8*, *i16*, *i32*, *i64* ).
-* **0x03 = FIXED_64**: 8 bytes, little endian encoded ( *double* ).
-* **0x04 = BINARY**: base-128 encoded length + binary data ( *string*, *binary* ).
-* **0x05 = MESSAGE**: enclosed message, terminated with field-ID 0 ( *struct*, *union*, *exception* ).
-* **0x06 = COLLECTION**: base-128 encoded length N + N * (tag + field) ( *list*, *set*, *map* ).
-* **0x07** Unused.
+* **0x00 = STOP**: Stop reading fields.
+* **0x01 = NONE**: No value; Boolean false ( *bool*, *void* ).
+* **0x02 = TRUE**: No value; Boolean true ( *bool* ).
+* **0x03 = VARINT**: Zigzag encoded base-128 number ( *byte*, *i8*, *i16*, *i32*, *i64* ).
+* **0x04 = FIXED_64**: 8 bytes, little endian encoded ( *double* ).
+* **0x05 = BINARY**: base-128 encoded length + binary data ( *string*, *binary* ).
+* **0x06 = MESSAGE**: enclosed message, terminated with field-ID 0 ( *struct*, *union*, *exception* ).
+* **0x07 = COLLECTION**: base-128 encoded length N + N * (tag + field) ( *list*, *set*, *map* ).
 
 The two values are combined as: `tag :== (field-id << 3) | type`, written as a
 base-128 varint (not zigzag encoded), followed by the value as described.

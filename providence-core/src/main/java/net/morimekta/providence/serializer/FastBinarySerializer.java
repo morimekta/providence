@@ -196,6 +196,9 @@ public class FastBinarySerializer extends Serializer {
     private int writeFieldValue(BinaryWriter out, int key, PDescriptor descriptor, Object value)
             throws IOException, SerializerException {
         switch (descriptor.getType()) {
+            case VOID: {
+                return out.writeVarint(key << 3 | NONE);
+            }
             case BOOL: {
                 return out.writeVarint(key << 3 | ((Boolean) value ? TRUE : NONE));
             }
@@ -276,6 +279,10 @@ public class FastBinarySerializer extends Serializer {
     private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
             throws IOException, SerializerException {
         switch (type) {
+            case NONE:
+                return cast(false);
+            case TRUE:
+                return cast(true);
             case VARINT: {
                 if (descriptor == null) {
                     if (readStrict) {
@@ -373,13 +380,9 @@ public class FastBinarySerializer extends Serializer {
                     throw new SerializerException("Type " + descriptor.getType() +
                                                   " not compatible with collection data.");
                 }
-            case NONE:
-                return cast(false);
-            case TRUE:
-                return cast(true);
         }
 
-        return null;
+        throw new SerializerException("No handling for type " + type);
     }
 
     private static final int STOP       = 0x00;
