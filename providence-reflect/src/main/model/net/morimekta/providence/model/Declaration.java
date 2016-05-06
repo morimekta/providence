@@ -207,28 +207,28 @@ public class Declaration
 
         switch (tUnionField) {
             case DECL_ENUM: {
-                out.append("decl_enum:");
-                out.append(mDeclEnum.asString());
+                out.append("decl_enum:")
+                   .append(mDeclEnum.asString());
                 break;
             }
             case DECL_TYPEDEF: {
-                out.append("decl_typedef:");
-                out.append(mDeclTypedef.asString());
+                out.append("decl_typedef:")
+                   .append(mDeclTypedef.asString());
                 break;
             }
             case DECL_STRUCT: {
-                out.append("decl_struct:");
-                out.append(mDeclStruct.asString());
+                out.append("decl_struct:")
+                   .append(mDeclStruct.asString());
                 break;
             }
             case DECL_SERVICE: {
-                out.append("decl_service:");
-                out.append(mDeclService.asString());
+                out.append("decl_service:")
+                   .append(mDeclService.asString());
                 break;
             }
             case DECL_CONST: {
-                out.append("decl_const:");
-                out.append(mDeclConst.asString());
+                out.append("decl_const:")
+                   .append(mDeclConst.asString());
                 break;
             }
         }
@@ -397,6 +397,10 @@ public class Declaration
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.Declaration builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -411,10 +415,17 @@ public class Declaration
         private net.morimekta.providence.model.ServiceType mDeclService;
         private net.morimekta.providence.model.ThriftField mDeclConst;
 
-
+        /**
+         * Make a model.Declaration builder.
+         */
         public _Builder() {
         }
 
+        /**
+         * Make a mutating builder off a base model.Declaration.
+         *
+         * @param base The base Declaration
+         */
         public _Builder(Declaration base) {
             this();
 
@@ -440,7 +451,7 @@ public class Declaration
         }
 
         /**
-         * Checked presence of the decl_enum field.
+         * Checks for presence of the decl_enum field.
          *
          * @return True iff decl_enum has been set.
          */
@@ -472,7 +483,7 @@ public class Declaration
         }
 
         /**
-         * Checked presence of the decl_typedef field.
+         * Checks for presence of the decl_typedef field.
          *
          * @return True iff decl_typedef has been set.
          */
@@ -504,7 +515,7 @@ public class Declaration
         }
 
         /**
-         * Checked presence of the decl_struct field.
+         * Checks for presence of the decl_struct field.
          *
          * @return True iff decl_struct has been set.
          */
@@ -536,7 +547,7 @@ public class Declaration
         }
 
         /**
-         * Checked presence of the decl_service field.
+         * Checks for presence of the decl_service field.
          *
          * @return True iff decl_service has been set.
          */
@@ -568,7 +579,7 @@ public class Declaration
         }
 
         /**
-         * Checked presence of the decl_const field.
+         * Checks for presence of the decl_const field.
          *
          * @return True iff decl_const has been set.
          */
@@ -588,6 +599,7 @@ public class Declaration
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

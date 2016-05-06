@@ -235,34 +235,42 @@ public class ThriftField
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         out.append("key:")
-            .append(mKey);
+           .append(mKey);
         if (mRequirement != null) {
             out.append(',');
             out.append("requirement:")
-                .append(mRequirement.toString());
+               .append(mRequirement.toString());
         }
         if (mType != null) {
             out.append(',');
             out.append("type:")
-                .append('\"').append(mType).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mType))
+               .append('\"');
         }
         if (mName != null) {
             out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         if (mDefaultValue != null) {
             out.append(',');
             out.append("default_value:")
-                .append('\"').append(mDefaultValue).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mDefaultValue))
+               .append('\"');
         }
         if (mAnnotations != null && mAnnotations.size() > 0) {
             out.append(',');
             out.append("annotations:")
-                .append(net.morimekta.util.Strings.asString(mAnnotations));
+               .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -467,6 +475,10 @@ public class ThriftField
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.ThriftField builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -483,13 +495,20 @@ public class ThriftField
         private String mDefaultValue;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
-
+        /**
+         * Make a model.ThriftField builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(7);
             mKey = kDefaultKey;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.ThriftField.
+         *
+         * @param base The base ThriftField
+         */
         public _Builder(ThriftField base) {
             this();
 
@@ -534,7 +553,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -566,7 +585,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the key field.
+         * Checks for presence of the key field.
          *
          * @return True iff key has been set.
          */
@@ -598,7 +617,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the requirement field.
+         * Checks for presence of the requirement field.
          *
          * @return True iff requirement has been set.
          */
@@ -630,7 +649,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the type field.
+         * Checks for presence of the type field.
          *
          * @return True iff type has been set.
          */
@@ -662,7 +681,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -694,7 +713,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the default_value field.
+         * Checks for presence of the default_value field.
          *
          * @return True iff default_value has been set.
          */
@@ -740,7 +759,7 @@ public class ThriftField
         }
 
         /**
-         * Checked presence of the annotations field.
+         * Checks for presence of the annotations field.
          *
          * @return True iff annotations has been set.
          */
@@ -760,6 +779,7 @@ public class ThriftField
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

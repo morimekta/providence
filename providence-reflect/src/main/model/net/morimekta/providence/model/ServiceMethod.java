@@ -249,34 +249,40 @@ public class ServiceMethod
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         out.append("one_way:")
-            .append(mOneWay);
+           .append(mOneWay);
         if (mReturnType != null) {
             out.append(',');
             out.append("return_type:")
-                .append('\"').append(mReturnType).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mReturnType))
+               .append('\"');
         }
         if (mName != null) {
             out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         if (mParams != null && mParams.size() > 0) {
             out.append(',');
             out.append("params:")
-                .append(net.morimekta.util.Strings.asString(mParams));
+               .append(net.morimekta.util.Strings.asString(mParams));
         }
         if (mExceptions != null && mExceptions.size() > 0) {
             out.append(',');
             out.append("exceptions:")
-                .append(net.morimekta.util.Strings.asString(mExceptions));
+               .append(net.morimekta.util.Strings.asString(mExceptions));
         }
         if (mAnnotations != null && mAnnotations.size() > 0) {
             out.append(',');
             out.append("annotations:")
-                .append(net.morimekta.util.Strings.asString(mAnnotations));
+               .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -481,6 +487,10 @@ public class ServiceMethod
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.ServiceMethod builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -497,7 +507,9 @@ public class ServiceMethod
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mExceptions;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
-
+        /**
+         * Make a model.ServiceMethod builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(7);
             mOneWay = kDefaultOneWay;
@@ -506,6 +518,11 @@ public class ServiceMethod
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.ServiceMethod.
+         *
+         * @param base The base ServiceMethod
+         */
         public _Builder(ServiceMethod base) {
             this();
 
@@ -550,7 +567,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -582,7 +599,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the one_way field.
+         * Checks for presence of the one_way field.
          *
          * @return True iff one_way has been set.
          */
@@ -614,7 +631,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the return_type field.
+         * Checks for presence of the return_type field.
          *
          * @return True iff return_type has been set.
          */
@@ -646,7 +663,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -693,7 +710,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the params field.
+         * Checks for presence of the params field.
          *
          * @return True iff params has been set.
          */
@@ -740,7 +757,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the exceptions field.
+         * Checks for presence of the exceptions field.
          *
          * @return True iff exceptions has been set.
          */
@@ -786,7 +803,7 @@ public class ServiceMethod
         }
 
         /**
-         * Checked presence of the annotations field.
+         * Checks for presence of the annotations field.
          *
          * @return True iff annotations has been set.
          */
@@ -806,6 +823,7 @@ public class ServiceMethod
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

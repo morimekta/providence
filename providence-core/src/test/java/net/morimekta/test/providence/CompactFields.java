@@ -31,6 +31,9 @@ public class CompactFields
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -39,6 +42,9 @@ public class CompactFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public int getId() {
         return mId;
     }
@@ -47,6 +53,9 @@ public class CompactFields
         return mLabel != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getLabel() {
         return mLabel;
     }
@@ -130,22 +139,21 @@ public class CompactFields
         out.append("{");
 
         boolean first = true;
-        if (hasName()) {
+        if (mName != null) {
             first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+            out.append("name:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
-        if (hasId()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("id:");
-            out.append(Integer.toString(mId));
-        }
-        if (hasLabel()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("label:");
-            out.append('\"').append(mLabel).append('\"');
+        out.append("id:")
+           .append(mId);
+        if (mLabel != null) {
+            out.append(',');
+            out.append("label:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mLabel))
+               .append('\"');
         }
         out.append('}');
         return out.toString();
@@ -310,6 +318,10 @@ public class CompactFields
         return new _Builder(this);
     }
 
+    /**
+     * Make a providence.CompactFields builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -322,12 +334,19 @@ public class CompactFields
         private int mId;
         private String mLabel;
 
-
+        /**
+         * Make a providence.CompactFields builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(3);
             mId = kDefaultId;
         }
 
+        /**
+         * Make a mutating builder off a base providence.CompactFields.
+         *
+         * @param base The base CompactFields
+         */
         public _Builder(CompactFields base) {
             this();
 
@@ -343,46 +362,104 @@ public class CompactFields
             }
         }
 
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(0);
             mName = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mName = null;
             return this;
         }
+
+        /**
+         * Sets the value of id.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setId(int value) {
             optionals.set(1);
             mId = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the id field.
+         *
+         * @return True iff id has been set.
+         */
         public boolean isSetId() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the id field.
+         *
+         * @return The builder
+         */
         public _Builder clearId() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mId = kDefaultId;
             return this;
         }
+
+        /**
+         * Sets the value of label.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setLabel(String value) {
             optionals.set(2);
             mLabel = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the label field.
+         *
+         * @return True iff label has been set.
+         */
         public boolean isSetLabel() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the label field.
+         *
+         * @return The builder
+         */
         public _Builder clearLabel() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mLabel = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

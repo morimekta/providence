@@ -12,16 +12,50 @@ public class CalculateException
     private volatile int tHashCode;
 
     private CalculateException(_Builder builder) {
-        super(builder.createMessage());
+        super(createMessage(builder.mMessage,
+                            builder.mOperation));
 
         mMessage = builder.mMessage;
         mOperation = builder.mOperation;
+    }
+
+    public CalculateException(String pMessage,
+                              net.morimekta.test.calculator.Operation pOperation) {
+        super(createMessage(pMessage,
+                            pOperation));
+
+        mMessage = pMessage;
+        mOperation = pOperation;
+    }
+
+    private static String createMessage(String pMessage,
+                                        net.morimekta.test.calculator.Operation pOperation) {
+        StringBuilder out = new StringBuilder();
+        out.append('{');
+        boolean first = true;
+        if (pMessage != null) {
+            first = false;
+            out.append("message:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(pMessage))
+               .append('\"');
+        }
+        if (pOperation != null) {
+            if (!first) out.append(',');
+            out.append("operation:")
+               .append(pOperation.asString());
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public boolean hasMessage() {
         return mMessage != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getMessage() {
         return mMessage;
     }
@@ -30,6 +64,9 @@ public class CalculateException
         return mOperation != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.calculator.Operation getOperation() {
         return mOperation;
     }
@@ -96,16 +133,17 @@ public class CalculateException
         out.append("{");
 
         boolean first = true;
-        if (hasMessage()) {
+        if (mMessage != null) {
             first = false;
-            out.append("message:");
-            out.append('\"').append(mMessage).append('\"');
+            out.append("message:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mMessage))
+               .append('\"');
         }
-        if (hasOperation()) {
+        if (mOperation != null) {
             if (!first) out.append(',');
-            first = false;
-            out.append("operation:");
-            out.append(mOperation.asString());
+            out.append("operation:")
+               .append(mOperation.asString());
         }
         out.append('}');
         return out.toString();
@@ -264,6 +302,10 @@ public class CalculateException
         return new _Builder(this);
     }
 
+    /**
+     * Make a calculator.CalculateException builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -275,11 +317,18 @@ public class CalculateException
         private String mMessage;
         private net.morimekta.test.calculator.Operation mOperation;
 
-
+        /**
+         * Make a calculator.CalculateException builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(2);
         }
 
+        /**
+         * Make a mutating builder off a base calculator.CalculateException.
+         *
+         * @param base The base CalculateException
+         */
         public _Builder(CalculateException base) {
             this();
 
@@ -293,33 +342,72 @@ public class CalculateException
             }
         }
 
+        /**
+         * Sets the value of message.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMessage(String value) {
             optionals.set(0);
             mMessage = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the message field.
+         *
+         * @return True iff message has been set.
+         */
         public boolean isSetMessage() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the message field.
+         *
+         * @return The builder
+         */
         public _Builder clearMessage() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mMessage = null;
             return this;
         }
+
+        /**
+         * Sets the value of operation.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             optionals.set(1);
             mOperation = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the operation field.
+         *
+         * @return True iff operation has been set.
+         */
         public boolean isSetOperation() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the operation field.
+         *
+         * @return The builder
+         */
         public _Builder clearOperation() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mOperation = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
@@ -349,26 +437,6 @@ public class CalculateException
         @Override
         public boolean isValid() {
             return optionals.get(0);
-        }
-
-        protected String createMessage() {
-            StringBuilder builder = new StringBuilder();
-            builder.append('{');
-            boolean first = true;
-            if (mMessage != null) {
-                if (first) first = false;
-                else builder.append(',');
-                builder.append("message:")
-                       .append(mMessage);
-            }
-            if (mOperation != null) {
-                if (first) first = false;
-                else builder.append(',');
-                builder.append("operation:")
-                       .append(mOperation.asString());
-            }
-            builder.append('}');
-            return builder.toString();
         }
 
         @Override

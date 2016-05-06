@@ -31,9 +31,16 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.util.Stringable;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -74,9 +81,11 @@ public class TinyMessageFormat {
         }
 
         if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)")
-                  .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)")
-                  .appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(")
+            writer.formatln("@%s(ignoreUnknown = true)", JsonIgnoreProperties.class.getName())
+                  .formatln("@%s(%s.%s)", JsonInclude.class.getName(),
+                            JsonInclude.Include.class.getName().replaceAll("[$]", "."),
+                            JsonInclude.Include.NON_EMPTY.name())
+                  .formatln("@%s(", JsonDeserialize.class.getName())
                   .formatln("        builder = %s._Builder.class)", message.instanceType());
         }
 
@@ -87,7 +96,9 @@ public class TinyMessageFormat {
                    .equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends " + Exception.class.getName());
         }
-        writer.formatln("implements java.io.Serializable, Comparable<%s>",
+        writer.formatln("implements %s, %s, Comparable<%s>",
+                        Serializable.class.getName(),
+                        Stringable.class.getName(),
                         message.instanceType());
         writer.append(" {")
               .end()  // double indent.
@@ -103,6 +114,10 @@ public class TinyMessageFormat {
 
         appendBuilderConstructor(writer, message);
         appendCreateConstructor(writer, message);
+
+        if (message.isException()) {
+            appendCreateMessage(writer, message);
+        }
 
         appendFieldGetters(writer, message);
 
@@ -191,48 +206,6 @@ public class TinyMessageFormat {
 
     private void appendFieldGetters(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         for (JField field : message.fields()) {
-            if (message.isUnion()) {
-                if (field.container()) {
-                    writer.formatln("public int %s() {", field.counter())
-                          .formatln("    return tUnionField == _Field.%s ? %s.size() : 0;",
-                                    field.fieldEnum(),
-                                    field.member())
-                          .appendln('}')
-                          .newline();
-                }
-                if (field.alwaysPresent()) {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return tUnionField == _Field.%s;", field.fieldEnum())
-                          .appendln('}')
-                          .newline();
-                } else {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return tUnionField == _Field.%s && %s != null;",
-                                    field.fieldEnum(),
-                                    field.member())
-                          .appendln('}')
-                          .newline();
-                }
-            } else {
-                if (field.container()) {
-                    writer.formatln("public int %s() {", field.counter())
-                          .formatln("    return %s != null ? %s.size() : 0;", field.member(), field.member())
-                          .appendln('}')
-                          .newline();
-                }
-                if (field.alwaysPresent()) {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return true;")
-                          .appendln('}')
-                          .newline();
-                } else {
-                    writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return %s != null;", field.member())
-                          .appendln('}')
-                          .newline();
-                }
-            }
-
             if (field.hasComment()) {
                 new BlockCommentBuilder(writer)
                         .comment(field.comment())
@@ -251,7 +224,7 @@ public class TinyMessageFormat {
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
             if (!field.container() && !field.alwaysPresent() && field.getPField()
                                                                      .hasDefaultValue()) {
-                writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
+                writer.formatln("    return %s != null ? %s : %s;", field.member(), field.member(), field.kDefault());
             } else {
                 writer.formatln("    return %s;", field.member());
             }
@@ -328,12 +301,31 @@ public class TinyMessageFormat {
             }
         } else {
             if (message.isException()) {
-                writer.appendln("super(builder.createMessage());")
+                writer.appendln("super(createMessage(")
+                      .begin(   "                    ");
+                boolean first = true;
+                for (JField field : message.fields()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(',')
+                              .appendln();
+                    }
+                    if (field.container()) {
+                        writer.format("builder.optionals.get(%d) ? builder.%s.build() : null",
+                                      field.index(), field.member());
+                    } else {
+                        writer.format("builder.%s", field.member());
+                    }
+                }
+                writer.append("));")
+                      .end()
                       .newline();
             }
+
             for (JField field : message.fields()) {
                 if (field.container()) {
-                    writer.formatln("if (builder.%s()) {", field.isSet())
+                    writer.formatln("if (builder.optionals.get(%d)) {", field.index())
                           .formatln("    %s = builder.%s.build();", field.member(), field.member())
                           .appendln("} else {")
                           .formatln("    %s = null;", field.member())
@@ -348,11 +340,128 @@ public class TinyMessageFormat {
               .newline();
     }
 
+    private void appendCreateMessage(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
+        writer.appendln("private static String createMessage(")
+              .begin(   "                                    ");
+
+        boolean first = true;
+        for (JField fld : message.fields()) {
+            if (first) {
+                first = false;
+            } else {
+                writer.append(',')
+                      .appendln();
+            }
+            writer.format("%s %s", fld.valueType(), fld.param());
+        }
+
+        writer.append(") {")
+              .end()
+              .begin()
+              .appendln("StringBuilder out = new StringBuilder();")
+              .appendln("out.append('{');");
+
+        boolean firstFirstCheck = true;
+        boolean alwaysAfter = false;
+        boolean last;
+        JField[] fields = message.fields().toArray(new JField[message.fields().size()]);
+        for (int i = 0; i < fields.length; ++i) {
+            first = i == 0;
+            last  = i == (fields.length - 1);
+
+            JField field = fields[i];
+            if (!field.alwaysPresent()) {
+                if (!alwaysAfter && firstFirstCheck && !last) {
+                    writer.appendln("boolean first = true;");
+                }
+                if (field.container()) {
+                    writer.formatln("if (%s != null && %s.size() > 0) {", field.param(), field.param());
+                } else {
+                    writer.formatln("if (%s != null) {", field.param());
+                }
+                writer.begin();
+            }
+
+            if (alwaysAfter) {
+                writer.appendln("out.append(',');");
+            } else if (!field.alwaysPresent()) {
+                if (firstFirstCheck || first) {
+                    if (!last) {
+                        writer.appendln("first = false;");
+                    }
+                } else if (last) {
+                    writer.appendln("if (!first) out.append(',');");
+                } else {
+                    writer.appendln("if (first) first = false;")
+                          .appendln("else out.append(',');");
+                }
+            }
+
+            writer.formatln("out.append(\"%s:\")", field.name());
+            switch (field.type()) {
+                case BOOL:
+                case I32:
+                case I64:
+                    writer.formatln("   .append(%s);", field.param());
+                    break;
+                case BYTE:
+                case I16:
+                    writer.formatln("   .append((int) %s);", field.param());
+                    break;
+                case DOUBLE:
+                case MAP:
+                case SET:
+                case LIST:
+                    writer.formatln("   .append(%s.asString(%s));",
+                                    Strings.class.getName(),
+                                    field.param());
+                    break;
+                case STRING:
+                    writer.formatln("   .append('\\\"')")
+                          .formatln("   .append(%s.escape(%s))",
+                                    Strings.class.getName(),
+                                    field.param())
+                          .appendln("   .append('\\\"');");
+                    break;
+                case BINARY:
+                    writer.appendln("   .append(\"b64(\")")
+                          .formatln("   .append(%s.toBase64())", field.param())
+                          .appendln("   .append(')');");
+                    break;
+                case MESSAGE:
+                    writer.formatln("   .append(%s.asString());", field.param());
+                    break;
+                default:
+                    writer.formatln("   .append(%s.toString());", field.param());
+                    break;
+            }
+
+            if (!field.alwaysPresent()) {
+                writer.end().appendln('}');
+                if (!alwaysAfter && firstFirstCheck) {
+                    firstFirstCheck = false;
+                }
+            } else {
+                alwaysAfter = true;
+            }
+        }
+        writer.appendln("out.append('}');")
+              .appendln("return out.toString();")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
     private void appendCreateConstructor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        if (message.isException()) {
-            // TODO(steineldar): Handle constructing exception!
-        } else if (message.isUnion()) {
+        if (message.isUnion()) {
             for (JField field : message.fields()) {
+                BlockCommentBuilder block = new BlockCommentBuilder(writer);
+                if (field.hasComment()) {
+                    block.comment(field.comment());
+                }
+                block.param_("value", "The union value")
+                     .return_("The created union.")
+                     .finish();
                 writer.formatln("public static %s %s(%s value) {",
                                 message.instanceType(),
                                 camelCase("with", field.name()),
@@ -379,6 +488,24 @@ public class TinyMessageFormat {
             writer.end()
                   .append(") {")
                   .begin();
+
+            if (message.isException()) {
+                writer.appendln("super(createMessage(")
+                      .begin(   "                    ");
+                first = true;
+                for (JField field : message.fields()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(',')
+                              .appendln();
+                    }
+                    writer.format("%s", field.param());
+                }
+                writer.append("));")
+                      .end()
+                      .newline();
+            }
 
             for (JField field : message.fields()) {
                 switch (field.type()) {

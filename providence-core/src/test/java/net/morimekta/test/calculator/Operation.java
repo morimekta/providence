@@ -33,6 +33,9 @@ public class Operation
         return mOperator != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.calculator.Operator getOperator() {
         return mOperator;
     }
@@ -45,6 +48,9 @@ public class Operation
         return mOperands != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.test.calculator.Operand> getOperands() {
         return mOperands;
     }
@@ -111,16 +117,15 @@ public class Operation
         out.append("{");
 
         boolean first = true;
-        if (hasOperator()) {
+        if (mOperator != null) {
             first = false;
-            out.append("operator:");
-            out.append(mOperator.getName());
+            out.append("operator:")
+               .append(mOperator.toString());
         }
-        if (numOperands() > 0) {
+        if (mOperands != null && mOperands.size() > 0) {
             if (!first) out.append(',');
-            first = false;
-            out.append("operands:");
-            out.append(net.morimekta.util.Strings.asString(mOperands));
+            out.append("operands:")
+               .append(net.morimekta.util.Strings.asString(mOperands));
         }
         out.append('}');
         return out.toString();
@@ -279,6 +284,10 @@ public class Operation
         return new _Builder(this);
     }
 
+    /**
+     * Make a calculator.Operation builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -288,14 +297,21 @@ public class Operation
         private java.util.BitSet optionals;
 
         private net.morimekta.test.calculator.Operator mOperator;
-        private net.morimekta.providence.descriptor.PList.Builder mOperands;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mOperands;
 
-
+        /**
+         * Make a calculator.Operation builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(2);
             mOperands = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base calculator.Operation.
+         *
+         * @param base The base Operation
+         */
         public _Builder(Operation base) {
             this();
 
@@ -309,25 +325,57 @@ public class Operation
             }
         }
 
+        /**
+         * Sets the value of operator.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOperator(net.morimekta.test.calculator.Operator value) {
             optionals.set(0);
             mOperator = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the operator field.
+         *
+         * @return True iff operator has been set.
+         */
         public boolean isSetOperator() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the operator field.
+         *
+         * @return The builder
+         */
         public _Builder clearOperator() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mOperator = null;
             return this;
         }
+
+        /**
+         * Sets the value of operands.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOperands(java.util.Collection<net.morimekta.test.calculator.Operand> value) {
             optionals.set(1);
             mOperands.clear();
             mOperands.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to operands.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToOperands(net.morimekta.test.calculator.Operand... values) {
             optionals.set(1);
             for (net.morimekta.test.calculator.Operand item : values) {
@@ -336,15 +384,28 @@ public class Operation
             return this;
         }
 
+        /**
+         * Checks for presence of the operands field.
+         *
+         * @return True iff operands has been set.
+         */
         public boolean isSetOperands() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the operands field.
+         *
+         * @return The builder
+         */
         public _Builder clearOperands() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mOperands.clear();
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

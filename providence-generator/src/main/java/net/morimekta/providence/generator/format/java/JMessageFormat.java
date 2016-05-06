@@ -52,6 +52,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Collections;
 
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -117,9 +118,10 @@ public class JMessageFormat {
                    .equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends " + PException.class.getName());
         }
-        writer.formatln("implements %s<%s>, java.io.Serializable, Comparable<%s>",
+        writer.formatln("implements %s<%s>, %s, Comparable<%s>",
                         message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
                         message.instanceType(),
+                        Serializable.class.getName(),
                         message.instanceType());
         if (options.android) {
             writer.format(", android.os.Parcelable");
@@ -568,7 +570,12 @@ public class JMessageFormat {
                         writer.append(',')
                               .appendln();
                     }
-                    writer.format("builder.%s", field.member());
+                    if (field.container()) {
+                        writer.format("builder.%s() ? builder.%s.build() : null",
+                                      field.isSet(), field.member());
+                    } else {
+                        writer.format("builder.%s", field.member());
+                    }
                 }
                 writer.append("));")
                       .end()
@@ -737,12 +744,6 @@ public class JMessageFormat {
                 } else {
                     writer.append(',')
                           .appendln();
-                }
-                if (options.jackson) {
-                    writer.format("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
-                    if (field.binary()) {
-                        writer.append("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
-                    }
                 }
                 writer.format("%s %s", field.valueType(), field.param());
             }

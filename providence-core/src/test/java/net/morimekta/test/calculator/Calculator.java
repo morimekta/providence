@@ -35,10 +35,13 @@ public class Calculator {
                 Calculate_response msg = (Calculate_response) resp.getMessage();
 
                 if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
+                    net.morimekta.providence.serializer.ApplicationException ex = (net.morimekta.providence.serializer.ApplicationException) resp.getMessage();
+                    throw new java.io.IOException(ex.getMessage(), ex);
+                }
+                if (msg.unionField() != null) {
                     switch (msg.unionField()) {
                         case CE:
                             throw msg.getCe();
-                        default: throw new java.io.IOException("Unknown exception field: " + msg.unionField().toString());
                     }
                 }
 
@@ -71,8 +74,19 @@ public class Calculator {
         @Override
         public boolean process(net.morimekta.providence.mio.MessageReader reader, net.morimekta.providence.mio.MessageWriter writer) throws java.io.IOException {
             try {
-                net.morimekta.providence.PServiceCallType type = net.morimekta.providence.PServiceCallType.EXCEPTION;
-                net.morimekta.providence.PServiceCall call = reader.read(Calculator.kDescriptor);
+                net.morimekta.providence.PServiceCall call;
+                try {
+                    call = reader.read(Calculator.kDescriptor);
+                } catch (net.morimekta.providence.serializer.SerializerException se) {
+                    writer.write(new net.morimekta.providence.PServiceCall(
+                            se.getMethodName(),
+                            net.morimekta.providence.PServiceCallType.EXCEPTION,
+                            se.getSequenceNo(),
+                            new net.morimekta.providence.serializer.ApplicationException(
+                                    se.getMessage(),
+                                    se.getExceptionType())));
+                    return true;
+                }
 
                 switch(call.getMethod()) {
                     case "calculate": {
@@ -82,25 +96,39 @@ public class Calculator {
                             net.morimekta.test.calculator.Operand result =
                                     impl.calculate(req.getOp());
                             rsp.setSuccess(result);
-                            type = net.morimekta.providence.PServiceCallType.REPLY;
                         } catch (net.morimekta.test.calculator.CalculateException e) {
                             rsp.setCe(e);
                         }
-                        net.morimekta.providence.PServiceCall reply = new net.morimekta.providence.PServiceCall(call.getMethod(), type, call.getSequence(), rsp.build());
+                        net.morimekta.providence.PServiceCall reply =
+                                new net.morimekta.providence.PServiceCall(call.getMethod(),
+                                                                          net.morimekta.providence.PServiceCallType.REPLY,
+                                                                          call.getSequence(),
+                                                                          rsp.build());
                         writer.write(reply);
                         break;
                     }
                     case "iamalive": {
                         Iamalive_request req = (Iamalive_request) call.getMessage();
                         impl.iamalive();
-                        type = net.morimekta.providence.PServiceCallType.REPLY;
                         break;
                     }
-                    default: throw new java.io.IOException("Method call not handled: " + call.getMethod());
+                    default: {
+                        net.morimekta.providence.serializer.ApplicationException ex =
+                                new net.morimekta.providence.serializer.ApplicationException(
+                                        "Unknown method \"" + call.getMethod() + "\" on calculator.Calculator.",
+                                        net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN_METHOD);
+                        net.morimekta.providence.PServiceCall reply =
+                                new net.morimekta.providence.PServiceCall(call.getMethod(),
+                                                                          net.morimekta.providence.PServiceCallType.EXCEPTION,
+                                                                          call.getSequence(),
+                                                                          ex);
+                        writer.write(reply);
+                        break;
+                    }
                 }
                 return true;
-            } catch (net.morimekta.providence.serializer.SerializerException se) {
-                throw new java.io.IOException(se);
+            } catch (net.morimekta.providence.serializer.SerializerException e) {
+                throw new java.io.IOException(e.getMessage(), e);
             }
         }
     }
@@ -162,7 +190,7 @@ public class Calculator {
 
     // type --> calculate___request
     @SuppressWarnings("unused")
-    public static class Calculate_request
+    private static class Calculate_request
             implements net.morimekta.providence.PMessage<Calculate_request>, java.io.Serializable, Comparable<Calculate_request> {
         private final static long serialVersionUID = -2850591557621395232L;
 
@@ -182,6 +210,9 @@ public class Calculator {
             return mOp != null;
         }
 
+        /**
+         * @return The field value
+         */
         public net.morimekta.test.calculator.Operation getOp() {
             return mOp;
         }
@@ -242,11 +273,9 @@ public class Calculator {
             StringBuilder out = new StringBuilder();
             out.append("{");
 
-            boolean first = true;
-            if (hasOp()) {
-                first = false;
-                out.append("op:");
-                out.append(mOp.asString());
+            if (mOp != null) {
+                out.append("op:")
+                   .append(mOp.asString());
             }
             out.append('}');
             return out.toString();
@@ -395,6 +424,10 @@ public class Calculator {
             return new _Builder(this);
         }
 
+        /**
+         * Make a calculator.calculate___request builder.
+         * @return The builder instance.
+         */
         public static _Builder builder() {
             return new _Builder();
         }
@@ -405,11 +438,18 @@ public class Calculator {
 
             private net.morimekta.test.calculator.Operation mOp;
 
-
+            /**
+             * Make a calculator.calculate___request builder.
+             */
             public _Builder() {
                 optionals = new java.util.BitSet(1);
             }
 
+            /**
+             * Make a mutating builder off a base calculator.calculate___request.
+             *
+             * @param base The base calculate___request
+             */
             public _Builder(Calculate_request base) {
                 this();
 
@@ -419,20 +459,40 @@ public class Calculator {
                 }
             }
 
+            /**
+             * Sets the value of op.
+             *
+             * @param value The new value
+             * @return The builder
+             */
             public _Builder setOp(net.morimekta.test.calculator.Operation value) {
                 optionals.set(0);
                 mOp = value;
                 return this;
             }
+
+            /**
+             * Checks for presence of the op field.
+             *
+             * @return True iff op has been set.
+             */
             public boolean isSetOp() {
                 return optionals.get(0);
             }
+
+            /**
+             * Clears the op field.
+             *
+             * @return The builder
+             */
             public _Builder clearOp() {
-                optionals.set(0, false);
+                optionals.clear(0);
                 mOp = null;
                 return this;
             }
+
             @Override
+            @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
@@ -471,7 +531,7 @@ public class Calculator {
 
     // type <-- calculate___response
     @SuppressWarnings("unused")
-    public static class Calculate_response
+    private static class Calculate_response
             implements net.morimekta.providence.PUnion<Calculate_response>, java.io.Serializable, Comparable<Calculate_response> {
         private final static long serialVersionUID = 3839355577455995570L;
 
@@ -489,10 +549,18 @@ public class Calculator {
             mCe = tUnionField == _Field.CE ? builder.mCe : null;
         }
 
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
         public static Calculate_response withSuccess(net.morimekta.test.calculator.Operand value) {
             return new _Builder().setSuccess(value).build();
         }
 
+        /**
+         * @param value The union value
+         * @return The created union.
+         */
         public static Calculate_response withCe(net.morimekta.test.calculator.CalculateException value) {
             return new _Builder().setCe(value).build();
         }
@@ -501,6 +569,9 @@ public class Calculator {
             return tUnionField == _Field.SUCCESS && mSuccess != null;
         }
 
+        /**
+         * @return The field value
+         */
         public net.morimekta.test.calculator.Operand getSuccess() {
             return mSuccess;
         }
@@ -509,6 +580,9 @@ public class Calculator {
             return tUnionField == _Field.CE && mCe != null;
         }
 
+        /**
+         * @return The field value
+         */
         public net.morimekta.test.calculator.CalculateException getCe() {
             return mCe;
         }
@@ -582,13 +656,13 @@ public class Calculator {
 
             switch (tUnionField) {
                 case SUCCESS: {
-                    out.append("success:");
-                    out.append(mSuccess.asString());
+                    out.append("success:")
+                       .append(mSuccess.asString());
                     break;
                 }
                 case CE: {
-                    out.append("ce:");
-                    out.append(mCe.asString());
+                    out.append("ce:")
+                       .append(mCe.asString());
                     break;
                 }
             }
@@ -742,6 +816,10 @@ public class Calculator {
             return new _Builder(this);
         }
 
+        /**
+         * Make a calculator.calculate___response builder.
+         * @return The builder instance.
+         */
         public static _Builder builder() {
             return new _Builder();
         }
@@ -753,10 +831,17 @@ public class Calculator {
             private net.morimekta.test.calculator.Operand mSuccess;
             private net.morimekta.test.calculator.CalculateException mCe;
 
-
+            /**
+             * Make a calculator.calculate___response builder.
+             */
             public _Builder() {
             }
 
+            /**
+             * Make a mutating builder off a base calculator.calculate___response.
+             *
+             * @param base The base calculate___response
+             */
             public _Builder(Calculate_response base) {
                 this();
 
@@ -766,33 +851,72 @@ public class Calculator {
                 mCe = base.mCe;
             }
 
+            /**
+             * Sets the value of success.
+             *
+             * @param value The new value
+             * @return The builder
+             */
             public _Builder setSuccess(net.morimekta.test.calculator.Operand value) {
                 tUnionField = _Field.SUCCESS;
                 mSuccess = value;
                 return this;
             }
+
+            /**
+             * Checks for presence of the success field.
+             *
+             * @return True iff success has been set.
+             */
             public boolean isSetSuccess() {
                 return tUnionField == _Field.SUCCESS;
             }
+
+            /**
+             * Clears the success field.
+             *
+             * @return The builder
+             */
             public _Builder clearSuccess() {
                 if (tUnionField == _Field.SUCCESS) tUnionField = null;
                 mSuccess = null;
                 return this;
             }
+
+            /**
+             * Sets the value of ce.
+             *
+             * @param value The new value
+             * @return The builder
+             */
             public _Builder setCe(net.morimekta.test.calculator.CalculateException value) {
                 tUnionField = _Field.CE;
                 mCe = value;
                 return this;
             }
+
+            /**
+             * Checks for presence of the ce field.
+             *
+             * @return True iff ce has been set.
+             */
             public boolean isSetCe() {
                 return tUnionField == _Field.CE;
             }
+
+            /**
+             * Clears the ce field.
+             *
+             * @return The builder
+             */
             public _Builder clearCe() {
                 if (tUnionField == _Field.CE) tUnionField = null;
                 mCe = null;
                 return this;
             }
+
             @Override
+            @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
@@ -833,7 +957,7 @@ public class Calculator {
 
     // type --> iamalive___request
     @SuppressWarnings("unused")
-    public static class Iamalive_request
+    private static class Iamalive_request
             implements net.morimekta.providence.PMessage<Iamalive_request>, java.io.Serializable, Comparable<Iamalive_request> {
         private final static long serialVersionUID = 7912890008187182926L;
 
@@ -897,7 +1021,6 @@ public class Calculator {
             StringBuilder out = new StringBuilder();
             out.append("{");
 
-            boolean first = true;
             out.append('}');
             return out.toString();
         }
@@ -1035,6 +1158,10 @@ public class Calculator {
             return new _Builder(this);
         }
 
+        /**
+         * Make a calculator.iamalive___request builder.
+         * @return The builder instance.
+         */
         public static _Builder builder() {
             return new _Builder();
         }
@@ -1043,17 +1170,25 @@ public class Calculator {
                 extends net.morimekta.providence.PMessageBuilder<Iamalive_request> {
             private java.util.BitSet optionals;
 
-
+            /**
+             * Make a calculator.iamalive___request builder.
+             */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
             }
 
+            /**
+             * Make a mutating builder off a base calculator.iamalive___request.
+             *
+             * @param base The base iamalive___request
+             */
             public _Builder(Iamalive_request base) {
                 this();
 
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {

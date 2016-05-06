@@ -42,12 +42,14 @@ public class ApplicationException
         if (pMessage != null) {
             first = false;
             out.append("message:")
-                .append('\"').append(pMessage).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(pMessage))
+               .append('\"');
         }
         if (pId != null) {
             if (!first) out.append(',');
             out.append("id:")
-                .append(pId.toString());
+               .append(pId.toString());
         }
         out.append('}');
         return out.toString();
@@ -140,12 +142,14 @@ public class ApplicationException
         if (mMessage != null) {
             first = false;
             out.append("message:")
-                .append('\"').append(mMessage).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mMessage))
+               .append('\"');
         }
         if (mId != null) {
             if (!first) out.append(',');
             out.append("id:")
-                .append(mId.toString());
+               .append(mId.toString());
         }
         out.append('}');
         return out.toString();
@@ -304,6 +308,10 @@ public class ApplicationException
         return new _Builder(this);
     }
 
+    /**
+     * Make a service.ApplicationException builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -315,11 +323,18 @@ public class ApplicationException
         private String mMessage;
         private net.morimekta.providence.serializer.ApplicationExceptionType mId;
 
-
+        /**
+         * Make a service.ApplicationException builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(2);
         }
 
+        /**
+         * Make a mutating builder off a base service.ApplicationException.
+         *
+         * @param base The base ApplicationException
+         */
         public _Builder(ApplicationException base) {
             this();
 
@@ -334,6 +349,8 @@ public class ApplicationException
         }
 
         /**
+         * Sets the value of message.
+         *
          * @param value The new value
          * @return The builder
          */
@@ -342,15 +359,30 @@ public class ApplicationException
             mMessage = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the message field.
+         *
+         * @return True iff message has been set.
+         */
         public boolean isSetMessage() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the message field.
+         *
+         * @return The builder
+         */
         public _Builder clearMessage() {
             optionals.clear(0);
             mMessage = null;
             return this;
         }
+
         /**
+         * Sets the value of id.
+         *
          * @param value The new value
          * @return The builder
          */
@@ -359,15 +391,29 @@ public class ApplicationException
             mId = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the id field.
+         *
+         * @return True iff id has been set.
+         */
         public boolean isSetId() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the id field.
+         *
+         * @return The builder
+         */
         public _Builder clearId() {
             optionals.clear(1);
             mId = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

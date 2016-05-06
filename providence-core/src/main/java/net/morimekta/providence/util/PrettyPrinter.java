@@ -28,9 +28,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
-import net.morimekta.util.json.JsonException;
-import net.morimekta.util.json.JsonWriter;
 
 import java.io.StringWriter;
 import java.text.DecimalFormat;
@@ -183,13 +182,10 @@ public class PrettyPrinter {
     private void appendPrimitive(IndentedPrintWriter writer, Object o) {
         if (o instanceof PEnumValue) {
             writer.print(o.toString());
-        } else if (o instanceof String) {
-            JsonWriter jw = new JsonWriter(writer);
-            try {
-                jw.value((String) o);
-                jw.flush();
-            } catch (JsonException e) {
-            }
+        } else if (o instanceof CharSequence) {
+            writer.print('\"');
+            writer.print(Strings.escape((CharSequence) o));
+            writer.print('\"');
         } else if (o instanceof Binary) {
             writer.format("b64(%s)", ((Binary) o).toBase64());
         } else if (o instanceof Boolean) {

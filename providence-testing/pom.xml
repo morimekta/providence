@@ -114,7 +114,7 @@
                 <version>0.1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <id>generate-jsckson-sources-for-test</id>
+                        <id>generate-jackson-sources-for-test</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>testCompile</goal>
@@ -131,15 +131,27 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-sources-for-test</id>
+                        <id>generate-android-sources-for-test</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
                         <configuration>
                             <android>true</android>
-                            <jackson>true</jackson>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/test/android/**/*.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-test-sources/android</outputDir>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-sources-for-test</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>generate-model-sources</id>

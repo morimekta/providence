@@ -215,30 +215,34 @@ public class ThriftDocument
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         if (mPackage != null) {
             if (first) first = false;
             else out.append(',');
             out.append("package:")
-                .append('\"').append(mPackage).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mPackage))
+               .append('\"');
         }
         if (mIncludes != null && mIncludes.size() > 0) {
             if (first) first = false;
             else out.append(',');
             out.append("includes:")
-                .append(net.morimekta.util.Strings.asString(mIncludes));
+               .append(net.morimekta.util.Strings.asString(mIncludes));
         }
         if (mNamespaces != null && mNamespaces.size() > 0) {
             if (first) first = false;
             else out.append(',');
             out.append("namespaces:")
-                .append(net.morimekta.util.Strings.asString(mNamespaces));
+               .append(net.morimekta.util.Strings.asString(mNamespaces));
         }
         if (mDecl != null && mDecl.size() > 0) {
             if (!first) out.append(',');
             out.append("decl:")
-                .append(net.morimekta.util.Strings.asString(mDecl));
+               .append(net.morimekta.util.Strings.asString(mDecl));
         }
         out.append('}');
         return out.toString();
@@ -427,6 +431,10 @@ public class ThriftDocument
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.ThriftDocument builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -441,7 +449,9 @@ public class ThriftDocument
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mNamespaces;
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mDecl;
 
-
+        /**
+         * Make a model.ThriftDocument builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(5);
             mIncludes = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -449,6 +459,11 @@ public class ThriftDocument
             mDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.ThriftDocument.
+         *
+         * @param base The base ThriftDocument
+         */
         public _Builder(ThriftDocument base) {
             this();
 
@@ -489,7 +504,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * Must come before the first statement of the header.
          *
@@ -527,7 +542,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checked presence of the package field.
+         * Checks for presence of the package field.
          *
          * Deducted from filename in .thrift IDL files.
          *
@@ -582,7 +597,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checked presence of the includes field.
+         * Checks for presence of the includes field.
          *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
@@ -636,7 +651,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checked presence of the namespaces field.
+         * Checks for presence of the namespaces field.
          *
          * namespace &lt;key&gt; &lt;value&gt;
          *
@@ -687,7 +702,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checked presence of the decl field.
+         * Checks for presence of the decl field.
          *
          * @return True iff decl has been set.
          */
@@ -707,6 +722,7 @@ public class ThriftDocument
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

@@ -64,6 +64,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public boolean isBooleanValue() {
         return mBooleanValue;
     }
@@ -72,6 +75,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public byte getByteValue() {
         return mByteValue;
     }
@@ -80,6 +86,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public short getShortValue() {
         return mShortValue;
     }
@@ -88,6 +97,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public int getIntegerValue() {
         return mIntegerValue;
     }
@@ -96,6 +108,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public long getLongValue() {
         return mLongValue;
     }
@@ -104,6 +119,9 @@ public class DefaultFields
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public double getDoubleValue() {
         return mDoubleValue;
     }
@@ -112,6 +130,9 @@ public class DefaultFields
         return mStringValue != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getStringValue() {
         return mStringValue;
     }
@@ -120,6 +141,9 @@ public class DefaultFields
         return mBinaryValue != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.util.Binary getBinaryValue() {
         return mBinaryValue;
     }
@@ -128,6 +152,9 @@ public class DefaultFields
         return mEnumValue != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.Value getEnumValue() {
         return mEnumValue;
     }
@@ -136,6 +163,9 @@ public class DefaultFields
         return mCompactValue != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.CompactFields getCompactValue() {
         return mCompactValue;
     }
@@ -241,65 +271,46 @@ public class DefaultFields
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        boolean first = true;
-        if (hasBooleanValue()) {
-            first = false;
-            out.append("booleanValue:");
-            out.append(mBooleanValue ? "true" : "false");
+        out.append("booleanValue:")
+           .append(mBooleanValue);
+        out.append(',');
+        out.append("byteValue:")
+           .append((int) mByteValue);
+        out.append(',');
+        out.append("shortValue:")
+           .append((int) mShortValue);
+        out.append(',');
+        out.append("integerValue:")
+           .append(mIntegerValue);
+        out.append(',');
+        out.append("longValue:")
+           .append(mLongValue);
+        out.append(',');
+        out.append("doubleValue:")
+           .append(net.morimekta.util.Strings.asString(mDoubleValue));
+        if (mStringValue != null) {
+            out.append(',');
+            out.append("stringValue:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mStringValue))
+               .append('\"');
         }
-        if (hasByteValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("byteValue:");
-            out.append(Byte.toString(mByteValue));
+        if (mBinaryValue != null) {
+            out.append(',');
+            out.append("binaryValue:")
+               .append("b64(")
+               .append(mBinaryValue.toBase64())
+               .append(')');
         }
-        if (hasShortValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("shortValue:");
-            out.append(Short.toString(mShortValue));
+        if (mEnumValue != null) {
+            out.append(',');
+            out.append("enumValue:")
+               .append(mEnumValue.toString());
         }
-        if (hasIntegerValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("integerValue:");
-            out.append(Integer.toString(mIntegerValue));
-        }
-        if (hasLongValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("longValue:");
-            out.append(Long.toString(mLongValue));
-        }
-        if (hasDoubleValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("doubleValue:");
-            out.append(net.morimekta.util.Strings.asString(mDoubleValue));
-        }
-        if (hasStringValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("stringValue:");
-            out.append('\"').append(mStringValue).append('\"');
-        }
-        if (hasBinaryValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("binaryValue:");
-            out.append("hex(").append(mBinaryValue.toHexString()).append(')');
-        }
-        if (hasEnumValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("enumValue:");
-            out.append(mEnumValue.getName());
-        }
-        if (hasCompactValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("compactValue:");
-            out.append(mCompactValue.asString());
+        if (mCompactValue != null) {
+            out.append(',');
+            out.append("compactValue:")
+               .append(mCompactValue.asString());
         }
         out.append('}');
         return out.toString();
@@ -514,6 +525,10 @@ public class DefaultFields
         return new _Builder(this);
     }
 
+    /**
+     * Make a providence.DefaultFields builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -533,7 +548,9 @@ public class DefaultFields
         private net.morimekta.test.providence.Value mEnumValue;
         private net.morimekta.test.providence.CompactFields mCompactValue;
 
-
+        /**
+         * Make a providence.DefaultFields builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(10);
             mBooleanValue = kDefaultBooleanValue;
@@ -544,6 +561,11 @@ public class DefaultFields
             mDoubleValue = kDefaultDoubleValue;
         }
 
+        /**
+         * Make a mutating builder off a base providence.DefaultFields.
+         *
+         * @param base The base DefaultFields
+         */
         public _Builder(DefaultFields base) {
             this();
 
@@ -577,137 +599,328 @@ public class DefaultFields
             }
         }
 
+        /**
+         * Sets the value of booleanValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBooleanValue(boolean value) {
             optionals.set(0);
             mBooleanValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the booleanValue field.
+         *
+         * @return True iff booleanValue has been set.
+         */
         public boolean isSetBooleanValue() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the booleanValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearBooleanValue() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mBooleanValue = kDefaultBooleanValue;
             return this;
         }
+
+        /**
+         * Sets the value of byteValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setByteValue(byte value) {
             optionals.set(1);
             mByteValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the byteValue field.
+         *
+         * @return True iff byteValue has been set.
+         */
         public boolean isSetByteValue() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the byteValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearByteValue() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mByteValue = kDefaultByteValue;
             return this;
         }
+
+        /**
+         * Sets the value of shortValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setShortValue(short value) {
             optionals.set(2);
             mShortValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the shortValue field.
+         *
+         * @return True iff shortValue has been set.
+         */
         public boolean isSetShortValue() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the shortValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearShortValue() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mShortValue = kDefaultShortValue;
             return this;
         }
+
+        /**
+         * Sets the value of integerValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setIntegerValue(int value) {
             optionals.set(3);
             mIntegerValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the integerValue field.
+         *
+         * @return True iff integerValue has been set.
+         */
         public boolean isSetIntegerValue() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the integerValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearIntegerValue() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mIntegerValue = kDefaultIntegerValue;
             return this;
         }
+
+        /**
+         * Sets the value of longValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setLongValue(long value) {
             optionals.set(4);
             mLongValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the longValue field.
+         *
+         * @return True iff longValue has been set.
+         */
         public boolean isSetLongValue() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the longValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearLongValue() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mLongValue = kDefaultLongValue;
             return this;
         }
+
+        /**
+         * Sets the value of doubleValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDoubleValue(double value) {
             optionals.set(5);
             mDoubleValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the doubleValue field.
+         *
+         * @return True iff doubleValue has been set.
+         */
         public boolean isSetDoubleValue() {
             return optionals.get(5);
         }
+
+        /**
+         * Clears the doubleValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearDoubleValue() {
-            optionals.set(5, false);
+            optionals.clear(5);
             mDoubleValue = kDefaultDoubleValue;
             return this;
         }
+
+        /**
+         * Sets the value of stringValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setStringValue(String value) {
             optionals.set(6);
             mStringValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the stringValue field.
+         *
+         * @return True iff stringValue has been set.
+         */
         public boolean isSetStringValue() {
             return optionals.get(6);
         }
+
+        /**
+         * Clears the stringValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearStringValue() {
-            optionals.set(6, false);
+            optionals.clear(6);
             mStringValue = null;
             return this;
         }
+
+        /**
+         * Sets the value of binaryValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
             optionals.set(7);
             mBinaryValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the binaryValue field.
+         *
+         * @return True iff binaryValue has been set.
+         */
         public boolean isSetBinaryValue() {
             return optionals.get(7);
         }
+
+        /**
+         * Clears the binaryValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearBinaryValue() {
-            optionals.set(7, false);
+            optionals.clear(7);
             mBinaryValue = null;
             return this;
         }
+
+        /**
+         * Sets the value of enumValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setEnumValue(net.morimekta.test.providence.Value value) {
             optionals.set(8);
             mEnumValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the enumValue field.
+         *
+         * @return True iff enumValue has been set.
+         */
         public boolean isSetEnumValue() {
             return optionals.get(8);
         }
+
+        /**
+         * Clears the enumValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearEnumValue() {
-            optionals.set(8, false);
+            optionals.clear(8);
             mEnumValue = null;
             return this;
         }
+
+        /**
+         * Sets the value of compactValue.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             optionals.set(9);
             mCompactValue = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the compactValue field.
+         *
+         * @return True iff compactValue has been set.
+         */
         public boolean isSetCompactValue() {
             return optionals.get(9);
         }
+
+        /**
+         * Clears the compactValue field.
+         *
+         * @return The builder
+         */
         public _Builder clearCompactValue() {
-            optionals.set(9, false);
+            optionals.clear(9);
             mCompactValue = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

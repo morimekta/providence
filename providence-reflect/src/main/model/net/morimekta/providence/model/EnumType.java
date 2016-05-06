@@ -177,24 +177,28 @@ public class EnumType
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         if (mName != null) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         if (mValues != null && mValues.size() > 0) {
             if (first) first = false;
             else out.append(',');
             out.append("values:")
-                .append(net.morimekta.util.Strings.asString(mValues));
+               .append(net.morimekta.util.Strings.asString(mValues));
         }
         if (mAnnotations != null && mAnnotations.size() > 0) {
             if (!first) out.append(',');
             out.append("annotations:")
-                .append(net.morimekta.util.Strings.asString(mAnnotations));
+               .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -373,6 +377,10 @@ public class EnumType
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.EnumType builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -386,13 +394,20 @@ public class EnumType
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.EnumValue> mValues;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
-
+        /**
+         * Make a model.EnumType builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(4);
             mValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.EnumType.
+         *
+         * @param base The base EnumType
+         */
         public _Builder(EnumType base) {
             this();
 
@@ -427,7 +442,7 @@ public class EnumType
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -459,7 +474,7 @@ public class EnumType
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -506,7 +521,7 @@ public class EnumType
         }
 
         /**
-         * Checked presence of the values field.
+         * Checks for presence of the values field.
          *
          * @return True iff values has been set.
          */
@@ -552,7 +567,7 @@ public class EnumType
         }
 
         /**
-         * Checked presence of the annotations field.
+         * Checks for presence of the annotations field.
          *
          * @return True iff annotations has been set.
          */
@@ -572,6 +587,7 @@ public class EnumType
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

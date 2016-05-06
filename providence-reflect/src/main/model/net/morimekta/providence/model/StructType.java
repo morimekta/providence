@@ -199,30 +199,34 @@ public class StructType
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         if (mVariant != null) {
             if (first) first = false;
             else out.append(',');
             out.append("variant:")
-                .append(mVariant.toString());
+               .append(mVariant.toString());
         }
         if (mName != null) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         if (mFields != null && mFields.size() > 0) {
             if (first) first = false;
             else out.append(',');
             out.append("fields:")
-                .append(net.morimekta.util.Strings.asString(mFields));
+               .append(net.morimekta.util.Strings.asString(mFields));
         }
         if (mAnnotations != null && mAnnotations.size() > 0) {
             if (!first) out.append(',');
             out.append("annotations:")
-                .append(net.morimekta.util.Strings.asString(mAnnotations));
+               .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -411,6 +415,10 @@ public class StructType
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.StructType builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -425,13 +433,20 @@ public class StructType
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mFields;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
-
+        /**
+         * Make a model.StructType builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(5);
             mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.StructType.
+         *
+         * @param base The base StructType
+         */
         public _Builder(StructType base) {
             this();
 
@@ -470,7 +485,7 @@ public class StructType
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -502,7 +517,7 @@ public class StructType
         }
 
         /**
-         * Checked presence of the variant field.
+         * Checks for presence of the variant field.
          *
          * @return True iff variant has been set.
          */
@@ -534,7 +549,7 @@ public class StructType
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -581,7 +596,7 @@ public class StructType
         }
 
         /**
-         * Checked presence of the fields field.
+         * Checks for presence of the fields field.
          *
          * @return True iff fields has been set.
          */
@@ -627,7 +642,7 @@ public class StructType
         }
 
         /**
-         * Checked presence of the annotations field.
+         * Checks for presence of the annotations field.
          *
          * @return True iff annotations has been set.
          */

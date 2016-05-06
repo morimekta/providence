@@ -117,8 +117,7 @@ public class JMessageBuilderFormat {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
                .finish();
-        writer.newline()
-              .appendln("public _Builder() {")
+        writer.appendln("public _Builder() {")
               .begin();
         if (!message.isUnion()) {
             writer.formatln("optionals = new %s(%d);",
@@ -327,7 +326,7 @@ public class JMessageBuilderFormat {
 
     private void appendIsSet(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Checked presence of the " + field.name() + " field.")
+        comment.comment("Checks for presence of the " + field.name() + " field.")
                .newline();
         if (field.hasComment()) {
             comment.comment(field.comment())

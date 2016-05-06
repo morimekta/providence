@@ -165,20 +165,24 @@ public class EnumValue
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         if (mName != null) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         out.append("value:")
-            .append(mValue);
+           .append(mValue);
         if (mAnnotations != null && mAnnotations.size() > 0) {
             out.append(',');
             out.append("annotations:")
-                .append(net.morimekta.util.Strings.asString(mAnnotations));
+               .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -353,6 +357,10 @@ public class EnumValue
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.EnumValue builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -366,13 +374,20 @@ public class EnumValue
         private int mValue;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
-
+        /**
+         * Make a model.EnumValue builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(4);
             mValue = kDefaultValue;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base model.EnumValue.
+         *
+         * @param base The base EnumValue
+         */
         public _Builder(EnumValue base) {
             this();
 
@@ -405,7 +420,7 @@ public class EnumValue
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -437,7 +452,7 @@ public class EnumValue
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -469,7 +484,7 @@ public class EnumValue
         }
 
         /**
-         * Checked presence of the value field.
+         * Checks for presence of the value field.
          *
          * @return True iff value has been set.
          */
@@ -515,7 +530,7 @@ public class EnumValue
         }
 
         /**
-         * Checked presence of the annotations field.
+         * Checks for presence of the annotations field.
          *
          * @return True iff annotations has been set.
          */
@@ -535,6 +550,7 @@ public class EnumValue
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

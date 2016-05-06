@@ -1,11 +1,11 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.test.providence.calculator.Operand;
-import net.morimekta.test.providence.calculator.Operation;
-import net.morimekta.test.providence.calculator.Operator;
-import net.morimekta.test.providence.number.Imaginary;
-import net.morimekta.test.providence.DefaultValues;
-import net.morimekta.test.providence.Value;
+import net.morimekta.test.android.calculator.Operand;
+import net.morimekta.test.android.calculator.Operation;
+import net.morimekta.test.android.calculator.Operator;
+import net.morimekta.test.android.number.Imaginary;
+import net.morimekta.test.android.DefaultValues;
+import net.morimekta.test.android.Value;
 import net.morimekta.util.Binary;
 
 import org.junit.Test;

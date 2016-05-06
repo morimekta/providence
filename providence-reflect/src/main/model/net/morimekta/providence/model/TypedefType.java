@@ -131,18 +131,24 @@ public class TypedefType
         if (mComment != null) {
             first = false;
             out.append("comment:")
-                .append('\"').append(mComment).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mComment))
+               .append('\"');
         }
         if (mType != null) {
             if (first) first = false;
             else out.append(',');
             out.append("type:")
-                .append('\"').append(mType).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mType))
+               .append('\"');
         }
         if (mName != null) {
             if (!first) out.append(',');
             out.append("name:")
-                .append('\"').append(mName).append('\"');
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(mName))
+               .append('\"');
         }
         out.append('}');
         return out.toString();
@@ -311,6 +317,10 @@ public class TypedefType
         return new _Builder(this);
     }
 
+    /**
+     * Make a model.TypedefType builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -323,11 +333,18 @@ public class TypedefType
         private String mType;
         private String mName;
 
-
+        /**
+         * Make a model.TypedefType builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(3);
         }
 
+        /**
+         * Make a mutating builder off a base model.TypedefType.
+         *
+         * @param base The base TypedefType
+         */
         public _Builder(TypedefType base) {
             this();
 
@@ -358,7 +375,7 @@ public class TypedefType
         }
 
         /**
-         * Checked presence of the comment field.
+         * Checks for presence of the comment field.
          *
          * @return True iff comment has been set.
          */
@@ -390,7 +407,7 @@ public class TypedefType
         }
 
         /**
-         * Checked presence of the type field.
+         * Checks for presence of the type field.
          *
          * @return True iff type has been set.
          */
@@ -422,7 +439,7 @@ public class TypedefType
         }
 
         /**
-         * Checked presence of the name field.
+         * Checks for presence of the name field.
          *
          * @return True iff name has been set.
          */
@@ -442,6 +459,7 @@ public class TypedefType
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

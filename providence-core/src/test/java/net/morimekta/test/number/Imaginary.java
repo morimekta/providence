@@ -28,6 +28,9 @@ public class Imaginary
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public double getV() {
         return mV;
     }
@@ -36,6 +39,9 @@ public class Imaginary
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public double getI() {
         return mI;
     }
@@ -101,18 +107,11 @@ public class Imaginary
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        boolean first = true;
-        if (hasV()) {
-            first = false;
-            out.append("v:");
-            out.append(net.morimekta.util.Strings.asString(mV));
-        }
-        if (hasI()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("i:");
-            out.append(net.morimekta.util.Strings.asString(mI));
-        }
+        out.append("v:")
+           .append(net.morimekta.util.Strings.asString(mV));
+        out.append(',');
+        out.append("i:")
+           .append(net.morimekta.util.Strings.asString(mI));
         out.append('}');
         return out.toString();
     }
@@ -262,6 +261,10 @@ public class Imaginary
         return new _Builder(this);
     }
 
+    /**
+     * Make a number.Imaginary builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -273,13 +276,20 @@ public class Imaginary
         private double mV;
         private double mI;
 
-
+        /**
+         * Make a number.Imaginary builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(2);
             mV = kDefaultV;
             mI = kDefaultI;
         }
 
+        /**
+         * Make a mutating builder off a base number.Imaginary.
+         *
+         * @param base The base Imaginary
+         */
         public _Builder(Imaginary base) {
             this();
 
@@ -289,33 +299,72 @@ public class Imaginary
             mI = base.mI;
         }
 
+        /**
+         * Sets the value of v.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setV(double value) {
             optionals.set(0);
             mV = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the v field.
+         *
+         * @return True iff v has been set.
+         */
         public boolean isSetV() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the v field.
+         *
+         * @return The builder
+         */
         public _Builder clearV() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mV = kDefaultV;
             return this;
         }
+
+        /**
+         * Sets the value of i.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setI(double value) {
             optionals.set(1);
             mI = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the i field.
+         *
+         * @return True iff i has been set.
+         */
         public boolean isSetI() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the i field.
+         *
+         * @return The builder
+         */
         public _Builder clearI() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mI = kDefaultI;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

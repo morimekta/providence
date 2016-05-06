@@ -34,7 +34,7 @@ public class PExceptionTest {
                      "integerValue:9," +
                      "longValue:10," +
                      "doubleValue:7.8," +
-                     "stringValue:11," +
+                     "stringValue:\"11\"," +
                      "binaryValue:b64(AAECAwQF)," +
                      "enumValue:FIFTEENTH" +
                      "}", ex.getMessage());

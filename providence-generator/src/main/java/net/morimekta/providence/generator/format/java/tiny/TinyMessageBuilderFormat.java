@@ -14,7 +14,6 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.util.LinkedHashMapBuilder;
 import net.morimekta.util.LinkedHashSetBuilder;
-import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -58,15 +57,7 @@ public class TinyMessageBuilderFormat {
 
         for (JField field : message.fields()) {
             appendSetter(message, field);
-            if (field.container()) {
-                appendAdder(message, field);
-            }
-            appendIsSet(message, field);
             appendResetter(message, field);
-        }
-
-        if (message.isException()) {
-            appendCreateMessage(message);
         }
 
         writer.formatln("public %s build() {", message.instanceType())
@@ -214,7 +205,7 @@ public class TinyMessageBuilderFormat {
                                             LinkedHashSetBuilder.class.getName().replaceAll("[$]", "."));
                             break;
                         case SORTED:
-                            writer.formatln("%s = %s.builder();",
+                            writer.formatln("%s = %s.naturalOrder();",
                                             field.member(),
                                             ImmutableSortedSet.class.getName().replaceAll("[$]", "."));
                             break;
@@ -258,13 +249,8 @@ public class TinyMessageBuilderFormat {
         for (JField field : message.fields()) {
             boolean checkPresence = message.isUnion() ? field.container() : !field.alwaysPresent();
             if (checkPresence) {
-                if (field.container()) {
-                    writer.formatln("if (base.%s() > 0) {", field.counter())
-                          .begin();
-                } else {
-                    writer.formatln("if (base.%s()) {", field.presence())
-                          .begin();
-                }
+                writer.formatln("if (base.%s != null) {", field.member())
+                      .begin();
             }
             if (!message.isUnion()) {
                 writer.formatln("optionals.set(%d);", field.index());
@@ -404,88 +390,6 @@ public class TinyMessageBuilderFormat {
               .appendln('}');
     }
 
-    private void appendAdder(JMessage message, JField field) throws GeneratorException {
-        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
-        }
-        if (field.type() == PType.MAP) {
-            comment.param_("key", "The inserted key")
-                   .param_("value", "The inserted value");
-        } else {
-            comment.param_("values", "The added value");
-        }
-        comment.return_("The builder")
-               .finish();
-
-        if (JAnnotation.isDeprecated(field)) {
-            writer.appendln(JAnnotation.DEPRECATED);
-        }
-
-        switch (field.type()) {
-            case MAP: {
-                PMap<?, ?> mType = (PMap<?, ?>) field.getPField()
-                                                     .getDescriptor();
-                String mkType = helper.getValueType(mType.keyDescriptor());
-                String miType = helper.getValueType(mType.itemDescriptor());
-
-                writer.formatln("public _Builder %s(%s key, %s value) {", field.adder(), mkType, miType)
-                      .begin();
-                if (message.isUnion()) {
-                    writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
-                } else {
-                    writer.formatln("optionals.set(%d);", field.index());
-                }
-                writer.formatln("%s.put(key, value);", field.member())
-                      .appendln("return this;")
-                      .end()
-                      .appendln('}')
-                      .newline();
-
-                break;
-            }
-            case SET:
-            case LIST: {
-                PContainer<?> lType = (PContainer<?>) field.getPField()
-                                                                 .getDescriptor();
-                String liType = helper.getValueType(lType.itemDescriptor());
-
-                writer.formatln("public _Builder %s(%s... values) {", field.adder(), liType)
-                      .begin();
-                if (message.isUnion()) {
-                    writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
-                } else {
-                    writer.formatln("optionals.set(%d);", field.index());
-                }
-                writer.formatln("for (%s item : values) {", liType)
-                      .begin()
-                      .formatln("%s.add(item);", field.member())
-                      .end()
-                      .appendln('}')
-                      .appendln("return this;")
-                      .end()
-                      .appendln('}')
-                      .newline();
-
-                break;
-            }
-        }
-    }
-
-    private void appendIsSet(JMessage message, JField field) {
-        writer.formatln("public boolean %s() {", field.isSet())
-              .begin();
-
-        if (message.isUnion()) {
-            writer.formatln("return tUnionField == _Field.%s;", field.fieldEnum());
-        } else {
-            writer.formatln("return optionals.get(%d);", field.index());
-        }
-        writer.end()
-              .appendln('}');
-    }
-
     private void appendResetter(JMessage message, JField field) {
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
@@ -563,78 +467,5 @@ public class TinyMessageBuilderFormat {
         writer.appendln("return this;")
               .end()
               .appendln('}');
-    }
-
-    private void appendCreateMessage(JMessage<?> message) {
-        writer.appendln("protected String createMessage() {")
-              .begin()
-              .appendln("StringBuilder builder = new StringBuilder();")
-              .appendln("builder.append('{');")
-              .appendln("boolean first = true;");
-        boolean alwaysAfter = false;
-        for (JField field : message.fields()) {
-            if (!field.alwaysPresent()) {
-                if (field.container()) {
-                    writer.formatln("if (%s.size() > 0) {", field.member());
-                } else {
-                    writer.formatln("if (%s != null) {", field.member());
-                }
-                writer.begin();
-            }
-
-            if (alwaysAfter) {
-                writer.appendln("builder.append(',');");
-            } else {
-                writer.appendln("if (first) first = false;")
-                      .appendln("else builder.append(',');");
-            }
-
-            writer.formatln("builder.append(\"%s:\")", field.name());
-            switch (field.type()) {
-                case BOOL:
-                case I32:
-                case I64:
-                    writer.formatln("       .append(%s);", field.member());
-                    break;
-                case BYTE:
-                case I16:
-                    writer.formatln("       .append((int) %s);", field.member());
-                    break;
-                case DOUBLE:
-                case MAP:
-                case SET:
-                case LIST:
-                    writer.formatln("       .append(%s.asString(%s));",
-                                    Strings.class.getName(),
-                                    field.member());
-                    break;
-                case STRING:
-                    writer.formatln("       .append(%s);", field.member());
-                    break;
-                case BINARY:
-                    writer.appendln("       .append(\"b64(\")")
-                          .formatln("       .append(%s.toBase64())", field.member())
-                          .appendln("       .append(')');");
-                    break;
-                case MESSAGE:
-                    writer.formatln("       .append(%s.asString());", field.member());
-                    break;
-                default:
-                    writer.formatln("       .append(%s.toString());", field.member());
-                    break;
-            }
-
-            if (!field.alwaysPresent()) {
-                writer.end()
-                      .appendln('}');
-            } else {
-                alwaysAfter = true;
-            }
-        }
-        writer.appendln("builder.append('}');")
-              .appendln("return builder.toString();")
-              .end()
-              .appendln('}')
-              .newline();
     }
 }

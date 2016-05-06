@@ -405,7 +405,11 @@ public class Containers
         return mBooleanList != null;
     }
 
-    /** all types as list<x>. */
+    /**
+     * all types as list&lt;x&gt;.
+     *
+     * @return The field value
+     */
     public java.util.List<Boolean> getBooleanList() {
         return mBooleanList;
     }
@@ -418,6 +422,9 @@ public class Containers
         return mByteList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<Byte> getByteList() {
         return mByteList;
     }
@@ -430,6 +437,9 @@ public class Containers
         return mShortList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<Short> getShortList() {
         return mShortList;
     }
@@ -442,6 +452,9 @@ public class Containers
         return mIntegerList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<Integer> getIntegerList() {
         return mIntegerList;
     }
@@ -454,6 +467,9 @@ public class Containers
         return mLongList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<Long> getLongList() {
         return mLongList;
     }
@@ -466,6 +482,9 @@ public class Containers
         return mDoubleList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<Double> getDoubleList() {
         return mDoubleList;
     }
@@ -478,6 +497,9 @@ public class Containers
         return mStringList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<String> getStringList() {
         return mStringList;
     }
@@ -490,6 +512,9 @@ public class Containers
         return mBinaryList != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.util.Binary> getBinaryList() {
         return mBinaryList;
     }
@@ -502,7 +527,11 @@ public class Containers
         return mBooleanSet != null;
     }
 
-    /** all types as set<x>. */
+    /**
+     * all types as set&lt;x&gt;.
+     *
+     * @return The field value
+     */
     public java.util.Set<Boolean> getBooleanSet() {
         return mBooleanSet;
     }
@@ -515,6 +544,9 @@ public class Containers
         return mByteSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<Byte> getByteSet() {
         return mByteSet;
     }
@@ -527,6 +559,9 @@ public class Containers
         return mShortSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<Short> getShortSet() {
         return mShortSet;
     }
@@ -539,6 +574,9 @@ public class Containers
         return mIntegerSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<Integer> getIntegerSet() {
         return mIntegerSet;
     }
@@ -551,6 +589,9 @@ public class Containers
         return mLongSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<Long> getLongSet() {
         return mLongSet;
     }
@@ -563,6 +604,9 @@ public class Containers
         return mDoubleSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<Double> getDoubleSet() {
         return mDoubleSet;
     }
@@ -575,6 +619,9 @@ public class Containers
         return mStringSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<String> getStringSet() {
         return mStringSet;
     }
@@ -587,6 +634,9 @@ public class Containers
         return mBinarySet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<net.morimekta.util.Binary> getBinarySet() {
         return mBinarySet;
     }
@@ -599,7 +649,11 @@ public class Containers
         return mBooleanMap != null;
     }
 
-    /** all types as map<x,x>. */
+    /**
+     * all types as map&lt;x,x&gt;.
+     *
+     * @return The field value
+     */
     public java.util.Map<Boolean,Boolean> getBooleanMap() {
         return mBooleanMap;
     }
@@ -612,6 +666,9 @@ public class Containers
         return mByteMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<Byte,Byte> getByteMap() {
         return mByteMap;
     }
@@ -624,6 +681,9 @@ public class Containers
         return mShortMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<Short,Short> getShortMap() {
         return mShortMap;
     }
@@ -636,6 +696,9 @@ public class Containers
         return mIntegerMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<Integer,Integer> getIntegerMap() {
         return mIntegerMap;
     }
@@ -648,6 +711,9 @@ public class Containers
         return mLongMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<Long,Long> getLongMap() {
         return mLongMap;
     }
@@ -660,6 +726,9 @@ public class Containers
         return mDoubleMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<Double,Double> getDoubleMap() {
         return mDoubleMap;
     }
@@ -672,6 +741,9 @@ public class Containers
         return mStringMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,String> getStringMap() {
         return mStringMap;
     }
@@ -684,6 +756,9 @@ public class Containers
         return mBinaryMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> getBinaryMap() {
         return mBinaryMap;
     }
@@ -696,7 +771,11 @@ public class Containers
         return mEnumList != null;
     }
 
-    /** Using enum as key and value in containers. */
+    /**
+     * Using enum as key and value in containers.
+     *
+     * @return The field value
+     */
     public java.util.List<net.morimekta.test.providence.Value> getEnumList() {
         return mEnumList;
     }
@@ -709,6 +788,9 @@ public class Containers
         return mEnumSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<net.morimekta.test.providence.Value> getEnumSet() {
         return mEnumSet;
     }
@@ -721,6 +803,9 @@ public class Containers
         return mEnumMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> getEnumMap() {
         return mEnumMap;
     }
@@ -733,7 +818,11 @@ public class Containers
         return mMessageList != null;
     }
 
-    /** Using struct as key and value in containers. */
+    /**
+     * Using struct as key and value in containers.
+     *
+     * @return The field value
+     */
     public java.util.List<net.morimekta.test.providence.DefaultFields> getMessageList() {
         return mMessageList;
     }
@@ -746,6 +835,9 @@ public class Containers
         return mMessageSet != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Set<net.morimekta.test.providence.DefaultFields> getMessageSet() {
         return mMessageSet;
     }
@@ -758,6 +850,9 @@ public class Containers
         return mMessageMap != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,net.morimekta.test.providence.DefaultFields> getMessageMap() {
         return mMessageMap;
     }
@@ -766,6 +861,9 @@ public class Containers
         return mRequiredFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.RequiredFields getRequiredFields() {
         return mRequiredFields;
     }
@@ -774,6 +872,9 @@ public class Containers
         return mDefaultFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.DefaultFields getDefaultFields() {
         return mDefaultFields;
     }
@@ -782,6 +883,9 @@ public class Containers
         return mOptionalFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.OptionalFields getOptionalFields() {
         return mOptionalFields;
     }
@@ -790,6 +894,9 @@ public class Containers
         return mUnionFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.UnionFields getUnionFields() {
         return mUnionFields;
     }
@@ -798,6 +905,9 @@ public class Containers
         return mExceptionFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.ExceptionFields getExceptionFields() {
         return mExceptionFields;
     }
@@ -806,6 +916,9 @@ public class Containers
         return mDefaultValues != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.providence.DefaultValues getDefaultValues() {
         return mDefaultValues;
     }
@@ -1042,220 +1155,219 @@ public class Containers
         out.append("{");
 
         boolean first = true;
-        if (numBooleanList() > 0) {
+        if (mBooleanList != null && mBooleanList.size() > 0) {
             first = false;
-            out.append("booleanList:");
-            out.append(net.morimekta.util.Strings.asString(mBooleanList));
+            out.append("booleanList:")
+               .append(net.morimekta.util.Strings.asString(mBooleanList));
         }
-        if (numByteList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("byteList:");
-            out.append(net.morimekta.util.Strings.asString(mByteList));
+        if (mByteList != null && mByteList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("byteList:")
+               .append(net.morimekta.util.Strings.asString(mByteList));
         }
-        if (numShortList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("shortList:");
-            out.append(net.morimekta.util.Strings.asString(mShortList));
+        if (mShortList != null && mShortList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("shortList:")
+               .append(net.morimekta.util.Strings.asString(mShortList));
         }
-        if (numIntegerList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("integerList:");
-            out.append(net.morimekta.util.Strings.asString(mIntegerList));
+        if (mIntegerList != null && mIntegerList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("integerList:")
+               .append(net.morimekta.util.Strings.asString(mIntegerList));
         }
-        if (numLongList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("longList:");
-            out.append(net.morimekta.util.Strings.asString(mLongList));
+        if (mLongList != null && mLongList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("longList:")
+               .append(net.morimekta.util.Strings.asString(mLongList));
         }
-        if (numDoubleList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("doubleList:");
-            out.append(net.morimekta.util.Strings.asString(mDoubleList));
+        if (mDoubleList != null && mDoubleList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("doubleList:")
+               .append(net.morimekta.util.Strings.asString(mDoubleList));
         }
-        if (numStringList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("stringList:");
-            out.append(net.morimekta.util.Strings.asString(mStringList));
+        if (mStringList != null && mStringList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("stringList:")
+               .append(net.morimekta.util.Strings.asString(mStringList));
         }
-        if (numBinaryList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("binaryList:");
-            out.append(net.morimekta.util.Strings.asString(mBinaryList));
+        if (mBinaryList != null && mBinaryList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("binaryList:")
+               .append(net.morimekta.util.Strings.asString(mBinaryList));
         }
-        if (numBooleanSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("booleanSet:");
-            out.append(net.morimekta.util.Strings.asString(mBooleanSet));
+        if (mBooleanSet != null && mBooleanSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("booleanSet:")
+               .append(net.morimekta.util.Strings.asString(mBooleanSet));
         }
-        if (numByteSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("byteSet:");
-            out.append(net.morimekta.util.Strings.asString(mByteSet));
+        if (mByteSet != null && mByteSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("byteSet:")
+               .append(net.morimekta.util.Strings.asString(mByteSet));
         }
-        if (numShortSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("shortSet:");
-            out.append(net.morimekta.util.Strings.asString(mShortSet));
+        if (mShortSet != null && mShortSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("shortSet:")
+               .append(net.morimekta.util.Strings.asString(mShortSet));
         }
-        if (numIntegerSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("integerSet:");
-            out.append(net.morimekta.util.Strings.asString(mIntegerSet));
+        if (mIntegerSet != null && mIntegerSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("integerSet:")
+               .append(net.morimekta.util.Strings.asString(mIntegerSet));
         }
-        if (numLongSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("longSet:");
-            out.append(net.morimekta.util.Strings.asString(mLongSet));
+        if (mLongSet != null && mLongSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("longSet:")
+               .append(net.morimekta.util.Strings.asString(mLongSet));
         }
-        if (numDoubleSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("doubleSet:");
-            out.append(net.morimekta.util.Strings.asString(mDoubleSet));
+        if (mDoubleSet != null && mDoubleSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("doubleSet:")
+               .append(net.morimekta.util.Strings.asString(mDoubleSet));
         }
-        if (numStringSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("stringSet:");
-            out.append(net.morimekta.util.Strings.asString(mStringSet));
+        if (mStringSet != null && mStringSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("stringSet:")
+               .append(net.morimekta.util.Strings.asString(mStringSet));
         }
-        if (numBinarySet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("binarySet:");
-            out.append(net.morimekta.util.Strings.asString(mBinarySet));
+        if (mBinarySet != null && mBinarySet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("binarySet:")
+               .append(net.morimekta.util.Strings.asString(mBinarySet));
         }
-        if (numBooleanMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("booleanMap:");
-            out.append(net.morimekta.util.Strings.asString(mBooleanMap));
+        if (mBooleanMap != null && mBooleanMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("booleanMap:")
+               .append(net.morimekta.util.Strings.asString(mBooleanMap));
         }
-        if (numByteMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("byteMap:");
-            out.append(net.morimekta.util.Strings.asString(mByteMap));
+        if (mByteMap != null && mByteMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("byteMap:")
+               .append(net.morimekta.util.Strings.asString(mByteMap));
         }
-        if (numShortMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("shortMap:");
-            out.append(net.morimekta.util.Strings.asString(mShortMap));
+        if (mShortMap != null && mShortMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("shortMap:")
+               .append(net.morimekta.util.Strings.asString(mShortMap));
         }
-        if (numIntegerMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("integerMap:");
-            out.append(net.morimekta.util.Strings.asString(mIntegerMap));
+        if (mIntegerMap != null && mIntegerMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("integerMap:")
+               .append(net.morimekta.util.Strings.asString(mIntegerMap));
         }
-        if (numLongMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("longMap:");
-            out.append(net.morimekta.util.Strings.asString(mLongMap));
+        if (mLongMap != null && mLongMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("longMap:")
+               .append(net.morimekta.util.Strings.asString(mLongMap));
         }
-        if (numDoubleMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("doubleMap:");
-            out.append(net.morimekta.util.Strings.asString(mDoubleMap));
+        if (mDoubleMap != null && mDoubleMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("doubleMap:")
+               .append(net.morimekta.util.Strings.asString(mDoubleMap));
         }
-        if (numStringMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("stringMap:");
-            out.append(net.morimekta.util.Strings.asString(mStringMap));
+        if (mStringMap != null && mStringMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("stringMap:")
+               .append(net.morimekta.util.Strings.asString(mStringMap));
         }
-        if (numBinaryMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("binaryMap:");
-            out.append(net.morimekta.util.Strings.asString(mBinaryMap));
+        if (mBinaryMap != null && mBinaryMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("binaryMap:")
+               .append(net.morimekta.util.Strings.asString(mBinaryMap));
         }
-        if (numEnumList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("enumList:");
-            out.append(net.morimekta.util.Strings.asString(mEnumList));
+        if (mEnumList != null && mEnumList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("enumList:")
+               .append(net.morimekta.util.Strings.asString(mEnumList));
         }
-        if (numEnumSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("enumSet:");
-            out.append(net.morimekta.util.Strings.asString(mEnumSet));
+        if (mEnumSet != null && mEnumSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("enumSet:")
+               .append(net.morimekta.util.Strings.asString(mEnumSet));
         }
-        if (numEnumMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("enumMap:");
-            out.append(net.morimekta.util.Strings.asString(mEnumMap));
+        if (mEnumMap != null && mEnumMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("enumMap:")
+               .append(net.morimekta.util.Strings.asString(mEnumMap));
         }
-        if (numMessageList() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("messageList:");
-            out.append(net.morimekta.util.Strings.asString(mMessageList));
+        if (mMessageList != null && mMessageList.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("messageList:")
+               .append(net.morimekta.util.Strings.asString(mMessageList));
         }
-        if (numMessageSet() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("messageSet:");
-            out.append(net.morimekta.util.Strings.asString(mMessageSet));
+        if (mMessageSet != null && mMessageSet.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("messageSet:")
+               .append(net.morimekta.util.Strings.asString(mMessageSet));
         }
-        if (numMessageMap() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("messageMap:");
-            out.append(net.morimekta.util.Strings.asString(mMessageMap));
+        if (mMessageMap != null && mMessageMap.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("messageMap:")
+               .append(net.morimekta.util.Strings.asString(mMessageMap));
         }
-        if (hasRequiredFields()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("requiredFields:");
-            out.append(mRequiredFields.asString());
+        if (mRequiredFields != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("requiredFields:")
+               .append(mRequiredFields.asString());
         }
-        if (hasDefaultFields()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("defaultFields:");
-            out.append(mDefaultFields.asString());
+        if (mDefaultFields != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("defaultFields:")
+               .append(mDefaultFields.asString());
         }
-        if (hasOptionalFields()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("optionalFields:");
-            out.append(mOptionalFields.asString());
+        if (mOptionalFields != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("optionalFields:")
+               .append(mOptionalFields.asString());
         }
-        if (hasUnionFields()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("unionFields:");
-            out.append(mUnionFields.asString());
+        if (mUnionFields != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("unionFields:")
+               .append(mUnionFields.asString());
         }
-        if (hasExceptionFields()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("exceptionFields:");
-            out.append(mExceptionFields.asString());
+        if (mExceptionFields != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("exceptionFields:")
+               .append(mExceptionFields.asString());
         }
-        if (hasDefaultValues()) {
+        if (mDefaultValues != null) {
             if (!first) out.append(',');
-            first = false;
-            out.append("defaultValues:");
-            out.append(mDefaultValues.asString());
+            out.append("defaultValues:")
+               .append(mDefaultValues.asString());
         }
         out.append('}');
         return out.toString();
@@ -1754,6 +1866,10 @@ public class Containers
         return new _Builder(this);
     }
 
+    /**
+     * Make a providence.Containers builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -1762,36 +1878,36 @@ public class Containers
             extends net.morimekta.providence.PMessageBuilder<Containers> {
         private java.util.BitSet optionals;
 
-        private net.morimekta.providence.descriptor.PList.Builder mBooleanList;
-        private net.morimekta.providence.descriptor.PList.Builder mByteList;
-        private net.morimekta.providence.descriptor.PList.Builder mShortList;
-        private net.morimekta.providence.descriptor.PList.Builder mIntegerList;
-        private net.morimekta.providence.descriptor.PList.Builder mLongList;
-        private net.morimekta.providence.descriptor.PList.Builder mDoubleList;
-        private net.morimekta.providence.descriptor.PList.Builder mStringList;
-        private net.morimekta.providence.descriptor.PList.Builder mBinaryList;
-        private net.morimekta.providence.descriptor.PSet.Builder mBooleanSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mByteSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mShortSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mIntegerSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mLongSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mDoubleSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mStringSet;
-        private net.morimekta.providence.descriptor.PSet.Builder mBinarySet;
-        private net.morimekta.providence.descriptor.PMap.Builder mBooleanMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mByteMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mShortMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mIntegerMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mLongMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mDoubleMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mStringMap;
-        private net.morimekta.providence.descriptor.PMap.Builder mBinaryMap;
-        private net.morimekta.providence.descriptor.PList.Builder mEnumList;
-        private net.morimekta.providence.descriptor.PSet.Builder mEnumSet;
-        private net.morimekta.providence.descriptor.PMap.Builder mEnumMap;
-        private net.morimekta.providence.descriptor.PList.Builder mMessageList;
-        private net.morimekta.providence.descriptor.PSet.Builder mMessageSet;
-        private net.morimekta.providence.descriptor.PMap.Builder mMessageMap;
+        private net.morimekta.providence.descriptor.PList.Builder<Boolean> mBooleanList;
+        private net.morimekta.providence.descriptor.PList.Builder<Byte> mByteList;
+        private net.morimekta.providence.descriptor.PList.Builder<Short> mShortList;
+        private net.morimekta.providence.descriptor.PList.Builder<Integer> mIntegerList;
+        private net.morimekta.providence.descriptor.PList.Builder<Long> mLongList;
+        private net.morimekta.providence.descriptor.PList.Builder<Double> mDoubleList;
+        private net.morimekta.providence.descriptor.PList.Builder<String> mStringList;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mBinaryList;
+        private net.morimekta.providence.descriptor.PSet.Builder<Boolean> mBooleanSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<Byte> mByteSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<Short> mShortSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<Integer> mIntegerSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<Long> mLongSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<Double> mDoubleSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<String> mStringSet;
+        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mBinarySet;
+        private net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mBooleanMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mByteMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mShortMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mIntegerMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mLongMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mDoubleMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mStringMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.Value> mEnumList;
+        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.Value> mEnumSet;
+        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> mEnumMap;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.DefaultFields> mMessageList;
+        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.DefaultFields> mMessageSet;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.DefaultFields> mMessageMap;
         private net.morimekta.test.providence.RequiredFields mRequiredFields;
         private net.morimekta.test.providence.DefaultFields mDefaultFields;
         private net.morimekta.test.providence.OptionalFields mOptionalFields;
@@ -1799,7 +1915,9 @@ public class Containers
         private net.morimekta.test.providence.ExceptionFields mExceptionFields;
         private net.morimekta.test.providence.DefaultValues mDefaultValues;
 
-
+        /**
+         * Make a providence.Containers builder.
+         */
         public _Builder() {
             optionals = new java.util.BitSet(36);
             mBooleanList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -1834,6 +1952,11 @@ public class Containers
             mMessageMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
+        /**
+         * Make a mutating builder off a base providence.Containers.
+         *
+         * @param base The base Containers
+         */
         public _Builder(Containers base) {
             this();
 
@@ -1983,14 +2106,29 @@ public class Containers
             }
         }
 
-        /** all types as list<x>. */
+        /**
+         * Sets the value of booleanList.
+         *
+         * all types as list&lt;x&gt;.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBooleanList(java.util.Collection<Boolean> value) {
             optionals.set(0);
             mBooleanList.clear();
             mBooleanList.addAll(value);
             return this;
         }
-        /** all types as list<x>. */
+
+        /**
+         * Adds entries to booleanList.
+         *
+         * all types as list&lt;x&gt;.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToBooleanList(boolean... values) {
             optionals.set(0);
             for (boolean item : values) {
@@ -1999,20 +2137,49 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the booleanList field.
+         *
+         * all types as list&lt;x&gt;.
+         *
+         * @return True iff booleanList has been set.
+         */
         public boolean isSetBooleanList() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the booleanList field.
+         *
+         * all types as list&lt;x&gt;.
+         *
+         * @return The builder
+         */
         public _Builder clearBooleanList() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mBooleanList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of byteList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setByteList(java.util.Collection<Byte> value) {
             optionals.set(1);
             mByteList.clear();
             mByteList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to byteList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToByteList(byte... values) {
             optionals.set(1);
             for (byte item : values) {
@@ -2021,20 +2188,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the byteList field.
+         *
+         * @return True iff byteList has been set.
+         */
         public boolean isSetByteList() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the byteList field.
+         *
+         * @return The builder
+         */
         public _Builder clearByteList() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mByteList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of shortList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setShortList(java.util.Collection<Short> value) {
             optionals.set(2);
             mShortList.clear();
             mShortList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to shortList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToShortList(short... values) {
             optionals.set(2);
             for (short item : values) {
@@ -2043,20 +2235,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the shortList field.
+         *
+         * @return True iff shortList has been set.
+         */
         public boolean isSetShortList() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the shortList field.
+         *
+         * @return The builder
+         */
         public _Builder clearShortList() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mShortList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of integerList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setIntegerList(java.util.Collection<Integer> value) {
             optionals.set(3);
             mIntegerList.clear();
             mIntegerList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to integerList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToIntegerList(int... values) {
             optionals.set(3);
             for (int item : values) {
@@ -2065,20 +2282,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the integerList field.
+         *
+         * @return True iff integerList has been set.
+         */
         public boolean isSetIntegerList() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the integerList field.
+         *
+         * @return The builder
+         */
         public _Builder clearIntegerList() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mIntegerList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of longList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setLongList(java.util.Collection<Long> value) {
             optionals.set(4);
             mLongList.clear();
             mLongList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to longList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToLongList(long... values) {
             optionals.set(4);
             for (long item : values) {
@@ -2087,20 +2329,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the longList field.
+         *
+         * @return True iff longList has been set.
+         */
         public boolean isSetLongList() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the longList field.
+         *
+         * @return The builder
+         */
         public _Builder clearLongList() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mLongList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of doubleList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDoubleList(java.util.Collection<Double> value) {
             optionals.set(5);
             mDoubleList.clear();
             mDoubleList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to doubleList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToDoubleList(double... values) {
             optionals.set(5);
             for (double item : values) {
@@ -2109,20 +2376,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the doubleList field.
+         *
+         * @return True iff doubleList has been set.
+         */
         public boolean isSetDoubleList() {
             return optionals.get(5);
         }
+
+        /**
+         * Clears the doubleList field.
+         *
+         * @return The builder
+         */
         public _Builder clearDoubleList() {
-            optionals.set(5, false);
+            optionals.clear(5);
             mDoubleList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of stringList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setStringList(java.util.Collection<String> value) {
             optionals.set(6);
             mStringList.clear();
             mStringList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to stringList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToStringList(String... values) {
             optionals.set(6);
             for (String item : values) {
@@ -2131,20 +2423,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the stringList field.
+         *
+         * @return True iff stringList has been set.
+         */
         public boolean isSetStringList() {
             return optionals.get(6);
         }
+
+        /**
+         * Clears the stringList field.
+         *
+         * @return The builder
+         */
         public _Builder clearStringList() {
-            optionals.set(6, false);
+            optionals.clear(6);
             mStringList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of binaryList.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBinaryList(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(7);
             mBinaryList.clear();
             mBinaryList.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to binaryList.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToBinaryList(net.morimekta.util.Binary... values) {
             optionals.set(7);
             for (net.morimekta.util.Binary item : values) {
@@ -2153,22 +2470,49 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the binaryList field.
+         *
+         * @return True iff binaryList has been set.
+         */
         public boolean isSetBinaryList() {
             return optionals.get(7);
         }
+
+        /**
+         * Clears the binaryList field.
+         *
+         * @return The builder
+         */
         public _Builder clearBinaryList() {
-            optionals.set(7, false);
+            optionals.clear(7);
             mBinaryList.clear();
             return this;
         }
-        /** all types as set<x>. */
+
+        /**
+         * Sets the value of booleanSet.
+         *
+         * all types as set&lt;x&gt;.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBooleanSet(java.util.Collection<Boolean> value) {
             optionals.set(8);
             mBooleanSet.clear();
             mBooleanSet.addAll(value);
             return this;
         }
-        /** all types as set<x>. */
+
+        /**
+         * Adds entries to booleanSet.
+         *
+         * all types as set&lt;x&gt;.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToBooleanSet(boolean... values) {
             optionals.set(8);
             for (boolean item : values) {
@@ -2177,20 +2521,49 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the booleanSet field.
+         *
+         * all types as set&lt;x&gt;.
+         *
+         * @return True iff booleanSet has been set.
+         */
         public boolean isSetBooleanSet() {
             return optionals.get(8);
         }
+
+        /**
+         * Clears the booleanSet field.
+         *
+         * all types as set&lt;x&gt;.
+         *
+         * @return The builder
+         */
         public _Builder clearBooleanSet() {
-            optionals.set(8, false);
+            optionals.clear(8);
             mBooleanSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of byteSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setByteSet(java.util.Collection<Byte> value) {
             optionals.set(9);
             mByteSet.clear();
             mByteSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to byteSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToByteSet(byte... values) {
             optionals.set(9);
             for (byte item : values) {
@@ -2199,20 +2572,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the byteSet field.
+         *
+         * @return True iff byteSet has been set.
+         */
         public boolean isSetByteSet() {
             return optionals.get(9);
         }
+
+        /**
+         * Clears the byteSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearByteSet() {
-            optionals.set(9, false);
+            optionals.clear(9);
             mByteSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of shortSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setShortSet(java.util.Collection<Short> value) {
             optionals.set(10);
             mShortSet.clear();
             mShortSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to shortSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToShortSet(short... values) {
             optionals.set(10);
             for (short item : values) {
@@ -2221,20 +2619,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the shortSet field.
+         *
+         * @return True iff shortSet has been set.
+         */
         public boolean isSetShortSet() {
             return optionals.get(10);
         }
+
+        /**
+         * Clears the shortSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearShortSet() {
-            optionals.set(10, false);
+            optionals.clear(10);
             mShortSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of integerSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setIntegerSet(java.util.Collection<Integer> value) {
             optionals.set(11);
             mIntegerSet.clear();
             mIntegerSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to integerSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToIntegerSet(int... values) {
             optionals.set(11);
             for (int item : values) {
@@ -2243,20 +2666,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the integerSet field.
+         *
+         * @return True iff integerSet has been set.
+         */
         public boolean isSetIntegerSet() {
             return optionals.get(11);
         }
+
+        /**
+         * Clears the integerSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearIntegerSet() {
-            optionals.set(11, false);
+            optionals.clear(11);
             mIntegerSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of longSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setLongSet(java.util.Collection<Long> value) {
             optionals.set(12);
             mLongSet.clear();
             mLongSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to longSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToLongSet(long... values) {
             optionals.set(12);
             for (long item : values) {
@@ -2265,20 +2713,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the longSet field.
+         *
+         * @return True iff longSet has been set.
+         */
         public boolean isSetLongSet() {
             return optionals.get(12);
         }
+
+        /**
+         * Clears the longSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearLongSet() {
-            optionals.set(12, false);
+            optionals.clear(12);
             mLongSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of doubleSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDoubleSet(java.util.Collection<Double> value) {
             optionals.set(13);
             mDoubleSet.clear();
             mDoubleSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to doubleSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToDoubleSet(double... values) {
             optionals.set(13);
             for (double item : values) {
@@ -2287,20 +2760,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the doubleSet field.
+         *
+         * @return True iff doubleSet has been set.
+         */
         public boolean isSetDoubleSet() {
             return optionals.get(13);
         }
+
+        /**
+         * Clears the doubleSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearDoubleSet() {
-            optionals.set(13, false);
+            optionals.clear(13);
             mDoubleSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of stringSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setStringSet(java.util.Collection<String> value) {
             optionals.set(14);
             mStringSet.clear();
             mStringSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to stringSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToStringSet(String... values) {
             optionals.set(14);
             for (String item : values) {
@@ -2309,20 +2807,45 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the stringSet field.
+         *
+         * @return True iff stringSet has been set.
+         */
         public boolean isSetStringSet() {
             return optionals.get(14);
         }
+
+        /**
+         * Clears the stringSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearStringSet() {
-            optionals.set(14, false);
+            optionals.clear(14);
             mStringSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of binarySet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBinarySet(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(15);
             mBinarySet.clear();
             mBinarySet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to binarySet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToBinarySet(net.morimekta.util.Binary... values) {
             optionals.set(15);
             for (net.morimekta.util.Binary item : values) {
@@ -2331,184 +2854,425 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the binarySet field.
+         *
+         * @return True iff binarySet has been set.
+         */
         public boolean isSetBinarySet() {
             return optionals.get(15);
         }
+
+        /**
+         * Clears the binarySet field.
+         *
+         * @return The builder
+         */
         public _Builder clearBinarySet() {
-            optionals.set(15, false);
+            optionals.clear(15);
             mBinarySet.clear();
             return this;
         }
-        /** all types as map<x,x>. */
+
+        /**
+         * Sets the value of booleanMap.
+         *
+         * all types as map&lt;x,x&gt;.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBooleanMap(java.util.Map<Boolean,Boolean> value) {
             optionals.set(16);
             mBooleanMap.clear();
             mBooleanMap.putAll(value);
             return this;
         }
-        /** all types as map<x,x>. */
+
+        /**
+         * Adds a mapping to booleanMap.
+         *
+         * all types as map&lt;x,x&gt;.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInBooleanMap(boolean key, boolean value) {
             optionals.set(16);
             mBooleanMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the booleanMap field.
+         *
+         * all types as map&lt;x,x&gt;.
+         *
+         * @return True iff booleanMap has been set.
+         */
         public boolean isSetBooleanMap() {
             return optionals.get(16);
         }
+
+        /**
+         * Clears the booleanMap field.
+         *
+         * all types as map&lt;x,x&gt;.
+         *
+         * @return The builder
+         */
         public _Builder clearBooleanMap() {
-            optionals.set(16, false);
+            optionals.clear(16);
             mBooleanMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of byteMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setByteMap(java.util.Map<Byte,Byte> value) {
             optionals.set(17);
             mByteMap.clear();
             mByteMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to byteMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInByteMap(byte key, byte value) {
             optionals.set(17);
             mByteMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the byteMap field.
+         *
+         * @return True iff byteMap has been set.
+         */
         public boolean isSetByteMap() {
             return optionals.get(17);
         }
+
+        /**
+         * Clears the byteMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearByteMap() {
-            optionals.set(17, false);
+            optionals.clear(17);
             mByteMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of shortMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setShortMap(java.util.Map<Short,Short> value) {
             optionals.set(18);
             mShortMap.clear();
             mShortMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to shortMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInShortMap(short key, short value) {
             optionals.set(18);
             mShortMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the shortMap field.
+         *
+         * @return True iff shortMap has been set.
+         */
         public boolean isSetShortMap() {
             return optionals.get(18);
         }
+
+        /**
+         * Clears the shortMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearShortMap() {
-            optionals.set(18, false);
+            optionals.clear(18);
             mShortMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of integerMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setIntegerMap(java.util.Map<Integer,Integer> value) {
             optionals.set(19);
             mIntegerMap.clear();
             mIntegerMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to integerMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInIntegerMap(int key, int value) {
             optionals.set(19);
             mIntegerMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the integerMap field.
+         *
+         * @return True iff integerMap has been set.
+         */
         public boolean isSetIntegerMap() {
             return optionals.get(19);
         }
+
+        /**
+         * Clears the integerMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearIntegerMap() {
-            optionals.set(19, false);
+            optionals.clear(19);
             mIntegerMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of longMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setLongMap(java.util.Map<Long,Long> value) {
             optionals.set(20);
             mLongMap.clear();
             mLongMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to longMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInLongMap(long key, long value) {
             optionals.set(20);
             mLongMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the longMap field.
+         *
+         * @return True iff longMap has been set.
+         */
         public boolean isSetLongMap() {
             return optionals.get(20);
         }
+
+        /**
+         * Clears the longMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearLongMap() {
-            optionals.set(20, false);
+            optionals.clear(20);
             mLongMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of doubleMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDoubleMap(java.util.Map<Double,Double> value) {
             optionals.set(21);
             mDoubleMap.clear();
             mDoubleMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to doubleMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInDoubleMap(double key, double value) {
             optionals.set(21);
             mDoubleMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the doubleMap field.
+         *
+         * @return True iff doubleMap has been set.
+         */
         public boolean isSetDoubleMap() {
             return optionals.get(21);
         }
+
+        /**
+         * Clears the doubleMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearDoubleMap() {
-            optionals.set(21, false);
+            optionals.clear(21);
             mDoubleMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of stringMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setStringMap(java.util.Map<String,String> value) {
             optionals.set(22);
             mStringMap.clear();
             mStringMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to stringMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInStringMap(String key, String value) {
             optionals.set(22);
             mStringMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the stringMap field.
+         *
+         * @return True iff stringMap has been set.
+         */
         public boolean isSetStringMap() {
             return optionals.get(22);
         }
+
+        /**
+         * Clears the stringMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearStringMap() {
-            optionals.set(22, false);
+            optionals.clear(22);
             mStringMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of binaryMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setBinaryMap(java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> value) {
             optionals.set(23);
             mBinaryMap.clear();
             mBinaryMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to binaryMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInBinaryMap(net.morimekta.util.Binary key, net.morimekta.util.Binary value) {
             optionals.set(23);
             mBinaryMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the binaryMap field.
+         *
+         * @return True iff binaryMap has been set.
+         */
         public boolean isSetBinaryMap() {
             return optionals.get(23);
         }
+
+        /**
+         * Clears the binaryMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearBinaryMap() {
-            optionals.set(23, false);
+            optionals.clear(23);
             mBinaryMap.clear();
             return this;
         }
-        /** Using enum as key and value in containers. */
+
+        /**
+         * Sets the value of enumList.
+         *
+         * Using enum as key and value in containers.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setEnumList(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(24);
             mEnumList.clear();
             mEnumList.addAll(value);
             return this;
         }
-        /** Using enum as key and value in containers. */
+
+        /**
+         * Adds entries to enumList.
+         *
+         * Using enum as key and value in containers.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToEnumList(net.morimekta.test.providence.Value... values) {
             optionals.set(24);
             for (net.morimekta.test.providence.Value item : values) {
@@ -2517,20 +3281,49 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the enumList field.
+         *
+         * Using enum as key and value in containers.
+         *
+         * @return True iff enumList has been set.
+         */
         public boolean isSetEnumList() {
             return optionals.get(24);
         }
+
+        /**
+         * Clears the enumList field.
+         *
+         * Using enum as key and value in containers.
+         *
+         * @return The builder
+         */
         public _Builder clearEnumList() {
-            optionals.set(24, false);
+            optionals.clear(24);
             mEnumList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of enumSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setEnumSet(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(25);
             mEnumSet.clear();
             mEnumSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to enumSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToEnumSet(net.morimekta.test.providence.Value... values) {
             optionals.set(25);
             for (net.morimekta.test.providence.Value item : values) {
@@ -2539,42 +3332,95 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the enumSet field.
+         *
+         * @return True iff enumSet has been set.
+         */
         public boolean isSetEnumSet() {
             return optionals.get(25);
         }
+
+        /**
+         * Clears the enumSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearEnumSet() {
-            optionals.set(25, false);
+            optionals.clear(25);
             mEnumSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of enumMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setEnumMap(java.util.Map<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> value) {
             optionals.set(26);
             mEnumMap.clear();
             mEnumMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to enumMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInEnumMap(net.morimekta.test.providence.Value key, net.morimekta.test.providence.Value value) {
             optionals.set(26);
             mEnumMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the enumMap field.
+         *
+         * @return True iff enumMap has been set.
+         */
         public boolean isSetEnumMap() {
             return optionals.get(26);
         }
+
+        /**
+         * Clears the enumMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearEnumMap() {
-            optionals.set(26, false);
+            optionals.clear(26);
             mEnumMap.clear();
             return this;
         }
-        /** Using struct as key and value in containers. */
+
+        /**
+         * Sets the value of messageList.
+         *
+         * Using struct as key and value in containers.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMessageList(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(27);
             mMessageList.clear();
             mMessageList.addAll(value);
             return this;
         }
-        /** Using struct as key and value in containers. */
+
+        /**
+         * Adds entries to messageList.
+         *
+         * Using struct as key and value in containers.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToMessageList(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(27);
             for (net.morimekta.test.providence.DefaultFields item : values) {
@@ -2583,20 +3429,49 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the messageList field.
+         *
+         * Using struct as key and value in containers.
+         *
+         * @return True iff messageList has been set.
+         */
         public boolean isSetMessageList() {
             return optionals.get(27);
         }
+
+        /**
+         * Clears the messageList field.
+         *
+         * Using struct as key and value in containers.
+         *
+         * @return The builder
+         */
         public _Builder clearMessageList() {
-            optionals.set(27, false);
+            optionals.clear(27);
             mMessageList.clear();
             return this;
         }
+
+        /**
+         * Sets the value of messageSet.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMessageSet(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(28);
             mMessageSet.clear();
             mMessageSet.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to messageSet.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToMessageSet(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(28);
             for (net.morimekta.test.providence.DefaultFields item : values) {
@@ -2605,113 +3480,266 @@ public class Containers
             return this;
         }
 
+        /**
+         * Checks for presence of the messageSet field.
+         *
+         * @return True iff messageSet has been set.
+         */
         public boolean isSetMessageSet() {
             return optionals.get(28);
         }
+
+        /**
+         * Clears the messageSet field.
+         *
+         * @return The builder
+         */
         public _Builder clearMessageSet() {
-            optionals.set(28, false);
+            optionals.clear(28);
             mMessageSet.clear();
             return this;
         }
+
+        /**
+         * Sets the value of messageMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMessageMap(java.util.Map<String,net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(29);
             mMessageMap.clear();
             mMessageMap.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to messageMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInMessageMap(String key, net.morimekta.test.providence.DefaultFields value) {
             optionals.set(29);
             mMessageMap.put(key, value);
             return this;
         }
 
+        /**
+         * Checks for presence of the messageMap field.
+         *
+         * @return True iff messageMap has been set.
+         */
         public boolean isSetMessageMap() {
             return optionals.get(29);
         }
+
+        /**
+         * Clears the messageMap field.
+         *
+         * @return The builder
+         */
         public _Builder clearMessageMap() {
-            optionals.set(29, false);
+            optionals.clear(29);
             mMessageMap.clear();
             return this;
         }
+
+        /**
+         * Sets the value of requiredFields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setRequiredFields(net.morimekta.test.providence.RequiredFields value) {
             optionals.set(30);
             mRequiredFields = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the requiredFields field.
+         *
+         * @return True iff requiredFields has been set.
+         */
         public boolean isSetRequiredFields() {
             return optionals.get(30);
         }
+
+        /**
+         * Clears the requiredFields field.
+         *
+         * @return The builder
+         */
         public _Builder clearRequiredFields() {
-            optionals.set(30, false);
+            optionals.clear(30);
             mRequiredFields = null;
             return this;
         }
+
+        /**
+         * Sets the value of defaultFields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDefaultFields(net.morimekta.test.providence.DefaultFields value) {
             optionals.set(31);
             mDefaultFields = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the defaultFields field.
+         *
+         * @return True iff defaultFields has been set.
+         */
         public boolean isSetDefaultFields() {
             return optionals.get(31);
         }
+
+        /**
+         * Clears the defaultFields field.
+         *
+         * @return The builder
+         */
         public _Builder clearDefaultFields() {
-            optionals.set(31, false);
+            optionals.clear(31);
             mDefaultFields = null;
             return this;
         }
+
+        /**
+         * Sets the value of optionalFields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOptionalFields(net.morimekta.test.providence.OptionalFields value) {
             optionals.set(32);
             mOptionalFields = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the optionalFields field.
+         *
+         * @return True iff optionalFields has been set.
+         */
         public boolean isSetOptionalFields() {
             return optionals.get(32);
         }
+
+        /**
+         * Clears the optionalFields field.
+         *
+         * @return The builder
+         */
         public _Builder clearOptionalFields() {
-            optionals.set(32, false);
+            optionals.clear(32);
             mOptionalFields = null;
             return this;
         }
+
+        /**
+         * Sets the value of unionFields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setUnionFields(net.morimekta.test.providence.UnionFields value) {
             optionals.set(33);
             mUnionFields = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the unionFields field.
+         *
+         * @return True iff unionFields has been set.
+         */
         public boolean isSetUnionFields() {
             return optionals.get(33);
         }
+
+        /**
+         * Clears the unionFields field.
+         *
+         * @return The builder
+         */
         public _Builder clearUnionFields() {
-            optionals.set(33, false);
+            optionals.clear(33);
             mUnionFields = null;
             return this;
         }
+
+        /**
+         * Sets the value of exceptionFields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setExceptionFields(net.morimekta.test.providence.ExceptionFields value) {
             optionals.set(34);
             mExceptionFields = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the exceptionFields field.
+         *
+         * @return True iff exceptionFields has been set.
+         */
         public boolean isSetExceptionFields() {
             return optionals.get(34);
         }
+
+        /**
+         * Clears the exceptionFields field.
+         *
+         * @return The builder
+         */
         public _Builder clearExceptionFields() {
-            optionals.set(34, false);
+            optionals.clear(34);
             mExceptionFields = null;
             return this;
         }
+
+        /**
+         * Sets the value of defaultValues.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDefaultValues(net.morimekta.test.providence.DefaultValues value) {
             optionals.set(35);
             mDefaultValues = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the defaultValues field.
+         *
+         * @return True iff defaultValues has been set.
+         */
         public boolean isSetDefaultValues() {
             return optionals.get(35);
         }
+
+        /**
+         * Clears the defaultValues field.
+         *
+         * @return The builder
+         */
         public _Builder clearDefaultValues() {
-            optionals.set(35, false);
+            optionals.clear(35);
             mDefaultValues = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

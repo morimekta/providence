@@ -23,14 +23,26 @@ public class Operand
         mImaginary = tUnionField == _Field.IMAGINARY ? builder.mImaginary : null;
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Operand withOperation(net.morimekta.test.calculator.Operation value) {
         return new _Builder().setOperation(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Operand withNumber(double value) {
         return new _Builder().setNumber(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Operand withImaginary(net.morimekta.test.number.Imaginary value) {
         return new _Builder().setImaginary(value).build();
     }
@@ -39,6 +51,9 @@ public class Operand
         return tUnionField == _Field.OPERATION && mOperation != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.calculator.Operation getOperation() {
         return mOperation;
     }
@@ -47,6 +62,9 @@ public class Operand
         return tUnionField == _Field.NUMBER;
     }
 
+    /**
+     * @return The field value
+     */
     public double getNumber() {
         return mNumber;
     }
@@ -55,6 +73,9 @@ public class Operand
         return tUnionField == _Field.IMAGINARY && mImaginary != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.test.number.Imaginary getImaginary() {
         return mImaginary;
     }
@@ -133,18 +154,18 @@ public class Operand
 
         switch (tUnionField) {
             case OPERATION: {
-                out.append("operation:");
-                out.append(mOperation.asString());
+                out.append("operation:")
+                   .append(mOperation.asString());
                 break;
             }
             case NUMBER: {
-                out.append("number:");
-                out.append(net.morimekta.util.Strings.asString(mNumber));
+                out.append("number:")
+                   .append(net.morimekta.util.Strings.asString(mNumber));
                 break;
             }
             case IMAGINARY: {
-                out.append("imaginary:");
-                out.append(mImaginary.asString());
+                out.append("imaginary:")
+                   .append(mImaginary.asString());
                 break;
             }
         }
@@ -303,6 +324,10 @@ public class Operand
         return new _Builder(this);
     }
 
+    /**
+     * Make a calculator.Operand builder.
+     * @return The builder instance.
+     */
     public static _Builder builder() {
         return new _Builder();
     }
@@ -315,11 +340,18 @@ public class Operand
         private double mNumber;
         private net.morimekta.test.number.Imaginary mImaginary;
 
-
+        /**
+         * Make a calculator.Operand builder.
+         */
         public _Builder() {
             mNumber = kDefaultNumber;
         }
 
+        /**
+         * Make a mutating builder off a base calculator.Operand.
+         *
+         * @param base The base Operand
+         */
         public _Builder(Operand base) {
             this();
 
@@ -330,46 +362,104 @@ public class Operand
             mImaginary = base.mImaginary;
         }
 
+        /**
+         * Sets the value of operation.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             tUnionField = _Field.OPERATION;
             mOperation = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the operation field.
+         *
+         * @return True iff operation has been set.
+         */
         public boolean isSetOperation() {
             return tUnionField == _Field.OPERATION;
         }
+
+        /**
+         * Clears the operation field.
+         *
+         * @return The builder
+         */
         public _Builder clearOperation() {
             if (tUnionField == _Field.OPERATION) tUnionField = null;
             mOperation = null;
             return this;
         }
+
+        /**
+         * Sets the value of number.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setNumber(double value) {
             tUnionField = _Field.NUMBER;
             mNumber = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the number field.
+         *
+         * @return True iff number has been set.
+         */
         public boolean isSetNumber() {
             return tUnionField == _Field.NUMBER;
         }
+
+        /**
+         * Clears the number field.
+         *
+         * @return The builder
+         */
         public _Builder clearNumber() {
             if (tUnionField == _Field.NUMBER) tUnionField = null;
             mNumber = kDefaultNumber;
             return this;
         }
+
+        /**
+         * Sets the value of imaginary.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setImaginary(net.morimekta.test.number.Imaginary value) {
             tUnionField = _Field.IMAGINARY;
             mImaginary = value;
             return this;
         }
+
+        /**
+         * Checks for presence of the imaginary field.
+         *
+         * @return True iff imaginary has been set.
+         */
         public boolean isSetImaginary() {
             return tUnionField == _Field.IMAGINARY;
         }
+
+        /**
+         * Clears the imaginary field.
+         *
+         * @return The builder
+         */
         public _Builder clearImaginary() {
             if (tUnionField == _Field.IMAGINARY) tUnionField = null;
             mImaginary = null;
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
