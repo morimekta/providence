@@ -2,9 +2,9 @@ package net.morimekta.providence.model;
 
 /**
  * Reflective thrift IDL description.
- * 
+ * <p>
  * Comments are gathered before the start of the next statement.
- * 
+ * <p>
  * - Line comments are accumulated with newline delimiter.
  *   Each line is individually trimmed.
  * - Block comments replace the entire comment.

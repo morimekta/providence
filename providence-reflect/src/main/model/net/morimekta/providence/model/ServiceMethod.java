@@ -1,6 +1,8 @@
 package net.morimekta.providence.model;
 
-/** (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')? */
+/**
+ * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
+ */
 @SuppressWarnings("unused")
 public class ServiceMethod
         implements net.morimekta.providence.PMessage<ServiceMethod>, java.io.Serializable, Comparable<ServiceMethod> {
@@ -72,6 +74,9 @@ public class ServiceMethod
         return mComment != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -80,6 +85,9 @@ public class ServiceMethod
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public boolean isOneWay() {
         return mOneWay;
     }
@@ -88,6 +96,9 @@ public class ServiceMethod
         return mReturnType != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getReturnType() {
         return mReturnType;
     }
@@ -96,6 +107,9 @@ public class ServiceMethod
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -108,6 +122,9 @@ public class ServiceMethod
         return mParams != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.providence.model.ThriftField> getParams() {
         return mParams;
     }
@@ -120,6 +137,9 @@ public class ServiceMethod
         return mExceptions != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.providence.model.ThriftField> getExceptions() {
         return mExceptions;
     }
@@ -132,6 +152,9 @@ public class ServiceMethod
         return mAnnotations != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
@@ -223,46 +246,37 @@ public class ServiceMethod
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasOneWay()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("one_way:");
-            out.append(mOneWay ? "true" : "false");
+        out.append("one_way:")
+            .append(mOneWay);
+        if (mReturnType != null) {
+            out.append(',');
+            out.append("return_type:")
+                .append('\"').append(mReturnType).append('\"');
         }
-        if (hasReturnType()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("return_type:");
-            out.append('\"').append(mReturnType).append('\"');
+        if (mName != null) {
+            out.append(',');
+            out.append("name:")
+                .append('\"').append(mName).append('\"');
         }
-        if (hasName()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+        if (mParams != null && mParams.size() > 0) {
+            out.append(',');
+            out.append("params:")
+                .append(net.morimekta.util.Strings.asString(mParams));
         }
-        if (numParams() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("params:");
-            out.append(net.morimekta.util.Strings.asString(mParams));
+        if (mExceptions != null && mExceptions.size() > 0) {
+            out.append(',');
+            out.append("exceptions:")
+                .append(net.morimekta.util.Strings.asString(mExceptions));
         }
-        if (numExceptions() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("exceptions:");
-            out.append(net.morimekta.util.Strings.asString(mExceptions));
-        }
-        if (numAnnotations() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("annotations:");
-            out.append(net.morimekta.util.Strings.asString(mAnnotations));
+        if (mAnnotations != null && mAnnotations.size() > 0) {
+            out.append(',');
+            out.append("annotations:")
+                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -479,9 +493,9 @@ public class ServiceMethod
         private boolean mOneWay;
         private String mReturnType;
         private String mName;
-        private net.morimekta.providence.descriptor.PList.Builder mParams;
-        private net.morimekta.providence.descriptor.PList.Builder mExceptions;
-        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mParams;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mExceptions;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
 
         public _Builder() {
@@ -523,64 +537,153 @@ public class ServiceMethod
             }
         }
 
+        /**
+         * Sets the value of comment.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
+
+        /**
+         * Sets the value of one_way.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setOneWay(boolean value) {
             optionals.set(1);
             mOneWay = value;
             return this;
         }
+
+        /**
+         * Checked presence of the one_way field.
+         *
+         * @return True iff one_way has been set.
+         */
         public boolean isSetOneWay() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the one_way field.
+         *
+         * @return The builder
+         */
         public _Builder clearOneWay() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mOneWay = kDefaultOneWay;
             return this;
         }
+
+        /**
+         * Sets the value of return_type.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setReturnType(String value) {
             optionals.set(2);
             mReturnType = value;
             return this;
         }
+
+        /**
+         * Checked presence of the return_type field.
+         *
+         * @return True iff return_type has been set.
+         */
         public boolean isSetReturnType() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the return_type field.
+         *
+         * @return The builder
+         */
         public _Builder clearReturnType() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mReturnType = null;
             return this;
         }
+
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(3);
             mName = value;
             return this;
         }
+
+        /**
+         * Checked presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mName = null;
             return this;
         }
+
+        /**
+         * Sets the value of params.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setParams(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
             optionals.set(4);
             mParams.clear();
             mParams.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to params.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToParams(net.morimekta.providence.model.ThriftField... values) {
             optionals.set(4);
             for (net.morimekta.providence.model.ThriftField item : values) {
@@ -589,20 +692,45 @@ public class ServiceMethod
             return this;
         }
 
+        /**
+         * Checked presence of the params field.
+         *
+         * @return True iff params has been set.
+         */
         public boolean isSetParams() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the params field.
+         *
+         * @return The builder
+         */
         public _Builder clearParams() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mParams.clear();
             return this;
         }
+
+        /**
+         * Sets the value of exceptions.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
             optionals.set(5);
             mExceptions.clear();
             mExceptions.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to exceptions.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToExceptions(net.morimekta.providence.model.ThriftField... values) {
             optionals.set(5);
             for (net.morimekta.providence.model.ThriftField item : values) {
@@ -611,34 +739,72 @@ public class ServiceMethod
             return this;
         }
 
+        /**
+         * Checked presence of the exceptions field.
+         *
+         * @return True iff exceptions has been set.
+         */
         public boolean isSetExceptions() {
             return optionals.get(5);
         }
+
+        /**
+         * Clears the exceptions field.
+         *
+         * @return The builder
+         */
         public _Builder clearExceptions() {
-            optionals.set(5, false);
+            optionals.clear(5);
             mExceptions.clear();
             return this;
         }
+
+        /**
+         * Sets the value of annotations.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to annotations.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
             mAnnotations.put(key, value);
             return this;
         }
 
+        /**
+         * Checked presence of the annotations field.
+         *
+         * @return True iff annotations has been set.
+         */
         public boolean isSetAnnotations() {
             return optionals.get(6);
         }
+
+        /**
+         * Clears the annotations field.
+         *
+         * @return The builder
+         */
         public _Builder clearAnnotations() {
-            optionals.set(6, false);
+            optionals.clear(6);
             mAnnotations.clear();
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

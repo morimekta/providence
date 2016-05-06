@@ -35,6 +35,8 @@ public class ThriftOnlySerializerProvider implements SerializerProvider {
         this.defaultContentType = defaultContentType;
         this.serializerMap = new HashMap<>();
 
+        // The BinarySerializer is identical to the TBinaryProtocolSerializer,
+        // except that it is "native providence".
         register(new BinarySerializer(), BinarySerializer.MIME_TYPE, TBinaryProtocolSerializer.ALT_MIME_TYPE);
         register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
         register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);

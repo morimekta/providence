@@ -1,6 +1,8 @@
 package net.morimekta.providence.model;
 
-/** typedef <type> <name> */
+/**
+ * typedef &lt;type&gt; &lt;name&gt;
+ */
 @SuppressWarnings("unused")
 public class TypedefType
         implements net.morimekta.providence.PMessage<TypedefType>, java.io.Serializable, Comparable<TypedefType> {
@@ -30,6 +32,9 @@ public class TypedefType
         return mComment != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -38,6 +43,9 @@ public class TypedefType
         return mType != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getType() {
         return mType;
     }
@@ -46,6 +54,9 @@ public class TypedefType
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -117,22 +128,21 @@ public class TypedefType
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasType()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("type:");
-            out.append('\"').append(mType).append('\"');
+        if (mType != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("type:")
+                .append('\"').append(mType).append('\"');
         }
-        if (hasName()) {
+        if (mName != null) {
             if (!first) out.append(',');
-            first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+            out.append("name:")
+                .append('\"').append(mName).append('\"');
         }
         out.append('}');
         return out.toString();
@@ -335,45 +345,102 @@ public class TypedefType
             }
         }
 
+        /**
+         * Sets the value of comment.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
+
+        /**
+         * Sets the value of type.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setType(String value) {
             optionals.set(1);
             mType = value;
             return this;
         }
+
+        /**
+         * Checked presence of the type field.
+         *
+         * @return True iff type has been set.
+         */
         public boolean isSetType() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the type field.
+         *
+         * @return The builder
+         */
         public _Builder clearType() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mType = null;
             return this;
         }
+
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(2);
             mName = value;
             return this;
         }
+
+        /**
+         * Checked presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mName = null;
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

@@ -27,7 +27,6 @@ import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
-import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CEnum;
@@ -39,11 +38,9 @@ import net.morimekta.util.io.IndentedPrintWriter;
  * @since 20.09.15
  */
 public class JEnumFormat {
-    private final JHelper  helper;
     private final JOptions options;
 
-    public JEnumFormat(JHelper helper, JOptions options) {
-        this.helper = helper;
+    JEnumFormat(JOptions options) {
         this.options = options;
     }
 
@@ -251,7 +248,7 @@ public class JEnumFormat {
               .appendln('}');
     }
 
-    protected void appendBuilder(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
+    private void appendBuilder(IndentedPrintWriter writer, PEnumDescriptor<?> type) {
         String simpleClass = JUtils.getClassName(type);
         writer.formatln("public static class _Builder extends %s<%s> {",
                         PEnumBuilder.class.getName(),

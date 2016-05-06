@@ -14,7 +14,6 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JService;
 import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
 import net.morimekta.providence.mio.MessageReader;
@@ -28,17 +27,12 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
 
-/**
- * Created by morimekta on 4/24/16.
- */
 public class JServiceFormat {
     private final JHelper helper;
-    private final JOptions options;
     private final JMessageFormat messageFormat;
 
-    public JServiceFormat(JHelper helper, JOptions options, JMessageFormat messageFormat) {
+    JServiceFormat(JHelper helper, JMessageFormat messageFormat) {
         this.helper = helper;
-        this.options = options;
         this.messageFormat = messageFormat;
     }
 
@@ -225,15 +219,31 @@ public class JServiceFormat {
                         MessageReader.class.getName(),
                         MessageWriter.class.getName(),
                         IOException.class.getName())
-              .begin()
-              .appendln("try {")
               .begin();
 
-        writer.formatln("%s call = reader.read(%s.kDescriptor);",
-                        PServiceCall.class.getName(),
+        writer.appendln("try {")
+              .begin();
+
+        writer.formatln("%s call;",
+                        PServiceCall.class.getName())
+              .appendln("try {")
+              .formatln("    call = reader.read(%s.kDescriptor);",
                         service.className())
-              .newline()
-              .appendln("switch(call.getMethod()) {")
+              .formatln("} catch (%s se) {", SerializerException.class.getName())
+              .formatln("    writer.write(new %s(", PServiceCall.class.getName())
+              .appendln("            se.getMethodName(),")
+              .formatln("            %s.%s,",
+                        PServiceCallType.class.getName(),
+                        PServiceCallType.EXCEPTION.name())
+              .appendln("            se.getSequenceNo(),")
+              .formatln("            new %s(", ApplicationException.class.getName())
+              .appendln("                    se.getMessage(),")
+              .appendln("                    se.getExceptionType())));")
+              .appendln("    return true;")
+              .appendln('}')
+              .newline();
+
+        writer.appendln("switch(call.getMethod()) {")
               .begin();
 
         for (JServiceMethod method : service.methods()) {
@@ -315,10 +325,11 @@ public class JServiceFormat {
 
         writer.appendln("default: {")
               .begin()
-              .formatln("%s ex = new %s(\"Unknown method \\\"\" + call.getMethod() + \"\\\" on %s.\", %s.%s);",
-                        ApplicationException.class.getName(),
-                        ApplicationException.class.getName(),
-                        service.getService().getQualifiedName(null),
+              .formatln("%s ex =", ApplicationException.class.getName())
+              .formatln("        new %s(", ApplicationException.class.getName())
+              .formatln("                \"Unknown method \\\"\" + call.getMethod() + \"\\\" on %s.\",",
+                        service.getService().getQualifiedName(null))
+              .formatln("                %s.%s);",
                         ApplicationExceptionType.class.getName(),
                         ApplicationExceptionType.UNKNOWN_METHOD.getName());
 

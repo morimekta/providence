@@ -5,11 +5,11 @@ package net.morimekta.providence.model;
  *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
  * For const:
  *   const &lt;type&gt; &lt;name&gt; = &lt;default_value&gt;
- * 
+ * <p>
  * Fields without key is assigned values ranging from 65335 and down (2^16-1)
  * in order of appearance. Because of the &quot;in order of appearance&quot; the field
  * *must* be filled by the IDL parser.
- * 
+ * <p>
  * Consts are always given the key &#39;0&#39;.
  */
 @SuppressWarnings("unused")
@@ -68,6 +68,9 @@ public class ThriftField
         return mComment != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -76,6 +79,9 @@ public class ThriftField
         return true;
     }
 
+    /**
+     * @return The field value
+     */
     public int getKey() {
         return mKey;
     }
@@ -84,6 +90,9 @@ public class ThriftField
         return mRequirement != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.Requirement getRequirement() {
         return hasRequirement() ? mRequirement : kDefaultRequirement;
     }
@@ -92,6 +101,9 @@ public class ThriftField
         return mType != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getType() {
         return mType;
     }
@@ -100,6 +112,9 @@ public class ThriftField
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -108,6 +123,9 @@ public class ThriftField
         return mDefaultValue != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getDefaultValue() {
         return mDefaultValue;
     }
@@ -120,6 +138,9 @@ public class ThriftField
         return mAnnotations != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
@@ -211,46 +232,37 @@ public class ThriftField
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasKey()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("key:");
-            out.append(Integer.toString(mKey));
+        out.append("key:")
+            .append(mKey);
+        if (mRequirement != null) {
+            out.append(',');
+            out.append("requirement:")
+                .append(mRequirement.toString());
         }
-        if (hasRequirement()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("requirement:");
-            out.append(mRequirement.getName());
+        if (mType != null) {
+            out.append(',');
+            out.append("type:")
+                .append('\"').append(mType).append('\"');
         }
-        if (hasType()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("type:");
-            out.append('\"').append(mType).append('\"');
+        if (mName != null) {
+            out.append(',');
+            out.append("name:")
+                .append('\"').append(mName).append('\"');
         }
-        if (hasName()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+        if (mDefaultValue != null) {
+            out.append(',');
+            out.append("default_value:")
+                .append('\"').append(mDefaultValue).append('\"');
         }
-        if (hasDefaultValue()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("default_value:");
-            out.append('\"').append(mDefaultValue).append('\"');
-        }
-        if (numAnnotations() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("annotations:");
-            out.append(net.morimekta.util.Strings.asString(mAnnotations));
+        if (mAnnotations != null && mAnnotations.size() > 0) {
+            out.append(',');
+            out.append("annotations:")
+                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -469,7 +481,7 @@ public class ThriftField
         private String mType;
         private String mName;
         private String mDefaultValue;
-        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
 
         public _Builder() {
@@ -509,104 +521,244 @@ public class ThriftField
             }
         }
 
+        /**
+         * Sets the value of comment.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
+
+        /**
+         * Sets the value of key.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setKey(int value) {
             optionals.set(1);
             mKey = value;
             return this;
         }
+
+        /**
+         * Checked presence of the key field.
+         *
+         * @return True iff key has been set.
+         */
         public boolean isSetKey() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the key field.
+         *
+         * @return The builder
+         */
         public _Builder clearKey() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mKey = kDefaultKey;
             return this;
         }
+
+        /**
+         * Sets the value of requirement.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setRequirement(net.morimekta.providence.model.Requirement value) {
             optionals.set(2);
             mRequirement = value;
             return this;
         }
+
+        /**
+         * Checked presence of the requirement field.
+         *
+         * @return True iff requirement has been set.
+         */
         public boolean isSetRequirement() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the requirement field.
+         *
+         * @return The builder
+         */
         public _Builder clearRequirement() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mRequirement = null;
             return this;
         }
+
+        /**
+         * Sets the value of type.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setType(String value) {
             optionals.set(3);
             mType = value;
             return this;
         }
+
+        /**
+         * Checked presence of the type field.
+         *
+         * @return True iff type has been set.
+         */
         public boolean isSetType() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the type field.
+         *
+         * @return The builder
+         */
         public _Builder clearType() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mType = null;
             return this;
         }
+
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(4);
             mName = value;
             return this;
         }
+
+        /**
+         * Checked presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mName = null;
             return this;
         }
+
+        /**
+         * Sets the value of default_value.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDefaultValue(String value) {
             optionals.set(5);
             mDefaultValue = value;
             return this;
         }
+
+        /**
+         * Checked presence of the default_value field.
+         *
+         * @return True iff default_value has been set.
+         */
         public boolean isSetDefaultValue() {
             return optionals.get(5);
         }
+
+        /**
+         * Clears the default_value field.
+         *
+         * @return The builder
+         */
         public _Builder clearDefaultValue() {
-            optionals.set(5, false);
+            optionals.clear(5);
             mDefaultValue = null;
             return this;
         }
+
+        /**
+         * Sets the value of annotations.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to annotations.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
             mAnnotations.put(key, value);
             return this;
         }
 
+        /**
+         * Checked presence of the annotations field.
+         *
+         * @return True iff annotations has been set.
+         */
         public boolean isSetAnnotations() {
             return optionals.get(6);
         }
+
+        /**
+         * Clears the annotations field.
+         *
+         * @return The builder
+         */
         public _Builder clearAnnotations() {
-            optionals.set(6, false);
+            optionals.clear(6);
             mAnnotations.clear();
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

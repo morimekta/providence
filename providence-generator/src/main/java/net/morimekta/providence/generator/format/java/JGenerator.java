@@ -41,25 +41,26 @@ import java.io.OutputStream;
  * @since 05.09.15
  */
 public class JGenerator extends Generator {
-    private final JOptions mOptions;
-    TypeRegistry mRegistry;
-    JHelper      helper;
+    private final JHelper          helper;
+    private final JMessageFormat   messageFormatter;
+    private final JEnumFormat      enumFormatter;
+    private final JServiceFormat   serviceFormatter;
+    private final JConstantsFormat constFormat;
 
     public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) {
         super(manager);
-        mRegistry = registry;
-        mOptions = options;
 
-        helper = new JHelper(mRegistry, options);
+        helper           = new JHelper(registry, options);
+        messageFormatter = new JMessageFormat(helper, options);
+        enumFormatter    = new JEnumFormat(options);
+        serviceFormatter = new JServiceFormat(helper, messageFormatter);
+        constFormat      = new JConstantsFormat(helper, options);
     }
 
     @Override
     @SuppressWarnings("resource")
     public void generate(CDocument document) throws IOException, GeneratorException {
         String javaPackage = JUtils.getJavaPackage(document);
-        JMessageFormat messageFormatter = new JMessageFormat(helper, mOptions);
-        JEnumFormat    enumFormatter    = new JEnumFormat(helper, mOptions);
-        JServiceFormat serviceFormatter = new JServiceFormat(helper, mOptions, messageFormatter);
 
         String path = JUtils.getPackageClassPath(javaPackage);
 
@@ -68,7 +69,6 @@ public class JGenerator extends Generator {
             String file = helper.getConstantsClassName(document) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
-                JConstantsFormat constFormat = new JConstantsFormat(helper, mOptions);
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 constFormat.format(writer, document);
                 writer.flush();

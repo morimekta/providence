@@ -20,5 +20,5 @@ enum ApplicationExceptionType {
  */
 exception ApplicationException {
     1: string message;
-    2: i32 id = 0;
+    2: ApplicationExceptionType id = ApplicationExceptionType.UNKNOWN;
 }

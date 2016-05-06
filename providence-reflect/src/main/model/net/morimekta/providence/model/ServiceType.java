@@ -58,6 +58,9 @@ public class ServiceType
         return mComment != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -66,6 +69,9 @@ public class ServiceType
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -74,6 +80,9 @@ public class ServiceType
         return mExtend != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getExtend() {
         return mExtend;
     }
@@ -86,6 +95,9 @@ public class ServiceType
         return mMethods != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.providence.model.ServiceMethod> getMethods() {
         return mMethods;
     }
@@ -98,6 +110,9 @@ public class ServiceType
         return mAnnotations != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
@@ -179,34 +194,33 @@ public class ServiceType
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasName()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+        if (mName != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("name:")
+                .append('\"').append(mName).append('\"');
         }
-        if (hasExtend()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("extend:");
-            out.append('\"').append(mExtend).append('\"');
+        if (mExtend != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("extend:")
+                .append('\"').append(mExtend).append('\"');
         }
-        if (numMethods() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("methods:");
-            out.append(net.morimekta.util.Strings.asString(mMethods));
+        if (mMethods != null && mMethods.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("methods:")
+                .append(net.morimekta.util.Strings.asString(mMethods));
         }
-        if (numAnnotations() > 0) {
+        if (mAnnotations != null && mAnnotations.size() > 0) {
             if (!first) out.append(',');
-            first = false;
-            out.append("annotations:");
-            out.append(net.morimekta.util.Strings.asString(mAnnotations));
+            out.append("annotations:")
+                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -406,8 +420,8 @@ public class ServiceType
         private String mComment;
         private String mName;
         private String mExtend;
-        private net.morimekta.providence.descriptor.PList.Builder mMethods;
-        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ServiceMethod> mMethods;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
 
         public _Builder() {
@@ -441,51 +455,121 @@ public class ServiceType
             }
         }
 
+        /**
+         * Sets the value of comment.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
+
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(1);
             mName = value;
             return this;
         }
+
+        /**
+         * Checked presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mName = null;
             return this;
         }
+
+        /**
+         * Sets the value of extend.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setExtend(String value) {
             optionals.set(2);
             mExtend = value;
             return this;
         }
+
+        /**
+         * Checked presence of the extend field.
+         *
+         * @return True iff extend has been set.
+         */
         public boolean isSetExtend() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the extend field.
+         *
+         * @return The builder
+         */
         public _Builder clearExtend() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mExtend = null;
             return this;
         }
+
+        /**
+         * Sets the value of methods.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.ServiceMethod> value) {
             optionals.set(3);
             mMethods.clear();
             mMethods.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to methods.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToMethods(net.morimekta.providence.model.ServiceMethod... values) {
             optionals.set(3);
             for (net.morimekta.providence.model.ServiceMethod item : values) {
@@ -494,34 +578,72 @@ public class ServiceType
             return this;
         }
 
+        /**
+         * Checked presence of the methods field.
+         *
+         * @return True iff methods has been set.
+         */
         public boolean isSetMethods() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the methods field.
+         *
+         * @return The builder
+         */
         public _Builder clearMethods() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mMethods.clear();
             return this;
         }
+
+        /**
+         * Sets the value of annotations.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to annotations.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
             mAnnotations.put(key, value);
             return this;
         }
 
+        /**
+         * Checked presence of the annotations field.
+         *
+         * @return True iff annotations has been set.
+         */
         public boolean isSetAnnotations() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the annotations field.
+         *
+         * @return The builder
+         */
         public _Builder clearAnnotations() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mAnnotations.clear();
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

@@ -11,4 +11,4 @@ test-models:
 	    providence-core/src/test/providence/*.thrift \
 	    providence-core/src/test/providence/*/*.thrift
 
-.PHONY: serializer model
+.PHONY: serializer model test-models

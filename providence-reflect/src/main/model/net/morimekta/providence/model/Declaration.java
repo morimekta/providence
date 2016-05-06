@@ -1,6 +1,8 @@
 package net.morimekta.providence.model;
 
-/** ( <enum> | <typedef> | <struct> | <service> | <const> ) */
+/**
+ * ( &lt;enum&gt; | &lt;typedef&gt; | &lt;struct&gt; | &lt;service&gt; | &lt;const&gt; )
+ */
 @SuppressWarnings("unused")
 public class Declaration
         implements net.morimekta.providence.PUnion<Declaration>, java.io.Serializable, Comparable<Declaration> {
@@ -26,22 +28,42 @@ public class Declaration
         mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclEnum(net.morimekta.providence.model.EnumType value) {
         return new _Builder().setDeclEnum(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclTypedef(net.morimekta.providence.model.TypedefType value) {
         return new _Builder().setDeclTypedef(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclStruct(net.morimekta.providence.model.StructType value) {
         return new _Builder().setDeclStruct(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclService(net.morimekta.providence.model.ServiceType value) {
         return new _Builder().setDeclService(value).build();
     }
 
+    /**
+     * @param value The union value
+     * @return The created union.
+     */
     public static Declaration withDeclConst(net.morimekta.providence.model.ThriftField value) {
         return new _Builder().setDeclConst(value).build();
     }
@@ -50,6 +72,9 @@ public class Declaration
         return tUnionField == _Field.DECL_ENUM && mDeclEnum != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.EnumType getDeclEnum() {
         return mDeclEnum;
     }
@@ -58,6 +83,9 @@ public class Declaration
         return tUnionField == _Field.DECL_TYPEDEF && mDeclTypedef != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.TypedefType getDeclTypedef() {
         return mDeclTypedef;
     }
@@ -66,6 +94,9 @@ public class Declaration
         return tUnionField == _Field.DECL_STRUCT && mDeclStruct != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.StructType getDeclStruct() {
         return mDeclStruct;
     }
@@ -74,6 +105,9 @@ public class Declaration
         return tUnionField == _Field.DECL_SERVICE && mDeclService != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.ServiceType getDeclService() {
         return mDeclService;
     }
@@ -82,6 +116,9 @@ public class Declaration
         return tUnionField == _Field.DECL_CONST && mDeclConst != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.ThriftField getDeclConst() {
         return mDeclConst;
     }
@@ -390,71 +427,166 @@ public class Declaration
             mDeclConst = base.mDeclConst;
         }
 
+        /**
+         * Sets the value of decl_enum.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
             tUnionField = _Field.DECL_ENUM;
             mDeclEnum = value;
             return this;
         }
+
+        /**
+         * Checked presence of the decl_enum field.
+         *
+         * @return True iff decl_enum has been set.
+         */
         public boolean isSetDeclEnum() {
             return tUnionField == _Field.DECL_ENUM;
         }
+
+        /**
+         * Clears the decl_enum field.
+         *
+         * @return The builder
+         */
         public _Builder clearDeclEnum() {
             if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
             mDeclEnum = null;
             return this;
         }
+
+        /**
+         * Sets the value of decl_typedef.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
             mDeclTypedef = value;
             return this;
         }
+
+        /**
+         * Checked presence of the decl_typedef field.
+         *
+         * @return True iff decl_typedef has been set.
+         */
         public boolean isSetDeclTypedef() {
             return tUnionField == _Field.DECL_TYPEDEF;
         }
+
+        /**
+         * Clears the decl_typedef field.
+         *
+         * @return The builder
+         */
         public _Builder clearDeclTypedef() {
             if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
             mDeclTypedef = null;
             return this;
         }
+
+        /**
+         * Sets the value of decl_struct.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDeclStruct(net.morimekta.providence.model.StructType value) {
             tUnionField = _Field.DECL_STRUCT;
             mDeclStruct = value;
             return this;
         }
+
+        /**
+         * Checked presence of the decl_struct field.
+         *
+         * @return True iff decl_struct has been set.
+         */
         public boolean isSetDeclStruct() {
             return tUnionField == _Field.DECL_STRUCT;
         }
+
+        /**
+         * Clears the decl_struct field.
+         *
+         * @return The builder
+         */
         public _Builder clearDeclStruct() {
             if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
             mDeclStruct = null;
             return this;
         }
+
+        /**
+         * Sets the value of decl_service.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
             mDeclService = value;
             return this;
         }
+
+        /**
+         * Checked presence of the decl_service field.
+         *
+         * @return True iff decl_service has been set.
+         */
         public boolean isSetDeclService() {
             return tUnionField == _Field.DECL_SERVICE;
         }
+
+        /**
+         * Clears the decl_service field.
+         *
+         * @return The builder
+         */
         public _Builder clearDeclService() {
             if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
             mDeclService = null;
             return this;
         }
+
+        /**
+         * Sets the value of decl_const.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDeclConst(net.morimekta.providence.model.ThriftField value) {
             tUnionField = _Field.DECL_CONST;
             mDeclConst = value;
             return this;
         }
+
+        /**
+         * Checked presence of the decl_const field.
+         *
+         * @return True iff decl_const has been set.
+         */
         public boolean isSetDeclConst() {
             return tUnionField == _Field.DECL_CONST;
         }
+
+        /**
+         * Clears the decl_const field.
+         *
+         * @return The builder
+         */
         public _Builder clearDeclConst() {
             if (tUnionField == _Field.DECL_CONST) tUnionField = null;
             mDeclConst = null;
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

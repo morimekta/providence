@@ -242,45 +242,39 @@ public class JMessageOverridesFormat {
             for (JField field : message.fields()) {
                 writer.formatln("case %s: {", field.fieldEnum())
                       .begin()
-                      .formatln("out.append(\"%s:\");", field.name());
+                      .formatln("out.append(\"%s:\")", field.name());
 
                 switch (field.type()) {
                     case BOOL:
-                        writer.formatln("out.append(%s);", field.member());
+                    case I32:
+                    case I64:
+                        writer.formatln("   .append(%s);", field.member());
                         break;
                     case BYTE:
-                        writer.formatln("out.append(%s);", field.member());
-                        break;
                     case I16:
-                        writer.formatln("out.append(%s);", field.member());
-                        break;
-                    case I32:
-                        writer.formatln("out.append(%s);", field.member());
-                        break;
-                    case I64:
-                        writer.formatln("out.append(%s);", field.member());
+                        writer.formatln("   .append((int) %s);", field.member());
                         break;
                     case DOUBLE:
-                        writer.formatln("out.append(%s.asString(%s));", Strings.class.getName(), field.member());
-                        break;
-                    case STRING:
-                        writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
-                        break;
-                    case BINARY:
-                        writer.formatln("out.append(\"b64(\").append(%s.toBase64()).append(')');", field.member());
-                        break;
-                    case ENUM:
-                        writer.formatln("out.append(%s.getName());", field.member());
-                        break;
-                    case MESSAGE:
-                        writer.formatln("out.append(%s.asString());", field.member());
-                        break;
                     case SET:
                     case LIST:
                     case MAP:
-                        writer.formatln("out.append(%s.asString(%s));",
+                        writer.formatln("   .append(%s.asString(%s));",
                                         Strings.class.getName(),
                                         field.member());
+                        break;
+                    case STRING:
+                        writer.formatln("   .append('\\\"').append(%s.escape(%s)).append('\\\"');",
+                                        Strings.class.getName(),
+                                        field.member());
+                        break;
+                    case BINARY:
+                        writer.formatln("   .append(\"b64(\").append(%s.toBase64()).append(')');", field.member());
+                        break;
+                    case MESSAGE:
+                        writer.formatln("   .append(%s.asString());", field.member());
+                        break;
+                    default:
+                        writer.formatln("   .append(%s.getName());", field.member());
                         break;
                 }
 
@@ -291,68 +285,90 @@ public class JMessageOverridesFormat {
             writer.end()
                   .appendln('}');
         } else {
-            writer.appendln("boolean first = true;");
+            boolean firstFirstCheck = true;
+            boolean alwaysAfter = false;
+            boolean last, first;
 
-            boolean first = true;
-            for (JField field : message.fields()) {
-                if (field.container()) {
-                    writer.formatln("if (%s() > 0) {", field.counter());
-                } else {
-                    writer.formatln("if (%s()) {", field.presence());
-                }
-                writer.begin();
-                if (first) {
-                    first = false;
-                } else {
-                    writer.appendln("if (!first) out.append(',');");
-                }
-                writer.appendln("first = false;")
-                      .formatln("out.append(\"%s:\");", field.name());
+            JField[] fields = message.fields().toArray(new JField[message.fields().size()]);
+            for (int i = 0; i < fields.length; ++i) {
+                first = i == 0;
+                last  = i == (fields.length - 1);
 
+                JField field = fields[i];
+                if (!field.alwaysPresent()) {
+                    if (!alwaysAfter && firstFirstCheck && !last) {
+                        writer.appendln("boolean first = true;");
+                    }
+                    if (field.container()) {
+                        writer.formatln("if (%s != null && %s.size() > 0) {", field.member(), field.member());
+                    } else {
+                        writer.formatln("if (%s != null) {", field.member());
+                    }
+                    writer.begin();
+                }
+
+                if (alwaysAfter) {
+                    writer.appendln("out.append(',');");
+                } else if (!field.alwaysPresent()) {
+                    if (firstFirstCheck || first) {
+                        if (!last) {
+                            writer.appendln("first = false;");
+                        }
+                    } else if (last) {
+                        writer.appendln("if (!first) out.append(',');");
+                    } else {
+                        writer.appendln("if (first) first = false;")
+                              .appendln("else out.append(',');");
+                    }
+                }
+
+                writer.formatln("out.append(\"%s:\")", field.name());
                 switch (field.type()) {
                     case BOOL:
-                        writer.formatln("out.append(%s ? \"true\" : \"false\");", field.member());
+                    case I32:
+                    case I64:
+                        writer.formatln("   .append(%s);", field.member());
                         break;
                     case BYTE:
-                        writer.formatln("out.append(Byte.toString(%s));", field.member());
-                        break;
                     case I16:
-                        writer.formatln("out.append(Short.toString(%s));", field.member());
-                        break;
-                    case I32:
-                        writer.formatln("out.append(Integer.toString(%s));", field.member());
-                        break;
-                    case I64:
-                        writer.formatln("out.append(Long.toString(%s));", field.member());
+                        writer.formatln("   .append((int) %s);", field.member());
                         break;
                     case DOUBLE:
-                        writer.formatln("out.append(%s.asString(%s));",
+                    case MAP:
+                    case SET:
+                    case LIST:
+                        writer.formatln("   .append(%s.asString(%s));",
                                         Strings.class.getName(),
                                         field.member());
                         break;
                     case STRING:
-                        writer.formatln("out.append('\\\"').append(%s).append('\\\"');", field.member());
+                        writer.appendln("   .append('\\\"')")
+                              .formatln("   .append(%s.escape(%s))",
+                                        Strings.class.getName(),
+                                        field.member())
+                              .appendln("   .append('\\\"');");
                         break;
                     case BINARY:
-                        writer.formatln("out.append(\"hex(\").append(%s.toHexString()).append(')');", field.member());
-                        break;
-                    case ENUM:
-                        writer.formatln("out.append(%s.getName());", field.member());
+                        writer.appendln("   .append(\"b64(\")")
+                              .formatln("   .append(%s.toBase64())", field.member())
+                              .appendln("   .append(')');");
                         break;
                     case MESSAGE:
-                        writer.formatln("out.append(%s.asString());", field.member());
+                        writer.formatln("   .append(%s.asString());", field.member());
                         break;
-                    case SET:
-                    case LIST:
-                    case MAP:
-                        writer.formatln("out.append(%s.asString(%s));",
-                                        Strings.class.getName(),
-                                        field.member());
+                    default:
+                        writer.formatln("   .append(%s.toString());", field.member());
                         break;
                 }
 
-                writer.end()
-                      .appendln('}');
+                if (!field.alwaysPresent()) {
+                    writer.end().appendln('}');
+                    if (!alwaysAfter && firstFirstCheck) {
+                        firstFirstCheck = false;
+                    }
+                } else {
+                    alwaysAfter = true;
+                }
             }
         }
 

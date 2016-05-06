@@ -17,7 +17,7 @@ public interface CAnnotatedDescriptor {
 
     /**
      * Get set of available annotations.
-     * @return
+     * @return The annotation set.
      */
     Set<String> getAnnotations();
 

@@ -27,9 +27,6 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.utils.ContainerType;
-import net.morimekta.providence.generator.format.java.utils.JAnnotation;
-import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.reflect.contained.CField;
 
 import com.google.common.collect.ImmutableList;
@@ -179,10 +176,33 @@ public class JField {
 
     public String builderFieldType() throws GeneratorException  {
         switch (field.getType()) {
-            case MAP: return PMap.Builder.class.getName().replace('$', '.');
-            case SET: return PSet.Builder.class.getName().replace('$', '.');
-            case LIST: return PList.Builder.class.getName().replace('$', '.');
-            default: return fieldType();
+            case MAP: {
+                PMap mType = (PMap) field.getDescriptor();
+                String kType = helper.getFieldType(mType.keyDescriptor());
+                String iType = helper.getFieldType(mType.itemDescriptor());
+                return String.format(
+                        "%s<%s,%s>",
+                        PMap.Builder.class.getName().replace('$', '.'),
+                        kType, iType);
+            }
+            case SET: {
+                PSet sType = (PSet) field.getDescriptor();
+                String iType = helper.getFieldType(sType.itemDescriptor());
+                return String.format(
+                        "%s<%s>",
+                        PSet.Builder.class.getName().replace('$', '.'),
+                        iType);
+            }
+            case LIST: {
+                PList lType = (PList) field.getDescriptor();
+                String iType = helper.getFieldType(lType.itemDescriptor());
+                return String.format(
+                        "%s<%s>",
+                        PList.Builder.class.getName().replace('$', '.'),
+                        iType);
+            }
+            default:
+                return fieldType();
         }
     }
 

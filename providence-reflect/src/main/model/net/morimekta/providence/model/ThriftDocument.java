@@ -1,6 +1,8 @@
 package net.morimekta.providence.model;
 
-/** <namespace>* <include>* <declataion>* */
+/**
+ * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
+ */
 @SuppressWarnings("unused")
 public class ThriftDocument
         implements net.morimekta.providence.PMessage<ThriftDocument>, java.io.Serializable, Comparable<ThriftDocument> {
@@ -62,7 +64,11 @@ public class ThriftDocument
         return mComment != null;
     }
 
-    /** Must come before the first statement of the header. */
+    /**
+     * Must come before the first statement of the header.
+     *
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -71,7 +77,11 @@ public class ThriftDocument
         return mPackage != null;
     }
 
-    /** Deducted from filename in .thrift IDL files. */
+    /**
+     * Deducted from filename in .thrift IDL files.
+     *
+     * @return The field value
+     */
     public String getPackage() {
         return mPackage;
     }
@@ -84,7 +94,11 @@ public class ThriftDocument
         return mIncludes != null;
     }
 
-    /** include "<package>.thrift" */
+    /**
+     * include &quot;&lt;package&gt;.thrift&quot;
+     *
+     * @return The field value
+     */
     public java.util.List<String> getIncludes() {
         return mIncludes;
     }
@@ -97,7 +111,11 @@ public class ThriftDocument
         return mNamespaces != null;
     }
 
-    /** namespace <key> <value> */
+    /**
+     * namespace &lt;key&gt; &lt;value&gt;
+     *
+     * @return The field value
+     */
     public java.util.Map<String,String> getNamespaces() {
         return mNamespaces;
     }
@@ -110,6 +128,9 @@ public class ThriftDocument
         return mDecl != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
         return mDecl;
     }
@@ -191,34 +212,33 @@ public class ThriftDocument
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasPackage()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("package:");
-            out.append('\"').append(mPackage).append('\"');
+        if (mPackage != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("package:")
+                .append('\"').append(mPackage).append('\"');
         }
-        if (numIncludes() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("includes:");
-            out.append(net.morimekta.util.Strings.asString(mIncludes));
+        if (mIncludes != null && mIncludes.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("includes:")
+                .append(net.morimekta.util.Strings.asString(mIncludes));
         }
-        if (numNamespaces() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("namespaces:");
-            out.append(net.morimekta.util.Strings.asString(mNamespaces));
+        if (mNamespaces != null && mNamespaces.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("namespaces:")
+                .append(net.morimekta.util.Strings.asString(mNamespaces));
         }
-        if (numDecl() > 0) {
+        if (mDecl != null && mDecl.size() > 0) {
             if (!first) out.append(',');
-            first = false;
-            out.append("decl:");
-            out.append(net.morimekta.util.Strings.asString(mDecl));
+            out.append("decl:")
+                .append(net.morimekta.util.Strings.asString(mDecl));
         }
         out.append('}');
         return out.toString();
@@ -417,9 +437,9 @@ public class ThriftDocument
 
         private String mComment;
         private String mPackage;
-        private net.morimekta.providence.descriptor.PList.Builder mIncludes;
-        private net.morimekta.providence.descriptor.PMap.Builder mNamespaces;
-        private net.morimekta.providence.descriptor.PList.Builder mDecl;
+        private net.morimekta.providence.descriptor.PList.Builder<String> mIncludes;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mNamespaces;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mDecl;
 
 
         public _Builder() {
@@ -454,42 +474,105 @@ public class ThriftDocument
             }
         }
 
-        /** Must come before the first statement of the header. */
+        /**
+         * Sets the value of comment.
+         *
+         * Must come before the first statement of the header.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * Must come before the first statement of the header.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * Must come before the first statement of the header.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
-        /** Deducted from filename in .thrift IDL files. */
+
+        /**
+         * Sets the value of package.
+         *
+         * Deducted from filename in .thrift IDL files.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setPackage(String value) {
             optionals.set(1);
             mPackage = value;
             return this;
         }
+
+        /**
+         * Checked presence of the package field.
+         *
+         * Deducted from filename in .thrift IDL files.
+         *
+         * @return True iff package has been set.
+         */
         public boolean isSetPackage() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the package field.
+         *
+         * Deducted from filename in .thrift IDL files.
+         *
+         * @return The builder
+         */
         public _Builder clearPackage() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mPackage = null;
             return this;
         }
-        /** include "<package>.thrift" */
+
+        /**
+         * Sets the value of includes.
+         *
+         * include &quot;&lt;package&gt;.thrift&quot;
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setIncludes(java.util.Collection<String> value) {
             optionals.set(2);
             mIncludes.clear();
             mIncludes.addAll(value);
             return this;
         }
-        /** include "<package>.thrift" */
+
+        /**
+         * Adds entries to includes.
+         *
+         * include &quot;&lt;package&gt;.thrift&quot;
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToIncludes(String... values) {
             optionals.set(2);
             for (String item : values) {
@@ -498,42 +581,103 @@ public class ThriftDocument
             return this;
         }
 
+        /**
+         * Checked presence of the includes field.
+         *
+         * include &quot;&lt;package&gt;.thrift&quot;
+         *
+         * @return True iff includes has been set.
+         */
         public boolean isSetIncludes() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the includes field.
+         *
+         * include &quot;&lt;package&gt;.thrift&quot;
+         *
+         * @return The builder
+         */
         public _Builder clearIncludes() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mIncludes.clear();
             return this;
         }
-        /** namespace <key> <value> */
+
+        /**
+         * Sets the value of namespaces.
+         *
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setNamespaces(java.util.Map<String,String> value) {
             optionals.set(3);
             mNamespaces.clear();
             mNamespaces.putAll(value);
             return this;
         }
-        /** namespace <key> <value> */
+
+        /**
+         * Adds a mapping to namespaces.
+         *
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInNamespaces(String key, String value) {
             optionals.set(3);
             mNamespaces.put(key, value);
             return this;
         }
 
+        /**
+         * Checked presence of the namespaces field.
+         *
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @return True iff namespaces has been set.
+         */
         public boolean isSetNamespaces() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the namespaces field.
+         *
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @return The builder
+         */
         public _Builder clearNamespaces() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mNamespaces.clear();
             return this;
         }
+
+        /**
+         * Sets the value of decl.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setDecl(java.util.Collection<net.morimekta.providence.model.Declaration> value) {
             optionals.set(4);
             mDecl.clear();
             mDecl.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to decl.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToDecl(net.morimekta.providence.model.Declaration... values) {
             optionals.set(4);
             for (net.morimekta.providence.model.Declaration item : values) {
@@ -542,14 +686,26 @@ public class ThriftDocument
             return this;
         }
 
+        /**
+         * Checked presence of the decl field.
+         *
+         * @return True iff decl has been set.
+         */
         public boolean isSetDecl() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the decl field.
+         *
+         * @return The builder
+         */
         public _Builder clearDecl() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mDecl.clear();
             return this;
         }
+
         @Override
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);

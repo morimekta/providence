@@ -26,9 +26,8 @@ public class JConstantsFormat {
 
     private final JOptions options;
     private final JHelper  helper;
-    private int tmpValueCounter = 0;
 
-    public JConstantsFormat(JHelper helper, JOptions options) {
+    JConstantsFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }

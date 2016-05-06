@@ -75,6 +75,11 @@ public class BinarySerializer extends Serializer {
         this(true);
     }
 
+    /**
+     * Construct a serializer instance.
+     *
+     * @param readStrict If the serializer should fail on bad reading.
+     */
     public BinarySerializer(boolean readStrict) {
         this(readStrict, true);
     }
@@ -83,6 +88,7 @@ public class BinarySerializer extends Serializer {
      * Construct a serializer instance.
      *
      * @param readStrict If the serializer should fail on reading mismatched data.
+     * @param versioned If the serializer should use the versioned service call format.
      */
     public BinarySerializer(boolean readStrict, boolean versioned) {
         this.readStrict = readStrict;

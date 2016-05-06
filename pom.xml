@@ -201,6 +201,9 @@
                         </goals>
                         <configuration>
                             <additionalparam>-Xdoclint:all</additionalparam>
+                            <notimestamp>true</notimestamp>
+                            <nodeprecatedlist>true</nodeprecatedlist>
+                            <debug>false</debug>
                         </configuration>
                     </execution>
                 </executions>

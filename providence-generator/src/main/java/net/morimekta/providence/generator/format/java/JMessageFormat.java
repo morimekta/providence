@@ -48,6 +48,7 @@ import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -60,12 +61,12 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
  * @since 20.09.15
  */
 public class JMessageFormat {
-    public static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
+    private static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JHelper  helper;
     private final JOptions options;
 
-    public JMessageFormat(JHelper helper, JOptions options) {
+    JMessageFormat(JHelper helper, JOptions options) {
         this.helper = helper;
         this.options = options;
     }
@@ -137,6 +138,9 @@ public class JMessageFormat {
 
         appendBuilderConstructor(writer, message);
         appendCreateConstructor(writer, message);
+        if (message.isException()) {
+            appendCreateMessage(writer, message);
+        }
 
         appendFieldGetters(writer, message);
 
@@ -554,9 +558,23 @@ public class JMessageFormat {
             }
         } else {
             if (message.isException()) {
-                writer.appendln("super(builder.createMessage());")
+                writer.appendln("super(createMessage(")
+                      .begin(   "                    ");
+                boolean first = true;
+                for (JField field : message.fields()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(',')
+                              .appendln();
+                    }
+                    writer.format("builder.%s", field.member());
+                }
+                writer.append("));")
+                      .end()
                       .newline();
             }
+
             for (JField field : message.fields()) {
                 if (field.container()) {
                     writer.formatln("if (builder.%s()) {", field.isSet())
@@ -574,10 +592,121 @@ public class JMessageFormat {
               .newline();
     }
 
+    private void appendCreateMessage(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
+        writer.appendln("private static String createMessage(")
+              .begin(   "                                    ");
+
+        boolean first = true;
+        for (JField fld : message.fields()) {
+            if (first) {
+                first = false;
+            } else {
+                writer.append(',')
+                      .appendln();
+            }
+            writer.format("%s %s", fld.valueType(), fld.param());
+        }
+
+        writer.append(") {")
+              .end()
+              .begin()
+              .appendln("StringBuilder out = new StringBuilder();")
+              .appendln("out.append('{');");
+
+        boolean firstFirstCheck = true;
+        boolean alwaysAfter = false;
+        boolean last;
+        JField[] fields = message.fields().toArray(new JField[message.fields().size()]);
+        for (int i = 0; i < fields.length; ++i) {
+            first = i == 0;
+            last  = i == (fields.length - 1);
+
+            JField field = fields[i];
+            if (!field.alwaysPresent()) {
+                if (!alwaysAfter && firstFirstCheck && !last) {
+                    writer.appendln("boolean first = true;");
+                }
+                if (field.container()) {
+                    writer.formatln("if (%s != null && %s.size() > 0) {", field.param(), field.param());
+                } else {
+                    writer.formatln("if (%s != null) {", field.param());
+                }
+                writer.begin();
+            }
+
+            if (alwaysAfter) {
+                writer.appendln("out.append(',');");
+            } else if (!field.alwaysPresent()) {
+                if (firstFirstCheck || first) {
+                    if (!last) {
+                        writer.appendln("first = false;");
+                    }
+                } else if (last) {
+                    writer.appendln("if (!first) out.append(',');");
+                } else {
+                    writer.appendln("if (first) first = false;")
+                          .appendln("else out.append(',');");
+                }
+            }
+
+            writer.formatln("out.append(\"%s:\")", field.name());
+            switch (field.type()) {
+                case BOOL:
+                case I32:
+                case I64:
+                    writer.formatln("   .append(%s);", field.param());
+                    break;
+                case BYTE:
+                case I16:
+                    writer.formatln("   .append((int) %s);", field.param());
+                    break;
+                case DOUBLE:
+                case MAP:
+                case SET:
+                case LIST:
+                    writer.formatln("   .append(%s.asString(%s));",
+                                    Strings.class.getName(),
+                                    field.param());
+                    break;
+                case STRING:
+                    writer.formatln("   .append('\\\"')")
+                          .formatln("   .append(%s.escape(%s))",
+                                    Strings.class.getName(),
+                                    field.param())
+                          .appendln("   .append('\\\"');");
+                    break;
+                case BINARY:
+                    writer.appendln("   .append(\"b64(\")")
+                          .formatln("   .append(%s.toBase64())", field.param())
+                          .appendln("   .append(')');");
+                    break;
+                case MESSAGE:
+                    writer.formatln("   .append(%s.asString());", field.param());
+                    break;
+                default:
+                    writer.formatln("   .append(%s.toString());", field.param());
+                    break;
+            }
+
+            if (!field.alwaysPresent()) {
+                writer.end().appendln('}');
+                if (!alwaysAfter && firstFirstCheck) {
+                    firstFirstCheck = false;
+                }
+            } else {
+                alwaysAfter = true;
+            }
+        }
+        writer.appendln("out.append('}');")
+              .appendln("return out.toString();")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+
     private void appendCreateConstructor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        if (message.isException()) {
-            // TODO(steineldar): Handle constructing exception!
-        } else if (message.isUnion()) {
+        if (message.isUnion()) {
             for (JField field : message.fields()) {
                 BlockCommentBuilder block = new BlockCommentBuilder(writer);
                 if (field.hasComment()) {
@@ -620,6 +749,24 @@ public class JMessageFormat {
             writer.end()
                   .append(") {")
                   .begin();
+
+            if (message.isException()) {
+                writer.appendln("super(createMessage(")
+                      .begin(   "                    ");
+                first = true;
+                for (JField field : message.fields()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(',')
+                              .appendln();
+                    }
+                    writer.format("%s", field.param());
+                }
+                writer.append("));")
+                      .end()
+                      .newline();
+            }
 
             for (JField field : message.fields()) {
                 switch (field.type()) {

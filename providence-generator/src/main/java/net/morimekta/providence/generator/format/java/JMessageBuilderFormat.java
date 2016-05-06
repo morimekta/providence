@@ -12,7 +12,6 @@ import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
-import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
@@ -34,7 +33,7 @@ public class JMessageBuilderFormat {
     }
 
     public void appendBuilder(JMessage<?> message) throws GeneratorException {
-        appendMutators();
+        appendMutators(message);
 
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
@@ -65,10 +64,6 @@ public class JMessageBuilderFormat {
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
 
-        if (message.isException()) {
-            appendCreateMessage(message);
-        }
-
         writer.appendln("@Override")
               .formatln("public %s build() {", message.instanceType())
               .begin()
@@ -80,7 +75,7 @@ public class JMessageBuilderFormat {
               .appendln('}');
     }
 
-    private void appendMutators() {
+    private void appendMutators(JMessage message) {
         writer.appendln("@Override")
               .appendln("public _Builder mutate() {")
               .begin()
@@ -88,6 +83,11 @@ public class JMessageBuilderFormat {
               .end()
               .appendln('}')
               .newline();
+
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
+               .return_("The builder instance.")
+               .finish();
         writer.formatln("public static _Builder builder() {")
               .begin()
               .appendln("return new _Builder();")
@@ -114,6 +114,9 @@ public class JMessageBuilderFormat {
     }
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
+               .finish();
         writer.newline()
               .appendln("public _Builder() {")
               .begin();
@@ -137,6 +140,11 @@ public class JMessageBuilderFormat {
     }
 
     private void appendMutateConstructor(JMessage<?> message) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Make a mutating builder off a base " + message.descriptor().getQualifiedName(null) + ".")
+               .newline()
+               .param_("base", "The base " + message.descriptor().getName())
+               .finish();
         writer.formatln("public _Builder(%s base) {", message.instanceType())
               .begin()
               .appendln("this();")
@@ -184,6 +192,8 @@ public class JMessageBuilderFormat {
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Sets the value of " + field.name() + ".")
+               .newline();
         if (field.hasComment()) {
             comment.comment(field.comment())
                    .newline();
@@ -234,11 +244,20 @@ public class JMessageBuilderFormat {
 
         writer.appendln("return this;")
               .end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        if (field.type() == PType.MAP) {
+            comment.comment("Adds a mapping to " + field.name() + ".")
+                   .newline();
+        } else {
+            comment.comment("Adds entries to " + field.name() + ".")
+                   .newline();
+        }
+
         if (field.hasComment()) {
             comment.comment(field.comment())
                    .newline();
@@ -307,6 +326,15 @@ public class JMessageBuilderFormat {
     }
 
     private void appendIsSet(JMessage message, JField field) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Checked presence of the " + field.name() + " field.")
+               .newline();
+        if (field.hasComment()) {
+            comment.comment(field.comment())
+                   .newline();
+        }
+        comment.return_(String.format("True iff %s has been set.", field.name()))
+               .finish();
         writer.formatln("public boolean %s() {", field.isSet())
               .begin();
 
@@ -316,10 +344,20 @@ public class JMessageBuilderFormat {
             writer.formatln("return optionals.get(%d);", field.index());
         }
         writer.end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 
     private void appendResetter(JMessage message, JField field) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Clears the " + field.name() + " field.")
+               .newline();
+        if (field.hasComment()) {
+            comment.comment(field.comment())
+                   .newline();
+        }
+        comment.return_("The builder")
+               .finish();
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
 
@@ -339,11 +377,13 @@ public class JMessageBuilderFormat {
 
         writer.appendln("return this;")
               .end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 
     private void appendOverrideSetter(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
+              .appendln("@SuppressWarnings(\"unchecked\")")
               .appendln("public _Builder set(int key, Object value) {")
               .begin()
               .appendln("if (value == null) return clear(key);")
@@ -431,79 +471,6 @@ public class JMessageBuilderFormat {
                   .append(';');
         }
         writer.end()
-              .appendln('}')
-              .newline();
-    }
-
-    private void appendCreateMessage(JMessage<?> message) {
-        writer.appendln("protected String createMessage() {")
-              .begin()
-              .appendln("StringBuilder builder = new StringBuilder();")
-              .appendln("builder.append('{');")
-              .appendln("boolean first = true;");
-        boolean alwaysAfter = false;
-        for (JField field : message.fields()) {
-            if (!field.alwaysPresent()) {
-                if (field.container()) {
-                    writer.formatln("if (%s.size() > 0) {", field.member());
-                } else {
-                    writer.formatln("if (%s != null) {", field.member());
-                }
-                writer.begin();
-            }
-
-            if (alwaysAfter) {
-                writer.appendln("builder.append(',');");
-            } else {
-                writer.appendln("if (first) first = false;")
-                      .appendln("else builder.append(',');");
-            }
-
-            writer.formatln("builder.append(\"%s:\")", field.name());
-            switch (field.type()) {
-                case BOOL:
-                case I32:
-                case I64:
-                    writer.formatln("       .append(%s);", field.member());
-                    break;
-                case BYTE:
-                case I16:
-                    writer.formatln("       .append((int) %s);", field.member());
-                    break;
-                case DOUBLE:
-                case MAP:
-                case SET:
-                case LIST:
-                    writer.formatln("       .append(%s.asString(%s));",
-                                    Strings.class.getName(),
-                                    field.member());
-                    break;
-                case STRING:
-                    writer.formatln("       .append(%s);", field.member());
-                    break;
-                case BINARY:
-                    writer.appendln("       .append(\"b64(\")")
-                          .formatln("       .append(%s.toBase64())", field.member())
-                          .appendln("       .append(')');");
-                    break;
-                case MESSAGE:
-                    writer.formatln("       .append(%s.asString());", field.member());
-                    break;
-                default:
-                    writer.formatln("       .append(%s.toString());", field.member());
-                    break;
-            }
-
-            if (!field.alwaysPresent()) {
-                writer.end()
-                      .appendln('}');
-            } else {
-                alwaysAfter = true;
-            }
-        }
-        writer.appendln("builder.append('}');")
-              .appendln("return builder.toString();")
-              .end()
               .appendln('}')
               .newline();
     }

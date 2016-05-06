@@ -13,6 +13,7 @@ public interface PClientHandler {
      * Handle a service call.
      *
      * @param call The request call.
+     * @param service The service to be handled.
      * @param <RQ> Request type.
      * @param <RS> Response type.
      * @return The response service call object, or null if none (e.g. oneway).

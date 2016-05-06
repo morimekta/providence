@@ -10,47 +10,76 @@ public class ApplicationException
         implements net.morimekta.providence.PMessage<ApplicationException>, java.io.Serializable, Comparable<ApplicationException> {
     private final static long serialVersionUID = 6590039153455193300L;
 
-    private final static int kDefaultId = 0;
+    private final static net.morimekta.providence.serializer.ApplicationExceptionType kDefaultId = net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN;
 
     private final String mMessage;
-    private final int mId;
+    private final net.morimekta.providence.serializer.ApplicationExceptionType mId;
     
     private volatile int tHashCode;
 
     private ApplicationException(_Builder builder) {
-        super(builder.createMessage());
+        super(createMessage(builder.mMessage,
+                            builder.mId));
 
         mMessage = builder.mMessage;
         mId = builder.mId;
     }
 
-    public ApplicationException(String message,
-                                ApplicationExceptionType type) {
-        this(builder().setMessage(message)
-                      .setId(type.getValue()));
+    public ApplicationException(String pMessage,
+                                net.morimekta.providence.serializer.ApplicationExceptionType pId) {
+        super(createMessage(pMessage,
+                            pId));
+
+        mMessage = pMessage;
+        mId = pId;
+    }
+
+    private static String createMessage(String pMessage,
+                                        net.morimekta.providence.serializer.ApplicationExceptionType pId) {
+        StringBuilder out = new StringBuilder();
+        out.append('{');
+        boolean first = true;
+        if (pMessage != null) {
+            first = false;
+            out.append("message:")
+                .append('\"').append(pMessage).append('\"');
+        }
+        if (pId != null) {
+            if (!first) out.append(',');
+            out.append("id:")
+                .append(pId.toString());
+        }
+        out.append('}');
+        return out.toString();
     }
 
     public boolean hasMessage() {
         return mMessage != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getMessage() {
         return mMessage;
     }
 
     public boolean hasId() {
-        return true;
+        return mId != null;
     }
 
-    public int getId() {
-        return mId;
+    /**
+     * @return The field value
+     */
+    public net.morimekta.providence.serializer.ApplicationExceptionType getId() {
+        return hasId() ? mId : kDefaultId;
     }
 
     @Override
     public boolean has(int key) {
         switch(key) {
             case 1: return hasMessage();
-            case 2: return true;
+            case 2: return hasId();
             default: return false;
         }
     }
@@ -59,7 +88,7 @@ public class ApplicationException
     public int num(int key) {
         switch(key) {
             case 1: return hasMessage() ? 1 : 0;
-            case 2: return 1;
+            case 2: return hasId() ? 1 : 0;
             default: return 0;
         }
     }
@@ -108,16 +137,15 @@ public class ApplicationException
         out.append("{");
 
         boolean first = true;
-        if (hasMessage()) {
+        if (mMessage != null) {
             first = false;
-            out.append("message:");
-            out.append('\"').append(mMessage).append('\"');
+            out.append("message:")
+                .append('\"').append(mMessage).append('\"');
         }
-        if (hasId()) {
+        if (mId != null) {
             if (!first) out.append(',');
-            first = false;
-            out.append("id:");
-            out.append(Integer.toString(mId));
+            out.append("id:")
+                .append(mId.toString());
         }
         out.append('}');
         return out.toString();
@@ -134,15 +162,19 @@ public class ApplicationException
             if (c != 0) return c;
         }
 
-        c = Integer.compare(mId, other.mId);
+        c = Boolean.compare(mId != null, other.mId != null);
         if (c != 0) return c;
+        if (mId != null) {
+            c = Integer.compare(mId.getValue(), mId.getValue());
+            if (c != 0) return c;
+        }
 
         return 0;
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ID(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "id", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
+        ID(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "id", net.morimekta.providence.serializer.ApplicationExceptionType.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
         ;
 
         private final int mKey;
@@ -281,12 +313,11 @@ public class ApplicationException
         private java.util.BitSet optionals;
 
         private String mMessage;
-        private int mId;
+        private net.morimekta.providence.serializer.ApplicationExceptionType mId;
 
 
         public _Builder() {
             optionals = new java.util.BitSet(2);
-            mId = kDefaultId;
         }
 
         public _Builder(ApplicationException base) {
@@ -296,10 +327,16 @@ public class ApplicationException
                 optionals.set(0);
                 mMessage = base.mMessage;
             }
-            optionals.set(1);
-            mId = base.mId;
+            if (base.hasId()) {
+                optionals.set(1);
+                mId = base.mId;
+            }
         }
 
+        /**
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setMessage(String value) {
             optionals.set(0);
             mMessage = value;
@@ -309,11 +346,15 @@ public class ApplicationException
             return optionals.get(0);
         }
         public _Builder clearMessage() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mMessage = null;
             return this;
         }
-        public _Builder setId(int value) {
+        /**
+         * @param value The new value
+         * @return The builder
+         */
+        public _Builder setId(net.morimekta.providence.serializer.ApplicationExceptionType value) {
             optionals.set(1);
             mId = value;
             return this;
@@ -322,8 +363,8 @@ public class ApplicationException
             return optionals.get(1);
         }
         public _Builder clearId() {
-            optionals.set(1, false);
-            mId = kDefaultId;
+            optionals.clear(1);
+            mId = null;
             return this;
         }
         @Override
@@ -331,7 +372,7 @@ public class ApplicationException
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setMessage((String) value); break;
-                case 2: setId((int) value); break;
+                case 2: setId((net.morimekta.providence.serializer.ApplicationExceptionType) value); break;
             }
             return this;
         }
@@ -356,24 +397,6 @@ public class ApplicationException
         @Override
         public boolean isValid() {
             return true;
-        }
-
-        protected String createMessage() {
-            StringBuilder builder = new StringBuilder();
-            builder.append('{');
-            boolean first = true;
-            if (mMessage != null) {
-                if (first) first = false;
-                else builder.append(',');
-                builder.append("message:")
-                       .append(mMessage);
-            }
-            if (first) first = false;
-            else builder.append(',');
-            builder.append("id:")
-                   .append(mId);
-            builder.append('}');
-            return builder.toString();
         }
 
         @Override

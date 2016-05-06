@@ -60,6 +60,9 @@ public class StructType
         return mComment != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getComment() {
         return mComment;
     }
@@ -68,6 +71,9 @@ public class StructType
         return mVariant != null;
     }
 
+    /**
+     * @return The field value
+     */
     public net.morimekta.providence.model.StructVariant getVariant() {
         return hasVariant() ? mVariant : kDefaultVariant;
     }
@@ -76,6 +82,9 @@ public class StructType
         return mName != null;
     }
 
+    /**
+     * @return The field value
+     */
     public String getName() {
         return mName;
     }
@@ -88,6 +97,9 @@ public class StructType
         return mFields != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.List<net.morimekta.providence.model.ThriftField> getFields() {
         return mFields;
     }
@@ -100,6 +112,9 @@ public class StructType
         return mAnnotations != null;
     }
 
+    /**
+     * @return The field value
+     */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
     }
@@ -181,34 +196,33 @@ public class StructType
         out.append("{");
 
         boolean first = true;
-        if (hasComment()) {
+        if (mComment != null) {
             first = false;
-            out.append("comment:");
-            out.append('\"').append(mComment).append('\"');
+            out.append("comment:")
+                .append('\"').append(mComment).append('\"');
         }
-        if (hasVariant()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("variant:");
-            out.append(mVariant.getName());
+        if (mVariant != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("variant:")
+                .append(mVariant.toString());
         }
-        if (hasName()) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("name:");
-            out.append('\"').append(mName).append('\"');
+        if (mName != null) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("name:")
+                .append('\"').append(mName).append('\"');
         }
-        if (numFields() > 0) {
-            if (!first) out.append(',');
-            first = false;
-            out.append("fields:");
-            out.append(net.morimekta.util.Strings.asString(mFields));
+        if (mFields != null && mFields.size() > 0) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("fields:")
+                .append(net.morimekta.util.Strings.asString(mFields));
         }
-        if (numAnnotations() > 0) {
+        if (mAnnotations != null && mAnnotations.size() > 0) {
             if (!first) out.append(',');
-            first = false;
-            out.append("annotations:");
-            out.append(net.morimekta.util.Strings.asString(mAnnotations));
+            out.append("annotations:")
+                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
         out.append('}');
         return out.toString();
@@ -408,8 +422,8 @@ public class StructType
         private String mComment;
         private net.morimekta.providence.model.StructVariant mVariant;
         private String mName;
-        private net.morimekta.providence.descriptor.PList.Builder mFields;
-        private net.morimekta.providence.descriptor.PMap.Builder mAnnotations;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mFields;
+        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
 
         public _Builder() {
@@ -443,51 +457,121 @@ public class StructType
             }
         }
 
+        /**
+         * Sets the value of comment.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setComment(String value) {
             optionals.set(0);
             mComment = value;
             return this;
         }
+
+        /**
+         * Checked presence of the comment field.
+         *
+         * @return True iff comment has been set.
+         */
         public boolean isSetComment() {
             return optionals.get(0);
         }
+
+        /**
+         * Clears the comment field.
+         *
+         * @return The builder
+         */
         public _Builder clearComment() {
-            optionals.set(0, false);
+            optionals.clear(0);
             mComment = null;
             return this;
         }
+
+        /**
+         * Sets the value of variant.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setVariant(net.morimekta.providence.model.StructVariant value) {
             optionals.set(1);
             mVariant = value;
             return this;
         }
+
+        /**
+         * Checked presence of the variant field.
+         *
+         * @return True iff variant has been set.
+         */
         public boolean isSetVariant() {
             return optionals.get(1);
         }
+
+        /**
+         * Clears the variant field.
+         *
+         * @return The builder
+         */
         public _Builder clearVariant() {
-            optionals.set(1, false);
+            optionals.clear(1);
             mVariant = null;
             return this;
         }
+
+        /**
+         * Sets the value of name.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setName(String value) {
             optionals.set(2);
             mName = value;
             return this;
         }
+
+        /**
+         * Checked presence of the name field.
+         *
+         * @return True iff name has been set.
+         */
         public boolean isSetName() {
             return optionals.get(2);
         }
+
+        /**
+         * Clears the name field.
+         *
+         * @return The builder
+         */
         public _Builder clearName() {
-            optionals.set(2, false);
+            optionals.clear(2);
             mName = null;
             return this;
         }
+
+        /**
+         * Sets the value of fields.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setFields(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
             optionals.set(3);
             mFields.clear();
             mFields.addAll(value);
             return this;
         }
+
+        /**
+         * Adds entries to fields.
+         *
+         * @param values The added value
+         * @return The builder
+         */
         public _Builder addToFields(net.morimekta.providence.model.ThriftField... values) {
             optionals.set(3);
             for (net.morimekta.providence.model.ThriftField item : values) {
@@ -496,35 +580,74 @@ public class StructType
             return this;
         }
 
+        /**
+         * Checked presence of the fields field.
+         *
+         * @return True iff fields has been set.
+         */
         public boolean isSetFields() {
             return optionals.get(3);
         }
+
+        /**
+         * Clears the fields field.
+         *
+         * @return The builder
+         */
         public _Builder clearFields() {
-            optionals.set(3, false);
+            optionals.clear(3);
             mFields.clear();
             return this;
         }
+
+        /**
+         * Sets the value of annotations.
+         *
+         * @param value The new value
+         * @return The builder
+         */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
         }
+
+        /**
+         * Adds a mapping to annotations.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
             mAnnotations.put(key, value);
             return this;
         }
 
+        /**
+         * Checked presence of the annotations field.
+         *
+         * @return True iff annotations has been set.
+         */
         public boolean isSetAnnotations() {
             return optionals.get(4);
         }
+
+        /**
+         * Clears the annotations field.
+         *
+         * @return The builder
+         */
         public _Builder clearAnnotations() {
-            optionals.set(4, false);
+            optionals.clear(4);
             mAnnotations.clear();
             return this;
         }
+
         @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
