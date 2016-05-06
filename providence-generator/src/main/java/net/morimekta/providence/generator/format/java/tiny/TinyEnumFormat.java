@@ -26,9 +26,14 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
-import net.morimekta.providence.reflect.contained.CEnum;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.util.Stringable;
 import net.morimekta.util.io.IndentedPrintWriter;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Stein Eldar Johnsen
@@ -51,14 +56,14 @@ public class TinyEnumFormat {
                     .comment(type.getComment())
                     .finish();
         }
-        if (JAnnotation.isDeprecated(type)) {
+        if (JAnnotation.isDeprecated((CAnnotatedDescriptor) type)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
-        writer.formatln("public enum %s {",
-                        simpleClass)
+        writer.formatln("public enum %s implements %s {",
+                        simpleClass, Stringable.class.getName())
               .begin();
 
-        for (CEnum v : type.getValues()) {
+        for (CEnumValue v : type.getValues()) {
             if (v.getComment() != null) {
                 new BlockCommentBuilder(writer)
                         .comment(type.getComment())
@@ -68,8 +73,7 @@ public class TinyEnumFormat {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
             writer.formatln("%s(%d, \"%s\"),",
-                            v.getName()
-                             .toUpperCase(),
+                            JUtils.enumConst(v),
                             v.getValue(),
                             v.getName());
         }
@@ -87,16 +91,11 @@ public class TinyEnumFormat {
               .appendln("}")
               .newline();
 
-        writer.appendln("public int getValue() {")
-              .begin()
-              .appendln("return mValue;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.appendln("@com.fasterxml.jackson.annotation.JsonValue");
-
-        writer.appendln("public String getName() {")
+        if (options.jackson) {
+            writer.formatln("@%s", JsonValue.class.getName());
+        }
+        writer.append("@Override")
+              .appendln("public String asString() {")
               .begin()
               .appendln("return mName;")
               .end()
@@ -121,7 +120,9 @@ public class TinyEnumFormat {
               .appendln('}')
               .newline();
 
-        writer.appendln("@com.fasterxml.jackson.annotation.JsonCreator");
+        if (options.jackson) {
+            writer.formatln("@%s", JsonCreator.class.getName());
+        }
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()
               .appendln("switch (name) {")

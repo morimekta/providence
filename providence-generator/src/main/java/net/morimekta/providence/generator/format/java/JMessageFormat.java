@@ -105,6 +105,9 @@ public class JMessageFormat {
                   .appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(")
                   .formatln("        builder = %s._Builder.class)", message.instanceType());
         }
+        if (JAnnotation.isDeprecated(message.descriptor())) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
 
         String mod = "public";
         if (containingService != null) {

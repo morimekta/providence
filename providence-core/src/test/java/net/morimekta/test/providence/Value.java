@@ -41,6 +41,11 @@ public enum Value implements net.morimekta.providence.PEnumValue<Value> {
         return mName;
     }
 
+    @Override
+    public String asString() {
+        return mName;
+    }
+
     public static Value forValue(int value) {
         switch (value) {
             case 1: return Value.FIRST;

@@ -37,15 +37,15 @@ public class CEnumDescriptorTest {
 
     @Before
     public void setUp() {
-        List<CEnum> values = new LinkedList<>();
+        List<CEnumValue> values = new LinkedList<>();
         type = new CEnumDescriptor("My comment", "package", "MyEnum", null);
 
-        values.add(new CEnum(null, 1, "ONE", type, null));
-        values.add(new CEnum(null, 2, "TWO", type, null));
-        values.add(new CEnum(null, 3, "THREE", type, null));
-        values.add(new CEnum("Skipping stuff", 5, "FIVE", type, null));
-        values.add(new CEnum(null, 6, "SIX", type, null));
-        values.add(new CEnum("And more", 8, "EIGHT", type, null));
+        values.add(new CEnumValue(null, 1, "ONE", type, null));
+        values.add(new CEnumValue(null, 2, "TWO", type, null));
+        values.add(new CEnumValue(null, 3, "THREE", type, null));
+        values.add(new CEnumValue("Skipping stuff", 5, "FIVE", type, null));
+        values.add(new CEnumValue(null, 6, "SIX", type, null));
+        values.add(new CEnumValue("And more", 8, "EIGHT", type, null));
 
         type.setValues(values);
     }
@@ -82,7 +82,7 @@ public class CEnumDescriptorTest {
 
     @Test
     public void testProvider() {
-        assertEquals(CEnum.class,
+        assertEquals(CEnumValue.class,
                      type.builder()
                          .setByValue(1)
                          .build()

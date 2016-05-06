@@ -1,11 +1,13 @@
 package net.morimekta.providence.generator.format.java.tiny;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.util.Binary;
@@ -101,7 +103,7 @@ public class TinyValueFormat {
                 }
                 break;
             case ENUM:
-                writer.format("%s.%s", helper.getValueType(type), value.toString());
+                writer.format("%s.%s", helper.getValueType(type), JUtils.enumConst((PEnumValue) value));
                 break;
             case MESSAGE: {
                 writer.format("%s.builder()", helper.getFieldType(type))

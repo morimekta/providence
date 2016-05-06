@@ -32,25 +32,25 @@ import java.util.Set;
 /**
  * Contained enum descriptor type.
  * <p>
- * Also see {@link CEnum}.
+ * Also see {@link CEnumValue}.
  */
-public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotatedDescriptor {
-    private CEnum[]             values;
+public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnnotatedDescriptor {
+    private CEnumValue[] values;
 
     private final Map<String, String> annotations;
     private final String              comment;
 
     public CEnumDescriptor(String comment, String packageName, String name, Map<String, String> annotations) {
         super(packageName, name, new _Factory());
-        this.values = new CEnum[0];
+        this.values = new CEnumValue[0];
         this.comment = comment;
         this.annotations = annotations;
         ((_Factory) getFactoryInternal()).setType(this);
     }
 
-    public void setValues(List<CEnum> values) {
-        this.values = new CEnum[values.size()];
-        Iterator<CEnum> iter = values.iterator();
+    public void setValues(List<CEnumValue> values) {
+        this.values = new CEnumValue[values.size()];
+        Iterator<CEnumValue> iter = values.iterator();
         for (int i = 0; i < this.values.length; ++i) {
             this.values[i] = iter.next();
         }
@@ -62,13 +62,13 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
     }
 
     @Override
-    public CEnum[] getValues() {
+    public CEnumValue[] getValues() {
         return values;
     }
 
     @Override
-    public CEnum getValueById(int id) {
-        for (CEnum value : getValues()) {
+    public CEnumValue getValueById(int id) {
+        for (CEnumValue value : getValues()) {
             if (value.getValue() == id) {
                 return value;
             }
@@ -77,8 +77,8 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
     }
 
     @Override
-    public CEnum getValueByName(String name) {
-        for (CEnum value : getValues()) {
+    public CEnumValue getValueByName(String name) {
+        for (CEnumValue value : getValues()) {
             if (value.getName()
                      .equalsIgnoreCase(name)) {
                 return value;
@@ -112,7 +112,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
         return null;
     }
 
-    private static class _Factory extends PEnumBuilderFactory<CEnum> {
+    private static class _Factory extends PEnumBuilderFactory<CEnumValue> {
         private CEnumDescriptor mType;
 
         public void setType(CEnumDescriptor type) {
@@ -120,9 +120,9 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnum> implements CAnnotate
         }
 
         @Override
-        public PEnumBuilder<CEnum> builder() {
+        public PEnumBuilder<CEnumValue> builder() {
             // TODO Auto-generated method stub
-            return new CEnum.Builder(mType);
+            return new CEnumValue.Builder(mType);
         }
     }
 }

@@ -27,6 +27,11 @@ public enum Requirement implements net.morimekta.providence.PEnumValue<Requireme
         return mName;
     }
 
+    @Override
+    public String asString() {
+        return mName;
+    }
+
     public static Requirement forValue(int value) {
         switch (value) {
             case 0: return Requirement.DEFAULT;

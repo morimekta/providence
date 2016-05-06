@@ -38,6 +38,9 @@ public class JMessageBuilderFormat {
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
         }
+        if (JAnnotation.isDeprecated(message.descriptor())) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
 
         writer.appendln("public static class _Builder")
               .begin()

@@ -32,6 +32,11 @@ public enum StructVariant implements net.morimekta.providence.PEnumValue<StructV
         return mName;
     }
 
+    @Override
+    public String asString() {
+        return mName;
+    }
+
     public static StructVariant forValue(int value) {
         switch (value) {
             case 1: return StructVariant.STRUCT;

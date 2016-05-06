@@ -32,6 +32,11 @@ public enum ApplicationExceptionType implements net.morimekta.providence.PEnumVa
         return mName;
     }
 
+    @Override
+    public String asString() {
+        return mName;
+    }
+
     public static ApplicationExceptionType forValue(int value) {
         switch (value) {
             case 0: return ApplicationExceptionType.UNKNOWN;

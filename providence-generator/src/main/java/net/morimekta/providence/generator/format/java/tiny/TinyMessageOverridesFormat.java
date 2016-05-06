@@ -145,10 +145,11 @@ public class TinyMessageOverridesFormat {
                         writer.formatln("   .append(\"b64(\").append(%s.toBase64()).append(')');", field.member());
                         break;
                     case MESSAGE:
+                    case ENUM:
                         writer.formatln("   .append(%s.asString());", field.member());
                         break;
                     default:
-                        writer.formatln("   .append(%s.getName());", field.member());
+                        writer.formatln("   .append(%s.toString());", field.member());
                         break;
                 }
 
@@ -228,6 +229,7 @@ public class TinyMessageOverridesFormat {
                               .appendln("   .append(')');");
                         break;
                     case MESSAGE:
+                    case ENUM:
                         writer.formatln("   .append(%s.asString());", field.member());
                         break;
                     default:
@@ -294,7 +296,7 @@ public class TinyMessageOverridesFormat {
                         writer.formatln("return %s.compareTo(other.%s);", field.member(), field.member());
                         break;
                     case ENUM:
-                        writer.formatln("return Integer.compare(%s.getValue(), other.%s.getValue());",
+                        writer.formatln("return Integer.compare(%s.ordinal(), other.%s.ordinal());",
                                         field.member(),
                                         field.member());
                         break;
@@ -352,7 +354,7 @@ public class TinyMessageOverridesFormat {
                         writer.formatln("c = %s.compareTo(other.%s);", field.member(), field.member());
                         break;
                     case ENUM:
-                        writer.formatln("c = Integer.compare(%s.getValue(), %s.getValue());",
+                        writer.formatln("c = Integer.compare(%s.ordinal(), %s.ordinal());",
                                         field.member(),
                                         field.member());
                         break;

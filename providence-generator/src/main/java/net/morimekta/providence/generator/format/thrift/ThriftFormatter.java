@@ -29,7 +29,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.contained.CEnum;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
@@ -210,7 +210,7 @@ public class ThriftFormatter {
         builder.formatln("enum %s {", type.getName())
                .begin();
         int nextValue = enumValuePresence.equals(EnumValuePresence.FIRST) ? -1 : PEnumDescriptor.DEFAULT_FIRST_VALUE;
-        for (CEnum value : type.getValues()) {
+        for (CEnumValue value : type.getValues()) {
             if (value.getComment() != null) {
                 appendBlockComment(builder, value.getComment(), false);
             }

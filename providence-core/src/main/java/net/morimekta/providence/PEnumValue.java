@@ -19,11 +19,13 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.util.Stringable;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public interface PEnumValue<T> extends PValue<T> {
+public interface PEnumValue<T> extends PValue<T>, Stringable {
     /**
      * @return The numeric value for the enum.
      */

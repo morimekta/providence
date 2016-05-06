@@ -19,15 +19,13 @@
 
 package net.morimekta.providence.generator.format.java.utils;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.util.Strings;
-import net.morimekta.util.io.IndentedPrintWriter;
-
-import com.google.common.html.HtmlEscapers;
 
 import java.io.File;
 
@@ -130,5 +128,9 @@ public class JUtils {
             skipped = 0;
         }
         return builder.toString();
+    }
+
+    public static String enumConst(PEnumValue value) {
+        return Strings.c_case("", value.getName()).toUpperCase();
     }
 }

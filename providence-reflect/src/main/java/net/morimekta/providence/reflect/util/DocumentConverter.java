@@ -34,7 +34,7 @@ import net.morimekta.providence.model.StructType;
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.contained.CEnum;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CExceptionDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
@@ -83,11 +83,11 @@ public class DocumentConverter {
                                                                document.getPackage(),
                                                                enumType.getName(),
                                                                enumType.getAnnotations());
-                    List<CEnum> values = new LinkedList<>();
+                    List<CEnumValue> values = new LinkedList<>();
                     for (EnumValue value : enumType.getValues()) {
                         int v = value.hasValue() ? value.getValue() : nextValue;
                         nextValue = v + 1;
-                        values.add(new CEnum(value.getComment(), value.getValue(), value.getName(), type, value.getAnnotations()));
+                        values.add(new CEnumValue(value.getComment(), value.getValue(), value.getName(), type, value.getAnnotations()));
                     }
                     type.setValues(values);
                     declaredTypes.add(type);

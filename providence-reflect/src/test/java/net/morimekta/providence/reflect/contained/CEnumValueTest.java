@@ -35,23 +35,23 @@ import static org.junit.Assert.assertTrue;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class CEnumTest {
+public class CEnumValueTest {
     private CEnumDescriptor type;
-    private CEnum           value3;
-    private CEnum           value3_other;
-    private CEnum           value5;
+    private CEnumValue      value3;
+    private CEnumValue      value3_other;
+    private CEnumValue      value5;
 
     @Before
     public void setUp() {
-        List<CEnum> values = new LinkedList<>();
+        List<CEnumValue> values = new LinkedList<>();
         type = new CEnumDescriptor("My comment", "package", "MyEnum", null);
 
-        values.add(new CEnum(null, 1, "ONE", type, null));
-        values.add(new CEnum(null, 2, "TWO", type, null));
-        values.add(new CEnum(null, 3, "THREE", type, null));
-        values.add(new CEnum("Skipping stuff", 5, "FIVE", type, null));
-        values.add(new CEnum(null, 6, "SIX", type, null));
-        values.add(new CEnum("And more", 8, "EIGHT", type, null));
+        values.add(new CEnumValue(null, 1, "ONE", type, null));
+        values.add(new CEnumValue(null, 2, "TWO", type, null));
+        values.add(new CEnumValue(null, 3, "THREE", type, null));
+        values.add(new CEnumValue("Skipping stuff", 5, "FIVE", type, null));
+        values.add(new CEnumValue(null, 6, "SIX", type, null));
+        values.add(new CEnumValue("And more", 8, "EIGHT", type, null));
 
         type.setValues(values);
 
@@ -94,17 +94,17 @@ public class CEnumTest {
 
     @Test
     public void testBuilder() {
-        assertFalse(new CEnum.Builder(type).isValid());
-        assertTrue(new CEnum.Builder(type).setByValue(3)
-                                          .isValid());
-        assertFalse(new CEnum.Builder(type).setByValue(7)
-                                           .isValid());
+        assertFalse(new CEnumValue.Builder(type).isValid());
+        assertTrue(new CEnumValue.Builder(type).setByValue(3)
+                                               .isValid());
+        assertFalse(new CEnumValue.Builder(type).setByValue(7)
+                                                .isValid());
 
-        CEnum.Builder threeBuilder = new CEnum.Builder(type).setByName("THREE");
+        CEnumValue.Builder threeBuilder = new CEnumValue.Builder(type).setByName("THREE");
         assertTrue(threeBuilder.isValid());
         assertEquals(value3, threeBuilder.build());
 
-        CEnum.Builder fourBuilder = new CEnum.Builder(type).setByName("FOUR");
+        CEnumValue.Builder fourBuilder = new CEnumValue.Builder(type).setByName("FOUR");
         assertFalse(fourBuilder.isValid());
         assertNull(fourBuilder.build());
     }

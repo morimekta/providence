@@ -26,6 +26,11 @@ public enum Operator implements net.morimekta.providence.PEnumValue<Operator> {
         return mName;
     }
 
+    @Override
+    public String asString() {
+        return mName;
+    }
+
     public static Operator forValue(int value) {
         switch (value) {
             case 1: return Operator.IDENTITY;

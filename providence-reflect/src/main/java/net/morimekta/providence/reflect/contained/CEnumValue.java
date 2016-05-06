@@ -31,18 +31,18 @@ import java.util.Set;
  * Contained enum value. This emulates enum values to used in thrift
  * reflection.
  */
-public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
-    private final int                    value;
-    private final String                 name;
-    private final PEnumDescriptor<CEnum> type;
-    private final String                 comment;
-    private final Map<String, String>    annotations;
+public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor {
+    private final int                         value;
+    private final String                      name;
+    private final PEnumDescriptor<CEnumValue> type;
+    private final String                      comment;
+    private final Map<String, String>         annotations;
 
-    public CEnum(String comment,
-                 int value,
-                 String name,
-                 PEnumDescriptor<CEnum> type,
-                 Map<String, String> annotations) {
+    public CEnumValue(String comment,
+                      int value,
+                      String name,
+                      PEnumDescriptor<CEnumValue> type,
+                      Map<String, String> annotations) {
         this.comment = comment;
         this.value = value;
         this.name = name;
@@ -62,6 +62,11 @@ public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
 
     @Override
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String asString() {
         return name;
     }
 
@@ -91,16 +96,16 @@ public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
     }
 
     @Override
-    public PEnumDescriptor<CEnum> descriptor() {
+    public PEnumDescriptor<CEnumValue> descriptor() {
         return type;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof CEnum)) {
+        if (o == null || !(o instanceof CEnumValue)) {
             return false;
         }
-        CEnum other = (CEnum) o;
+        CEnumValue other = (CEnumValue) o;
         return other.descriptor()
                     .getQualifiedName(null)
                     .equals(type.getQualifiedName(null)) &&
@@ -110,7 +115,7 @@ public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
     }
 
     @Override
-    public int compareTo(CEnum other) {
+    public int compareTo(CEnumValue other) {
         return Integer.compare(value, other.value);
     }
 
@@ -119,17 +124,17 @@ public class CEnum implements PEnumValue<CEnum>, CAnnotatedDescriptor {
         return name.toUpperCase();
     }
 
-    public static class Builder extends PEnumBuilder<CEnum> {
+    public static class Builder extends PEnumBuilder<CEnumValue> {
         private final CEnumDescriptor mType;
 
-        private CEnum mValue = null;
+        private CEnumValue mValue = null;
 
         public Builder(CEnumDescriptor type) {
             mType = type;
         }
 
         @Override
-        public CEnum build() {
+        public CEnumValue build() {
             return mValue;
         }
 

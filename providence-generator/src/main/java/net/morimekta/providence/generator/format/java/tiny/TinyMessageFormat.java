@@ -88,6 +88,9 @@ public class TinyMessageFormat {
                   .formatln("@%s(", JsonDeserialize.class.getName())
                   .formatln("        builder = %s._Builder.class)", message.instanceType());
         }
+        if (JAnnotation.isDeprecated(message.descriptor())) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
               .formatln("public class %s", message.instanceType())

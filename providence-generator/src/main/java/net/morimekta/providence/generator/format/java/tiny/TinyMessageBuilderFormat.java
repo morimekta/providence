@@ -46,6 +46,9 @@ public class TinyMessageBuilderFormat {
         if (options.jackson) {
             writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
         }
+        if (JAnnotation.isDeprecated(message.descriptor())) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
 
         writer.appendln("public static class _Builder {")
               .begin();
@@ -166,8 +169,10 @@ public class TinyMessageBuilderFormat {
     }
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
-        writer.newline()
-              .appendln("public _Builder() {")
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
+               .finish();
+        writer.appendln("public _Builder() {")
               .begin();
         if (!message.isUnion()) {
             writer.formatln("optionals = new %s(%d);",
@@ -238,6 +243,11 @@ public class TinyMessageBuilderFormat {
     }
 
     private void appendMutateConstructor(JMessage<?> message) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Make a mutating builder off a base " + message.descriptor().getQualifiedName(null) + ".")
+               .newline()
+               .param_("base", "The base " + message.descriptor().getName())
+               .finish();
         writer.formatln("public _Builder(%s base) {", message.instanceType())
               .begin()
               .appendln("this();")
@@ -280,6 +290,8 @@ public class TinyMessageBuilderFormat {
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Sets the value of " + field.name() + ".")
+               .newline();
         if (field.hasComment()) {
             comment.comment(field.comment())
                    .newline();
@@ -387,10 +399,20 @@ public class TinyMessageBuilderFormat {
 
         writer.appendln("return this;")
               .end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 
     private void appendResetter(JMessage message, JField field) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Clears the " + field.name() + " field.")
+               .newline();
+        if (field.hasComment()) {
+            comment.comment(field.comment())
+                   .newline();
+        }
+        comment.return_("The builder")
+               .finish();
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
 
@@ -466,6 +488,7 @@ public class TinyMessageBuilderFormat {
 
         writer.appendln("return this;")
               .end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 }
