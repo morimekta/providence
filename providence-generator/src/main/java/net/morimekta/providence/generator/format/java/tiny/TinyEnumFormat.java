@@ -27,8 +27,8 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
-import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -91,10 +91,18 @@ public class TinyEnumFormat {
               .appendln("}")
               .newline();
 
+        // @Override - Needs updated utils 0.2.4.
+        writer.appendln("public int asInteger() {")
+              .begin()
+              .appendln("return mValue;")
+              .end()
+              .appendln('}')
+              .newline();
+
         if (options.jackson) {
             writer.formatln("@%s", JsonValue.class.getName());
         }
-        writer.append("@Override")
+        writer.appendln("@Override")
               .appendln("public String asString() {")
               .begin()
               .appendln("return mName;")
