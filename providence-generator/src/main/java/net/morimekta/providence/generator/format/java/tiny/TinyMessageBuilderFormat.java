@@ -2,9 +2,6 @@ package net.morimekta.providence.generator.format.java.tiny;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
@@ -12,15 +9,7 @@ import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
-import net.morimekta.util.LinkedHashMapBuilder;
-import net.morimekta.util.LinkedHashSetBuilder;
 import net.morimekta.util.io.IndentedPrintWriter;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.ImmutableSortedSet;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -97,70 +86,7 @@ public class TinyMessageBuilderFormat {
         }
         writer.newline();
         for (JField field : message.fields()) {
-            switch (field.type()) {
-                case MAP: {
-                    PMap<?,?> mType = (PMap<?,?>) field.getPField().getDescriptor();
-                    switch (JAnnotation.containerType(field)) {
-                        case ORDERED:
-                            writer.formatln("private %s<%s,%s> %s;",
-                                            LinkedHashMapBuilder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(mType.keyDescriptor()),
-                                            helper.getFieldType(mType.itemDescriptor()),
-                                            field.member());
-                            break;
-                        case SORTED:
-                            writer.formatln("private %s<%s,%s> %s;",
-                                            ImmutableSortedMap.Builder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(mType.keyDescriptor()),
-                                            helper.getFieldType(mType.itemDescriptor()),
-                                            field.member());
-                            break;
-                        case DEFAULT:
-                            writer.formatln("private %s<%s,%s> %s;",
-                                            ImmutableMap.Builder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(mType.keyDescriptor()),
-                                            helper.getFieldType(mType.itemDescriptor()),
-                                            field.member());
-                            break;
-                    }
-                    break;
-                }
-                case SET: {
-                    PSet<?> sType = (PSet<?>) field.getPField().getDescriptor();
-                    switch (JAnnotation.containerType(field)) {
-                        case ORDERED:
-                            writer.formatln("private %s<%s> %s;",
-                                            LinkedHashSetBuilder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(sType.itemDescriptor()),
-                                            field.member());
-                            break;
-                        case SORTED:
-                            writer.formatln("private %s<%s> %s;",
-                                            ImmutableSortedSet.Builder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(sType.itemDescriptor()),
-                                            field.member());
-                            break;
-                        case DEFAULT:
-                            writer.formatln("private %s<%s> %s;",
-                                            ImmutableSet.Builder.class.getName().replaceAll("[$]", "."),
-                                            helper.getFieldType(sType.itemDescriptor()),
-                                            field.member());
-                            break;
-                    }
-                    break;
-                }
-                case LIST: {
-                    PList<?> lType = (PList<?>) field.getPField().getDescriptor();
-                    writer.formatln("private %s<%s> %s;",
-                                    ImmutableList.Builder.class.getName().replaceAll("[$]", "."),
-                                    helper.getFieldType(lType.itemDescriptor()),
-                                    field.member());
-                    break;
-                }
-                default:
-                    writer.formatln("private %s %s;", field.builderFieldType(), field.member());
-                    break;
-            }
+            writer.formatln("private %s %s;", field.fieldType(), field.member());
         }
         if (message.fields()
                    .size() > 0) {
@@ -180,62 +106,11 @@ public class TinyMessageBuilderFormat {
                             message.fields()
                                    .size());
         }
-        for (JField field : message.fields()) {
-            switch (field.type()) {
-                case MAP: {
-                    switch (JAnnotation.containerType(field)) {
-                        case ORDERED:
-                            writer.formatln("%s = new %s<>();",
-                                            field.member(),
-                                            LinkedHashMapBuilder.class.getName().replaceAll("[$]", "."));
-                            break;
-                        case SORTED:
-                            writer.formatln("%s = %s.naturalOrder();",
-                                            field.member(),
-                                            ImmutableSortedMap.class.getName().replaceAll("[$]", "."));
-                            break;
-                        case DEFAULT:
-                            writer.formatln("%s = %s.builder();",
-                                            field.member(),
-                                            ImmutableMap.class.getName().replaceAll("[$]", "."));
-                            break;
-                    }
-                    break;
-                }
-                case SET: {
-                    switch (JAnnotation.containerType(field)) {
-                        case ORDERED:
-                            writer.formatln("%s = new %s<>();",
-                                            field.member(),
-                                            LinkedHashSetBuilder.class.getName().replaceAll("[$]", "."));
-                            break;
-                        case SORTED:
-                            writer.formatln("%s = %s.naturalOrder();",
-                                            field.member(),
-                                            ImmutableSortedSet.class.getName().replaceAll("[$]", "."));
-                            break;
-                        case DEFAULT:
-                            writer.formatln("%s = %s.builder();",
-                                            field.member(),
-                                            ImmutableSet.class.getName().replaceAll("[$]", "."));
-                            break;
-                    }
-                    break;
-                }
-                case LIST: {
-                    writer.formatln("%s = %s.builder();",
-                                    field.member(),
-                                    ImmutableList.class.getName().replaceAll("[$]", "."));
-                    break;
-                }
-                default:
-                    if (field.hasDefault()) {
-                        writer.formatln("%s = %s;", field.member(), field.kDefault());
-                    }
-                    break;
+        message.fields()
+               .stream()
+               .filter(JField::hasDefault)
+               .forEachOrdered(field -> writer.formatln("%s = %s;", field.member(), field.kDefault()));
 
-            }
-        }
         writer.end()
               .appendln('}')
               .newline();
@@ -257,7 +132,7 @@ public class TinyMessageBuilderFormat {
                   .newline();
         }
         for (JField field : message.fields()) {
-            boolean checkPresence = message.isUnion() ? field.container() : !field.alwaysPresent();
+            boolean checkPresence = !field.alwaysPresent();
             if (checkPresence) {
                 writer.formatln("if (base.%s != null) {", field.member())
                       .begin();
@@ -265,18 +140,8 @@ public class TinyMessageBuilderFormat {
             if (!message.isUnion()) {
                 writer.formatln("optionals.set(%d);", field.index());
             }
-            switch (field.type()) {
-                case LIST:
-                case SET:
-                    writer.formatln("%s.addAll(base.%s);", field.member(), field.member());
-                    break;
-                case MAP:
-                    writer.formatln("%s.putAll(base.%s);", field.member(), field.member());
-                    break;
-                default:
-                    writer.formatln("%s = base.%s;", field.member(), field.member());
-                    break;
-            }
+            writer.formatln("%s = base.%s;", field.member(), field.member());
+
             if (checkPresence) {
                 writer.end()
                       .appendln('}');
@@ -325,77 +190,7 @@ public class TinyMessageBuilderFormat {
             writer.formatln("optionals.set(%d);", field.index());
         }
 
-
-        switch (field.type()) {
-            case MAP: {
-                switch (JAnnotation.containerType(field)) {
-                    case ORDERED:
-                        writer.formatln("%s = new %s<>();",
-                                        field.member(),
-                                        LinkedHashMapBuilder.class.getName()
-                                                                  .replaceAll("[$]", "."));
-                        break;
-                    case SORTED:
-                        writer.formatln("%s = %s.naturalOrder();",
-                                        field.member(),
-                                        ImmutableSortedMap.class.getName()
-                                                                .replaceAll("[$]", "."));
-                        break;
-                    case DEFAULT:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableMap.class.getName()
-                                                          .replaceAll("[$]", "."));
-                        break;
-                }
-                break;
-            }
-            case SET: {
-                switch (JAnnotation.containerType(field)) {
-                    case ORDERED:
-                        writer.formatln("%s = new %s<>();",
-                                        field.member(),
-                                        LinkedHashSetBuilder.class.getName()
-                                                                  .replaceAll("[$]", "."));
-                        break;
-                    case SORTED:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableSortedSet.class.getName()
-                                                                .replaceAll("[$]", "."));
-                        break;
-                    case DEFAULT:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableSet.class.getName()
-                                                          .replaceAll("[$]", "."));
-                        break;
-                }
-                break;
-            }
-            case LIST: {
-                writer.formatln("%s = %s.builder();",
-                                field.member(),
-                                ImmutableList.class.getName()
-                                                   .replaceAll("[$]", "."));
-                break;
-            }
-            default:
-                break;
-        }
-
-        switch (field.type()) {
-            case SET:
-            case LIST:
-                writer.formatln("%s.addAll(value);", field.member());
-                break;
-            case MAP:
-                writer.formatln("%s.putAll(value);", field.member());
-                break;
-            default:
-                writer.formatln("%s = value;", field.member());
-                break;
-        }
+        writer.formatln("%s = %s;", field.member(), field.copyOfUnsafe("value"));
 
         writer.appendln("return this;")
               .end()
@@ -419,71 +214,13 @@ public class TinyMessageBuilderFormat {
         if (message.isUnion()) {
             writer.formatln("if (tUnionField == _Field.%s) tUnionField = null;", field.fieldEnum());
         } else {
-            writer.formatln("optionals.set(%d, false);", field.index());
+            writer.formatln("optionals.clear(%d);", field.index());
         }
 
-        switch (field.type()) {
-            case MAP: {
-                switch (JAnnotation.containerType(field)) {
-                    case ORDERED:
-                        writer.formatln("%s = new %s<>();",
-                                        field.member(),
-                                        LinkedHashMapBuilder.class.getName()
-                                                                  .replaceAll("[$]", "."));
-                        break;
-                    case SORTED:
-                        writer.formatln("%s = %s.naturalOrder();",
-                                        field.member(),
-                                        ImmutableSortedMap.class.getName()
-                                                                .replaceAll("[$]", "."));
-                        break;
-                    case DEFAULT:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableMap.class.getName()
-                                                          .replaceAll("[$]", "."));
-                        break;
-                }
-                break;
-            }
-            case SET: {
-                switch (JAnnotation.containerType(field)) {
-                    case ORDERED:
-                        writer.formatln("%s = new %s<>();",
-                                        field.member(),
-                                        LinkedHashSetBuilder.class.getName()
-                                                                  .replaceAll("[$]", "."));
-                        break;
-                    case SORTED:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableSortedSet.class.getName()
-                                                                .replaceAll("[$]", "."));
-                        break;
-                    case DEFAULT:
-                        writer.formatln("%s = %s.builder();",
-                                        field.member(),
-                                        ImmutableSet.class.getName()
-                                                          .replaceAll("[$]", "."));
-                        break;
-                }
-                break;
-            }
-            case LIST: {
-                writer.formatln("%s = %s.builder();",
-                                field.member(),
-                                ImmutableList.class.getName()
-                                                   .replaceAll("[$]", "."));
-                break;
-            }
-            default:
-                if (field.hasDefault()) {
-                    writer.formatln("%s = %s;", field.member(), field.kDefault());
-                } else {
-                    writer.formatln("%s = null;", field.member());
-                }
-                break;
-
+        if (field.hasDefault()) {
+            writer.formatln("%s = %s;", field.member(), field.kDefault());
+        } else {
+            writer.formatln("%s = null;", field.member());
         }
 
         writer.appendln("return this;")

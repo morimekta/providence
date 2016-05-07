@@ -264,42 +264,17 @@ public class TinyMessageFormat {
                   .newline();
 
             for (JField field : message.fields()) {
-                switch (field.type()) {
-                    case LIST:
-                        writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
-                                field.member(),
-                                field.fieldEnum(),
-                                field.member());
-                        break;
-                    case SET:
-                        writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
-                                field.member(),
-                                field.fieldEnum(),
-                                field.member());
-                        break;
-                    case MAP:
-                        writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
-                                field.member(),
-                                field.fieldEnum(),
-                                field.member());
-                        break;
-                    default:
-                        if (field.alwaysPresent()) {
-                            writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : %s;",
-                                            field.member(),
-                                            field.fieldEnum(),
-                                            field.member(),
-                                            field.kDefault());
-                        } else {
-                            writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : null;",
-                                            field.member(),
-                                            field.fieldEnum(),
-                                            field.member());
-                        }
-                        break;
+                if (field.alwaysPresent()) {
+                    writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : %s;",
+                                    field.member(),
+                                    field.fieldEnum(),
+                                    field.member(),
+                                    field.kDefault());
+                } else {
+                    writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : null;",
+                                    field.member(),
+                                    field.fieldEnum(),
+                                    field.member());
                 }
             }
         } else {
@@ -327,15 +302,7 @@ public class TinyMessageFormat {
             }
 
             for (JField field : message.fields()) {
-                if (field.container()) {
-                    writer.formatln("if (builder.optionals.get(%d)) {", field.index())
-                          .formatln("    %s = builder.%s.build();", field.member(), field.member())
-                          .appendln("} else {")
-                          .formatln("    %s = null;", field.member())
-                          .appendln('}');
-                } else {
-                    writer.formatln("%s = builder.%s;", field.member(), field.member());
-                }
+                writer.formatln("%s = builder.%s;", field.member(), field.member());
             }
         }
         writer.end()

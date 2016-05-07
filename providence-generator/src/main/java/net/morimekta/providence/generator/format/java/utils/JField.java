@@ -28,6 +28,8 @@ import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.util.LinkedHashMapBuilder;
+import net.morimekta.util.LinkedHashSetBuilder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -205,6 +207,59 @@ public class JField {
                 return fieldType();
         }
     }
+
+    public String copyOfUnsafe(String variable) throws GeneratorException  {
+        switch (field.getType()) {
+            case MAP: {
+                PMap mType = (PMap) field.getDescriptor();
+                String kType = helper.getFieldType(mType.keyDescriptor());
+                String iType = helper.getFieldType(mType.itemDescriptor());
+                switch (containerType()) {
+                    case DEFAULT: return String.format(
+                            "%s.<%s,%s>copyOf(%s)",
+                            ImmutableMap.class.getName(),
+                            kType, iType, variable);
+                    case SORTED: return String.format(
+                            "%s.<%s,%s>copyOf(%s)",
+                            ImmutableSortedMap.class.getName(),
+                            kType, iType, variable);
+                    case ORDERED: return String.format(
+                            "new %s<%s,%s>().putAll(%s).build()",
+                            LinkedHashMapBuilder.class.getName(),
+                            kType, iType, variable);
+                }
+            }
+            case SET: {
+                PSet sType = (PSet) field.getDescriptor();
+                String iType = helper.getFieldType(sType.itemDescriptor());
+                switch (containerType()) {
+                    case DEFAULT: return String.format(
+                            "%s.<%s>copyOf(%s)",
+                            ImmutableSet.class.getName(),
+                            iType, variable);
+                    case SORTED: return String.format(
+                            "%s.<%s>copyOf(%s)",
+                            ImmutableSortedSet.class.getName(),
+                            iType, variable);
+                    case ORDERED: return String.format(
+                            "new %s<%s>().addAll(%s).build()",
+                            LinkedHashSetBuilder.class.getName(),
+                            iType, variable);
+                }
+            }
+            case LIST: {
+                PList lType = (PList) field.getDescriptor();
+                String iType = helper.getFieldType(lType.itemDescriptor());
+                return String.format(
+                        "%s.<%s>copyOf(%s)",
+                        ImmutableList.class.getName(),
+                        iType, variable);
+            }
+            default:
+                return variable;
+        }
+    }
+
 
     public String fieldInstanceType() throws GeneratorException  {
         switch (field.getType()) {
