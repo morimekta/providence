@@ -22,7 +22,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence-tools</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>providence-package</artifactId>
 
@@ -30,17 +30,17 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-compiler</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-converter</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-rpc-tool</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
