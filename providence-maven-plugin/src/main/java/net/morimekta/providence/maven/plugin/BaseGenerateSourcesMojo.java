@@ -18,8 +18,8 @@ package net.morimekta.providence.maven.plugin;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JGenerator;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
+import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -43,32 +43,62 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * mvn net.morimekta.providence:providence-maven-plugin:0.0.1-SNAPSHOT:generate-providence-sources -X
+ * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
-    @Parameter
-    protected boolean skip = false;
+    /**
+     * Skip the providence generator step for this module.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean skip;
 
-    @Parameter
-    private boolean tiny = false;
+    /**
+     * Use the "tiny java" generator version instead of the default. It has
+     * minimal dependencies, and cannot be serialized using the providence
+     * libraries. It will only require dependency on one library:
+     * <ul>
+     *     <li><code>net.morimekta.utils:io-util:0.2.3</code>
+     * </ul>
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean tiny;
 
-    @Parameter
-    private boolean android = false;
+    /**
+     * Adds android.os.Parcelable support. Not compatible with 'tiny'.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean android;
 
-    @Parameter
-    private boolean jackson = false;
+    /**
+     * If set to true will add jackson 2 annotations to messages and enums.
+     * Required additional dependency on jackson 2 core libraries:
+     * <ul>
+     *     <li><code>com.fasterxml.jackson.core:jackson-annotations:2.x</code>
+     *     <li><code>com.fasterxml.jackson.core:jackson-core:2.x</code>
+     *     <li><code>com.fasterxml.jackson.core:jackson-databind:2.x</code>
+     * </ul>
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean jackson;
 
-    @Parameter
-    private IncludeExcludeFileSelector inputFiles = null;
+    /**
+     * If true will add the generated sources to be compiled.
+     */
+    @Parameter(defaultValue = "true")
+    protected boolean compileOutput;
 
+    /**
+     * Additional directories to find include files for thrift compilation.
+     * The extra files there will <b>not</b> be compiled into source code.
+     */
     @Parameter
-    private IncludeExcludeFileSelector includeDirs = null;
+    protected IncludeExcludeFileSelector includeDirs;
 
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-    Set<File> getInputFiles(IncludeExcludeFileSelector inputFiles,
-                            String defaultInputInclude) {
+    private Set<File> getInputFiles(IncludeExcludeFileSelector inputFiles,
+                                    String defaultInputInclude) {
         TreeSet<File> inputs = new TreeSet<>();
 
         DirectoryScanner inputScanner = new DirectoryScanner();
@@ -91,7 +121,9 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         return inputs;
     }
 
-    boolean executeInternal(File outputDir, String defaultInputIncludes) throws MojoExecutionException, MojoFailureException {
+    boolean executeInternal(File outputDir,
+                            IncludeExcludeFileSelector inputFiles,
+                            String defaultInputIncludes) throws MojoExecutionException, MojoFailureException {
         if (skip) {
             return false;
         }
@@ -171,6 +203,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
         }
 
-        return true;
+        return compileOutput;
     }
 }

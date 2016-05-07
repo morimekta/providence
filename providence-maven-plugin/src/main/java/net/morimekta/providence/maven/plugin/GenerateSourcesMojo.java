@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.InstantiationStrategy;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 
 import java.io.File;
 
@@ -37,8 +38,15 @@ public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence")
     private File outputDir = null;
 
+    /**
+     * Files to compile. By default will select all '.thrift' files in
+     * 'src/main/providence/' and subdirectories.
+     */
+    @Parameter
+    protected IncludeExcludeFileSelector inputFiles;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (executeInternal(outputDir, "src/main/providence/**/*.thrift")) {
+        if (executeInternal(outputDir, inputFiles, "src/main/providence/**/*.thrift")) {
             project.addCompileSourceRoot(outputDir.getPath());
         }
     }
