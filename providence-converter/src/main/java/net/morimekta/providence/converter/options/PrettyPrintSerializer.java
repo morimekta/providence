@@ -32,17 +32,17 @@ public class PrettyPrintSerializer extends Serializer {
 
     @Override
     public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call) throws IOException, SerializerException {
-        throw new IOException("Only able to print messages.");
+        throw new SerializerException("Only able to print messages.");
     }
 
     @Override
     public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
-        throw new IOException("Pretty printer not allowed as input type.");
+        throw new SerializerException("Pretty printer not allowed as input type.");
     }
 
     @Override
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service) throws IOException, SerializerException {
-        throw new IOException("Pretty printer not allowed as input type.");
+    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service) throws SerializerException {
+        throw new SerializerException("Pretty printer not allowed as input type.");
     }
 
     @Override
