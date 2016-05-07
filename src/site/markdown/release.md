@@ -40,7 +40,7 @@ Proper releases are done with a branch cut.
 
 Not it's time for verification.
 
-* Run `# jekyll serge` and go to `http://localhost:4000/` and go through the
+* Run `# jekyll serve` and go to `http://localhost:4000/` and go through the
   docs. If that looks right, and the artifacts found at the
   [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories) are
   correct, you're ready to make the release.
