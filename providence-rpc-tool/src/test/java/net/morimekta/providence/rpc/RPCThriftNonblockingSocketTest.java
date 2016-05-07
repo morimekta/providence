@@ -254,7 +254,7 @@ public class RPCThriftNonblockingSocketTest {
                      "    44,\n" +
                      "    {\n" +
                      "        \"message\": \"Invalid method name: 'testing'\",\n" +
-                     "        \"id\": 1\n" +
+                     "        \"id\": \"UNKNOWN_METHOD\"\n" +
                      "    }\n" +
                      "]\n", outContent.toString());
         assertEquals(0, exitCode);
