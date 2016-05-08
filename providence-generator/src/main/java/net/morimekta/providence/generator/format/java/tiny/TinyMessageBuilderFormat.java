@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.type.ArrayType;
 import com.fasterxml.jackson.databind.type.MapType;
 
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -361,17 +360,7 @@ public class TinyMessageBuilderFormat {
                   .newline();
         }
         for (JField field : message.fields()) {
-            boolean checkPresence = !field.alwaysPresent() && !message.isUnion();
-            if (checkPresence) {
-                writer.formatln("if (base.%s != null) {", field.member())
-                      .begin();
-            }
             writer.formatln("%s = base.%s;", field.member(), field.member());
-
-            if (checkPresence) {
-                writer.end()
-                      .appendln('}');
-            }
         }
 
         writer.end()
@@ -392,12 +381,6 @@ public class TinyMessageBuilderFormat {
                .finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
-        }
-        if (options.jackson) {
-            writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
-            if (field.binary()) {
-                writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
-            }
         }
         if (field.type() == PType.SET || field.type() == PType.LIST) {
             PContainer<?> cType = (PContainer<?>) field.getPField()
