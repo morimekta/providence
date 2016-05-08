@@ -318,7 +318,7 @@ public class TinyMessageBuilderFormat {
 
     private void appendFields(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
-            writer.appendln("private _Field tUnionField;");
+            writer.appendln("private int tUnionField;");
         } else {
             writer.formatln("private %s optionals;",
                             BitSet.class.getName());
@@ -339,7 +339,9 @@ public class TinyMessageBuilderFormat {
                .finish();
         writer.appendln("public _Builder() {")
               .begin();
-        if (!message.isUnion()) {
+        if (message.isUnion()) {
+            writer.formatln("tUnionField = Integer.MAX_VALUE;");
+        } else {
             writer.formatln("optionals = new %s(%d);",
                             BitSet.class.getName(),
                             message.fields()
@@ -353,7 +355,6 @@ public class TinyMessageBuilderFormat {
         writer.end()
               .appendln('}')
               .newline();
-
     }
 
     private void appendMutateConstructor(JMessage<?> message) {
@@ -371,7 +372,7 @@ public class TinyMessageBuilderFormat {
                   .newline();
         }
         for (JField field : message.fields()) {
-            boolean checkPresence = !field.alwaysPresent();
+            boolean checkPresence = !field.alwaysPresent() && !message.isUnion();
             if (checkPresence) {
                 writer.formatln("if (base.%s != null) {", field.member())
                       .begin();
@@ -424,7 +425,7 @@ public class TinyMessageBuilderFormat {
         writer.begin();
 
         if (message.isUnion()) {
-            writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+            writer.formatln("tUnionField = %s;", field.fieldEnum());
         } else {
             writer.formatln("optionals.set(%d);", field.index());
         }
@@ -451,7 +452,10 @@ public class TinyMessageBuilderFormat {
               .begin();
 
         if (message.isUnion()) {
-            writer.formatln("if (tUnionField == _Field.%s) tUnionField = null;", field.fieldEnum());
+            // The field ID outside short values should not be possible.
+            // Otherwise 0, all positive and negative short values must
+            // be handled correctly.
+            writer.formatln("if (tUnionField == %s) tUnionField = Integer.MAX_VALUE;", field.fieldEnum());
         } else {
             writer.formatln("optionals.clear(%d);", field.index());
         }

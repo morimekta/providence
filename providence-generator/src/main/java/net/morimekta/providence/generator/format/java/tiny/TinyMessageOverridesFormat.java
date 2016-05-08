@@ -76,7 +76,7 @@ public class TinyMessageOverridesFormat {
               .formatln("%s.class", message.instanceType());
         for (JField field : message.fields()) {
             writer.append(",");
-            writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+            writer.formatln("%s, %s", field.id(), field.member());
         }
 
         writer.end()
@@ -261,7 +261,7 @@ public class TinyMessageOverridesFormat {
               .begin();
 
         if (message.isUnion()) {
-            writer.appendln("int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());")
+            writer.appendln("int c = Integer.compare(tUnionField, other.tUnionField);")
                   .appendln("if (c != 0) return c;")
                   .newline()
                   .appendln("switch (tUnionField) {")

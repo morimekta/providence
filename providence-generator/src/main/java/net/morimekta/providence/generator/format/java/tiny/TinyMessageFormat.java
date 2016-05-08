@@ -142,7 +142,9 @@ public class TinyMessageFormat {
 
         overrides.appendOverrides(message);
 
-        appendFieldEnum(writer, message);
+        if (message.isUnion()) {
+            appendFieldEnum(writer, message);
+        }
 
         builder.appendBuilder(message);
 
@@ -152,75 +154,10 @@ public class TinyMessageFormat {
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        writer.formatln("public enum _Field {")
-              .begin();
-
         for (JField field : message.fields()) {
-            writer.formatln("%s(%d, \"%s\"),",
-                            field.fieldEnum(),
-                            field.id(),
-                            field.name());
+            writer.formatln("public static final int %s = %d;", field.fieldEnum(), field.id());
         }
-        writer.appendln(';')
-              .newline();
-
-        writer.appendln("private final int mKey;")
-              .appendln("private final String mName;")
-              .newline()
-              .formatln("_Field(int key, String name) {")
-              .begin()
-              .appendln("mKey = key;")
-              .appendln("mName = name;")
-              .end()
-              .appendln('}')
-              .newline();
-        writer.appendln("public int getKey() { return mKey; }")
-              .newline();
-        writer.appendln("public String getName() { return mName; }")
-              .newline();
-
-        writer.appendln("@Override")
-              .appendln("public String toString() {")
-              .appendln("    StringBuilder builder = new StringBuilder();")
-              .formatln("    builder.append(\"%s._Field(\")", message.instanceType())
-              .appendln("           .append(mKey)")
-              .appendln("           .append(':')")
-              .appendln("           .append(mName)")
-              .appendln("           .append(')');")
-              .appendln("    return builder.toString();")
-              .appendln('}')
-              .newline();
-
-        writer.appendln("public static _Field forKey(int key) {")
-              .begin()
-              .appendln("switch (key) {")
-              .begin();
-        for (JField field : message.fields()) {
-            writer.formatln("case %d: return _Field.%s;", field.id(), field.fieldEnum());
-        }
-        writer.end()
-              .appendln('}')
-              .appendln("return null;")
-              .end()
-              .appendln('}')
-              .newline();
-
-        writer.appendln("public static _Field forName(String name) {")
-              .begin()
-              .appendln("switch (name) {")
-              .begin();
-        for (JField field : message.fields()) {
-            writer.formatln("case \"%s\": return _Field.%s;", field.name(), field.fieldEnum());
-        }
-        writer.end()
-              .appendln('}')
-              .appendln("return null;")
-              .end()
-              .appendln('}');
-
-        writer.end()
-              .appendln('}')
-              .newline();
+        writer.newline();
     }
 
     private void appendFieldGetters(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
@@ -252,7 +189,7 @@ public class TinyMessageFormat {
         }
 
         if (message.isUnion()) {
-            writer.appendln("public _Field unionField() {")
+            writer.appendln("public int unionField() {")
                   .appendln("    return tUnionField;")
                   .appendln('}')
                   .newline();
@@ -265,7 +202,7 @@ public class TinyMessageFormat {
         }
         if (message.isUnion()) {
             writer.newline()
-                  .appendln("private final _Field tUnionField;");
+                  .appendln("private final int tUnionField;");
         }
         writer.appendln()
               .appendln("private volatile int tHashCode;")
@@ -281,13 +218,13 @@ public class TinyMessageFormat {
 
             for (JField field : message.fields()) {
                 if (field.alwaysPresent()) {
-                    writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : %s;",
+                    writer.formatln("%s = tUnionField == %s ? builder.%s : %s;",
                                     field.member(),
                                     field.fieldEnum(),
                                     field.member(),
                                     field.kDefault());
                 } else {
-                    writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : null;",
+                    writer.formatln("%s = tUnionField == %s ? builder.%s : null;",
                                     field.member(),
                                     field.fieldEnum(),
                                     field.member());
