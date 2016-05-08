@@ -190,7 +190,7 @@ public class TinyMessageBuilderFormat {
                                 field.instanceType());
                 break;
             default:
-                writer.formatln("%s.%s(ctxt.readValue(jp, %s.class));",
+                writer.formatln("%s.%s(ctxt.readValue(jp, %s.TYPE));",
                                 builder,
                                 field.setter(),
                                 field.instanceType());
@@ -236,7 +236,7 @@ public class TinyMessageBuilderFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            writer.formatln("case \"%d\": ", field.id())
+            writer.formatln("case \"%d\":", field.id())
                   .formatln("case \"%s\": {", field.name())
                   .begin();
 

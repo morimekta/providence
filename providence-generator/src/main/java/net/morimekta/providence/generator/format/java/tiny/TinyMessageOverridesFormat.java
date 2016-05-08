@@ -33,6 +33,7 @@ public class TinyMessageOverridesFormat {
         writer.appendln("@Override")
               .appendln("public boolean equals(Object o) {")
               .begin()
+              .appendln("if (o == this) return true;")
               .formatln("if (o == null || !(o instanceof %s)) return false;", message.instanceType());
         if (message.fields()
                    .size() > 0) {
