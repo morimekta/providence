@@ -299,12 +299,7 @@ public class TinyMessageFormat {
                         writer.append(',')
                               .appendln();
                     }
-                    if (field.container()) {
-                        writer.format("builder.optionals.get(%d) ? builder.%s.build() : null",
-                                      field.index(), field.member());
-                    } else {
-                        writer.format("builder.%s", field.member());
-                    }
+                    writer.format("builder.%s", field.member());
                 }
                 writer.append("));")
                       .end()

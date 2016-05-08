@@ -316,9 +316,6 @@ public class TinyMessageBuilderFormat {
     private void appendFields(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
             writer.appendln("private int tUnionField;");
-        } else {
-            writer.formatln("private %s optionals;",
-                            BitSet.class.getName());
         }
         writer.newline();
         for (JField field : message.fields()) {
@@ -338,11 +335,6 @@ public class TinyMessageBuilderFormat {
               .begin();
         if (message.isUnion()) {
             writer.formatln("tUnionField = Integer.MAX_VALUE;");
-        } else {
-            writer.formatln("optionals = new %s(%d);",
-                            BitSet.class.getName(),
-                            message.fields()
-                                   .size());
         }
         message.fields()
                .stream()
@@ -373,9 +365,6 @@ public class TinyMessageBuilderFormat {
             if (checkPresence) {
                 writer.formatln("if (base.%s != null) {", field.member())
                       .begin();
-            }
-            if (!message.isUnion()) {
-                writer.formatln("optionals.set(%d);", field.index());
             }
             writer.formatln("%s = base.%s;", field.member(), field.member());
 
@@ -423,8 +412,6 @@ public class TinyMessageBuilderFormat {
 
         if (message.isUnion()) {
             writer.formatln("tUnionField = %s;", field.fieldEnum());
-        } else {
-            writer.formatln("optionals.set(%d);", field.index());
         }
 
         writer.formatln("%s = %s;", field.member(), field.copyOfUnsafe("value"));
@@ -453,8 +440,6 @@ public class TinyMessageBuilderFormat {
             // Otherwise 0, all positive and negative short values must
             // be handled correctly.
             writer.formatln("if (tUnionField == %s) tUnionField = Integer.MAX_VALUE;", field.fieldEnum());
-        } else {
-            writer.formatln("optionals.clear(%d);", field.index());
         }
 
         if (field.hasDefault()) {
