@@ -32,8 +32,16 @@ import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.io.IndentedPrintWriter;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import java.io.IOException;
 
 /**
  * @author Stein Eldar Johnsen
@@ -55,6 +63,12 @@ public class TinyEnumFormat {
             new BlockCommentBuilder(writer)
                     .comment(type.getComment())
                     .finish();
+        }
+        if (options.jackson) {
+            writer.formatln("@%s(",
+                            JsonDeserialize.class.getName())
+                  .formatln("        using = %s._Deserializer.class)",
+                            simpleClass);
         }
         if (JAnnotation.isDeprecated((CAnnotatedDescriptor) type)) {
             writer.appendln(JAnnotation.DEPRECATED);
@@ -91,6 +105,9 @@ public class TinyEnumFormat {
               .appendln("}")
               .newline();
 
+        if (options.jackson) {
+            writer.formatln("@%s", JsonValue.class.getName());
+        }
         // @Override - Needs updated utils 0.2.4.
         writer.appendln("public int asInteger() {")
               .begin()
@@ -99,9 +116,6 @@ public class TinyEnumFormat {
               .appendln('}')
               .newline();
 
-        if (options.jackson) {
-            writer.formatln("@%s", JsonValue.class.getName());
-        }
         writer.appendln("@Override")
               .appendln("public String asString() {")
               .begin()
@@ -109,6 +123,10 @@ public class TinyEnumFormat {
               .end()
               .appendln('}')
               .newline();
+
+        if (options.jackson) {
+            appendJacksonDeserializer(writer, type);
+        }
 
         writer.formatln("public static %s forValue(int value) {", simpleClass)
               .begin()
@@ -128,9 +146,6 @@ public class TinyEnumFormat {
               .appendln('}')
               .newline();
 
-        if (options.jackson) {
-            writer.formatln("@%s", JsonCreator.class.getName());
-        }
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()
               .appendln("switch (name) {")
@@ -142,13 +157,52 @@ public class TinyEnumFormat {
                             value.getName()
                                  .toUpperCase());
         }
+
         writer.appendln("default: return null;")
               .end()
               .appendln('}')
               .end()
+              .appendln('}');
+
+        writer.end()
               .appendln('}')
+              .newline();
+    }
+
+    private void appendJacksonDeserializer(IndentedPrintWriter writer, CEnumDescriptor type) throws GeneratorException {
+        String instanceType = JUtils.getClassName(type);
+
+        writer.formatln("public static class _Deserializer extends %s<%s> {",
+                        JsonDeserializer.class.getName(),
+                        instanceType)
+              .begin();
+
+        writer.appendln("@Override")
+              .formatln("public %s deserialize(%s jp,",
+                        instanceType,
+                        JsonParser.class.getName())
+              .formatln("       %s             %s ctxt)",
+                        instanceType.replaceAll("[\\S]", " "),
+                        DeserializationContext.class.getName())
+              .formatln("         throws %s,",
+                        IOException.class.getName())
+              .formatln("                %s {",
+                        JsonProcessingException.class.getName())
+              .begin();
+
+        writer.formatln("if (jp.getCurrentToken() == %s.VALUE_NUMBER_INT) {", JsonToken.class.getName())
+              .formatln("    return %s.forValue(jp.getIntValue());", instanceType)
+              .formatln("} else if (jp.getCurrentToken() == %s.VALUE_STRING) {", JsonToken.class.getName())
+              .formatln("    return %s.forName(jp.getText());", instanceType)
+              .appendln("} else {")
+              .formatln("    throw new %s(jp, \"Invalid token for enum deserialization \" + jp.getText());",
+                        JsonParseException.class.getName())
+              .appendln('}');
+
+        writer.end()
+              .formatln("}")
               .end()
-              .appendln('}')
+              .formatln("}")
               .newline();
     }
 }

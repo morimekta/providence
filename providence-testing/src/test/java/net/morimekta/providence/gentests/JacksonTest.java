@@ -50,7 +50,7 @@ public class JacksonTest {
                      "\"doubleValue\":1.23456789012345E9," +
                      "\"stringValue\":\"Ûñı©óð€\"," +
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
-                     "\"enumValue\":\"FIRST\"," +
+                     "\"enumValue\":1," +
                      "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
                      "}", serialize(primitives));
     }
@@ -66,7 +66,7 @@ public class JacksonTest {
                      "\"doubleValue\":1.23456789012345E9," +
                      "\"stringValue\":\"Ûñı©óð€\"," +
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
-                     "\"enumValue\":\"FIRST\"," +
+                     "\"enumValue\":1," +
                      "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
                      "}]", serialize(Collections.singletonList(primitives)));
     }
@@ -114,7 +114,7 @@ public class JacksonTest {
                          "\"doubleValue\":1.23456789012345E9," +
                          "\"stringValue\":\"Ûñı©óð€\"," +
                          "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
-                         "\"enumValue\":\"FIRST\"," +
+                         "\"enumValue\":1," +
                          "\"compactValue\":[\"Test\",4]" +
                          "}]";
 
