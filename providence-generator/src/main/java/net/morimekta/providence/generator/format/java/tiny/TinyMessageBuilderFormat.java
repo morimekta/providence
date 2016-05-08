@@ -52,11 +52,7 @@ public class TinyMessageBuilderFormat {
         // the compact format. Note that it will still serializer as "normal"
         // json objects.
         if (options.jackson) {
-            if (message.descriptor().isCompactible()) {
-                 appendJacksonDeserializer(message);
-            } else {
-                writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
-            }
+            appendJacksonDeserializer(message);
         }
         if (JAnnotation.isDeprecated(message.descriptor())) {
             writer.appendln(JAnnotation.DEPRECATED);
@@ -240,7 +236,8 @@ public class TinyMessageBuilderFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            writer.formatln("case \"%s\": {", field.name())
+            writer.formatln("case \"%d\": ", field.id())
+                  .formatln("case \"%s\": {", field.name())
                   .begin();
 
             appendReadValue("builder", field, message);

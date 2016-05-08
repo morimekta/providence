@@ -106,16 +106,16 @@ public class JacksonTest {
     @Test
     public void testDeserialize_collection() throws IOException {
         String message = "[{" +
-                         "\"booleanValue\":true," +
-                         "\"byteValue\":64," +
-                         "\"shortValue\":12345," +
-                         "\"integerValue\":1234567890," +
-                         "\"longValue\":1234567890123456789," +
-                         "\"doubleValue\":1.23456789012345E9," +
-                         "\"stringValue\":\"Ûñı©óð€\"," +
-                         "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
-                         "\"enumValue\":1," +
-                         "\"compactValue\":[\"Test\",4]" +
+                         "\"1\":true," +
+                         "\"2\":64," +
+                         "\"3\":12345," +
+                         "\"4\":1234567890," +
+                         "\"5\":1234567890123456789," +
+                         "\"6\":1.23456789012345E9," +
+                         "\"7\":\"Ûñı©óð€\"," +
+                         "\"8\":\"AAECAwQFBgcICQA=\"," +
+                         "\"9\":1," +
+                         "\"10\":[\"Test\",4]" +
                          "}]";
 
         ObjectMapper mapper = new ObjectMapper();

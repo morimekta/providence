@@ -112,13 +112,8 @@ public class TinyMessageFormat {
                 writer.formatln("@%s(", JsonSerialize.class.getName())
                       .formatln("        using = %s._Serializer.class)", message.instanceType());
             }
-            if (message.descriptor().isCompactible()) {
-                writer.formatln("@%s(", JsonDeserialize.class.getName())
-                      .formatln("        using = %s._Deserializer.class)", message.instanceType());
-            } else {
-                writer.formatln("@%s(", JsonDeserialize.class.getName())
-                      .formatln("        builder = %s._Builder.class)", message.instanceType());
-            }
+            writer.formatln("@%s(", JsonDeserialize.class.getName())
+                  .formatln("        using = %s._Deserializer.class)", message.instanceType());
         }
         if (JAnnotation.isDeprecated(message.descriptor())) {
             writer.appendln(JAnnotation.DEPRECATED);
