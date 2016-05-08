@@ -37,6 +37,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.IOException;
@@ -85,8 +86,23 @@ public class TinyMessageFormat {
                   .formatln("@%s(%s.%s)", JsonInclude.class.getName(),
                             JsonInclude.Include.class.getName().replaceAll("[$]", "."),
                             JsonInclude.Include.NON_EMPTY.name())
-                  .formatln("@%s(", JsonDeserialize.class.getName())
-                  .formatln("        builder = %s._Builder.class)", message.instanceType());
+                  .formatln("@%s({", JsonPropertyOrder.class.getName())
+                  .begin("        ");
+            boolean first = true;
+            for (JField field : message.fields()) {
+                if (first) first = false;
+                else writer.append(", ");
+                writer.formatln("\"%s\"", field.name());
+            }
+            writer.end()
+                  .format("})");
+            if (message.descriptor().isCompactible()) {
+                writer.formatln("@%s(", JsonDeserialize.class.getName())
+                      .formatln("        using = %s._Deserializer.class)", message.instanceType());
+            } else {
+                writer.formatln("@%s(", JsonDeserialize.class.getName())
+                      .formatln("        builder = %s._Builder.class)", message.instanceType());
+            }
         }
         if (JAnnotation.isDeprecated(message.descriptor())) {
             writer.appendln(JAnnotation.DEPRECATED);

@@ -40,7 +40,6 @@ public class JacksonTest {
     }
 
     @Test
-    @Ignore("Field ordering is messed up (aka unstable)")
     public void testSerialize_primitives() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -64,7 +63,6 @@ public class JacksonTest {
     }
 
     @Test
-    @Ignore("Field ordering is messed up (aka unstable)")
     public void testSerialize_collection() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -108,7 +106,8 @@ public class JacksonTest {
 
         DefaultValues out = mapper.readValue(in, DefaultValues.class);
 
-        assertEquals(out, primitives);
+        assertEquals(primitives.toString().replaceAll(",", ",\n"),
+                     out.toString().replaceAll(",", ",\n"));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class JacksonTest {
                          "\"stringValue\":\"Ûñı©óð€\"," +
                          "\"binaryValue\":\"AAECAwQFBgcICQA=\"," +
                          "\"enumValue\":\"FIRST\"," +
-                         "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                         "\"compactValue\":[\"Test\",4]" +
                          "}]";
 
         ObjectMapper mapper = new ObjectMapper();
@@ -135,6 +134,7 @@ public class JacksonTest {
                                                               .constructCollectionType(ArrayList.class,
                                                                                        DefaultValues.class));
 
-        assertEquals(out.get(0), primitives);
+        assertEquals(primitives.toString().replaceAll(",", ",\n"),
+                     out.get(0).toString().replaceAll(",", ",\n"));
     }
 }
