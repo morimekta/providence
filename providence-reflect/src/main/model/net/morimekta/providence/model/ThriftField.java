@@ -194,6 +194,7 @@ public class ThriftField
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof ThriftField)) return false;
         ThriftField other = (ThriftField) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

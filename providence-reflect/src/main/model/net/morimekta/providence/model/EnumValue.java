@@ -130,6 +130,7 @@ public class EnumValue
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof EnumValue)) return false;
         EnumValue other = (EnumValue) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

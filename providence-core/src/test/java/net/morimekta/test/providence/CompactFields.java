@@ -109,6 +109,7 @@ public class CompactFields
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof CompactFields)) return false;
         CompactFields other = (CompactFields) o;
         return java.util.Objects.equals(mName, other.mName) &&

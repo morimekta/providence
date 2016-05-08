@@ -105,6 +105,7 @@ public class CalculateException
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof CalculateException)) return false;
         CalculateException other = (CalculateException) o;
         return java.util.Objects.equals(mMessage, other.mMessage) &&

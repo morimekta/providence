@@ -111,6 +111,7 @@ public class ApplicationException
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof ApplicationException)) return false;
         ApplicationException other = (ApplicationException) o;
         return java.util.Objects.equals(mMessage, other.mMessage) &&

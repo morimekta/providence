@@ -248,6 +248,7 @@ public class Calculator {
 
         @Override
         public boolean equals(Object o) {
+            if (o == this) return true;
             if (o == null || !(o instanceof Calculate_request)) return false;
             Calculate_request other = (Calculate_request) o;
             return java.util.Objects.equals(mOp, other.mOp);
@@ -626,6 +627,7 @@ public class Calculator {
 
         @Override
         public boolean equals(Object o) {
+            if (o == this) return true;
             if (o == null || !(o instanceof Calculate_response)) return false;
             Calculate_response other = (Calculate_response) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
@@ -998,6 +1000,7 @@ public class Calculator {
 
         @Override
         public boolean equals(Object o) {
+            if (o == this) return true;
             if (o == null || !(o instanceof Iamalive_request)) return false;
             return true;
         }

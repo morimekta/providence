@@ -98,6 +98,7 @@ public class TypedefType
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof TypedefType)) return false;
         TypedefType other = (TypedefType) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

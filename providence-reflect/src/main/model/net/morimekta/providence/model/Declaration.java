@@ -171,6 +171,7 @@ public class Declaration
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof Declaration)) return false;
         Declaration other = (Declaration) o;
         return java.util.Objects.equals(tUnionField, other.tUnionField) &&

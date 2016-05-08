@@ -80,6 +80,7 @@ public class Imaginary
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof Imaginary)) return false;
         Imaginary other = (Imaginary) o;
         return java.util.Objects.equals(mV, other.mV) &&

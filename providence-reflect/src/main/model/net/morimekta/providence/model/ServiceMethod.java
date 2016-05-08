@@ -208,6 +208,7 @@ public class ServiceMethod
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof ServiceMethod)) return false;
         ServiceMethod other = (ServiceMethod) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

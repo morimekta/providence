@@ -295,6 +295,7 @@ public class UnionFields
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof UnionFields)) return false;
         UnionFields other = (UnionFields) o;
         return java.util.Objects.equals(tUnionField, other.tUnionField) &&

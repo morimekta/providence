@@ -221,6 +221,7 @@ public class OptionalFields
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof OptionalFields)) return false;
         OptionalFields other = (OptionalFields) o;
         return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&

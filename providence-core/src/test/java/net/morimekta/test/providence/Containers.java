@@ -1059,6 +1059,7 @@ public class Containers
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof Containers)) return false;
         Containers other = (Containers) o;
         return java.util.Objects.equals(mBooleanList, other.mBooleanList) &&

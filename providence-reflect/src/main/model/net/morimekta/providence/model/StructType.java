@@ -162,6 +162,7 @@ public class StructType
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof StructType)) return false;
         StructType other = (StructType) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

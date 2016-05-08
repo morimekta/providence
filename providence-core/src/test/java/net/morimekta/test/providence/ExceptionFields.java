@@ -308,6 +308,7 @@ public class ExceptionFields
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof ExceptionFields)) return false;
         ExceptionFields other = (ExceptionFields) o;
         return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&

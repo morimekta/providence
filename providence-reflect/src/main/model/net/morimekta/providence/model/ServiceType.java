@@ -160,6 +160,7 @@ public class ServiceType
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof ServiceType)) return false;
         ServiceType other = (ServiceType) o;
         return java.util.Objects.equals(mComment, other.mComment) &&

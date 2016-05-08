@@ -230,6 +230,7 @@ public class DefaultValues
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof DefaultValues)) return false;
         DefaultValues other = (DefaultValues) o;
         return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
