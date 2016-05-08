@@ -1,4 +1,4 @@
-package net.morimekta.providence.generator.format.java;
+package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -21,12 +21,12 @@ import java.util.List;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class JValueFormat {
+public class ValueBuilder {
     private final JOptions            options;
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
-    public JValueFormat(IndentedPrintWriter writer, JOptions options, JHelper helper) {
+    public ValueBuilder(IndentedPrintWriter writer, JOptions options, JHelper helper) {
         this.writer = writer;
         this.options = options;
         this.helper = helper;

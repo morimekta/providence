@@ -46,6 +46,7 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
+import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.util.Strings;
@@ -87,7 +88,7 @@ public class JMessageFormat {
         JMessageAndroidFormat android = new JMessageAndroidFormat(writer, helper);
         JMessageOverridesFormat overrides = new JMessageOverridesFormat(writer, options, helper);
         JMessageBuilderFormat builder = new JMessageBuilderFormat(writer, helper, options);
-        JValueFormat values = new JValueFormat(writer, options, helper);
+        ValueBuilder values = new ValueBuilder(writer, options, helper);
 
         CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
         if (annotatedDescriptor.getComment() != null) {

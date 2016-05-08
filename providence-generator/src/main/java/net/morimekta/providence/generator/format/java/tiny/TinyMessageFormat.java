@@ -31,6 +31,7 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
+import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
@@ -75,7 +76,7 @@ public class TinyMessageFormat {
 
         TinyMessageOverridesFormat overrides = new TinyMessageOverridesFormat(writer, options, helper);
         TinyMessageBuilderFormat builder = new TinyMessageBuilderFormat(writer, helper, options);
-        TinyValueFormat values = new TinyValueFormat(writer, options, helper);
+        ValueBuilder values = new ValueBuilder(writer, options, helper);
 
         CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
         if (annotatedDescriptor.getComment() != null) {

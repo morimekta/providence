@@ -10,6 +10,7 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -33,7 +34,7 @@ public class JConstantsFormat {
     }
 
     public void format(IndentedPrintWriter writer, CDocument document) throws GeneratorException {
-        JValueFormat value = new JValueFormat(writer, options, helper);
+        ValueBuilder value = new ValueBuilder(writer, options, helper);
 
         writer.format("package %s;", helper.getJavaPackage(document))
               .newline();
