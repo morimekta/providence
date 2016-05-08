@@ -2,12 +2,12 @@ package net.morimekta.providence.gentests;
 
 import net.morimekta.test.jackson.CompactFields;
 import net.morimekta.test.jackson.DefaultValues;
+import net.morimekta.test.jackson.UnionFields;
 import net.morimekta.test.jackson.Value;
 import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -41,13 +41,6 @@ public class JacksonTest {
 
     @Test
     public void testSerialize_primitives() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        mapper.writeValue(out, primitives);
-
-        String serialized = new String(out.toByteArray(), StandardCharsets.UTF_8);
-
         assertEquals("{" +
                      "\"booleanValue\":true," +
                      "\"byteValue\":64," +
@@ -59,18 +52,11 @@ public class JacksonTest {
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
                      "\"enumValue\":\"FIRST\"," +
                      "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
-                     "}", serialized);
+                     "}", serialize(primitives));
     }
 
     @Test
     public void testSerialize_collection() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        mapper.writeValue(out, Collections.singletonList(primitives));
-
-        String serialized = new String(out.toByteArray(), StandardCharsets.UTF_8);
-
         assertEquals("[{" +
                      "\"booleanValue\":true," +
                      "\"byteValue\":64," +
@@ -82,7 +68,14 @@ public class JacksonTest {
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
                      "\"enumValue\":\"FIRST\"," +
                      "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
-                     "}]", serialized);
+                     "}]", serialize(Collections.singletonList(primitives)));
+    }
+
+    @Test
+    public void testSerialize_union() throws IOException {
+        assertEquals("{\"booleanValue\":true}", serialize(UnionFields.withBooleanValue(true)));
+        assertEquals("{\"binaryValue\":\"AAECAwQFBgcICQA\"}", serialize(UnionFields.withBinaryValue(Binary.fromBase64("AAECAwQFBgcICQA"))));
+        assertEquals("{\"compactValue\":{\"name\":\"test\",\"id\":4}}", serialize(UnionFields.withCompactValue(new CompactFields("test", 4, null))));
     }
 
     @Test
@@ -136,5 +129,12 @@ public class JacksonTest {
 
         assertEquals(primitives.toString().replaceAll(",", ",\n"),
                      out.get(0).toString().replaceAll(",", ",\n"));
+    }
+
+    private String serialize(Object value) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mapper.writeValue(out, value);
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 }

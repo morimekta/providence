@@ -20,6 +20,7 @@
 package net.morimekta.providence.generator.format.java.tiny;
 
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
@@ -38,7 +39,12 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -82,20 +88,30 @@ public class TinyMessageFormat {
         }
 
         if (options.jackson) {
-            writer.formatln("@%s(ignoreUnknown = true)", JsonIgnoreProperties.class.getName())
-                  .formatln("@%s(%s.%s)", JsonInclude.class.getName(),
-                            JsonInclude.Include.class.getName().replaceAll("[$]", "."),
-                            JsonInclude.Include.NON_EMPTY.name())
-                  .formatln("@%s({", JsonPropertyOrder.class.getName())
-                  .begin("        ");
-            boolean first = true;
-            for (JField field : message.fields()) {
-                if (first) first = false;
-                else writer.append(", ");
-                writer.formatln("\"%s\"", field.name());
+            writer.formatln("@%s(ignoreUnknown = true)", JsonIgnoreProperties.class.getName());
+            if (!message.isUnion()) {
+                writer.formatln("@%s(%s.%s)",
+                                JsonInclude.class.getName(),
+                                JsonInclude.Include.class.getName()
+                                                         .replaceAll("[$]", "."),
+                                JsonInclude.Include.NON_EMPTY.name())
+                      .formatln("@%s({", JsonPropertyOrder.class.getName())
+                      .begin("        ");
+                boolean first = true;
+                for (JField field : message.fields()) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        writer.append(", ");
+                    }
+                    writer.formatln("\"%s\"", field.name());
+                }
+                writer.end()
+                      .format("})");
+            } else {
+                writer.formatln("@%s(", JsonSerialize.class.getName())
+                      .formatln("        using = %s._Serializer.class)", message.instanceType());
             }
-            writer.end()
-                  .format("})");
             if (message.descriptor().isCompactible()) {
                 writer.formatln("@%s(", JsonDeserialize.class.getName())
                       .formatln("        using = %s._Deserializer.class)", message.instanceType());
@@ -143,6 +159,9 @@ public class TinyMessageFormat {
         overrides.appendOverrides(message);
 
         if (message.isUnion()) {
+            if (options.jackson) {
+                appendUnionSerializer(writer, message);
+            }
             appendFieldEnum(writer, message);
         }
 
@@ -151,6 +170,48 @@ public class TinyMessageFormat {
         writer.end()
               .appendln('}')
               .newline();
+    }
+
+    private void appendUnionSerializer(IndentedPrintWriter writer, JMessage<?> message) {
+        writer.formatln("public static class _Serializer extends %s<%s> {",
+                        JsonSerializer.class.getName(),
+                        message.instanceType())
+              .begin()
+              .appendln("@Override")
+              .formatln("public void serialize(%s value, %s jgen, %s provider)",
+                        message.instanceType(),
+                        JsonGenerator.class.getName(),
+                        SerializerProvider.class.getName())
+              .formatln("        throws %s, %s {",
+                        IOException.class.getName(), JsonProcessingException.class.getName())
+              .begin();
+
+        writer.appendln("jgen.writeStartObject();")
+              .appendln("switch (value.tUnionField) {")
+              .begin();
+
+        for (JField field : message.fields()) {
+            writer.formatln("case %s: {", field.fieldEnum())
+                  .begin();
+
+            if (field.type() == PType.BINARY) {
+                writer.formatln("provider.defaultSerializeField(\"%s\", value.%s.toBase64(), jgen);", field.name(), field.member());
+            } else {
+                writer.formatln("provider.defaultSerializeField(\"%s\", value.%s, jgen);", field.name(), field.member());
+            }
+            writer.appendln("break;")
+                  .end()
+                  .appendln('}');
+        }
+
+        writer.end()
+              .appendln('}')
+              .appendln("jgen.writeEndObject();");
+
+        writer.end()
+              .appendln('}')
+              .end()
+              .appendln('}');
     }
 
     private void appendFieldEnum(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
