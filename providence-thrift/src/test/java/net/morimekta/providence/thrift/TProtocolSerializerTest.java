@@ -5,11 +5,15 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
 
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TEnum;
 import org.apache.thrift.TException;
@@ -20,12 +24,10 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
-import org.apache.thrift.protocol.TSimpleJSONProtocol;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
+import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -236,8 +238,17 @@ public class TProtocolSerializerTest {
     }
 
     @Test
-    @Ignore("TSimpleJsonProtocol is write-only.")
     public void testTSimpleJsonProtocol() throws IOException, SerializerException, TException {
-        testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
+        // testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new TSimpleJsonProtocolSerializer().serialize(baos, containers.get(0));
+
+        // Check that the serialized JSON is parseable by jackson.
+        JsonNode node = mapper.readTree(new ByteArrayInputStream(baos.toByteArray()));
+
+        // Just checking a part of it. Binary data is kinda messed up anyway.
+        assertEquals("[21520,13500,24486,1798]", node.get("shortList").toString());
     }
 }
