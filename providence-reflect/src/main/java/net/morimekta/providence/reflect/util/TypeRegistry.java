@@ -30,6 +30,7 @@ import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -98,12 +99,17 @@ public class TypeRegistry {
         String declaredTypeName = name;
         if (!name.contains(".") && packageContext != null) {
             declaredTypeName = packageContext + "." + name;
+        } else {
+            int dot = declaredTypeName.indexOf('.');
+            packageContext = declaredTypeName.substring(0, dot);
+            name = declaredTypeName.substring(dot + 1);
         }
+
         if (declaredTypes.containsKey(declaredTypeName)) {
             return (T) declaredTypes.get(declaredTypeName);
         }
 
-        throw new IllegalArgumentException("No such type \"" + name + "\" for package \"" + packageContext + "\"");
+        throw new IllegalArgumentException("No such type \"" + name + "\" in package \"" + packageContext + "\"");
     }
 
     /**
@@ -138,9 +144,11 @@ public class TypeRegistry {
      *
      * @param typeName       Name of type, without any spaces.
      * @param packageContext The package context of the type.
+     * @param annotations    Annotations on the type.
      * @return The type provider.
      */
-    public PDescriptorProvider getProvider(String typeName, final String packageContext) {
+    @SuppressWarnings("unchecked")
+    public PDescriptorProvider getProvider(String typeName, final String packageContext, Map<String, String> annotations) {
         while (typedefs.containsKey(typeName)) {
             typeName = typedefs.get(typeName);
         }
@@ -160,16 +168,32 @@ public class TypeRegistry {
             }
             String keyType = parts[0];
             String valueType = parts[1];
-            return PMap.provider(getProvider(keyType, packageContext),
-                                 getProvider(valueType, packageContext));
+            switch (ThriftCollection.forName(ThriftAnnotation.COLLECTION.id)) {
+                case SORTED:
+                    return PMap.sortedProvider(getProvider(keyType, packageContext, Collections.EMPTY_MAP),
+                                               getProvider(valueType, packageContext, Collections.EMPTY_MAP));
+                case ORDERED:
+                    return PMap.orderedProvider(getProvider(keyType, packageContext, Collections.EMPTY_MAP),
+                                                getProvider(valueType, packageContext, Collections.EMPTY_MAP));
+                case DEFAULT:
+                    return PMap.provider(getProvider(keyType, packageContext, Collections.EMPTY_MAP),
+                                         getProvider(valueType, packageContext, Collections.EMPTY_MAP));
+            }
         }
         if (typeName.startsWith("set<") && typeName.endsWith(">")) {
             String itemType = typeName.substring(4, typeName.length() - 1);
-            return PSet.provider(getProvider(itemType, packageContext));
+            switch (ThriftCollection.forName(ThriftAnnotation.COLLECTION.id)) {
+                case SORTED:
+                    return PSet.sortedProvider(getProvider(itemType, packageContext, Collections.EMPTY_MAP));
+                case ORDERED:
+                    return PSet.orderedProvider(getProvider(itemType, packageContext, Collections.EMPTY_MAP));
+                case DEFAULT:
+                    return PSet.provider(getProvider(itemType, packageContext, Collections.EMPTY_MAP));
+            }
         }
         if (typeName.startsWith("list<") && typeName.endsWith(">")) {
             String itemType = typeName.substring(5, typeName.length() - 1);
-            return PList.provider(getProvider(itemType, packageContext));
+            return PList.provider(getProvider(itemType, packageContext, Collections.EMPTY_MAP));
         }
 
         final String name = typeName;

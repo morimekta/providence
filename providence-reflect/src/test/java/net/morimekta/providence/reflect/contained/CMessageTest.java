@@ -27,6 +27,7 @@ import net.morimekta.util.Binary;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class CMessageTest {
                               32000,
                               PRequirement.OPTIONAL,
                               "field_a",
-                              registry.getProvider("TypeA", "test"),
+                              registry.getProvider("TypeA", "test", Collections.EMPTY_MAP),
                               null,
                               null));
 

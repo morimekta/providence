@@ -170,7 +170,7 @@ public class DocumentConverter {
                         if (!sm.isOneWay()) {
                             List<CField> rsFields = new LinkedList<>();
                             if (sm.getReturnType() != null) {
-                                PDescriptorProvider type = registry.getProvider(sm.getReturnType(), document.getPackage());
+                                PDescriptorProvider type = registry.getProvider(sm.getReturnType(), document.getPackage(), sm.getAnnotations());
 
                                 CField success = new CField(null,
                                                             0,
@@ -246,7 +246,7 @@ public class DocumentConverter {
     }
 
     private CField makeField(String pkg, ThriftField field) {
-        PDescriptorProvider type = registry.getProvider(field.getType(), pkg);
+        PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
             defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getDefaultValue());
