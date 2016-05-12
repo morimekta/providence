@@ -25,7 +25,9 @@ public class TinyMessageOverridesFormat {
         appendEquals(message);
         appendHashCode(message);
         appendToString(message);
+        // Stringable
         appendAsString(message);
+        // Comparable
         appendCompareTo(message);
     }
 

@@ -184,9 +184,9 @@ public class TinyEnumFormat {
               .formatln("       %s             %s ctxt)",
                         instanceType.replaceAll("[\\S]", " "),
                         DeserializationContext.class.getName())
-              .formatln("         throws %s,",
+              .formatln("        throws %s,",
                         IOException.class.getName())
-              .formatln("                %s {",
+              .formatln("               %s {",
                         JsonProcessingException.class.getName())
               .begin();
 

@@ -100,12 +100,6 @@ public class JMessageFormat {
             writer.appendln(JAnnotation.DEPRECATED);
         }
 
-        if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)")
-                  .appendln("@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)")
-                  .appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(")
-                  .formatln("        builder = %s._Builder.class)", message.instanceType());
-        }
         if (JAnnotation.isDeprecated(message.descriptor())) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
@@ -475,13 +469,6 @@ public class JMessageFormat {
                    .finish();
             if (JAnnotation.isDeprecated(field)) {
                 writer.appendln(JAnnotation.DEPRECATED);
-            }
-            if (options.jackson) {
-                writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\")", field.name());
-                if (field.binary()) {
-                    writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonSerialize(" +
-                                    "using = net.morimekta.providence.jackson.BinaryJsonSerializer.class) ");
-                }
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
             if (!field.container() && !field.alwaysPresent() && field.getPField()

@@ -176,31 +176,35 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
         }
 
-        Generator generator;
-        if (tiny) {
-            JOptions options = new JOptions();
-            options.jackson = jackson;
-            if (android) {
-                throw new MojoExecutionException("Android option not compatible with pure-jackson.");
+        try {
+            Generator generator;
+            if (tiny) {
+                JOptions options = new JOptions();
+                options.jackson = jackson;
+                if (android) {
+                    throw new MojoExecutionException("Android option not compatible with pure-jackson.");
+                }
+                generator = new TinyGenerator(fileManager, loader.getRegistry(), options);
+            } else {
+                JOptions options = new JOptions();
+                options.android = android;
+                options.jackson = jackson;
+                generator = new JGenerator(fileManager, loader.getRegistry(), options);
             }
-            generator = new TinyGenerator(fileManager, loader.getRegistry(), options);
-        } else {
-            JOptions options = new JOptions();
-            options.android = android;
-            options.jackson = jackson;
-            generator = new JGenerator(fileManager, loader.getRegistry(), options);
-        }
 
-        for (CDocument doc : documents) {
-            try {
-                generator.generate(doc);
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to write document: " + doc.getPackageName(), e);
-            } catch (GeneratorException e) {
-                getLog().warn(e.getMessage());
-                getLog().warn(".---------------------.");
-                throw new MojoFailureException("Failed to generate document: " + doc.getPackageName(), e);
+            for (CDocument doc : documents) {
+                try {
+                    generator.generate(doc);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Failed to write document: " + doc.getPackageName(), e);
+                } catch (GeneratorException e) {
+                    getLog().warn(e.getMessage());
+                    throw new MojoFailureException("Failed to generate document: " + doc.getPackageName(), e);
+                }
             }
+        } catch (GeneratorException e) {
+            getLog().warn(e.getMessage());
+            throw new MojoFailureException("Failed to generate file: " + e.getMessage(), e);
         }
 
         return compileOutput;

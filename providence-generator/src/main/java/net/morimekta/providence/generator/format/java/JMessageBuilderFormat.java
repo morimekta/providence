@@ -35,9 +35,6 @@ public class JMessageBuilderFormat {
     public void appendBuilder(JMessage<?> message) throws GeneratorException {
         appendMutators(message);
 
-        if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder(withPrefix = \"set\")");
-        }
         if (JAnnotation.isDeprecated(message.descriptor())) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
@@ -205,12 +202,6 @@ public class JMessageBuilderFormat {
                .finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
-        }
-        if (options.jackson) {
-            writer.formatln("@com.fasterxml.jackson.annotation.JsonProperty(\"%s\") ", field.name());
-            if (field.binary()) {
-                writer.appendln("@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = net.morimekta.providence.jackson.BinaryJsonDeserializer.class) ");
-            }
         }
         if (field.type() == PType.SET || field.type() == PType.LIST) {
             PContainer<?> cType = (PContainer<?>) field.getPField()

@@ -30,12 +30,9 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
-import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.util.io.IndentedPrintWriter;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * @author Stein Eldar Johnsen
@@ -102,10 +99,6 @@ public class JEnumFormat {
               .appendln('}')
               .newline();
 
-        if (options.jackson) {
-            writer.formatln("@%s", JsonValue.class.getName());
-        }
-
         writer.appendln("@Override")
               .appendln("public String getName() {")
               .begin()
@@ -139,9 +132,6 @@ public class JEnumFormat {
               .appendln('}')
               .newline();
 
-        if (options.jackson) {
-            writer.formatln("@%s", JsonCreator.class.getName());
-        }
         writer.formatln("public static %s forName(String name) {", simpleClass)
               .begin()
               .appendln("switch (name) {")

@@ -23,7 +23,13 @@ package net.morimekta.providence.generator.format.java.utils;
  * Options class for java 2 generator.
  */
 public class JOptions {
+    /**
+     *
+     */
     public boolean android = false;
 
+    /**
+     *
+     */
     public boolean jackson = false;
 }

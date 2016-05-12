@@ -47,8 +47,12 @@ public class JGenerator extends Generator {
     private final JServiceFormat   serviceFormatter;
     private final JConstantsFormat constFormat;
 
-    public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) {
+    public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) throws GeneratorException {
         super(manager);
+
+        if (options.jackson) {
+            throw new GeneratorException("Jackson option requires 'tiny' classes.");
+        }
 
         helper           = new JHelper(registry, options);
         messageFormatter = new JMessageFormat(helper, options);

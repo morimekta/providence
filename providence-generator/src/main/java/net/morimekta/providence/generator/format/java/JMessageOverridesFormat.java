@@ -43,9 +43,6 @@ public class JMessageOverridesFormat {
     }
 
     private void appendCompact(JMessage<?> message) {
-        if (options.jackson) {
-            writer.appendln("@com.fasterxml.jackson.annotation.JsonIgnore");
-        }
         writer.appendln("@Override")
               .appendln("public boolean compact() {")
               .begin();
