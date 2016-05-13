@@ -19,9 +19,9 @@
 
 package net.morimekta.providence.compiler;
 
-import net.morimekta.providence.compiler.options.Language;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.Language;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
@@ -71,14 +71,13 @@ public class Compiler {
                     System.out.println();
                     switch (options.help.generator) {
                         case java:
-                            System.out.println(" - tiny    : Use the 'tiny' java variant with less methods and dependencies. But");
-                            System.out.println("             with little serialization support.");
+                            System.out.println(" - android : Add android parcelable interface to model classes.");
+                            break;
+                        case tiny_java:
                             System.out.println(" - jackson : Add jackson 2 annotations to model classes.");
-                            System.out.println(" - android : Add android parcelable interface to model classes. Not compatible");
-                            System.out.println("             with 'tiny'.");
                             break;
                         default:
-                            System.out.println("None.");
+                            System.out.println("No options available for " + options.help.generator + ".");
                             break;
                     }
                 } else {

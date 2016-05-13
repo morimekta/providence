@@ -1,5 +1,7 @@
 package net.morimekta.providence.compiler.options;
 
+import net.morimekta.providence.generator.Language;
+
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.OptionDef;
