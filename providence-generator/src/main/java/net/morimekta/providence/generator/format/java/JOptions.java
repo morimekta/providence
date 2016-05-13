@@ -17,19 +17,14 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator.format.java.utils;
+package net.morimekta.providence.generator.format.java;
 
 /**
  * Options class for java 2 generator.
  */
 public class JOptions {
     /**
-     *
+     * Android option for the
      */
     public boolean android = false;
-
-    /**
-     *
-     */
-    public boolean jackson = false;
 }

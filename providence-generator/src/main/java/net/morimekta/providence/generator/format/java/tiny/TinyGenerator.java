@@ -24,7 +24,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -40,14 +40,14 @@ import java.io.OutputStream;
  * @since 05.09.15
  */
 public class TinyGenerator extends Generator {
-    private final JOptions options;
+    private final TinyOptions options;
     private final JHelper  helper;
 
-    public TinyGenerator(FileManager manager, TypeRegistry registry, JOptions options) {
+    public TinyGenerator(FileManager manager, TypeRegistry registry, TinyOptions options) {
         super(manager);
 
         this.options = options;
-        this.helper = new JHelper(registry, options);
+        this.helper = new JHelper(registry);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TinyGenerator extends Generator {
             String file = helper.getConstantsClassName(document) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
-                TinyConstantsFormat constFormat = new TinyConstantsFormat(helper, options);
+                TinyConstantsFormat constFormat = new TinyConstantsFormat(helper);
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
                 constFormat.format(writer, document);
                 writer.flush();

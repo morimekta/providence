@@ -54,7 +54,7 @@ public class JHelper {
 
     private final TypeRegistry mRegistry;
 
-    public JHelper(TypeRegistry registry, JOptions options) {
+    public JHelper(TypeRegistry registry) {
         mRegistry = registry;
     }
 

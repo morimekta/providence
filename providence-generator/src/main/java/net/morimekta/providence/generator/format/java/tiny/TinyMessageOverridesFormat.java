@@ -3,7 +3,7 @@ package net.morimekta.providence.generator.format.java.tiny;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class TinyMessageOverridesFormat {
     private final IndentedPrintWriter writer;
 
-    public TinyMessageOverridesFormat(IndentedPrintWriter writer, JOptions options, JHelper helper) {
+    public TinyMessageOverridesFormat(IndentedPrintWriter writer, TinyOptions options, JHelper helper) {
         this.writer = writer;
     }
 

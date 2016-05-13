@@ -24,7 +24,6 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -50,11 +49,7 @@ public class JGenerator extends Generator {
     public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) throws GeneratorException {
         super(manager);
 
-        if (options.jackson) {
-            throw new GeneratorException("Jackson option requires 'tiny' classes.");
-        }
-
-        helper           = new JHelper(registry, options);
+        helper           = new JHelper(registry);
         messageFormatter = new JMessageFormat(helper, options);
         enumFormatter    = new JEnumFormat(options);
         serviceFormatter = new JServiceFormat(helper, messageFormatter);

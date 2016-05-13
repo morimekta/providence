@@ -11,7 +11,6 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;

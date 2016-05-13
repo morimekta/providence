@@ -27,7 +27,6 @@ import net.morimekta.providence.descriptor.PEnumDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;

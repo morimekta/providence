@@ -4,10 +4,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.utils.JField;
-import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.util.Binary;
@@ -22,13 +19,11 @@ import java.util.List;
  * @since 08.01.16.
  */
 public class ValueBuilder {
-    private final JOptions            options;
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
-    public ValueBuilder(IndentedPrintWriter writer, JOptions options, JHelper helper) {
+    public ValueBuilder(IndentedPrintWriter writer, JHelper helper) {
         this.writer = writer;
-        this.options = options;
         this.helper = helper;
     }
 

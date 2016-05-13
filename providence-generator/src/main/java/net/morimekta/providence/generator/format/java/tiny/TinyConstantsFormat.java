@@ -11,7 +11,6 @@ import net.morimekta.providence.generator.format.java.utils.ContainerType;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CField;
@@ -35,16 +34,14 @@ import java.util.Map;
 public class TinyConstantsFormat {
     private static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
-    private final JOptions options;
     private final JHelper  helper;
 
-    public TinyConstantsFormat(JHelper helper, JOptions options) {
+    public TinyConstantsFormat(JHelper helper) {
         this.helper = helper;
-        this.options = options;
     }
 
     public void format(IndentedPrintWriter writer, CDocument document) throws GeneratorException {
-        ValueBuilder value = new ValueBuilder(writer, options, helper);
+        ValueBuilder value = new ValueBuilder(writer, helper);
 
         writer.format("package %s;", helper.getJavaPackage(document))
               .newline();

@@ -18,8 +18,9 @@ package net.morimekta.providence.maven.plugin;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JGenerator;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -179,7 +180,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         try {
             Generator generator;
             if (tiny) {
-                JOptions options = new JOptions();
+                TinyOptions options = new TinyOptions();
                 options.jackson = jackson;
                 if (android) {
                     throw new MojoExecutionException("Android option not compatible with pure-jackson.");
@@ -188,7 +189,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             } else {
                 JOptions options = new JOptions();
                 options.android = android;
-                options.jackson = jackson;
                 generator = new JGenerator(fileManager, loader.getRegistry(), options);
             }
 

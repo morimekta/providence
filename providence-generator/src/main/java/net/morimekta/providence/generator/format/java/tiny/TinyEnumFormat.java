@@ -24,7 +24,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
@@ -49,9 +49,9 @@ import java.io.IOException;
  */
 public class TinyEnumFormat {
     private final JHelper  helper;
-    private final JOptions options;
+    private final TinyOptions options;
 
-    public TinyEnumFormat(JHelper helper, JOptions options) {
+    public TinyEnumFormat(JHelper helper, TinyOptions options) {
         this.helper = helper;
         this.options = options;
     }

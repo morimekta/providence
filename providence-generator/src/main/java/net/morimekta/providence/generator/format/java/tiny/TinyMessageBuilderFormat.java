@@ -10,7 +10,7 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -34,11 +34,11 @@ import java.util.LinkedHashMap;
  * @since 08.01.16.
  */
 public class TinyMessageBuilderFormat {
-    private final JOptions options;
+    private final TinyOptions options;
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
-    public TinyMessageBuilderFormat(IndentedPrintWriter writer, JHelper helper, JOptions options) {
+    public TinyMessageBuilderFormat(IndentedPrintWriter writer, JHelper helper, TinyOptions options) {
         this.writer = writer;
         this.helper = helper;
         this.options = options;

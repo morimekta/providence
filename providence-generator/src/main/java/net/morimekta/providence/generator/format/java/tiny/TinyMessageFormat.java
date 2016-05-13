@@ -29,7 +29,7 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JOptions;
+import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
@@ -61,9 +61,9 @@ public class TinyMessageFormat {
     public static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JHelper  helper;
-    private final JOptions options;
+    private final TinyOptions options;
 
-    public TinyMessageFormat(JHelper helper, JOptions options) {
+    public TinyMessageFormat(JHelper helper, TinyOptions options) {
         this.helper = helper;
         this.options = options;
     }
@@ -76,7 +76,7 @@ public class TinyMessageFormat {
 
         TinyMessageOverridesFormat overrides = new TinyMessageOverridesFormat(writer, options, helper);
         TinyMessageBuilderFormat builder = new TinyMessageBuilderFormat(writer, helper, options);
-        ValueBuilder values = new ValueBuilder(writer, options, helper);
+        ValueBuilder values = new ValueBuilder(writer, helper);
 
         CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) descriptor;
         if (annotatedDescriptor.getComment() != null) {
