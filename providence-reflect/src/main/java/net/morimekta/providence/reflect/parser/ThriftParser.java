@@ -55,12 +55,12 @@ import java.util.regex.Pattern;
  * @since 07.09.15
  */
 public class ThriftParser implements Parser {
-    private final static Pattern RE_BLOCK_LINE   = Pattern.compile("^([\\s]*[*])?[\\s]?");
-    private static final Pattern VALID_PACKAGE   = Pattern.compile(
+    private final static Pattern RE_BLOCK_LINE        = Pattern.compile("^([\\s]*[*])?[\\s]?");
+    private static final Pattern VALID_PACKAGE        = Pattern.compile(
             "[-._a-zA-Z0-9]+");
-    private static final Pattern VALID_NAMESPACE = Pattern.compile(
+    public static final Pattern  VALID_IDENTIFIER     = Pattern.compile(
             "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
-    private static final Pattern VALID_SDI_NAMESPACE = Pattern.compile(
+    public static final Pattern  VALID_SDI_IDENTIFIER = Pattern.compile(
             "([_a-zA-Z][-_a-zA-Z0-9]*[.])*[_a-zA-Z][-_a-zA-Z0-9]*");
 
     @Override
