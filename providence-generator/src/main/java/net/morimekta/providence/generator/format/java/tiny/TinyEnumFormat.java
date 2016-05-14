@@ -24,11 +24,11 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumValue;
+import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -73,8 +73,8 @@ public class TinyEnumFormat {
         if (JAnnotation.isDeprecated((CAnnotatedDescriptor) type)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
-        writer.formatln("public enum %s implements %s {",
-                        simpleClass, Stringable.class.getName())
+        writer.formatln("public enum %s implements %s, %s {",
+                        simpleClass, Stringable.class.getName(), Numeric.class.getName())
               .begin();
 
         for (CEnumValue v : type.getValues()) {
@@ -108,8 +108,8 @@ public class TinyEnumFormat {
         if (options.jackson) {
             writer.formatln("@%s", JsonValue.class.getName());
         }
-        // @Override - Needs updated utils 0.2.4.
-        writer.appendln("public int asInteger() {")
+        writer.appendln("@Override")
+              .appendln("public int asInteger() {")
               .begin()
               .appendln("return mValue;")
               .end()

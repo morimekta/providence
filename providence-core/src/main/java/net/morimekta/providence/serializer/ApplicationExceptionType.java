@@ -33,6 +33,11 @@ public enum ApplicationExceptionType implements net.morimekta.providence.PEnumVa
     }
 
     @Override
+    public int asInteger() {
+        return mValue;
+    }
+
+    @Override
     public String asString() {
         return mName;
     }

@@ -33,6 +33,11 @@ public enum StructVariant implements net.morimekta.providence.PEnumValue<StructV
     }
 
     @Override
+    public int asInteger() {
+        return mValue;
+    }
+
+    @Override
     public String asString() {
         return mName;
     }

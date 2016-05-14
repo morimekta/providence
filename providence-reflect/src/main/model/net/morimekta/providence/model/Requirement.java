@@ -28,6 +28,11 @@ public enum Requirement implements net.morimekta.providence.PEnumValue<Requireme
     }
 
     @Override
+    public int asInteger() {
+        return mValue;
+    }
+
+    @Override
     public String asString() {
         return mName;
     }

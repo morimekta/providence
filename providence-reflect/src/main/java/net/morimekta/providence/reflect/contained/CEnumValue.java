@@ -66,6 +66,11 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
+    public int asInteger() {
+        return value;
+    }
+
+    @Override
     public String asString() {
         return name;
     }

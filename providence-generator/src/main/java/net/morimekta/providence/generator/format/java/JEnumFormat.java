@@ -107,6 +107,14 @@ public class JEnumFormat {
               .newline();
 
         writer.appendln("@Override")
+              .appendln("public int asInteger() {")
+              .begin()
+              .appendln("return mValue;")
+              .end()
+              .appendln('}')
+              .newline();
+
+        writer.appendln("@Override")
               .appendln("public String asString() {")
               .begin()
               .appendln("return mName;")
