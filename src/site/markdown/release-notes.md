@@ -3,7 +3,7 @@ Release Notes
 
 Release notes for each release.
 
-## providence 0.1.1 - ??.??.????
+## providence 0.1.1 - 14.05.2016
 
 - 'tiny_java' updates:
     - Supports parsing compact JSON messages.
