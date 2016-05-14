@@ -38,7 +38,7 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
 import net.morimekta.providence.rpc.options.ConvertStream;
 import net.morimekta.providence.rpc.options.Format;
-import net.morimekta.providence.rpc.options.FormatOptionsHandler;
+import net.morimekta.providence.rpc.options.FormatOptionHandler;
 import net.morimekta.providence.rpc.options.StreamOptionHandler;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
@@ -124,7 +124,7 @@ public class RPCOptions {
     @Option(name = "--format",
             aliases = {"-f"},
             metaVar = "fmt",
-            handler = FormatOptionsHandler.class,
+            handler = FormatOptionHandler.class,
             usage = "Request RPC format")
     protected Format format = Format.versioned_binary;
 

@@ -11,8 +11,8 @@ import org.kohsuke.args4j.spi.Setter;
 /**
  * Options handler for format. Avoids listing all the formats in one go.
  */
-public class FormatOptionsHandler extends OptionHandler<Format> {
-    public FormatOptionsHandler(CmdLineParser parser, OptionDef option, Setter<? super Format> setter) {
+public class FormatOptionHandler extends OptionHandler<Format> {
+    public FormatOptionHandler(CmdLineParser parser, OptionDef option, Setter<? super Format> setter) {
         super(parser, option, setter);
     }
 

@@ -2,7 +2,6 @@ package net.morimekta.providence.converter.options;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Convert params for input or output of providence data.
@@ -29,8 +28,16 @@ public class ConvertStream {
             if (hasFormat) {
                 builder.append(',');
             }
-            Path pwd = Paths.get(".").toFile().getAbsoluteFile().toPath();
-            builder.append(file.toPath().relativize(pwd).toString());
+            Path pwd = new File(System.getenv("PWD")).getAbsoluteFile().toPath();
+            String abs = file.getAbsolutePath();
+            String rel = pwd.relativize(file.getAbsoluteFile()
+                                            .toPath())
+                            .toString();
+            if (abs.length() < rel.length() || rel.startsWith("../../")) {
+                builder.append(abs);
+            } else {
+                builder.append(rel);
+            }
         } else if (!hasFormat) {
             builder.append("none");
         }

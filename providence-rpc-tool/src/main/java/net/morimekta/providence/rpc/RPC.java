@@ -127,9 +127,12 @@ public class RPC {
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
+        } catch (IllegalArgumentException e) {
+            System.out.flush();
+            System.err.print(e.getMessage());
         } catch (UncheckedIOException | IOException e) {
             System.out.flush();
-            System.err.println(e.getClass().getName());
+            System.err.println();
             System.err.print("I/O error: ");
             e.printStackTrace();
         }
