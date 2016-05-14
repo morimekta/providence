@@ -101,7 +101,8 @@ public class CompilerTest {
                      " --out (-o) dir             : Output directory. (default: .)\n" +
                      "\n" +
                      "Available generators:\n" +
-                     " - java       : Main java (1.7+) code generator.\n" +
+                     " - java       : Main java (1.8+) code generator.\n" +
+                     " - tiny_java  : Minimalistic java (1.7+) code generator.\n" +
                      " - thrift     : Re-generate thrift files with the same spec.\n" +
                      " - json       : Create JSON specification files.\n",
                      outContent.toString());
@@ -116,16 +117,88 @@ public class CompilerTest {
         assertEquals("Providence compiler - v" + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
-                     "java : Main java (1.7+) code generator.\n" +
+                     "java : Main java (1.8+) code generator.\n" +
                      "Available options\n" +
                      "\n" +
-                     " - tiny    : Use the 'tiny' java variant with less methods and dependencies. But\n" +
-                     "             with little serialization support.\n" +
-                     " - jackson : Add jackson 2 annotations to model classes.\n" +
-                     " - android : Add android parcelable interface to model classes. Not compatible\n" +
-                     "             with 'tiny'.\n",
+                     " - android : Add android parcelable interface to model classes.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testHelp_tiny_java() {
+        compiler.run("--help", "tiny_java");
+
+        assertEquals("Providence compiler - v" + version + "\n" +
+                     "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "\n" +
+                     "tiny_java : Minimalistic java (1.7+) code generator.\n" +
+                     "Available options\n" +
+                     "\n" +
+                     " - jackson : Add jackson 2 annotations to model classes.\n",
+                     outContent.toString());
+        assertEquals("", errContent.toString());
+        assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testIncludeNotExist() {
+        compiler.run("-I",
+                     temp.getRoot().getAbsolutePath() + "/does_not_exist",
+                     "-g", "java",
+                     thriftFile.getAbsolutePath());
+
+        assertEquals("", outContent.toString());
+        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "Included dir " + temp.getRoot().getAbsolutePath() + "/does_not_exist does not exist.\n" +
+                     "\n" +
+                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+        assertEquals(1, exitCode);
+    }
+
+    @Test
+    public void testIncludeNotADirectory() {
+        compiler.run("-I",
+                     thriftFile.getAbsolutePath(),
+                     "-g", "java",
+                     thriftFile.getAbsolutePath());
+
+        assertEquals("", outContent.toString());
+        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "Included dir " + temp.getRoot().getAbsolutePath() + "/test.thrift is not a directory.\n" +
+                     "\n" +
+                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+        assertEquals(1, exitCode);
+    }
+
+    @Test
+    public void testOutputDirNotExist() {
+        compiler.run("--out",
+                     temp.getRoot().getAbsolutePath() + "/does_not_exist",
+                     "-g", "java",
+                     thriftFile.getAbsolutePath());
+
+        assertEquals("", outContent.toString());
+        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "Output dir " + temp.getRoot().getAbsolutePath() + "/does_not_exist does not exist.\n" +
+                     "\n" +
+                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+        assertEquals(1, exitCode);
+    }
+
+    @Test
+    public void testOutputDirNotADirectory() {
+        compiler.run("--out",
+                     thriftFile.getAbsolutePath(),
+                     "-g", "java",
+                     thriftFile.getAbsolutePath());
+
+        assertEquals("", outContent.toString());
+        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "Output dir " + thriftFile.getAbsolutePath() + " is not a directory.\n" +
+                     "\n" +
+                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+        assertEquals(1, exitCode);
     }
 }

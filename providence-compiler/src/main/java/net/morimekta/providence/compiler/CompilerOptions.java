@@ -23,7 +23,7 @@ import net.morimekta.console.FormatString;
 import net.morimekta.providence.compiler.options.GeneratorOptionHandler;
 import net.morimekta.providence.compiler.options.GeneratorOptions;
 import net.morimekta.providence.compiler.options.HelpOptionHandler;
-import net.morimekta.providence.compiler.options.HelpOptions;
+import net.morimekta.providence.compiler.options.HelpOption;
 import net.morimekta.providence.compiler.options.Syntax;
 import net.morimekta.providence.compiler.options.SyntaxOptionHandler;
 import net.morimekta.providence.generator.Generator;
@@ -83,7 +83,7 @@ public class CompilerOptions {
             help = true,
             handler = HelpOptionHandler.class,
             usage = "Show this help or about language.")
-    protected HelpOptions help = null;
+    protected HelpOption help = null;
 
     @Option(name = "--gen",
             aliases = {"-g"},
@@ -147,7 +147,7 @@ public class CompilerOptions {
                 throw new CmdLineException(cli, new FormatString("Output dir %s does not exist."), out);
             }
             if (!file.isDirectory()) {
-                throw new CmdLineException(cli, new FormatString("Output fir %s is not a directory."), out);
+                throw new CmdLineException(cli, new FormatString("Output dir %s is not a directory."), out);
             }
             return new FileManager(file);
         }

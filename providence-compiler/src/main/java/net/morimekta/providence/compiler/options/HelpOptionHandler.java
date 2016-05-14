@@ -14,8 +14,8 @@ import static net.morimekta.console.FormatString.except;
 /**
  * arg4j options handler for stream specification (file / url, format).
  */
-public class HelpOptionHandler extends OptionHandler<HelpOptions> {
-    public HelpOptionHandler(CmdLineParser parser, OptionDef option, Setter<HelpOptions> setter) {
+public class HelpOptionHandler extends OptionHandler<HelpOption> {
+    public HelpOptionHandler(CmdLineParser parser, OptionDef option, Setter<HelpOption> setter) {
         super(parser, option, setter);
     }
 
@@ -44,7 +44,7 @@ public class HelpOptionHandler extends OptionHandler<HelpOptions> {
             }
         }
 
-        setter.addValue(new HelpOptions(language));
+        setter.addValue(new HelpOption(language));
         return 1;
     }
 

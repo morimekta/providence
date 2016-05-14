@@ -5,11 +5,11 @@ import net.morimekta.providence.generator.Language;
 /**
  * Convert params for input or output of providence data.
  */
-public class HelpOptions {
+public class HelpOption {
     // language to print help about.
     public final Language generator;
 
-    public HelpOptions(Language generator) {
+    public HelpOption(Language generator) {
         this.generator = generator;
     }
 
