@@ -113,12 +113,7 @@ public class Compiler {
             return;
         } catch (CmdLineException e) {
             System.err.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
-            if (e.getLocalizedMessage()
-                 .length() > 0) {
-                System.err.println(e.getLocalizedMessage());
-            } else {
-                e.printStackTrace();
-            }
+            System.err.println(e.getLocalizedMessage());
             System.err.println();
             System.err.println("Run $ pvdc --help # for available options.");
         } catch (ParseException e) {
@@ -142,11 +137,12 @@ public class Compiler {
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
         } catch (GeneratorException e) {
-            e.printStackTrace();
+            System.err.print("Generator error: " + e.getMessage());
         } catch (IOException e) {
-            System.err.print("I/O error: ");
-            e.printStackTrace();
+            System.err.print("I/O error: " + e.getMessage());
         }
         exit(1);
     }
