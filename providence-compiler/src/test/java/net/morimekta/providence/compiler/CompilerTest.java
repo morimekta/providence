@@ -118,8 +118,7 @@ public class CompilerTest {
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
                      " - tiny_java  : Minimalistic java (1.7+) code generator.\n" +
-                     " - thrift     : Re-generate thrift files with the same spec.\n" +
-                     " - json       : Create JSON specification files.\n",
+                     " - json       : Generates JSON specification files.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);

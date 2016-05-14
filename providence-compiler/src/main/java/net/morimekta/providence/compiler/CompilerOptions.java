@@ -33,7 +33,6 @@ import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
-import net.morimekta.providence.generator.format.thrift.ThriftGenerator;
 import net.morimekta.providence.generator.util.FakeFileManager;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -167,8 +166,6 @@ public class CompilerOptions {
 
     public Generator getGenerator(CmdLineParser cli, TypeLoader loader) throws CmdLineException, GeneratorException {
         switch (gen.generator) {
-            case thrift:
-                return new ThriftGenerator(getFileManager(cli));
             case json:
                 return new JsonGenerator(getFileManager(cli), loader);
             case java: {
