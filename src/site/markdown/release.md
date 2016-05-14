@@ -32,7 +32,7 @@ Proper releases are done with a branch cut.
 * Merge the last commit into `master`, and **go back to the release branch**.
 * Run `# git reset --hard $(git log --oneline --format=%h -n 2 | tail -n 1)`.
   This will check out the actual release commit.
-* Run `# git clean verify site site:stage`, which will build the website for the
+* Run `# mvn clean verify site site:stage`, which will build the website for the
   release.
 * Run `# git checkout gh-pages`, and `# cp -R target/site/* .`, which will
   prepare the page site for the release.
