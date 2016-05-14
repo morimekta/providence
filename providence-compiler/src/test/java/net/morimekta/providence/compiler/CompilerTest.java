@@ -111,7 +111,7 @@ public class CompilerTest {
                      "\n" +
                      " file                       : Files to compile.\n" +
                      " --gen (-g) generator       : Generate files for this language spec.\n" +
-                     " --help (-h, -?) [language] : Show this help or about language. (default: help())\n" +
+                     " --help (-h, -?) [language] : Show this help or about language. (default: help)\n" +
                      " --include (-I) dir         : Allow includes of files in directory.\n" +
                      " --out (-o) dir             : Output directory. (default: .)\n" +
                      "\n" +

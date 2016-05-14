@@ -14,11 +14,10 @@ public class HelpOption {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder("help(");
+        StringBuilder builder = new StringBuilder("help");
         if (generator != null) {
-            builder.append(generator.name());
+            builder.append(':').append(generator.name());
         }
-        builder.append(")");
         return builder.toString();
     }
 }
