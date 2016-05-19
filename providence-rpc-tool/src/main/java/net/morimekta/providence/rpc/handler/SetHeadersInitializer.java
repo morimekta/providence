@@ -19,32 +19,35 @@ public class SetHeadersInitializer implements HttpRequestInitializer {
 
     @Override
     public void initialize(HttpRequest request) throws IOException {
-        HttpHeaders http = request.getHeaders();
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            String value = entry.getValue();
-            switch (entry.getKey().toLowerCase()) {
-                case "accept":
-                    http.setAccept(value);
-                    break;
-                case "accept-encoding":
-                    http.setAcceptEncoding(value);
-                    break;
-                case "authorization":
-                    http.setAuthorization(value);
-                    break;
-                case "content-encoding":
-                    http.setContentEncoding(value);
-                    break;
-                case "content-type":
-                    http.setContentType(value);
-                    break;
-                case "user-agent":
-                    http.setUserAgent(value);
-                    break;
-                default:
-                    http.set(entry.getKey(), value);
-                    break;
+        // With the interceptor will overwrite headers set by the Http client.
+        request.setInterceptor(rq -> {
+            HttpHeaders http = rq.getHeaders();
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                String value = entry.getValue();
+                switch (entry.getKey().toLowerCase()) {
+                    case "accept":
+                        http.setAccept(value);
+                        break;
+                    case "accept-encoding":
+                        http.setAcceptEncoding(value);
+                        break;
+                    case "authorization":
+                        http.setAuthorization(value);
+                        break;
+                    case "content-encoding":
+                        http.setContentEncoding(value);
+                        break;
+                    case "content-type":
+                        http.setContentType(value);
+                        break;
+                    case "user-agent":
+                        http.setUserAgent(value);
+                        break;
+                    default:
+                        http.set(entry.getKey(), value);
+                        break;
+                }
             }
-        }
+        });
     }
 }
