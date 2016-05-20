@@ -92,6 +92,42 @@ Can be encoded as 24 significant bytes instead:
 The compact message notation works regardless of the Field-ID mode of the
 serializer.
 
+## Service Calls
+
+JSON Service calls are done in a pretty compact way. It follows the 'compact'
+struct definition, representing the call with a struct like:
+
+```thrift
+enum CallType {
+  call = 1,
+  reply = 2,
+  exception = 3,
+  oneway = 4
+}
+
+struct Call {
+  1: required string name
+  2: required CallType type
+  3: required i32 sequence
+  4: required struct message
+} (compact = "")
+```
+
+Where *what* the message struct is is determined by the call type. See definition
+of `fast-binary` and `binary` for details on service calls. An example service
+call would look like:
+
+```json
+[
+  "myMethod",
+  "call",
+  79,
+  {
+    "param1": 42
+  }
+]
+```
+
 ## Map Limitations
 
 Since map keys have to be encoded as strings in JSON, the JSON serializer
