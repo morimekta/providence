@@ -107,7 +107,7 @@ only describes which *wire format* the value is encoded as.
 * **0x04 = FIXED_64**: 8 bytes, little endian encoded ( *double* ).
 * **0x05 = BINARY**: base-128 encoded length + binary data ( *string*, *binary* ).
 * **0x06 = MESSAGE**: enclosed message, terminated with field-ID 0 ( *struct*, *union*, *exception* ).
-* **0x07 = COLLECTION**: base-128 encoded length N + N * (tag + field) ( *list*, *set*, *map* ).
+* **0x07 = COLLECTION**: (base-128 encoded length N) + (tags) N * (item) ( *list*, *set*, *map* ).
 
 The two values are combined as: `tag :== (field-id << 3) | type`, written as a
 base-128 varint (not zigzag encoded), followed by the value as described.
@@ -121,13 +121,15 @@ entries.
 
 Lists and sets are encoded the same way.
 
-`[$field-id << 3 | 0x06] [base-128 $length] [$length * [[$type] [$value]]]`
+`[$field-id << 3 | 0x06] [base-128 $length] [$item-type] ($length * [$item-value])`
 
-Maps are a bit more complicated, so they are encoded like:
+Maps are a bit more complicated as it contains keys and values os possibly
+different types, so they are encoded like:
 
-`[$field-id << 3 | 0x06] [base-128 2 * $length] [$length * [[1 << 3 | $k-type] [$key] [2 << 3 | $v-type] [$value]]]`
+`[$field-id << 3 | 0x06] [base-128 2 * $length] [$key-type << 3 | $item-type] ($length * ([$key-value] [$item-value]))`
 
 This way it will appear as a list of `2 * N` elements with alternating key and
-value types. The key and value IDs `1` and `2` are just for the case of
-debugging and testing. Since the key and values come alternatively it is 
-strictly not needed.
+value types. Since the type is a 3-bit value, both types fit in a 7-bit int and
+is double encoded the same way the field + type is encoded. In order to fit boolean
+values into the collection as values, and not a type-determined value, it is
+stored as a base-128 varint (type 3) with value 0 or 1.
