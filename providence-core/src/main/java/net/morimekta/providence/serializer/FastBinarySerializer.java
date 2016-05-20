@@ -203,7 +203,7 @@ public class FastBinarySerializer extends Serializer {
             } else {
                 if (readStrict) {
                     throw new SerializerException(
-                            "Unknown field " + id + " for type" + descriptor.getQualifiedName(null));
+                            "Unknown field ID %d in type %s", id, descriptor.getQualifiedName(null));
                 }
                 readFieldValue(in, tag, null);
             }
@@ -265,31 +265,83 @@ public class FastBinarySerializer extends Serializer {
                 int len = out.writeVarint(key << 3 | MESSAGE);
                 return len + writeMessage(out, (PMessage) value);
             }
-            case MAP: {
-                int len = out.writeVarint(key << 3 | COLLECTION);
-
-                Map<Object, Object> map = (Map<Object, Object>) value;
-                PMap<?, ?> desc = (PMap<?, ?>) descriptor;
-
-                len += out.writeVarint(map.size() * 2);
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                    len += writeFieldValue(out, 1, desc.keyDescriptor(), entry.getKey());
-                    len += writeFieldValue(out, 2, desc.itemDescriptor(), entry.getValue());
-                }
-                return len;
-            }
+            case MAP:
             case SET:
             case LIST: {
                 int len = out.writeVarint(key << 3 | COLLECTION);
+                return len + writeContainerEntry(out, COLLECTION, descriptor, value);
+            }
+            default:
+                throw new SerializerException("");
+        }
+    }
 
-                Collection<Object> coll = (Collection<Object>) value;
-                PContainer<?> desc = (PContainer<?>) descriptor;
 
-                len += out.writeVarint(coll.size());
-                for (Object item : coll) {
-                    len += writeFieldValue(out, 0, desc.itemDescriptor(), item);
+    @SuppressWarnings("unchecked")
+    private int writeContainerEntry(BinaryWriter out, int typeid, PDescriptor descriptor, Object value)
+            throws IOException, SerializerException {
+        switch (typeid) {
+            case VARINT: {
+                if (value instanceof Boolean) {
+                    return out.writeVarint(((Boolean) value ? 1 : 0));
+                } else if (value instanceof Number) {
+                    return out.writeZigzag(((Number) value).longValue());
+                } else if (value instanceof PEnumValue) {
+                    return out.writeZigzag(((PEnumValue) value).getValue());
+                } else {
+                    throw new SerializerException("");
                 }
-                return len;
+            }
+            case FIXED_64: {
+                return out.writeDouble((Double) value);
+            }
+            case BINARY: {
+                if (value instanceof CharSequence) {
+                    byte[] bytes = ((String) value).getBytes(StandardCharsets.UTF_8);
+                    int len = out.writeVarint(bytes.length);
+                    out.write(bytes);
+                    return len + bytes.length;
+                } else if (value instanceof Binary) {
+                    Binary bytes = (Binary) value;
+                    int len = out.writeVarint(bytes.length());
+                    bytes.write(out);
+                    return len + bytes.length();
+                } else {
+                    throw new SerializerException("");
+                }
+            }
+            case MESSAGE: {
+                return writeMessage(out, (PMessage) value);
+            }
+            case COLLECTION: {
+                if (value instanceof Map) {
+                    Map<Object, Object> map = (Map<Object, Object>) value;
+                    PMap<?, ?> desc = (PMap<?, ?>) descriptor;
+
+                    int ktype = itemType(desc.keyDescriptor());
+                    int vtype = itemType(desc.itemDescriptor());
+
+                    int len = out.writeVarint(map.size() * 2);
+                    len += out.writeVarint(ktype << 3 | vtype);
+                    for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                        len += writeContainerEntry(out, ktype, desc.keyDescriptor(), entry.getKey());
+                        len += writeContainerEntry(out, vtype, desc.itemDescriptor(), entry.getValue());
+                    }
+                    return len;
+                } else if (value instanceof Collection){
+                    Collection<Object> coll = (Collection<Object>) value;
+                    PContainer<?> desc = (PContainer<?>) descriptor;
+                    int vtype = itemType(desc.itemDescriptor());
+
+                    int len = out.writeVarint(coll.size());
+                    len    += out.writeVarint(vtype);
+                    for (Object item : coll) {
+                        len += writeContainerEntry(out, vtype, desc.itemDescriptor(), item);
+                    }
+                    return len;
+                } else {
+                    throw new SerializerException("");
+                }
             }
             default:
                 throw new SerializerException("");
@@ -313,6 +365,8 @@ public class FastBinarySerializer extends Serializer {
                     return null;
                 }
                 switch (descriptor.getType()) {
+                    case BOOL:
+                        return cast(in.readIntVarint() != 0);
                     case BYTE:
                         return cast((byte) in.readIntZigzag());
                     case I16:
@@ -360,8 +414,15 @@ public class FastBinarySerializer extends Serializer {
                         throw new SerializerException("");
                     }
                     final int len = in.readIntVarint();
+                    final int tag = in.readIntVarint();
+                    final int vtype = tag & 0x07;
+                    final int ktype = tag > 0x07 ? tag >>> 3 : vtype;
                     for (int i = 0; i < len; ++i) {
-                        readFieldValue(in, in.readIntVarint() & 0x07, null);
+                        if (i % 2 == 0) {
+                            readFieldValue(in, ktype, null);
+                        } else {
+                            readFieldValue(in, vtype, null);
+                        }
                     }
                     return null;
                 } else if (descriptor.getType() == PType.MAP) {
@@ -371,9 +432,12 @@ public class FastBinarySerializer extends Serializer {
 
                     PMap.Builder<Object, Object> out = ct.builder();
                     final int len = in.readIntVarint();
+                    final int tag = in.readIntVarint();
+                    final int vtype = tag & 0x07;
+                    final int ktype = tag > 0x07 ? tag >>> 3 : vtype;
                     for (int i = 0; i < len; ++i, ++i) {
-                        Object key = readFieldValue(in, in.readIntVarint() & 0x07, kt);
-                        Object value = readFieldValue(in, in.readIntVarint() & 0x07, vt);
+                        Object key = readFieldValue(in, ktype, kt);
+                        Object value = readFieldValue(in, vtype, vt);
                         out.put(key, value);
                     }
                     return cast(out.build());
@@ -382,9 +446,9 @@ public class FastBinarySerializer extends Serializer {
                     PDescriptor it = ct.itemDescriptor();
                     PList.Builder<Object> out = ct.builder();
                     final int len = in.readIntVarint();
+                    final int vtype = in.readIntVarint() & 0x07;
                     for (int i = 0; i < len; ++i) {
-                        int tag = in.readIntVarint();
-                        out.add(readFieldValue(in, tag & 0x07, it));
+                        out.add(readFieldValue(in, vtype, it));
                     }
                     return cast(out.build());
                 } else if (descriptor.getType() == PType.SET) {
@@ -392,18 +456,43 @@ public class FastBinarySerializer extends Serializer {
                     PDescriptor it = ct.itemDescriptor();
                     PSet.Builder<Object> out = ct.builder();
                     final int len = in.readIntVarint();
+                    final int vtype = in.readIntVarint() & 0x07;
                     for (int i = 0; i < len; ++i) {
-                        int tag = in.readIntVarint();
-                        out.add(readFieldValue(in, tag & 0x07, it));
+                        out.add(readFieldValue(in, vtype, it));
                     }
                     return cast(out.build());
                 } else {
                     throw new SerializerException("Type " + descriptor.getType() +
                                                   " not compatible with collection data.");
                 }
+            default:
+                throw new SerializerException("No handling for type " + type);
         }
+    }
 
-        throw new SerializerException("No handling for type " + type);
+    private static int itemType(PDescriptor descriptor) throws SerializerException {
+        switch (descriptor.getType()) {
+            case BOOL:
+            case BYTE:
+            case I16:
+            case I32:
+            case I64:
+            case ENUM:
+                return VARINT;
+            case DOUBLE:
+                return FIXED_64;
+            case BINARY:
+            case STRING:
+                return BINARY;
+            case MESSAGE:
+                return MESSAGE;
+            case SET:
+            case LIST:
+            case MAP:
+                return COLLECTION;
+            default:
+                throw new SerializerException("");
+        }
     }
 
     private static final int STOP       = 0x00;

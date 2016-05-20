@@ -196,35 +196,17 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
 
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,
                                                                             PDescriptorProvider itemDesc) {
-        BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
-            @Override
-            public Builder<K, V> builder() {
-                return new ImmutableMapBuilder<>();
-            }
-        };
-        return provider(keyDesc, itemDesc, factory);
+        return provider(keyDesc, itemDesc, ImmutableMapBuilder::new);
     }
 
     public static <K extends Comparable<K>, V> PContainerProvider<Map<K, V>, PMap<K, V>> sortedProvider(PDescriptorProvider keyDesc,
                                                                                                         PDescriptorProvider itemDesc) {
-        BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
-            @Override
-            public Builder<K, V> builder() {
-                return new ImmutableSortedMapBuilder<>();
-            }
-        };
-        return provider(keyDesc, itemDesc, factory);
+        return provider(keyDesc, itemDesc, ImmutableSortedMapBuilder::new);
     }
 
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> orderedProvider(PDescriptorProvider keyDesc,
                                                                                    PDescriptorProvider itemDesc) {
-        BuilderFactory<K, V> factory = new BuilderFactory<K, V>() {
-            @Override
-            public Builder<K, V> builder() {
-                return new LinkedHashMapBuilder<>();
-            }
-        };
-        return provider(keyDesc, itemDesc, factory);
+        return provider(keyDesc, itemDesc, LinkedHashMapBuilder::new);
     }
 
     private static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,

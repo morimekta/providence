@@ -121,13 +121,7 @@ public class PList<I> extends PContainer<List<I>> {
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc) {
-        BuilderFactory<I> factory = new BuilderFactory<I>() {
-            @Override
-            public Builder<I> builder() {
-                return new ImmutableListBuilder<>();
-            }
-        };
-        return provider(itemDesc, factory);
+        return provider(itemDesc, ImmutableListBuilder::new);
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc,

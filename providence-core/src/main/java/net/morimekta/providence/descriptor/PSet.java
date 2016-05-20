@@ -186,33 +186,15 @@ public class PSet<I> extends PContainer<Set<I>> {
     }
 
     public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
-        BuilderFactory<I> factory = new BuilderFactory<I>() {
-            @Override
-            public Builder<I> builder() {
-                return new ImmutableSetBuilder<>();
-            }
-        };
-        return provider(itemDesc, factory);
+        return provider(itemDesc, ImmutableSetBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> sortedProvider(PDescriptorProvider itemDesc) {
-        BuilderFactory<I> factory = new BuilderFactory<I>() {
-            @Override
-            public Builder<I> builder() {
-                return new ImmutableSortedSetBuilder<>();
-            }
-        };
-        return provider(itemDesc, factory);
+        return provider(itemDesc, ImmutableSortedSetBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> orderedProvider(PDescriptorProvider itemDesc) {
-        BuilderFactory<I> factory = new BuilderFactory<I>() {
-            @Override
-            public Builder<I> builder() {
-                return new LinkedHashSetBuilder<>();
-            }
-        };
-        return provider(itemDesc, factory);
+        return provider(itemDesc, LinkedHashSetBuilder::new);
     }
 
     private static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc,
