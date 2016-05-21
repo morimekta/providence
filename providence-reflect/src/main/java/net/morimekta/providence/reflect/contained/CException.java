@@ -28,7 +28,6 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PrettyPrinter;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -170,7 +169,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public String asString() {
-        return new PrettyPrinter("", "", "").format(this);
+        return CMessage.asString(this);
     }
 
     @Override

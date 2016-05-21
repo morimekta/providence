@@ -100,7 +100,12 @@ public class SerializerTest {
             bais = new ByteArrayInputStream(baos.toByteArray());
             Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
 
-            assertEquals(actual, expected);
+            if (serializer.binaryProtocol()) {
+                assertEquals(actual, expected);
+            } else {
+                assertEquals(expected.toString().replaceAll("[,]", ",\n"),
+                             actual.toString().replaceAll("[,]", ",\n"));
+            }
         }
 
         // complex message in stream.
@@ -126,7 +131,12 @@ public class SerializerTest {
                 Containers expected = containers.get(i);
                 Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
 
-                assertEquals(actual, expected);
+                if (serializer.binaryProtocol()) {
+                    assertEquals(actual, expected);
+                } else {
+                    assertEquals(expected.toString().replaceAll("[,]", ",\n"),
+                                 actual.toString().replaceAll("[,]", ",\n"));
+                }
             }
 
             assertEquals(0, bais.available());
@@ -141,7 +151,12 @@ public class SerializerTest {
 
         assertEquals(containers.size(), actual.size());
         for (int i = 0; i < containers.size(); ++i) {
-            assertEquals(actual.get(i), containers.get(i));
+            if (serializer.binaryProtocol()) {
+                assertEquals(containers.get(i), actual.get(i));
+            } else {
+                assertEquals(containers.get(i).toString().replaceAll("[,]", ",\n"),
+                             actual.get(i).toString().replaceAll("[,]", ",\n"));
+            }
         }
     }
 
@@ -207,6 +222,14 @@ public class SerializerTest {
         testSerializer(serializer);
         testOutput(serializer, "/compat/pretty.json");
         testCompatibility(serializer, "/compat/pretty.json");
+    }
+
+    @Test
+    public void testPretty() throws SerializerException, IOException {
+        Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true, false);
+        testOutput(serializer, "/compat/pretty.cfg");
+        testSerializer(serializer);
+        testCompatibility(serializer, "/compat/pretty.cfg");
     }
 
     @Test

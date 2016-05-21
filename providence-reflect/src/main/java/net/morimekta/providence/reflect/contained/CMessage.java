@@ -24,20 +24,25 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.util.PrettyPrinter;
+import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.util.Binary;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
+    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true, false);
+
     private final Map<Integer, Object> values;
 
     CMessage(Map<Integer, Object> fields) {
@@ -160,7 +165,20 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public String asString() {
-        return new PrettyPrinter("", "", "").format(this);
+        return asString((PMessage) this);
+    }
+
+    /**
+     * Prints a compact string representation of the message.
+     *
+     * @param message The message to stringify.
+     * @param <T> The message type.
+     * @return The resulting string.
+     */
+    protected static <T extends PMessage<T>> String asString(T message) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PRETTY_SERIALIZER.serialize(baos, message);
+        return new String(baos.toByteArray(), UTF_8);
     }
 
     /**

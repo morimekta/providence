@@ -77,7 +77,7 @@
         <args4j.version>2.33</args4j.version>
         <google-http.version>1.22.0</google-http.version>
 
-        <morimekta_utils.version>0.2.4</morimekta_utils.version>
+        <morimekta_utils.version>0.2.5-SNAPSHOT</morimekta_utils.version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>

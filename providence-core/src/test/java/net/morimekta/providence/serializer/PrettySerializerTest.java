@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package net.morimekta.providence.util;
+package net.morimekta.providence.serializer;
 
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
@@ -27,14 +27,19 @@ import net.morimekta.test.number.Imaginary;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class PrettyPrinterTest {
+public class PrettySerializerTest {
     private Operation mOperation;
+    private String    mFormatted;
 
     @Before
     public void setUp() {
@@ -58,11 +63,8 @@ public class PrettyPrinterTest {
                                                                            .build())
                                                     .build())
                               .build();
-    }
 
-    @Test
-    public void testDebugString() {
-        assertEquals("operator: MULTIPLY\n" +
+        mFormatted = "operator: MULTIPLY\n" +
                      "operands: {\n" +
                      "  operation: {\n" +
                      "    operator: ADD\n" +
@@ -79,6 +81,23 @@ public class PrettyPrinterTest {
                      "    v: 1.7\n" +
                      "    i: -2\n" +
                      "  }\n" +
-                     "}", PrettyPrinter.debugString(mOperation));
+                     "}";
+    }
+
+    @Test
+    public void testFormat() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrettySerializer serializer = new PrettySerializer("  ", " ", "\n", "", false, true);
+        serializer.serialize(baos, mOperation);
+        assertEquals(mFormatted, new String(baos.toByteArray(), UTF_8));
+    }
+
+    @Test
+    public void testParse() throws IOException, SerializerException {
+        PrettySerializer serializer = new PrettySerializer("  ", " ", "\n", "", false, true);
+
+        Operation actual = serializer.deserialize(getClass().getResourceAsStream("/json/calculator/pretty.cfg"), Operation.kDescriptor);
+
+        assertEquals(mOperation, actual);
     }
 }

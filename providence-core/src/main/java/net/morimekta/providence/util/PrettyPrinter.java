@@ -19,193 +19,31 @@
 
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PUnion;
-import net.morimekta.providence.descriptor.PContainer;
-import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.util.Binary;
-import net.morimekta.util.Strings;
-import net.morimekta.util.io.IndentedPrintWriter;
+import net.morimekta.providence.serializer.PrettySerializer;
 
-import java.io.StringWriter;
-import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Pretty printer that can print message content for easily reading and
- * debugging. This is a write only format used in stringifying messages.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * debugging.
  */
 public class PrettyPrinter {
-    private final static String INDENT  = "  ";
-    private final static String SPACE   = " ";
-    private final static String NEWLINE = "\n";
-    private final static String SEP     = ",";
+    private static final PrettySerializer debugStringSerializer = new PrettySerializer("  ", " ", "\n", "", false, true);
 
-    private final String mIndent;
-    private final String mSpace;
-    private final String mNewline;
-    private final String mSep;
-
-    public PrettyPrinter() {
-        this(INDENT, SPACE, NEWLINE, SEP);
-    }
-
-    public PrettyPrinter(String indent, String space, String newline) {
-        this(indent, space, newline, SEP);
-    }
-
-    public PrettyPrinter(String indent, String space, String newline, String sep) {
-        mIndent = indent;
-        mSpace = space;
-        mNewline = newline;
-        mSep = sep;
-    }
-
-    public String format(PMessage<?> message) {
-        StringWriter stringWriter = new StringWriter();
-        IndentedPrintWriter builder = new IndentedPrintWriter(stringWriter, mIndent, mNewline);
-        try {
-            appendMessage(builder, message);
-            builder.flush();
-        } finally {
-            builder.close();
-        }
-        return stringWriter.toString();
-    }
-
-    private void appendMessage(IndentedPrintWriter builder, PMessage<?> message) {
-        PStructDescriptor<?, ?> type = message.descriptor();
-
-        builder.append("{")
-               .begin();
-
-        if (message instanceof PUnion) {
-            PField field = ((PUnion) message).unionField();
-            if (field != null) {
-                Object o = message.get(field.getKey());
-
-                builder.appendln(field.getName())
-                       .append(":")
-                       .append(mSpace);
-                appendTypedValue(builder, field.getDescriptor(), o);
-            }
-        } else {
-            boolean first = true;
-            for (PField field : type.getFields()) {
-                if (message.has(field.getKey())) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        builder.append(mSep);
-                    }
-                    Object o = message.get(field.getKey());
-
-                    builder.appendln(field.getName())
-                           .append(":")
-                           .append(mSpace);
-                    appendTypedValue(builder, field.getDescriptor(), o);
-                }
-            }
-        }
-
-        builder.end()
-               .appendln("}");
-    }
-
-    private void appendTypedValue(IndentedPrintWriter writer, PDescriptor descriptor, Object o) {
-        switch (descriptor.getType()) {
-            case LIST:
-            case SET:
-                writer.append("[")
-                      .begin();
-
-                PContainer<?> containerType = (PContainer<?>) descriptor;
-                Collection<?> collection = (Collection<?>) o;
-
-                boolean first = true;
-                for (Object i : collection) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',');
-                    }
-                    writer.appendln();
-                    appendTypedValue(writer, containerType.itemDescriptor(), i);
-                }
-
-                writer.end()
-                      .appendln("]");
-                break;
-            case MAP:
-                PMap<?, ?> mapType = (PMap<?, ?>) descriptor;
-
-                Map<?, ?> map = (Map<?, ?>) o;
-
-                writer.append("{")
-                      .begin();
-
-                first = true;
-                for (Map.Entry<?, ?> entry : map.entrySet()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',');
-                    }
-                    writer.appendln();
-                    appendTypedValue(writer, mapType.keyDescriptor(), entry.getKey());
-                    writer.append(":")
-                          .append(mSpace);
-                    appendTypedValue(writer, mapType.itemDescriptor(), entry.getValue());
-                }
-
-                writer.end()
-                      .appendln("}");
-                break;
-            case MESSAGE:
-                PMessage<?> message = (PMessage<?>) o;
-                appendMessage(writer, message);
-                break;
-            default:
-                appendPrimitive(writer, o);
-                break;
-        }
-    }
-
-    private void appendPrimitive(IndentedPrintWriter writer, Object o) {
-        if (o instanceof PEnumValue) {
-            writer.print(o.toString());
-        } else if (o instanceof CharSequence) {
-            writer.print('\"');
-            writer.print(Strings.escape((CharSequence) o));
-            writer.print('\"');
-        } else if (o instanceof Binary) {
-            writer.format("b64(%s)", ((Binary) o).toBase64());
-        } else if (o instanceof Boolean) {
-            writer.print(((Boolean) o).booleanValue());
-        } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {
-            writer.print(o.toString());
-        } else if (o instanceof Double) {
-            Double d = (Double) o;
-            if (d == ((double) d.longValue())) {
-                // actually an integer or long value.
-                writer.print(d.longValue());
-            } else if (d > ((10 << 9) - 1) || (1 / d) > (10 << 6)) {
-                // Scientific notation should be used.
-                writer.print((new DecimalFormat("0.#########E0")).format(d.doubleValue()));
-            } else {
-                writer.print(d.doubleValue());
-            }
-        } else {
-            throw new IllegalArgumentException("Unknown primitive type class " + o.getClass()
-                                                                                  .getSimpleName());
-        }
+    /**
+     * Prints a pretty formatted string that is optimized for diffing (mainly
+     * for testing and debugging).
+     *
+     * @param message The message to stringify.
+     * @param <T> The message type.
+     * @return The resulting string.
+     */
+    public static <T extends PMessage<T>> String debugString(T message) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        debugStringSerializer.serialize(baos, message);
+        return new String(baos.toByteArray(), UTF_8);
     }
 }
