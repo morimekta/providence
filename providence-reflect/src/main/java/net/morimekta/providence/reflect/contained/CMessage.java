@@ -19,16 +19,19 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.PrettyPrinter;
-import net.morimekta.providence.util.TypeUtils;
+import net.morimekta.util.Binary;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
@@ -151,7 +154,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
 
     @Override
     public int compareTo(T other) {
-        return TypeUtils.compare((T) this, other);
+        return compare((T) this, other);
     }
 
     @Override
@@ -163,4 +166,69 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     public String asString() {
         return new PrettyPrinter("", "", "").format(this);
     }
+
+    /**
+     * Compare two values to each other.
+     *
+     * @param o1 The first value.
+     * @param o2 The second value.
+     * @param <T> The object type.
+     * @return The compare value (-1, 0 or 1).
+     */
+    protected static <T extends Comparable<T>> int compare(T o1, T o2) {
+        if (o1 == null || o2 == null) {
+            return Boolean.compare(o1 != null, o2 != null);
+        } else if (o1 instanceof Boolean && o2 instanceof Boolean) {
+            return Boolean.compare((Boolean) o1, (Boolean) o2);
+        } else if (o1 instanceof Short && o2 instanceof Short) {
+            return Short.compare((Short) o1, (Short) o2);
+        } else if (o1 instanceof Integer && o2 instanceof Integer) {
+            return Integer.compare((Integer) o1, (Integer) o2);
+        } else if (o1 instanceof Long && o2 instanceof Long) {
+            return Long.compare((Long) o1, (Long) o2);
+        } else if (o1 instanceof Double && o2 instanceof Double) {
+            return Double.compare((Double) o1, (Double) o2);
+        } else if (o1 instanceof String && o2 instanceof String) {
+            return ((String) o1).compareTo((String) o2);
+        } else if (o1 instanceof Binary && o2 instanceof Binary) {
+            return ((Binary) o1).compareTo((Binary) o2);
+        } else if (o1 instanceof PEnumValue && o2 instanceof PEnumValue) {
+            return Integer.compare(((PEnumValue) o1).getValue(), ((PEnumValue) o2).getValue());
+        } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
+            return compareMessages((PMessage) o1, (PMessage) o2);
+        } else if (o1 instanceof Map && o2 instanceof Map) {
+            // Maps cannot be compared to each other.
+        } else if (o1 instanceof Set && o2 instanceof Set) {
+            // Sets cannot be compared to each other.
+        } else if (o1 instanceof List && o2 instanceof List) {
+            // Lists cannot be compared to each other.
+        }
+        return 0;
+    }
+
+    private static <T extends PMessage<T>> int compareMessages(T m1, T m2) {
+        int c = 0;
+        c = m1.descriptor()
+              .getQualifiedName(null)
+              .compareTo(m2.descriptor()
+                           .getQualifiedName(null));
+        if (c != 0) {
+            return c;
+        }
+        for (PField field : m1.descriptor()
+                              .getFields()) {
+            c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
+            if (c != 0) {
+                return c;
+            }
+            if (m1.has(field.getKey())) {
+                c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
+                if (c != 0) {
+                    return c;
+                }
+            }
+        }
+        return 0;
+    }
+
 }

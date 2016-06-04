@@ -26,7 +26,6 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.PrettyPrinter;
-import net.morimekta.providence.util.TypeUtils;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -162,7 +161,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
     @Override
     public int compareTo(CException other) {
-        return TypeUtils.compare(this, other);
+        return CMessage.compare(this, other);
     }
 
     @Override

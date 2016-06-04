@@ -25,7 +25,6 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.util.TypeUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -156,7 +155,7 @@ public class CField implements PField, CAnnotatedDescriptor {
                requirement == other.requirement &&
                // We cannot test that the types are deep-equals as it may have circular
                // containment.
-               TypeUtils.equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
+               equalsQualifiedName(getDescriptor(), other.getDescriptor()) &&
                name.equals(other.name) &&
                Objects.equals(defaultValue, other.defaultValue);
     }
@@ -164,5 +163,24 @@ public class CField implements PField, CAnnotatedDescriptor {
     @Override
     public int hashCode() {
         return Objects.hash(CField.class, key, requirement, name, getDefaultValue());
+    }
+
+    /**
+     * Check if the two descriptors has the same qualified name, i..e
+     * symbolically represent the same type.
+     *
+     * @param a The first type.
+     * @param b The second type.
+     * @return If the two types are the same.
+     */
+    private static boolean equalsQualifiedName(PDescriptor a, PDescriptor b) {
+        if ((a == null) != (b == null)) {
+            return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        return a.getQualifiedName(null)
+                .equals(b.getQualifiedName(null));
     }
 }

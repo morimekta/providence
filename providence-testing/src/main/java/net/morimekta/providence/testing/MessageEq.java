@@ -5,7 +5,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.util.TypeUtils;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
