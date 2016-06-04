@@ -23,6 +23,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.test.calculator.Operand;
 import net.morimekta.test.calculator.Operation;
+import net.morimekta.test.calculator.Operator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +73,20 @@ public class PMessageTest {
                      "{imaginary:{v:1.7,i:-2}}" +
                      "]" +
                      "}", operation.toString());
+    }
+
+    @Test
+    public void testMerge() {
+        assertEquals(operation,
+                     Operation.builder().merge(operation).build());
+
+        assertEquals("calculator.Operation{" +
+                     "operator:SUBTRACT,operands:[" +
+                     "{operation:{operator:ADD,operands:[{number:1234},{number:4.321}]}}," +
+                     "{imaginary:{v:1.7,i:-2}}" +
+                     "]" +
+                     "}",
+                     operation.mergeWith(Operation.builder().setOperator(Operator.SUBTRACT).build()).toString());
     }
 
     @Test

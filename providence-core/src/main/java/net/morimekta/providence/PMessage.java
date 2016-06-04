@@ -55,6 +55,16 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
     PMessageBuilder<T> mutate();
 
     /**
+     * Shorthand for merging two messages.
+     *
+     * @param other The message to merge over this messages' values.
+     * @return The merged message.
+     */
+    default T mergeWith(T other) {
+        return mutate().merge(other).build();
+    }
+
+    /**
      * @return If the message is compact.
      */
     boolean compact();
