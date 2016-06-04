@@ -136,6 +136,61 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <version>2.1.5</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>attach-rpm</id>
+                        <goals>
+                            <goal>attached-rpm</goal>
+                        </goals>
+                        <configuration>
+                            <!-- identification -->
+                            <name>providence</name>
+                            <version>${providence.release-version}</version>
+                            <license>Apache 2.0</license>
+                            <group>Development/Tools</group>
+
+                            <!-- dependencies -->
+                            <requires>
+                                <require>java &gt;= 1.8</require>
+                            </requires>
+
+                            <!-- mapping -->
+                            <mappings>
+                                <mapping>
+                                    <directory>/usr/local/bin</directory>
+                                    <filemode>755</filemode>
+                                    <username>root</username>
+                                    <sources>
+                                        <source>
+                                            <location>${project.basedir}/src/deb/bin</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/local/lib</directory>
+                                    <filemode>644</filemode>
+                                    <sources>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-compiler/target/providence-compiler.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-converter/target/providence-converter.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-rpc-tool/target/providence-rpc-tool.jar</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

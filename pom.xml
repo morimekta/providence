@@ -22,6 +22,12 @@
         </license>
     </licenses>
 
+    <organization>
+        <name>morimekta.net</name>
+        <url>http://www.morimekta.net/providence</url>
+    </organization>
+    <inceptionYear>2015</inceptionYear>
+
     <developers>
         <developer>
             <id>morimekta</id>
@@ -68,6 +74,7 @@
         <morimekta_utils.version>0.2.3</morimekta_utils.version>
 
         <providence.version>0.1.2-SNAPSHOT</providence.version>
+        <providence.release-version>0.1.2-dev</providence.release-version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
