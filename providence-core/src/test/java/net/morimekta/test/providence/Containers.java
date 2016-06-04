@@ -2107,6 +2107,224 @@ public class Containers
             }
         }
 
+        @Override
+        public _Builder merge(Containers from) {
+            if (from.hasBooleanList()) {
+                optionals.set(0);
+                mBooleanList.clear();
+                mBooleanList.addAll(from.getBooleanList());
+            }
+
+            if (from.hasByteList()) {
+                optionals.set(1);
+                mByteList.clear();
+                mByteList.addAll(from.getByteList());
+            }
+
+            if (from.hasShortList()) {
+                optionals.set(2);
+                mShortList.clear();
+                mShortList.addAll(from.getShortList());
+            }
+
+            if (from.hasIntegerList()) {
+                optionals.set(3);
+                mIntegerList.clear();
+                mIntegerList.addAll(from.getIntegerList());
+            }
+
+            if (from.hasLongList()) {
+                optionals.set(4);
+                mLongList.clear();
+                mLongList.addAll(from.getLongList());
+            }
+
+            if (from.hasDoubleList()) {
+                optionals.set(5);
+                mDoubleList.clear();
+                mDoubleList.addAll(from.getDoubleList());
+            }
+
+            if (from.hasStringList()) {
+                optionals.set(6);
+                mStringList.clear();
+                mStringList.addAll(from.getStringList());
+            }
+
+            if (from.hasBinaryList()) {
+                optionals.set(7);
+                mBinaryList.clear();
+                mBinaryList.addAll(from.getBinaryList());
+            }
+
+            if (from.hasBooleanSet()) {
+                optionals.set(8);
+                mBooleanSet.addAll(from.getBooleanSet());
+            }
+
+            if (from.hasByteSet()) {
+                optionals.set(9);
+                mByteSet.addAll(from.getByteSet());
+            }
+
+            if (from.hasShortSet()) {
+                optionals.set(10);
+                mShortSet.addAll(from.getShortSet());
+            }
+
+            if (from.hasIntegerSet()) {
+                optionals.set(11);
+                mIntegerSet.addAll(from.getIntegerSet());
+            }
+
+            if (from.hasLongSet()) {
+                optionals.set(12);
+                mLongSet.addAll(from.getLongSet());
+            }
+
+            if (from.hasDoubleSet()) {
+                optionals.set(13);
+                mDoubleSet.addAll(from.getDoubleSet());
+            }
+
+            if (from.hasStringSet()) {
+                optionals.set(14);
+                mStringSet.addAll(from.getStringSet());
+            }
+
+            if (from.hasBinarySet()) {
+                optionals.set(15);
+                mBinarySet.addAll(from.getBinarySet());
+            }
+
+            if (from.hasBooleanMap()) {
+                optionals.set(16);
+                mBooleanMap.putAll(from.getBooleanMap());
+            }
+
+            if (from.hasByteMap()) {
+                optionals.set(17);
+                mByteMap.putAll(from.getByteMap());
+            }
+
+            if (from.hasShortMap()) {
+                optionals.set(18);
+                mShortMap.putAll(from.getShortMap());
+            }
+
+            if (from.hasIntegerMap()) {
+                optionals.set(19);
+                mIntegerMap.putAll(from.getIntegerMap());
+            }
+
+            if (from.hasLongMap()) {
+                optionals.set(20);
+                mLongMap.putAll(from.getLongMap());
+            }
+
+            if (from.hasDoubleMap()) {
+                optionals.set(21);
+                mDoubleMap.putAll(from.getDoubleMap());
+            }
+
+            if (from.hasStringMap()) {
+                optionals.set(22);
+                mStringMap.putAll(from.getStringMap());
+            }
+
+            if (from.hasBinaryMap()) {
+                optionals.set(23);
+                mBinaryMap.putAll(from.getBinaryMap());
+            }
+
+            if (from.hasEnumList()) {
+                optionals.set(24);
+                mEnumList.clear();
+                mEnumList.addAll(from.getEnumList());
+            }
+
+            if (from.hasEnumSet()) {
+                optionals.set(25);
+                mEnumSet.addAll(from.getEnumSet());
+            }
+
+            if (from.hasEnumMap()) {
+                optionals.set(26);
+                mEnumMap.putAll(from.getEnumMap());
+            }
+
+            if (from.hasMessageList()) {
+                optionals.set(27);
+                mMessageList.clear();
+                mMessageList.addAll(from.getMessageList());
+            }
+
+            if (from.hasMessageSet()) {
+                optionals.set(28);
+                mMessageSet.addAll(from.getMessageSet());
+            }
+
+            if (from.hasMessageMap()) {
+                optionals.set(29);
+                mMessageMap.putAll(from.getMessageMap());
+            }
+
+            if (from.hasRequiredFields()) {
+                optionals.set(30);
+                if (isSetRequiredFields()) {
+                    mRequiredFields = mRequiredFields.mutate().merge(from.getRequiredFields()).build();
+                } else {
+                    mRequiredFields = from.getRequiredFields();
+                }
+            }
+
+            if (from.hasDefaultFields()) {
+                optionals.set(31);
+                if (isSetDefaultFields()) {
+                    mDefaultFields = mDefaultFields.mutate().merge(from.getDefaultFields()).build();
+                } else {
+                    mDefaultFields = from.getDefaultFields();
+                }
+            }
+
+            if (from.hasOptionalFields()) {
+                optionals.set(32);
+                if (isSetOptionalFields()) {
+                    mOptionalFields = mOptionalFields.mutate().merge(from.getOptionalFields()).build();
+                } else {
+                    mOptionalFields = from.getOptionalFields();
+                }
+            }
+
+            if (from.hasUnionFields()) {
+                optionals.set(33);
+                if (isSetUnionFields()) {
+                    mUnionFields = mUnionFields.mutate().merge(from.getUnionFields()).build();
+                } else {
+                    mUnionFields = from.getUnionFields();
+                }
+            }
+
+            if (from.hasExceptionFields()) {
+                optionals.set(34);
+                if (isSetExceptionFields()) {
+                    mExceptionFields = mExceptionFields.mutate().merge(from.getExceptionFields()).build();
+                } else {
+                    mExceptionFields = from.getExceptionFields();
+                }
+            }
+
+            if (from.hasDefaultValues()) {
+                optionals.set(35);
+                if (isSetDefaultValues()) {
+                    mDefaultValues = mDefaultValues.mutate().merge(from.getDefaultValues()).build();
+                } else {
+                    mDefaultValues = from.getDefaultValues();
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of booleanList.
          *

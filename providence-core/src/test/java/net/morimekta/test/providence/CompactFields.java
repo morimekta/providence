@@ -363,6 +363,23 @@ public class CompactFields
             }
         }
 
+        @Override
+        public _Builder merge(CompactFields from) {
+            if (from.hasName()) {
+                optionals.set(0);
+                mName = from.getName();
+            }
+
+            optionals.set(1);
+            mId = from.getId();
+
+            if (from.hasLabel()) {
+                optionals.set(2);
+                mLabel = from.getLabel();
+            }
+            return this;
+        }
+
         /**
          * Sets the value of name.
          *

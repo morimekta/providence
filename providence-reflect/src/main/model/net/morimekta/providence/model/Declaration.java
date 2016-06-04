@@ -439,6 +439,57 @@ public class Declaration
             mDeclConst = base.mDeclConst;
         }
 
+        @Override
+        public _Builder merge(Declaration from) {
+            if (from.unionField() == null) {
+                return this;
+            }
+
+            switch (from.unionField()) {
+                case DECL_ENUM: {
+                    if (tUnionField == _Field.DECL_ENUM && mDeclEnum != null) {
+                        mDeclEnum = mDeclEnum.mutate().merge(from.getDeclEnum()).build();
+                    } else {
+                        setDeclEnum(from.getDeclEnum());
+                    }
+                    break;
+                }
+                case DECL_TYPEDEF: {
+                    if (tUnionField == _Field.DECL_TYPEDEF && mDeclTypedef != null) {
+                        mDeclTypedef = mDeclTypedef.mutate().merge(from.getDeclTypedef()).build();
+                    } else {
+                        setDeclTypedef(from.getDeclTypedef());
+                    }
+                    break;
+                }
+                case DECL_STRUCT: {
+                    if (tUnionField == _Field.DECL_STRUCT && mDeclStruct != null) {
+                        mDeclStruct = mDeclStruct.mutate().merge(from.getDeclStruct()).build();
+                    } else {
+                        setDeclStruct(from.getDeclStruct());
+                    }
+                    break;
+                }
+                case DECL_SERVICE: {
+                    if (tUnionField == _Field.DECL_SERVICE && mDeclService != null) {
+                        mDeclService = mDeclService.mutate().merge(from.getDeclService()).build();
+                    } else {
+                        setDeclService(from.getDeclService());
+                    }
+                    break;
+                }
+                case DECL_CONST: {
+                    if (tUnionField == _Field.DECL_CONST && mDeclConst != null) {
+                        mDeclConst = mDeclConst.mutate().merge(from.getDeclConst()).build();
+                    } else {
+                        setDeclConst(from.getDeclConst());
+                    }
+                    break;
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of decl_enum.
          *

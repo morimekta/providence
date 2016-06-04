@@ -300,6 +300,16 @@ public class Imaginary
             mI = base.mI;
         }
 
+        @Override
+        public _Builder merge(Imaginary from) {
+            optionals.set(0);
+            mV = from.getV();
+
+            optionals.set(1);
+            mI = from.getI();
+            return this;
+        }
+
         /**
          * Sets the value of v.
          *

@@ -326,6 +326,21 @@ public class Operation
             }
         }
 
+        @Override
+        public _Builder merge(Operation from) {
+            if (from.hasOperator()) {
+                optionals.set(0);
+                mOperator = from.getOperator();
+            }
+
+            if (from.hasOperands()) {
+                optionals.set(1);
+                mOperands.clear();
+                mOperands.addAll(from.getOperands());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of operator.
          *

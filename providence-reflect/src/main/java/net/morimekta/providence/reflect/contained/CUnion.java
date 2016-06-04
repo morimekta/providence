@@ -19,14 +19,17 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Stein Eldar Johnsen
@@ -78,11 +81,44 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
                         return ImmutableMap.of(field.getKey(), ((PList.Builder) this.value).build());
                     case SET:
                         return ImmutableMap.of(field.getKey(), ((PSet.Builder) this.value).build());
+                    case MAP:
+                        return ImmutableMap.of(field.getKey(), ((PMap.Builder) this.value).build());
                     default:
                         return ImmutableMap.of(field.getKey(), this.value);
                 }
             }
         }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Builder merge(CUnion from) {
+            if (field == null || field != from.unionField()) {
+                set(from.unionField.getKey(), from.get(from.unionField.getKey()));
+            } else {
+                int key = field.getKey();
+                switch (field.getType()) {
+                    case MESSAGE: {
+                        PMessage src = (PMessage) value;
+                        PMessage toMerge = (PMessage) from.get(key);
+
+                        value = src.mutate().merge(toMerge).build();
+                        break;
+                    }
+                    case SET:
+                        ((PSet.Builder<Object>) value).addAll((Set<Object>) from.get(key));
+                        break;
+                    case MAP:
+                        ((PMap.Builder<Object, Object>) value).putAll((Map<Object, Object>) from.get(key));
+                        break;
+                    default:
+                        set(key, from.get(key));
+                        break;
+                }
+            }
+
+            return this;
+        }
+
 
         @Override
         public CUnion build() {
@@ -101,7 +137,21 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
                 return this; // soft ignoring unsupported fields.
             }
             this.field = field;
-            this.value = value;
+            switch (field.getType()) {
+                case SET:
+                    this.value = ((PSet) field.getDescriptor()).builder();
+                    break;
+                case LIST:
+                    this.value = ((PList) field.getDescriptor()).builder();
+                    break;
+                case MAP:
+                    this.value = ((PMap) field.getDescriptor()).builder();
+                    break;
+                default:
+                    this.value = value;
+                    break;
+            }
+
             return this;
         }
 

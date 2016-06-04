@@ -541,6 +541,43 @@ public class ThriftField
             }
         }
 
+        @Override
+        public _Builder merge(ThriftField from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            optionals.set(1);
+            mKey = from.getKey();
+
+            if (from.hasRequirement()) {
+                optionals.set(2);
+                mRequirement = from.getRequirement();
+            }
+
+            if (from.hasType()) {
+                optionals.set(3);
+                mType = from.getType();
+            }
+
+            if (from.hasName()) {
+                optionals.set(4);
+                mName = from.getName();
+            }
+
+            if (from.hasDefaultValue()) {
+                optionals.set(5);
+                mDefaultValue = from.getDefaultValue();
+            }
+
+            if (from.hasAnnotations()) {
+                optionals.set(6);
+                mAnnotations.putAll(from.getAnnotations());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

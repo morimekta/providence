@@ -473,6 +473,36 @@ public class StructType
             }
         }
 
+        @Override
+        public _Builder merge(StructType from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            if (from.hasVariant()) {
+                optionals.set(1);
+                mVariant = from.getVariant();
+            }
+
+            if (from.hasName()) {
+                optionals.set(2);
+                mName = from.getName();
+            }
+
+            if (from.hasFields()) {
+                optionals.set(3);
+                mFields.clear();
+                mFields.addAll(from.getFields());
+            }
+
+            if (from.hasAnnotations()) {
+                optionals.set(4);
+                mAnnotations.putAll(from.getAnnotations());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

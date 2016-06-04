@@ -50,15 +50,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         if (field == null) {
             return false;
         }
-        switch (field.getDescriptor()
-                     .getType()) {
-            case MAP:
-            case LIST:
-            case SET:
-                return num(key) > 0;
-            default:
-                return values.containsKey(key);
-        }
+        return values.containsKey(key);
     }
 
     @Override
@@ -67,18 +59,22 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         if (field == null) {
             return 0;
         }
+
+        // Non-present containers are empty.
+        if (!values.containsKey(key)) {
+            return 0;
+        }
+
         switch (field.getDescriptor()
                      .getType()) {
             case MAP:
-                Map<?, ?> value = (Map<?, ?>) values.get(key);
-                return value == null ? 0 : value.size();
+                return ((Map<?, ?>) values.get(key)).size();
             case LIST:
             case SET:
-                Collection<?> collection = (Collection<?>) values.get(key);
-                return collection == null ? 0 : collection.size();
+                return ((Collection<?>) values.get(key)).size();
             default:
-                // Non container fields are either present or not.
-                return values.containsKey(key) ? 1 : 0;
+                // present non-containers also empty.
+                return 0;
         }
     }
 

@@ -363,6 +363,25 @@ public class TypedefType
             }
         }
 
+        @Override
+        public _Builder merge(TypedefType from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            if (from.hasType()) {
+                optionals.set(1);
+                mType = from.getType();
+            }
+
+            if (from.hasName()) {
+                optionals.set(2);
+                mName = from.getName();
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

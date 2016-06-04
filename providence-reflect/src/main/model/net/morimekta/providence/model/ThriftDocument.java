@@ -490,6 +490,37 @@ public class ThriftDocument
             }
         }
 
+        @Override
+        public _Builder merge(ThriftDocument from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            if (from.hasPackage()) {
+                optionals.set(1);
+                mPackage = from.getPackage();
+            }
+
+            if (from.hasIncludes()) {
+                optionals.set(2);
+                mIncludes.clear();
+                mIncludes.addAll(from.getIncludes());
+            }
+
+            if (from.hasNamespaces()) {
+                optionals.set(3);
+                mNamespaces.putAll(from.getNamespaces());
+            }
+
+            if (from.hasDecl()) {
+                optionals.set(4);
+                mDecl.clear();
+                mDecl.addAll(from.getDecl());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

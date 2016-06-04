@@ -600,6 +600,52 @@ public class RequiredFields
             }
         }
 
+        @Override
+        public _Builder merge(RequiredFields from) {
+            optionals.set(0);
+            mBooleanValue = from.isBooleanValue();
+
+            optionals.set(1);
+            mByteValue = from.getByteValue();
+
+            optionals.set(2);
+            mShortValue = from.getShortValue();
+
+            optionals.set(3);
+            mIntegerValue = from.getIntegerValue();
+
+            optionals.set(4);
+            mLongValue = from.getLongValue();
+
+            optionals.set(5);
+            mDoubleValue = from.getDoubleValue();
+
+            if (from.hasStringValue()) {
+                optionals.set(6);
+                mStringValue = from.getStringValue();
+            }
+
+            if (from.hasBinaryValue()) {
+                optionals.set(7);
+                mBinaryValue = from.getBinaryValue();
+            }
+
+            if (from.hasEnumValue()) {
+                optionals.set(8);
+                mEnumValue = from.getEnumValue();
+            }
+
+            if (from.hasCompactValue()) {
+                optionals.set(9);
+                if (isSetCompactValue()) {
+                    mCompactValue = mCompactValue.mutate().merge(from.getCompactValue()).build();
+                } else {
+                    mCompactValue = from.getCompactValue();
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of booleanValue.
          *

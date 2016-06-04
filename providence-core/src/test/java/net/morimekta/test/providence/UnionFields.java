@@ -639,6 +639,61 @@ public class UnionFields
             mCompactValue = base.mCompactValue;
         }
 
+        @Override
+        public _Builder merge(UnionFields from) {
+            if (from.unionField() == null) {
+                return this;
+            }
+
+            switch (from.unionField()) {
+                case BOOLEAN_VALUE: {
+                    setBooleanValue(from.isBooleanValue());
+                    break;
+                }
+                case BYTE_VALUE: {
+                    setByteValue(from.getByteValue());
+                    break;
+                }
+                case SHORT_VALUE: {
+                    setShortValue(from.getShortValue());
+                    break;
+                }
+                case INTEGER_VALUE: {
+                    setIntegerValue(from.getIntegerValue());
+                    break;
+                }
+                case LONG_VALUE: {
+                    setLongValue(from.getLongValue());
+                    break;
+                }
+                case DOUBLE_VALUE: {
+                    setDoubleValue(from.getDoubleValue());
+                    break;
+                }
+                case STRING_VALUE: {
+                    setStringValue(from.getStringValue());
+                    break;
+                }
+                case BINARY_VALUE: {
+                    setBinaryValue(from.getBinaryValue());
+                    break;
+                }
+                case ENUM_VALUE: {
+                    setEnumValue(from.getEnumValue());
+                    break;
+                }
+                case COMPACT_VALUE: {
+                    if (tUnionField == _Field.COMPACT_VALUE && mCompactValue != null) {
+                        mCompactValue = mCompactValue.mutate().merge(from.getCompactValue()).build();
+                    } else {
+                        setCompactValue(from.getCompactValue());
+                    }
+                    break;
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of booleanValue.
          *

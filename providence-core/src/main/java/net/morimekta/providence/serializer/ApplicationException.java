@@ -349,6 +349,20 @@ public class ApplicationException
             }
         }
 
+        @Override
+        public _Builder merge(ApplicationException from) {
+            if (from.hasMessage()) {
+                optionals.set(0);
+                mMessage = from.getMessage();
+            }
+
+            if (from.hasId()) {
+                optionals.set(1);
+                mId = from.getId();
+            }
+            return this;
+        }
+
         /**
          * Sets the value of message.
          *

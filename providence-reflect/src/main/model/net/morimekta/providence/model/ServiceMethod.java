@@ -555,6 +555,45 @@ public class ServiceMethod
             }
         }
 
+        @Override
+        public _Builder merge(ServiceMethod from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            optionals.set(1);
+            mOneWay = from.isOneWay();
+
+            if (from.hasReturnType()) {
+                optionals.set(2);
+                mReturnType = from.getReturnType();
+            }
+
+            if (from.hasName()) {
+                optionals.set(3);
+                mName = from.getName();
+            }
+
+            if (from.hasParams()) {
+                optionals.set(4);
+                mParams.clear();
+                mParams.addAll(from.getParams());
+            }
+
+            if (from.hasExceptions()) {
+                optionals.set(5);
+                mExceptions.clear();
+                mExceptions.addAll(from.getExceptions());
+            }
+
+            if (from.hasAnnotations()) {
+                optionals.set(6);
+                mAnnotations.putAll(from.getAnnotations());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

@@ -19,18 +19,19 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
+import net.morimekta.providence.descriptor.PSet;
 
-import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableMap;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -41,7 +42,7 @@ public class CStruct extends CMessage<CStruct> {
     CStructDescriptor descriptor;
 
     private CStruct(Builder builder) {
-        super(ImmutableSortedMap.copyOf(builder.values));
+        super(builder.getValueMap());
         descriptor = builder.descriptor;
     }
 
@@ -63,6 +64,47 @@ public class CStruct extends CMessage<CStruct> {
             this.descriptor = descriptor;
             this.values = new TreeMap<>();
         }
+        
+        @Override
+        @SuppressWarnings("unchecked")
+        public Builder merge(CStruct from) {
+            for (PField field : descriptor.getFields()) {
+                int key = field.getKey();
+                if (from.has(key)) {
+                    switch (field.getType()) {
+                        case MESSAGE:
+                            if (values.containsKey(key)) {
+                                PMessage src = (PMessage) values.get(key);
+                                PMessage toMerge = (PMessage) from.get(key);
+
+                                values.put(key, src.mutate().merge(toMerge).build());
+                            } else {
+                                set(key, from.get(key));
+                            }
+                            break;
+                        case SET:
+                            if (values.containsKey(key)) {
+                                ((PSet.Builder<Object>) values.get(key)).addAll((Collection<Object>) from.get(key));
+                            } else {
+                                set(key, from.get(key));
+                            }
+                            break;
+                        case MAP:
+                            if (values.containsKey(key)) {
+                                ((PMap.Builder<Object, Object>) values.get(key)).putAll((Map<Object, Object>) from.get(key));
+                            } else {
+                                set(key, from.get(key));
+                            }
+                            break;
+                        default:
+                            set(key, from.get(key));
+                            break;
+                    }
+                }
+            }
+            
+            return this;
+        }
 
         @Override
         public CStruct build() {
@@ -83,18 +125,45 @@ public class CStruct extends CMessage<CStruct> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
             PField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            if (value != null) {
-                values.put(field.getKey(), value);
+            if (value == null) {
+                values.remove(key);
+            } else {
+                switch (field.getType()) {
+                    case LIST: {
+                        PList.Builder builder = ((PList) field.getDescriptor()).builder();
+                        builder.addAll((Collection<Object>) value);
+                        values.put(key, builder);
+                        break;
+                    }
+                    case SET: {
+                        PSet.Builder builder = ((PSet) field.getDescriptor()).builder();
+                        builder.addAll((Collection<Object>) value);
+                        values.put(key, builder);
+                        break;
+                    }
+                    case MAP: {
+                        PMap.Builder builder = ((PMap) field.getDescriptor()).builder();
+                        builder.putAll((Map<Object, Object>) value);
+                        values.put(key, builder);
+                        break;
+                    }
+                    default:
+                        values.put(key, value);
+                        break;
+                }
             }
+
             return this;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
             PField field = descriptor.getField(key);
             if (field == null) {
@@ -103,20 +172,22 @@ public class CStruct extends CMessage<CStruct> {
             if (value != null) {
                 if (field.getType() == PType.LIST) {
                     @SuppressWarnings("unchecked")
-                    List<Object> list = (List<Object>) values.get(field.getKey());
+                    PList.Builder<Object> list = (PList.Builder<Object>) values.get(field.getKey());
                     if (list == null) {
-                        list = new LinkedList<>();
+                        list = ((PList) field.getDescriptor()).builder();
                         values.put(field.getKey(), list);
                     }
                     list.add(value);
                 } else if (field.getType() == PType.SET) {
                     @SuppressWarnings("unchecked")
-                    Set<Object> set = (Set<Object>) values.get(field.getKey());
+                    PSet.Builder<Object> set = (PSet.Builder<Object>) values.get(field.getKey());
                     if (set == null) {
-                        set = new HashSet<>();
+                        set = ((PSet) field.getDescriptor()).builder();
                         values.put(field.getKey(), set);
                     }
                     set.add(value);
+                } else {
+                    throw new IllegalArgumentException("Key " + key + " is not a collection: " + field.getType());
                 }
             }
             return this;
@@ -126,6 +197,31 @@ public class CStruct extends CMessage<CStruct> {
         public Builder clear(int key) {
             values.remove(key);
             return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        private Map<Integer, Object> getValueMap() {
+            ImmutableMap.Builder<Integer, Object> out = ImmutableMap.builder();
+            for (CField field : descriptor.getFields()) {
+                int key = field.getKey();
+                if (values.containsKey(key)) {
+                    switch (field.getType()) {
+                        case SET:
+                            out.put(key, ((PSet.Builder<Object>) values.get(key)).build());
+                            break;
+                        case LIST:
+                            out.put(key, ((PList.Builder<Object>) values.get(key)).build());
+                            break;
+                        case MAP:
+                            out.put(key, ((PMap.Builder<Object, Object>) values.get(key)).build());
+                            break;
+                        default:
+                            out.put(key, values.get(key));
+                            break;
+                    }
+                }
+            }
+            return out.build();
         }
     }
 }

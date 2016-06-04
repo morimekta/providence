@@ -430,6 +430,31 @@ public class EnumType
             }
         }
 
+        @Override
+        public _Builder merge(EnumType from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            if (from.hasName()) {
+                optionals.set(1);
+                mName = from.getName();
+            }
+
+            if (from.hasValues()) {
+                optionals.set(2);
+                mValues.clear();
+                mValues.addAll(from.getValues());
+            }
+
+            if (from.hasAnnotations()) {
+                optionals.set(3);
+                mAnnotations.putAll(from.getAnnotations());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

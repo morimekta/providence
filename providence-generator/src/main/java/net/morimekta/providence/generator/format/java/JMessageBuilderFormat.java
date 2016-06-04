@@ -49,6 +49,8 @@ public class JMessageBuilderFormat {
         appendDefaultConstructor(message);
         appendMutateConstructor(message);
 
+        appendMerge(message);
+
         for (JField field : message.fields()) {
             appendSetter(message, field);
             if (field.container()) {
@@ -186,6 +188,124 @@ public class JMessageBuilderFormat {
         writer.end()
               .appendln('}')
               .newline();
+    }
+
+
+    private void appendMerge(JMessage<?> message) throws GeneratorException {
+        writer.appendln("@Override")
+              .formatln("public _Builder merge(%s from) {", message.instanceType())
+              .begin();
+
+        if (message.isUnion()) {
+            writer.appendln("if (from.unionField() == null) {")
+                  .appendln("    return this;")
+                  .appendln("}")
+                  .newline()
+                  .appendln("switch (from.unionField()) {")
+                  .begin();
+
+            for (JField field : message.fields()) {
+                writer.formatln("case %s: {", field.fieldEnum())
+                      .begin();
+
+                switch (field.type()) {
+                    case MESSAGE:
+                        writer.formatln("if (tUnionField == _Field.%s && %s != null) {",
+                                        field.fieldEnum(), field.member())
+                              .formatln("    %s = %s.mutate().merge(from.%s()).build();",
+                                        field.member(), field.member(), field.getter())
+                              .appendln("} else {")
+                              .formatln("    %s(from.%s());",
+                                        field.setter(), field.getter())
+                              .appendln('}');
+                        break;
+                    case SET:
+                        writer.formatln("if (tUnionField == _Field.%s) {",
+                                        field.fieldEnum())
+                              .formatln("    %s.addAll(from.%s()):",
+                                        field.member(), field.getter())
+                              .appendln("} else {")
+                              .formatln("    %s(from.%s());",
+                                        field.setter(), field.getter())
+                              .appendln('}');
+                        break;
+                    case MAP:
+                        writer.formatln("if (tUnionField == _Field.%s) {",
+                                        field.fieldEnum())
+                              .formatln("    %s.putAll(from.%s()):",
+                                        field.member(), field.getter())
+                              .appendln("} else {")
+                              .formatln("    %s(from.%s());",
+                                        field.setter(), field.getter())
+                              .appendln('}');
+                        break;
+                    default:
+                        writer.formatln("%s(from.%s());", field.setter(), field.getter());
+                        break;
+                }
+
+                writer.appendln("break;")
+                      .end()
+                      .appendln('}');
+            }
+
+            writer.end()
+                  .appendln('}');
+        } else {
+            boolean first = true;
+            for (JField field : message.fields()) {
+                if (first) {
+                    first = false;
+                } else {
+                    writer.newline();
+                }
+
+                if (!field.alwaysPresent()) {
+                    writer.formatln("if (from.%s()) {", field.presence())
+                          .begin();
+                }
+
+                writer.formatln("optionals.set(%d);", field.index());
+
+                switch (field.type()) {
+                    case MESSAGE:
+                        // Message fields are merged.
+                        writer.formatln("if (%s()) {", field.isSet())
+                              .formatln("    %s = %s.mutate().merge(from.%s()).build();",
+                                        field.member(),
+                                        field.member(),
+                                        field.getter())
+                              .appendln("} else {")
+                              .formatln("    %s = from.%s();", field.member(), field.getter())
+                              .appendln('}');
+                        break;
+                    case SET:
+                        writer.formatln("%s.addAll(from.%s());", field.member(), field.getter());
+                        break;
+                    case MAP:
+                        writer.formatln("%s.putAll(from.%s());", field.member(), field.getter());
+                        break;
+                    case LIST:
+                        writer.formatln("%s.clear();", field.member());
+                        writer.formatln("%s.addAll(from.%s());", field.member(), field.getter());
+                        break;
+                    default:
+                        writer.formatln("%s = from.%s();", field.member(), field.getter());
+                        break;
+                }
+
+                if (!field.alwaysPresent()) {
+                    writer.end()
+                          .appendln('}');
+                }
+            }
+        }
+
+        writer.appendln("return this;")
+              .end()
+              .appendln('}')
+              .newline();
+
     }
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {

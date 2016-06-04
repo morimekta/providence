@@ -363,6 +363,37 @@ public class Operand
             mImaginary = base.mImaginary;
         }
 
+        @Override
+        public _Builder merge(Operand from) {
+            if (from.unionField() == null) {
+                return this;
+            }
+
+            switch (from.unionField()) {
+                case OPERATION: {
+                    if (tUnionField == _Field.OPERATION && mOperation != null) {
+                        mOperation = mOperation.mutate().merge(from.getOperation()).build();
+                    } else {
+                        setOperation(from.getOperation());
+                    }
+                    break;
+                }
+                case NUMBER: {
+                    setNumber(from.getNumber());
+                    break;
+                }
+                case IMAGINARY: {
+                    if (tUnionField == _Field.IMAGINARY && mImaginary != null) {
+                        mImaginary = mImaginary.mutate().merge(from.getImaginary()).build();
+                    } else {
+                        setImaginary(from.getImaginary());
+                    }
+                    break;
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of operation.
          *

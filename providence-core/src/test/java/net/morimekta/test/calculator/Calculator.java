@@ -460,6 +460,19 @@ public class Calculator {
                 }
             }
 
+            @Override
+            public _Builder merge(Calculate_request from) {
+                if (from.hasOp()) {
+                    optionals.set(0);
+                    if (isSetOp()) {
+                        mOp = mOp.mutate().merge(from.getOp()).build();
+                    } else {
+                        mOp = from.getOp();
+                    }
+                }
+                return this;
+            }
+
             /**
              * Sets the value of op.
              *
@@ -853,6 +866,33 @@ public class Calculator {
                 mCe = base.mCe;
             }
 
+            @Override
+            public _Builder merge(Calculate_response from) {
+                if (from.unionField() == null) {
+                    return this;
+                }
+
+                switch (from.unionField()) {
+                    case SUCCESS: {
+                        if (tUnionField == _Field.SUCCESS && mSuccess != null) {
+                            mSuccess = mSuccess.mutate().merge(from.getSuccess()).build();
+                        } else {
+                            setSuccess(from.getSuccess());
+                        }
+                        break;
+                    }
+                    case CE: {
+                        if (tUnionField == _Field.CE && mCe != null) {
+                            mCe = mCe.mutate().merge(from.getCe()).build();
+                        } else {
+                            setCe(from.getCe());
+                        }
+                        break;
+                    }
+                }
+                return this;
+            }
+
             /**
              * Sets the value of success.
              *
@@ -1188,6 +1228,11 @@ public class Calculator {
             public _Builder(Iamalive_request base) {
                 this();
 
+            }
+
+            @Override
+            public _Builder merge(Iamalive_request from) {
+                return this;
             }
 
             @Override

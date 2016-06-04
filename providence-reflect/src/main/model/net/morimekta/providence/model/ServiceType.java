@@ -473,6 +473,36 @@ public class ServiceType
             }
         }
 
+        @Override
+        public _Builder merge(ServiceType from) {
+            if (from.hasComment()) {
+                optionals.set(0);
+                mComment = from.getComment();
+            }
+
+            if (from.hasName()) {
+                optionals.set(1);
+                mName = from.getName();
+            }
+
+            if (from.hasExtend()) {
+                optionals.set(2);
+                mExtend = from.getExtend();
+            }
+
+            if (from.hasMethods()) {
+                optionals.set(3);
+                mMethods.clear();
+                mMethods.addAll(from.getMethods());
+            }
+
+            if (from.hasAnnotations()) {
+                optionals.set(4);
+                mAnnotations.putAll(from.getAnnotations());
+            }
+            return this;
+        }
+
         /**
          * Sets the value of comment.
          *

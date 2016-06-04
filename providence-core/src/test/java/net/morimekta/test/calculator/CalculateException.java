@@ -343,6 +343,24 @@ public class CalculateException
             }
         }
 
+        @Override
+        public _Builder merge(CalculateException from) {
+            if (from.hasMessage()) {
+                optionals.set(0);
+                mMessage = from.getMessage();
+            }
+
+            if (from.hasOperation()) {
+                optionals.set(1);
+                if (isSetOperation()) {
+                    mOperation = mOperation.mutate().merge(from.getOperation()).build();
+                } else {
+                    mOperation = from.getOperation();
+                }
+            }
+            return this;
+        }
+
         /**
          * Sets the value of message.
          *
