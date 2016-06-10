@@ -24,7 +24,6 @@ package net.morimekta.providence.converter;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.converter.options.ConvertStream;
 import net.morimekta.providence.converter.options.Format;
-import net.morimekta.providence.converter.options.PrettyPrintSerializer;
 import net.morimekta.providence.converter.options.StreamOptionHandler;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -35,6 +34,7 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
@@ -121,14 +121,12 @@ public class ConvertOptions {
                 return new TBinaryProtocolSerializer(strict);
             case json_protocol:
                 return new TJsonProtocolSerializer(strict);
-            case simple_json_protocol:
-                return new TSimpleJsonProtocolSerializer();
             case compact_protocol:
                 return new TCompactProtocolSerializer(strict);
             case tuple_protocol:
                 return new TTupleProtocolSerializer(strict);
             case pretty:
-                return new PrettyPrintSerializer();
+                return new PrettySerializer("  ", " ", "\n", "", false, true);
         }
 
         throw except(cli, "Unknown format %s", format.name());

@@ -101,7 +101,7 @@ public class RPCFlagsTest {
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "\n" +
-                " --format (-f) fmt  : Request RPC format (default: versioned_binary)\n" +
+                " --format (-f) fmt  : Request RPC format (default: binary)\n" +
                 " --header (-H) hdr  : Header to set on the request, K/V separated by ':'.\n" +
                 " --help (-h, -?)    : This help listing. (default: true)\n" +
                 " --in (-i) spec     : Input specification (default: json)\n" +
@@ -115,8 +115,9 @@ public class RPCFlagsTest {
                 " - named_json           : Compact JSON with names fields and enums.\n" +
                 " - pretty_json          : Prettified named json output (multiline).\n" +
                 " - binary               : Binary serialization.\n" +
-                " - versioned_binary     : Binary serialization with version spec.\n" +
+                " - unversioned_binary   : Binary serialization with version spec.\n" +
                 " - fast_binary          : Fast binary protocol based on proto format.\n" +
+                " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +

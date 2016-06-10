@@ -10,16 +10,13 @@ public enum Format {
     pretty_json("Prettified named json output (multiline)."),
     binary("Compact binary_protocol serialization."),
     fast_binary("Fast binary protocol based on proto format"),
+    pretty("Debug format that allows comments with an easy to read syntax."),
 
     // TProtocolSerializer
     json_protocol("TJsonProtocol"),
     binary_protocol("TBinaryProtocol"),
     compact_protocol("TCompactProtocol"),
-    tuple_protocol("TTupleProtocol"),
-
-    // Pseudo (out only)
-    simple_json_protocol("TSimpleJSONProtocol (output only)"),
-    pretty("Pretty-Printer (output only)"),;
+    tuple_protocol("TTupleProtocol");
 
     public String desc;
 

@@ -110,12 +110,11 @@ public class ConvertTest {
                 " - pretty_json          : Prettified named json output (multiline).\n" +
                 " - binary               : Compact binary_protocol serialization.\n" +
                 " - fast_binary          : Fast binary protocol based on proto format\n" +
+                " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +
-                " - tuple_protocol       : TTupleProtocol\n" +
-                " - simple_json_protocol : TSimpleJSONProtocol (output only)\n" +
-                " - pretty               : Pretty-Printer (output only)\n",
+                " - tuple_protocol       : TTupleProtocol\n",
                 outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);

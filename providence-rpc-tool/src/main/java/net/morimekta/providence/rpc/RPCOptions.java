@@ -43,6 +43,7 @@ import net.morimekta.providence.rpc.options.StreamOptionHandler;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
@@ -126,7 +127,7 @@ public class RPCOptions {
             metaVar = "fmt",
             handler = FormatOptionHandler.class,
             usage = "Request RPC format")
-    protected Format format = Format.versioned_binary;
+    protected Format format = Format.binary;
 
     @Option(name = "--header",
             aliases = {"-H"},
@@ -141,9 +142,9 @@ public class RPCOptions {
     protected Serializer getSerializer(CmdLineParser cli, Format format) throws CmdLineException {
         switch (format) {
             case binary:
-                return new BinarySerializer(strict, false);
-            case versioned_binary:
                 return new BinarySerializer(strict, true);
+            case unversioned_binary:
+                return new BinarySerializer(strict, false);
             case json:
                 return new JsonSerializer(strict, JsonSerializer.IdType.ID);
             case named_json:
@@ -152,6 +153,8 @@ public class RPCOptions {
                 return new JsonSerializer(strict, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
             case fast_binary:
                 return new FastBinarySerializer(strict);
+            case pretty:
+                return new PrettySerializer("  ", " ", "\n", "", false, true);
             case binary_protocol:
                 return new TBinaryProtocolSerializer(strict);
             case json_protocol:
