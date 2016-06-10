@@ -23,10 +23,18 @@ import java.net.SocketAddress;
 public class SocketClientHandler implements PClientHandler {
     private final Serializer    serializer;
     private final SocketAddress address;
+    private final int connect_timeout;
+    private final int read_timeout;
 
     public SocketClientHandler(Serializer serializer, SocketAddress address) {
+        this(serializer, address, 10000, 10000);
+    }
+
+    public SocketClientHandler(Serializer serializer, SocketAddress address, int connect_timeout, int read_timeout) {
         this.serializer = serializer;
         this.address = address;
+        this.connect_timeout = connect_timeout;
+        this.read_timeout = read_timeout;
     }
 
     private synchronized Socket connect() throws IOException {
@@ -34,7 +42,8 @@ public class SocketClientHandler implements PClientHandler {
         socket.setSoLinger(false, 0);
         socket.setTcpNoDelay(true);
         socket.setKeepAlive(true);
-        socket.connect(address, 100);
+        socket.setSoTimeout(read_timeout);
+        socket.connect(address, connect_timeout);
         return socket;
     }
 

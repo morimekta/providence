@@ -10,6 +10,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.thrift.io.FramedBufferInputSteram;
 import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,51 +22,70 @@ import java.nio.channels.SocketChannel;
  * Client handler for thrift RPC using the TNonblockingServer, or similar that
  * uses the TFramedTransport message wrapper.
  *
- * TODO: Reuse socket channel until closed.
+ * When using this client handler make sure to close it when no longer in use.
+ * Otherwise it will keep the socket channel open almost indefinitely.
  */
-public class NonblockingSocketClientHandler implements PClientHandler {
+public class NonblockingSocketClientHandler implements PClientHandler, Closeable {
     private final Serializer    serializer;
     private final SocketAddress address;
+    private final int           connect_timeout;
+    private final int           read_timeout;
+
+    private SocketChannel channel;
 
     public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address) {
+        this(serializer, address, 10000, 10000);
+    }
+
+    public NonblockingSocketClientHandler(Serializer serializer, SocketAddress address, int connect_timeout, int read_timeout) {
         this.serializer = serializer;
         this.address = address;
+        this.connect_timeout = connect_timeout;
+        this.read_timeout = read_timeout;
     }
 
     private SocketChannel connect() throws IOException {
-        SocketChannel channel = SocketChannel.open();
-        Socket socket = channel.socket();
-        socket.setSoLinger(false, 0);
-        socket.setTcpNoDelay(true);
-        socket.setKeepAlive(true);
-        socket.setSoTimeout(1000);
+        if (channel == null) {
+            channel = SocketChannel.open();
+            Socket socket = channel.socket();
+            socket.setSoLinger(false, 0);
+            socket.setTcpNoDelay(true);
+            socket.setKeepAlive(true);
+            socket.setSoTimeout(read_timeout);
 
-        channel.configureBlocking(true);
-        if (!channel.connect(address)) {
-            if (!channel.finishConnect()) {
-                throw new IOException();
-            }
+            // The channel is always in blocking mode.
+            channel.configureBlocking(true);
+            channel.socket().connect(address, connect_timeout);
         }
         return channel;
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (channel != null) {
+            try {
+                channel.close();
+            } finally {
+                channel = null;
+            }
+        }
     }
 
     @Override
     public <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS>
     handleCall(PServiceCall<RQ> call, PService service)
             throws IOException, SerializerException {
-        try (SocketChannel channel = connect()) {
-            OutputStream out = new FramedBufferOutputStream(channel);
-            serializer.serialize(out, call);
-            out.flush();
+        SocketChannel channel = connect();
 
-            channel.shutdownOutput();
-            channel.configureBlocking(true);
+        OutputStream out = new FramedBufferOutputStream(channel);
+        serializer.serialize(out, call);
+        out.flush();
 
-            if (call.getType() != PServiceCallType.ONEWAY) {
-                InputStream in = new FramedBufferInputSteram(channel);
-                return serializer.deserialize(in, service);
-            }
+        if (call.getType() != PServiceCallType.ONEWAY) {
+            InputStream in = new FramedBufferInputSteram(channel);
+            return serializer.deserialize(in, service);
         }
+
         return null;
     }
 }
