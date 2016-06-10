@@ -73,13 +73,13 @@
         <args4j.version>2.33</args4j.version>
         <morimekta_utils.version>0.2.3</morimekta_utils.version>
 
-        <providence.version>0.1.2</providence.version>
-        <providence.release-version>0.1.2</providence.release-version>
+        <providence.version>0.1.3-SNAPSHOT</providence.version>
+        <providence.release-version>0.1.3-dev</providence.release-version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
     <artifactId>providence-tools</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
