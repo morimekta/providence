@@ -9,7 +9,7 @@ public enum Format {
     named_json("Compact JSON with names fields and enums."),
     pretty_json("Prettified named json output (multiline)."),
     binary("Binary serialization."),
-    unversioned_binary("Binary serialization with version spec."),
+    unversioned_binary("Binary serialization without version spec (deprecated)."),
     fast_binary("Fast binary protocol based on proto format."),
     pretty("Debug format that allows comments with an easy to read syntax."),
 

@@ -129,6 +129,18 @@ public class RPCOptions {
             usage = "Request RPC format")
     protected Format format = Format.binary;
 
+    @Option(name = "--connect_timeout",
+            aliases = {"-C"},
+            metaVar = "ms",
+            usage = "Connection timeout in milliseconds. 0 means infinite.")
+    protected int connect_timeout = 10000;
+
+    @Option(name = "--read_timeout",
+            aliases = {"-T"},
+            metaVar = "ms",
+            usage = "Request timeout in milliseconds. 0 means infinite.")
+    protected int read_timeout = 10000;
+
     @Option(name = "--header",
             aliases = {"-H"},
             metaVar = "hdr",
@@ -302,9 +314,9 @@ public class RPCOptions {
 
             switch (uri.getScheme()) {
                 case "thrift":
-                    return new SocketClientHandler(serializer, address);
+                    return new SocketClientHandler(serializer, address, connect_timeout, read_timeout);
                 case "thrift+nonblocking":
-                    return new NonblockingSocketClientHandler(serializer, address);
+                    return new NonblockingSocketClientHandler(serializer, address, connect_timeout, read_timeout);
                 default:
                     throw except(cli, "Unknown thrift protocol " + uri.getScheme());
             }
@@ -322,7 +334,7 @@ public class RPCOptions {
         }
 
         HttpTransport transport = new ApacheHttpTransport();
-        HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs));
+        HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs, connect_timeout, read_timeout));
         SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mimeType());
         return new HttpClientHandler(url, factory, serializerProvider);
     }

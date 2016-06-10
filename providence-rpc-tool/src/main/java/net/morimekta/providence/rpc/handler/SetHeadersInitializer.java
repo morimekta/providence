@@ -12,13 +12,20 @@ import java.util.Map;
  */
 public class SetHeadersInitializer implements HttpRequestInitializer {
     private final Map<String, String> headers;
+    private final int                 connect_timeout;
+    private final int                 read_timeout;
 
-    public SetHeadersInitializer(Map<String, String> headers) {
+    public SetHeadersInitializer(Map<String, String> headers, int connect_timeout, int read_timeout) {
         this.headers = headers;
+        this.connect_timeout = connect_timeout;
+        this.read_timeout = read_timeout;
     }
 
     @Override
     public void initialize(HttpRequest request) throws IOException {
+        request.setConnectTimeout(connect_timeout);
+        request.setReadTimeout(read_timeout);
+
         // With the interceptor will overwrite headers set by the Http client.
         request.setInterceptor(rq -> {
             HttpHeaders http = rq.getHeaders();
@@ -44,7 +51,15 @@ public class SetHeadersInitializer implements HttpRequestInitializer {
                         http.setUserAgent(value);
                         break;
                     default:
-                        http.set(entry.getKey(), value);
+                        try {
+                            http.set(entry.getKey(), value);
+                        } catch (Exception e) {
+                            // Turn the exception into one that we track and
+                            // print proper error message. This is most likely
+                            // because the header has to be handled with a
+                            // special method.
+                            throw new IOException("Unable to set header " + entry.getKey() + ": " + e.getMessage(), e);
+                        }
                         break;
                 }
             }

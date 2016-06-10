@@ -101,21 +101,23 @@ public class RPCFlagsTest {
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "\n" +
-                " --format (-f) fmt  : Request RPC format (default: binary)\n" +
-                " --header (-H) hdr  : Header to set on the request, K/V separated by ':'.\n" +
-                " --help (-h, -?)    : This help listing. (default: true)\n" +
-                " --in (-i) spec     : Input specification (default: json)\n" +
-                " --include (-I) dir : Include from directories. Defaults to PWD.\n" +
-                " --out (-o) spec    : Output specification (default: pretty_json)\n" +
-                " --service (-s) srv : Qualified identifier name from definitions to use for parsing source file.\n" +
-                " --strict (-S)      : Read incoming messages strictly. (default: false)\n" +
+                " --connect_timeout (-C) ms : Connection timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
+                " --format (-f) fmt         : Request RPC format (default: binary)\n" +
+                " --header (-H) hdr         : Header to set on the request, K/V separated by ':'.\n" +
+                " --help (-h, -?)           : This help listing. (default: true)\n" +
+                " --in (-i) spec            : Input specification (default: json)\n" +
+                " --include (-I) dir        : Include from directories. Defaults to PWD.\n" +
+                " --out (-o) spec           : Output specification (default: pretty_json)\n" +
+                " --read_timeout (-T) ms    : Request timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
+                " --service (-s) srv        : Qualified identifier name from definitions to use for parsing source file.\n" +
+                " --strict (-S)             : Read incoming messages strictly. (default: false)\n" +
                 "\n" +
                 "Available formats are:\n" +
                 " - json                 : Readable JSON with numeric field IDs and enums.\n" +
                 " - named_json           : Compact JSON with names fields and enums.\n" +
                 " - pretty_json          : Prettified named json output (multiline).\n" +
                 " - binary               : Binary serialization.\n" +
-                " - unversioned_binary   : Binary serialization with version spec.\n" +
+                " - unversioned_binary   : Binary serialization without version spec (deprecated).\n" +
                 " - fast_binary          : Fast binary protocol based on proto format.\n" +
                 " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
                 " - json_protocol        : TJsonProtocol\n" +
