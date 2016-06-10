@@ -27,8 +27,8 @@ Proper releases are done with a branch cut.
   you want to release.
 * Run `# mvn release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn release:perform -Prelease-sign-artifacts` to generate the artifacts
-  and push to sonatype for staging.
+* Run `# mvn release:perform` to generate the artifacts and push to sonatype
+  for staging.
 
 If the artifacts found at the [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
 are correct, you're ready to make the release. First make the actual binary release:
