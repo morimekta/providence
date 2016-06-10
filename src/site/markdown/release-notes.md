@@ -3,7 +3,7 @@ Release Notes
 
 Release notes for each release.
 
-## providence 0.1.2 - unreleased
+## providence 0.1.2 - 10.06.2016
 
 - Support dependency between providence definitions in different maven modules.
   Generates `providence` assemblies with the .thrift files. The standard

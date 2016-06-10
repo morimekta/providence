@@ -7,6 +7,11 @@ Providence is a development tool whose version needs to match the source code
 that uses it. Use the [maven plugin](providence-maven-plugin/index.html) for
 java.
 
+### Providence Tools v0.1.2
+
+* [debian package](/pkg/providence-0.1.2_all.deb)   (13M, sha1: cff55f07c33743719bd402d7aa1ead1966d0ccf0, md5: 2daf1cb552c11a31be2ad18287da50a3)
+* [RPM package](/pkg/providence-0.1.2-1.noarch.rpm) (13M, sha1: 23fe2c820d8ff7d07f35bc4f39a41f2e923a9ed9, md5: f8031e44603d2a9d5231c5f0fa044f57)
+
 ### Providence Tools v0.1.1
 
 * [debian package](/pkg/providence-0.1.1_all.deb) (13M, sha1: 6553535b8316ff12c0a71deeccfb87717017f9f8, md5: fd4b9f32e4a343c5cf00e26d11c7b5a1)
