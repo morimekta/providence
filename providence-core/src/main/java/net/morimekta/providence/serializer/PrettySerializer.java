@@ -24,6 +24,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PContainer;
@@ -34,6 +35,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
@@ -101,20 +103,69 @@ public class PrettySerializer extends Serializer {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
-        builder.format("%d: %s %s(",
+        builder.format("%d: %s %s",
                        call.getSequence(),
                        call.getType().toString(),
                        call.getMethod())
-               .begin("      ");
+               .begin(indent + indent);
 
         appendMessage(builder, call.getMessage(), true);
 
         builder.end()
-               .append(')')
                .newline()
                .flush();
 
         return cout.getByteCount();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+            throws SerializerException, IOException {
+        // pretty printed service calls cannot be chained-serialized, so this should be totally safe.
+        Tokenizer tokenizer = new Tokenizer(input, false);
+
+        Token token = tokenizer.expect("Sequence or type");
+        int sequence = 0;
+        if (token.isInteger()) {
+            sequence = (int) token.parseInteger();
+            tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
+            token = tokenizer.expectIdentifier("Call Type");
+        }
+        PServiceCallType callType = PServiceCallType.findByName(token.asString());
+        if (callType == null) {
+            throw new SerializerException("No such call type " + token.asString());
+        }
+
+        String methodName = tokenizer.expectIdentifier("Method name").asString();
+
+        PServiceMethod method = service.getMethod(methodName);
+        if (method == null) {
+            throw new SerializerException("No such method " + methodName + " on service " + service.getQualifiedName(null));
+        }
+
+        tokenizer.expectSymbol("Call params start", '(');
+        tokenizer.expectSymbol("Message encloser", '{');
+
+        T message;
+        switch (callType) {
+            case CALL:
+            case ONEWAY:
+                message = (T) readMessage(tokenizer, method.getRequestType(), true);
+                break;
+            case REPLY:
+                message = (T) readMessage(tokenizer, method.getResponseType(), true);
+                break;
+            case EXCEPTION:
+                message = (T) readMessage(tokenizer, ApplicationException.kDescriptor, true);
+                break;
+            default:
+                throw new IllegalStateException("Unreachable code reached");
+        }
+
+        tokenizer.expectSymbol("Call params closing", ')');
+
+        return new PServiceCall<>(methodName, callType, sequence, message);
     }
 
     @Override
@@ -357,12 +408,6 @@ public class PrettySerializer extends Serializer {
 
             }
         }
-        return null;
-    }
-
-    @Override
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
-            throws SerializerException {
         return null;
     }
 

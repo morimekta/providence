@@ -46,7 +46,7 @@ public abstract class Serializer {
     deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException;
 
     public abstract <T extends PMessage<T>> PServiceCall<T>
-    deserialize(InputStream input, PService service) throws SerializerException;
+    deserialize(InputStream input, PService service) throws SerializerException, IOException;
 
     public abstract boolean binaryProtocol();
 

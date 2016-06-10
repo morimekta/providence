@@ -31,7 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * debugging.
  */
 public class PrettyPrinter {
-    private static final PrettySerializer debugStringSerializer = new PrettySerializer("  ", " ", "\n", "", false, true);
+    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer("  ", " ", "\n", "", false, true);
 
     /**
      * Prints a pretty formatted string that is optimized for diffing (mainly
@@ -43,7 +43,7 @@ public class PrettyPrinter {
      */
     public static <T extends PMessage<T>> String debugString(T message) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        debugStringSerializer.serialize(baos, message);
+        DEBUG_STRING_SERIALIZER.serialize(baos, message);
         return new String(baos.toByteArray(), UTF_8);
     }
 }
