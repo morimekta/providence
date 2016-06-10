@@ -18,13 +18,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence.git</url>
-      <tag>v0.1.2</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
     </parent>
     <artifactId>providence-thrift</artifactId>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -93,7 +93,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.1.2</version>
+                <version>0.1.3-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>generate-providence-sources</id>
