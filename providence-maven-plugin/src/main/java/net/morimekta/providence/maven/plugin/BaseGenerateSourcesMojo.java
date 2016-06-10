@@ -22,26 +22,42 @@ import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.util.FileManager;
+import net.morimekta.providence.maven.util.ProvidenceAssemble;
+import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
@@ -95,41 +111,43 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     protected IncludeExcludeFileSelector includeDirs;
 
-    @Parameter(defaultValue = "${project}", readonly = true)
-    protected MavenProject project;
+    /**
+     * Location of the output artifact.
+     */
+    @Parameter(defaultValue = "${project.build.directory}", readonly = true)
+    private File buildDir = null;
 
-    private Set<File> getInputFiles(IncludeExcludeFileSelector inputFiles,
-                                    String defaultInputInclude) {
-        TreeSet<File> inputs = new TreeSet<>();
+    // --- After here are internals, components and maven-set params.
 
-        DirectoryScanner inputScanner = new DirectoryScanner();
-        if (inputFiles != null) {
-            inputScanner.setIncludes(inputFiles.getIncludes());
-            if (inputFiles.getExcludes() != null) {
-                inputScanner.setExcludes(inputFiles.getExcludes());
-            }
-        } else {
-            inputScanner.setIncludes(new String[]{defaultInputInclude});
-        }
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    protected MavenProject project = null;
 
-        inputScanner.setBasedir(project.getBasedir());
-        inputScanner.scan();
+    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
+    protected ArtifactRepository localRepository = null;
 
-        for (String file : inputScanner.getIncludedFiles()) {
-            inputs.add(new File(project.getBasedir(), file));
-        }
+    @Parameter(defaultValue = "${project.remoteRepositories}", readonly = true, required = true)
+    protected List<ArtifactRepository> remoteRepositories = null;
 
-        return inputs;
-    }
+    @Component
+    private ArtifactResolver artifactResolver = null;
+
+    @Component
+    private RepositorySystem repositorySystem = null;
+
+    @Component
+    protected MavenProjectHelper projectHelper = null;
 
     boolean executeInternal(File outputDir,
-                            IncludeExcludeFileSelector inputFiles,
-                            String defaultInputIncludes) throws MojoExecutionException, MojoFailureException {
+                            IncludeExcludeFileSelector files,
+                            String defaultInputIncludes,
+                            boolean testCompile,
+                            boolean assemble,
+                            String finalAssembleName) throws MojoExecutionException, MojoFailureException {
         if (skip) {
             return false;
         }
 
-        Set<File> inputs = getInputFiles(inputFiles, defaultInputIncludes);
+        Set<File> inputs = ProvidenceInput.getInputFiles(project, files, defaultInputIncludes);
         if (inputs.isEmpty()) {
             return false;
         }
@@ -141,6 +159,53 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         TreeSet<File> includes = new TreeSet<>();
+
+        File workingDir = new File(buildDir, testCompile ? "providence-test" : "providence");
+        File[] deleteFiles = workingDir.listFiles();
+        if (!workingDir.exists()) {
+            if (!workingDir.mkdirs()) {
+                throw new MojoExecutionException("Unable to create working directory " + workingDir);
+            }
+        } else if (deleteFiles != null) {
+            StreamSupport.<File>stream(Spliterators.spliterator(deleteFiles, Spliterator.DISTINCT | Spliterator.IMMUTABLE),
+                                       false).forEach(File::delete);
+        }
+
+        Set<Artifact> providenceArtifacts = new HashSet<>();
+        for (Dependency dep : project.getDependencies()) {
+            if (!ProvidenceAssemble.CLASSIFIER.equals(dep.getClassifier())) {
+                continue;
+            }
+
+            if (!(dep.getScope() == null ||
+                  "compile".equals(dep.getScope()) ||
+                  (testCompile && "test".equals(dep.getScope())))) {
+                continue;
+            }
+
+            // TODO: Handle exclusions?
+            Artifact artifact = repositorySystem.createDependencyArtifact(dep);
+            // Avoid resolving stuff we already have resolved.
+            if (providenceArtifacts.contains(artifact)) {
+                continue;
+            }
+
+            ArtifactResolutionRequest request = new ArtifactResolutionRequest();
+            request.setLocalRepository(localRepository);
+            request.setRemoteRepositories(remoteRepositories);
+            request.setResolveTransitively(true);
+            request.setArtifact(artifact);
+
+            ArtifactResolutionResult result = artifactResolver.resolve(request);
+            for (Artifact providenceArtifact : result.getArtifacts()) {
+                if (ProvidenceAssemble.CLASSIFIER.equals(providenceArtifact.getClassifier())) {
+                    providenceArtifacts.add(providenceArtifact);
+                    ProvidenceAssemble.addDependencyInclude(workingDir,
+                                                            includes,
+                                                            providenceArtifact);
+                }
+            }
+        }
 
         if (includeDirs != null) {
             DirectoryScanner includeScanner = new DirectoryScanner();
@@ -174,6 +239,14 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                 getLog().warn(e.getMessage());
                 getLog().warn(".---------------------.");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
+            }
+        }
+
+        if (!testCompile) {
+            if (assemble) {
+                File target = new File(buildDir, finalAssembleName);
+                ProvidenceAssemble.generateProvidencePackageFile(inputs, project.getArtifact(), target);
+                projectHelper.attachArtifact(project, ProvidenceAssemble.TYPE, ProvidenceAssemble.CLASSIFIER, target);
             }
         }
 

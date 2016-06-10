@@ -1,5 +1,11 @@
 namespace java net.morimekta.test.providence
 
+include "model.thrift"
+
+struct ContainsModel {
+    1: model.EnumType enumType;
+}
+
 enum Value {
    FIRST = 1,
    SECOND = 2,

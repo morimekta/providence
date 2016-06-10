@@ -15,6 +15,8 @@
  */
 package net.morimekta.providence.maven.plugin;
 
+import net.morimekta.providence.maven.util.ProvidenceAssemble;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.InstantiationStrategy;
@@ -42,11 +44,20 @@ public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
      * Files to compile. By default will select all '.thrift' files in
      * 'src/main/providence/' and subdirectories.
      */
+    @Parameter(alias = "inputFiles")
+    protected IncludeExcludeFileSelector files;
+
     @Parameter
-    protected IncludeExcludeFileSelector inputFiles;
+    protected boolean assemble = false;
+
+    /**
+     * Final name of the created assembly.
+     */
+    @Parameter(defaultValue = "${project.artifactId}-${project.version}-" + ProvidenceAssemble.CLASSIFIER + "." + ProvidenceAssemble.TYPE)
+    private String finalAssembleName = null;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (executeInternal(outputDir, inputFiles, "src/main/providence/**/*.thrift")) {
+        if (executeInternal(outputDir, files, "src/main/providence/**/*.thrift", false, assemble, finalAssembleName)) {
             project.addCompileSourceRoot(outputDir.getPath());
         }
     }

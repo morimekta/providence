@@ -42,11 +42,11 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
      * Files to compile. By default will select all '.thrift' files in
      * 'src/test/providence/' and subdirectories.
      */
-    @Parameter
-    protected IncludeExcludeFileSelector inputFiles;
+    @Parameter(alias = "inputFiles")
+    protected IncludeExcludeFileSelector files;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (executeInternal(outputDir, inputFiles, "src/test/providence/**/*.thrift")) {
+        if (executeInternal(outputDir, files, "src/test/providence/**/*.thrift", true, false, null)) {
             project.addTestCompileSourceRoot(outputDir.getPath());
         }
     }

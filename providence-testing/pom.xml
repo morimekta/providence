@@ -34,6 +34,21 @@
             <version>0.1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-reflect</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-reflect</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
+            <classifier>providence</classifier>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
             <version>${morimekta_utils.version}</version>
