@@ -3,6 +3,31 @@ Release Notes
 
 Release notes for each release.
 
+## providence 0.1.2 - unreleased
+
+- Support dependency between providence definitions in different maven modules.
+  Generates `providence` assemblies with the .thrift files. The standard
+  providence models (models.thrift for the thrift definition and services.thrift
+  for the ApplicationException and type) can be included in other thrift.
+- Make thrift clients handle timeout on connect and read delays. And the
+  thrift nonclocking channel based client handler no longer closes the connection
+  after each method call.
+- Added a PrettSerialize that replace the PrettyPrinter. Supports parsing
+  full structs, and supports comments inline in the source files.
+- Struct builders have a `merge(other)` method, and the message itself has
+  a `mergeWith(other)` method that generated a new merged instance.
+- Removed the TypeUtil class, moved remaining functions where used.
+- Documentation updates on json and fast serializers.
+
+#### Providence - Tools
+
+- Able to set connection and read timeout on the rpc requests.
+- PrettySerializer available in converter and rpc tool.
+- Build RPM package.
+- Set headers overrides default headers (rpc-tool).
+- Handle user-agent, authenticaiton etc headers that require some special
+  handling in google-http-client.
+
 ## providence 0.1.1 - 14.05.2016
 
 - 'tiny_java' updates:

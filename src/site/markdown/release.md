@@ -29,9 +29,38 @@ Proper releases are done with a branch cut.
   actual release, and one with the "next development cycle".
 * Run `# mvn release:perform -Prelease-sign-artifacts` to generate the artifacts
   and push to sonatype for staging.
-* Merge the last commit into `master`, and **go back to the release branch**.
+
+If the artifacts found at the [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
+are correct, you're ready to make the release. First make the actual binary release:
+
+* Select artifact and push `release` in the top action bar to push the artifacts
+  to the maven repository of sonatype.
+
+Now merge the last commit into `master`, and **go back to the release branch**
+to prepare the site release.
+
 * Run `# git reset --hard $(git log --oneline --format=%h -n 2 | tail -n 1)`.
   This will check out the actual release commit.
+
+While the release is being distributed (may actually take a couple of hours),
+prepare the [Providence Tools](https://github.com/morimekta/providence-tools)
+release.
+
+* Run `# mvn clean verify install` to make sure the release-artifacts are
+  available locally.
+* Go to the `providence-tools` project and prepare versions by updating the
+  `providence.version` property in the main `pom.xml` file to the new release
+  version. And setting the release version with `mvn versions:set` to the
+  same value.
+* Build with `# mvn clean verify package`.
+* Take out the two files: `providence-package/target/providence-{version}_all.deb`
+  and `providence-package/target/rpm/providence/RPMS/noarch/providence-{version}_1.noarch.rpm`
+  and save them to the `mortimekta.github.io/pkg` directory. Make sure to generate
+  `md5sum` and `sha1sum` of the two files.
+
+**Then back in this project**. Update the [release-notes.md](release-notes.html) and
+[downloads.md](downloads.html) files.
+  
 * Run `# mvn clean verify site site:stage`, which will build the website for the
   release.
 * Run `# git checkout gh-pages`, and `# cp -R target/site/* .`, which will
