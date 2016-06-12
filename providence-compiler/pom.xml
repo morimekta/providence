@@ -50,6 +50,16 @@
             <artifactId>providence-generator</artifactId>
             <version>${providence.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-generator-java</artifactId>
+            <version>${providence.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-generator-json</artifactId>
+            <version>${providence.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
