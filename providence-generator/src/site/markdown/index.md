@@ -1,4 +1,4 @@
-Providence Tools : Generator
-============================
+Providence Generator : Common
+=============================
 
 Generator code.
