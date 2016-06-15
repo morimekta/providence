@@ -53,6 +53,7 @@ public class JsonGenerator extends Generator {
                 OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
                 try {
                     serializer.serialize(out, doc);
+                    out.write('\n');
                 } catch (SerializerException e) {
                     throw new GeneratorException("Unable to serialize document.", e);
                 }
