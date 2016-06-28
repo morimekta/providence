@@ -21,10 +21,17 @@
 
 package net.morimekta.providence.converter;
 
+import net.morimekta.console.args.Argument;
+import net.morimekta.console.args.ArgumentException;
+import net.morimekta.console.args.ArgumentOptions;
+import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.args.Option;
+import net.morimekta.console.args.UnaryOption;
+import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.converter.options.ConvertStream;
+import net.morimekta.providence.converter.options.ConvertStreamParser;
 import net.morimekta.providence.converter.options.Format;
-import net.morimekta.providence.converter.options.StreamOptionHandler;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -41,13 +48,7 @@ import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
-import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
-
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -62,50 +63,60 @@ import java.util.TreeSet;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import static net.morimekta.console.FormatString.except;
+import static net.morimekta.console.util.Parser.dir;
 
 /**
  * Options used by the providence converter.
  */
 @SuppressWarnings("all")
 public class ConvertOptions {
-    @Option(name = "--include",
-            aliases = {"-I"},
-            metaVar = "dir",
-            usage = "Include from directories. Defaults to CWD.")
     protected List<File> includes = new LinkedList<>();
-
-    @Option(name = "--in",
-            aliases = {"-i"},
-            usage = "Input specification",
-            metaVar = "spec",
-            handler = StreamOptionHandler.class)
     protected ConvertStream in = new ConvertStream(Format.json, null);
-
-    @Option(name = "--out",
-            aliases = {"-o"},
-            usage = "Output specification",
-            metaVar = "spec",
-            handler = StreamOptionHandler.class)
     protected ConvertStream out = new ConvertStream(Format.pretty, null);
-
-    @Option(name = "--strict",
-            aliases = {"-S"},
-            usage = "Read incoming messages strictly.")
     protected boolean strict = false;
-
-    @Argument(required = true,
-              metaVar = "type",
-              usage = "Qualified identifier name from definitions to use for parsing source file.")
     protected String type;
-
-    @Option(name = "--help",
-            aliases = {"-h", "-?"},
-            help = true,
-            usage = "This help listing.")
     protected boolean mHelp;
 
-    protected Serializer getSerializer(CmdLineParser cli, Format format) throws CmdLineException {
+    public ArgumentParser getArgumentParser(String prog, String version, String description) {
+        ArgumentOptions opts = ArgumentOptions.defaults().withUsageWidth(
+                Math.min(120, TerminalSize.get().cols));
+        ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
+
+        parser.add(new Option("--include", "I", "Include from directories.", "dir", dir(this::addInclude), "${PWD}", true, false, false));
+        parser.add(new Option("--in", "i", "Input specification", "spec", new ConvertStreamParser().then(this::setIn)));
+        parser.add(new Option("--out", "o", "Output specification", "spec", new ConvertStreamParser().then(this::setOut)));
+        parser.add(new UnaryOption("--strict", "S", "Read incoming messages strictly.", this::setStrict));
+        parser.add(new Argument("type", "Qualified identifier name from definitions to use for parsing source file.", null, this::setType, null, false, true, false));
+        parser.add(new UnaryOption("--help", "h?", "This help listing.", this::setHelp));
+
+        return parser;
+    }
+
+    public void addInclude(File include) {
+        this.includes.add(include);
+    }
+
+    public void setIn(ConvertStream in) {
+        this.in = in;
+    }
+
+    public void setOut(ConvertStream out) {
+        this.out = out;
+    }
+
+    public void setStrict(boolean strict) {
+        this.strict = strict;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setHelp(boolean mHelp) {
+        this.mHelp = mHelp;
+    }
+
+    protected Serializer getSerializer(Format format) {
         switch (format) {
             case binary:
                 return new BinarySerializer(strict);
@@ -129,19 +140,19 @@ public class ConvertOptions {
                 return new PrettySerializer("  ", " ", "\n", "", false, true);
         }
 
-        throw except(cli, "Unknown format %s", format.name());
+        throw new ArgumentException("Unknown format %s", format.name());
     }
 
     public boolean isHelp() {
         return mHelp;
     }
 
-    public void collectIncludes(File dir, Map<String, File> includes, CmdLineParser cli) throws CmdLineException {
+    public void collectIncludes(File dir, Map<String, File> includes) {
         if (!dir.exists()) {
-            throw except(cli, "No such include directory: " + dir.getPath());
+            throw new ArgumentException("No such include directory: " + dir.getPath());
         }
         if (!dir.isDirectory()) {
-            throw except(cli, "Not a directory: " + dir.getPath());
+            throw new ArgumentException("Not a directory: " + dir.getPath());
         }
         for (File file : dir.listFiles()) {
             if (file.isHidden()) {
@@ -153,10 +164,10 @@ public class ConvertOptions {
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> PStructDescriptor<T, F> getDefinition(CmdLineParser cli)
-            throws CmdLineException, ParseException {
+    public <T extends PMessage<T>, F extends PField> PStructDescriptor<T, F> getDefinition()
+            throws ParseException {
         if (type.isEmpty()) {
-            throw except(cli, "Input type.");
+            throw new ArgumentException("Input type.");
         }
 
         Map<String, File> includeMap = new HashMap<>();
@@ -164,7 +175,7 @@ public class ConvertOptions {
             includes.add(new File("."));
         }
         for (File file : includes) {
-            collectIncludes(file, includeMap, cli);
+            collectIncludes(file, includeMap);
         }
 
         Set<File> rootSet = new TreeSet<File>();
@@ -180,21 +191,21 @@ public class ConvertOptions {
         try {
             loader.load(includeMap.get(namespace));
         } catch (IOException e) {
-            throw except(cli, e.getLocalizedMessage());
+            throw new ArgumentException(e.getLocalizedMessage());
         }
 
         @SuppressWarnings("unchecked")
         PStructDescriptor<T, F> descriptor = (PStructDescriptor) loader.getRegistry()
                                                                        .getDescriptor(type, null);
         if (descriptor == null) {
-            throw except(cli, "No available type for name %s", type);
+            throw new ArgumentException("No available type for name %s", type);
         }
 
         return descriptor;
     }
 
-    public <T extends PMessage<T>> Collector<T, OutputStream, Integer> getOutput(CmdLineParser cli)
-            throws CmdLineException, IOException {
+    public <T extends PMessage<T>> Collector<T, OutputStream, Integer> getOutput()
+            throws IOException {
         Format fmt = Format.pretty;
         File file = null;
         if (out != null) {
@@ -202,10 +213,10 @@ public class ConvertOptions {
             file = out.file;
         }
 
-        final Serializer serializer = getSerializer(cli, fmt);
+        final Serializer serializer = getSerializer( fmt);
         if (file != null) {
             if (file.exists() && !file.isFile()) {
-                throw except(cli, "%s exists and is not a file.", file.getAbsolutePath());
+                throw new ArgumentException("%s exists and is not a file.", file.getAbsolutePath());
             }
 
             return MessageCollectors.toFile(file, serializer);
@@ -214,9 +225,9 @@ public class ConvertOptions {
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> Stream<T> getInput(CmdLineParser cli)
-            throws CmdLineException, ParseException {
-        PStructDescriptor<T, F> descriptor = getDefinition(cli);
+    public <T extends PMessage<T>, F extends PField> Stream<T> getInput()
+            throws ParseException {
+        PStructDescriptor<T, F> descriptor = getDefinition();
 
         Format fmt = Format.pretty;
         File file = null;
@@ -225,19 +236,19 @@ public class ConvertOptions {
             file = in.file;
         }
 
-        Serializer serializer = getSerializer(cli, fmt);
+        Serializer serializer = getSerializer(fmt);
         if (file != null) {
             try {
                 return MessageStreams.file(file, serializer, descriptor);
             } catch (IOException e) {
-                throw except(cli, "Unable to read file %s", file.getName());
+                throw new ArgumentException("Unable to read file %s", file.getName());
             }
         } else {
             BufferedInputStream is = new BufferedInputStream(System.in);
             try {
                 return MessageStreams.stream(is, serializer, descriptor);
             } catch (IOException e) {
-                throw except(cli, "Broken pipe");
+                throw new ArgumentException("Broken pipe");
             }
         }
     }

@@ -21,13 +21,11 @@
 
 package net.morimekta.providence.converter;
 
+import net.morimekta.console.args.ArgumentException;
+import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.providence.converter.options.Format;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.util.Strings;
-
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.ParserProperties;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -49,14 +47,13 @@ public class Convert {
 
     @SuppressWarnings("unchecked")
     void run(String... args) {
-        ParserProperties props = ParserProperties.defaults()
-                                                 .withUsageWidth(120);
-        CmdLineParser cli = new CmdLineParser(options, props);
         try {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/build.properties"));
 
-            cli.parseArgument(args);
+            ArgumentParser cli = options.getArgumentParser("pvd", "v" + properties.getProperty("build.version"), "Providence Converter");
+
+            cli.parse(args);
             if (options.isHelp()) {
                 System.out.println("Providence Converter - v" + properties.getProperty("build.version"));
                 System.out.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
@@ -74,10 +71,11 @@ public class Convert {
                 return;
             }
 
-            options.getInput(cli)
-                   .collect(options.getOutput(cli));
+            cli.validate();
+
+            options.getInput().collect(options.getOutput());
             return;
-        } catch (CmdLineException e) {
+        } catch (ArgumentException e) {
             System.err.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
             if (e.getLocalizedMessage()
                  .length() > 0) {

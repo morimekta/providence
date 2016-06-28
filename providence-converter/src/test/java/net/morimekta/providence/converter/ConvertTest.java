@@ -97,12 +97,13 @@ public class ConvertTest {
                 "$ cat call.json | pvd -I thrift/ -s cal.Calculator\n" +
                 "$ pvd -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator\n" +
                 "\n" +
-                " type               : Qualified identifier name from definitions to use for parsing source file.\n" +
-                " --help (-h, -?)    : This help listing. (default: true)\n" +
-                " --in (-i) spec     : Input specification (default: json)\n" +
-                " --include (-I) dir : Include from directories. Defaults to CWD.\n" +
-                " --out (-o) spec    : Output specification (default: pretty)\n" +
-                " --strict (-S)      : Read incoming messages strictly. (default: false)\n" +
+                " --include (-I) Include from directories. : dir (default: ${PWD})\n" +
+                " --in (-i) Input specification : spec\n" +
+                " --out (-o) Output specification : spec\n" +
+                " --strict (-S)                 : Read incoming messages strictly.\n" +
+                " --help (-h, -?)               : This help listing.\n" +
+                " type                          : Qualified identifier name from definitions to use for parsing\n" +
+                "                                 source file.\n" +
                 "\n" +
                 "Available formats are:\n" +
                 " - json                 : Readable JSON with ID enums.\n" +

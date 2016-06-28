@@ -19,13 +19,17 @@
 
 package net.morimekta.providence.compiler;
 
-import net.morimekta.console.FormatString;
-import net.morimekta.providence.compiler.options.GeneratorOptionHandler;
-import net.morimekta.providence.compiler.options.GeneratorOptions;
-import net.morimekta.providence.compiler.options.HelpOptionHandler;
+import net.morimekta.console.args.Argument;
+import net.morimekta.console.args.ArgumentException;
+import net.morimekta.console.args.ArgumentOptions;
+import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.args.Option;
+import net.morimekta.console.util.TerminalSize;
+import net.morimekta.providence.compiler.options.GeneratorSpec;
+import net.morimekta.providence.compiler.options.GeneratorSpecParser;
 import net.morimekta.providence.compiler.options.HelpOption;
+import net.morimekta.providence.compiler.options.HelpSpec;
 import net.morimekta.providence.compiler.options.Syntax;
-import net.morimekta.providence.compiler.options.SyntaxOptionHandler;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JGenerator;
@@ -33,7 +37,6 @@ import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
-import net.morimekta.providence.generator.util.FakeFileManager;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.MessageParser;
@@ -41,16 +44,14 @@ import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.parser.ThriftParser;
 import net.morimekta.providence.serializer.JsonSerializer;
 
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import static net.morimekta.console.FormatString.except;
+import static net.morimekta.console.util.Parser.dir;
+import static net.morimekta.console.util.Parser.file;
+import static net.morimekta.console.util.Parser.oneOf;
+import static net.morimekta.console.util.Parser.outputDir;
 
 /**
  * @author Stein Eldar Johnsen
@@ -58,45 +59,50 @@ import static net.morimekta.console.FormatString.except;
  */
 @SuppressWarnings("all")
 public class CompilerOptions {
-    @Option(name = "--out",
-            aliases = {"-o"},
-            metaVar = "dir",
-            usage = "Output directory.")
-    protected String out = ".";
+    protected File          out      = new File(".");
+    protected List<File>    includes = new LinkedList<>();
+    protected Syntax        syntax   = Syntax.thrift;
+    protected HelpSpec      help     = null;
+    protected GeneratorSpec gen      = null;
+    protected List<File>    files    = new LinkedList<>();
 
-    @Option(name = "--include",
-            aliases = "-I",
-            metaVar = "dir",
-            usage = "Allow includes of files in directory.")
-    protected List<String> includes = new LinkedList<>();
+    public ArgumentParser getArgumentParser(String prog, String version, String description) {
+        ArgumentOptions opts = ArgumentOptions.defaults().withUsageWidth(
+                Math.min(120, TerminalSize.get().cols));
+        ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
+        parser.add(new Option("--gen", "g", "generator", "Generate files for this language spec.",
+                              new GeneratorSpecParser().then(this::setGenerator)));
+        parser.add(new HelpOption("--help", "h?", "Show this help or about language.", this::setHelp));
+        parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
+        parser.add(new Option("--out", "o", "dir", "Output directory", dir(this::setOut), "${PWD}"));
+        parser.add(new Option("--syntax", null, "syntax", "Input file syntax", oneOf(Syntax.class, this::setSyntax), "thrift", false, false, true));
+        parser.add(new Argument("file", "Files to compile.", null, file(this::addFile), null, true, true, false));
+        return parser;
+    }
 
-    @Option(name = "--syntax",
-            hidden = true,
-            metaVar = "syntax",
-            handler = SyntaxOptionHandler.class,
-            usage = "Input file syntax.")
-    protected Syntax syntax = Syntax.thrift;
+    public void setOut(File out) {
+        this.out = out;
+    }
 
-    @Option(name = "--help",
-            aliases = {"-h", "-?"},
-            help = true,
-            handler = HelpOptionHandler.class,
-            usage = "Show this help or about language.")
-    protected HelpOption help = null;
+    public void addInclude(File includes) {
+        this.includes.add(includes);
+    }
 
-    @Option(name = "--gen",
-            aliases = {"-g"},
-            metaVar = "generator",
-            required = true,
-            handler = GeneratorOptionHandler.class,
-            usage = "Generate files for this language spec.")
-    protected GeneratorOptions gen;
+    public void setSyntax(Syntax syntax) {
+        this.syntax = syntax;
+    }
 
-    @Argument(metaVar = "file",
-              required = true,
-              multiValued = true,
-              usage = "Files to compile.")
-    protected List<String> files = new LinkedList<>();
+    public void setHelp(HelpSpec help) {
+        this.help = help;
+    }
+
+    public void setGenerator(GeneratorSpec gen) {
+        this.gen = gen;
+    }
+
+    public void addFile(File files) {
+        this.files.add(files);
+    }
 
     public CompilerOptions() {
     }
@@ -105,69 +111,38 @@ public class CompilerOptions {
         return help != null;
     }
 
-    public List<File> getIncludes(CmdLineParser cli) throws CmdLineException {
-        List<File> includes = new LinkedList<>();
-        for (String include : this.includes) {
-            File file = new File(include);
-            if (!file.exists()) {
-                throw new CmdLineException(cli, new FormatString("Included dir %s does not exist."), include);
-            }
-            if (!file.isDirectory()) {
-                throw new CmdLineException(cli, new FormatString("Included dir %s is not a directory."), include);
-            }
-            includes.add(file);
-        }
-        return includes;
+    public List<File> getIncludes() throws ArgumentException {
+        return this.includes;
     }
 
-    public List<File> getInputFiles(CmdLineParser cli) throws CmdLineException {
-        List<File> files = new LinkedList<>();
-        if (this.files.isEmpty()) {
-            throw new CmdLineException(cli, new FormatString("No input file(s)."));
-        }
-
-        for (String f : this.files) {
-            File file = new File(f);
-            if (!file.exists()) {
-                throw new CmdLineException(cli, new FormatString("No such file %s."), f);
-            }
-            if (file.isDirectory()) {
-                throw new CmdLineException(cli, new FormatString("%s is a directory."), f);
-            }
-            files.add(file);
-        }
+    public List<File> getInputFiles() throws ArgumentException {
         return files;
     }
 
-    public FileManager getFileManager(CmdLineParser cli) throws CmdLineException {
-        if (out != null) {
-            File file = new File(out);
-            if (!file.exists()) {
-                throw new CmdLineException(cli, new FormatString("Output dir %s does not exist."), out);
+    public FileManager getFileManager() throws ArgumentException {
+        if (!out.exists()) {
+            if (!out.mkdirs()) {
+                throw new ArgumentException("Unable to create directory %s", out.toString());
             }
-            if (!file.isDirectory()) {
-                throw new CmdLineException(cli, new FormatString("Output dir %s is not a directory."), out);
-            }
-            return new FileManager(file);
         }
-        return new FakeFileManager(new File("."));
+        return new FileManager(out);
     }
 
-    public Parser getParser(CmdLineParser cli) throws CmdLineException {
+    public Parser getParser() throws ArgumentException {
         switch (syntax) {
             case thrift:
                 return new ThriftParser();
             case json:
                 return new MessageParser(new JsonSerializer());
             default:
-                throw new CmdLineException(cli, new FormatString("Unknown SLI syntax %s."), syntax.name());
+                throw new ArgumentException("Unknown SLI syntax %s.", syntax.name());
         }
     }
 
-    public Generator getGenerator(CmdLineParser cli, TypeLoader loader) throws CmdLineException, GeneratorException {
+    public Generator getGenerator(TypeLoader loader) throws ArgumentException, GeneratorException {
         switch (gen.generator) {
             case json:
-                return new JsonGenerator(getFileManager(cli), loader);
+                return new JsonGenerator(getFileManager(), loader);
             case java: {
                 JOptions options = new JOptions();
                 for (String opt : gen.options) {
@@ -176,10 +151,10 @@ public class CompilerOptions {
                             options.android = true;
                             break;
                         default:
-                            throw except(cli, "No such option for java generator: " + opt);
+                            throw new ArgumentException("No such option for java generator: " + opt);
                     }
                 }
-                return new JGenerator(getFileManager(cli), loader.getRegistry(), options);
+                return new JGenerator(getFileManager(), loader.getRegistry(), options);
             }
             case tiny_java: {
                 TinyOptions options = new TinyOptions();
@@ -189,13 +164,13 @@ public class CompilerOptions {
                             options.jackson = true;
                             break;
                         default:
-                            throw except(cli, "No such option for tiny_java generator: " + opt);
+                            throw new ArgumentException("No such option for tiny_java generator: " + opt);
                     }
                 }
-                return new TinyGenerator(getFileManager(cli), loader.getRegistry(), options);
+                return new TinyGenerator(getFileManager(), loader.getRegistry(), options);
             }
             default:
-                throw except(cli, "Unknown language %s.", gen.generator.name());
+                throw new ArgumentException("Unknown language %s.", gen.generator.name());
         }
     }
 }

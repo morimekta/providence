@@ -19,6 +19,8 @@
 
 package net.morimekta.providence.compiler;
 
+import net.morimekta.console.args.ArgumentException;
+import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.Language;
@@ -27,10 +29,6 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
-
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.ParserProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,15 +48,13 @@ public class Compiler {
     }
 
     public void run(String... args) {
-        ParserProperties props = ParserProperties
-                .defaults()
-                .withUsageWidth(120);
-        CmdLineParser cli = new CmdLineParser(options, props);
         try {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/build.properties"));
 
-            cli.parseArgument(args);
+            ArgumentParser cli = options.getArgumentParser("pvdc", "v" + properties.getProperty("build.version"), "Providence compiler");
+
+            cli.parse(args);
             if (options.isHelp()) {
                 System.out.println("Providence compiler - v" + properties.getProperty("build.version"));
                 System.out.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
@@ -94,12 +90,14 @@ public class Compiler {
                 return;
             }
 
-            Parser parser = options.getParser(cli);
-            List<File> includes = options.getIncludes(cli);
-            List<File> input = options.getInputFiles(cli);
+            cli.validate();
+
+            Parser parser = options.getParser();
+            List<File> includes = options.getIncludes();
+            List<File> input = options.getInputFiles();
 
             TypeLoader loader = new TypeLoader(includes, parser);
-            Generator generator = options.getGenerator(cli, loader);
+            Generator generator = options.getGenerator(loader);
 
             List<CDocument> docs = new LinkedList<>();
             for (File f : input) {
@@ -111,7 +109,7 @@ public class Compiler {
             }
 
             return;
-        } catch (CmdLineException e) {
+        } catch (ArgumentException e) {
             System.err.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
             System.err.println(e.getLocalizedMessage());
             System.err.println();

@@ -101,16 +101,18 @@ public class RPCFlagsTest {
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
                 "\n" +
-                " --connect_timeout (-C) ms : Connection timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
-                " --format (-f) fmt         : Request RPC format (default: binary)\n" +
+                " --include (-I) dir        : Allow includes of files in directory\n" +
+                " --in (-i) spec            : Input specification (default: json)\n" +
+                " --out (-o) spec           : Output Specification (default: pretty_json)\n" +
+                " --service (-s) srv        : Qualified identifier name from definitions to use for parsing source\n" +
+                "                             file.\n" +
+                " --format (-f) fmt         : Request RPC format (default: binary)\n" +
+                " --connect_timeout (-C) ms : Connection timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
+                " --read_timeout (-R) ms    : Request timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
                 " --header (-H) hdr         : Header to set on the request, K/V separated by ':'.\n" +
-                " --help (-h, -?)           : This help listing. (default: true)\n" +
-                " --in (-i) spec            : Input specification (default: json)\n" +
-                " --include (-I) dir        : Include from directories. Defaults to PWD.\n" +
-                " --out (-o) spec           : Output specification (default: pretty_json)\n" +
-                " --read_timeout (-T) ms    : Request timeout in milliseconds. 0 means infinite. (default: 10000)\n" +
-                " --service (-s) srv        : Qualified identifier name from definitions to use for parsing source file.\n" +
-                " --strict (-S)             : Read incoming messages strictly. (default: false)\n" +
+                " --strict (-S)             : Read incoming messages strictly.\n" +
+                " --help (-h, -?)           : This help message.\n" +
+                " URL                       : The endpoint URI\n" +
                 "\n" +
                 "Available formats are:\n" +
                 " - json                 : Readable JSON with numeric field IDs and enums.\n" +
@@ -136,7 +138,7 @@ public class RPCFlagsTest {
         assertEquals("", outContent.toString());
         assertEquals(
                 "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
-                "Option \"--service (-s)\" is required\n" +
+                "Option --service is required\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n",
                 errContent.toString());
@@ -168,7 +170,7 @@ public class RPCFlagsTest {
         assertEquals("", outContent.toString());
         assertEquals(
                 "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
-                "No such include directory: " + dir.getAbsolutePath() + "\n" +
+                "No such directory " + dir.getAbsolutePath() + "\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n", errContent.toString());
     }

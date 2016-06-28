@@ -7,12 +7,12 @@ import java.util.Collection;
 /**
  * Convert params for input or output of providence data.
  */
-public class GeneratorOptions {
+public class GeneratorSpec {
     // expected format.
     public final Language           generator;
     public final Collection<String> options;
 
-    public GeneratorOptions(Language generator, Collection<String> options) {
+    public GeneratorSpec(Language generator, Collection<String> options) {
         this.generator = generator;
         this.options = options;
     }

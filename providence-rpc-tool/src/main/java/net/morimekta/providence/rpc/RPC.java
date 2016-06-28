@@ -21,6 +21,8 @@
 
 package net.morimekta.providence.rpc;
 
+import net.morimekta.console.args.ArgumentException;
+import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PService;
@@ -32,9 +34,6 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 
 import com.google.api.client.http.HttpResponseException;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.ParserProperties;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -50,14 +49,14 @@ public class RPC {
 
     @SuppressWarnings("unchecked")
     void run(String... args) {
-        ParserProperties props = ParserProperties.defaults()
-                                                 .withUsageWidth(120);
-        CmdLineParser cli = new CmdLineParser(options, props);
         try {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/build.properties"));
 
-            cli.parseArgument(args);
+            ArgumentParser cli = options.getArgumentParser("pvdrpc", "" + properties.getProperty("build.version"),
+                                                           "Providence RPC Tool");
+
+            cli.parse(args);
             if (options.isHelp()) {
                 System.out.println("Providence RPC Tool - v" + properties.getProperty("build.version"));
                 System.out.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
@@ -76,10 +75,12 @@ public class RPC {
                 return;
             }
 
-            MessageReader in = options.getInput(cli);
-            MessageWriter out = options.getOutput(cli);
-            PService service = options.getDefinition(cli);
-            PClientHandler handler = options.getHandler(cli);
+            cli.validate();
+
+            MessageReader in = options.getInput();
+            MessageWriter out = options.getOutput();
+            PService service = options.getDefinition();
+            PClientHandler handler = options.getHandler();
 
             PServiceCall call = in.read(service);
             PServiceCall resp = handler.handleCall(call, service);
@@ -93,7 +94,7 @@ public class RPC {
         } catch (HttpResponseException e) {
             System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
             System.err.println(" - from: " + options.endpoint);
-        } catch (CmdLineException e) {
+        } catch (ArgumentException e) {
             System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
             System.err.println(e.getMessage());
             System.err.println();

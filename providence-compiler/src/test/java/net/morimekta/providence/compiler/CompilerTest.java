@@ -109,11 +109,11 @@ public class CompilerTest {
                      "Example code to run:\n" +
                      "$ pvdc -I thrift/ --out target/ --gen java:android thrift/the-one.thrift\n" +
                      "\n" +
-                     " file                       : Files to compile.\n" +
                      " --gen (-g) generator       : Generate files for this language spec.\n" +
-                     " --help (-h, -?) [language] : Show this help or about language. (default: help)\n" +
-                     " --include (-I) dir         : Allow includes of files in directory.\n" +
-                     " --out (-o) dir             : Output directory. (default: .)\n" +
+                     " --help (-h, -?) [language] : Show this help or about language.\n" +
+                     " --include (-I) dir         : Allow includes of files in directory\n" +
+                     " --out (-o) dir             : Output directory (default: ${PWD})\n" +
+                     " file                       : Files to compile.\n" +
                      "\n" +
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
@@ -165,7 +165,7 @@ public class CompilerTest {
 
         assertEquals("", outContent.toString());
         assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "Included dir " + temp.getRoot().getAbsolutePath() + "/does_not_exist does not exist.\n" +
+                     "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n", errContent.toString());
         assertEquals(1, exitCode);
@@ -180,7 +180,7 @@ public class CompilerTest {
 
         assertEquals("", outContent.toString());
         assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "Included dir " + temp.getRoot().getAbsolutePath() + "/test.thrift is not a directory.\n" +
+                     "" + temp.getRoot().getAbsolutePath() + "/test.thrift is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n", errContent.toString());
         assertEquals(1, exitCode);
@@ -195,7 +195,7 @@ public class CompilerTest {
 
         assertEquals("", outContent.toString());
         assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "Output dir " + temp.getRoot().getAbsolutePath() + "/does_not_exist does not exist.\n" +
+                     "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n", errContent.toString());
         assertEquals(1, exitCode);
@@ -210,7 +210,7 @@ public class CompilerTest {
 
         assertEquals("", outContent.toString());
         assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "Output dir " + thriftFile.getAbsolutePath() + " is not a directory.\n" +
+                     thriftFile.getAbsolutePath() + " is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n", errContent.toString());
         assertEquals(1, exitCode);
