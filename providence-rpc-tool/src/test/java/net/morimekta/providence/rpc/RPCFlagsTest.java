@@ -1,5 +1,6 @@
 package net.morimekta.providence.rpc;
 
+import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -8,6 +9,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,16 +24,20 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by morimekta on 4/25/16.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(TerminalSize.class)
+@PowerMockIgnore("javax.net.ssl.*")
 public class RPCFlagsTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
     private static PrintStream defaultErr;
 
-    @Rule
     public TemporaryFolder temp;
 
     private OutputStream outContent;
@@ -52,6 +61,9 @@ public class RPCFlagsTest {
 
     @Before
     public void setUp() throws IOException {
+        mockStatic(TerminalSize.class);
+        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
         version = properties.getProperty("build.version");
@@ -86,6 +98,8 @@ public class RPCFlagsTest {
         System.setErr(defaultErr);
         System.setOut(defaultOut);
         System.setIn(defaultIn);
+
+        temp.delete();
     }
 
     @Test

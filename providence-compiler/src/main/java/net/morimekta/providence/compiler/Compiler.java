@@ -141,6 +141,8 @@ public class Compiler {
             System.err.print("Generator error: " + e.getMessage());
         } catch (IOException e) {
             System.err.print("I/O error: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         exit(1);
     }

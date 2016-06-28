@@ -1,13 +1,16 @@
 package net.morimekta.providence.compiler;
 
+import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,17 +24,20 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by morimekta on 4/26/16.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(TerminalSize.class)
 public class CompilerTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
     private static PrintStream defaultErr;
 
-    @Rule
-    public TemporaryFolder temp;
+    private TemporaryFolder temp;
 
     private OutputStream outContent;
     private OutputStream errContent;
@@ -53,6 +59,9 @@ public class CompilerTest {
 
     @Before
     public void setUp() throws IOException {
+        mockStatic(TerminalSize.class);
+        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
         version = properties.getProperty("build.version");
@@ -97,6 +106,8 @@ public class CompilerTest {
         System.setErr(defaultErr);
         System.setOut(defaultOut);
         System.setIn(defaultIn);
+
+        temp.delete();
     }
 
     @Test

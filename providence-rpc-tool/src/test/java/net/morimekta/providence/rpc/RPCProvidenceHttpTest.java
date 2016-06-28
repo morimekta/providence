@@ -1,5 +1,6 @@
 package net.morimekta.providence.rpc;
 
+import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.rpc.util.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.server.ProvidenceServlet;
@@ -20,7 +21,12 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,16 +43,19 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(TerminalSize.class)
+@PowerMockIgnore("javax.net.ssl.*")
 public class RPCProvidenceHttpTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
     private static PrintStream defaultErr;
 
-    @Rule
     public TemporaryFolder temp;
 
     private OutputStream outContent;
@@ -92,6 +101,9 @@ public class RPCProvidenceHttpTest {
 
     @Before
     public void setUp() throws Exception {
+        mockStatic(TerminalSize.class);
+        PowerMockito.when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+
         reset(impl);
 
         temp = new TemporaryFolder();
@@ -124,6 +136,8 @@ public class RPCProvidenceHttpTest {
         System.setErr(defaultErr);
         System.setOut(defaultOut);
         System.setIn(defaultIn);
+
+        temp.delete();
     }
 
     @AfterClass

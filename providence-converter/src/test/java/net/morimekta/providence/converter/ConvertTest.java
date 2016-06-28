@@ -1,5 +1,6 @@
 package net.morimekta.providence.converter;
 
+import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -8,6 +9,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,16 +24,19 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Test the providence converter (pvd) command.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(TerminalSize.class)
 public class ConvertTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
     private static PrintStream defaultErr;
 
-    @Rule
     public TemporaryFolder temp;
 
     private OutputStream outContent;
@@ -49,6 +56,9 @@ public class ConvertTest {
 
     @Before
     public void setUp() throws IOException {
+        mockStatic(TerminalSize.class);
+        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
         version = properties.getProperty("build.version");
@@ -83,6 +93,8 @@ public class ConvertTest {
         System.setErr(defaultErr);
         System.setOut(defaultOut);
         System.setIn(defaultIn);
+
+        temp.delete();
     }
 
     @Test
