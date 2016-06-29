@@ -18,9 +18,13 @@ public class Operand
     private Operand(_Builder builder) {
         tUnionField = builder.tUnionField;
 
-        mOperation = tUnionField == _Field.OPERATION ? builder.mOperation : null;
+        mOperation = tUnionField != _Field.OPERATION
+                ? null
+                : builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
         mNumber = tUnionField == _Field.NUMBER ? builder.mNumber : kDefaultNumber;
-        mImaginary = tUnionField == _Field.IMAGINARY ? builder.mImaginary : null;
+        mImaginary = tUnionField != _Field.IMAGINARY
+                ? null
+                : builder.mImaginary_builder != null ? builder.mImaginary_builder.build() : builder.mImaginary;
     }
 
     /**
@@ -324,8 +328,10 @@ public class Operand
         private _Field tUnionField;
 
         private net.morimekta.test.calculator.Operation mOperation;
+        private net.morimekta.test.calculator.Operation._Builder mOperation_builder;
         private double mNumber;
         private net.morimekta.test.number.Imaginary mImaginary;
+        private net.morimekta.test.number.Imaginary._Builder mImaginary_builder;
 
         /**
          * Make a calculator.Operand builder.
@@ -388,6 +394,7 @@ public class Operand
          */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             tUnionField = _Field.OPERATION;
+            mOperation_builder = null;
             mOperation = value;
             return this;
         }
@@ -409,7 +416,28 @@ public class Operand
         public _Builder clearOperation() {
             if (tUnionField == _Field.OPERATION) tUnionField = null;
             mOperation = null;
+            mOperation_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained operation.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.calculator.Operation._Builder mutableOperation() {
+            if (tUnionField != _Field.OPERATION) {
+                clearOperation();
+            }
+            tUnionField = _Field.OPERATION;
+
+            if (mOperation != null) {
+                mOperation_builder = mOperation.mutate();
+                mOperation = null;
+            } else if (mOperation_builder == null) {
+                mOperation_builder = net.morimekta.test.calculator.Operation.builder();
+            }
+            return mOperation_builder;
         }
 
         /**
@@ -452,6 +480,7 @@ public class Operand
          */
         public _Builder setImaginary(net.morimekta.test.number.Imaginary value) {
             tUnionField = _Field.IMAGINARY;
+            mImaginary_builder = null;
             mImaginary = value;
             return this;
         }
@@ -473,7 +502,38 @@ public class Operand
         public _Builder clearImaginary() {
             if (tUnionField == _Field.IMAGINARY) tUnionField = null;
             mImaginary = null;
+            mImaginary_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained imaginary.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.number.Imaginary._Builder mutableImaginary() {
+            if (tUnionField != _Field.IMAGINARY) {
+                clearImaginary();
+            }
+            tUnionField = _Field.IMAGINARY;
+
+            if (mImaginary != null) {
+                mImaginary_builder = mImaginary.mutate();
+                mImaginary = null;
+            } else if (mImaginary_builder == null) {
+                mImaginary_builder = net.morimekta.test.number.Imaginary.builder();
+            }
+            return mImaginary_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOperation();
+                case 3: return (net.morimekta.providence.PMessageBuilder<MT>) mutableImaginary();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override
@@ -513,8 +573,8 @@ public class Operand
             }
 
             switch (tUnionField) {
-                case OPERATION: return mOperation != null;
-                case IMAGINARY: return mImaginary != null;
+                case OPERATION: return mOperation != null || mOperation_builder != null;
+                case IMAGINARY: return mImaginary != null || mImaginary_builder != null;
                 default: return true;
             }
         }

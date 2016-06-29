@@ -464,6 +464,14 @@ public class CompactFields
 
         @Override
         @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {

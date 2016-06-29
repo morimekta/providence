@@ -1,5 +1,6 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
@@ -60,8 +61,10 @@ public class JMessageBuilderFormat {
             }
             appendIsSet(message, field);
             appendResetter(message, field);
+            appendMutableGetters(message, field);
         }
 
+        appendOverrideMutator(message);
         appendOverrideSetter(message);
         appendOverrideAdder(message);
         appendOverrideResetter(message);
@@ -110,6 +113,9 @@ public class JMessageBuilderFormat {
         writer.newline();
         for (JField field : message.fields()) {
             writer.formatln("private %s %s;", field.builderFieldType(), field.member());
+            if (field.type() == PType.MESSAGE) {
+                writer.formatln("private %s._Builder %s_builder;", field.builderFieldType(), field.member());
+            }
         }
         if (message.fields()
                    .size() > 0) {
@@ -273,11 +279,16 @@ public class JMessageBuilderFormat {
                 switch (field.type()) {
                     case MESSAGE:
                         // Message fields are merged.
-                        writer.formatln("if (%s()) {", field.isSet())
-                              .formatln("    %s = %s.mutate().merge(from.%s()).build();",
+                        writer.formatln("if (%s_builder != null) {", field.member())
+                              .formatln("    %s_builder.merge(from.%s());",
+                                        field.member(),
+                                        field.getter())
+                              .formatln("} else if (%s != null) {", field.member())
+                              .formatln("    %s_builder = %s.mutate().merge(from.%s());",
                                         field.member(),
                                         field.member(),
                                         field.getter())
+                              .formatln("    %s = null;", field.member())
                               .appendln("} else {")
                               .formatln("    %s = from.%s();", field.member(), field.getter())
                               .appendln('}');
@@ -352,6 +363,9 @@ public class JMessageBuilderFormat {
                 writer.formatln("%s.clear();", field.member())
                       .formatln("%s.putAll(value);", field.member());
                 break;
+            case MESSAGE:
+                writer.formatln("%s_builder = null;", field.member());
+                // intentional overrun.
             default:
                 writer.formatln("%s = value;", field.member());
                 break;
@@ -488,9 +502,108 @@ public class JMessageBuilderFormat {
             writer.formatln("%s = %s;", field.member(), field.kDefault());
         } else {
             writer.formatln("%s = null;", field.member());
+            if (field.type() == PType.MESSAGE) {
+                writer.formatln("%s_builder = null;", field.member());
+            }
         }
 
         writer.appendln("return this;")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+    /**
+     * Get mutable values. This returns message builders for messages, collection
+     * builders for collections, and the normal immutable value for everything
+     * else.
+     *
+     * @param message The message to get mutable getters for.
+     * @param field The field to generate getter for.
+     */
+    private void appendMutableGetters(JMessage message, JField field) throws GeneratorException {
+        if (field.getPField().getDescriptor() instanceof PPrimitive ||
+            field.type() == PType.ENUM) {
+            return;
+        }
+
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Gets the builder for the contained " + field.name() + ".")
+               .newline();
+        if (field.hasComment()) {
+            comment.comment(field.comment())
+                   .newline();
+        }
+        comment.return_("The field builder")
+               .finish();
+        if (JAnnotation.isDeprecated(field)) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
+        switch (field.type()) {
+            case MESSAGE: {
+                writer.formatln("public %s._Builder %s() {", field.instanceType(),
+                                Strings.camelCase("mutable", field.name()))
+                      .begin();
+
+                if (message.isUnion()) {
+                    writer.formatln("if (tUnionField != _Field.%s) {", field.fieldEnum())
+                          .formatln("    %s();", field.resetter())
+                          .appendln('}')
+                          .formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                } else {
+                    writer.formatln("optionals.set(%d);", field.index());
+                }
+
+                writer.newline()
+                      .formatln("if (%s != null) {", field.member())
+                      .formatln("    %s_builder = %s.mutate();", field.member(), field.member())
+                      .formatln("    %s = null;", field.member())
+                      .formatln("} else if (%s_builder == null) {", field.member())
+                      .formatln("    %s_builder = %s.builder();", field.member(), field.instanceType())
+                      .appendln('}')
+                      .formatln("return %s_builder;", field.member());
+
+                writer.end()
+                      .appendln('}')
+                      .newline();
+                break;
+            }
+            case SET:
+            case LIST:
+            case MAP:
+                writer.formatln("public %s %s() {", field.builderFieldType(),
+                                Strings.camelCase("mutable", field.name()))
+                      .begin();
+
+                writer.formatln("return %s;", field.member());
+
+                writer.end()
+                      .appendln('}')
+                      .newline();
+                break;
+            default:
+                throw new GeneratorException("Unexpected field type: " + field.type());
+        }
+    }
+
+    private void appendOverrideMutator(JMessage<?> message) throws GeneratorException {
+        writer.appendln("@Override")
+              .appendln("@SuppressWarnings(\"unchecked\")")
+              .formatln("public <MT extends %s<MT>> %s<MT> mutator(int key) {",
+                        PMessage.class.getName(), PMessageBuilder.class.getName())
+              .begin()
+              .appendln("switch (key) {")
+              .begin();
+        message.fields()
+               .stream()
+               .filter(field -> field.type() == PType.MESSAGE)
+               .forEachOrdered(field -> writer.formatln("case %d: return (%s<MT>) %s();",
+                                                        field.id(),
+                                                        PMessageBuilder.class.getName(),
+                                                        Strings.camelCase("mutable", field.name())));
+        writer.appendln("default: throw new IllegalArgumentException(\"Not a message field ID: \" + key);")
+              .end()
+              .appendln('}')
               .end()
               .appendln('}')
               .newline();
@@ -572,8 +685,8 @@ public class JMessageBuilderFormat {
             for (JField field : message.fields()) {
                 if (!field.alwaysPresent()) {
                     if (field.type() == PType.MESSAGE) {
-                        writer.formatln("case %s: return %s != null;",
-                                        field.fieldEnum(), field.member());
+                        writer.formatln("case %s: return %s != null || %s_builder != null;",
+                                        field.fieldEnum(), field.member(), field.member());
                     } else {
                         writer.formatln("case %s: return %s != null;", field.fieldEnum(), field.member());
                     }

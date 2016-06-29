@@ -199,7 +199,7 @@ public class Calculator {
         private volatile int tHashCode;
 
         private Calculate_request(_Builder builder) {
-            mOp = builder.mOp;
+            mOp = builder.mOp_builder != null ? builder.mOp_builder.build() : builder.mOp;
         }
 
         public Calculate_request(net.morimekta.test.calculator.Operation pOp) {
@@ -424,6 +424,7 @@ public class Calculator {
             private java.util.BitSet optionals;
 
             private net.morimekta.test.calculator.Operation mOp;
+            private net.morimekta.test.calculator.Operation._Builder mOp_builder;
 
             /**
              * Make a calculator.calculate___request builder.
@@ -450,8 +451,11 @@ public class Calculator {
             public _Builder merge(Calculate_request from) {
                 if (from.hasOp()) {
                     optionals.set(0);
-                    if (isSetOp()) {
-                        mOp = mOp.mutate().merge(from.getOp()).build();
+                    if (mOp_builder != null) {
+                        mOp_builder.merge(from.getOp());
+                    } else if (mOp != null) {
+                        mOp_builder = mOp.mutate().merge(from.getOp());
+                        mOp = null;
                     } else {
                         mOp = from.getOp();
                     }
@@ -467,6 +471,7 @@ public class Calculator {
              */
             public _Builder setOp(net.morimekta.test.calculator.Operation value) {
                 optionals.set(0);
+                mOp_builder = null;
                 mOp = value;
                 return this;
             }
@@ -488,7 +493,34 @@ public class Calculator {
             public _Builder clearOp() {
                 optionals.clear(0);
                 mOp = null;
+                mOp_builder = null;
                 return this;
+            }
+
+            /**
+             * Gets the builder for the contained op.
+             *
+             * @return The field builder
+             */
+            public net.morimekta.test.calculator.Operation._Builder mutableOp() {
+                optionals.set(0);
+
+                if (mOp != null) {
+                    mOp_builder = mOp.mutate();
+                    mOp = null;
+                } else if (mOp_builder == null) {
+                    mOp_builder = net.morimekta.test.calculator.Operation.builder();
+                }
+                return mOp_builder;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+                switch (key) {
+                    case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOp();
+                    default: throw new IllegalArgumentException("Not a message field ID: " + key);
+                }
             }
 
             @Override
@@ -550,8 +582,12 @@ public class Calculator {
         private Calculate_response(_Builder builder) {
             tUnionField = builder.tUnionField;
 
-            mSuccess = tUnionField == _Field.SUCCESS ? builder.mSuccess : null;
-            mCe = tUnionField == _Field.CE ? builder.mCe : null;
+            mSuccess = tUnionField != _Field.SUCCESS
+                    ? null
+                    : builder.mSuccess_builder != null ? builder.mSuccess_builder.build() : builder.mSuccess;
+            mCe = tUnionField != _Field.CE
+                    ? null
+                    : builder.mCe_builder != null ? builder.mCe_builder.build() : builder.mCe;
         }
 
         /**
@@ -821,7 +857,9 @@ public class Calculator {
             private _Field tUnionField;
 
             private net.morimekta.test.calculator.Operand mSuccess;
+            private net.morimekta.test.calculator.Operand._Builder mSuccess_builder;
             private net.morimekta.test.calculator.CalculateException mCe;
+            private net.morimekta.test.calculator.CalculateException._Builder mCe_builder;
 
             /**
              * Make a calculator.calculate___response builder.
@@ -878,6 +916,7 @@ public class Calculator {
              */
             public _Builder setSuccess(net.morimekta.test.calculator.Operand value) {
                 tUnionField = _Field.SUCCESS;
+                mSuccess_builder = null;
                 mSuccess = value;
                 return this;
             }
@@ -899,7 +938,28 @@ public class Calculator {
             public _Builder clearSuccess() {
                 if (tUnionField == _Field.SUCCESS) tUnionField = null;
                 mSuccess = null;
+                mSuccess_builder = null;
                 return this;
+            }
+
+            /**
+             * Gets the builder for the contained success.
+             *
+             * @return The field builder
+             */
+            public net.morimekta.test.calculator.Operand._Builder mutableSuccess() {
+                if (tUnionField != _Field.SUCCESS) {
+                    clearSuccess();
+                }
+                tUnionField = _Field.SUCCESS;
+
+                if (mSuccess != null) {
+                    mSuccess_builder = mSuccess.mutate();
+                    mSuccess = null;
+                } else if (mSuccess_builder == null) {
+                    mSuccess_builder = net.morimekta.test.calculator.Operand.builder();
+                }
+                return mSuccess_builder;
             }
 
             /**
@@ -910,6 +970,7 @@ public class Calculator {
              */
             public _Builder setCe(net.morimekta.test.calculator.CalculateException value) {
                 tUnionField = _Field.CE;
+                mCe_builder = null;
                 mCe = value;
                 return this;
             }
@@ -931,7 +992,38 @@ public class Calculator {
             public _Builder clearCe() {
                 if (tUnionField == _Field.CE) tUnionField = null;
                 mCe = null;
+                mCe_builder = null;
                 return this;
+            }
+
+            /**
+             * Gets the builder for the contained ce.
+             *
+             * @return The field builder
+             */
+            public net.morimekta.test.calculator.CalculateException._Builder mutableCe() {
+                if (tUnionField != _Field.CE) {
+                    clearCe();
+                }
+                tUnionField = _Field.CE;
+
+                if (mCe != null) {
+                    mCe_builder = mCe.mutate();
+                    mCe = null;
+                } else if (mCe_builder == null) {
+                    mCe_builder = net.morimekta.test.calculator.CalculateException.builder();
+                }
+                return mCe_builder;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+                switch (key) {
+                    case 0: return (net.morimekta.providence.PMessageBuilder<MT>) mutableSuccess();
+                    case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCe();
+                    default: throw new IllegalArgumentException("Not a message field ID: " + key);
+                }
             }
 
             @Override
@@ -969,8 +1061,8 @@ public class Calculator {
                 }
 
                 switch (tUnionField) {
-                    case SUCCESS: return mSuccess != null;
-                    case CE: return mCe != null;
+                    case SUCCESS: return mSuccess != null || mSuccess_builder != null;
+                    case CE: return mCe != null || mCe_builder != null;
                     default: return true;
                 }
             }
@@ -1209,6 +1301,14 @@ public class Calculator {
             @Override
             public _Builder merge(Iamalive_request from) {
                 return this;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+                switch (key) {
+                    default: throw new IllegalArgumentException("Not a message field ID: " + key);
+                }
             }
 
             @Override

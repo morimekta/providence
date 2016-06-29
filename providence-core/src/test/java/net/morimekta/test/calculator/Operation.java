@@ -406,6 +406,23 @@ public class Operation
             return this;
         }
 
+        /**
+         * Gets the builder for the contained operands.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mutableOperands() {
+            return mOperands;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
+        }
+
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {

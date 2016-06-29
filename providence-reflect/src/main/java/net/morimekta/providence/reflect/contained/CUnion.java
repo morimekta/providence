@@ -21,6 +21,7 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
@@ -42,7 +43,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
 
     private CUnion(Builder builder) {
         super(builder.getValueMap());
-        this.unionField = builder.field;
+        this.unionField = builder.unionField;
         this.descriptor = builder.descriptor;
     }
 
@@ -64,52 +65,82 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
     public static class Builder extends PMessageBuilder<CUnion> {
         private final CUnionDescriptor descriptor;
 
-        private CField field;
-        private Object value;
+        private CField unionField;
+        private Object currentValue;
 
         public Builder(CUnionDescriptor descriptor) {
             this.descriptor = descriptor;
         }
 
         private Map<Integer, Object> getValueMap() {
-            if (field == null) {
+            if (unionField == null) {
                 return ImmutableMap.of();
-            } else if (value == null) {
-                return ImmutableMap.of(field.getKey(), null);
+            } else if (currentValue == null) {
+                return ImmutableMap.of(unionField.getKey(), null);
             } else {
-                switch (field.getType()) {
+                switch (unionField.getType()) {
                     case LIST:
-                        return ImmutableMap.of(field.getKey(), ((PList.Builder) this.value).build());
+                        return ImmutableMap.of(unionField.getKey(), ((PList.Builder) this.currentValue).build());
                     case SET:
-                        return ImmutableMap.of(field.getKey(), ((PSet.Builder) this.value).build());
+                        return ImmutableMap.of(unionField.getKey(), ((PSet.Builder) this.currentValue).build());
                     case MAP:
-                        return ImmutableMap.of(field.getKey(), ((PMap.Builder) this.value).build());
+                        return ImmutableMap.of(unionField.getKey(), ((PMap.Builder) this.currentValue).build());
+                    case MESSAGE:
+                        if (currentValue instanceof PMessageBuilder) {
+                            return ImmutableMap.of(unionField.getKey(), ((PMessageBuilder) currentValue).build());
+                        }
                     default:
-                        return ImmutableMap.of(field.getKey(), this.value);
+                        return ImmutableMap.of(unionField.getKey(), this.currentValue);
                 }
             }
         }
 
         @Override
         @SuppressWarnings("unchecked")
+        public <M extends PMessage<M>> PMessageBuilder<M> mutator(int key) {
+            CField field = descriptor.getField(key);
+            if (field == null) {
+                throw new IllegalArgumentException("No such unionField ID " + key);
+            } else if (field.getType() != PType.MESSAGE) {
+                throw new IllegalArgumentException("Not a message unionField ID " + key + ": " + field.getName());
+            }
+            if (unionField != field) {
+                unionField = field;
+                currentValue = null;
+            }
+
+            if (currentValue == null) {
+                currentValue = ((PStructDescriptor) field.getDescriptor()).builder();
+            } else if (currentValue instanceof PMessage) {
+                currentValue = ((PMessage) currentValue).mutate();
+            } else if (!(currentValue instanceof PMessageBuilder)) {
+                // This should in theory not be possible. This is just a safe-guard.
+                throw new IllegalArgumentException("Invalid currentValue in map on message type: " + currentValue.getClass().getSimpleName());
+            }
+
+            return (PMessageBuilder<M>) currentValue;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
         public Builder merge(CUnion from) {
-            if (field == null || field != from.unionField()) {
+            if (unionField == null || unionField != from.unionField()) {
                 set(from.unionField.getKey(), from.get(from.unionField.getKey()));
             } else {
-                int key = field.getKey();
-                switch (field.getType()) {
+                int key = unionField.getKey();
+                switch (unionField.getType()) {
                     case MESSAGE: {
-                        PMessage src = (PMessage) value;
+                        PMessage src = (PMessage) currentValue;
                         PMessage toMerge = (PMessage) from.get(key);
 
-                        value = src.mutate().merge(toMerge).build();
+                        currentValue = src.mutate().merge(toMerge).build();
                         break;
                     }
                     case SET:
-                        ((PSet.Builder<Object>) value).addAll((Set<Object>) from.get(key));
+                        ((PSet.Builder<Object>) currentValue).addAll((Set<Object>) from.get(key));
                         break;
                     case MAP:
-                        ((PMap.Builder<Object, Object>) value).putAll((Map<Object, Object>) from.get(key));
+                        ((PMap.Builder<Object, Object>) currentValue).putAll((Map<Object, Object>) from.get(key));
                         break;
                     default:
                         set(key, from.get(key));
@@ -132,7 +163,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
 
         @Override
         public boolean isValid() {
-            return field != null;
+            return unionField != null;
         }
 
         @Override
@@ -141,19 +172,19 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            this.field = field;
+            this.unionField = field;
             switch (field.getType()) {
                 case SET:
-                    this.value = ((PSet) field.getDescriptor()).builder();
+                    this.currentValue = ((PSet) field.getDescriptor()).builder();
                     break;
                 case LIST:
-                    this.value = ((PList) field.getDescriptor()).builder();
+                    this.currentValue = ((PList) field.getDescriptor()).builder();
                     break;
                 case MAP:
-                    this.value = ((PMap) field.getDescriptor()).builder();
+                    this.currentValue = ((PMap) field.getDescriptor()).builder();
                     break;
                 default:
-                    this.value = value;
+                    this.currentValue = value;
                     break;
             }
 
@@ -167,31 +198,31 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
-            if (this.field != field || this.value == null) {
-                this.field = field;
+            if (this.unionField != field || this.currentValue == null) {
+                this.unionField = field;
                 switch (field.getType()) {
                     case LIST: {
                         PList lType = (PList) field.getDescriptor();
-                        this.value = lType.builder();
+                        this.currentValue = lType.builder();
                         break;
                     }
                     case SET: {
                         PSet lType = (PSet) field.getDescriptor();
-                        this.value = lType.builder();
+                        this.currentValue = lType.builder();
                         break;
                     }
                     default: {
-                        throw new IllegalArgumentException("Unable to accept addTo on non-list field " + field.getName());
+                        throw new IllegalArgumentException("Unable to accept addTo on non-list unionField " + field.getName());
                     }
                 }
             }
             switch (field.getType()) {
                 case LIST: {
-                    ((PList.Builder) this.value).add(value);
+                    ((PList.Builder) this.currentValue).add(value);
                     break;
                 }
                 case SET: {
-                    ((PList.Builder) this.value).add(value);
+                    ((PList.Builder) this.currentValue).add(value);
                     break;
                 }
             }
@@ -200,8 +231,8 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
 
         @Override
         public Builder clear(int key) {
-            this.field = null;
-            this.value = null;
+            this.unionField = null;
+            this.currentValue = null;
             return this;
         }
     }

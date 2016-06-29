@@ -47,7 +47,7 @@ public class ExceptionFields
         mStringValue = builder.mStringValue;
         mBinaryValue = builder.mBinaryValue;
         mEnumValue = builder.mEnumValue;
-        mCompactValue = builder.mCompactValue;
+        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     public ExceptionFields(boolean pBooleanValue,
@@ -614,6 +614,7 @@ public class ExceptionFields
         private net.morimekta.util.Binary mBinaryValue;
         private net.morimekta.test.providence.Value mEnumValue;
         private net.morimekta.test.providence.CompactFields mCompactValue;
+        private net.morimekta.test.providence.CompactFields._Builder mCompactValue_builder;
 
         /**
          * Make a providence.ExceptionFields builder.
@@ -703,8 +704,11 @@ public class ExceptionFields
 
             if (from.hasCompactValue()) {
                 optionals.set(9);
-                if (isSetCompactValue()) {
-                    mCompactValue = mCompactValue.mutate().merge(from.getCompactValue()).build();
+                if (mCompactValue_builder != null) {
+                    mCompactValue_builder.merge(from.getCompactValue());
+                } else if (mCompactValue != null) {
+                    mCompactValue_builder = mCompactValue.mutate().merge(from.getCompactValue());
+                    mCompactValue = null;
                 } else {
                     mCompactValue = from.getCompactValue();
                 }
@@ -1008,6 +1012,7 @@ public class ExceptionFields
          */
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             optionals.set(9);
+            mCompactValue_builder = null;
             mCompactValue = value;
             return this;
         }
@@ -1029,7 +1034,34 @@ public class ExceptionFields
         public _Builder clearCompactValue() {
             optionals.clear(9);
             mCompactValue = null;
+            mCompactValue_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained compactValue.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.CompactFields._Builder mutableCompactValue() {
+            optionals.set(9);
+
+            if (mCompactValue != null) {
+                mCompactValue_builder = mCompactValue.mutate();
+                mCompactValue = null;
+            } else if (mCompactValue_builder == null) {
+                mCompactValue_builder = net.morimekta.test.providence.CompactFields.builder();
+            }
+            return mCompactValue_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override

@@ -16,7 +16,7 @@ public class CalculateException
                             builder.mOperation));
 
         mMessage = builder.mMessage;
-        mOperation = builder.mOperation;
+        mOperation = builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
     }
 
     public CalculateException(String pMessage,
@@ -303,6 +303,7 @@ public class CalculateException
 
         private String mMessage;
         private net.morimekta.test.calculator.Operation mOperation;
+        private net.morimekta.test.calculator.Operation._Builder mOperation_builder;
 
         /**
          * Make a calculator.CalculateException builder.
@@ -338,8 +339,11 @@ public class CalculateException
 
             if (from.hasOperation()) {
                 optionals.set(1);
-                if (isSetOperation()) {
-                    mOperation = mOperation.mutate().merge(from.getOperation()).build();
+                if (mOperation_builder != null) {
+                    mOperation_builder.merge(from.getOperation());
+                } else if (mOperation != null) {
+                    mOperation_builder = mOperation.mutate().merge(from.getOperation());
+                    mOperation = null;
                 } else {
                     mOperation = from.getOperation();
                 }
@@ -387,6 +391,7 @@ public class CalculateException
          */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             optionals.set(1);
+            mOperation_builder = null;
             mOperation = value;
             return this;
         }
@@ -408,7 +413,34 @@ public class CalculateException
         public _Builder clearOperation() {
             optionals.clear(1);
             mOperation = null;
+            mOperation_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained operation.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.calculator.Operation._Builder mutableOperation() {
+            optionals.set(1);
+
+            if (mOperation != null) {
+                mOperation_builder = mOperation.mutate();
+                mOperation = null;
+            } else if (mOperation_builder == null) {
+                mOperation_builder = net.morimekta.test.calculator.Operation.builder();
+            }
+            return mOperation_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 2: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOperation();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override

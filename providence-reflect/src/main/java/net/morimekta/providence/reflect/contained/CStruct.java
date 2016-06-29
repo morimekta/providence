@@ -74,14 +74,7 @@ public class CStruct extends CMessage<CStruct> {
                 if (from.has(key)) {
                     switch (field.getType()) {
                         case MESSAGE:
-                            if (values.containsKey(key)) {
-                                PMessage src = (PMessage) values.get(key);
-                                PMessage toMerge = (PMessage) from.get(key);
-
-                                values.put(key, src.mutate().merge(toMerge).build());
-                            } else {
-                                set(key, from.get(key));
-                            }
+                            ((PMessageBuilder) mutator(key)).merge((PMessage) from.get(key));
                             break;
                         case SET:
                             if (values.containsKey(key)) {
@@ -105,6 +98,31 @@ public class CStruct extends CMessage<CStruct> {
             }
             
             return this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <M extends PMessage<M>> PMessageBuilder<M> mutator(int key) {
+            CField field = descriptor.getField(key);
+            if (field == null) {
+                throw new IllegalArgumentException("No such field ID " + key);
+            } else if (field.getType() != PType.MESSAGE) {
+                throw new IllegalArgumentException("Not a message field ID " + key + ": " + field.getName());
+            }
+
+            Object current = values.get(key);
+            if (current == null) {
+                current = ((PStructDescriptor) field.getDescriptor()).builder();
+                values.put(key, current);
+            } else if (current instanceof PMessage) {
+                current = ((PMessage) current).mutate();
+                values.put(key, current);
+            } else if (!(current instanceof PMessageBuilder)) {
+                // This should in theory not be possible. This is just a safe-guard.
+                throw new IllegalArgumentException("Invalid value in map on message type: " + current.getClass().getSimpleName());
+            }
+
+            return (PMessageBuilder<M>) current;
         }
 
         @Override
@@ -220,6 +238,14 @@ public class CStruct extends CMessage<CStruct> {
                             break;
                         case MAP:
                             out.put(key, ((PMap.Builder<Object, Object>) values.get(key)).build());
+                            break;
+                        case MESSAGE:
+                            Object current = values.get(key);
+                            if (current instanceof PMessageBuilder) {
+                                out.put(key, ((PMessageBuilder) current).build());
+                            } else {
+                                out.put(key, current);
+                            }
                             break;
                         default:
                             out.put(key, values.get(key));

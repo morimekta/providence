@@ -71,6 +71,17 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
     public abstract PMessageBuilder<T> merge(T from);
 
     /**
+     * Get the builder for the given message contained in this builder. If
+     * the sub-builder does not exist, create, either from existing instance
+     * or from scratch.
+     *
+     * @param key The field key.
+     * @param <M> The sub-message type.
+     * @return The builder.
+     */
+    public abstract <M extends PMessage<M>> PMessageBuilder<M> mutator(int key);
+
+    /**
      * Get the descriptor for the message being built.
      *
      * @return The struct descriptor.

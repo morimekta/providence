@@ -55,4 +55,23 @@ public class ProvidenceBuilderTest {
 
         assertEquals(exp, c);
     }
+
+    @Test
+    public void testMutator() {
+        Imaginary imag = (Imaginary) Operand.builder()
+                                            .mutator(3)
+                                            .set(Imaginary._Field.I.getKey(), 12.6)
+                                            .build();
+        assertEquals(Imaginary.builder()
+                              .setI(12.6)
+                              .build(), imag);
+
+        Operand expected = Operand.withImaginary(imag);
+
+        Operand._Builder builder = Operand.builder();
+        builder.mutableImaginary()
+               .set(Imaginary._Field.I.getKey(), 12.6);
+
+        assertEquals(expected, builder.build());
+    }
 }

@@ -553,6 +553,15 @@ public class EnumType
         }
 
         /**
+         * Gets the builder for the contained values.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.EnumValue> mutableValues() {
+            return mValues;
+        }
+
+        /**
          * Sets the value of annotations.
          *
          * @param value The new value
@@ -596,6 +605,23 @@ public class EnumType
             optionals.clear(3);
             mAnnotations.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained annotations.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            return mAnnotations;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override

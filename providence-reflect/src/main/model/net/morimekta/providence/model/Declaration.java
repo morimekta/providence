@@ -21,11 +21,21 @@ public class Declaration
     private Declaration(_Builder builder) {
         tUnionField = builder.tUnionField;
 
-        mDeclEnum = tUnionField == _Field.DECL_ENUM ? builder.mDeclEnum : null;
-        mDeclTypedef = tUnionField == _Field.DECL_TYPEDEF ? builder.mDeclTypedef : null;
-        mDeclStruct = tUnionField == _Field.DECL_STRUCT ? builder.mDeclStruct : null;
-        mDeclService = tUnionField == _Field.DECL_SERVICE ? builder.mDeclService : null;
-        mDeclConst = tUnionField == _Field.DECL_CONST ? builder.mDeclConst : null;
+        mDeclEnum = tUnionField != _Field.DECL_ENUM
+                ? null
+                : builder.mDeclEnum_builder != null ? builder.mDeclEnum_builder.build() : builder.mDeclEnum;
+        mDeclTypedef = tUnionField != _Field.DECL_TYPEDEF
+                ? null
+                : builder.mDeclTypedef_builder != null ? builder.mDeclTypedef_builder.build() : builder.mDeclTypedef;
+        mDeclStruct = tUnionField != _Field.DECL_STRUCT
+                ? null
+                : builder.mDeclStruct_builder != null ? builder.mDeclStruct_builder.build() : builder.mDeclStruct;
+        mDeclService = tUnionField != _Field.DECL_SERVICE
+                ? null
+                : builder.mDeclService_builder != null ? builder.mDeclService_builder.build() : builder.mDeclService;
+        mDeclConst = tUnionField != _Field.DECL_CONST
+                ? null
+                : builder.mDeclConst_builder != null ? builder.mDeclConst_builder.build() : builder.mDeclConst;
     }
 
     /**
@@ -397,10 +407,15 @@ public class Declaration
         private _Field tUnionField;
 
         private net.morimekta.providence.model.EnumType mDeclEnum;
+        private net.morimekta.providence.model.EnumType._Builder mDeclEnum_builder;
         private net.morimekta.providence.model.TypedefType mDeclTypedef;
+        private net.morimekta.providence.model.TypedefType._Builder mDeclTypedef_builder;
         private net.morimekta.providence.model.StructType mDeclStruct;
+        private net.morimekta.providence.model.StructType._Builder mDeclStruct_builder;
         private net.morimekta.providence.model.ServiceType mDeclService;
+        private net.morimekta.providence.model.ServiceType._Builder mDeclService_builder;
         private net.morimekta.providence.model.ThriftField mDeclConst;
+        private net.morimekta.providence.model.ThriftField._Builder mDeclConst_builder;
 
         /**
          * Make a model.Declaration builder.
@@ -484,6 +499,7 @@ public class Declaration
          */
         public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
             tUnionField = _Field.DECL_ENUM;
+            mDeclEnum_builder = null;
             mDeclEnum = value;
             return this;
         }
@@ -505,7 +521,28 @@ public class Declaration
         public _Builder clearDeclEnum() {
             if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
             mDeclEnum = null;
+            mDeclEnum_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl_enum.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.model.EnumType._Builder mutableDeclEnum() {
+            if (tUnionField != _Field.DECL_ENUM) {
+                clearDeclEnum();
+            }
+            tUnionField = _Field.DECL_ENUM;
+
+            if (mDeclEnum != null) {
+                mDeclEnum_builder = mDeclEnum.mutate();
+                mDeclEnum = null;
+            } else if (mDeclEnum_builder == null) {
+                mDeclEnum_builder = net.morimekta.providence.model.EnumType.builder();
+            }
+            return mDeclEnum_builder;
         }
 
         /**
@@ -516,6 +553,7 @@ public class Declaration
          */
         public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
+            mDeclTypedef_builder = null;
             mDeclTypedef = value;
             return this;
         }
@@ -537,7 +575,28 @@ public class Declaration
         public _Builder clearDeclTypedef() {
             if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
             mDeclTypedef = null;
+            mDeclTypedef_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl_typedef.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.model.TypedefType._Builder mutableDeclTypedef() {
+            if (tUnionField != _Field.DECL_TYPEDEF) {
+                clearDeclTypedef();
+            }
+            tUnionField = _Field.DECL_TYPEDEF;
+
+            if (mDeclTypedef != null) {
+                mDeclTypedef_builder = mDeclTypedef.mutate();
+                mDeclTypedef = null;
+            } else if (mDeclTypedef_builder == null) {
+                mDeclTypedef_builder = net.morimekta.providence.model.TypedefType.builder();
+            }
+            return mDeclTypedef_builder;
         }
 
         /**
@@ -548,6 +607,7 @@ public class Declaration
          */
         public _Builder setDeclStruct(net.morimekta.providence.model.StructType value) {
             tUnionField = _Field.DECL_STRUCT;
+            mDeclStruct_builder = null;
             mDeclStruct = value;
             return this;
         }
@@ -569,7 +629,28 @@ public class Declaration
         public _Builder clearDeclStruct() {
             if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
             mDeclStruct = null;
+            mDeclStruct_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl_struct.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.model.StructType._Builder mutableDeclStruct() {
+            if (tUnionField != _Field.DECL_STRUCT) {
+                clearDeclStruct();
+            }
+            tUnionField = _Field.DECL_STRUCT;
+
+            if (mDeclStruct != null) {
+                mDeclStruct_builder = mDeclStruct.mutate();
+                mDeclStruct = null;
+            } else if (mDeclStruct_builder == null) {
+                mDeclStruct_builder = net.morimekta.providence.model.StructType.builder();
+            }
+            return mDeclStruct_builder;
         }
 
         /**
@@ -580,6 +661,7 @@ public class Declaration
          */
         public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
+            mDeclService_builder = null;
             mDeclService = value;
             return this;
         }
@@ -601,7 +683,28 @@ public class Declaration
         public _Builder clearDeclService() {
             if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
             mDeclService = null;
+            mDeclService_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl_service.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.model.ServiceType._Builder mutableDeclService() {
+            if (tUnionField != _Field.DECL_SERVICE) {
+                clearDeclService();
+            }
+            tUnionField = _Field.DECL_SERVICE;
+
+            if (mDeclService != null) {
+                mDeclService_builder = mDeclService.mutate();
+                mDeclService = null;
+            } else if (mDeclService_builder == null) {
+                mDeclService_builder = net.morimekta.providence.model.ServiceType.builder();
+            }
+            return mDeclService_builder;
         }
 
         /**
@@ -612,6 +715,7 @@ public class Declaration
          */
         public _Builder setDeclConst(net.morimekta.providence.model.ThriftField value) {
             tUnionField = _Field.DECL_CONST;
+            mDeclConst_builder = null;
             mDeclConst = value;
             return this;
         }
@@ -633,7 +737,41 @@ public class Declaration
         public _Builder clearDeclConst() {
             if (tUnionField == _Field.DECL_CONST) tUnionField = null;
             mDeclConst = null;
+            mDeclConst_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl_const.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.model.ThriftField._Builder mutableDeclConst() {
+            if (tUnionField != _Field.DECL_CONST) {
+                clearDeclConst();
+            }
+            tUnionField = _Field.DECL_CONST;
+
+            if (mDeclConst != null) {
+                mDeclConst_builder = mDeclConst.mutate();
+                mDeclConst = null;
+            } else if (mDeclConst_builder == null) {
+                mDeclConst_builder = net.morimekta.providence.model.ThriftField.builder();
+            }
+            return mDeclConst_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclEnum();
+                case 2: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclTypedef();
+                case 3: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclStruct();
+                case 4: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclService();
+                case 5: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclConst();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override
@@ -677,11 +815,11 @@ public class Declaration
             }
 
             switch (tUnionField) {
-                case DECL_ENUM: return mDeclEnum != null;
-                case DECL_TYPEDEF: return mDeclTypedef != null;
-                case DECL_STRUCT: return mDeclStruct != null;
-                case DECL_SERVICE: return mDeclService != null;
-                case DECL_CONST: return mDeclConst != null;
+                case DECL_ENUM: return mDeclEnum != null || mDeclEnum_builder != null;
+                case DECL_TYPEDEF: return mDeclTypedef != null || mDeclTypedef_builder != null;
+                case DECL_STRUCT: return mDeclStruct != null || mDeclStruct_builder != null;
+                case DECL_SERVICE: return mDeclService != null || mDeclService_builder != null;
+                case DECL_CONST: return mDeclConst != null || mDeclConst_builder != null;
                 default: return true;
             }
         }

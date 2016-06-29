@@ -23,6 +23,7 @@ import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -497,6 +498,12 @@ public class JMessageFormat {
                                 field.fieldEnum(),
                                 field.member());
                         break;
+                    case MESSAGE:
+                        writer.formatln("%s = tUnionField != _Field.%s", field.member(), field.fieldEnum())
+                              .appendln("        ? null")
+                              .formatln("        : builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
+                                        field.member(), field.member(), field.member());
+                        break;
                     default:
                         if (field.alwaysPresent()) {
                             writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : %s;",
@@ -545,7 +552,12 @@ public class JMessageFormat {
                           .formatln("    %s = null;", field.member())
                           .appendln('}');
                 } else {
-                    writer.formatln("%s = builder.%s;", field.member(), field.member());
+                    if (field.type() == PType.MESSAGE) {
+                        writer.formatln("%s = builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
+                                        field.member(), field.member(), field.member(), field.member());
+                    } else {
+                        writer.formatln("%s = builder.%s;", field.member(), field.member());
+                    }
                 }
             }
         }

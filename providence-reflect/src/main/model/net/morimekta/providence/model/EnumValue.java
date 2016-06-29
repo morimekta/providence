@@ -558,6 +558,23 @@ public class EnumValue
             return this;
         }
 
+        /**
+         * Gets the builder for the contained annotations.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            return mAnnotations;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
+        }
+
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {

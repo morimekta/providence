@@ -39,7 +39,9 @@ public class UnionFields
         mStringValue = tUnionField == _Field.STRING_VALUE ? builder.mStringValue : null;
         mBinaryValue = tUnionField == _Field.BINARY_VALUE ? builder.mBinaryValue : null;
         mEnumValue = tUnionField == _Field.ENUM_VALUE ? builder.mEnumValue : null;
-        mCompactValue = tUnionField == _Field.COMPACT_VALUE ? builder.mCompactValue : null;
+        mCompactValue = tUnionField != _Field.COMPACT_VALUE
+                ? null
+                : builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     /**
@@ -590,6 +592,7 @@ public class UnionFields
         private net.morimekta.util.Binary mBinaryValue;
         private net.morimekta.test.providence.Value mEnumValue;
         private net.morimekta.test.providence.CompactFields mCompactValue;
+        private net.morimekta.test.providence.CompactFields._Builder mCompactValue_builder;
 
         /**
          * Make a providence.UnionFields builder.
@@ -976,6 +979,7 @@ public class UnionFields
          */
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             tUnionField = _Field.COMPACT_VALUE;
+            mCompactValue_builder = null;
             mCompactValue = value;
             return this;
         }
@@ -997,7 +1001,37 @@ public class UnionFields
         public _Builder clearCompactValue() {
             if (tUnionField == _Field.COMPACT_VALUE) tUnionField = null;
             mCompactValue = null;
+            mCompactValue_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained compactValue.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.CompactFields._Builder mutableCompactValue() {
+            if (tUnionField != _Field.COMPACT_VALUE) {
+                clearCompactValue();
+            }
+            tUnionField = _Field.COMPACT_VALUE;
+
+            if (mCompactValue != null) {
+                mCompactValue_builder = mCompactValue.mutate();
+                mCompactValue = null;
+            } else if (mCompactValue_builder == null) {
+                mCompactValue_builder = net.morimekta.test.providence.CompactFields.builder();
+            }
+            return mCompactValue_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override
@@ -1054,7 +1088,7 @@ public class UnionFields
                 case STRING_VALUE: return mStringValue != null;
                 case BINARY_VALUE: return mBinaryValue != null;
                 case ENUM_VALUE: return mEnumValue != null;
-                case COMPACT_VALUE: return mCompactValue != null;
+                case COMPACT_VALUE: return mCompactValue != null || mCompactValue_builder != null;
                 default: return true;
             }
         }

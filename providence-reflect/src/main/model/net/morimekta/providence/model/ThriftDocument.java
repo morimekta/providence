@@ -639,6 +639,17 @@ public class ThriftDocument
         }
 
         /**
+         * Gets the builder for the contained includes.
+         *
+         * include &quot;&lt;package&gt;.thrift&quot;
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<String> mutableIncludes() {
+            return mIncludes;
+        }
+
+        /**
          * Sets the value of namespaces.
          *
          * namespace &lt;key&gt; &lt;value&gt;
@@ -693,6 +704,17 @@ public class ThriftDocument
         }
 
         /**
+         * Gets the builder for the contained namespaces.
+         *
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableNamespaces() {
+            return mNamespaces;
+        }
+
+        /**
          * Sets the value of decl.
          *
          * @param value The new value
@@ -737,6 +759,23 @@ public class ThriftDocument
             optionals.clear(4);
             mDecl.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained decl.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mutableDecl() {
+            return mDecl;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override

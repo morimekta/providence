@@ -195,12 +195,12 @@ public class Containers
         } else {
             mMessageMap = null;
         }
-        mRequiredFields = builder.mRequiredFields;
-        mDefaultFields = builder.mDefaultFields;
-        mOptionalFields = builder.mOptionalFields;
-        mUnionFields = builder.mUnionFields;
-        mExceptionFields = builder.mExceptionFields;
-        mDefaultValues = builder.mDefaultValues;
+        mRequiredFields = builder.mRequiredFields_builder != null ? builder.mRequiredFields_builder.build() : builder.mRequiredFields;
+        mDefaultFields = builder.mDefaultFields_builder != null ? builder.mDefaultFields_builder.build() : builder.mDefaultFields;
+        mOptionalFields = builder.mOptionalFields_builder != null ? builder.mOptionalFields_builder.build() : builder.mOptionalFields;
+        mUnionFields = builder.mUnionFields_builder != null ? builder.mUnionFields_builder.build() : builder.mUnionFields;
+        mExceptionFields = builder.mExceptionFields_builder != null ? builder.mExceptionFields_builder.build() : builder.mExceptionFields;
+        mDefaultValues = builder.mDefaultValues_builder != null ? builder.mDefaultValues_builder.build() : builder.mDefaultValues;
     }
 
     public Containers(java.util.List<Boolean> pBooleanList,
@@ -1896,11 +1896,17 @@ public class Containers
         private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.DefaultFields> mMessageSet;
         private net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.DefaultFields> mMessageMap;
         private net.morimekta.test.providence.RequiredFields mRequiredFields;
+        private net.morimekta.test.providence.RequiredFields._Builder mRequiredFields_builder;
         private net.morimekta.test.providence.DefaultFields mDefaultFields;
+        private net.morimekta.test.providence.DefaultFields._Builder mDefaultFields_builder;
         private net.morimekta.test.providence.OptionalFields mOptionalFields;
+        private net.morimekta.test.providence.OptionalFields._Builder mOptionalFields_builder;
         private net.morimekta.test.providence.UnionFields mUnionFields;
+        private net.morimekta.test.providence.UnionFields._Builder mUnionFields_builder;
         private net.morimekta.test.providence.ExceptionFields mExceptionFields;
+        private net.morimekta.test.providence.ExceptionFields._Builder mExceptionFields_builder;
         private net.morimekta.test.providence.DefaultValues mDefaultValues;
+        private net.morimekta.test.providence.DefaultValues._Builder mDefaultValues_builder;
 
         /**
          * Make a providence.Containers builder.
@@ -2257,8 +2263,11 @@ public class Containers
 
             if (from.hasRequiredFields()) {
                 optionals.set(30);
-                if (isSetRequiredFields()) {
-                    mRequiredFields = mRequiredFields.mutate().merge(from.getRequiredFields()).build();
+                if (mRequiredFields_builder != null) {
+                    mRequiredFields_builder.merge(from.getRequiredFields());
+                } else if (mRequiredFields != null) {
+                    mRequiredFields_builder = mRequiredFields.mutate().merge(from.getRequiredFields());
+                    mRequiredFields = null;
                 } else {
                     mRequiredFields = from.getRequiredFields();
                 }
@@ -2266,8 +2275,11 @@ public class Containers
 
             if (from.hasDefaultFields()) {
                 optionals.set(31);
-                if (isSetDefaultFields()) {
-                    mDefaultFields = mDefaultFields.mutate().merge(from.getDefaultFields()).build();
+                if (mDefaultFields_builder != null) {
+                    mDefaultFields_builder.merge(from.getDefaultFields());
+                } else if (mDefaultFields != null) {
+                    mDefaultFields_builder = mDefaultFields.mutate().merge(from.getDefaultFields());
+                    mDefaultFields = null;
                 } else {
                     mDefaultFields = from.getDefaultFields();
                 }
@@ -2275,8 +2287,11 @@ public class Containers
 
             if (from.hasOptionalFields()) {
                 optionals.set(32);
-                if (isSetOptionalFields()) {
-                    mOptionalFields = mOptionalFields.mutate().merge(from.getOptionalFields()).build();
+                if (mOptionalFields_builder != null) {
+                    mOptionalFields_builder.merge(from.getOptionalFields());
+                } else if (mOptionalFields != null) {
+                    mOptionalFields_builder = mOptionalFields.mutate().merge(from.getOptionalFields());
+                    mOptionalFields = null;
                 } else {
                     mOptionalFields = from.getOptionalFields();
                 }
@@ -2284,8 +2299,11 @@ public class Containers
 
             if (from.hasUnionFields()) {
                 optionals.set(33);
-                if (isSetUnionFields()) {
-                    mUnionFields = mUnionFields.mutate().merge(from.getUnionFields()).build();
+                if (mUnionFields_builder != null) {
+                    mUnionFields_builder.merge(from.getUnionFields());
+                } else if (mUnionFields != null) {
+                    mUnionFields_builder = mUnionFields.mutate().merge(from.getUnionFields());
+                    mUnionFields = null;
                 } else {
                     mUnionFields = from.getUnionFields();
                 }
@@ -2293,8 +2311,11 @@ public class Containers
 
             if (from.hasExceptionFields()) {
                 optionals.set(34);
-                if (isSetExceptionFields()) {
-                    mExceptionFields = mExceptionFields.mutate().merge(from.getExceptionFields()).build();
+                if (mExceptionFields_builder != null) {
+                    mExceptionFields_builder.merge(from.getExceptionFields());
+                } else if (mExceptionFields != null) {
+                    mExceptionFields_builder = mExceptionFields.mutate().merge(from.getExceptionFields());
+                    mExceptionFields = null;
                 } else {
                     mExceptionFields = from.getExceptionFields();
                 }
@@ -2302,8 +2323,11 @@ public class Containers
 
             if (from.hasDefaultValues()) {
                 optionals.set(35);
-                if (isSetDefaultValues()) {
-                    mDefaultValues = mDefaultValues.mutate().merge(from.getDefaultValues()).build();
+                if (mDefaultValues_builder != null) {
+                    mDefaultValues_builder.merge(from.getDefaultValues());
+                } else if (mDefaultValues != null) {
+                    mDefaultValues_builder = mDefaultValues.mutate().merge(from.getDefaultValues());
+                    mDefaultValues = null;
                 } else {
                     mDefaultValues = from.getDefaultValues();
                 }
@@ -2367,6 +2391,17 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained booleanList.
+         *
+         * all types as list&lt;x&gt;.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Boolean> mutableBooleanList() {
+            return mBooleanList;
+        }
+
+        /**
          * Sets the value of byteList.
          *
          * @param value The new value
@@ -2411,6 +2446,15 @@ public class Containers
             optionals.clear(1);
             mByteList.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained byteList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Byte> mutableByteList() {
+            return mByteList;
         }
 
         /**
@@ -2461,6 +2505,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained shortList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Short> mutableShortList() {
+            return mShortList;
+        }
+
+        /**
          * Sets the value of integerList.
          *
          * @param value The new value
@@ -2505,6 +2558,15 @@ public class Containers
             optionals.clear(3);
             mIntegerList.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained integerList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Integer> mutableIntegerList() {
+            return mIntegerList;
         }
 
         /**
@@ -2555,6 +2617,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained longList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Long> mutableLongList() {
+            return mLongList;
+        }
+
+        /**
          * Sets the value of doubleList.
          *
          * @param value The new value
@@ -2599,6 +2670,15 @@ public class Containers
             optionals.clear(5);
             mDoubleList.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained doubleList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<Double> mutableDoubleList() {
+            return mDoubleList;
         }
 
         /**
@@ -2649,6 +2729,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained stringList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<String> mutableStringList() {
+            return mStringList;
+        }
+
+        /**
          * Sets the value of binaryList.
          *
          * @param value The new value
@@ -2693,6 +2782,15 @@ public class Containers
             optionals.clear(7);
             mBinaryList.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained binaryList.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mutableBinaryList() {
+            return mBinaryList;
         }
 
         /**
@@ -2751,6 +2849,17 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained booleanSet.
+         *
+         * all types as set&lt;x&gt;.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Boolean> mutableBooleanSet() {
+            return mBooleanSet;
+        }
+
+        /**
          * Sets the value of byteSet.
          *
          * @param value The new value
@@ -2795,6 +2904,15 @@ public class Containers
             optionals.clear(9);
             mByteSet.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained byteSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Byte> mutableByteSet() {
+            return mByteSet;
         }
 
         /**
@@ -2845,6 +2963,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained shortSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Short> mutableShortSet() {
+            return mShortSet;
+        }
+
+        /**
          * Sets the value of integerSet.
          *
          * @param value The new value
@@ -2889,6 +3016,15 @@ public class Containers
             optionals.clear(11);
             mIntegerSet.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained integerSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Integer> mutableIntegerSet() {
+            return mIntegerSet;
         }
 
         /**
@@ -2939,6 +3075,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained longSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Long> mutableLongSet() {
+            return mLongSet;
+        }
+
+        /**
          * Sets the value of doubleSet.
          *
          * @param value The new value
@@ -2983,6 +3128,15 @@ public class Containers
             optionals.clear(13);
             mDoubleSet.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained doubleSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<Double> mutableDoubleSet() {
+            return mDoubleSet;
         }
 
         /**
@@ -3033,6 +3187,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained stringSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<String> mutableStringSet() {
+            return mStringSet;
+        }
+
+        /**
          * Sets the value of binarySet.
          *
          * @param value The new value
@@ -3077,6 +3240,15 @@ public class Containers
             optionals.clear(15);
             mBinarySet.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained binarySet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mutableBinarySet() {
+            return mBinarySet;
         }
 
         /**
@@ -3134,6 +3306,17 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained booleanMap.
+         *
+         * all types as map&lt;x,x&gt;.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mutableBooleanMap() {
+            return mBooleanMap;
+        }
+
+        /**
          * Sets the value of byteMap.
          *
          * @param value The new value
@@ -3177,6 +3360,15 @@ public class Containers
             optionals.clear(17);
             mByteMap.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained byteMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mutableByteMap() {
+            return mByteMap;
         }
 
         /**
@@ -3226,6 +3418,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained shortMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mutableShortMap() {
+            return mShortMap;
+        }
+
+        /**
          * Sets the value of integerMap.
          *
          * @param value The new value
@@ -3269,6 +3470,15 @@ public class Containers
             optionals.clear(19);
             mIntegerMap.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained integerMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mutableIntegerMap() {
+            return mIntegerMap;
         }
 
         /**
@@ -3318,6 +3528,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained longMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mutableLongMap() {
+            return mLongMap;
+        }
+
+        /**
          * Sets the value of doubleMap.
          *
          * @param value The new value
@@ -3361,6 +3580,15 @@ public class Containers
             optionals.clear(21);
             mDoubleMap.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained doubleMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mutableDoubleMap() {
+            return mDoubleMap;
         }
 
         /**
@@ -3410,6 +3638,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained stringMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableStringMap() {
+            return mStringMap;
+        }
+
+        /**
          * Sets the value of binaryMap.
          *
          * @param value The new value
@@ -3453,6 +3690,15 @@ public class Containers
             optionals.clear(23);
             mBinaryMap.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained binaryMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
+            return mBinaryMap;
         }
 
         /**
@@ -3511,6 +3757,17 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained enumList.
+         *
+         * Using enum as key and value in containers.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.Value> mutableEnumList() {
+            return mEnumList;
+        }
+
+        /**
          * Sets the value of enumSet.
          *
          * @param value The new value
@@ -3558,6 +3815,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained enumSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.Value> mutableEnumSet() {
+            return mEnumSet;
+        }
+
+        /**
          * Sets the value of enumMap.
          *
          * @param value The new value
@@ -3601,6 +3867,15 @@ public class Containers
             optionals.clear(26);
             mEnumMap.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained enumMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> mutableEnumMap() {
+            return mEnumMap;
         }
 
         /**
@@ -3659,6 +3934,17 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained messageList.
+         *
+         * Using struct as key and value in containers.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageList() {
+            return mMessageList;
+        }
+
+        /**
          * Sets the value of messageSet.
          *
          * @param value The new value
@@ -3703,6 +3989,15 @@ public class Containers
             optionals.clear(28);
             mMessageSet.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained messageSet.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageSet() {
+            return mMessageSet;
         }
 
         /**
@@ -3752,6 +4047,15 @@ public class Containers
         }
 
         /**
+         * Gets the builder for the contained messageMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.DefaultFields> mutableMessageMap() {
+            return mMessageMap;
+        }
+
+        /**
          * Sets the value of requiredFields.
          *
          * @param value The new value
@@ -3759,6 +4063,7 @@ public class Containers
          */
         public _Builder setRequiredFields(net.morimekta.test.providence.RequiredFields value) {
             optionals.set(30);
+            mRequiredFields_builder = null;
             mRequiredFields = value;
             return this;
         }
@@ -3780,7 +4085,25 @@ public class Containers
         public _Builder clearRequiredFields() {
             optionals.clear(30);
             mRequiredFields = null;
+            mRequiredFields_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained requiredFields.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.RequiredFields._Builder mutableRequiredFields() {
+            optionals.set(30);
+
+            if (mRequiredFields != null) {
+                mRequiredFields_builder = mRequiredFields.mutate();
+                mRequiredFields = null;
+            } else if (mRequiredFields_builder == null) {
+                mRequiredFields_builder = net.morimekta.test.providence.RequiredFields.builder();
+            }
+            return mRequiredFields_builder;
         }
 
         /**
@@ -3791,6 +4114,7 @@ public class Containers
          */
         public _Builder setDefaultFields(net.morimekta.test.providence.DefaultFields value) {
             optionals.set(31);
+            mDefaultFields_builder = null;
             mDefaultFields = value;
             return this;
         }
@@ -3812,7 +4136,25 @@ public class Containers
         public _Builder clearDefaultFields() {
             optionals.clear(31);
             mDefaultFields = null;
+            mDefaultFields_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained defaultFields.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.DefaultFields._Builder mutableDefaultFields() {
+            optionals.set(31);
+
+            if (mDefaultFields != null) {
+                mDefaultFields_builder = mDefaultFields.mutate();
+                mDefaultFields = null;
+            } else if (mDefaultFields_builder == null) {
+                mDefaultFields_builder = net.morimekta.test.providence.DefaultFields.builder();
+            }
+            return mDefaultFields_builder;
         }
 
         /**
@@ -3823,6 +4165,7 @@ public class Containers
          */
         public _Builder setOptionalFields(net.morimekta.test.providence.OptionalFields value) {
             optionals.set(32);
+            mOptionalFields_builder = null;
             mOptionalFields = value;
             return this;
         }
@@ -3844,7 +4187,25 @@ public class Containers
         public _Builder clearOptionalFields() {
             optionals.clear(32);
             mOptionalFields = null;
+            mOptionalFields_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained optionalFields.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.OptionalFields._Builder mutableOptionalFields() {
+            optionals.set(32);
+
+            if (mOptionalFields != null) {
+                mOptionalFields_builder = mOptionalFields.mutate();
+                mOptionalFields = null;
+            } else if (mOptionalFields_builder == null) {
+                mOptionalFields_builder = net.morimekta.test.providence.OptionalFields.builder();
+            }
+            return mOptionalFields_builder;
         }
 
         /**
@@ -3855,6 +4216,7 @@ public class Containers
          */
         public _Builder setUnionFields(net.morimekta.test.providence.UnionFields value) {
             optionals.set(33);
+            mUnionFields_builder = null;
             mUnionFields = value;
             return this;
         }
@@ -3876,7 +4238,25 @@ public class Containers
         public _Builder clearUnionFields() {
             optionals.clear(33);
             mUnionFields = null;
+            mUnionFields_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained unionFields.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.UnionFields._Builder mutableUnionFields() {
+            optionals.set(33);
+
+            if (mUnionFields != null) {
+                mUnionFields_builder = mUnionFields.mutate();
+                mUnionFields = null;
+            } else if (mUnionFields_builder == null) {
+                mUnionFields_builder = net.morimekta.test.providence.UnionFields.builder();
+            }
+            return mUnionFields_builder;
         }
 
         /**
@@ -3887,6 +4267,7 @@ public class Containers
          */
         public _Builder setExceptionFields(net.morimekta.test.providence.ExceptionFields value) {
             optionals.set(34);
+            mExceptionFields_builder = null;
             mExceptionFields = value;
             return this;
         }
@@ -3908,7 +4289,25 @@ public class Containers
         public _Builder clearExceptionFields() {
             optionals.clear(34);
             mExceptionFields = null;
+            mExceptionFields_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained exceptionFields.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.ExceptionFields._Builder mutableExceptionFields() {
+            optionals.set(34);
+
+            if (mExceptionFields != null) {
+                mExceptionFields_builder = mExceptionFields.mutate();
+                mExceptionFields = null;
+            } else if (mExceptionFields_builder == null) {
+                mExceptionFields_builder = net.morimekta.test.providence.ExceptionFields.builder();
+            }
+            return mExceptionFields_builder;
         }
 
         /**
@@ -3919,6 +4318,7 @@ public class Containers
          */
         public _Builder setDefaultValues(net.morimekta.test.providence.DefaultValues value) {
             optionals.set(35);
+            mDefaultValues_builder = null;
             mDefaultValues = value;
             return this;
         }
@@ -3940,7 +4340,39 @@ public class Containers
         public _Builder clearDefaultValues() {
             optionals.clear(35);
             mDefaultValues = null;
+            mDefaultValues_builder = null;
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained defaultValues.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.test.providence.DefaultValues._Builder mutableDefaultValues() {
+            optionals.set(35);
+
+            if (mDefaultValues != null) {
+                mDefaultValues_builder = mDefaultValues.mutate();
+                mDefaultValues = null;
+            } else if (mDefaultValues_builder == null) {
+                mDefaultValues_builder = net.morimekta.test.providence.DefaultValues.builder();
+            }
+            return mDefaultValues_builder;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                case 51: return (net.morimekta.providence.PMessageBuilder<MT>) mutableRequiredFields();
+                case 52: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDefaultFields();
+                case 53: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOptionalFields();
+                case 54: return (net.morimekta.providence.PMessageBuilder<MT>) mutableUnionFields();
+                case 55: return (net.morimekta.providence.PMessageBuilder<MT>) mutableExceptionFields();
+                case 56: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDefaultValues();
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override

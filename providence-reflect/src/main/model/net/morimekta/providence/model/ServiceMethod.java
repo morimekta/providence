@@ -756,6 +756,15 @@ public class ServiceMethod
         }
 
         /**
+         * Gets the builder for the contained params.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableParams() {
+            return mParams;
+        }
+
+        /**
          * Sets the value of exceptions.
          *
          * @param value The new value
@@ -803,6 +812,15 @@ public class ServiceMethod
         }
 
         /**
+         * Gets the builder for the contained exceptions.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableExceptions() {
+            return mExceptions;
+        }
+
+        /**
          * Sets the value of annotations.
          *
          * @param value The new value
@@ -846,6 +864,23 @@ public class ServiceMethod
             optionals.clear(6);
             mAnnotations.clear();
             return this;
+        }
+
+        /**
+         * Gets the builder for the contained annotations.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            return mAnnotations;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            switch (key) {
+                default: throw new IllegalArgumentException("Not a message field ID: " + key);
+            }
         }
 
         @Override
