@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <name>Providence Tools</name>
+    <description>
+        Binary tools for providence. This is not supposed to be pushed to
+        artifactory etc, but to create RPM and deb files.
+    </description>
+    <url>http://www.morimekta.net/providence</url>
+
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>morimekta.net</name>
+        <url>http://www.morimekta.net/providence</url>
+    </organization>
+    <inceptionYear>2015</inceptionYear>
+
+    <developers>
+        <developer>
+            <id>morimekta</id>
+            <name>Stein Eldar Johnsen</name>
+            <email>oss@morimekta.net</email>
+            <timezone>Europe/Oslo</timezone>
+            <roles>
+                <role>Maintainer</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/morimekta/providence-tools</url>
+        <developerConnection>scm:git:ssh://git@github.com/morimekta/providence-tools.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.javadoc.encoding>UTF-8</project.javadoc.encoding>
+        <project.reporting.inputEncoding>UTF-8</project.reporting.inputEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!-- RPC tool only -->
+        <google-http.version>1.21.0</google-http.version>
+        <jetty.version>9.3.8.v20160314</jetty.version>
+        <java.servlet.version>3.1.0</java.servlet.version>
+        <thrift.version>0.9.3</thrift.version>
+        <logback.version>1.1.7</logback.version>
+        <slf4j.version>1.7.20</slf4j.version>
+
+        <!-- test dependencies -->
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <mockito.version>1.10.17</mockito.version>
+
+        <!-- compile dependencies -->
+        <guava.version>19.0</guava.version>
+        <morimekta_utils.version>0.3.0-SNAPSHOT</morimekta_utils.version>
+
+        <providence.version>0.1.3-SNAPSHOT</providence.version>
+        <providence.release-version>0.1.3-dev</providence.release-version>
+    </properties>
+
+    <groupId>net.morimekta.providence</groupId>
+    <artifactId>providence-tools</artifactId>
+    <version>0.1.3-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>providence-compiler</module>
+        <module>providence-converter</module>
+        <module>providence-rpc-tool</module>
+        <module>providence-package</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.5</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.19.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:all</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

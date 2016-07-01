@@ -1,0 +1,11 @@
+Package: providence
+Version: [[version]]
+Section: Development
+Priority: optional
+Architecture: all
+Description: [[description]]
+Maintainer: Stein Eldar Johnsen (oss@morimekta.net)
+Homepage: http://www.morimekta.net/providence
+Vcs-Browser: http://www.github.com/morimekta/providence-tools
+Distribution: development
+Depends: java8-runtime | java9-runtime
