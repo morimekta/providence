@@ -91,7 +91,6 @@
 
         <morimekta_utils.version>0.3.0</morimekta_utils.version>
         <!-- TODO: Figure out how to generate this correctly. -->
-        <providence.version>0.1.3-SNAPSHOT</providence.version>
         <providence.release-version>0.1.3-dev</providence.release-version>
     </properties>
 
