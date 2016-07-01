@@ -153,7 +153,7 @@
                         <configuration>
                             <!-- identification -->
                             <name>providence</name>
-                            <version>${providence.release-version}</version>
+                            <version>${project.version}</version>
                             <license>Apache 2.0</license>
                             <group>Development/Tools</group>
 

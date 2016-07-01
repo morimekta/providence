@@ -1,4 +1,4 @@
 Providence Generator : Common
 =============================
 
-Generator code.
+Common library code for the providence generator. 

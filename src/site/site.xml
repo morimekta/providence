@@ -10,29 +10,31 @@
         <menu name="Introduction" inherit="top">
 
             <item href="index.html" name="Providence" />
-            <item href="providence-tools.html" name="Providence Tools" />
             <item href="release.html" name="Release Process" />
-            <item href="release-notes.html" name="Release Notes" />
-            <item href="downloads.html" name="Downloads" />
+            <item href="providence-tools.html" name="Providence Tools" />
+            <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
         </menu>
 
         <menu name="Modules" inherit="top">
 
-            <item href="providence-core/index.html" name="Core" />
-            <item href="providence-core-jackson/index.html" name="Core : Jackson" />
-            <item href="providence-core-client/index.html" name="Core : Client" />
-            <item href="providence-reflect/index.html" name="Tools : Reflect" />
-            <item href="providence-generator/index.html" name="Tools : Generator" />
-            <item href="providence-maven-plugin/index.html" name="Tools : Maven Plugin" />
-            <item href="providence-thrift/index.html" name="Utils: Thrift Bridge" />
-            <item href="providence-testing/index.html" name="Utils: Testing" />
+            <item href="providence-core/index.html"               name="Core" />
+            <item href="providence-core-jackson/index.html"       name="Core : Jackson" />
+            <item href="providence-core-client/index.html"        name="Core : Client" />
+
+            <item href="providence-reflect/index.html"            name="Tools : Reflect" />
+            <item href="providence-generator/index.html"          name="Tools : Generator" />
+            <item href="providence-generator-java/index.html"     name="Tools : Generator - Java" />
+            <item href="providence-generator-java/tiny-java.html" name="Tools : Generator - Tiny Java" />
+            <item href="providence-generator-json/index.html"     name="Tools : Generator - JSON" />
+            <item href="providence-maven-plugin/index.html"       name="Tools : Maven Plugin" />
+
+            <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />
+            <item href="providence-testing/index.html"            name="Utils : Testing" />
 
         </menu>
 
         <menu name="Docs" inherit="top">
-
-            <item href="generated-java.html" name="Generated Java Code" />
 
             <item href="serializer-binary.html" name="Serializer : Binary" />
             <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
