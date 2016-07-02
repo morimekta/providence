@@ -29,7 +29,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -204,7 +204,7 @@ public class TypeRegistry {
             return PList.provider(getProvider(itemType, packageContext, null));
         }
 
-        if (!ThriftParser.VALID_IDENTIFIER.matcher(typeName).matches()) {
+        if (!ThriftDocumentParser.VALID_IDENTIFIER.matcher(typeName).matches()) {
             throw new IllegalArgumentException(typeName + " is not a valid declared type identifier.");
         }
 

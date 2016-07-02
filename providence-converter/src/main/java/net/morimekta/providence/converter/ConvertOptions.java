@@ -36,7 +36,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
@@ -186,7 +186,7 @@ public class ConvertOptions {
         String namespace = type.substring(0, type.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftParser());
+        TypeLoader loader = new TypeLoader(rootSet, new ThriftDocumentParser());
 
         try {
             loader.load(includeMap.get(namespace));

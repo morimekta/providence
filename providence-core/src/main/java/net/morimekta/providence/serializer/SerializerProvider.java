@@ -3,6 +3,7 @@ package net.morimekta.providence.serializer;
 /**
  * Provider of serializers based on a string mime-type.
  */
+@FunctionalInterface
 public interface SerializerProvider {
     /**
      * Get serializer for the given mime-type
@@ -15,5 +16,7 @@ public interface SerializerProvider {
     /**
      * @return The default serializer.
      */
-    Serializer getDefault();
+    default Serializer getDefault() {
+        return getSerializer(BinarySerializer.MIME_TYPE);
+    }
 }

@@ -27,8 +27,8 @@ import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -225,7 +225,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         FileManager fileManager = new FileManager(outputDir);
-        Parser parser = new ThriftParser();
+        DocumentParser parser = new ThriftDocumentParser();
         TypeLoader loader = new TypeLoader(includes, parser);
 
         LinkedList<CDocument> documents = new LinkedList<>();

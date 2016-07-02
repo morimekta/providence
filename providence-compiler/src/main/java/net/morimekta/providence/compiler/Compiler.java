@@ -26,8 +26,8 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.Language;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.util.Strings;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public class Compiler {
 
             cli.validate();
 
-            Parser parser = options.getParser();
+            DocumentParser parser = options.getParser();
             List<File> includes = options.getIncludes();
             List<File> input = options.getInputFiles();
 

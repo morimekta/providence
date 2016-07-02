@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class ThriftParser implements Parser {
+public class ThriftDocumentParser implements DocumentParser {
     private final static Pattern RE_BLOCK_LINE        = Pattern.compile("^([\\s]*[*])?[\\s]?");
     private static final Pattern VALID_PACKAGE        = Pattern.compile(
             "[-._a-zA-Z0-9]+");

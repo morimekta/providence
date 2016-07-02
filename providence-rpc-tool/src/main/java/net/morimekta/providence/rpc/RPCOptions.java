@@ -40,7 +40,7 @@ import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.rpc.handler.SetHeadersInitializer;
 import net.morimekta.providence.rpc.options.ConvertStream;
@@ -236,7 +236,7 @@ public class RPCOptions {
         String namespace = service.substring(0, service.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftParser());
+        TypeLoader loader = new TypeLoader(rootSet, new ThriftDocumentParser());
 
         try {
             if (!includeMap.containsKey(namespace)) {

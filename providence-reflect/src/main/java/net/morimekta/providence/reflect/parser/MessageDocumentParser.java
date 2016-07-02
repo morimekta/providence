@@ -20,22 +20,29 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ThriftDocument;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.Serializer;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Document parser interface.
+ * @author Stein Eldar Johnsen
+ * @since 07.09.15
  */
-public interface Parser {
-    /**
-     * Parse input stream to document declaration model.
-     *
-     * @param in The stream to parse.
-     * @param name The file name that is being parsed.
-     * @return The declared document model.
-     * @throws IOException When the stream was unreadable.
-     * @throws ParseException When the document could not be parsed.
-     */
-    ThriftDocument parse(InputStream in, String name) throws IOException, ParseException;
+public class MessageDocumentParser implements DocumentParser {
+    private final Serializer mSerializer;
+
+    public MessageDocumentParser(Serializer serializer) {
+        mSerializer = serializer;
+    }
+
+    @Override
+    public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
+        try {
+            return mSerializer.deserialize(in, ThriftDocument.kDescriptor);
+        } catch (SerializerException tse) {
+            throw new ParseException("Failed to deserialize definition file.", tse);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Stream processor interface for providence services.
  */
+@FunctionalInterface
 public interface PProcessor {
     /**
      * Process message read from reader, and write response to writer.

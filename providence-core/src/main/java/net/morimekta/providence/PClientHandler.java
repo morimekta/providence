@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Interface for handling a call request from a synchronous client.
  */
+@FunctionalInterface
 public interface PClientHandler {
     /**
      * Handle a service call.

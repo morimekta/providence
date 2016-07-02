@@ -25,7 +25,7 @@ import org.junit.Test;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class MessageParserTest {
+public class MessageDocumentParserTest {
     @Test
     public void testParse() {
 

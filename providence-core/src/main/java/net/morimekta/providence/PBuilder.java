@@ -23,6 +23,7 @@ package net.morimekta.providence;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
+@FunctionalInterface
 public interface PBuilder<T> {
     T build();
 }

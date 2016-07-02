@@ -36,14 +36,14 @@ import static org.junit.Assert.fail;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class ThriftParserTest {
-    private PrettySerializer printer;
-    private ThriftParser     parser;
+public class ThriftDocumentParserTest {
+    private PrettySerializer     printer;
+    private ThriftDocumentParser parser;
 
     @Before
     public void setUp() {
         this.printer = new PrettySerializer();
-        this.parser = new ThriftParser();
+        this.parser = new ThriftDocumentParser();
     }
 
     @Test

@@ -21,8 +21,8 @@ package net.morimekta.providence.reflect;
 
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.Parser;
 import net.morimekta.providence.reflect.util.DocumentConverter;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 
@@ -45,7 +45,7 @@ public class TypeLoader {
     private final TypeRegistry mRegistry;
 
     private final DocumentConverter           mConverter;
-    private final Parser                      mParser;
+    private final DocumentParser              mParser;
     private final Map<String, ThriftDocument> mLoadedDocuments;
     private final Collection<File>            mIncludes;
 
@@ -56,7 +56,7 @@ public class TypeLoader {
      *                 search these in order.
      * @param parser   The thrift file parser.
      */
-    public TypeLoader(Collection<File> includes, Parser parser) {
+    public TypeLoader(Collection<File> includes, DocumentParser parser) {
         this(includes, parser, new TypeRegistry());
     }
 
@@ -68,7 +68,7 @@ public class TypeLoader {
      * @param parser   The thrift file parser.
      * @param registry Type registry to keep parsed types in.
      */
-    private TypeLoader(Collection<File> includes, Parser parser, TypeRegistry registry) {
+    private TypeLoader(Collection<File> includes, DocumentParser parser, TypeRegistry registry) {
         this(includes, parser, registry, new DocumentConverter(registry));
     }
 
@@ -81,7 +81,7 @@ public class TypeLoader {
      * @param registry  The type registry.
      * @param converter The document converter
      */
-    protected TypeLoader(Collection<File> includes, Parser parser, TypeRegistry registry, DocumentConverter converter) {
+    protected TypeLoader(Collection<File> includes, DocumentParser parser, TypeRegistry registry, DocumentConverter converter) {
         mIncludes = includes;
         mParser = parser;
         mRegistry = registry;

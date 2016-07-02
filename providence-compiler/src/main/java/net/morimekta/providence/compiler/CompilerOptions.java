@@ -39,9 +39,9 @@ import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.MessageParser;
-import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.parser.MessageDocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.serializer.JsonSerializer;
 
 import java.io.File;
@@ -51,7 +51,6 @@ import java.util.List;
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.file;
 import static net.morimekta.console.util.Parser.oneOf;
-import static net.morimekta.console.util.Parser.outputDir;
 
 /**
  * @author Stein Eldar Johnsen
@@ -128,12 +127,12 @@ public class CompilerOptions {
         return new FileManager(out);
     }
 
-    public Parser getParser() throws ArgumentException {
+    public DocumentParser getParser() throws ArgumentException {
         switch (syntax) {
             case thrift:
-                return new ThriftParser();
+                return new ThriftDocumentParser();
             case json:
-                return new MessageParser(new JsonSerializer());
+                return new MessageDocumentParser(new JsonSerializer());
             default:
                 throw new ArgumentException("Unknown SLI syntax %s.", syntax.name());
         }

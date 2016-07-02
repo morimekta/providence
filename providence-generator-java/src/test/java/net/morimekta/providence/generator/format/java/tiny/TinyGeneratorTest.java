@@ -4,7 +4,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.util.io.IOUtils;
 
@@ -26,14 +26,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class TinyGeneratorTest {
     @Rule
-    public  TemporaryFolder tmp;
-    private FileManager     fileManager;
-    private File            out;
-    private TypeRegistry    typeRegistry;
-    private TypeLoader      typeLoader;
-    private ThriftParser    parser;
-    private File            inc;
-    private File            file;
+    public  TemporaryFolder      tmp;
+    private FileManager          fileManager;
+    private File                 out;
+    private TypeRegistry         typeRegistry;
+    private TypeLoader           typeLoader;
+    private ThriftDocumentParser parser;
+    private File                 inc;
+    private File                 file;
 
     @Before
     public void setUp() throws IOException {
@@ -51,7 +51,7 @@ public class TinyGeneratorTest {
         inc = tmp.newFolder("includes");
 
         fileManager = new FileManager(out);
-        parser = new ThriftParser();
+        parser = new ThriftDocumentParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
         typeRegistry = new TypeRegistry();
     }

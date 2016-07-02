@@ -4,8 +4,8 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.Parser;
-import net.morimekta.providence.reflect.parser.ThriftParser;
+import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.reflect.util.TypeRegistry;
 import net.morimekta.util.io.IOUtils;
 
@@ -34,9 +34,9 @@ public class JsonGeneratorTest {
     private File            out;
     private TypeLoader      typeLoader;
     private File            inc;
-    private Parser          parser;
-    private File file;
-    private TypeRegistry typeRegistry;
+    private DocumentParser  parser;
+    private File            file;
+    private TypeRegistry    typeRegistry;
 
     @Before
     public void setUp() throws IOException {
@@ -54,7 +54,7 @@ public class JsonGeneratorTest {
         inc = tmp.newFolder("includes");
 
         fileManager = new FileManager(out);
-        parser = new ThriftParser();
+        parser = new ThriftDocumentParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
         typeRegistry = new TypeRegistry();
     }
