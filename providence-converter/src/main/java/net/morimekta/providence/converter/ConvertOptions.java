@@ -25,8 +25,8 @@ import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.console.args.UnaryOption;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.converter.options.ConvertStream;
@@ -83,11 +83,11 @@ public class ConvertOptions {
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
 
         parser.add(new Option("--include", "I", "Include from directories.", "dir", dir(this::addInclude), "${PWD}", true, false, false));
-        parser.add(new Option("--in", "i", "Input specification", "spec", new ConvertStreamParser().then(this::setIn)));
-        parser.add(new Option("--out", "o", "Output specification", "spec", new ConvertStreamParser().then(this::setOut)));
-        parser.add(new UnaryOption("--strict", "S", "Read incoming messages strictly.", this::setStrict));
-        parser.add(new Argument("type", "Qualified identifier name from definitions to use for parsing source file.", null, this::setType, null, false, true, false));
-        parser.add(new UnaryOption("--help", "h?", "This help listing.", this::setHelp));
+        parser.add(new Option("--in", "i", "Input specification", "spec", new ConvertStreamParser().andApply(this::setIn)));
+        parser.add(new Option("--out", "o", "Output specification", "spec", new ConvertStreamParser().andApply(this::setOut)));
+        parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
+        parser.add(new Argument("type", "Qualified identifier name from definitions to use for parsing source file.", this::setType));
+        parser.add(new Flag("--help", "h?", "This help listing.", this::setHelp));
 
         return parser;
     }

@@ -70,12 +70,12 @@ public class CompilerOptions {
                 Math.min(120, TerminalSize.get().cols));
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
         parser.add(new Option("--gen", "g", "generator", "Generate files for this language spec.",
-                              new GeneratorSpecParser().then(this::setGenerator)));
+                              new GeneratorSpecParser().andApply(this::setGenerator)));
         parser.add(new HelpOption("--help", "h?", "Show this help or about language.", this::setHelp));
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
         parser.add(new Option("--out", "o", "dir", "Output directory", dir(this::setOut), "${PWD}"));
         parser.add(new Option("--syntax", null, "syntax", "Input file syntax", oneOf(Syntax.class, this::setSyntax), "thrift", false, false, true));
-        parser.add(new Argument("file", "Files to compile.", null, file(this::addFile), null, true, true, false));
+        parser.add(new Argument("file", "Files to compile.", file(this::addFile), null, null, true, true, false));
         return parser;
     }
 

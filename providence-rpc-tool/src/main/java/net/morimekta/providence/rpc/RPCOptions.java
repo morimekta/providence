@@ -25,8 +25,8 @@ import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.console.args.UnaryOption;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.client.HttpClientHandler;
@@ -105,17 +105,17 @@ public class RPCOptions {
                 Math.min(120, TerminalSize.get().cols));
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
-        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().then(this::setIn), "json"));
-        parser.add(new Option("--out", "o", "spec", "Output Specification", new ConvertStreamParser().then(this::setOut), "pretty_json"));
+        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), "json"));
+        parser.add(new Option("--out", "o", "spec", "Output Specification", new ConvertStreamParser().andApply(this::setOut), "pretty_json"));
         parser.add(new Option("--service", "s", "srv", "Qualified identifier name from definitions to use for parsing source file.",
                               this::setService, null, false, true, false));
         parser.add(new Option("--format", "f", "fmt", "Request RPC format", oneOf(Format.class, this::setFormat), "binary"));
         parser.add(new Option("--connect_timeout", "C", "ms", "Connection timeout in milliseconds. 0 means infinite.", i32(this::setConnectTimeout), "10000"));
         parser.add(new Option("--read_timeout", "R", "ms", "Request timeout in milliseconds. 0 means infinite.", i32(this::setReadTimeout), "10000"));
         parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.", this::addHeaders, null, true, false, false));
-        parser.add(new UnaryOption("--strict", "S", "Read incoming messages strictly.", this::setStrict));
-        parser.add(new UnaryOption("--help", "h?", "This help message.", this::setHelp));
-        parser.add(new Argument("URL", "The endpoint URI", null, this::setEndpoint, null, false, true, false));
+        parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
+        parser.add(new Flag("--help", "h?", "This help message.", this::setHelp));
+        parser.add(new Argument("URL", "The endpoint URI", this::setEndpoint));
 
         return parser;
     }
