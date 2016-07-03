@@ -18,13 +18,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence-tools.git</url>
-      <tag>v0.2.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1-SNAPSHOT</version>
     </parent>
     <artifactId>providence-rpc-tool</artifactId>
 
@@ -32,22 +32,22 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-client</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -201,7 +201,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.0</version>
+                <version>0.2.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>

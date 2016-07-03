@@ -58,7 +58,7 @@
     <scm>
         <url>https://github.com/morimekta/providence</url>
         <developerConnection>scm:git:ssh://git@github.com/morimekta/providence.git</developerConnection>
-        <tag>v0.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
@@ -94,7 +94,7 @@
 
     <groupId>net.morimekta.providence</groupId>
     <artifactId>providence</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
