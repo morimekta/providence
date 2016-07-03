@@ -1,5 +1,5 @@
-Providence Utils Testing
-========================
+Providence Utils : Thrift
+=========================
 
 The providence - thrift bridge is a module to enable all the TProtocol
 formats for use in serializing providence messages. This goes through the
