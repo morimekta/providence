@@ -2,7 +2,7 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class DefaultValues
-        implements net.morimekta.providence.PMessage<DefaultValues>, java.io.Serializable, Comparable<DefaultValues> {
+        implements net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field>, java.io.Serializable, Comparable<DefaultValues> {
     private final static long serialVersionUID = 1589448735484096354L;
 
     private final static boolean kDefaultBooleanValue = true;
@@ -502,7 +502,7 @@ public class DefaultValues
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<DefaultValues> {
+            extends net.morimekta.providence.PMessageBuilderFactory<DefaultValues,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -523,7 +523,7 @@ public class DefaultValues
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<DefaultValues> {
+            extends net.morimekta.providence.PMessageBuilder<DefaultValues,_Field> {
         private java.util.BitSet optionals;
 
         private boolean mBooleanValue;
@@ -979,9 +979,9 @@ public class DefaultValues
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                case 10: return mutableCompactValue();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

@@ -2,7 +2,7 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class UnionFields
-        implements net.morimekta.providence.PUnion<UnionFields>, java.io.Serializable, Comparable<UnionFields> {
+        implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>, java.io.Serializable, Comparable<UnionFields> {
     private final static long serialVersionUID = -4125227148631020921L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -558,7 +558,7 @@ public class UnionFields
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<UnionFields> {
+            extends net.morimekta.providence.PMessageBuilderFactory<UnionFields,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -579,7 +579,7 @@ public class UnionFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<UnionFields> {
+            extends net.morimekta.providence.PMessageBuilder<UnionFields,_Field> {
         private _Field tUnionField;
 
         private boolean mBooleanValue;
@@ -1027,9 +1027,9 @@ public class UnionFields
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                case 10: return mutableCompactValue();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

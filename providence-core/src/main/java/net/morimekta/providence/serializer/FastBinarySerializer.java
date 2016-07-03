@@ -78,13 +78,15 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream os, Message message) throws IOException, SerializerException {
         BinaryWriter out = new BinaryWriter(os);
         return writeMessage(out, message);
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream os, PServiceCall<Message, Field> call)
             throws IOException, SerializerException {
         BinaryWriter out = new BinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
@@ -97,15 +99,17 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream is, PStructDescriptor<T, TF> descriptor) throws
-                                                                                                                         SerializerException, IOException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Message deserialize(InputStream is, PStructDescriptor<Message, Field> descriptor)
+            throws SerializerException, IOException {
         BinaryReader in = new BinaryReader(is);
         return readMessage(in, descriptor);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream is, PService service)
             throws SerializerException {
         String methodName = null;
         int sequence = 0;
@@ -126,7 +130,7 @@ public class FastBinarySerializer extends Serializer {
                         .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
             } else if (type == PServiceCallType.EXCEPTION) {
                 ApplicationException ex = readMessage(in, ApplicationException.kDescriptor);
-                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+                return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             }
 
             PServiceMethod method = service.getMethod(methodName);
@@ -138,9 +142,9 @@ public class FastBinarySerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<Message, Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
 
-            T message = readMessage(in, descriptor);
+            Message message = readMessage(in, descriptor);
             return new PServiceCall<>(methodName, type, sequence, message);
         } catch (IOException e) {
             throw new SerializerException(e, e.getMessage())
@@ -169,8 +173,9 @@ public class FastBinarySerializer extends Serializer {
 
     // --- MESSAGE ---
 
-    private <T extends PMessage<T>> int writeMessage(BinaryWriter out, T message) throws IOException,
-                                                                                         SerializerException {
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    int writeMessage(BinaryWriter out, Message message)
+            throws IOException, SerializerException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -189,14 +194,15 @@ public class FastBinarySerializer extends Serializer {
         return len + out.writeVarint(STOP);
     }
 
-    private <T extends PMessage<T>, TF extends PField> T readMessage(BinaryReader in, PStructDescriptor<T, TF> descriptor)
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message readMessage(BinaryReader in, PStructDescriptor<Message, Field> descriptor)
             throws SerializerException, IOException {
-        PMessageBuilder<T> builder = descriptor.builder();
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
         while ((tag = in.readIntVarint()) > STOP) {
             int id = tag >>> 3;
             int type = tag & 0x07;
-            TF field = descriptor.getField(id);
+            Field field = descriptor.getField(id);
             if (field != null) {
                 Object value = readFieldValue(in, type, field.getDescriptor());
                 builder.set(field.getKey(), value);

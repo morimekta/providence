@@ -1,18 +1,20 @@
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PField;
+
 /**
  * Enclosed call to a service method.
  */
-public class PServiceCall<T extends PMessage<T>> {
-    private final String method;
+public class PServiceCall<Message extends PMessage<Message, Field>, Field extends PField> {
+    private final String           method;
     private final PServiceCallType type;
-    private final int sequence;
-    private final T message;
+    private final int              sequence;
+    private final Message          message;
 
     public PServiceCall(String method,
                         PServiceCallType type,
                         int sequence,
-                        T message) {
+                        Message message) {
         this.method = method;
         this.type = type;
         this.sequence = sequence;
@@ -53,7 +55,7 @@ public class PServiceCall<T extends PMessage<T>> {
      *
      * @return The sent message.
      */
-    public T getMessage() {
+    public Message getMessage() {
         return message;
     }
 }

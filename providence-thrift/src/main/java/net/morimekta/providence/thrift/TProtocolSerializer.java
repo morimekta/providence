@@ -93,8 +93,8 @@ class TProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream output, Message message) throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -109,7 +109,8 @@ class TProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream output, PServiceCall<Message, Field> call)
             throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
@@ -130,8 +131,8 @@ class TProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> Message
+    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TProtocol protocol = protocolFactory.getProtocol(transport);
@@ -146,7 +147,8 @@ class TProtocolSerializer extends Serializer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream input, PService service)
             throws SerializerException {
         PServiceCallType type = null;
         TMessage tm = null;
@@ -170,9 +172,9 @@ class TProtocolSerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<Message,Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
 
-            T message = readMessage(protocol, descriptor);
+            Message message = readMessage(protocol, descriptor);
 
             protocol.readMessageEnd();
 
@@ -192,7 +194,7 @@ class TProtocolSerializer extends Serializer {
         }
     }
 
-    private void writeMessage(PMessage<?> message, TProtocol protocol) throws TException, SerializerException {
+    private void writeMessage(PMessage<?,?> message, TProtocol protocol) throws TException, SerializerException {
         PStructDescriptor<?, ?> type = message.descriptor();
 
         protocol.writeStructBegin(new TStruct(message.descriptor()
@@ -216,11 +218,12 @@ class TProtocolSerializer extends Serializer {
         protocol.writeStructEnd();
     }
 
-    private <T extends PMessage<T>> T readMessage(TProtocol protocol, PStructDescriptor<T, ?> descriptor)
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message readMessage(TProtocol protocol, PStructDescriptor<Message, Field> descriptor)
             throws SerializerException, TException {
         TField f;
 
-        PMessageBuilder<T> builder = descriptor.builder();
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
         protocol.readStructBegin();  // ignored.
         while ((f = protocol.readFieldBegin()) != null) {
             if (f.type == PType.STOP.id) {
@@ -376,7 +379,7 @@ class TProtocolSerializer extends Serializer {
                 protocol.writeI32(value.getValue());
                 break;
             case MESSAGE:
-                writeMessage((PMessage<?>) item, protocol);
+                writeMessage((PMessage<?,?>) item, protocol);
                 break;
             case LIST:
                 PList<?> lType = (PList<?>) type;

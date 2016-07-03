@@ -2,7 +2,7 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class Containers
-        implements net.morimekta.providence.PMessage<Containers>, java.io.Serializable, Comparable<Containers> {
+        implements net.morimekta.providence.PMessage<Containers,Containers._Field>, java.io.Serializable, Comparable<Containers> {
     private final static long serialVersionUID = 3106880629763954881L;
 
     private final java.util.List<Boolean> mBooleanList;
@@ -1841,7 +1841,7 @@ public class Containers
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Containers> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Containers,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -1862,7 +1862,7 @@ public class Containers
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Containers> {
+            extends net.morimekta.providence.PMessageBuilder<Containers,_Field> {
         private java.util.BitSet optionals;
 
         private net.morimekta.providence.descriptor.PList.Builder<Boolean> mBooleanList;
@@ -4363,14 +4363,14 @@ public class Containers
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 51: return (net.morimekta.providence.PMessageBuilder<MT>) mutableRequiredFields();
-                case 52: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDefaultFields();
-                case 53: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOptionalFields();
-                case 54: return (net.morimekta.providence.PMessageBuilder<MT>) mutableUnionFields();
-                case 55: return (net.morimekta.providence.PMessageBuilder<MT>) mutableExceptionFields();
-                case 56: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDefaultValues();
+                case 51: return mutableRequiredFields();
+                case 52: return mutableDefaultFields();
+                case 53: return mutableOptionalFields();
+                case 54: return mutableUnionFields();
+                case 55: return mutableExceptionFields();
+                case 56: return mutableDefaultValues();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

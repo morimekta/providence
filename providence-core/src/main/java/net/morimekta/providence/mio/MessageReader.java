@@ -14,9 +14,11 @@ import java.io.IOException;
  * An interface for reading messages and service calls.
  */
 public interface MessageReader extends Closeable {
-    <T extends PMessage<T>, TF extends PField> T read(PStructDescriptor<T, TF> descriptor)
+    <Message extends PMessage<Message, Field>, Field extends PField>
+    Message read(PStructDescriptor<Message, Field> descriptor)
             throws IOException, SerializerException;
 
-    <T extends PMessage<T>> PServiceCall<T> read(PService service)
+    <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> read(PService service)
             throws IOException, SerializerException;
 }

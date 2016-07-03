@@ -73,32 +73,39 @@ public class PrettySerializer extends Serializer {
     private final String  space;
     private final String  newline;
     private final String  entrySep;
-    private final boolean encloseOuther;
+    private final boolean encloseOuter;
     private final boolean repeatedListEntries;
 
     public PrettySerializer() {
         this(INDENT, SPACE, NEWLINE, LIST_SEP, true, false);
     }
 
-    public PrettySerializer(String indent, String space, String newline, String entrySep, boolean encloseOuther, boolean repeatedListEntries) {
+    public PrettySerializer(String indent,
+                            String space,
+                            String newline,
+                            String entrySep,
+                            boolean encloseOuter,
+                            boolean repeatedListEntries) {
         this.indent = indent;
         this.space = space;
         this.newline = newline;
         this.entrySep = entrySep;
-        this.encloseOuther = encloseOuther;
+        this.encloseOuter = encloseOuter;
         this.repeatedListEntries = repeatedListEntries;
     }
 
-    public <T extends PMessage<T>> int serialize(OutputStream out, T message) {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream out, Message message) {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
-        appendMessage(builder, message, encloseOuther);
+        appendMessage(builder, message, encloseOuter);
         builder.flush();
         return cout.getByteCount();
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream out, PServiceCall<T> call)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream out, PServiceCall<Message, Field> call)
             throws IOException, SerializerException {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
@@ -120,7 +127,8 @@ public class PrettySerializer extends Serializer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream input, PService service)
             throws SerializerException, IOException {
         // pretty printed service calls cannot be chained-serialized, so this should be totally safe.
         Tokenizer tokenizer = new Tokenizer(input, false);
@@ -147,17 +155,17 @@ public class PrettySerializer extends Serializer {
         tokenizer.expectSymbol("Call params start", '(');
         tokenizer.expectSymbol("Message encloser", '{');
 
-        T message;
+        Message message;
         switch (callType) {
             case CALL:
             case ONEWAY:
-                message = (T) readMessage(tokenizer, method.getRequestType(), true);
+                message = (Message) readMessage(tokenizer, method.getRequestType(), true);
                 break;
             case REPLY:
-                message = (T) readMessage(tokenizer, method.getResponseType(), true);
+                message = (Message) readMessage(tokenizer, method.getResponseType(), true);
                 break;
             case EXCEPTION:
-                message = (T) readMessage(tokenizer, ApplicationException.kDescriptor, true);
+                message = (Message) readMessage(tokenizer, ApplicationException.kDescriptor, true);
                 break;
             default:
                 throw new IllegalStateException("Unreachable code reached");
@@ -169,10 +177,11 @@ public class PrettySerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input,
-                                                                    PStructDescriptor<T, TF> descriptor)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Message deserialize(InputStream input,
+                        PStructDescriptor<Message, Field> descriptor)
             throws IOException, SerializerException {
-        Tokenizer tokenizer = new Tokenizer(input, encloseOuther);
+        Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
         if (first != null && first.isSymbol(Token.kMessageStart)) {
             tokenizer.next();
@@ -182,9 +191,12 @@ public class PrettySerializer extends Serializer {
         }
     }
 
-    private <T extends PMessage<T>, TF extends PField> T readMessage(Tokenizer tokenizer, PStructDescriptor<T, TF> descriptor, boolean requireEnd)
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message readMessage(Tokenizer tokenizer,
+                        PStructDescriptor<Message, Field> descriptor,
+                        boolean requireEnd)
             throws IOException, SerializerException {
-        PMessageBuilder<T> builder = descriptor.builder();
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
 
         for (;;) {
             Token t = tokenizer.next();
@@ -421,7 +433,7 @@ public class PrettySerializer extends Serializer {
         return MIME_TYPE;
     }
 
-    private void appendMessage(IndentedPrintWriter builder, PMessage<?> message, boolean enclose) {
+    private void appendMessage(IndentedPrintWriter builder, PMessage<?,?> message, boolean enclose) {
         PStructDescriptor<?, ?> type = message.descriptor();
 
         if (enclose) {
@@ -569,7 +581,7 @@ public class PrettySerializer extends Serializer {
                 break;
             }
             case MESSAGE:
-                PMessage<?> message = (PMessage<?>) o;
+                PMessage<?,?> message = (PMessage<?, ?>) o;
                 appendMessage(writer, message, true);
                 break;
             default:

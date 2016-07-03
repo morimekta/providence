@@ -63,7 +63,7 @@ public class JConstantsFormat {
                           .formatln("%s = %s.builder()", name, instance)
                           .begin(DBL_INDENT);
 
-                    PMessage<?> message = (PMessage<?>) c.getDefaultValue();
+                    PMessage<?,?> message = (PMessage<?,?>) c.getDefaultValue();
                     int i = 0;
                     for (PField f : message.descriptor()
                                            .getFields()) {

@@ -19,11 +19,14 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PField;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class PMessageBuilderFactory<T extends PMessage<T>> implements PBuilderFactory<T> {
+public abstract class PMessageBuilderFactory<Message extends PMessage<Message, Field>, Field extends PField>
+        implements PBuilderFactory<Message> {
     @Override
-    public abstract PMessageBuilder<T> builder();
+    public abstract PMessageBuilder<Message, Field> builder();
 }

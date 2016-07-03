@@ -106,13 +106,15 @@ public class BinarySerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, T message) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream os, Message message) throws IOException, SerializerException {
         BinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream os, PServiceCall<T> call)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream os, PServiceCall<Message, Field> call)
             throws IOException, SerializerException {
         BinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
@@ -133,15 +135,17 @@ public class BinarySerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws
-                                                                                                                            SerializerException, IOException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor)
+            throws SerializerException, IOException {
         BinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream is, PService service)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream is, PService service)
             throws SerializerException {
         BinaryReader in = new BigEndianBinaryReader(is);
         String methodName = null;
@@ -180,7 +184,7 @@ public class BinarySerializer extends Serializer {
                         .setSequenceNo(sequence);
             } else if (type == PServiceCallType.EXCEPTION) {
                 ApplicationException ex = readMessage(in, ApplicationException.kDescriptor, false);
-                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+                return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             } else if (method == null) {
                 throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
                         .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD)
@@ -191,9 +195,9 @@ public class BinarySerializer extends Serializer {
 
             try {
                 @SuppressWarnings("unchecked")
-                PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+                PStructDescriptor<Message, Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
 
-                T message = readMessage(in, descriptor, false);
+                Message message = readMessage(in, descriptor, false);
 
                 return new PServiceCall<>(methodName, type, sequence, message);
             } catch (SerializerException se) {
@@ -211,8 +215,9 @@ public class BinarySerializer extends Serializer {
         }
     }
 
-    private <T extends PMessage<T>> int writeMessage(BinaryWriter writer, T message) throws IOException,
-                                                                                            SerializerException {
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    int writeMessage(BinaryWriter writer, Message message)
+            throws IOException, SerializerException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -237,14 +242,15 @@ public class BinarySerializer extends Serializer {
         return len;
     }
 
-    private <T extends PMessage<T>> T readMessage(BinaryReader input,
-                                                  PStructDescriptor<T, ?> descriptor,
-                                                  boolean nullable) throws SerializerException, IOException {
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message readMessage(BinaryReader input,
+                        PStructDescriptor<Message, Field> descriptor,
+                        boolean nullable) throws SerializerException, IOException {
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
         }
-        PMessageBuilder<T> builder = descriptor.builder();
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
         while (fieldInfo != null) {
             PField field = descriptor.getField(fieldInfo.getId());
             if (field != null) {
@@ -298,12 +304,12 @@ public class BinarySerializer extends Serializer {
      * @param in        The stream to consume.
      * @param fieldInfo The field info about the content.
      * @param type      The type to generate content for.
-     * @param <T>       The field item type.
+     * @param <Type>    The field item type.
      * @return The field value, or null if no type.
      *
      * @throws IOException If unable to read from stream or invalid field type.
      */
-    private <T> T readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
+    private <Type> Type readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
             throws IOException, SerializerException {
         if (type == null) {
             if (readStrict) {
@@ -334,7 +340,7 @@ public class BinarySerializer extends Serializer {
                 int val = in.expectInt();
                 if (type != null && type instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
-                    PEnumBuilder<T> builder = (PEnumBuilder<T>) ((PEnumDescriptor<?>)type).builder();
+                    PEnumBuilder<Type> builder = (PEnumBuilder<Type>) ((PEnumDescriptor<?>)type).builder();
                     builder.setByValue(val);
                     return cast(builder.build());
                 } else {

@@ -2,6 +2,7 @@ package net.morimekta.providence.mio;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.streams.MessageStreams;
@@ -35,7 +36,8 @@ public class FileMessageWriter implements MessageWriter, Closeable {
     }
 
     @Override
-    public <T extends PMessage<T>> int write(T message) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int write(Message message) throws IOException, SerializerException {
         int ret = serializer.serialize(getOutputStream(), message);
         if (!serializer.binaryProtocol()) {
             out.write(MessageStreams.READABLE_ENTRY_SEP);
@@ -44,7 +46,8 @@ public class FileMessageWriter implements MessageWriter, Closeable {
     }
 
     @Override
-    public <T extends PMessage<T>> int write(PServiceCall<T> call) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int write(PServiceCall<Message, Field> call) throws IOException, SerializerException {
         int ret = serializer.serialize(getOutputStream(), call);
         if (!serializer.binaryProtocol()) {
             out.write(MessageStreams.READABLE_ENTRY_SEP);

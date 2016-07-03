@@ -7,7 +7,7 @@ package net.morimekta.providence.serializer;
 @SuppressWarnings("unused")
 public class ApplicationException
         extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<ApplicationException>, java.io.Serializable, Comparable<ApplicationException> {
+        implements net.morimekta.providence.PMessage<ApplicationException,ApplicationException._Field>, java.io.Serializable, Comparable<ApplicationException> {
     private final static long serialVersionUID = 6590039153455193300L;
 
     private final static net.morimekta.providence.serializer.ApplicationExceptionType kDefaultId = net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN;
@@ -283,7 +283,7 @@ public class ApplicationException
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ApplicationException> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ApplicationException,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -304,7 +304,7 @@ public class ApplicationException
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ApplicationException> {
+            extends net.morimekta.providence.PMessageBuilder<ApplicationException,_Field> {
         private java.util.BitSet optionals;
 
         private String mMessage;
@@ -415,7 +415,7 @@ public class ApplicationException
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

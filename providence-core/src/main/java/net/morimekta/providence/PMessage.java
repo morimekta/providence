@@ -19,6 +19,7 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Stringable;
 
@@ -28,7 +29,8 @@ import net.morimekta.util.Stringable;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
+public interface PMessage<Message extends PMessage<Message, Field>, Field extends PField>
+        extends PValue<Message>, Stringable {
     /**
      * @param key The key of the field.
      * @return Whether the field is present.
@@ -52,7 +54,7 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
      *
      * @return The builder instance.
      */
-    PMessageBuilder<T> mutate();
+    PMessageBuilder<Message, Field> mutate();
 
     /**
      * Shorthand for merging two messages.
@@ -60,7 +62,7 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
      * @param other The message to merge over this messages' values.
      * @return The merged message.
      */
-    default T mergeWith(T other) {
+    default Message mergeWith(Message other) {
         return mutate().merge(other).build();
     }
 
@@ -78,5 +80,5 @@ public interface PMessage<T extends PMessage<T>> extends PValue<T>, Stringable {
     String asString();
 
     @Override
-    PStructDescriptor<T, ?> descriptor();
+    PStructDescriptor<Message, Field> descriptor();
 }

@@ -40,7 +40,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
+public abstract class CMessage<Message extends PMessage<Message, Field>, Field extends PField>
+        implements PMessage<Message, Field> {
     private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true, false);
 
     private final Map<Integer, Object> values;
@@ -154,8 +155,8 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
     }
 
     @Override
-    public int compareTo(T other) {
-        return compare((T) this, other);
+    public int compareTo(Message other) {
+        return compare((Message) this, other);
     }
 
     @Override
@@ -175,7 +176,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
      * @param <T> The message type.
      * @return The resulting string.
      */
-    protected static <T extends PMessage<T>> String asString(T message) {
+    protected static <T extends PMessage<T, F>, F extends PField> String asString(T message) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PRETTY_SERIALIZER.serialize(baos, message);
         return new String(baos.toByteArray(), UTF_8);
@@ -220,7 +221,7 @@ public abstract class CMessage<T extends PMessage<T>> implements PMessage<T> {
         return 0;
     }
 
-    private static <T extends PMessage<T>> int compareMessages(T m1, T m2) {
+    private static <T extends PMessage<T, F>, F extends PField> int compareMessages(T m1, T m2) {
         int c = 0;
         c = m1.descriptor()
               .getQualifiedName(null)

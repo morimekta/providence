@@ -19,12 +19,13 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
 /**
  * Base class for message builders.
  */
-public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder<T> {
+public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField> implements PBuilder<T> {
     /**
      * Checks if the current set data is enough to make a valid struct. It
      * will check for all required fields, and if any are missing it will
@@ -41,7 +42,7 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      * @param value The field value.
      * @return The message builder.
      */
-    public abstract PMessageBuilder<T> set(int key, Object value);
+    public abstract PMessageBuilder<T, F> set(int key, Object value);
 
     /**
      * Adds a value to a set or list container.
@@ -51,7 +52,7 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      * @return The message builder.
      * @throws IllegalArgumentException if the field is not a list or set.
      */
-    public abstract PMessageBuilder<T> addTo(int key, Object value);
+    public abstract PMessageBuilder<T, F> addTo(int key, Object value);
 
     /**
      * clear the provided field value.
@@ -59,7 +60,7 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      * @param key The field key.
      * @return The message builder.
      */
-    public abstract PMessageBuilder<T> clear(int key);
+    public abstract PMessageBuilder<T, F> clear(int key);
 
     /**
      * Merges the provided message into the builder. Contained messages should
@@ -68,7 +69,7 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      *
      * @param from The message to merge values from.
      */
-    public abstract PMessageBuilder<T> merge(T from);
+    public abstract PMessageBuilder<T, F> merge(T from);
 
     /**
      * Get the builder for the given message contained in this builder. If
@@ -76,15 +77,14 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      * or from scratch.
      *
      * @param key The field key.
-     * @param <M> The sub-message type.
      * @return The builder.
      */
-    public abstract <M extends PMessage<M>> PMessageBuilder<M> mutator(int key);
+    public abstract PMessageBuilder mutator(int key);
 
     /**
      * Get the descriptor for the message being built.
      *
      * @return The struct descriptor.
      */
-    public abstract PStructDescriptor<T, ?> descriptor();
+    public abstract PStructDescriptor<T, F> descriptor();
 }

@@ -5,7 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class Declaration
-        implements net.morimekta.providence.PUnion<Declaration>, java.io.Serializable, Comparable<Declaration> {
+        implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>, java.io.Serializable, Comparable<Declaration> {
     private final static long serialVersionUID = -6998763195276182553L;
 
     private final net.morimekta.providence.model.EnumType mDeclEnum;
@@ -382,7 +382,7 @@ public class Declaration
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Declaration> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Declaration,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -403,7 +403,7 @@ public class Declaration
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Declaration> {
+            extends net.morimekta.providence.PMessageBuilder<Declaration,_Field> {
         private _Field tUnionField;
 
         private net.morimekta.providence.model.EnumType mDeclEnum;
@@ -763,13 +763,13 @@ public class Declaration
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclEnum();
-                case 2: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclTypedef();
-                case 3: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclStruct();
-                case 4: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclService();
-                case 5: return (net.morimekta.providence.PMessageBuilder<MT>) mutableDeclConst();
+                case 1: return mutableDeclEnum();
+                case 2: return mutableDeclTypedef();
+                case 3: return mutableDeclStruct();
+                case 4: return mutableDeclService();
+                case 5: return mutableDeclConst();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

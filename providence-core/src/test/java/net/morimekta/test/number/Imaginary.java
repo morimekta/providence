@@ -2,7 +2,7 @@ package net.morimekta.test.number;
 
 @SuppressWarnings("unused")
 public class Imaginary
-        implements net.morimekta.providence.PMessage<Imaginary>, java.io.Serializable, Comparable<Imaginary> {
+        implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>, java.io.Serializable, Comparable<Imaginary> {
     private final static long serialVersionUID = 7869796731524194936L;
 
     private final static double kDefaultV = 0.0d;
@@ -236,7 +236,7 @@ public class Imaginary
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Imaginary> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Imaginary,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -257,7 +257,7 @@ public class Imaginary
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Imaginary> {
+            extends net.morimekta.providence.PMessageBuilder<Imaginary,_Field> {
         private java.util.BitSet optionals;
 
         private double mV;
@@ -362,7 +362,7 @@ public class Imaginary
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

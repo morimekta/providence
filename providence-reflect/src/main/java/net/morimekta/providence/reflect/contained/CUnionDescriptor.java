@@ -127,7 +127,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         return null;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CUnion> {
+    private static class _Factory extends PMessageBuilderFactory<CUnion,CField> {
         private CUnionDescriptor mType;
 
         public void setType(CUnionDescriptor type) {
@@ -135,7 +135,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         }
 
         @Override
-        public PMessageBuilder<CUnion> builder() {
+        public PMessageBuilder<CUnion,CField> builder() {
             // TODO Auto-generated method stub
             return new CUnion.Builder(mType);
         }

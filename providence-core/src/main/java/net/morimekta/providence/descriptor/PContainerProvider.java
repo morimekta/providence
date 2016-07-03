@@ -21,16 +21,20 @@ package net.morimekta.providence.descriptor;
 
 /**
  * Provider for a container type. See {@link PContainer}.
+ *
+ * @param <Container> The container type.
+ * @param <Descriptor> The container descriptor type.
  */
-public class PContainerProvider<C, T extends PContainer<C>> implements PDescriptorProvider {
-    private final T type;
+public class PContainerProvider<Container, Descriptor extends PContainer<Container>>
+        implements PDescriptorProvider {
+    private final Descriptor type;
 
-    protected PContainerProvider(T type) {
+    protected PContainerProvider(Descriptor type) {
         this.type = type;
     }
 
     @Override
-    public T descriptor() {
+    public Descriptor descriptor() {
         return type;
     }
 }

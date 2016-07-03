@@ -28,14 +28,14 @@ import net.morimekta.providence.PType;
 /**
  * The definition of a thrift structure.
  */
-public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField> extends PDeclaredDescriptor<T> {
-    private final PMessageBuilderFactory<T> factory;
-    private final boolean                   compactible;
-    private final boolean                   simple;
+public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PField> extends PDeclaredDescriptor<T> {
+    private final PMessageBuilderFactory<T, F> factory;
+    private final boolean                      compactible;
+    private final boolean                      simple;
 
     public PStructDescriptor(String packageName,
                              String name,
-                             PMessageBuilderFactory<T> factory,
+                             PMessageBuilderFactory<T, F> factory,
                              boolean simple,
                              boolean compactible) {
         super(packageName, name);
@@ -90,7 +90,7 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
     }
 
     @Override
-    public PMessageBuilder<T> builder() {
+    public PMessageBuilder<T, F> builder() {
         return factory.builder();
     }
 
@@ -128,7 +128,7 @@ public abstract class PStructDescriptor<T extends PMessage<T>, F extends PField>
      * Get the actual builder factory instance. For contained structs only.
      * @return The builder factory.
      */
-    protected PMessageBuilderFactory<T> getFactoryInternal() {
+    protected PMessageBuilderFactory<T, F> getFactoryInternal() {
         return factory;
     }
 }

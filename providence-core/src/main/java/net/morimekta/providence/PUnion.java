@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PField;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public interface PUnion<T extends PUnion<T>> extends PMessage<T> {
-    PField unionField();
+public interface PUnion<Union extends PUnion<Union, Field>, Field extends PField>
+        extends PMessage<Union, Field> {
+    Field unionField();
 }

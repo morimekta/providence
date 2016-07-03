@@ -37,20 +37,24 @@ import java.util.stream.Collectors;
  * Convenience methods for reading providence messages from resources.
  */
 public class ProvidenceHelper {
-    public static <T extends PMessage<T>, TF extends PField> T
-    fromJsonResource(String path, PStructDescriptor<T, TF> descriptor)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Message fromJsonResource(String path,
+                             PStructDescriptor<Message, Field> descriptor)
             throws SerializerException, IOException {
         return fromResource(path, descriptor, new JsonSerializer(true));
     }
 
-    public static <T extends PMessage<T>, F extends PField> ArrayList<T>
-    arrayListFromJsonResource(String path, PStructDescriptor<T, F> descriptor)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    ArrayList<Message> arrayListFromJsonResource(String path,
+                                                 PStructDescriptor<Message, Field> descriptor)
             throws SerializerException, IOException {
         return arrayListFromResource(path, descriptor, new JsonSerializer(true));
     }
 
-    public static <T extends PMessage<T>, TF extends PField> T
-    fromResource(String resource, PStructDescriptor<T, TF> descriptor, Serializer serializer)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Message fromResource(String resource,
+                         PStructDescriptor<Message, Field> descriptor,
+                         Serializer serializer)
             throws SerializerException, IOException {
         InputStream in = ProvidenceHelper.class.getResourceAsStream(resource);
         if(in == null) {
@@ -59,11 +63,13 @@ public class ProvidenceHelper {
         return serializer.deserialize(new BufferedInputStream(in), descriptor);
     }
 
-    public static <T extends PMessage<T>, F extends PField> ArrayList<T>
-    arrayListFromResource(String path, PStructDescriptor<T, F> descriptor, Serializer serializer)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    ArrayList<Message> arrayListFromResource(String path,
+                                             PStructDescriptor<Message, Field> descriptor,
+                                             Serializer serializer)
             throws SerializerException, IOException {
-        return (ArrayList<T>) MessageStreams.resource(path, serializer, descriptor)
-                                            .collect(Collectors.toList());
+        return (ArrayList<Message>) MessageStreams.resource(path, serializer, descriptor)
+                                                  .collect(Collectors.toList());
     }
 
     private ProvidenceHelper() {}

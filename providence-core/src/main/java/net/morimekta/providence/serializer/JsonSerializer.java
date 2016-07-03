@@ -135,7 +135,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream output, T message) throws SerializerException {
+    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, T message) throws SerializerException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
@@ -151,7 +151,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
+    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, PServiceCall<T, F> call)
             throws IOException, SerializerException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
@@ -179,7 +179,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws
+    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws
                                                                                                                       SerializerException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
@@ -195,7 +195,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+    public <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> deserialize(InputStream input, PService service)
             throws SerializerException {
         JsonTokenizer tokenizer = new JsonTokenizer(input);
         return parseServiceCall(tokenizer, service);
@@ -212,7 +212,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends PMessage<T>> PServiceCall<T> parseServiceCall(JsonTokenizer tokenizer, PService service)
+    private <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> parseServiceCall(JsonTokenizer tokenizer, PService service)
             throws SerializerException {
         PServiceCallType type = null;
         String methodName = null;
@@ -259,7 +259,7 @@ public class JsonSerializer extends Serializer {
 
                 tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
-                return (PServiceCall<T>) new PServiceCall<>(methodName, type, sequence, ex);
+                return (PServiceCall<T, F>) new PServiceCall<>(methodName, type, sequence, ex);
             }
 
             PServiceMethod method = service.getMethod(methodName);
@@ -269,7 +269,7 @@ public class JsonSerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<T, ?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<T, F> descriptor = type.request ? method.getRequestType() : method.getResponseType();
             T message = parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
@@ -290,9 +290,9 @@ public class JsonSerializer extends Serializer {
         }
     }
 
-    private <T extends PMessage<T>> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
+    private <T extends PMessage<T, F>, F extends PField> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, F> type)
             throws SerializerException, JsonException, IOException {
-        PMessageBuilder<T> builder = type.builder();
+        PMessageBuilder<T, F> builder = type.builder();
 
         if (!tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
             char sep = JsonToken.kMapStart;
@@ -328,9 +328,9 @@ public class JsonSerializer extends Serializer {
         return builder.build();
     }
 
-    private <T extends PMessage<T>> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, ?> type)
+    private <T extends PMessage<T, F>, F extends PField> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, F> type)
             throws SerializerException, IOException, JsonException {
-        PMessageBuilder<T> builder = type.builder();
+        PMessageBuilder<T, F> builder = type.builder();
         // compact message are not allowed to be empty.
 
         int i = 0;
@@ -602,7 +602,7 @@ public class JsonSerializer extends Serializer {
         }
     }
 
-    private void appendMessage(JsonWriter writer, PMessage<?> message) throws SerializerException, JsonException {
+    private void appendMessage(JsonWriter writer, PMessage<?,?> message) throws SerializerException, JsonException {
         PStructDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
@@ -653,7 +653,7 @@ public class JsonSerializer extends Serializer {
                 writer.value((String) null);
                 break;
             case MESSAGE:
-                PMessage<?> message = (PMessage<?>) value;
+                PMessage<?,?> message = (PMessage<?,?>) value;
                 appendMessage(writer, message);
                 break;
             case MAP:
@@ -717,7 +717,7 @@ public class JsonSerializer extends Serializer {
         } else if (primitive instanceof Binary) {
             writer.key((Binary) primitive);
         } else if (primitive instanceof PMessage) {
-            PMessage<?> message = (PMessage<?>) primitive;
+            PMessage<?,?> message = (PMessage<?,?>) primitive;
             if (!message.descriptor().isSimple()) {
                 throw new SerializerException("Only simple messages can be used as map keys. " +
                                               message.descriptor()

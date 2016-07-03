@@ -28,14 +28,9 @@ import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
-import net.morimekta.providence.descriptor.PExceptionDescriptor;
-import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptorProvider;
-import net.morimekta.providence.descriptor.PUnionDescriptor;
-import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
@@ -115,8 +110,9 @@ public class JMessageFormat {
                    .equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends " + PException.class.getName());
         }
-        writer.formatln("implements %s<%s>, %s, Comparable<%s>",
+        writer.formatln("implements %s<%s,%s._Field>, %s, Comparable<%s>",
                         message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
+                        message.instanceType(),
                         message.instanceType(),
                         Serializable.class.getName(),
                         message.instanceType());
@@ -363,7 +359,7 @@ public class JMessageFormat {
 
         writer.appendln("private final static class _Factory")
               .begin()
-              .formatln("    extends %s<%s> {",
+              .formatln("    extends %s<%s,_Field> {",
                         PMessageBuilderFactory.class.getName(),
                         message.instanceType())
               .appendln("@Override")

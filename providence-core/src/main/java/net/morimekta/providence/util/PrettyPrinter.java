@@ -20,6 +20,7 @@
 package net.morimekta.providence.util;
 
 import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.PrettySerializer;
 
 import java.io.ByteArrayOutputStream;
@@ -38,10 +39,11 @@ public class PrettyPrinter {
      * for testing and debugging).
      *
      * @param message The message to stringify.
-     * @param <T> The message type.
+     * @param <Message> The message type.
      * @return The resulting string.
      */
-    public static <T extends PMessage<T>> String debugString(T message) {
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    String debugString(Message message) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DEBUG_STRING_SERIALIZER.serialize(baos, message);
         return new String(baos.toByteArray(), UTF_8);

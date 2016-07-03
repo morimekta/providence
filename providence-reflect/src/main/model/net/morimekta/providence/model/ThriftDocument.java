@@ -5,7 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements net.morimekta.providence.PMessage<ThriftDocument>, java.io.Serializable, Comparable<ThriftDocument> {
+        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>, java.io.Serializable, Comparable<ThriftDocument> {
     private final static long serialVersionUID = -5731994850994905187L;
 
     private final String mComment;
@@ -406,7 +406,7 @@ public class ThriftDocument
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ThriftDocument> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ThriftDocument,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -427,7 +427,7 @@ public class ThriftDocument
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ThriftDocument> {
+            extends net.morimekta.providence.PMessageBuilder<ThriftDocument,_Field> {
         private java.util.BitSet optionals;
 
         private String mComment;
@@ -772,7 +772,7 @@ public class ThriftDocument
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

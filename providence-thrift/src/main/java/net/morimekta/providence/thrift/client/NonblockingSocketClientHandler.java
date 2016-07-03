@@ -4,6 +4,7 @@ import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
@@ -72,8 +73,11 @@ public class NonblockingSocketClientHandler implements PClientHandler, Closeable
     }
 
     @Override
-    public <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS>
-    handleCall(PServiceCall<RQ> call, PService service)
+    public <Request extends PMessage<Request, RequestField>,
+            Response extends PMessage<Response, ResponseField>,
+            RequestField extends PField,
+            ResponseField extends PField> PServiceCall<Response, ResponseField>
+    handleCall(PServiceCall<Request, RequestField> call, PService service)
             throws IOException, SerializerException {
         SocketChannel channel = connect();
 

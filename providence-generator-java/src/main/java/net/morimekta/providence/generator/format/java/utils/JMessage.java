@@ -36,7 +36,7 @@ import java.util.List;
 /**
  *
  */
-public class JMessage<T extends CMessage<T>> {
+public class JMessage<T extends CMessage<T, CField>> {
     private final PStructDescriptor<?, ?> struct;
     private final JHelper                 helper;
     private final ArrayList<JField>       fields;

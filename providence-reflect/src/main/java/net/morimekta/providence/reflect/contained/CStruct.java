@@ -39,7 +39,7 @@ import java.util.TreeMap;
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public class CStruct extends CMessage<CStruct> {
+public class CStruct extends CMessage<CStruct,CField> {
     CStructDescriptor descriptor;
 
     private CStruct(Builder builder) {
@@ -48,7 +48,7 @@ public class CStruct extends CMessage<CStruct> {
     }
 
     @Override
-    public PMessageBuilder<CStruct> mutate() {
+    public PMessageBuilder<CStruct,CField> mutate() {
         return new Builder(descriptor);
     }
 
@@ -57,7 +57,7 @@ public class CStruct extends CMessage<CStruct> {
         return descriptor;
     }
 
-    public static class Builder extends PMessageBuilder<CStruct> {
+    public static class Builder extends PMessageBuilder<CStruct,CField> {
         private final CStructDescriptor    descriptor;
         private final Map<Integer, Object> values;
 
@@ -102,7 +102,7 @@ public class CStruct extends CMessage<CStruct> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <M extends PMessage<M>> PMessageBuilder<M> mutator(int key) {
+        public PMessageBuilder mutator(int key) {
             CField field = descriptor.getField(key);
             if (field == null) {
                 throw new IllegalArgumentException("No such field ID " + key);
@@ -122,11 +122,11 @@ public class CStruct extends CMessage<CStruct> {
                 throw new IllegalArgumentException("Invalid value in map on message type: " + current.getClass().getSimpleName());
             }
 
-            return (PMessageBuilder<M>) current;
+            return (PMessageBuilder) current;
         }
 
         @Override
-        public PStructDescriptor<CStruct, ?> descriptor() {
+        public PStructDescriptor<CStruct, CField> descriptor() {
             return descriptor;
         }
 

@@ -2,7 +2,7 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operand
-        implements net.morimekta.providence.PUnion<Operand>, java.io.Serializable, Comparable<Operand> {
+        implements net.morimekta.providence.PUnion<Operand,Operand._Field>, java.io.Serializable, Comparable<Operand> {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;
@@ -303,7 +303,7 @@ public class Operand
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Operand> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Operand,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -324,7 +324,7 @@ public class Operand
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Operand> {
+            extends net.morimekta.providence.PMessageBuilder<Operand,_Field> {
         private _Field tUnionField;
 
         private net.morimekta.test.calculator.Operation mOperation;
@@ -528,10 +528,10 @@ public class Operand
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOperation();
-                case 3: return (net.morimekta.providence.PMessageBuilder<MT>) mutableImaginary();
+                case 1: return mutableOperation();
+                case 3: return mutableImaginary();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

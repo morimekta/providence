@@ -37,7 +37,7 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
+public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CField> {
     private final CUnionDescriptor descriptor;
     private final CField           unionField;
 
@@ -48,7 +48,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
     }
 
     @Override
-    public PMessageBuilder<CUnion> mutate() {
+    public PMessageBuilder<CUnion,CField> mutate() {
         return new Builder(descriptor);
     }
 
@@ -62,7 +62,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
         return unionField;
     }
 
-    public static class Builder extends PMessageBuilder<CUnion> {
+    public static class Builder extends PMessageBuilder<CUnion,CField> {
         private final CUnionDescriptor descriptor;
 
         private CField unionField;
@@ -97,7 +97,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <M extends PMessage<M>> PMessageBuilder<M> mutator(int key) {
+        public PMessageBuilder mutator(int key) {
             CField field = descriptor.getField(key);
             if (field == null) {
                 throw new IllegalArgumentException("No such unionField ID " + key);
@@ -118,7 +118,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
                 throw new IllegalArgumentException("Invalid currentValue in map on message type: " + currentValue.getClass().getSimpleName());
             }
 
-            return (PMessageBuilder<M>) currentValue;
+            return (PMessageBuilder) currentValue;
         }
 
         @Override
@@ -152,7 +152,7 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
         }
 
         @Override
-        public PStructDescriptor<CUnion, ?> descriptor() {
+        public PStructDescriptor<CUnion, CField> descriptor() {
             return descriptor;
         }
 

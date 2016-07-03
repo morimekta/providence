@@ -36,24 +36,24 @@ import java.io.OutputStream;
  * be inherently thread safe (including not needing any synchronized methods.
  */
 public abstract class Serializer {
-    public abstract <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, SerializerException;
+    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream output, Message message) throws IOException, SerializerException;
 
-    public abstract <T extends PMessage<T>> int
-    serialize(OutputStream output, PServiceCall<T> call) throws IOException, SerializerException;
+    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream output, PServiceCall<Message, Field> call) throws IOException, SerializerException;
 
-    public abstract <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException;
+    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
+    Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException;
 
-    public abstract <T extends PMessage<T>> PServiceCall<T>
-    deserialize(InputStream input, PService service) throws SerializerException, IOException;
+    public abstract <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream input, PService service) throws SerializerException, IOException;
 
     public abstract boolean binaryProtocol();
 
     public abstract String mimeType();
 
     @SuppressWarnings("unchecked")
-    protected <T> T cast(Object o) {
-        return (T) o;
+    protected <Type> Type cast(Object o) {
+        return (Type) o;
     }
 }

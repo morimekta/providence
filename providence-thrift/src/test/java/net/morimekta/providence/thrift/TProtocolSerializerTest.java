@@ -10,8 +10,6 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
 
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.thrift.TBase;
@@ -60,22 +58,27 @@ public class TProtocolSerializerTest {
         }
     }
 
-    public <PM extends PMessage<PM>, F extends TFieldIdEnum, TB extends TBase<TB, F>> void assertConsistent(String prefix,
-                                                                                                            PM providence,
-                                                                                                            TB thrift) {
+    public <Providence extends PMessage<Providence, ProvidenceField>,
+            ProvidenceField extends PField,
+            Thrift extends TBase<Thrift, ThriftField>,
+            ThriftField extends TFieldIdEnum> void assertConsistent(String prefix,
+                                                                    Providence providence,
+                                                                    Thrift thrift) {
         if (providence.descriptor()
                       .getVariant() == PMessageVariant.UNION) {
-            TUnion<?, F> t_union = (TUnion) thrift;
-            PUnion<?> p_union = (PUnion) providence;
+            @SuppressWarnings("unchecked")
+            TUnion<?, ThriftField> t_union = (TUnion) thrift;
+            @SuppressWarnings("unchecked")
+            PUnion<?, ProvidenceField> p_union = (PUnion) providence;
 
-            F t_field = t_union.getSetField();
+            ThriftField t_field = t_union.getSetField();
             PField p_field = p_union.unionField();
 
             assertEquals(p_field.getKey(), t_field.getThriftFieldId());
         } else {
             for (PField field : providence.descriptor()
                                              .getFields()) {
-                F thriftField = thrift.fieldForId(field.getKey());
+                ThriftField thriftField = thrift.fieldForId(field.getKey());
 
                 String fieldPath = (prefix.isEmpty() ? "" : prefix + ".") + field.getName();
 

@@ -20,8 +20,9 @@
 package net.morimekta.providence.streams;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -38,13 +39,15 @@ import java.util.stream.Collector;
  * @since 28.01.16.
  */
 public class MessageCollectors {
-    public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toFile(File file,
-                                                                                     Serializer serializer) {
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Collector<Message, OutputStream, Integer> toFile(File file,
+                                                     Serializer serializer) {
         return toPath(file.toPath(), serializer);
     }
 
-    public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toPath(Path file,
-                                                                                     Serializer serializer) {
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Collector<Message, OutputStream, Integer> toPath(Path file,
+                                                     Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> {
             try {
@@ -76,8 +79,9 @@ public class MessageCollectors {
         });
     }
 
-    public static <T extends PMessage<T>> Collector<T, OutputStream, Integer> toStream(OutputStream out,
-                                                                                       Serializer serializer) {
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Collector<Message, OutputStream, Integer> toStream(OutputStream out,
+                                                       Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> new BufferedOutputStream(out), (outputStream, t) -> {
             try {

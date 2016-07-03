@@ -7,7 +7,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements net.morimekta.providence.PMessage<ServiceType>, java.io.Serializable, Comparable<ServiceType> {
+        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>, java.io.Serializable, Comparable<ServiceType> {
     private final static long serialVersionUID = 789757775761432238L;
 
     private final String mComment;
@@ -390,7 +390,7 @@ public class ServiceType
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ServiceType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ServiceType,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -411,7 +411,7 @@ public class ServiceType
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ServiceType> {
+            extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field> {
         private java.util.BitSet optionals;
 
         private String mComment;
@@ -698,7 +698,7 @@ public class ServiceType
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

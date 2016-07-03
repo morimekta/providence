@@ -3,7 +3,7 @@ package net.morimekta.test.calculator;
 @SuppressWarnings("unused")
 public class CalculateException
         extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<CalculateException>, java.io.Serializable, Comparable<CalculateException> {
+        implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>, java.io.Serializable, Comparable<CalculateException> {
     private final static long serialVersionUID = -3144631929815376595L;
 
     private final String mMessage;
@@ -277,7 +277,7 @@ public class CalculateException
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<CalculateException> {
+            extends net.morimekta.providence.PMessageBuilderFactory<CalculateException,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -298,7 +298,7 @@ public class CalculateException
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<CalculateException> {
+            extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field> {
         private java.util.BitSet optionals;
 
         private String mMessage;
@@ -436,9 +436,9 @@ public class CalculateException
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 2: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOperation();
+                case 2: return mutableOperation();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

@@ -124,7 +124,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         return true;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CStruct> {
+    private static class _Factory extends PMessageBuilderFactory<CStruct,CField> {
         private CStructDescriptor mType;
 
         public void setType(CStructDescriptor type) {
@@ -132,7 +132,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         }
 
         @Override
-        public PMessageBuilder<CStruct> builder() {
+        public PMessageBuilder<CStruct,CField> builder() {
             // TODO Auto-generated method stub
             return new CStruct.Builder(mType);
         }

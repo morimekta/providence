@@ -26,8 +26,10 @@ import net.morimekta.providence.PBuilder;
  * <p>
  * See {@link PList}, {@link PSet} and {@link PMap} which specializes for each
  * type of container.
+ *
+ * @param <Container> The container type.
  */
-public abstract class PContainer<C> implements PDescriptor {
+public abstract class PContainer<Container> implements PDescriptor {
     private final PDescriptorProvider itemDescriptorProvider;
 
     protected PContainer(PDescriptorProvider provider) {
@@ -52,5 +54,5 @@ public abstract class PContainer<C> implements PDescriptor {
      * Get an instance builder for the container.
      * @return The instance builder.
      */
-    public abstract PBuilder<C> builder();
+    public abstract PBuilder<Container> builder();
 }

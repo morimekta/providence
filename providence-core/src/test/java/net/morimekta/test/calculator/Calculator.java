@@ -191,7 +191,7 @@ public class Calculator {
     // type --> calculate___request
     @SuppressWarnings("unused")
     private static class Calculate_request
-            implements net.morimekta.providence.PMessage<Calculate_request>, java.io.Serializable, Comparable<Calculate_request> {
+            implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>, java.io.Serializable, Comparable<Calculate_request> {
         private final static long serialVersionUID = -2850591557621395232L;
 
         private final net.morimekta.test.calculator.Operation mOp;
@@ -399,7 +399,7 @@ public class Calculator {
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Calculate_request> {
+                extends net.morimekta.providence.PMessageBuilderFactory<Calculate_request,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -420,7 +420,7 @@ public class Calculator {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Calculate_request> {
+                extends net.morimekta.providence.PMessageBuilder<Calculate_request,_Field> {
             private java.util.BitSet optionals;
 
             private net.morimekta.test.calculator.Operation mOp;
@@ -516,9 +516,9 @@ public class Calculator {
 
             @Override
             @SuppressWarnings("unchecked")
-            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            public net.morimekta.providence.PMessageBuilder mutator(int key) {
                 switch (key) {
-                    case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableOp();
+                    case 1: return mutableOp();
                     default: throw new IllegalArgumentException("Not a message field ID: " + key);
                 }
             }
@@ -569,7 +569,7 @@ public class Calculator {
     // type <-- calculate___response
     @SuppressWarnings("unused")
     private static class Calculate_response
-            implements net.morimekta.providence.PUnion<Calculate_response>, java.io.Serializable, Comparable<Calculate_response> {
+            implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>, java.io.Serializable, Comparable<Calculate_response> {
         private final static long serialVersionUID = 3839355577455995570L;
 
         private final net.morimekta.test.calculator.Operand mSuccess;
@@ -832,7 +832,7 @@ public class Calculator {
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Calculate_response> {
+                extends net.morimekta.providence.PMessageBuilderFactory<Calculate_response,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -853,7 +853,7 @@ public class Calculator {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Calculate_response> {
+                extends net.morimekta.providence.PMessageBuilder<Calculate_response,_Field> {
             private _Field tUnionField;
 
             private net.morimekta.test.calculator.Operand mSuccess;
@@ -1018,10 +1018,10 @@ public class Calculator {
 
             @Override
             @SuppressWarnings("unchecked")
-            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            public net.morimekta.providence.PMessageBuilder mutator(int key) {
                 switch (key) {
-                    case 0: return (net.morimekta.providence.PMessageBuilder<MT>) mutableSuccess();
-                    case 1: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCe();
+                    case 0: return mutableSuccess();
+                    case 1: return mutableCe();
                     default: throw new IllegalArgumentException("Not a message field ID: " + key);
                 }
             }
@@ -1082,7 +1082,7 @@ public class Calculator {
     // type --> iamalive___request
     @SuppressWarnings("unused")
     private static class Iamalive_request
-            implements net.morimekta.providence.PMessage<Iamalive_request>, java.io.Serializable, Comparable<Iamalive_request> {
+            implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>, java.io.Serializable, Comparable<Iamalive_request> {
         private final static long serialVersionUID = 7912890008187182926L;
 
         
@@ -1257,7 +1257,7 @@ public class Calculator {
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Iamalive_request> {
+                extends net.morimekta.providence.PMessageBuilderFactory<Iamalive_request,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -1278,7 +1278,7 @@ public class Calculator {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Iamalive_request> {
+                extends net.morimekta.providence.PMessageBuilder<Iamalive_request,_Field> {
             private java.util.BitSet optionals;
 
             /**
@@ -1305,7 +1305,7 @@ public class Calculator {
 
             @Override
             @SuppressWarnings("unchecked")
-            public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+            public net.morimekta.providence.PMessageBuilder mutator(int key) {
                 switch (key) {
                     default: throw new IllegalArgumentException("Not a message field ID: " + key);
                 }

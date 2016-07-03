@@ -72,13 +72,15 @@ public class ConstParser {
      *
      * @param tokenizer The JSON tokenizer.
      * @param type      The message type.
-     * @param <T>       Message generic type.
+     * @param <Message> Message generic type.
+     * @param <Field>   Message field type.
      * @return The parsed message.
      */
-    private <T extends PMessage<T>, F extends PField> T parseMessage(JsonTokenizer tokenizer,
-                                                                     PStructDescriptor<T, F> type)
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message parseMessage(JsonTokenizer tokenizer,
+                         PStructDescriptor<Message, Field> type)
             throws IOException, JsonException {
-        PMessageBuilder<T> builder = type.builder();
+        PMessageBuilder<Message, Field> builder = type.builder();
 
         if (tokenizer.peek("checking for empty").isSymbol(JsonToken.kMapEnd)) {
             tokenizer.next();
@@ -88,8 +90,8 @@ public class ConstParser {
         char sep = JsonToken.kMapStart;
         while (sep != JsonToken.kMapEnd) {
             JsonToken token = tokenizer.expectString("message field name");
-            F field = type.getField(token.substring(1, -1)
-                                         .asString());
+            Field field = type.getField(token.substring(1, -1)
+                                             .asString());
             if (field == null) {
                 throw new JsonException("Not a valid field name: " + token.substring(1, -1));
             }

@@ -30,13 +30,15 @@ public class FileMessageReader implements MessageReader {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T read(PStructDescriptor<T, TF> descriptor)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Message read(PStructDescriptor<Message, Field> descriptor)
             throws IOException, SerializerException {
         return serializer.deserialize(getInputStream(), descriptor);
     }
 
     @Override
-    public <T extends PMessage<T>> PServiceCall<T> read(PService service) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> read(PService service) throws IOException, SerializerException {
         return serializer.deserialize(getInputStream(), service);
     }
 

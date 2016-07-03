@@ -63,8 +63,8 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int
-    serialize(OutputStream output, T message) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> int
+    serialize(OutputStream output, Message message) throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -79,7 +79,8 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>> int serialize(OutputStream output, PServiceCall<T> call)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    int serialize(OutputStream output, PServiceCall<Message, Field> call)
             throws IOException, SerializerException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
@@ -100,8 +101,8 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T
-    deserialize(InputStream input, PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> Message
+    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
@@ -116,7 +117,8 @@ public class TTupleProtocolSerializer extends Serializer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T>> PServiceCall<T> deserialize(InputStream input, PService service)
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PServiceCall<Message, Field> deserialize(InputStream input, PService service)
             throws SerializerException {
         TMessage tm = null;
         PServiceCallType type = null;
@@ -139,9 +141,9 @@ public class TTupleProtocolSerializer extends Serializer {
                 throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
             }
 
-            PStructDescriptor<T,?> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<Message,Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
 
-            T message = readMessage(protocol, descriptor);
+            Message message = readMessage(protocol, descriptor);
 
             protocol.readMessageEnd();
 
@@ -171,10 +173,10 @@ public class TTupleProtocolSerializer extends Serializer {
         return MIME_TYPE;
     }
 
-    private void writeMessage(PMessage<?> message, TTupleProtocol protocol) throws TException, SerializerException {
+    private void writeMessage(PMessage<?,?> message, TTupleProtocol protocol) throws TException, SerializerException {
         PStructDescriptor<?, ?> descriptor = message.descriptor();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
-            PField fld = ((PUnion<?>) message).unionField();
+            PField fld = ((PUnion<?,?>) message).unionField();
             protocol.writeI16((short) fld.getKey());
             writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
         } else {
@@ -225,9 +227,10 @@ public class TTupleProtocolSerializer extends Serializer {
         return numOptionals;
     }
 
-    private <T extends PMessage<T>> T readMessage(TTupleProtocol protocol, PStructDescriptor<T, ?> descriptor)
+    private <Message extends PMessage<Message, Field>, Field extends PField>
+    Message readMessage(TTupleProtocol protocol, PStructDescriptor<Message, Field> descriptor)
             throws SerializerException, TException {
-        PMessageBuilder<T> builder = descriptor.builder();
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
 
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             int fieldId = protocol.readI16();
@@ -369,7 +372,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 protocol.writeI32(value.getValue());
                 break;
             case MESSAGE:
-                writeMessage((PMessage<?>) item, protocol);
+                writeMessage((PMessage<?,?>) item, protocol);
                 break;
             case LIST:
                 PList<?> lType = (PList<?>) type;

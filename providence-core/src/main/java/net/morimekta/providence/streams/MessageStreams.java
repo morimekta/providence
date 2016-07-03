@@ -53,14 +53,15 @@ public class MessageStreams {
      * @param file       The file to read.
      * @param serializer The serializer to use.
      * @param descriptor The descriptor of the entry type of the file.
-     * @param <T>        The message type.
-     * @param <F>        The message field type.
+     * @param <Message>  The message type.
+     * @param <Field>    The message field type.
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
-    public static <T extends PMessage<T>, F extends PField> Stream<T> file(File file,
-                                                                           Serializer serializer,
-                                                                           PStructDescriptor<T, F> descriptor)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Stream<Message> file(File file,
+                         Serializer serializer,
+                         PStructDescriptor<Message, Field> descriptor)
             throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
         return stream(in, serializer, descriptor);
@@ -74,14 +75,15 @@ public class MessageStreams {
      * @param resource   The file to read.
      * @param serializer The serializer to use.
      * @param descriptor The descriptor of the entry type of the file.
-     * @param <T>        The message type.
-     * @param <F>        The message field type.
+     * @param <Message>  The message type.
+     * @param <Field>    The message field type.
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
-    public static <T extends PMessage<T>, F extends PField> Stream<T> resource(String resource,
-                                                                               Serializer serializer,
-                                                                               PStructDescriptor<T, F> descriptor)
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Stream<Message> resource(String resource,
+                             Serializer serializer,
+                             PStructDescriptor<Message, Field> descriptor)
             throws IOException {
         InputStream in = MessageStreams.class.getResourceAsStream(resource);
         if (in == null) {
@@ -108,24 +110,25 @@ public class MessageStreams {
      * @param in         The input stream to read.
      * @param serializer The serializer to use.
      * @param descriptor The descriptor of the entry type of the file.
-     * @param <T>        The message type.
-     * @param <F>        The message field type.
+     * @param <Message>  The message type.
+     * @param <Field>    The message field type.
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
-    public static <T extends PMessage<T>, F extends PField> Stream<T> stream(InputStream in,
-                                                                             Serializer serializer,
-                                                                             PStructDescriptor<T, F> descriptor)
+    public static <Message extends PMessage<Message, Field>, Field extends PField> Stream<Message> stream(InputStream in,
+                                                                                                          Serializer serializer,
+                                                                                                          PStructDescriptor<Message, Field> descriptor)
             throws IOException {
         return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, null), false);
     }
 
-    private static abstract class BaseMessageSpliterator<T extends PMessage<T>> implements Spliterator<T> {
-        protected abstract T read();
+    private static abstract class BaseMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
+            implements Spliterator<Message> {
+        protected abstract Message read();
 
         @Override
-        public boolean tryAdvance(Consumer<? super T> action) {
-            T message = read();
+        public boolean tryAdvance(Consumer<? super Message> action) {
+            Message message = read();
             if (message != null) {
                 action.accept(message);
                 return true;
@@ -134,8 +137,8 @@ public class MessageStreams {
         }
 
         @Override
-        public void forEachRemaining(Consumer<? super T> action) {
-            T message;
+        public void forEachRemaining(Consumer<? super Message> action) {
+            Message message;
             while ((message = read()) != null) {
                 action.accept(message);
             }
@@ -147,7 +150,7 @@ public class MessageStreams {
          * @return null (no split).
          */
         @Override
-        public Spliterator<T> trySplit() {
+        public Spliterator<Message> trySplit() {
             return null;
         }
 
@@ -189,23 +192,23 @@ public class MessageStreams {
          * @return Comparable compareTo method.
          */
         @Override
-        public Comparator<? super T> getComparator() {
+        public Comparator<? super Message> getComparator() {
             return Comparable::compareTo;
         }
     }
 
-    private static class StreamMessageSpliterator<T extends PMessage<T>, F extends PField>
-            extends BaseMessageSpliterator<T> {
-        private final InputStream             in;
-        private final PStructDescriptor<T, F> descriptor;
-        private final Serializer              serializer;
+    private static class StreamMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
+            extends BaseMessageSpliterator<Message, Field> {
+        private final InputStream                       in;
+        private final PStructDescriptor<Message, Field> descriptor;
+        private final Serializer                        serializer;
 
         private int                         num;
         private Function<InputStream, Void> closer;
 
         private StreamMessageSpliterator(InputStream in,
                                          Serializer serializer,
-                                         PStructDescriptor<T, F> descriptor,
+                                         PStructDescriptor<Message, Field> descriptor,
                                          Function<InputStream, Void> closer) throws IOException {
             this.in = in;
             this.closer = closer;
@@ -217,7 +220,7 @@ public class MessageStreams {
         }
 
         @Override
-        public T read() {
+        public Message read() {
             try {
                 if (num > 0) {
                     if (!serializer.binaryProtocol()) {
@@ -240,7 +243,7 @@ public class MessageStreams {
                         return null;
                     in.reset();
                 }
-                T out = serializer.deserialize(in, descriptor);
+                Message out = serializer.deserialize(in, descriptor);
                 if (out == null) {
                     close();
                 }

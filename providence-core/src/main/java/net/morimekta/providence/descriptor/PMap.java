@@ -33,13 +33,13 @@ import java.util.Map;
 /**
  * Descriptor for a map with key and item type.
  */
-public class PMap<K, V> extends PContainer<Map<K, V>> {
-    private final PDescriptorProvider keyDescriptor;
-    private final BuilderFactory<K, V>   builderFactory;
+public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
+    private final PDescriptorProvider        keyDescriptor;
+    private final BuilderFactory<Key, Value> builderFactory;
 
     public PMap(PDescriptorProvider keyDesc,
                 PDescriptorProvider itemDesc,
-                BuilderFactory<K, V> builderFactory) {
+                BuilderFactory<Key, Value> builderFactory) {
         super(itemDesc);
         this.keyDescriptor = keyDesc;
         this.builderFactory = builderFactory;
@@ -190,7 +190,7 @@ public class PMap<K, V> extends PContainer<Map<K, V>> {
     }
 
     @Override
-    public Builder<K, V> builder() {
+    public Builder<Key, Value> builder() {
         return builderFactory.builder();
     }
 

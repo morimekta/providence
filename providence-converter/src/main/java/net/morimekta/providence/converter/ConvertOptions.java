@@ -164,7 +164,8 @@ public class ConvertOptions {
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> PStructDescriptor<T, F> getDefinition()
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    PStructDescriptor<Message, Field> getDefinition()
             throws ParseException {
         if (type.isEmpty()) {
             throw new ArgumentException("Input type.");
@@ -195,8 +196,8 @@ public class ConvertOptions {
         }
 
         @SuppressWarnings("unchecked")
-        PStructDescriptor<T, F> descriptor = (PStructDescriptor) loader.getRegistry()
-                                                                       .getDescriptor(type, null);
+        PStructDescriptor<Message, Field> descriptor = (PStructDescriptor) loader.getRegistry()
+                                                                                 .getDescriptor(type, null);
         if (descriptor == null) {
             throw new ArgumentException("No available type for name %s", type);
         }
@@ -204,7 +205,8 @@ public class ConvertOptions {
         return descriptor;
     }
 
-    public <T extends PMessage<T>> Collector<T, OutputStream, Integer> getOutput()
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Collector<Message, OutputStream, Integer> getOutput()
             throws IOException {
         Format fmt = Format.pretty;
         File file = null;
@@ -225,9 +227,9 @@ public class ConvertOptions {
         }
     }
 
-    public <T extends PMessage<T>, F extends PField> Stream<T> getInput()
-            throws ParseException {
-        PStructDescriptor<T, F> descriptor = getDefinition();
+    public <Message extends PMessage<Message, Field>, Field extends PField>
+    Stream<Message> getInput() throws ParseException {
+        PStructDescriptor<Message, Field> descriptor = getDefinition();
 
         Format fmt = Format.pretty;
         File file = null;

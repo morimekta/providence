@@ -21,6 +21,7 @@ package net.morimekta.providence.client;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
@@ -57,8 +58,12 @@ public class HttpClientHandler implements PClientHandler {
     }
 
     @Override
-    public <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS> handleCall(PServiceCall<RQ> pServiceCall,
-                                                                                          PService service)
+    public <Request extends PMessage<Request, RequestField>,
+            Response extends PMessage<Response, ResponseField>,
+            RequestField extends PField,
+            ResponseField extends PField>
+    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> pServiceCall,
+                                                     PService service)
             throws IOException, SerializerException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         requestSerializer.serialize(baos, pServiceCall);

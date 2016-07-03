@@ -2,7 +2,7 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class OptionalFields
-        implements net.morimekta.providence.PMessage<OptionalFields>, java.io.Serializable, Comparable<OptionalFields> {
+        implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>, java.io.Serializable, Comparable<OptionalFields> {
     private final static long serialVersionUID = 206291416785618490L;
 
     private final Boolean mBooleanValue;
@@ -539,7 +539,7 @@ public class OptionalFields
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<OptionalFields> {
+            extends net.morimekta.providence.PMessageBuilderFactory<OptionalFields,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -560,7 +560,7 @@ public class OptionalFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<OptionalFields> {
+            extends net.morimekta.providence.PMessageBuilder<OptionalFields,_Field> {
         private java.util.BitSet optionals;
 
         private Boolean mBooleanValue;
@@ -1034,9 +1034,9 @@ public class OptionalFields
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                case 10: return mutableCompactValue();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

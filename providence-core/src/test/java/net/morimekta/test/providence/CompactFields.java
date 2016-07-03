@@ -2,7 +2,7 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class CompactFields
-        implements net.morimekta.providence.PMessage<CompactFields>, java.io.Serializable, Comparable<CompactFields> {
+        implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>, java.io.Serializable, Comparable<CompactFields> {
     private final static long serialVersionUID = -8473304196623780023L;
 
     private final static int kDefaultId = 0;
@@ -293,7 +293,7 @@ public class CompactFields
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<CompactFields> {
+            extends net.morimekta.providence.PMessageBuilderFactory<CompactFields,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -314,7 +314,7 @@ public class CompactFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<CompactFields> {
+            extends net.morimekta.providence.PMessageBuilder<CompactFields,_Field> {
         private java.util.BitSet optionals;
 
         private String mName;
@@ -464,7 +464,7 @@ public class CompactFields
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

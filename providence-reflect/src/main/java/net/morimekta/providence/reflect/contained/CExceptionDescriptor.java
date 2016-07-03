@@ -24,7 +24,6 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -130,7 +129,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
         return PMessageVariant.EXCEPTION;
     }
 
-    private static class _Factory extends PMessageBuilderFactory<CException> {
+    private static class _Factory extends PMessageBuilderFactory<CException, CField> {
         private CExceptionDescriptor mType;
 
         public void setType(CExceptionDescriptor type) {
@@ -138,7 +137,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
         }
 
         @Override
-        public PMessageBuilder<CException> builder() {
+        public PMessageBuilder<CException, CField> builder() {
             // TODO Auto-generated method stub
             return new CException.Builder(mType);
         }

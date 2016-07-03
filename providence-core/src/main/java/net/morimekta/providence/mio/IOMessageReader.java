@@ -24,13 +24,13 @@ public class IOMessageReader implements MessageReader {
     }
 
     @Override
-    public <T extends PMessage<T>, TF extends PField> T
-    read(PStructDescriptor<T, TF> descriptor) throws IOException, SerializerException {
+    public <Message extends PMessage<Message, Field>, Field extends PField> Message
+    read(PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException {
         return serializer.deserialize(in, descriptor);
     }
 
     @Override
-    public <T extends PMessage<T>> PServiceCall<T>
+    public <Message extends PMessage<Message, Field>, Field extends PField> PServiceCall<Message, Field>
     read(PService service) throws IOException, SerializerException {
         return serializer.deserialize(in, service);
     }

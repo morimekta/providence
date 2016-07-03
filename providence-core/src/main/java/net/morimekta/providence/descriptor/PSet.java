@@ -34,11 +34,11 @@ import java.util.Set;
 /**
  * Descriptor for a set with item type.
  */
-public class PSet<I> extends PContainer<Set<I>> {
-    private final BuilderFactory<I> builderFactory;
+public class PSet<Item> extends PContainer<Set<Item>> {
+    private final BuilderFactory<Item> builderFactory;
 
     public PSet(PDescriptorProvider itemType,
-                BuilderFactory<I> builderFactory) {
+                BuilderFactory<Item> builderFactory) {
         super(itemType);
         this.builderFactory = builderFactory;
     }
@@ -181,7 +181,7 @@ public class PSet<I> extends PContainer<Set<I>> {
     }
 
     @Override
-    public Builder<I> builder() {
+    public Builder<Item> builder() {
         return builderFactory.builder();
     }
 

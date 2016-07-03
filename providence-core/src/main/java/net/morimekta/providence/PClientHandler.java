@@ -1,5 +1,6 @@
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.SerializerException;
 
@@ -15,12 +16,18 @@ public interface PClientHandler {
      *
      * @param call The request call.
      * @param service The service to be handled.
-     * @param <RQ> Request type.
-     * @param <RS> Response type.
+     * @param <Request> Request type.
+     * @param <Response> Response type.
+     * @param <RequestField> Request type.
+     * @param <ResponseField> Response type.
      * @return The response service call object, or null if none (e.g. oneway).
      * @throws IOException On read or write failure.
      * @throws SerializerException On serialization problems.
      */
-    <RQ extends PMessage<RQ>, RS extends PMessage<RS>> PServiceCall<RS>
-    handleCall(PServiceCall<RQ> call, PService service) throws IOException, SerializerException;
+    <       Request extends PMessage<Request, RequestField>,
+            Response extends PMessage<Response, ResponseField>,
+            RequestField extends PField,
+            ResponseField extends PField>
+    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call, PService service)
+            throws IOException, SerializerException;
 }

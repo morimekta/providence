@@ -5,7 +5,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class EnumValue
-        implements net.morimekta.providence.PMessage<EnumValue>, java.io.Serializable, Comparable<EnumValue> {
+        implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>, java.io.Serializable, Comparable<EnumValue> {
     private final static long serialVersionUID = -4079600082644582517L;
 
     private final static int kDefaultValue = 0;
@@ -332,7 +332,7 @@ public class EnumValue
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<EnumValue> {
+            extends net.morimekta.providence.PMessageBuilderFactory<EnumValue,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -353,7 +353,7 @@ public class EnumValue
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<EnumValue> {
+            extends net.morimekta.providence.PMessageBuilder<EnumValue,_Field> {
         private java.util.BitSet optionals;
 
         private String mComment;
@@ -569,7 +569,7 @@ public class EnumValue
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

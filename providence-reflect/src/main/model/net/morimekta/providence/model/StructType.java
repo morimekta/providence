@@ -7,7 +7,7 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements net.morimekta.providence.PMessage<StructType>, java.io.Serializable, Comparable<StructType> {
+        implements net.morimekta.providence.PMessage<StructType,StructType._Field>, java.io.Serializable, Comparable<StructType> {
     private final static long serialVersionUID = -7531050363059752370L;
 
     private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;
@@ -390,7 +390,7 @@ public class StructType
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<StructType> {
+            extends net.morimekta.providence.PMessageBuilderFactory<StructType,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -411,7 +411,7 @@ public class StructType
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<StructType> {
+            extends net.morimekta.providence.PMessageBuilder<StructType,_Field> {
         private java.util.BitSet optionals;
 
         private String mComment;
@@ -698,7 +698,7 @@ public class StructType
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

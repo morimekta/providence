@@ -2,7 +2,7 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operation
-        implements net.morimekta.providence.PMessage<Operation>, java.io.Serializable, Comparable<Operation> {
+        implements net.morimekta.providence.PMessage<Operation,Operation._Field>, java.io.Serializable, Comparable<Operation> {
     private final static long serialVersionUID = -2122462501055525645L;
 
     private final net.morimekta.test.calculator.Operator mOperator;
@@ -259,7 +259,7 @@ public class Operation
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<Operation> {
+            extends net.morimekta.providence.PMessageBuilderFactory<Operation,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -280,7 +280,7 @@ public class Operation
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Operation> {
+            extends net.morimekta.providence.PMessageBuilder<Operation,_Field> {
         private java.util.BitSet optionals;
 
         private net.morimekta.test.calculator.Operator mOperator;
@@ -417,7 +417,7 @@ public class Operation
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }

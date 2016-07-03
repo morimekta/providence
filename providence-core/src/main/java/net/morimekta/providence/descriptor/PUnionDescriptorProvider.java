@@ -25,7 +25,7 @@ import net.morimekta.providence.PMessage;
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
-public abstract class PUnionDescriptorProvider<V extends PMessage<V>, F extends PField>
+public abstract class PUnionDescriptorProvider<V extends PMessage<V, F>, F extends PField>
         extends PStructDescriptorProvider<V, F> {
     @Override
     public abstract PUnionDescriptor<V, F> descriptor();

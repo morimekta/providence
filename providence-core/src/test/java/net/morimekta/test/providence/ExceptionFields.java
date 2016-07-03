@@ -3,7 +3,7 @@ package net.morimekta.test.providence;
 @SuppressWarnings("unused")
 public class ExceptionFields
         extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<ExceptionFields>, java.io.Serializable, Comparable<ExceptionFields> {
+        implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>, java.io.Serializable, Comparable<ExceptionFields> {
     private final static long serialVersionUID = -4665960318174350293L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -580,7 +580,7 @@ public class ExceptionFields
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ExceptionFields> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ExceptionFields,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -601,7 +601,7 @@ public class ExceptionFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ExceptionFields> {
+            extends net.morimekta.providence.PMessageBuilder<ExceptionFields,_Field> {
         private java.util.BitSet optionals;
 
         private boolean mBooleanValue;
@@ -1057,9 +1057,9 @@ public class ExceptionFields
 
         @Override
         @SuppressWarnings("unchecked")
-        public <MT extends net.morimekta.providence.PMessage<MT>> net.morimekta.providence.PMessageBuilder<MT> mutator(int key) {
+        public net.morimekta.providence.PMessageBuilder mutator(int key) {
             switch (key) {
-                case 10: return (net.morimekta.providence.PMessageBuilder<MT>) mutableCompactValue();
+                case 10: return mutableCompactValue();
                 default: throw new IllegalArgumentException("Not a message field ID: " + key);
             }
         }

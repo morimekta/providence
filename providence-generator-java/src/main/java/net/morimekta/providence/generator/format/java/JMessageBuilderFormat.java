@@ -1,6 +1,5 @@
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
@@ -43,7 +42,7 @@ public class JMessageBuilderFormat {
 
         writer.appendln("public static class _Builder")
               .begin()
-              .formatln("    extends %s<%s> {",
+              .formatln("    extends %s<%s,_Field> {",
                         PMessageBuilder.class.getName(),
                         message.instanceType());
 
@@ -589,17 +588,16 @@ public class JMessageBuilderFormat {
     private void appendOverrideMutator(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("@SuppressWarnings(\"unchecked\")")
-              .formatln("public <MT extends %s<MT>> %s<MT> mutator(int key) {",
-                        PMessage.class.getName(), PMessageBuilder.class.getName())
+              .formatln("public %s mutator(int key) {",
+                        PMessageBuilder.class.getName())
               .begin()
               .appendln("switch (key) {")
               .begin();
         message.fields()
                .stream()
                .filter(field -> field.type() == PType.MESSAGE)
-               .forEachOrdered(field -> writer.formatln("case %d: return (%s<MT>) %s();",
+               .forEachOrdered(field -> writer.formatln("case %d: return %s();",
                                                         field.id(),
-                                                        PMessageBuilder.class.getName(),
                                                         Strings.camelCase("mutable", field.name())));
         writer.appendln("default: throw new IllegalArgumentException(\"Not a message field ID: \" + key);")
               .end()

@@ -44,7 +44,7 @@ import java.util.TreeMap;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CException extends Throwable implements PMessage<CException> {
+public class CException extends Throwable implements PMessage<CException, CField> {
     private final CExceptionDescriptor descriptor;
     private final Map<Integer, Object> values;
 
@@ -173,7 +173,7 @@ public class CException extends Throwable implements PMessage<CException> {
     }
 
     @Override
-    public PMessageBuilder<CException> mutate() {
+    public PMessageBuilder<CException,CField> mutate() {
         return new Builder(descriptor);
     }
 
@@ -182,7 +182,7 @@ public class CException extends Throwable implements PMessage<CException> {
         return descriptor;
     }
 
-    public static class Builder extends PMessageBuilder<CException> {
+    public static class Builder extends PMessageBuilder<CException,CField> {
         private final CExceptionDescriptor descriptor;
         private final Map<Integer, Object> values;
 
@@ -233,7 +233,7 @@ public class CException extends Throwable implements PMessage<CException> {
         }
 
         @Override
-        public PStructDescriptor<CException, ?> descriptor() {
+        public PStructDescriptor<CException, CField> descriptor() {
             return descriptor;
         }
 
@@ -323,7 +323,7 @@ public class CException extends Throwable implements PMessage<CException> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <M extends PMessage<M>> PMessageBuilder<M> mutator(int key) {
+        public PMessageBuilder mutator(int key) {
             CField field = descriptor.getField(key);
             if (field == null) {
                 throw new IllegalArgumentException("No such field ID " + key);
@@ -343,7 +343,7 @@ public class CException extends Throwable implements PMessage<CException> {
                 throw new IllegalArgumentException("Invalid value in map on message type: " + current.getClass().getSimpleName());
             }
 
-            return (PMessageBuilder<M>) current;
+            return (PMessageBuilder) current;
         }
 
         @SuppressWarnings("unchecked")

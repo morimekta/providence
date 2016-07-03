@@ -30,10 +30,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stein Eldar Johnsen
  * @since 21.01.16.
  */
-public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
-    private final PMessage<T> expected;
+public class MessageEq<Message extends PMessage<Message, Field>, Field extends PField>
+        extends BaseMatcher<Message> {
+    private final Message expected;
 
-    public MessageEq(PMessage<T> expected) {
+    public MessageEq(Message expected) {
         this.expected = expected;
     }
 
@@ -90,16 +91,17 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
         }
     }
 
-    protected static <T extends PMessage<T>> void collectMismatches(String xPath,
-                                                                    T expected,
-                                                                    T actual,
-                                                                    LinkedList<String> mismatches) {
+    protected static <T extends PMessage<T, F>, F extends PField>
+    void collectMismatches(String xPath,
+                           T expected,
+                           T actual,
+                           LinkedList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
         if (expected.descriptor()
                     .getVariant() == PMessageVariant.UNION) {
-            PUnion<?> eu = (PUnion) expected;
-            PUnion<?> ac = (PUnion) actual;
+            PUnion<?,?> eu = (PUnion) expected;
+            PUnion<?,?> ac = (PUnion) actual;
 
             if (!eu.unionField()
                    .equals(ac.unionField())) {
@@ -343,7 +345,7 @@ public class MessageEq<T extends PMessage<T>> extends BaseMatcher<T> {
         }
     }
 
-    protected static String limitToString(PMessage<?> message) {
+    protected static String limitToString(PMessage<?,?> message) {
         String tos = message == null ? "null" : message.asString();
         if (tos.length() > 120) {
             tos = tos.substring(0, 110) + "...}";
