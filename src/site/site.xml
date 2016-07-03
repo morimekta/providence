@@ -31,6 +31,7 @@
 
             <item href="providence-thrift/index.html"             name="Utils : Thrift Bridge" />
             <item href="providence-testing/index.html"            name="Utils : Testing" />
+            <item href="providence-config/index.html"             name="Utils : Config" />
 
         </menu>
 

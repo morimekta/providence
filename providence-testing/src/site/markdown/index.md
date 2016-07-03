@@ -1,5 +1,5 @@
-Providence Testing
-==================
+Providence Utils : Testing
+==========================
 
 The `providence-testing` library is meant for testing and comparing providence
 messages. Notable methods are:
