@@ -25,6 +25,7 @@ import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -119,6 +120,10 @@ public class CUnion extends CMessage<CUnion> implements PUnion<CUnion> {
             return this;
         }
 
+        @Override
+        public PStructDescriptor<CUnion, ?> descriptor() {
+            return descriptor;
+        }
 
         @Override
         public CUnion build() {

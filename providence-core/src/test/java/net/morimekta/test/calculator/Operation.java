@@ -441,6 +441,11 @@ public class Operation
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public Operation build() {
             return new Operation(this);
         }

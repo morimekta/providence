@@ -11,14 +11,14 @@ test-compile:
 
 models: compile
 	rm -rf providence-reflect/src/main/model/*
-	cp -R providence-reflect/target/generated-sources/providence/* \
-	      providence-reflect/src/main/model/
-	cp -R providence-core/target/generated-sources/providence/net/morimekta/providence/serializer/* \
-	      providence-core/src/main/java/net/morimekta/providence/serializer
+	mv providence-reflect/target/generated-sources/providence/* \
+	   providence-reflect/src/main/model/
+	mv providence-core/target/generated-sources/providence/net/morimekta/providence/serializer/* \
+	   providence-core/src/main/java/net/morimekta/providence/serializer
 
 test-models: test-compile
-	pvdc -o providence-core/src/test/java/ -g java \
-	    providence-core/src/test/providence/*.thrift \
-	    providence-core/src/test/providence/*/*.thrift
+	cp -R providence-core/target/generated-test-sources/providence/* \
+	      providence-core/src/test/java/
+	rm -rf providence-core/target/generated-test-sources/providence/*
 
 .PHONY: clean compile test-compile models test-models

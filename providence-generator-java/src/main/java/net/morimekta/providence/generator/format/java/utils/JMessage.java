@@ -20,7 +20,13 @@
 package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.descriptor.PExceptionDescriptor;
+import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PStructDescriptorProvider;
+import net.morimekta.providence.descriptor.PUnionDescriptor;
+import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
 
@@ -73,5 +79,32 @@ public class JMessage<T extends CMessage<T>> {
 
     public List<JField> fields() {
         return fields;
+    }
+
+    public String getDescriptorClass() throws GeneratorException {
+        switch (variant()) {
+            case STRUCT:
+                return PStructDescriptor.class.getName();
+            case UNION:
+                return PUnionDescriptor.class.getName();
+            case EXCEPTION:
+                return PExceptionDescriptor.class.getName();
+            default:
+                throw new GeneratorException("Unable to determine type class for " + variant());
+        }
+    }
+
+    public String getProviderClass() throws GeneratorException {
+        String providerClass;
+        switch (variant()) {
+            case STRUCT:
+                return PStructDescriptorProvider.class.getName();
+            case UNION:
+                return PUnionDescriptorProvider.class.getName();
+            case EXCEPTION:
+                return PExceptionDescriptorProvider.class.getName();
+            default:
+                throw new GeneratorException("Unable to determine type class for " + variant());
+        }
     }
 }

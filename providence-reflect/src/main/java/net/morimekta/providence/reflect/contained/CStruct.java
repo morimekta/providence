@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -104,6 +105,11 @@ public class CStruct extends CMessage<CStruct> {
             }
             
             return this;
+        }
+
+        @Override
+        public PStructDescriptor<CStruct, ?> descriptor() {
+            return descriptor;
         }
 
         @Override

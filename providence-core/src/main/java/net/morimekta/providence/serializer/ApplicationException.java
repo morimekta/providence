@@ -447,6 +447,11 @@ public class ApplicationException
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public ApplicationException build() {
             return new ApplicationException(this);
         }

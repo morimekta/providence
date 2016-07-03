@@ -1046,7 +1046,22 @@ public class UnionFields
 
         @Override
         public boolean isValid() {
-            return tUnionField != null;
+            if (tUnionField == null) {
+                return false;
+            }
+
+            switch (tUnionField) {
+                case STRING_VALUE: return mStringValue != null;
+                case BINARY_VALUE: return mBinaryValue != null;
+                case ENUM_VALUE: return mEnumValue != null;
+                case COMPACT_VALUE: return mCompactValue != null;
+                default: return true;
+            }
+        }
+
+        @Override
+        public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
+            return kDescriptor;
         }
 
         @Override

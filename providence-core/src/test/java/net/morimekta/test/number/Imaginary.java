@@ -394,6 +394,11 @@ public class Imaginary
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public Imaginary build() {
             return new Imaginary(this);
         }

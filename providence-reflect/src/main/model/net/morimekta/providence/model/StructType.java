@@ -719,6 +719,11 @@ public class StructType
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<StructType,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public StructType build() {
             return new StructType(this);
         }

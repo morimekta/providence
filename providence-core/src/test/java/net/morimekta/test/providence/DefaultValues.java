@@ -1004,6 +1004,11 @@ public class DefaultValues
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<DefaultValues,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public DefaultValues build() {
             return new DefaultValues(this);
         }

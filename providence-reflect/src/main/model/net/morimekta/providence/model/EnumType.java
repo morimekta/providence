@@ -637,6 +637,11 @@ public class EnumType
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public EnumType build() {
             return new EnumType(this);
         }

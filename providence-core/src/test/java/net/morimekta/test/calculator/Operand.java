@@ -508,7 +508,20 @@ public class Operand
 
         @Override
         public boolean isValid() {
-            return tUnionField != null;
+            if (tUnionField == null) {
+                return false;
+            }
+
+            switch (tUnionField) {
+                case OPERATION: return mOperation != null;
+                case IMAGINARY: return mImaginary != null;
+                default: return true;
+            }
+        }
+
+        @Override
+        public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
+            return kDescriptor;
         }
 
         @Override

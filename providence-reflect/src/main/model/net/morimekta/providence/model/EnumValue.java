@@ -596,6 +596,11 @@ public class EnumValue
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public EnumValue build() {
             return new EnumValue(this);
         }

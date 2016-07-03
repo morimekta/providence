@@ -5,12 +5,14 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
@@ -64,6 +66,7 @@ public class JMessageBuilderFormat {
         appendOverrideAdder(message);
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
+        appendOverrideDescriptor(message);
 
         writer.appendln("@Override")
               .formatln("public %s build() {", message.instanceType())
@@ -560,7 +563,25 @@ public class JMessageBuilderFormat {
               .appendln("public boolean isValid() {")
               .begin();
         if (message.isUnion()) {
-            writer.appendln("return tUnionField != null;");
+            writer.appendln("if (tUnionField == null) {")
+                  .appendln("    return false;")
+                  .appendln('}')
+                  .newline()
+                  .appendln("switch (tUnionField) {")
+                  .begin();
+            for (JField field : message.fields()) {
+                if (!field.alwaysPresent()) {
+                    if (field.type() == PType.MESSAGE) {
+                        writer.formatln("case %s: return %s != null;",
+                                        field.fieldEnum(), field.member());
+                    } else {
+                        writer.formatln("case %s: return %s != null;", field.fieldEnum(), field.member());
+                    }
+                }
+            }
+            writer.appendln("default: return true;")
+                  .end()
+                  .appendln('}');
         } else {
             writer.appendln("return ")
                   .begin("       ");
@@ -585,5 +606,17 @@ public class JMessageBuilderFormat {
         writer.end()
               .appendln('}')
               .newline();
+    }
+
+    private void appendOverrideDescriptor(JMessage<?> message) throws GeneratorException {
+        String typeClass = message.getDescriptorClass();
+        writer.appendln("@Override")
+              .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
+              .begin()
+              .appendln("return kDescriptor;")
+              .end()
+              .appendln('}')
+              .newline();
+
     }
 }

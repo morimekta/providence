@@ -233,6 +233,11 @@ public class CException extends Throwable implements PMessage<CException> {
         }
 
         @Override
+        public PStructDescriptor<CException, ?> descriptor() {
+            return descriptor;
+        }
+
+        @Override
         public CException build() {
             return new CException(this);
         }

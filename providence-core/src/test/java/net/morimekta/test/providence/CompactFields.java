@@ -499,6 +499,11 @@ public class CompactFields
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public CompactFields build() {
             return new CompactFields(this);
         }

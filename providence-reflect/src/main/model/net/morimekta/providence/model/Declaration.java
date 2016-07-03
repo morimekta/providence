@@ -672,7 +672,23 @@ public class Declaration
 
         @Override
         public boolean isValid() {
-            return tUnionField != null;
+            if (tUnionField == null) {
+                return false;
+            }
+
+            switch (tUnionField) {
+                case DECL_ENUM: return mDeclEnum != null;
+                case DECL_TYPEDEF: return mDeclTypedef != null;
+                case DECL_STRUCT: return mDeclStruct != null;
+                case DECL_SERVICE: return mDeclService != null;
+                case DECL_CONST: return mDeclConst != null;
+                default: return true;
+            }
+        }
+
+        @Override
+        public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
+            return kDescriptor;
         }
 
         @Override

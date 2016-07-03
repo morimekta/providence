@@ -1011,6 +1011,11 @@ public class RequiredFields
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public RequiredFields build() {
             return new RequiredFields(this);
         }

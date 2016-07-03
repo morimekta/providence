@@ -719,6 +719,11 @@ public class ServiceType
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public ServiceType build() {
             return new ServiceType(this);
         }

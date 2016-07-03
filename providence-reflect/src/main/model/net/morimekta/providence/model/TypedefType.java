@@ -500,6 +500,11 @@ public class TypedefType
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public TypedefType build() {
             return new TypedefType(this);
         }

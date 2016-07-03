@@ -894,6 +894,11 @@ public class ServiceMethod
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public ServiceMethod build() {
             return new ServiceMethod(this);
         }

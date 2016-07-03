@@ -19,6 +19,8 @@
 
 package net.morimekta.providence;
 
+import net.morimekta.providence.descriptor.PStructDescriptor;
+
 /**
  * Base class for message builders.
  */
@@ -67,4 +69,11 @@ public abstract class PMessageBuilder<T extends PMessage<T>> implements PBuilder
      * @param from The message to merge values from.
      */
     public abstract PMessageBuilder<T> merge(T from);
+
+    /**
+     * Get the descriptor for the message being built.
+     *
+     * @return The struct descriptor.
+     */
+    public abstract PStructDescriptor<T, ?> descriptor();
 }

@@ -445,6 +445,11 @@ public class CalculateException
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public CalculateException build() {
             return new CalculateException(this);
         }

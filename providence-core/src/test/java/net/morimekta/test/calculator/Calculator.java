@@ -523,6 +523,11 @@ public class Calculator {
             }
 
             @Override
+            public net.morimekta.providence.descriptor.PStructDescriptor<Calculate_request,_Field> descriptor() {
+                return kDescriptor;
+            }
+
+            @Override
             public Calculate_request build() {
                 return new Calculate_request(this);
             }
@@ -959,7 +964,20 @@ public class Calculator {
 
             @Override
             public boolean isValid() {
-                return tUnionField != null;
+                if (tUnionField == null) {
+                    return false;
+                }
+
+                switch (tUnionField) {
+                    case SUCCESS: return mSuccess != null;
+                    case CE: return mCe != null;
+                    default: return true;
+                }
+            }
+
+            @Override
+            public net.morimekta.providence.descriptor.PUnionDescriptor<Calculate_response,_Field> descriptor() {
+                return kDescriptor;
             }
 
             @Override
@@ -1220,6 +1238,11 @@ public class Calculator {
             @Override
             public boolean isValid() {
                 return true;
+            }
+
+            @Override
+            public net.morimekta.providence.descriptor.PStructDescriptor<Iamalive_request,_Field> descriptor() {
+                return kDescriptor;
             }
 
             @Override

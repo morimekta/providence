@@ -267,24 +267,8 @@ public class JMessageFormat {
     }
 
     private void appendDescriptor(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
-        String typeClass;
-        String providerClass;
-        switch (message.variant()) {
-            case STRUCT:
-                typeClass = PStructDescriptor.class.getName();
-                providerClass = PStructDescriptorProvider.class.getName();
-                break;
-            case UNION:
-                typeClass = PUnionDescriptor.class.getName();
-                providerClass = PUnionDescriptorProvider.class.getName();
-                break;
-            case EXCEPTION:
-                typeClass = PExceptionDescriptor.class.getName();
-                providerClass = PExceptionDescriptorProvider.class.getName();
-                break;
-            default:
-                throw new GeneratorException("Unable to determine type class for " + message.variant());
-        }
+        String typeClass = message.getDescriptorClass();
+        String providerClass = message.getProviderClass();
 
         writer.formatln("public static %s<%s,_Field> provider() {", providerClass, message.instanceType())
               .begin()

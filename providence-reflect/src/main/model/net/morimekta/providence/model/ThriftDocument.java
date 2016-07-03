@@ -781,6 +781,11 @@ public class ThriftDocument
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public ThriftDocument build() {
             return new ThriftDocument(this);
         }

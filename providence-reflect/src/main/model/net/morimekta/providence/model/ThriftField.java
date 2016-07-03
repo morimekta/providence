@@ -848,6 +848,11 @@ public class ThriftField
         }
 
         @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        @Override
         public ThriftField build() {
             return new ThriftField(this);
         }
