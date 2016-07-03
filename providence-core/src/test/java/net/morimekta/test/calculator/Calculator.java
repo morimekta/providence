@@ -321,9 +321,6 @@ public class Calculator {
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
             @Override
-            public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-            @Override
             public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
             @Override
@@ -339,25 +336,14 @@ public class Calculator {
 
             @Override
             public String toString() {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Calculate_request._Field(")
-                       .append(mKey)
-                       .append(": ");
-                if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                    builder.append(mRequired.label).append(" ");
-                }
-                builder.append(getDescriptor().getQualifiedName(null))
-                       .append(' ')
-                       .append(mName)
-                       .append(')');
-                return builder.toString();
+                return net.morimekta.providence.descriptor.PField.toString(this);
             }
 
             public static _Field forKey(int key) {
                 switch (key) {
                     case 1: return _Field.OP;
-                    default: return null;
                 }
+                return null;
             }
 
             public static _Field forName(String name) {
@@ -725,9 +711,6 @@ public class Calculator {
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
             @Override
-            public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-            @Override
             public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
             @Override
@@ -743,26 +726,15 @@ public class Calculator {
 
             @Override
             public String toString() {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Calculate_response._Field(")
-                       .append(mKey)
-                       .append(": ");
-                if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                    builder.append(mRequired.label).append(" ");
-                }
-                builder.append(getDescriptor().getQualifiedName(null))
-                       .append(' ')
-                       .append(mName)
-                       .append(')');
-                return builder.toString();
+                return net.morimekta.providence.descriptor.PField.toString(this);
             }
 
             public static _Field forKey(int key) {
                 switch (key) {
                     case 0: return _Field.SUCCESS;
                     case 1: return _Field.CE;
-                    default: return null;
                 }
+                return null;
             }
 
             public static _Field forName(String name) {
@@ -1099,9 +1071,6 @@ public class Calculator {
             public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
             @Override
-            public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-            @Override
             public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
             @Override
@@ -1117,24 +1086,13 @@ public class Calculator {
 
             @Override
             public String toString() {
-                StringBuilder builder = new StringBuilder();
-                builder.append("Iamalive_request._Field(")
-                       .append(mKey)
-                       .append(": ");
-                if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                    builder.append(mRequired.label).append(" ");
-                }
-                builder.append(getDescriptor().getQualifiedName(null))
-                       .append(' ')
-                       .append(mName)
-                       .append(')');
-                return builder.toString();
+                return net.morimekta.providence.descriptor.PField.toString(this);
             }
 
             public static _Field forKey(int key) {
                 switch (key) {
-                    default: return null;
                 }
+                return null;
             }
 
             public static _Field forName(String name) {

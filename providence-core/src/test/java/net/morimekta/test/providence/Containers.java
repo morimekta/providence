@@ -1693,9 +1693,6 @@ public class Containers
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-        @Override
         public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
@@ -1711,18 +1708,7 @@ public class Containers
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Containers._Field(")
-                   .append(mKey)
-                   .append(": ");
-            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                builder.append(mRequired.label).append(" ");
-            }
-            builder.append(getDescriptor().getQualifiedName(null))
-                   .append(' ')
-                   .append(mName)
-                   .append(')');
-            return builder.toString();
+            return net.morimekta.providence.descriptor.PField.toString(this);
         }
 
         public static _Field forKey(int key) {
@@ -1763,8 +1749,8 @@ public class Containers
                 case 54: return _Field.UNION_FIELDS;
                 case 55: return _Field.EXCEPTION_FIELDS;
                 case 56: return _Field.DEFAULT_VALUES;
-                default: return null;
             }
+            return null;
         }
 
         public static _Field forName(String name) {

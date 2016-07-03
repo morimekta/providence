@@ -210,9 +210,6 @@ public class TypedefType
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-        @Override
         public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
@@ -228,18 +225,7 @@ public class TypedefType
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("TypedefType._Field(")
-                   .append(mKey)
-                   .append(": ");
-            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                builder.append(mRequired.label).append(" ");
-            }
-            builder.append(getDescriptor().getQualifiedName(null))
-                   .append(' ')
-                   .append(mName)
-                   .append(')');
-            return builder.toString();
+            return net.morimekta.providence.descriptor.PField.toString(this);
         }
 
         public static _Field forKey(int key) {
@@ -247,8 +233,8 @@ public class TypedefType
                 case 1: return _Field.COMMENT;
                 case 2: return _Field.TYPE;
                 case 3: return _Field.NAME;
-                default: return null;
             }
+            return null;
         }
 
         public static _Field forName(String name) {

@@ -23,7 +23,6 @@ import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -214,10 +213,6 @@ public class JMessageFormat {
                         PRequirement.class.getName())
               .newline();
         writer.appendln("@Override")
-              .formatln("public %s getType() { return getDescriptor().getType(); }",
-                        PType.class.getName())
-              .newline();
-        writer.appendln("@Override")
               .formatln("public %s getDescriptor() { return mTypeProvider.descriptor(); }",
                         PDescriptor.class.getName())
               .newline();
@@ -235,21 +230,7 @@ public class JMessageFormat {
 
         writer.appendln("@Override")
               .appendln("public String toString() {")
-              .begin()
-              .appendln("StringBuilder builder = new StringBuilder();")
-              .formatln("builder.append(\"%s._Field(\")", message.instanceType())
-              .appendln("       .append(mKey)")
-              .appendln("       .append(\": \");")
-              .formatln("if (mRequired != %s.DEFAULT) {",
-                        PRequirement.class.getName())
-              .appendln("    builder.append(mRequired.label).append(\" \");")
-              .appendln("}")
-              .appendln("builder.append(getDescriptor().getQualifiedName(null))")
-              .appendln("       .append(' ')")
-              .appendln("       .append(mName)")
-              .appendln("       .append(')');")
-              .appendln("return builder.toString();")
-              .end()
+              .formatln("    return %s.toString(this);", PField.class.getName())
               .appendln('}')
               .newline();
 
@@ -260,9 +241,9 @@ public class JMessageFormat {
         for (JField field : message.fields()) {
             writer.formatln("case %d: return _Field.%s;", field.id(), field.fieldEnum());
         }
-        writer.appendln("default: return null;")
-              .end()
+        writer.end()
               .appendln('}')
+              .appendln("return null;")
               .end()
               .appendln('}')
               .newline();

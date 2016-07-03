@@ -320,9 +320,6 @@ public class ThriftDocument
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-        @Override
         public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
@@ -338,18 +335,7 @@ public class ThriftDocument
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("ThriftDocument._Field(")
-                   .append(mKey)
-                   .append(": ");
-            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                builder.append(mRequired.label).append(" ");
-            }
-            builder.append(getDescriptor().getQualifiedName(null))
-                   .append(' ')
-                   .append(mName)
-                   .append(')');
-            return builder.toString();
+            return net.morimekta.providence.descriptor.PField.toString(this);
         }
 
         public static _Field forKey(int key) {
@@ -359,8 +345,8 @@ public class ThriftDocument
                 case 3: return _Field.INCLUDES;
                 case 4: return _Field.NAMESPACES;
                 case 5: return _Field.DECL;
-                default: return null;
             }
+            return null;
         }
 
         public static _Field forName(String name) {

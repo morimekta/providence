@@ -34,18 +34,19 @@ import com.google.api.client.http.HttpResponse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 /**
  * HTTP client handler using the google HTTP client interface.
  */
 public class HttpClientHandler implements PClientHandler {
-    private final HttpRequestFactory factory;
-    private final SerializerProvider serializerProvider;
-    private final Serializer         requestSerializer;
-    private final GenericUrl         endpoint;
+    private final HttpRequestFactory   factory;
+    private final SerializerProvider   serializerProvider;
+    private final Serializer           requestSerializer;
+    private final Supplier<GenericUrl> urlSupplier;
 
-    public HttpClientHandler(GenericUrl endpoint, HttpRequestFactory factory, SerializerProvider serializerProvider) {
-        this.endpoint = endpoint;
+    public HttpClientHandler(Supplier<GenericUrl> urlSupplier, HttpRequestFactory factory, SerializerProvider serializerProvider) {
+        this.urlSupplier = urlSupplier;
         this.factory = factory;
         this.serializerProvider = serializerProvider;
         this.requestSerializer = serializerProvider.getDefault();
@@ -64,7 +65,7 @@ public class HttpClientHandler implements PClientHandler {
 
         ByteArrayContent content = new ByteArrayContent(requestSerializer.mimeType(), baos.toByteArray());
 
-        HttpRequest request = factory.buildPostRequest(endpoint, content);
+        HttpRequest request = factory.buildPostRequest(urlSupplier.get(), content);
         HttpResponse response = request.execute();
 
         Serializer responseSerializer = requestSerializer;

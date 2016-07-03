@@ -348,6 +348,6 @@ public class RPCOptions {
         HttpTransport transport = new ApacheHttpTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs, connect_timeout, read_timeout));
         SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mimeType());
-        return new HttpClientHandler(url, factory, serializerProvider);
+        return new HttpClientHandler(() -> url, factory, serializerProvider);
     }
 }

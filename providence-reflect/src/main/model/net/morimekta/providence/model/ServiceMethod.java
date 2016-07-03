@@ -372,9 +372,6 @@ public class ServiceMethod
         public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
 
         @Override
-        public net.morimekta.providence.PType getType() { return getDescriptor().getType(); }
-
-        @Override
         public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
 
         @Override
@@ -390,18 +387,7 @@ public class ServiceMethod
 
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("ServiceMethod._Field(")
-                   .append(mKey)
-                   .append(": ");
-            if (mRequired != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
-                builder.append(mRequired.label).append(" ");
-            }
-            builder.append(getDescriptor().getQualifiedName(null))
-                   .append(' ')
-                   .append(mName)
-                   .append(')');
-            return builder.toString();
+            return net.morimekta.providence.descriptor.PField.toString(this);
         }
 
         public static _Field forKey(int key) {
@@ -413,8 +399,8 @@ public class ServiceMethod
                 case 5: return _Field.PARAMS;
                 case 6: return _Field.EXCEPTIONS;
                 case 7: return _Field.ANNOTATIONS;
-                default: return null;
             }
+            return null;
         }
 
         public static _Field forName(String name) {

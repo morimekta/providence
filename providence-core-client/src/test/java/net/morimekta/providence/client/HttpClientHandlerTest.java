@@ -89,7 +89,7 @@ public class HttpClientHandlerTest {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         MyService.Iface client = new MyService.Client(new HttpClientHandler(
-                endpoint(), factory(), provider));
+                HttpClientHandlerTest::endpoint, factory(), provider));
 
         Response response = client.test(new Request("request"));
 
@@ -105,7 +105,7 @@ public class HttpClientHandlerTest {
                                   .build());
 
         MyService.Iface client = new MyService.Client(new HttpClientHandler(
-                endpoint(), factory(), provider));
+                HttpClientHandlerTest::endpoint, factory(), provider));
 
         try {
             client.test(new Request("request"));
@@ -126,7 +126,7 @@ public class HttpClientHandlerTest {
         url.setRawPath("/" + ENDPOINT + "/does_not_exists");
 
         MyService.Iface client = new MyService.Client(new HttpClientHandler(
-                url, factory(), provider));
+                () -> url, factory(), provider));
 
         try {
             client.test(new Request("request"));
