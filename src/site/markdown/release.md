@@ -23,11 +23,11 @@ Proper releases are done with a branch cut.
 #### Making the release cut.
 
 * Create a branch called `release-x.y.z` from master at the desired commit.
-* Run `# mvn clean verify install site` to build and verify the snapshot build
+* Run `# mvn -Ptooling clean verify install site` to build and verify the snapshot build
   you want to release.
-* Run `# mvn release:prepare`, which will create two new commits, one with the
+* Run `# mvn -Ptooling release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn release:perform` to generate the artifacts and push to sonatype
+* Run `# mvn -Ptooling release:perform` to generate the artifacts and push to sonatype
   for staging.
 
 If the artifacts found at the [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
