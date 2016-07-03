@@ -101,27 +101,21 @@
     <packaging>pom</packaging>
 
     <modules>
-        <!-- the real core. -->
+        <!-- Core Modules -->
         <module>providence-core</module>
         <module>providence-core-jackson</module>
         <module>providence-core-client</module>
 
-        <!-- utility libraries -->
-        <module>providence-thrift</module>
+        <!-- Tooling Modules -->
         <module>providence-reflect</module>
-        <module>providence-testing</module>
-
         <module>providence-generator</module>
         <module>providence-generator-java</module>
         <module>providence-generator-json</module>
-
         <module>providence-maven-plugin</module>
 
-        <!-- Tooling (not deployed as artifacts) -->
-        <module>providence-compiler</module>
-        <module>providence-converter</module>
-        <module>providence-rpc-tool</module>
-        <module>providence-package</module>
+        <!-- Utility Modules -->
+        <module>providence-testing</module>
+        <module>providence-thrift</module>
         <module>providence-config</module>
     </modules>
 
@@ -353,6 +347,16 @@
     </reporting>
 
     <profiles>
+        <profile>
+            <id>tooling</id>
+            <modules>
+                <!-- CLI Tooling (not deployed as artifacts) -->
+                <module>providence-compiler</module>
+                <module>providence-converter</module>
+                <module>providence-rpc-tool</module>
+                <module>providence-package</module>
+            </modules>
+        </profile>
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
