@@ -36,18 +36,45 @@ import static net.morimekta.providence.config.ProvidenceConfigUtil.getFromMessag
 public class MessageConfig<Message extends PMessage<Message, Field>, Field extends PField>
         implements ProvidenceConfig {
     public MessageConfig(Message instance) {
-        this.instance = instance;
-        this.instanceKeySet = ImmutableSet.copyOf(buildKeySet(instance));
+        this(null, instance);
     }
 
+    public MessageConfig(String prefix, Message instance) {
+        this.prefix = prefix;
+        this.instance = instance;
+        Set<String> keySet = buildKeySet(prefix, instance);
+        if (prefix != null) {
+            keySet.add(prefix);
+        }
+        this.instanceKeySet = ImmutableSet.copyOf(keySet);
+    }
+
+    /**
+     * Get the key prefix used in the confix wrapper. All keys in the message
+     * structure is prefixed by this value.
+     *
+     * @return The key prefix.
+     */
+    public String getPrefix() {
+        return prefix;
+    }
+
+    /**
+     * Get the message enclosed in the config wrapper.
+     *
+     * @return The message.
+     */
     public Message getMessage() {
         return instance;
     }
 
     @Override
     public Object get(String key) {
+        if (key.equals(prefix)) {
+            return getMessage();
+        }
         if (containsKey(key)) {
-            return getFromMessage(instance, key);
+            return getFromMessage(instance, cutPrefix(key));
         }
         return null;
     }
@@ -62,6 +89,14 @@ public class MessageConfig<Message extends PMessage<Message, Field>, Field exten
         return instanceKeySet;
     }
 
+    private String cutPrefix(String key) {
+        if (prefix != null && key.startsWith(prefix + ".")) {
+            return key.substring(prefix.length() + 1);
+        }
+        return key;
+    }
+
+    private final String      prefix;
     private final Message     instance;
     private final Set<String> instanceKeySet;
 }

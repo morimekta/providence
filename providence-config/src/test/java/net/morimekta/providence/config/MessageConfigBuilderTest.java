@@ -29,6 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -44,6 +45,8 @@ public class MessageConfigBuilderTest {
         config.putInteger("decl_const.key", 4);
 
         Declaration first = config.getSnapshot();
+
+        assertNull(config.getPrefix());
 
         assertNotNull(first.getDeclConst());
         assertEquals("MyName", first.getDeclConst().getName());
@@ -69,6 +72,50 @@ public class MessageConfigBuilderTest {
                                                .setName("MyEnum")
                                                .build());
         assertFalse(config.containsKey("decl_const"));
+
+        Declaration third = config.getSnapshot();
+
+        assertNotNull(third.getDeclEnum());
+        assertEquals("MyEnum", third.getDeclEnum().getName());
+    }
+
+    @Test
+    public void testBuilderConfig_withPrefix() {
+        MessageBuilderConfig<Declaration,Declaration._Field> config =
+                new MessageBuilderConfig<>("prefix", Declaration.kDescriptor);
+
+        config.putString("prefix.decl_const.name", "MyName");
+        config.putInteger("prefix.decl_const.key", 4);
+
+        Declaration first = config.getSnapshot();
+        assertEquals("prefix", config.getPrefix());
+
+        assertNotNull(first.getDeclConst());
+        assertEquals("MyName", first.getDeclConst().getName());
+        assertEquals(4, first.getDeclConst().getKey());
+
+        config.putString("prefix.decl_const.name", "OtherName");
+
+        Declaration second = config.getSnapshot();
+
+        assertEquals("OtherName", config.getString("prefix.decl_const.name"));
+        assertEquals("OtherName", second.getDeclConst().getName());
+        assertEquals("MyName", first.getDeclConst().getName());
+
+        ThriftField cnst = config.getMessage("prefix.decl_const");
+        assertNotNull(cnst);
+        assertEquals(second.getDeclConst(), cnst);
+
+        assertTrue(config.containsKey("prefix.decl_const"));
+        assertFalse(config.containsKey("prefix.decl_enum"));
+        assertFalse(config.containsKey("prefix.willy"));
+        assertFalse(config.containsKey("willy"));
+        assertTrue(config.containsKey("prefix"));
+
+        config.putMessage("prefix.decl_enum", EnumType.builder()
+                                                      .setName("MyEnum")
+                                                      .build());
+        assertFalse(config.containsKey("prefix.decl_const"));
 
         Declaration third = config.getSnapshot();
 

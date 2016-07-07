@@ -26,6 +26,8 @@ import net.morimekta.providence.model.ThriftField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -45,10 +47,35 @@ public class MessageConfigTest {
 
         assertSame(declaration, config.getMessage());
 
+        assertNull(config.getPrefix());
+
         assertTrue(config.containsKey("decl_const"));
         assertTrue(config.containsKey("decl_const.name"));
 
         assertEquals("Name", config.getString("decl_const.name"));
         assertEquals(44, config.getInteger("decl_const.key"));
+    }
+
+    @Test
+    public void testConfigWithPrefix() {
+        Declaration declaration = Declaration.withDeclConst(
+                ThriftField.builder()
+                           .setName("Name")
+                           .setKey(44)
+                           .build());
+
+        MessageConfig<Declaration,Declaration._Field> config = new MessageConfig<>("prefix", declaration);
+
+        assertSame(declaration, config.getMessage());
+        assertEquals("prefix", config.getPrefix());
+
+        assertFalse(config.containsKey("decl_const"));
+        assertTrue(config.containsKey("prefix"));
+
+        assertTrue(config.containsKey("prefix.decl_const"));
+        assertTrue(config.containsKey("prefix.decl_const.name"));
+
+        assertEquals("Name", config.getString("prefix.decl_const.name"));
+        assertEquals(44, config.getInteger("prefix.decl_const.key"));
     }
 }

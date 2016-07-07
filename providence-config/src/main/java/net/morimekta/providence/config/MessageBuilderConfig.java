@@ -50,7 +50,22 @@ public class MessageBuilderConfig<Message extends PMessage<Message, Field>, Fiel
         implements ProvidenceConfigBuilder<MessageBuilderConfig<Message, Field>> {
 
     public MessageBuilderConfig(PStructDescriptor<Message, Field> descriptor) {
+        this(null, descriptor);
+    }
+
+    public MessageBuilderConfig(String prefix, PStructDescriptor<Message, Field> descriptor) {
+        this.prefix = prefix;
         this.builder = descriptor.builder();
+    }
+
+    /**
+     * Get the key prefix used in the confix wrapper. All keys in the message
+     * structure is prefixed by this value.
+     *
+     * @return The key prefix.
+     */
+    public String getPrefix() {
+        return prefix;
     }
 
     /**
@@ -73,15 +88,22 @@ public class MessageBuilderConfig<Message extends PMessage<Message, Field>, Fiel
 
     @Override
     public Object get(String key) {
-        return getFromMessage(getSnapshot(), key);
+        if (key.equals(prefix)) {
+            return getSnapshot();
+        }
+        return getFromMessage(getSnapshot(), cutPrefix(key));
     }
 
     @Override
     public boolean containsKey(String key) {
+        if (key.equals(prefix)) {
+            // The 'contained' message from the build is always present.
+            return true;
+        }
         // This is a slight simplification, where we assume null values don't
         // exist in the message structure. It should be pretty rare though.
         try {
-            return getFromMessage(getSnapshot(), key) != null;
+            return getFromMessage(getSnapshot(), cutPrefix(key)) != null;
         } catch (ConfigException e) {
             // obviously not found.
             return false;
@@ -90,12 +112,12 @@ public class MessageBuilderConfig<Message extends PMessage<Message, Field>, Fiel
 
     @Override
     public Set<String> keySet() {
-        return buildKeySet(getSnapshot());
+        return buildKeySet(prefix, getSnapshot());
     }
 
     @Override
     public Object put(String key, Object value) {
-        String[] parts = key.split("[.]");
+        String[] parts = cutPrefix(key).split("[.]");
 
         PMessageBuilder current = builder;
         for (int i = 0; i < (parts.length - 1); ++i) {
@@ -147,8 +169,8 @@ public class MessageBuilderConfig<Message extends PMessage<Message, Field>, Fiel
 
             // --- not supported ---
             case BINARY:
-            // NOTE: Binary types not supported in config.
-            // TODO: Po
+                // NOTE: Binary types not supported in config.
+                // TODO: Binary could possibly be a "view" of strings in the "normal" providence config.
             case ENUM:
                 // TODO: Handle enum values correctly.
                 // This needs some extra tooling.
@@ -161,5 +183,13 @@ public class MessageBuilderConfig<Message extends PMessage<Message, Field>, Fiel
         return null;
     }
 
+    private String cutPrefix(String key) {
+        if (prefix != null && key.startsWith(prefix + ".")) {
+            return key.substring(prefix.length() + 1);
+        }
+        return key;
+    }
+
+    private final String prefix;
     private final PMessageBuilder<Message, Field> builder;
 }

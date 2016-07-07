@@ -55,9 +55,19 @@ public class ProvidenceConfigUtil {
      * @return The key-set.
      */
     public static Set<String> buildKeySet(PMessage<?,?> message) {
+        return buildKeySet(null, message);
+    }
+
+    /**
+     * Build a key set from a message.
+     * @param prefix The key prefix.
+     * @param message The message to make keyset from.
+     * @return The key-set.
+     */
+    public static Set<String> buildKeySet(String prefix, PMessage<?,?> message) {
         HashSet<String> keys = new HashSet<>();
 
-        buildKeySet(null, message, keys);
+        buildKeySet(prefix, message, keys);
 
         return keys;
     }
