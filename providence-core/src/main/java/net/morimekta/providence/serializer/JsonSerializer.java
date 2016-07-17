@@ -294,7 +294,9 @@ public class JsonSerializer extends Serializer {
             throws SerializerException, JsonException, IOException {
         PMessageBuilder<T, F> builder = type.builder();
 
-        if (!tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
+        if (tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
+            tokenizer.next();
+        } else {
             char sep = JsonToken.kMapStart;
             while (sep != JsonToken.kMapEnd) {
                 JsonToken token = tokenizer.expect("parsing message key");
