@@ -33,6 +33,7 @@ import net.morimekta.providence.rpc.options.Format;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 
+import ch.qos.logback.core.status.NopStatusListener;
 import com.google.api.client.http.HttpResponseException;
 
 import java.io.IOException;

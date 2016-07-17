@@ -66,8 +66,7 @@ public class CompilerOptions {
     protected List<File>    files    = new LinkedList<>();
 
     public ArgumentParser getArgumentParser(String prog, String version, String description) {
-        ArgumentOptions opts = ArgumentOptions.defaults().withUsageWidth(
-                Math.min(120, TerminalSize.get().cols));
+        ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
         parser.add(new Option("--gen", "g", "generator", "Generate files for this language spec.",
                               new GeneratorSpecParser().andApply(this::setGenerator)));

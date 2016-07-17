@@ -22,7 +22,7 @@ package net.morimekta.providence.config;
 
 import net.morimekta.config.Config;
 import net.morimekta.config.ConfigException;
-import net.morimekta.config.impl.LayeredConfig;
+import net.morimekta.config.impl.SimpleLayeredConfig;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.descriptor.PField;
@@ -38,7 +38,7 @@ import static net.morimekta.providence.config.ProvidenceConfigUtil.asMessage;
  * message with {@link #getMessage(String)} or the merged stack of messages
  * with {@link #getMergedMessage(String)}.
  */
-public class LayeredProvidenceConfig extends LayeredConfig implements ProvidenceConfig {
+public class LayeredProvidenceConfig extends SimpleLayeredConfig implements ProvidenceConfig {
     /**
      * Create an instance with an initial set of static configs.
      *

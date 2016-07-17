@@ -89,7 +89,7 @@
         <!-- slf4j API version must match the one logback uses -->
         <slf4j.version>1.7.20</slf4j.version>
 
-        <morimekta_utils.version>0.3.3-SNAPSHOT</morimekta_utils.version>
+        <morimekta_utils.version>0.3.3</morimekta_utils.version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
@@ -97,25 +97,6 @@
     <version>0.2.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
-
-    <modules>
-        <!-- Core Modules -->
-        <module>providence-core</module>
-        <module>providence-core-jackson</module>
-        <module>providence-core-client</module>
-
-        <!-- Tooling Modules -->
-        <module>providence-reflect</module>
-        <module>providence-generator</module>
-        <module>providence-generator-java</module>
-        <module>providence-generator-json</module>
-        <module>providence-maven-plugin</module>
-
-        <!-- Utility Modules -->
-        <module>providence-testing</module>
-        <module>providence-thrift</module>
-        <module>providence-config</module>
-    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -130,9 +111,30 @@
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client</artifactId>
+                <version>${google-http.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.thrift</groupId>
@@ -195,6 +197,10 @@
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.19.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
@@ -321,6 +327,38 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                            <includes>
+                                <incldue>**/*IT.java</incldue>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -346,7 +384,31 @@
 
     <profiles>
         <profile>
-            <id>tooling</id>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- Core Modules -->
+                <module>providence-core</module>
+                <module>providence-core-jackson</module>
+                <module>providence-core-client</module>
+
+                <!-- Tooling Modules -->
+                <module>providence-reflect</module>
+                <module>providence-generator</module>
+                <module>providence-generator-java</module>
+                <module>providence-generator-json</module>
+                <module>providence-maven-plugin</module>
+
+                <!-- Utility Modules -->
+                <module>providence-testing</module>
+                <module>providence-thrift</module>
+                <module>providence-config</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>cli</id>
             <modules>
                 <!-- CLI Tooling (not deployed as artifacts) -->
                 <module>providence-compiler</module>

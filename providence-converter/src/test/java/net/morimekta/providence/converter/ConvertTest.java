@@ -1,6 +1,7 @@
 package net.morimekta.providence.converter;
 
 import net.morimekta.console.util.TerminalSize;
+import net.morimekta.testing.IntegrationExecutor;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -58,6 +59,7 @@ public class ConvertTest {
     public void setUp() throws IOException {
         mockStatic(TerminalSize.class);
         when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+        when(TerminalSize.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
@@ -109,13 +111,12 @@ public class ConvertTest {
                 "$ cat call.json | pvd -I thrift/ -s cal.Calculator\n" +
                 "$ pvd -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator\n" +
                 "\n" +
-                " --include (-I) Include from directories. : dir (default: ${PWD})\n" +
-                " --in (-i) Input specification : spec\n" +
-                " --out (-o) Output specification : spec\n" +
-                " --strict (-S)                 : Read incoming messages strictly.\n" +
-                " --help (-h, -?)               : This help listing.\n" +
-                " type                          : Qualified identifier name from definitions to use for parsing\n" +
-                "                                 source file.\n" +
+                " --include (-I) dir : Include from directories. (default: ${PWD})\n" +
+                " --in (-i) spec     : Input specification\n" +
+                " --out (-o) spec    : Output specification\n" +
+                " --strict (-S)      : Read incoming messages strictly.\n" +
+                " --help (-h, -?)    : This help listing.\n" +
+                " type               : Qualified identifier name from definitions to use for parsing source file.\n" +
                 "\n" +
                 "Available formats are:\n" +
                 " - json                 : Readable JSON with ID enums.\n" +
@@ -130,29 +131,6 @@ public class ConvertTest {
                 " - tuple_protocol       : TTupleProtocol\n",
                 outContent.toString());
         assertEquals("", errContent.toString());
-        assertEquals(0, exitCode);
-    }
-
-    @Test
-    public void testStream_BinaryToJson() throws IOException {
-        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-        try (InputStream in = getClass().getResourceAsStream("/binary.data")) {
-            IOUtils.copy(in, tmp);
-        }
-        System.setIn(new ByteArrayInputStream(tmp.toByteArray()));
-
-        convert.run("-I", temp.getRoot().getAbsolutePath(),
-                    "-i", "binary",
-                    "-o", "pretty_json",
-                    "cont.Containers");
-
-        tmp = new ByteArrayOutputStream();
-        try (InputStream in = getClass().getResourceAsStream("/pretty.json")) {
-            IOUtils.copy(in, tmp);
-        }
-
-        assertEquals("", errContent.toString());
-        assertEquals(tmp.toString(), outContent.toString());
         assertEquals(0, exitCode);
     }
 }

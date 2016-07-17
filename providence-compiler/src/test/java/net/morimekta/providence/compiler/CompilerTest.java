@@ -61,6 +61,7 @@ public class CompilerTest {
     public void setUp() throws IOException {
         mockStatic(TerminalSize.class);
         when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+        when(TerminalSize.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
@@ -224,86 +225,6 @@ public class CompilerTest {
                      thriftFile.getAbsolutePath() + " is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n", errContent.toString());
-        assertEquals(1, exitCode);
-    }
-
-    @Test
-    public void testCompile() {
-        compiler.run("-I",
-                     include.getAbsolutePath(),
-                     "--out",
-                     output.getAbsolutePath(),
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
-
-        assertEquals("", outContent.toString());
-        assertEquals("", errContent.toString());
-        assertEquals(0, exitCode);
-
-        // It generated the file in test.thrift.
-        File service = new File(output, "net/morimekta/test/compiler/MyService.java");
-
-        assertTrue(service.exists());
-        assertTrue(service.isFile());
-
-        // And not the one in ref.thrift
-        File failure = new File(output, "net/morimekta/test/compiler_ref/Failure.java");
-
-        assertFalse(failure.exists());
-    }
-
-    @Test
-    public void testCompile_2() {
-        compiler.run("--out",
-                     output.getAbsolutePath(),
-                     "-g", "java",
-                     refFile.getAbsolutePath(),
-                     thriftFile.getAbsolutePath());
-
-        assertEquals("", outContent.toString());
-        assertEquals("", errContent.toString());
-        assertEquals(0, exitCode);
-
-        // It generated the file in test.thrift.
-        File service = new File(output, "net/morimekta/test/compiler/MyService.java");
-
-        assertTrue(service.exists());
-        assertTrue(service.isFile());
-
-        // And not the one in ref.thrift
-        File failure = new File(output, "net/morimekta/test/compiler_ref/Failure.java");
-
-        assertTrue(failure.exists());
-    }
-
-    @Test
-    public void testCompile_missingInclude() {
-        compiler.run("--out",
-                     output.getAbsolutePath(),
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
-
-        assertEquals("", outContent.toString());
-        assertEquals("No such package \"ref\" exists\n", errContent.toString());
-        assertEquals(1, exitCode);
-    }
-
-    @Test
-    public void testCompile_badReference() throws IOException {
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/compiler/test_2.thrift"), file);
-        file.flush();
-        file.close();
-
-        compiler.run("-I",
-                     include.getAbsolutePath(),
-                     "--out",
-                     output.getAbsolutePath(),
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
-
-        assertEquals("", outContent.toString());
-        assertEquals("No such type \"Request2\" in package \"ref\"\n", errContent.toString());
         assertEquals(1, exitCode);
     }
 }

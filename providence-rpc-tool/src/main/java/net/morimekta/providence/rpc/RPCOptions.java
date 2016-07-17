@@ -27,7 +27,6 @@ import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.PClientHandler;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.descriptor.PService;
@@ -101,8 +100,7 @@ public class RPCOptions {
     protected String endpoint = "";
 
     public ArgumentParser getArgumentParser(String prog, String version, String description) {
-        ArgumentOptions opts = ArgumentOptions.defaults().withUsageWidth(
-                Math.min(120, TerminalSize.get().cols));
+        ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
         parser.add(new Option("--include", "I", "dir", "Allow includes of files in directory", dir(this::addInclude), null, true, false, false));
         parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), "json"));

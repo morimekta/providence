@@ -6,7 +6,6 @@ import net.morimekta.util.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -28,7 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
- * Created by morimekta on 4/25/16.
+ * Tests for the flag values for .
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(TerminalSize.class)
@@ -63,6 +62,7 @@ public class RPCFlagsTest {
     public void setUp() throws IOException {
         mockStatic(TerminalSize.class);
         when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
+        when(TerminalSize.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));

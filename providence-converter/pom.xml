@@ -58,16 +58,16 @@
             <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>testing-util</artifactId>
+            <version>${morimekta_utils.version}</version>
+        </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
@@ -110,7 +110,7 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/build</directory>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -122,7 +122,6 @@
                 <directory>src/test/resources</directory>
             </testResource>
         </testResources>
-        <finalName>providence-converter</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -155,7 +154,21 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <finalName>providence-converter</finalName>
                             <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <!--
+                                     The logback core files are not directly referenced,
+                                     so we need to explicitly include them, unless they
+                                     are minimized away from the shaded jar file.
+                                     -->
+                                    <artifact>ch.qos.logback:logback-core</artifact>
+                                    <includes>
+                                        <include>ch/qos/logback/core/**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>net.morimekta.providence.converter.Convert</mainClass>
