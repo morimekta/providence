@@ -20,43 +20,14 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.config.Config;
-import net.morimekta.config.ConfigException;
-import net.morimekta.config.impl.SimpleLayeredConfig;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.descriptor.PField;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Supplier;
-
-import static net.morimekta.providence.config.ProvidenceConfigUtil.asMessage;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 /**
- * A layered config that gives access to contained messages, both the top
- * message with {@link #getMessage(String)} or the merged stack of messages
- * with {@link #getMergedMessage(String)}.
+ * Interface for layered providence configs.
  */
-public class LayeredProvidenceConfig extends SimpleLayeredConfig implements ProvidenceConfig {
-    /**
-     * Create an instance with an initial set of static configs.
-     *
-     * @param configs The configs from top to bottom layer.
-     */
-    public LayeredProvidenceConfig(Config... configs) {
-        super(configs);
-    }
-
-    /**
-     * Create an instance with an initial set of config suppliers.
-     *
-     * @param configs The config suppliers form top to bottom layer.
-     */
-    public LayeredProvidenceConfig(Collection<Supplier<Config>> configs) {
-        super(configs);
-    }
-
+public interface LayeredProvidenceConfig extends ProvidenceConfig {
     /**
      * Since the same message may appear in multiple layers, we will merge
      * all the messages that share the same key. The top message will overwrite
@@ -66,27 +37,10 @@ public class LayeredProvidenceConfig extends SimpleLayeredConfig implements Prov
      * lower layers use {@link #getMessage(String)} instead.
      *
      * @param key The config key to look up.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The merged message.
      */
-    public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message getMergedMessage(String key) {
-        PMessageBuilder<Message, Field> builder = null;
-
-        List<Supplier<Config>> layers = layers();
-        for (int i = layers.size(); i >= 0; --i) {
-            Config config = layers.get(i).get();
-            if (config.containsKey(key)) {
-                Message tmp = asMessage(config.getValue(key));
-                if (builder != null) {
-                    builder.merge(tmp);
-                } else {
-                    builder = tmp.mutate();
-                }
-            }
-        }
-
-        if (builder == null) {
-            throw new ConfigException("No such message: " + key);
-        }
-        return builder.build();
-    }
+    <Message extends PMessage<Message, Field>, Field extends PField>
+    Message getMergedMessage(String key, PStructDescriptor<Message, Field> descriptor);
 }

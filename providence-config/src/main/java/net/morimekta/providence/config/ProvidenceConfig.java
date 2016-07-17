@@ -23,6 +23,7 @@ package net.morimekta.providence.config;
 import net.morimekta.config.Config;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import static net.morimekta.providence.config.ProvidenceConfigUtil.asMessage;
 
@@ -41,5 +42,19 @@ public interface ProvidenceConfig extends Config {
     default <Message extends PMessage<Message, Field>, Field extends PField>
     Message getMessage(String key) {
         return asMessage(getValue(key));
+    }
+
+    /**
+     * Get value as a providence message.
+     *
+     * @param key The key to look for.
+     * @param descriptor The message descriptor.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The message.
+     */
+    default <Message extends PMessage<Message, Field>, Field extends PField>
+    Message getMessage(String key, PStructDescriptor<Message, Field> descriptor) {
+        return asMessage(descriptor, getValue(key));
     }
 }

@@ -24,6 +24,7 @@ import net.morimekta.config.ConfigException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +48,30 @@ public class ProvidenceConfigUtil {
             throw new ConfigException("Cannot convert " + value.getClass().getSimpleName() + " to providence message.");
         }
         return (Message) value;
+    }
+
+    /**
+     * Convert the value to a message, or fail if that is impossible. This
+     * is essentially just a checked cast.
+     *
+     * @param descriptor The message descriptor to convert to.
+     * @param value The instance to convert.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The message instance.
+     */
+    @SuppressWarnings("unchecked")
+    public static <Message extends PMessage<Message, Field>, Field extends PField> Message asMessage(
+            Object value,
+            PStructDescriptor<Message, Field> descriptor) {
+        if (!(value instanceof PMessage)) {
+            throw new ConfigException("Cannot convert " + value.getClass().getSimpleName() + " to providence message.");
+        }
+        PMessage message = (PMessage) value;
+        if (message.descriptor().equals(descriptor)) {
+            return (Message) value;
+        }
+        throw new ConfigException("Message " + message.descriptor().getQualifiedName(null) + " is not instance of " + descriptor.getQualifiedName(null));
     }
 
     /**
