@@ -62,6 +62,8 @@
     </scm>
 
     <properties>
+        <thrift.binary>thrift</thrift.binary>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.javadoc.encoding>UTF-8</project.javadoc.encoding>
         <project.reporting.inputEncoding>UTF-8</project.reporting.inputEncoding>
