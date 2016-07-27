@@ -239,6 +239,21 @@
                             <minimizeJar>true</minimizeJar>
                             <filters>
                                 <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <!-- The accompanied license and notice is not from this project. -->
+                                        <exclude>META-INF/LICENSE</exclude>
+                                        <exclude>META-INF/NOTICE</exclude>
+                                        <exclude>META-INF/DEPENDENCIES</exclude>
+                                        <exclude>META-INF/maven/</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>**/package.html</exclude>
+                                        <exclude>**/overview.html</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
                                     <!--
                                      The logback core files are not directly referenced,
                                      so we need to explicitly include them, unless they
