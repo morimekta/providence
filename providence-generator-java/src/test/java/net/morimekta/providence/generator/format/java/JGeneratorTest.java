@@ -6,7 +6,7 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -29,13 +29,13 @@ public class JGeneratorTest {
     @Rule
     public  TemporaryFolder tmp;
 
-    private FileManager    fileManager;
-    private File           out;
-    private TypeRegistry   typeRegistry;
-    private File           file;
-    private File           inc;
-    private TypeLoader     typeLoader;
-    private DocumentParser parser;
+    private FileManager      fileManager;
+    private File             out;
+    private DocumentRegistry documentRegistry;
+    private File             file;
+    private File             inc;
+    private TypeLoader       typeLoader;
+    private DocumentParser   parser;
 
     @Before
     public void setUp() throws IOException {
@@ -55,14 +55,14 @@ public class JGeneratorTest {
         fileManager = new FileManager(out);
         parser = new ThriftDocumentParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        typeRegistry = new TypeRegistry();
+        documentRegistry = new DocumentRegistry();
     }
 
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
         JOptions options = new JOptions();
 
-        JGenerator generator = new JGenerator(fileManager, typeRegistry, options);
+        JGenerator generator = new JGenerator(fileManager, documentRegistry, options);
         generator.generate(typeLoader.load(file));
 
         File test = new File(out, "net/morimekta/test/java/Test.java");

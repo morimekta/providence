@@ -5,7 +5,7 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -29,7 +29,7 @@ public class TinyGeneratorTest {
     public  TemporaryFolder      tmp;
     private FileManager          fileManager;
     private File                 out;
-    private TypeRegistry         typeRegistry;
+    private DocumentRegistry     documentRegistry;
     private TypeLoader           typeLoader;
     private ThriftDocumentParser parser;
     private File                 inc;
@@ -53,14 +53,14 @@ public class TinyGeneratorTest {
         fileManager = new FileManager(out);
         parser = new ThriftDocumentParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        typeRegistry = new TypeRegistry();
+        documentRegistry = new DocumentRegistry();
     }
 
     @Test
     public void testGenerate_simple() throws GeneratorException, IOException, ParseException {
         TinyOptions options = new TinyOptions();
 
-        TinyGenerator generator = new TinyGenerator(fileManager, typeRegistry, options);
+        TinyGenerator generator = new TinyGenerator(fileManager, documentRegistry, options);
         generator.generate(typeLoader.load(file));
 
         File test = new File(out, "net/morimekta/test/java/Test.java");

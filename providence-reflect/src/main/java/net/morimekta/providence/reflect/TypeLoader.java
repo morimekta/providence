@@ -24,7 +24,7 @@ import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.util.DocumentConverter;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -42,7 +42,7 @@ import java.util.Map;
  * @since 07.09.15
  */
 public class TypeLoader {
-    private final TypeRegistry mRegistry;
+    private final DocumentRegistry mRegistry;
 
     private final DocumentConverter           mConverter;
     private final DocumentParser              mParser;
@@ -57,7 +57,7 @@ public class TypeLoader {
      * @param parser   The thrift file parser.
      */
     public TypeLoader(Collection<File> includes, DocumentParser parser) {
-        this(includes, parser, new TypeRegistry());
+        this(includes, parser, new DocumentRegistry());
     }
 
     /**
@@ -68,7 +68,7 @@ public class TypeLoader {
      * @param parser   The thrift file parser.
      * @param registry Type registry to keep parsed types in.
      */
-    private TypeLoader(Collection<File> includes, DocumentParser parser, TypeRegistry registry) {
+    private TypeLoader(Collection<File> includes, DocumentParser parser, DocumentRegistry registry) {
         this(includes, parser, registry, new DocumentConverter(registry));
     }
 
@@ -81,7 +81,7 @@ public class TypeLoader {
      * @param registry  The type registry.
      * @param converter The document converter
      */
-    protected TypeLoader(Collection<File> includes, DocumentParser parser, TypeRegistry registry, DocumentConverter converter) {
+    protected TypeLoader(Collection<File> includes, DocumentParser parser, DocumentRegistry registry, DocumentConverter converter) {
         mIncludes = includes;
         mParser = parser;
         mRegistry = registry;
@@ -161,7 +161,7 @@ public class TypeLoader {
     /**
      * @return The local registry.
      */
-    public TypeRegistry getRegistry() {
+    public DocumentRegistry getRegistry() {
         return mRegistry;
     }
 }

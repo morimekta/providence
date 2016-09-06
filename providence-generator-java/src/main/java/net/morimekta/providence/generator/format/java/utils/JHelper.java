@@ -29,7 +29,7 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,9 +52,9 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
 public class JHelper {
     public static String packageSeparator = ".";
 
-    private final TypeRegistry mRegistry;
+    private final DocumentRegistry mRegistry;
 
-    public JHelper(TypeRegistry registry) {
+    public JHelper(DocumentRegistry registry) {
         mRegistry = registry;
     }
 

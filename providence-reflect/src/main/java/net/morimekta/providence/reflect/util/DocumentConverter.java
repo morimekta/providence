@@ -34,8 +34,8 @@ import net.morimekta.providence.model.StructType;
 import net.morimekta.providence.model.ThriftDocument;
 import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.providence.reflect.contained.CEnumValue;
 import net.morimekta.providence.reflect.contained.CExceptionDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CService;
@@ -55,9 +55,9 @@ import java.util.stream.Collectors;
  * @since 07.09.15
  */
 public class DocumentConverter {
-    private final TypeRegistry registry;
+    private final DocumentRegistry registry;
 
-    public DocumentConverter(TypeRegistry registry) {
+    public DocumentConverter(DocumentRegistry registry) {
         this.registry = registry;
     }
 
@@ -145,9 +145,10 @@ public class DocumentConverter {
                                  decl.getDeclTypedef()
                                      .getType());
                     registry.putTypedef(decl.getDeclTypedef()
-                                            .getType(),
+                                            .getName(),
+                                        document.getPackage(),
                                         decl.getDeclTypedef()
-                                             .getName());
+                                             .getType());
                     break;
                 }
                 case DECL_SERVICE: {

@@ -29,7 +29,7 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class JGenerator extends Generator {
     private final JServiceFormat   serviceFormatter;
     private final JConstantsFormat constFormat;
 
-    public JGenerator(FileManager manager, TypeRegistry registry, JOptions options) throws GeneratorException {
+    public JGenerator(FileManager manager, DocumentRegistry registry, JOptions options) throws GeneratorException {
         super(manager);
 
         helper           = new JHelper(registry);

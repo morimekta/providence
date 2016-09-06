@@ -195,7 +195,7 @@ public class ConvertOptions {
 
         @SuppressWarnings("unchecked")
         PStructDescriptor<Message, Field> descriptor = (PStructDescriptor) loader.getRegistry()
-                                                                                 .getDescriptor(type, null);
+                                                                                 .getDeclaredType(type, null);
         if (descriptor == null) {
             throw new ArgumentException("No available type for name %s", type);
         }

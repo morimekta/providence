@@ -6,7 +6,7 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -29,14 +29,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class JsonGeneratorTest {
     @Rule
-    public  TemporaryFolder tmp;
-    private FileManager     fileManager;
-    private File            out;
-    private TypeLoader      typeLoader;
-    private File            inc;
-    private DocumentParser  parser;
-    private File            file;
-    private TypeRegistry    typeRegistry;
+    public  TemporaryFolder  tmp;
+    private FileManager      fileManager;
+    private File             out;
+    private TypeLoader       typeLoader;
+    private File             inc;
+    private DocumentParser   parser;
+    private File             file;
+    private DocumentRegistry documentRegistry;
 
     @Before
     public void setUp() throws IOException {
@@ -56,7 +56,7 @@ public class JsonGeneratorTest {
         fileManager = new FileManager(out);
         parser = new ThriftDocumentParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        typeRegistry = new TypeRegistry();
+        documentRegistry = new DocumentRegistry();
     }
 
     @Test

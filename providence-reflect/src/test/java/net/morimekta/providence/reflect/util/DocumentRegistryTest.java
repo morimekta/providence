@@ -22,10 +22,9 @@ package net.morimekta.providence.reflect.util;
 import org.junit.Test;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
+ * Tests for the document registry.
  */
-public class TypeRegistryTest {
+public class DocumentRegistryTest {
     @Test
     public void testRegisterType() {
 

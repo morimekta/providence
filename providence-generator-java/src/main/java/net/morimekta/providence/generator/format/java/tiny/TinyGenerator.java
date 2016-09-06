@@ -24,12 +24,11 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
-import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
-import net.morimekta.providence.reflect.util.TypeRegistry;
+import net.morimekta.providence.reflect.util.DocumentRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class TinyGenerator extends Generator {
     private final TinyOptions options;
     private final JHelper  helper;
 
-    public TinyGenerator(FileManager manager, TypeRegistry registry, TinyOptions options) {
+    public TinyGenerator(FileManager manager, DocumentRegistry registry, TinyOptions options) {
         super(manager);
 
         this.options = options;
