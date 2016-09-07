@@ -580,6 +580,13 @@ public class Operand
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                throw new java.lang.IllegalStateException("No union field set in calculator.Operand");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
             return kDescriptor;
         }

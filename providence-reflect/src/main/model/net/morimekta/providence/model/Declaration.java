@@ -825,6 +825,13 @@ public class Declaration
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                throw new java.lang.IllegalStateException("No union field set in model.Declaration");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;
         }

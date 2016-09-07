@@ -865,6 +865,30 @@ public class ThriftField
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("key");
+                }
+
+                if (!optionals.get(3)) {
+                    missing.add("type");
+                }
+
+                if (!optionals.get(4)) {
+                    missing.add("name");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.ThriftField");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<ThriftField,_Field> descriptor() {
             return kDescriptor;
         }

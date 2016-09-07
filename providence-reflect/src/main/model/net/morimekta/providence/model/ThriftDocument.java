@@ -820,6 +820,22 @@ public class ThriftDocument
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("package");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.ThriftDocument");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
             return kDescriptor;
         }

@@ -36,6 +36,17 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     public abstract boolean isValid();
 
     /**
+     * Checks if the current set data is enough to make a valid struct. It
+     * will check for all required fields, and if any are missing it will
+     * throw an {@link IllegalStateException} with an appropriate error
+     * message.
+     *
+     * @throws IllegalStateException When the builder will not generate a
+     *         valid message model object.
+     */
+    public abstract void validate() throws IllegalStateException;
+
+    /**
      * Set the provided field value.
      *
      * @param key The field key.

@@ -477,6 +477,22 @@ public class CalculateException
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(0)) {
+                    missing.add("message");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message calculator.CalculateException");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
             return kDescriptor;
         }

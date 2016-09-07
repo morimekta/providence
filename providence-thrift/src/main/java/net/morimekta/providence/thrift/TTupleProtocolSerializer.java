@@ -257,8 +257,12 @@ public class TTupleProtocolSerializer extends Serializer {
             }
         }
 
-        if (readStrict && !builder.isValid()) {
-            throw new SerializerException("");
+        if (readStrict) {
+            try {
+                builder.validate();
+            } catch (IllegalStateException e) {
+                throw new SerializerException(e, e.getMessage());
+            }
         }
 
         return builder.build();

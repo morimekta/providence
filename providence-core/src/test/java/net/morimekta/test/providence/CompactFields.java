@@ -507,6 +507,26 @@ public class CompactFields
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(0)) {
+                    missing.add("name");
+                }
+
+                if (!optionals.get(1)) {
+                    missing.add("id");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message providence.CompactFields");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> descriptor() {
             return kDescriptor;
         }

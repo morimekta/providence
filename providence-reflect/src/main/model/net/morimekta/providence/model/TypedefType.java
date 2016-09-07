@@ -508,6 +508,10 @@ public class TypedefType
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;
         }
