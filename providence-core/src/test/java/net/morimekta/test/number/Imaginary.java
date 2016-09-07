@@ -402,6 +402,22 @@ public class Imaginary
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(0)) {
+                    missing.add("v");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message number.Imaginary");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
             return kDescriptor;
         }

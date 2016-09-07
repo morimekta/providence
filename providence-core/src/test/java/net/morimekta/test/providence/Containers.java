@@ -4497,6 +4497,10 @@ public class Containers
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Containers,_Field> descriptor() {
             return kDescriptor;
         }

@@ -1114,6 +1114,10 @@ public class ExceptionFields
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<ExceptionFields,_Field> descriptor() {
             return kDescriptor;
         }

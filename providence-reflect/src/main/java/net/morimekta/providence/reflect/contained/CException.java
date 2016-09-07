@@ -26,6 +26,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
@@ -245,6 +246,25 @@ public class CException extends Throwable implements PMessage<CException, CField
         @Override
         public boolean isValid() {
             return values.size() == 1;
+        }
+
+        @Override
+        public void validate() {
+            LinkedList<String> missing = new LinkedList<>();
+            for (PField field : descriptor.getFields()) {
+                if (field.getRequirement() == PRequirement.REQUIRED) {
+                    if (!values.containsKey(field.getKey())) {
+                        missing.add(field.getName());
+                    }
+                }
+            }
+
+            if (missing.size() > 0) {
+                throw new IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message " + descriptor().getQualifiedName(null));
+            }
         }
 
         @Override

@@ -1091,6 +1091,10 @@ public class OptionalFields
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<OptionalFields,_Field> descriptor() {
             return kDescriptor;
         }

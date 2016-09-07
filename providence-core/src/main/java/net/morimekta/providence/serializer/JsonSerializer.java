@@ -323,8 +323,12 @@ public class JsonSerializer extends Serializer {
             }
         }
 
-        if (readStrict && !builder.isValid()) {
-            throw new SerializerException("Type " + type.getName() + " not properly populated");
+        if (readStrict) {
+            try {
+                builder.validate();
+            } catch (IllegalStateException e) {
+                throw new SerializerException(e, e.getMessage());
+            }
         }
 
         return builder.build();
@@ -353,8 +357,12 @@ public class JsonSerializer extends Serializer {
             sep = tokenizer.expectSymbol("parsing compact message entry sep", JsonToken.kListEnd, JsonToken.kListSep);
         }
 
-        if (readStrict && !builder.isValid()) {
-            throw new SerializerException("Type " + type.getName() + " not properly populated");
+        if (readStrict) {
+            try {
+                builder.validate();
+            } catch (IllegalStateException e) {
+                throw new SerializerException(e, e.getMessage());
+            }
         }
 
         return builder.build();

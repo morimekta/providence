@@ -555,6 +555,10 @@ public class Calculator {
             }
 
             @Override
+            public void validate() {
+            }
+
+            @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<Calculate_request,_Field> descriptor() {
                 return kDescriptor;
             }
@@ -1068,6 +1072,13 @@ public class Calculator {
             }
 
             @Override
+            public void validate() {
+                if (!isValid()) {
+                    throw new java.lang.IllegalStateException("No union field set in calculator.calculate___response");
+                }
+            }
+
+            @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<Calculate_response,_Field> descriptor() {
                 return kDescriptor;
             }
@@ -1338,6 +1349,10 @@ public class Calculator {
             @Override
             public boolean isValid() {
                 return true;
+            }
+
+            @Override
+            public void validate() {
             }
 
             @Override

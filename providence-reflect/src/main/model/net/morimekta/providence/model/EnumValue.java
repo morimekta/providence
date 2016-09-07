@@ -613,6 +613,22 @@ public class EnumValue
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("name");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.EnumValue");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> descriptor() {
             return kDescriptor;
         }

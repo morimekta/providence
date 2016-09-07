@@ -32,6 +32,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -146,6 +147,25 @@ public class CStruct extends CMessage<CStruct,CField> {
             }
 
             return true;
+        }
+
+        @Override
+        public void validate() {
+            LinkedList<String> missing = new LinkedList<>();
+            for (PField field : descriptor.getFields()) {
+                if (field.getRequirement() == PRequirement.REQUIRED) {
+                    if (!values.containsKey(field.getKey())) {
+                        missing.add(field.getName());
+                    }
+                }
+            }
+
+            if (missing.size() > 0) {
+                throw new IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message " + descriptor().getQualifiedName(null));
+            }
         }
 
         @Override

@@ -663,6 +663,22 @@ public class EnumType
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("name");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.EnumType");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;
         }

@@ -17,20 +17,19 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
 public class JMessageBuilderFormat {
-    private final JOptions            options;
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
     public JMessageBuilderFormat(IndentedPrintWriter writer, JHelper helper, JOptions options) {
         this.writer = writer;
         this.helper = helper;
-        this.options = options;
     }
 
     public void appendBuilder(JMessage<?> message) throws GeneratorException {
@@ -68,6 +67,7 @@ public class JMessageBuilderFormat {
         appendOverrideAdder(message);
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
+        appendOverrideValidate(message);
         appendOverrideDescriptor(message);
 
         writer.appendln("@Override")
@@ -680,16 +680,19 @@ public class JMessageBuilderFormat {
                   .newline()
                   .appendln("switch (tUnionField) {")
                   .begin();
-            for (JField field : message.fields()) {
-                if (!field.alwaysPresent()) {
-                    if (field.type() == PType.MESSAGE) {
-                        writer.formatln("case %s: return %s != null || %s_builder != null;",
-                                        field.fieldEnum(), field.member(), field.member());
-                    } else {
-                        writer.formatln("case %s: return %s != null;", field.fieldEnum(), field.member());
-                    }
-                }
-            }
+            message.fields()
+                   .stream()
+                   .filter(field -> !field.alwaysPresent())
+                   .forEachOrdered(field -> {
+                       if (field.type() == PType.MESSAGE) {
+                           writer.formatln("case %s: return %s != null || %s_builder != null;",
+                                           field.fieldEnum(),
+                                           field.member(),
+                                           field.member());
+                       } else {
+                           writer.formatln("case %s: return %s != null;", field.fieldEnum(), field.member());
+                       }
+                   });
             writer.appendln("default: return true;")
                   .end()
                   .appendln('}');
@@ -717,6 +720,54 @@ public class JMessageBuilderFormat {
         writer.end()
               .appendln('}')
               .newline();
+    }
+
+    private void appendOverrideValidate(JMessage<?> message) {
+        writer.appendln("@Override")
+              .appendln("public void validate() {")
+              .begin();
+        if (message.isUnion()) {
+            writer.appendln("if (!isValid()) {")
+                  .formatln("    throw new %s(\"No union field set in %s\");",
+                            IllegalStateException.class.getName(),
+                            message.descriptor().getQualifiedName(null))
+                  .appendln("}");
+        } else {
+            boolean hasRequired =
+                    message.fields()
+                           .stream()
+                           .filter(JField::isRequired)
+                           .findFirst()
+                           .isPresent();
+            if (hasRequired) {
+                writer.appendln("if (!isValid()) {")
+                      .begin()
+                      .formatln("%s<String> missing = new %s<>();",
+                                LinkedList.class.getName(),
+                                LinkedList.class.getName())
+                      .newline();
+
+                message.fields()
+                       .stream()
+                       .filter(JField::isRequired)
+                       .forEachOrdered(field -> writer
+                               .formatln("if (!optionals.get(%d)) {", field.index())
+                               .formatln("    missing.add(\"%s\");", field.name())
+                               .appendln("}")
+                               .newline());
+
+                writer.formatln("throw new %s(", IllegalStateException.class.getName())
+                      .appendln("        \"Missing required fields \" +")
+                      .appendln("        String.join(\",\", missing) +")
+                      .formatln("        \" in message %s\");", message.descriptor().getQualifiedName(null))
+                      .end()
+                      .appendln("}");
+            }
+        }
+        writer.end()
+              .appendln('}')
+              .newline();
+
     }
 
     private void appendOverrideDescriptor(JMessage<?> message) throws GeneratorException {

@@ -1094,6 +1094,13 @@ public class UnionFields
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                throw new java.lang.IllegalStateException("No union field set in providence.UnionFields");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
             return kDescriptor;
         }

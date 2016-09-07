@@ -167,6 +167,14 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                throw new IllegalStateException("No union field set in " +
+                                                descriptor().getQualifiedName(null));
+            }
+        }
+
+        @Override
         public Builder set(int key, Object value) {
             CField field = descriptor.getField(key);
             if (field == null) {

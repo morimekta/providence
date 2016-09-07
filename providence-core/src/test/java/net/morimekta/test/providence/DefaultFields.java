@@ -1034,6 +1034,10 @@ public class DefaultFields
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> descriptor() {
             return kDescriptor;
         }

@@ -745,6 +745,22 @@ public class ServiceType
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("name");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.ServiceType");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<ServiceType,_Field> descriptor() {
             return kDescriptor;
         }

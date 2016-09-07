@@ -1043,6 +1043,58 @@ public class RequiredFields
         }
 
         @Override
+        public void validate() {
+            if (!isValid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(0)) {
+                    missing.add("booleanValue");
+                }
+
+                if (!optionals.get(1)) {
+                    missing.add("byteValue");
+                }
+
+                if (!optionals.get(2)) {
+                    missing.add("shortValue");
+                }
+
+                if (!optionals.get(3)) {
+                    missing.add("integerValue");
+                }
+
+                if (!optionals.get(4)) {
+                    missing.add("longValue");
+                }
+
+                if (!optionals.get(5)) {
+                    missing.add("doubleValue");
+                }
+
+                if (!optionals.get(6)) {
+                    missing.add("stringValue");
+                }
+
+                if (!optionals.get(7)) {
+                    missing.add("binaryValue");
+                }
+
+                if (!optionals.get(8)) {
+                    missing.add("enumValue");
+                }
+
+                if (!optionals.get(9)) {
+                    missing.add("compactValue");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message providence.RequiredFields");
+            }
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> descriptor() {
             return kDescriptor;
         }

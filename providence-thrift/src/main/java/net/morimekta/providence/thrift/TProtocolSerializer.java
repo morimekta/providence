@@ -261,8 +261,12 @@ class TProtocolSerializer extends Serializer {
         }
         protocol.readStructEnd();
 
-        if (!builder.isValid() && readStrict) {
-            throw new SerializerException("Read invalid message from protocol");
+        if (readStrict) {
+            try {
+                builder.validate();
+            } catch (IllegalStateException e) {
+                throw new SerializerException(e, e.getMessage());
+            }
         }
 
         return builder.build();

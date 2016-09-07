@@ -266,6 +266,15 @@ public class BinarySerializer extends Serializer {
 
             fieldInfo = readFieldInfo(input);
         }
+
+        if (readStrict) {
+            try {
+                builder.validate();
+            } catch (IllegalStateException e) {
+                throw new SerializerException(e, e.getMessage());
+            }
+        }
+
         return builder.build();
     }
 

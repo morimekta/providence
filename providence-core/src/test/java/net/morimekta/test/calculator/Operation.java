@@ -458,6 +458,10 @@ public class Operation
         }
 
         @Override
+        public void validate() {
+        }
+
+        @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> descriptor() {
             return kDescriptor;
         }
