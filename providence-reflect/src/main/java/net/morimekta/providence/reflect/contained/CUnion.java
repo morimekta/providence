@@ -30,6 +30,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +77,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             if (unionField == null) {
                 return ImmutableMap.of();
             } else if (currentValue == null) {
-                return ImmutableMap.of(unionField.getKey(), null);
+                throw new IllegalStateException("Union field set, but value is null.");
             } else {
                 switch (unionField.getType()) {
                     case LIST:
@@ -175,21 +176,25 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
             CField field = descriptor.getField(key);
             if (field == null) {
                 return this; // soft ignoring unsupported fields.
             }
+            if (value == null) {
+                return clear(key);
+            }
             this.unionField = field;
             switch (field.getType()) {
                 case SET:
-                    this.currentValue = ((PSet) field.getDescriptor()).builder();
+                    this.currentValue = ((PSet) field.getDescriptor()).builder().addAll((Collection) value);
                     break;
                 case LIST:
-                    this.currentValue = ((PList) field.getDescriptor()).builder();
+                    this.currentValue = ((PList) field.getDescriptor()).builder().addAll((Collection) value);
                     break;
                 case MAP:
-                    this.currentValue = ((PMap) field.getDescriptor()).builder();
+                    this.currentValue = ((PMap) field.getDescriptor()).builder().putAll((Map) value);
                     break;
                 default:
                     this.currentValue = value;
@@ -224,6 +229,9 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
                     }
                 }
             }
+            if (value == null) {
+                throw new IllegalArgumentException("Adding null item to collection " + field.getName());
+            }
             switch (field.getType()) {
                 case LIST: {
                     ((PList.Builder) this.currentValue).add(value);
@@ -239,8 +247,10 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
 
         @Override
         public Builder clear(int key) {
-            this.unionField = null;
-            this.currentValue = null;
+            if (unionField != null && unionField.getKey() == key) {
+                this.unionField = null;
+                this.currentValue = null;
+            }
             return this;
         }
     }
