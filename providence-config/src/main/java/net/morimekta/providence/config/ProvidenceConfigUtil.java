@@ -20,83 +20,19 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.config.ConfigException;
+import net.morimekta.config.IncompatibleValueException;
+import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utilities for providence config handling.
+ * Utilities for helping with providence config handling.
  */
 public class ProvidenceConfigUtil {
-    /**
-     * Convert the value to a message, or fail if that is impossible. This
-     * is essentially just a checked cast.
-     *
-     * @param value The instance to convert.
-     * @param <Message> The message type.
-     * @param <Field> The message field type.
-     * @return The message instance.
-     */
-    @SuppressWarnings("unchecked")
-    public static <Message extends PMessage<Message, Field>, Field extends PField> Message asMessage(Object value) {
-        if (!(value instanceof PMessage)) {
-            throw new ConfigException("Cannot convert " + value.getClass().getSimpleName() + " to providence message.");
-        }
-        return (Message) value;
-    }
-
-    /**
-     * Convert the value to a message, or fail if that is impossible. This
-     * is essentially just a checked cast.
-     *
-     * @param descriptor The message descriptor to convert to.
-     * @param value The instance to convert.
-     * @param <Message> The message type.
-     * @param <Field> The message field type.
-     * @return The message instance.
-     */
-    @SuppressWarnings("unchecked")
-    public static <Message extends PMessage<Message, Field>, Field extends PField> Message asMessage(
-            Object value,
-            PStructDescriptor<Message, Field> descriptor) {
-        if (!(value instanceof PMessage)) {
-            throw new ConfigException("Cannot convert " + value.getClass().getSimpleName() + " to providence message.");
-        }
-        PMessage message = (PMessage) value;
-        if (message.descriptor().equals(descriptor)) {
-            return (Message) value;
-        }
-        throw new ConfigException("Message " + message.descriptor().getQualifiedName(null) + " is not instance of " + descriptor.getQualifiedName(null));
-    }
-
-    /**
-     * Build a key set from a message.
-     * @param message The message to make keyset from.
-     * @return The key-set.
-     */
-    public static Set<String> buildKeySet(PMessage<?,?> message) {
-        return buildKeySet(null, message);
-    }
-
-    /**
-     * Build a key set from a message.
-     * @param prefix The key prefix.
-     * @param message The message to make keyset from.
-     * @return The key-set.
-     */
-    public static Set<String> buildKeySet(String prefix, PMessage<?,?> message) {
-        HashSet<String> keys = new HashSet<>();
-
-        buildKeySet(prefix, message, keys);
-
-        return keys;
-    }
-
     /**
      * Look up a key in the message structure. If the key is not found, return null.
      *
@@ -104,44 +40,53 @@ public class ProvidenceConfigUtil {
      * @param key The key to look up.
      * @return The value found or null.
      */
-    public static Object getFromMessage(PMessage message, String key) {
-        if (key.contains(".")) {
-            String[] parts = key.split("[.]", 2);
-            PField field = message.descriptor().getField(parts[0]);
-            if (field == null) {
-                throw new ConfigException("Message " + message.descriptor()
-                                                              .getQualifiedName(null) + " has no field named " +
-                                          parts[0]);
-            }
-            Object value = message.get(field.getKey());
-            if (value == null) {
-                return null;
-            }
+    public static Object getInMessage(PMessage message, String key) {
+        PStructDescriptor descriptor = message.descriptor();
 
-            if (value instanceof PMessage) {
-                return getFromMessage((PMessage) value, parts[1]);
+        if (key.contains(".")) {
+            int idx = key.indexOf(".");
+            String name = key.substring(0, idx);
+            String sub = key.substring(idx + 1);
+
+            PField field = descriptor.getField(name);
+            if (field == null) {
+                throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName(null) + " has no field named " +
+                                               name);
             }
-            throw new ConfigException("Unable to fetch sub-keys from " + key + ", " + value.getClass().getSimpleName() + " is not a message");
+            if (field.getDescriptor().getType() != PType.MESSAGE) {
+                throw new IncompatibleValueException("Field " + name + " is not of message type in " +
+                                                     descriptor.getQualifiedName(null));
+            }
+            if (!message.has(field.getKey())) {
+                throw new KeyNotFoundException("Field " + name + " not a set.");
+            }
+            return getInMessage((PMessage) message.get(field.getKey()), sub);
         }
 
         PField field = message.descriptor().getField(key);
         if (field == null) {
-            throw new ConfigException("Message " + message.descriptor()
-                                                          .getQualifiedName(null) + " has no field named " +
-                                      key);
+            throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName(null) + " has no field named " +
+                                           key);
         }
 
         return message.get(field.getKey());
     }
 
-
-    private static void buildKeySet(String prefix, PMessage message, Set<String> into) {
+    /**
+     * Build the key-sets for the given message and prefix.
+     * @param prefix The current prefix, or null for no prefix.
+     * @param message The message to make key-set pairs for.
+     * @param valueKeySet The value key-set (with simple values)
+     */
+    protected static void buildKeySet(String prefix, PMessage message, Set<String> valueKeySet) {
         for (PField field : message.descriptor().getFields()) {
             if (message.has(field.getKey())) {
                 String key = makeKey(prefix, field);
-                into.add(key);
+
                 if (field.getType() == PType.MESSAGE) {
-                    buildKeySet(key, (PMessage) message.get(field.getKey()), into);
+                    buildKeySet(key, (PMessage) message.get(field.getKey()), valueKeySet);
+                } else {
+                    valueKeySet.add(key);
                 }
             }
         }
@@ -153,4 +98,5 @@ public class ProvidenceConfigUtil {
         }
         return prefix + "." + field.getName();
     }
+
 }

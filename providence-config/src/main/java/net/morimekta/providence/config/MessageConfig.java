@@ -20,37 +20,53 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.config.Config;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 
 import com.google.common.collect.ImmutableSet;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static net.morimekta.providence.config.ProvidenceConfigUtil.buildKeySet;
-import static net.morimekta.providence.config.ProvidenceConfigUtil.getFromMessage;
+import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 
 /**
- * A config that wraps a providence message instance.
+ * A config that wraps an immutable providence message instance.
  */
 public class MessageConfig<Message extends PMessage<Message, Field>, Field extends PField>
-        implements ProvidenceConfig {
+        implements Config {
+    /**
+     * Create a config that wraps a providence message instance. This message
+     * will be exposed without any key prefix.
+     *
+     * @param instance The actual message instance to expose to the config.
+     */
     public MessageConfig(Message instance) {
         this(null, instance);
     }
 
+    /**
+     * Create a config that wraps a providence message instance.
+     *
+     * @param prefix Prefix for appending to the keys as it is exposed as
+     *               to the config interface. Each "virtual" config key will
+     *               become the providence <code>$prefix.$path</code> where
+     *               the $path variable is the internal path to the value
+     *               entry.
+     * @param instance The actual message instance to expose to the config.
+     */
     public MessageConfig(String prefix, Message instance) {
         this.prefix = prefix;
         this.instance = instance;
-        Set<String> keySet = buildKeySet(prefix, instance);
-        if (prefix != null) {
-            keySet.add(prefix);
-        }
-        this.instanceKeySet = ImmutableSet.copyOf(keySet);
+        Set<String> valueKeySet = new HashSet<>();
+        buildKeySet(prefix, instance, valueKeySet);
+        this.valueKeySet = ImmutableSet.copyOf(valueKeySet);
     }
 
     /**
-     * Get the key prefix used in the confix wrapper. All keys in the message
+     * Get the key prefix used in the config wrapper. All keys in the message
      * structure is prefixed by this value.
      *
      * @return The key prefix.
@@ -70,23 +86,20 @@ public class MessageConfig<Message extends PMessage<Message, Field>, Field exten
 
     @Override
     public Object get(String key) {
-        if (key.equals(prefix)) {
-            return getMessage();
-        }
         if (containsKey(key)) {
-            return getFromMessage(instance, cutPrefix(key));
+            return getInMessage(instance, cutPrefix(key));
         }
         return null;
     }
 
     @Override
     public boolean containsKey(String key) {
-        return instanceKeySet.contains(key);
+        return valueKeySet.contains(key);
     }
 
     @Override
     public Set<String> keySet() {
-        return instanceKeySet;
+        return valueKeySet;
     }
 
     private String cutPrefix(String key) {
@@ -98,5 +111,5 @@ public class MessageConfig<Message extends PMessage<Message, Field>, Field exten
 
     private final String      prefix;
     private final Message     instance;
-    private final Set<String> instanceKeySet;
+    private final Set<String> valueKeySet;
 }

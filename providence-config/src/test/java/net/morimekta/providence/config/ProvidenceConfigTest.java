@@ -20,28 +20,28 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.config.ConfigBuilder;
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.model.ThriftDocument;
+import net.morimekta.providence.util.TypeRegistry;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Interface for config builder for providence.
+ * Tests for the providence config parser.
  */
-public interface ProvidenceConfigBuilder<Builder extends ProvidenceConfigBuilder<Builder>>
-        extends ProvidenceConfig, ConfigBuilder<Builder> {
-    /**
-     * Get value as a providence message.
-     *
-     * @param key The key to look for.
-     * @param message The message to put.
-     * @param <Message> The message type.
-     * @param <Field> The message field type.
-     * @return The message.
-     */
-    @SuppressWarnings("unchecked")
-    default <Message extends PMessage<Message, Field>, Field extends PField>
-    Builder putMessage(String key, Message message) {
-        put(key, message);
-        return (Builder) this;
+public class ProvidenceConfigTest {
+    @Test
+    @Ignore("Not implemented yet!!!")
+    public void testParse() {
+        TypeRegistry registry = new TypeRegistry();
+        registry.registerRecursively(ThriftDocument.kDescriptor);
+
+        ProvidenceConfig config = new ProvidenceConfig(registry);
+
+        ThriftDocument doc = config.get("name");
+
+        assertEquals("other", doc.getPackage());
     }
 }

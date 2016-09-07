@@ -20,10 +20,20 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.providence.mio.FileMessageReader;
+import net.morimekta.providence.mio.FileMessageWriter;
 import net.morimekta.providence.model.Declaration;
+import net.morimekta.providence.model.Requirement;
 import net.morimekta.providence.model.ThriftField;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.SerializerException;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,12 +45,16 @@ import static org.junit.Assert.assertTrue;
  * Tests for the message config wrapper.
  */
 public class MessageConfigTest {
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
     @Test
     public void testConfig() {
         Declaration declaration = Declaration.withDeclConst(
                 ThriftField.builder()
                            .setName("Name")
                            .setKey(44)
+                           .setType("i32")
                            .build());
 
         MessageConfig<Declaration,Declaration._Field> config = new MessageConfig<>(declaration);
@@ -49,8 +63,8 @@ public class MessageConfigTest {
 
         assertNull(config.getPrefix());
 
-        assertTrue(config.containsKey("decl_const"));
         assertTrue(config.containsKey("decl_const.name"));
+        assertFalse(config.containsKey("decl_const"));
 
         assertEquals("Name", config.getString("decl_const.name"));
         assertEquals(44, config.getInteger("decl_const.key"));
@@ -62,6 +76,7 @@ public class MessageConfigTest {
                 ThriftField.builder()
                            .setName("Name")
                            .setKey(44)
+                           .setType("i32")
                            .build());
 
         MessageConfig<Declaration,Declaration._Field> config = new MessageConfig<>("prefix", declaration);
@@ -69,13 +84,61 @@ public class MessageConfigTest {
         assertSame(declaration, config.getMessage());
         assertEquals("prefix", config.getPrefix());
 
-        assertFalse(config.containsKey("decl_const"));
-        assertTrue(config.containsKey("prefix"));
+        assertFalse(config.containsKey("prefix"));
+        assertFalse(config.containsKey("prefix.decl_const"));
 
-        assertTrue(config.containsKey("prefix.decl_const"));
+        assertFalse(config.containsKey("decl_const"));
+        assertFalse(config.containsKey("prefix.decl_const"));
         assertTrue(config.containsKey("prefix.decl_const.name"));
 
         assertEquals("Name", config.getString("prefix.decl_const.name"));
         assertEquals(44, config.getInteger("prefix.decl_const.key"));
+    }
+
+    @Test
+    public void testSupplier() throws IOException, SerializerException {
+        File file = temp.newFile();
+
+        Declaration declaration = Declaration.withDeclConst(
+                ThriftField.builder()
+                           .setName("Name")
+                           .setRequirement(Requirement.DEFAULT)
+                           .setType("i32")
+                           .setKey(44)
+                           .build());
+        FileMessageWriter writer = new FileMessageWriter(file, new JsonSerializer());
+        writer.write(declaration);
+        writer.close();
+
+        // -- supplier test
+
+        MessageConfigSupplier<Declaration, Declaration._Field> supplier = new MessageConfigSupplier<>(
+                "decl", Declaration.kDescriptor, new FileMessageReader(file, new JsonSerializer()));
+
+        assertEquals("decl", supplier.getPrefix());
+
+        MessageConfig<Declaration, Declaration._Field> config = supplier.get();
+
+        assertEquals("decl", config.getPrefix());
+        assertEquals("Name", config.getString("decl.decl_const.name"));
+        assertEquals(Requirement.DEFAULT.getValue(), config.getInteger("decl.decl_const.requirement"));
+
+
+        declaration = Declaration.withDeclConst(
+                ThriftField.builder()
+                           .setName("Other")
+                           .setRequirement(Requirement.REQUIRED)
+                           .setType("double")
+                           .setKey(33)
+                           .build());
+        writer.write(declaration);
+        writer.close();
+
+        supplier.reload();
+        config = supplier.get();
+
+        assertEquals("Other", config.getString("decl.decl_const.name"));
+        assertEquals(Requirement.REQUIRED.getValue(), config.getInteger("decl.decl_const.requirement"));
+
     }
 }

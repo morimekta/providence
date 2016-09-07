@@ -20,41 +20,60 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.config.Config;
+import net.morimekta.config.IncompatibleValueException;
+import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.util.TypeRegistry;
 
-import static net.morimekta.providence.config.ProvidenceConfigUtil.asMessage;
+import java.util.HashMap;
+import java.util.Map;
+
+import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 
 /**
  * Providence enhanced config interface.
  */
-public interface ProvidenceConfig extends Config {
-    /**
-     * Get value as a providence message.
-     *
-     * @param key The key to look for.
-     * @param <Message> The message type.
-     * @param <Field> The message field type.
-     * @return The message.
-     */
-    default <Message extends PMessage<Message, Field>, Field extends PField>
-    Message getMessage(String key) {
-        return asMessage(getValue(key));
+public class ProvidenceConfig {
+    private final TypeRegistry                  registry;
+    private final Map<String, ProvidenceConfig> includes;
+    private final Map<String, PMessage>         entries;
+    private final Map<String, Object>           params;
+
+    public ProvidenceConfig(TypeRegistry registry) {
+        this.registry = registry;
+        this.includes = new HashMap<>();
+        this.entries = new HashMap<>();
+        this.params = new HashMap<>();
     }
 
     /**
-     * Get value as a providence message.
+     * Get value from the config.
      *
      * @param key The key to look for.
-     * @param descriptor The message descriptor.
-     * @param <Message> The message type.
-     * @param <Field> The message field type.
-     * @return The message.
+     * @return The value at the given key, or exception if not found.
      */
-    default <Message extends PMessage<Message, Field>, Field extends PField>
-    Message getMessage(String key, PStructDescriptor<Message, Field> descriptor) {
-        return asMessage(descriptor, getValue(key));
+    @SuppressWarnings("unchecked")
+    public <V> V get(String key) {
+        try {
+            if (key.contains(".")) {
+                int idx = key.indexOf(".");
+                String name = key.substring(0, idx);
+                String sub = key.substring(idx + 1);
+                if (entries.containsKey(name)) {
+                    return (V) getInMessage(entries.get(name), sub);
+                } else if (includes.containsKey(name)) {
+                    return includes.get(name)
+                                   .get(sub);
+                }
+                throw new IllegalArgumentException("Name " + name + " not available in config: " + key);
+            } else if (entries.containsKey(key)) {
+                return (V) entries.get(key);
+            }
+            throw new IllegalArgumentException("Name " + key + " not available in config.");
+        } catch (KeyNotFoundException e) {
+            throw new KeyNotFoundException(e.getMessage() + ": " + key);
+        } catch (IncompatibleValueException e) {
+            throw new IncompatibleValueException(e.getMessage() + ": " + key);
+        }
     }
 }
