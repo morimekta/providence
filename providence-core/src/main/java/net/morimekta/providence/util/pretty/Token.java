@@ -46,8 +46,13 @@ public class Token extends Slice {
 
     public static final String kSymbols = "{}:=()<>,;#[]";
 
-    private static final Pattern RE_IDENTIFIER = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
-    private static final Pattern RE_INTEGER    = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+    private static final Pattern RE_IDENTIFIER                  = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern RE_QUALIFIED_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern RE_DOUBLE_QUALIFIED_IDENTIFIER = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
+    private static final Pattern RE_REFERENCE_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*([.][_a-zA-Z][_a-zA-Z0-9]*)*");
+    private static final Pattern RE_INTEGER                     = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+
+    private static final Pattern RE_REAL    = Pattern.compile("-?(\\.[0-9]+|[1-9][0-9]*\\.[0-9]*)([eE][+-]?[0-9][0-9]*)?");
 
     private final int lineNo;
     private final int linePos;
@@ -67,13 +72,29 @@ public class Token extends Slice {
     }
 
     public boolean isIdentifier() {
-        return RE_IDENTIFIER.matcher(asString())
-                            .matches();
+        return RE_IDENTIFIER.matcher(asString()).matches();
+    }
+
+    public boolean isQualifiedIdentifier() {
+        return RE_QUALIFIED_IDENTIFIER.matcher(asString()).matches();
+    }
+
+    public boolean isDoubleQualifiedIdentifier() {
+        return RE_DOUBLE_QUALIFIED_IDENTIFIER.matcher(asString()).matches();
+    }
+
+    public boolean isReferenceIdentifier() {
+        return RE_REFERENCE_IDENTIFIER.matcher(asString()).matches();
     }
 
     public boolean isInteger() {
         return RE_INTEGER.matcher(asString())
                          .matches();
+    }
+
+    public boolean isReal() {
+        return RE_REAL.matcher(asString())
+                      .matches();
     }
 
     /**

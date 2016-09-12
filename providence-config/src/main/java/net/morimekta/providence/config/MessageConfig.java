@@ -33,7 +33,7 @@ import static net.morimekta.providence.config.ProvidenceConfigUtil.buildKeySet;
 import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 
 /**
- * A config that wraps an immutable providence message instance.
+ * A {@link Config} that wraps an immutable providence message instance.
  */
 public class MessageConfig<Message extends PMessage<Message, Field>, Field extends PField>
         implements Config {

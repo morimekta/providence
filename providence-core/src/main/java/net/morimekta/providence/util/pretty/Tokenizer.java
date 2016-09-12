@@ -29,6 +29,8 @@ import net.morimekta.util.io.IOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Simple tokenizer for the pretty serializer that strips away comments based
@@ -171,8 +173,13 @@ public class Tokenizer extends InputStream {
                 }
             }
 
+            List<String> chars = new LinkedList<>();
+            for (char c : symbols) {
+                chars.add(Strings.escape(new String(new char[]{c})));
+            }
+
             throw new SerializerException("Expected one of ['%s'], but found '%s' while %s",
-                                          Strings.escape(Strings.join("', '", symbols)),
+                                          Strings.join("', '", chars),
                                           Strings.escape(nextToken.asString()),
                                           message);
         }
