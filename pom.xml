@@ -413,10 +413,10 @@
             <id>cli</id>
             <modules>
                 <!-- CLI Tooling (not deployed as artifacts) -->
-                <module>providence-compiler</module>
-                <module>providence-converter</module>
-                <module>providence-rpc-tool</module>
-                <module>providence-package</module>
+                <module>providence-tools-compiler</module>
+                <module>providence-tools-converter</module>
+                <module>providence-tools-rpc</module>
+                <module>providence-tools</module>
             </modules>
         </profile>
         <profile>

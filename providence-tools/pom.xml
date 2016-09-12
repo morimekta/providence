@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Providence CLI : Packaging</name>
+    <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), and an RPC tool (pvdrpc).</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/morimekta/providence-extra.git</url>
+      <tag>HEAD</tag>
+  </scm>
+
+    <parent>
+        <groupId>net.morimekta.providence</groupId>
+        <artifactId>providence</artifactId>
+        <version>0.2.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>providence-package</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-compiler</artifactId>
+            <version>0.2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-converter</artifactId>
+            <version>0.2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-rpc</artifactId>
+            <version>0.2.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>providence</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.vafer</groupId>
+                <artifactId>jdeb</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <deb>[[buildDir]]/providence-[[version]]_all.[[extension]]</deb>
+                            <verbose>true</verbose>
+                            <snapshotExpand>true</snapshotExpand>
+                            <snapshotEnv>USER</snapshotEnv>
+
+                            <dataSet>
+                                <data>
+                                    <src>${project.basedir}/src/deb/bin/pvd</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/src/deb/bin/pvdc</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.basedir}/src/deb/bin/pvdrpc</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.parent.basedir}/providence-tools-compiler/target/providence-tools-compiler.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.parent.basedir}/providence-tools-converter/target/providence-tools-converter.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.parent.basedir}/providence-tools-rpc/target/providence-tools-rpc.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/lib</prefix>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>attach-rpm</id>
+                        <goals>
+                            <goal>attached-rpm</goal>
+                        </goals>
+                        <configuration>
+                            <!-- identification -->
+                            <name>providence</name>
+                            <version>${project.version}</version>
+                            <license>Apache 2.0</license>
+                            <group>Development/Tools</group>
+
+                            <!-- dependencies -->
+                            <requires>
+                                <require>java &gt;= 1.8</require>
+                            </requires>
+
+                            <!-- mapping -->
+                            <mappings>
+                                <mapping>
+                                    <directory>/usr/local/bin</directory>
+                                    <filemode>755</filemode>
+                                    <username>root</username>
+                                    <sources>
+                                        <source>
+                                            <location>${project.basedir}/src/deb/bin</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/local/lib</directory>
+                                    <filemode>644</filemode>
+                                    <sources>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-tools-compiler/target/providence-tools-compiler.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-tools-converter/target/providence-tools-converter.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-tools-rpc/target/providence-tools-rpc.jar</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

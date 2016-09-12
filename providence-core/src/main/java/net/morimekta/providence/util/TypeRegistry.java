@@ -56,11 +56,14 @@ public class TypeRegistry {
      * @param name    Name of type, without any spaces.
      * @param context The package context of the type.
      * @param <T>     The described type.
-     * @return The type provider.
+     * @return The type descriptor.
      */
     @SuppressWarnings("unchecked")
     public <T extends PDeclaredDescriptor<T>> T getDeclaredType(String name, String context) {
         String declaredTypeName = finalTypename(name, context);
+
+        context = declaredTypeName.replaceAll("\\..*", "");
+        name = declaredTypeName.replaceAll(".*\\.", "");
 
         if (declaredTypes.containsKey(declaredTypeName)) {
             return (T) declaredTypes.get(declaredTypeName);
@@ -69,8 +72,22 @@ public class TypeRegistry {
         if (knownPackages.contains(context)) {
             throw new IllegalArgumentException("No such type \"" + name + "\" in package \"" + context + "\"");
         } else {
-            throw new IllegalArgumentException("No such package \"" + context + "\" for type \"" + name + "\"");
+            throw new IllegalArgumentException("No such package \"" + context + "\" exists for type \"" + name + "\"");
         }
+    }
+
+    /**
+     * Get a declared type by its qualified type name.
+     *
+     * @param name The name of the type.
+     * @param <T>  The described type.
+     * @return The type descriptor.
+     */
+    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(String name) {
+        if (!name.contains(".")) {
+            throw new IllegalArgumentException("Global typename without package: \"" + name + "\"");
+        }
+        return getDeclaredType(name, name.replaceAll("\\..*", ""));
     }
 
     /**
