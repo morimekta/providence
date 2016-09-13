@@ -33,6 +33,11 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-config</artifactId>
+            <version>0.2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-converter</artifactId>
             <version>0.2.1-SNAPSHOT</version>
         </dependency>
@@ -102,6 +107,15 @@
                                     </mapper>
                                 </data>
                                 <data>
+                                    <src>${project.basedir}/src/deb/bin/pvdcfg</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/bin</prefix>
+                                        <filemode>755</filemode>
+                                    </mapper>
+                                </data>
+                                <data>
                                     <src>${project.basedir}/src/deb/bin/pvdrpc</src>
                                     <type>file</type>
                                     <mapper>
@@ -120,6 +134,14 @@
                                 </data>
                                 <data>
                                     <src>${project.parent.basedir}/providence-tools-converter/target/providence-tools-converter.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/local/lib</prefix>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${project.parent.basedir}/providence-tools-config/target/providence-tools-config.jar</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -182,6 +204,9 @@
                                         </source>
                                         <source>
                                             <location>${project.parent.basedir}/providence-tools-converter/target/providence-tools-converter.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>${project.parent.basedir}/providence-tools-config/target/providence-tools-config.jar</location>
                                         </source>
                                         <source>
                                             <location>${project.parent.basedir}/providence-tools-rpc/target/providence-tools-rpc.jar</location>

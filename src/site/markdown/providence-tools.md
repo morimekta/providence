@@ -62,6 +62,38 @@ pvd -i fast_binary,file:test.data -o pretty -I thrift/ test.MyData
 Which should read the data file serialized with the FastBinarySerializer format
 and print it out with the simple "pretty printer" format.
 
+## Config Helper
+
+Providence can be used as a base for generating config too. Related to this there
+is the providence config helper, or `pvdcfg`. The tool has a couple of main functions.
+
+- `params`: show the params available to be modified, and where they are defined.
+- `verify`: Verify a set of config files. This will simply print nothing if all is
+  OK, and a human readable error message if not.
+- `print`: Print the parsed config to standard out.
+
+Example calls:
+
+```sh
+$ pvdcfg -I providence/ params resources/my_service.cfg
+{
+  http_port = 8080 # resources/my_service.cfg
+  db_host = "localhost:1234" # resources/db.cfg
+}
+$ pvdcfg -I providence/ print resources/my_service.cfg
+{
+  http {
+    port = 8080
+    
+  }
+}
+$ pvdcfg -I providence/ verify --strict resources/*.cfg
+No such field 'blah' in config.Service
+resources/my_service.cfg line 23
+     blah = "nothing"
+-----^
+```
+
 ## RPC Tool
 
 The providence RPC tool `pvdrpc` is a program designed to test out thrift and

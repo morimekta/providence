@@ -414,6 +414,7 @@
             <modules>
                 <!-- CLI Tooling (not deployed as artifacts) -->
                 <module>providence-tools-compiler</module>
+                <module>providence-tools-config</module>
                 <module>providence-tools-converter</module>
                 <module>providence-tools-rpc</module>
                 <module>providence-tools</module>
