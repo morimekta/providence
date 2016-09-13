@@ -20,8 +20,11 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.config.ConfigException;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.test.config.Service;
+import net.morimekta.test.config.Value;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -29,17 +32,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the providence config parser.
@@ -55,6 +62,7 @@ public class ProvidenceConfigTest {
 
         registry = new TypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
+        registry.registerRecursively(Value.kDescriptor);
     }
 
     @After
@@ -63,13 +71,13 @@ public class ProvidenceConfigTest {
     }
 
     @Test
-    public void testParseSimple() throws IOException {
-        addConfig("/net/morimekta/providence/config/base_service.cfg");
-        addConfig("/net/morimekta/providence/config/prod_db.cfg");
-        addConfig("/net/morimekta/providence/config/stage_db.cfg");
+    public void testParseSimple() throws IOException, SerializerException {
+        writeConfig("/net/morimekta/providence/config/base_service.cfg");
+        writeConfig("/net/morimekta/providence/config/prod_db.cfg");
+        writeConfig("/net/morimekta/providence/config/stage_db.cfg");
 
-        File prod = addConfig("/net/morimekta/providence/config/prod.cfg");
-        File stage = addConfig("/net/morimekta/providence/config/stage.cfg");
+        File prod = writeConfig("/net/morimekta/providence/config/prod.cfg");
+        File stage = writeConfig("/net/morimekta/providence/config/stage.cfg");
 
         Map<String,String> params = new HashMap<>();
         params.put("admin_port", "14256");
@@ -89,7 +97,147 @@ public class ProvidenceConfigTest {
         assertEquals((short) 8080, stage_service.getHttp().getPort());
     }
 
-    private File addConfig(String resource) throws IOException {
+    @Test
+    public void testParams() throws IOException, SerializerException {
+        File a = temp.newFile("a.cfg");
+        File b = temp.newFile("b.cfg");
+
+        writeConfig(a,
+                    "params {\n" +
+                    "  a_number = 4321\n" +
+                    "  a_real = 43.21\n" +
+                    "  a_text = \"string\"\n" +
+                    "  a_enum = config.Value.SECOND\n" +
+                    "  a_bin = b64(dGVzdAo=)\n" +
+                    "}\n" + "config.Database {}\n");
+        writeConfig(b,
+                    "include \"a.cfg\" as a\n" +
+                    "\n" +
+                    "params {\n" +
+                    "  b_number = 4321\n" +
+                    "  b_real = 43.21\n" +
+                    "  b_text = \"string\"\n" +
+                    "  b_enum = config.Value.SECOND\n" +
+                    "  b_bin = hex(0123456789abcdef)\n" +
+                    "}\n" +
+                    "config.Database {}\n");
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+
+        List<ProvidenceConfig.Param> params = config.params(b);
+
+        StringBuilder builder = new StringBuilder();
+        params.stream()
+              .map(ProvidenceConfig.Param::toString)
+              .sorted()
+              .forEachOrdered(s -> {
+                  builder.append(s);
+                  builder.append('\n');
+              });
+
+        assertEquals(
+                "a_bin = [dGVzdAo] (a.cfg)\n" +
+                "a_enum = config.Value.SECOND (a.cfg)\n" +
+                "a_number = 4321 (a.cfg)\n" +
+                "a_real = 43.21 (a.cfg)\n" +
+                "a_text = \"string\" (a.cfg)\n" +
+                "b_bin = [ASNFZ4mrze8] (b.cfg)\n" +
+                "b_enum = config.Value.SECOND (b.cfg)\n" +
+                "b_number = 4321 (b.cfg)\n" +
+                "b_real = 43.21 (b.cfg)\n" +
+                "b_text = \"string\" (b.cfg)\n" +
+                "",
+                builder.toString());
+    }
+
+    @Test
+    public void testCircularIncludes() throws IOException {
+        File a = temp.newFile("a.cfg");
+        File b = temp.newFile("b.cfg");
+        File c = temp.newFile("c.cfg");
+
+        writeConfig(a,
+                    "include \"b.cfg\" as a\n" +
+                    "config.Database {}\n");
+        writeConfig(b,
+                    "include \"c.cfg\" as a\n" +
+                    "config.Database {}\n");
+        writeConfig(c,
+                    "include \"a.cfg\" as a\n" +
+                    "config.Database {}\n");
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+
+        try {
+            config.load(a);
+            fail("no exception on circular deps");
+        } catch (SerializerException e) {
+            assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
+        }
+
+        try {
+            config.params(a);
+            fail("no exception on circular deps");
+        } catch (SerializerException e) {
+            assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIncludeNoSuchFile() throws IOException {
+        File a = temp.newFile("a.cfg");
+        writeConfig(a,
+                    "include \"b.cfg\" as a\n" +
+                    "config.Database {}\n");
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+
+        try {
+            config.load(a);
+            fail("no exception on circular deps");
+        } catch (SerializerException e) {
+            assertEquals("Included file \"b.cfg\" not found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testParseFailure() throws IOException {
+        assertParseFailure("empty file",
+                           "No message in config: test.cfg",
+                           "");
+        assertParseFailure("bad params number",
+                           "Invalid termination of number: '1f'",
+                           "params { n = 1f }");
+        assertParseFailure("newline in string",
+                           "Unescaped non-printable char in literal: '\\n'",
+                           "params { s = \"\n\"}");
+        assertParseFailure("unterminated string",
+                           "Unexpected end of stream in literal",
+                           "params { s = \"a");
+        assertParseFailure("unknown identifier",
+                           "Invalid param value boo",
+                           "params { s = boo }");
+    }
+
+    private void assertParseFailure(String reason,
+                                    String exception,
+                                    String pretty) throws IOException {
+        File a = temp.newFile("test.cfg");
+        writeConfig(a, pretty);
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+
+        try {
+            config.load(a);
+            fail("no exception on " + reason);
+        } catch (SerializerException | ConfigException e) {
+            assertEquals("Wrong exception message on " + reason,
+                         exception, e.getMessage());
+        }
+        a.delete();
+    }
+
+    private File writeConfig(String resource) throws IOException {
         File file = temp.newFile(new File(resource).getName());
 
         try (OutputStream out = new FileOutputStream(file);
@@ -100,7 +248,16 @@ public class ProvidenceConfigTest {
         return file;
     }
 
-    private File addConfig(String resource, File folder) throws IOException {
+    private File writeConfig(File file, String content) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes(UTF_8));
+        try (OutputStream out = new FileOutputStream(file)) {
+            IOUtils.copy(in, out);
+        }
+
+        return file;
+    }
+
+    private File writeConfig(String resource, File folder) throws IOException {
         File file = new File(folder, new File(resource).getName());
 
         try (OutputStream out = new FileOutputStream(file);

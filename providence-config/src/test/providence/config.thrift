@@ -1,5 +1,10 @@
 namespace java net.morimekta.test.config
 
+enum Value {
+    FIRST = 1,
+    SECOND = 2
+}
+
 struct Credentials {
     1: required string username;
     2: required string password;
@@ -18,7 +23,7 @@ struct ServicePort {
 
     // TODO: Maps and lists not yet supported.
     // 3: optional map<string,binary> signature_keys;
-    // 4: optional map<string,binary> signature_override_keys;
+    // 4: optional list<binary> signature_override_keys;
     // TODO: Binary not yet supported.
     // 5: optional binary oauth_token_key;
 }

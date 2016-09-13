@@ -6,6 +6,10 @@ The serializer serializes all numbers as big-endian, using no zig-zag encoding
 etc. It has a "versioning" system, but there is only one version of the original
 protocol; v1.
 
+Per default the binary serializer will write the versioned data stream, but accept
+both versioned with v1 protocol and unversioned when deserializing. Setting the
+serializer to strict mode will only accept the desired protocol version.
+
 ## Service calls
 
 Service calls comes in two versions, versioned and unversioned.
@@ -43,6 +47,14 @@ EXCEPTION  0x03 :== application exception
 
 ONEWAY     0x04 :== message request wrapper (no reply expected)
 ```
+
+The call and oneway types are both method calls, where the oneway type does not
+expect, or require a reply. The call require a relply eve in the return type is
+'void'. This is where a 'field' type can be void.
+
+*__TODO:__ Research original thrift reply-type handling of void return types.*
+
+_**TODO:** Update thrift-serializers or client / server to use this behavior._
 
 ## Messages
 

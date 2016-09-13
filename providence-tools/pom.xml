@@ -23,7 +23,7 @@
         <artifactId>providence</artifactId>
         <version>0.2.1-SNAPSHOT</version>
     </parent>
-    <artifactId>providence-package</artifactId>
+    <artifactId>providence-tools</artifactId>
 
     <dependencies>
         <dependency>

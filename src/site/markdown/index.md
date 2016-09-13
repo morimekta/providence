@@ -131,7 +131,7 @@ will still allow thrift compiler to parse the .thrift files.
 #### Simple Messages.
 
 A simple message is one that does not contain nested structures, e.g. no containers,
-and no internal messages. Simple messages is easier to use as map keys, and some
+and no internal messages. Simple messages are easier to use as map keys, and some
 serialization formats may require that map key messages to be simple. Note that
 the simple definition is on the type, not the message.
 
@@ -144,25 +144,25 @@ java and C++ where it is a reserved word.
 
 In Java:
 
-- field names are prefixed with 'm'. E.g. 'my_field' becomes mMyField.
-- getters and setters are prefixed with 'set', 'addTo', 'get', 'clear', 'has' and 'num'.
-  respectively.
+- field names are prefixed with `m` and camel cased. E.g. `my_field` becomes
+  `mMyField`.
+- getters and setters are prefixed with `set`, `addTo`, `get`, `clear`,
+  `mutable`, `has` and `num`. respectively.
 
-Or in C++ or python
+Or in C++ or python. All the names are initially lowercase c_cased before included in the code.
 
-- field names are suffixed with '\_'. E.g. 'my_field' becomes 'my\_field\_'.
-- getters and setters are prefixed with 'set\_', 'get\_', 'mutable\_', 'clear\_' 'add\_to\_', 'has\_' and 'num\_'.
-- This breaks the convention that getters should not have any prefix or suffix.
+- __C++__: field names are suffixed with `_`. E.g. `myField` becomes `my_field_`.
+- __python__: field names are prefixed with `__`. E.g. `myField` becomes `__my_field`.
+- getters and setters are prefixed with `set_`, `get_`, `mutable_`, `clear_` `add_to_`, `has_` and `num_`.
+- This breaks the somewhat spread convention that C++ getters should not have any prefix or suffix, but
+  it makes it possible to use otherwise reserved words as field names.
 
 ### Removed support
 
 `*_namespace` keywords are not supported. Use `namespace php [package]` instead
-for php. XSD is AFAIK a facebook specific namespace, which is also not
-supported.
-
-None of the facebook specific modifiers are supported. They are also removed
-from keyword lists (xsd_nullable, xsd_optional). Any extra annotations has to
-be part of the comments.
+for php. None of the facebook specific modifiers are supported. They are also removed
+from keyword lists (xsd_nullable, xsd_optional and the xsd namespace), but annotations
+should be able to fill that gap.
 
 ## Contributing
 

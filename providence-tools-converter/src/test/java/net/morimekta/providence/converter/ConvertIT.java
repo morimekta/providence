@@ -5,7 +5,6 @@ import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -48,7 +47,6 @@ public class ConvertIT {
     }
 
     @Test
-    @Ignore("See issue #9 in morimekta/utils: Output is too large for 1 pipe buffer, and process locks on IO.")
     public void testStream_BinaryToJson() throws IOException {
         ByteArrayOutputStream tmp = new ByteArrayOutputStream();
         try (InputStream in = getClass().getResourceAsStream("/binary.data")) {

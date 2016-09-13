@@ -52,6 +52,11 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
      * Create a config that wraps a providence message instance. This message
      * will be exposed without any key prefix.
      *
+     * @param prefix The config prefix.
+     * @param descriptor The message descriptor of the config root message.
+     * @param reader The message reader containing the config.
+     * @throws IOException If message read failed.
+     * @throws SerializerException If message deserialization failed.
      */
     public MessageConfigSupplier(String prefix, PStructDescriptor<Message, Field> descriptor, MessageReader reader)
             throws IOException, SerializerException {
