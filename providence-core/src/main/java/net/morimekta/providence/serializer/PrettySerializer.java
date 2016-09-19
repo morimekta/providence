@@ -40,6 +40,7 @@ import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.pretty.Token;
 import net.morimekta.providence.util.pretty.Tokenizer;
+import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
@@ -104,7 +105,7 @@ public class PrettySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream out, PServiceCall<Message, Field> call)
-            throws IOException, SerializerException {
+            throws IOException, TokenizerException {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
@@ -127,7 +128,7 @@ public class PrettySerializer extends Serializer {
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> deserialize(InputStream input, PService service)
-            throws SerializerException, IOException {
+            throws TokenizerException, IOException {
         // pretty printed service calls cannot be chained-serialized, so this should be totally safe.
         Tokenizer tokenizer = new Tokenizer(input, false);
 
@@ -140,18 +141,21 @@ public class PrettySerializer extends Serializer {
         }
         PServiceCallType callType = PServiceCallType.findByName(token.asString());
         if (callType == null) {
-            throw new SerializerException("No such call type " + token.asString());
+            throw new TokenizerException(token, "No such call type " + token.asString())
+                    .setLine(tokenizer.getLine(token.getLineNo()));
         }
 
-        String methodName = tokenizer.expectIdentifier("Method name").asString();
+        token = tokenizer.expectIdentifier("method name");
+        String methodName = token.asString();
 
         PServiceMethod method = service.getMethod(methodName);
         if (method == null) {
-            throw new SerializerException("No such method " + methodName + " on service " + service.getQualifiedName(null));
+            throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName(null))
+                    .setLine(tokenizer.getLine(token.getLineNo()));
         }
 
-        tokenizer.expectSymbol("Call params start", '(');
-        tokenizer.expectSymbol("Message encloser", '{');
+        tokenizer.expectSymbol("call params start", '(');
+        tokenizer.expectSymbol("message encloser", '{');
 
         Message message;
         switch (callType) {
@@ -178,7 +182,7 @@ public class PrettySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input,
                         PStructDescriptor<Message, Field> descriptor)
-            throws IOException, SerializerException {
+            throws IOException, TokenizerException {
         Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
         if (first != null && first.isSymbol(Token.kMessageStart)) {
@@ -193,7 +197,7 @@ public class PrettySerializer extends Serializer {
     Message readMessage(Tokenizer tokenizer,
                         PStructDescriptor<Message, Field> descriptor,
                         boolean requireEnd)
-            throws IOException, SerializerException {
+            throws IOException, TokenizerException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
 
         for (;;) {
@@ -202,14 +206,17 @@ public class PrettySerializer extends Serializer {
                 break;
             }
             if (t == null) {
-                throw new SerializerException("Unexpected end of stream");
+                throw new TokenizerException("Unexpected end of stream");
             }
             if (!t.isIdentifier()) {
-                throw new SerializerException("");
+                throw new TokenizerException(t, "Expected field name, got '%s'",
+                                             Strings.escape(t.asString()))
+                        .setLine(tokenizer.getLine(t.getLineNo()));
             }
             PField field = descriptor.getField(t.asString());
             if (field == null) {
-                throw new SerializerException("No such field on " + descriptor.getQualifiedName(null) + ": " + t.asString());
+                throw new TokenizerException(t, "No such field %s on %s", t.asString(), descriptor.getQualifiedName(null))
+                        .setLine(tokenizer.getLine(t.getLineNo()));
             }
 
             tokenizer.expectSymbol("field value separator", Token.kKeyValueSep);
@@ -235,7 +242,7 @@ public class PrettySerializer extends Serializer {
         return builder.build();
     }
 
-    private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException, SerializerException {
+    private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException, TokenizerException {
         switch (descriptor.getType()) {
             case BOOL: {
                 Token t = tokenizer.expect("boolean value");
@@ -253,7 +260,8 @@ public class PrettySerializer extends Serializer {
                     case "no":
                         return false;
                 }
-                throw new SerializerException("Invalid boolean value " + t.asString());
+                throw new TokenizerException(t, "Invalid boolean value " + t.asString())
+                        .setLine(tokenizer.getLine(t.getLineNo()));
 
             }
             case BYTE: {
@@ -261,11 +269,13 @@ public class PrettySerializer extends Serializer {
                 if (t.isInteger()) {
                     long val = t.parseInteger();
                     if (val > Byte.MAX_VALUE || val < Byte.MIN_VALUE) {
-                        throw new SerializerException("Byte value out of bounds: " + t.asString());
+                        throw new TokenizerException(t, "Byte value out of bounds: " + t.asString())
+                                .setLine(tokenizer.getLine(t.getLineNo()));
                     }
                     return (byte) val;
                 } else {
-                    throw new SerializerException("Invalid byte value: " + t.asString());
+                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case I16: {
@@ -273,11 +283,13 @@ public class PrettySerializer extends Serializer {
                 if (t.isInteger()) {
                     long val = t.parseInteger();
                     if (val > Short.MAX_VALUE || val < Short.MIN_VALUE) {
-                        throw new SerializerException("Short value out of bounds: " + t.asString());
+                        throw new TokenizerException(t, "Short value out of bounds: " + t.asString())
+                                .setLine(tokenizer.getLine(t.getLineNo()));
                     }
                     return (short) val;
                 } else {
-                    throw new SerializerException("Invalid byte value: " + t.asString());
+                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case I32: {
@@ -285,11 +297,13 @@ public class PrettySerializer extends Serializer {
                 if (t.isInteger()) {
                     long val = t.parseInteger();
                     if (val > Integer.MAX_VALUE || val < Integer.MIN_VALUE) {
-                        throw new SerializerException("Integer value out of bounds: " + t.asString());
+                        throw new TokenizerException(t, "Integer value out of bounds: " + t.asString())
+                                .setLine(tokenizer.getLine(t.getLineNo()));
                     }
                     return (int) val;
                 } else {
-                    throw new SerializerException("Invalid byte value: " + t.asString());
+                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case I64: {
@@ -297,7 +311,8 @@ public class PrettySerializer extends Serializer {
                 if (t.isInteger()) {
                     return t.parseInteger();
                 } else {
-                    throw new SerializerException("Invalid byte value: " + t.asString());
+                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case DOUBLE: {
@@ -305,7 +320,8 @@ public class PrettySerializer extends Serializer {
                 try {
                     return t.parseDouble();
                 } catch (NumberFormatException nfe) {
-                    throw new SerializerException(nfe, nfe.getMessage());
+                    throw new TokenizerException(t, "Number format error: " + nfe.getMessage())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case STRING: {
@@ -313,15 +329,26 @@ public class PrettySerializer extends Serializer {
                 return t.decodeLiteral();
             }
             case BINARY: {
-                tokenizer.expectSymbol("binary value", Token.kListStart);
-                return tokenizer.readBinaryUntil(Token.kListEnd);
+                Token format = tokenizer.expectIdentifier("binary format");
+                tokenizer.expectSymbol("binary content start", '(');
+                String content = tokenizer.readUntil(')', false, false);
+                switch (format.asString()) {
+                    case "b64":
+                        return Binary.fromBase64(content);
+                    case "hex":
+                        return Binary.fromHexString(content);
+                    default:
+                        throw new TokenizerException(format, "")
+                                .setLine(tokenizer.getLine(format.getLineNo()));
+                }
             }
             case ENUM: {
                 Token t = tokenizer.expectIdentifier("enum value");
                 PEnumBuilder b = ((PEnumDescriptor) descriptor).builder();
                 b.setByName(t.asString());
                 if (!b.isValid()) {
-                    throw new SerializerException("No such " + descriptor.getQualifiedName(null) + " value " + t.asString());
+                    throw new TokenizerException(t, "No such " + descriptor.getQualifiedName(null) + " value " + t.asString())
+                            .setLine(tokenizer.getLine(t.getLineNo()));
                 }
                 return b.build();
             }
@@ -597,9 +624,9 @@ public class PrettySerializer extends Serializer {
             writer.print('\"');
         } else if (o instanceof Binary) {
             Binary b = (Binary) o;
-            writer.append('[')
+            writer.append("b64(")
                   .append(b.toBase64())
-                  .append(']');
+                  .append(')');
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {

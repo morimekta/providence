@@ -32,16 +32,17 @@ public class Token extends Slice {
     public static final char kMessageStart = '{';
     public static final char kMessageEnd   = '}';
     public static final char kKeyValueSep  = ':';
-
-    public static final char kLineSep1 = ',';
-    public static final char kLineSep2 = ';';
+    public static final char kMethodStart  = ')';
+    public static final char kMethodEnd    = '(';
+    public static final char kListStart    = '[';
+    public static final char kListEnd      = ']';
+    public static final char kLineSep1     = ',';
+    public static final char kLineSep2     = ';';
 
     // Not really 'symbols'.
     public static final char kLiteralEscape      = '\\';
     public static final char kLiteralQuote       = '\'';
     public static final char kLiteralDoubleQuote = '\"';
-    public static final char kListStart          = '[';
-    public static final char kListEnd            = ']';
     public static final char kShellComment       = '#';
 
     public static final String kSymbols = "{}:=()<>,;#[]";
@@ -61,6 +62,14 @@ public class Token extends Slice {
         super(fb, off, len);
         this.lineNo = lineNo;
         this.linePos = linePos;
+    }
+
+    public int getLineNo() {
+        return lineNo;
+    }
+
+    public int getLinePos() {
+        return linePos;
     }
 
     public boolean isSymbol(char symbol) {
