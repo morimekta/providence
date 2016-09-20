@@ -21,6 +21,7 @@
 package net.morimekta.providence.util.pretty;
 
 import net.morimekta.util.Slice;
+import net.morimekta.util.Strings;
 
 import java.util.regex.Pattern;
 
@@ -29,21 +30,26 @@ import java.util.regex.Pattern;
  */
 public class Token extends Slice {
     // Various symbols.
-    public static final char kMessageStart = '{';
-    public static final char kMessageEnd   = '}';
-    public static final char kKeyValueSep  = ':';
-    public static final char kMethodStart  = ')';
-    public static final char kMethodEnd    = '(';
-    public static final char kListStart    = '[';
-    public static final char kListEnd      = ']';
-    public static final char kLineSep1     = ',';
-    public static final char kLineSep2     = ';';
+    public static final char kMessageStart  = '{';
+    public static final char kMessageEnd    = '}';
+    public static final char kKeyValueSep   = ':';
+    public static final char kFieldValueSep = '=';
+    public static final char kMethodStart   = '(';
+    public static final char kMethodEnd     = ')';
+    public static final char kListStart     = '[';
+    public static final char kListEnd       = ']';
+    public static final char kLineSep1      = ',';
+    public static final char kLineSep2      = ';';
 
     // Not really 'symbols'.
+    public static final char kIdentifierSep      = '.';
     public static final char kLiteralEscape      = '\\';
     public static final char kLiteralQuote       = '\'';
     public static final char kLiteralDoubleQuote = '\"';
     public static final char kShellComment       = '#';
+
+    public static final String B64 = "b64";
+    public static final String HEX = "hex";
 
     public static final String kSymbols = "{}:=()<>,;#[]";
 
@@ -52,8 +58,7 @@ public class Token extends Slice {
     private static final Pattern RE_DOUBLE_QUALIFIED_IDENTIFIER = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
     private static final Pattern RE_REFERENCE_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*([.][_a-zA-Z][_a-zA-Z0-9]*)*");
     private static final Pattern RE_INTEGER                     = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
-
-    private static final Pattern RE_REAL    = Pattern.compile("-?(\\.[0-9]+|[1-9][0-9]*\\.[0-9]*)([eE][+-]?[0-9][0-9]*)?");
+    private static final Pattern RE_REAL                        = Pattern.compile("-?(\\.[0-9]+|[1-9][0-9]*\\.[0-9]*)([eE][+-]?[0-9][0-9]*)?");
 
     private final int lineNo;
     private final int linePos;
@@ -106,12 +111,23 @@ public class Token extends Slice {
                       .matches();
     }
 
+
     /**
      * Get the whole slice as a string.
      *
      * @return Slice decoded as UTF_8 string.
      */
     public String decodeLiteral() {
+        return decodeLiteral(false);
+    }
+
+
+    /**
+     * Get the whole slice as a string.
+     *
+     * @return Slice decoded as UTF_8 string.
+     */
+    public String decodeLiteral(boolean strict) {
         // This decodes the string from UTF_8 bytes.
         String tmp = substring(1, -1).asString();
         final int l = tmp.length();
@@ -174,11 +190,23 @@ public class Token extends Slice {
                         i += 2;  // skipping 2 more characters.
                         break;
                     default:
+                        if (strict) {
+                            throw new IllegalArgumentException("Invalid escaped char: '\\" +
+                                                               Strings.escape(String.valueOf(ch)) +
+                                                               "'");
+                        }
                         out.append('?');
                         break;
                 }
             } else if (tmp.charAt(i) == '\\') {
                 esc = true;
+            } else if (tmp.charAt(i) < 0x20 || tmp.charAt(1) == 0x7f) {
+                if (strict) {
+                    throw new IllegalArgumentException("Unescaped string char: '" +
+                                                       Strings.escape(String.valueOf(tmp.charAt(i))) +
+                                                       "'");
+                }
+                out.append('?');
             } else {
                 out.append(tmp.charAt(i));
             }

@@ -24,7 +24,6 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CDocument;
@@ -41,10 +40,8 @@ import java.util.Map;
  */
 public class DocumentRegistry extends TypeRegistry {
     private final Map<String, CDocument>              documents;
-    private final Map<String, PService>               services;
 
     public DocumentRegistry() {
-        services = new LinkedHashMap<>();
         documents = new LinkedHashMap<>();
     }
 

@@ -234,15 +234,15 @@ public class Tokenizer extends InputStream {
             if (r < 0x20 || r == 0x7F) {
                 int pos = startOffset - readOffset;
                 if (r == -1) {
-                    throw new TokenizerException("Unexpected end of stream in literal.")
+                    throw new TokenizerException("Unexpected end of stream in literal")
                             .setLineNo(lineNo)
                             .setLinePos(startLinePos + pos)
                             .setLine(getLine(lineNo));
                 } else {
-                    throw new TokenizerException("Invalid string literal char: %d", r)
+                    throw new TokenizerException("Unescaped non-printable char in literal: '%s'", Strings.escape(String.valueOf((char) r)))
                             .setLineNo(lineNo)
                             .setLinePos(startLinePos + pos)
-                            .setLine(getLine(nextToken.getLineNo()));
+                            .setLine(getLine(lineNo));
                 }
             }
 
@@ -435,8 +435,9 @@ public class Tokenizer extends InputStream {
             }
             return token;
         } else {
-            throw new TokenizerException("Invalid termination of number: '%c'", escapeChar(lastByte))
-                    .setLineNo(lineNo)
+            throw new TokenizerException(token, "Invalid termination of number: '%s%s'",
+                                         Strings.escape(token.asString()),
+                                         escapeChar(lastByte))
                     .setLinePos(startLinePos + len)
                     .setLine(getLine(lineNo));
         }

@@ -109,7 +109,7 @@ public class PrettySerializer extends Serializer {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
-        builder.format("%d: %s %s",
+        builder.format("%d: %s %s(",
                        call.getSequence(),
                        call.getType().toString(),
                        call.getMethod())
@@ -118,6 +118,7 @@ public class PrettySerializer extends Serializer {
         appendMessage(builder, call.getMessage(), true);
 
         builder.end()
+               .append(Token.kMethodEnd)
                .newline()
                .flush();
 
@@ -154,8 +155,8 @@ public class PrettySerializer extends Serializer {
                     .setLine(tokenizer.getLine(token.getLineNo()));
         }
 
-        tokenizer.expectSymbol("call params start", '(');
-        tokenizer.expectSymbol("message encloser", '{');
+        tokenizer.expectSymbol("call params start", Token.kMethodStart);
+        tokenizer.expectSymbol("message encloser", Token.kMessageStart);
 
         Message message;
         switch (callType) {
@@ -173,7 +174,7 @@ public class PrettySerializer extends Serializer {
                 throw new IllegalStateException("Unreachable code reached");
         }
 
-        tokenizer.expectSymbol("Call params closing", ')');
+        tokenizer.expectSymbol("Call params closing", Token.kMethodEnd);
 
         return new PServiceCall<>(methodName, callType, sequence, message);
     }
@@ -219,7 +220,7 @@ public class PrettySerializer extends Serializer {
                         .setLine(tokenizer.getLine(t.getLineNo()));
             }
 
-            tokenizer.expectSymbol("field value separator", Token.kKeyValueSep);
+            tokenizer.expectSymbol("field value separator", Token.kKeyValueSep, Token.kFieldValueSep);
 
             if (field.getType() == PType.LIST) {
                 // special handling for lists, repeated fields.
@@ -329,17 +330,17 @@ public class PrettySerializer extends Serializer {
                 return t.decodeLiteral();
             }
             case BINARY: {
-                Token format = tokenizer.expectIdentifier("binary format");
-                tokenizer.expectSymbol("binary content start", '(');
-                String content = tokenizer.readUntil(')', false, false);
-                switch (format.asString()) {
+                Token t = tokenizer.expectIdentifier("binary format");
+                tokenizer.expectSymbol("binary content start", Token.kMethodStart);
+                String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
+                switch (t.asString()) {
                     case "b64":
                         return Binary.fromBase64(content);
                     case "hex":
                         return Binary.fromHexString(content);
                     default:
-                        throw new TokenizerException(format, "")
-                                .setLine(tokenizer.getLine(format.getLineNo()));
+                        throw new TokenizerException(t, "Unrecognized binary format " + t.asString())
+                                .setLine(tokenizer.getLine(t.getLineNo()));
                 }
             }
             case ENUM: {
@@ -462,7 +463,7 @@ public class PrettySerializer extends Serializer {
         PStructDescriptor<?, ?> type = message.descriptor();
 
         if (enclose) {
-            builder.append("{")
+            builder.append(Token.kMessageStart)
                    .begin();
         }
 
@@ -476,7 +477,8 @@ public class PrettySerializer extends Serializer {
                 }
 
                 builder.append(field.getName())
-                       .append(":")
+                       .append(space)
+                       .append(Token.kFieldValueSep)
                        .append(space);
                 appendTypedValue(builder, field.getDescriptor(), o);
             }
@@ -509,13 +511,15 @@ public class PrettySerializer extends Serializer {
                             }
 
                             builder.append(field.getName())
-                                   .append(":")
+                                   .append(space)
+                                   .append(Token.kFieldValueSep)
                                    .append(space);
                             appendTypedValue(builder, list.itemDescriptor(), v);
                         }
                     } else {
                         builder.append(field.getName())
-                               .append(":")
+                               .append(space)
+                               .append(Token.kFieldValueSep)
                                .append(space);
                         appendTypedValue(builder, field.getDescriptor(), o);
                     }
@@ -525,7 +529,7 @@ public class PrettySerializer extends Serializer {
 
         if (enclose) {
             builder.end()
-                   .appendln("}");
+                   .appendln(Token.kMessageEnd);
         }
     }
 
@@ -544,7 +548,7 @@ public class PrettySerializer extends Serializer {
                     collection.size() <= 10) {
                     // special case if we have simple primitives (numbers and bools) in a "short" list,
                     // print in one single line.
-                    writer.append("[");
+                    writer.append(Token.kListStart);
 
                     boolean first = true;
                     for (Object i : collection) {
@@ -552,14 +556,14 @@ public class PrettySerializer extends Serializer {
                             first = false;
                         } else {
                             // Lists are always comma-delimited
-                            writer.append(',')
+                            writer.append(Token.kLineSep1)
                                   .append(space);
                         }
                         appendTypedValue(writer, containerType.itemDescriptor(), i);
                     }
-                    writer.append("]");
+                    writer.append(Token.kListEnd);
                 } else {
-                    writer.append("[")
+                    writer.append(Token.kListStart)
                           .begin();
 
                     boolean first = true;
@@ -568,14 +572,14 @@ public class PrettySerializer extends Serializer {
                             first = false;
                         } else {
                             // Lists are always comma-delimited
-                            writer.append(',');
+                            writer.append(Token.kLineSep1);
                         }
                         writer.appendln();
                         appendTypedValue(writer, containerType.itemDescriptor(), i);
                     }
 
                     writer.end()
-                          .appendln("]");
+                          .appendln(Token.kListEnd);
                 }
                 break;
             }
@@ -584,7 +588,7 @@ public class PrettySerializer extends Serializer {
 
                 Map<?, ?> map = (Map<?, ?>) o;
 
-                writer.append("{")
+                writer.append(Token.kMessageStart)
                       .begin();
 
                 boolean first = true;
@@ -596,13 +600,13 @@ public class PrettySerializer extends Serializer {
                     }
                     writer.appendln();
                     appendTypedValue(writer, mapType.keyDescriptor(), entry.getKey());
-                    writer.append(":")
+                    writer.append(Token.kKeyValueSep)
                           .append(space);
                     appendTypedValue(writer, mapType.itemDescriptor(), entry.getValue());
                 }
 
                 writer.end()
-                      .appendln("}");
+                      .appendln(Token.kMessageEnd);
                 break;
             }
             case MESSAGE:
@@ -619,14 +623,15 @@ public class PrettySerializer extends Serializer {
         if (o instanceof PEnumValue) {
             writer.print(((PEnumValue) o).asString());
         } else if (o instanceof CharSequence) {
-            writer.print('\"');
+            writer.print(Token.kLiteralDoubleQuote);
             writer.print(Strings.escape((CharSequence) o));
-            writer.print('\"');
+            writer.print(Token.kLiteralDoubleQuote);
         } else if (o instanceof Binary) {
             Binary b = (Binary) o;
-            writer.append("b64(")
+            writer.append(Token.B64)
+                  .append(Token.kMethodStart)
                   .append(b.toBase64())
-                  .append(')');
+                  .append(Token.kMethodEnd);
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {
@@ -637,7 +642,8 @@ public class PrettySerializer extends Serializer {
                 // actually an integer or long value.
                 writer.print(d.longValue());
             } else if (d > ((10 << 9) - 1) || (1 / d) > (10 << 6)) {
-                // Scientific notation should be used.
+                // Scientific notation should be used, this enforces a decimal
+                // length that is not too overwhelming.
                 writer.print((new DecimalFormat("0.#########E0")).format(d.doubleValue()));
             } else {
                 writer.print(d.doubleValue());
