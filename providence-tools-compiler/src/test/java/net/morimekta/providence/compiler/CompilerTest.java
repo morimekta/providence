@@ -21,9 +21,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -64,7 +63,7 @@ public class CompilerTest {
         when(TerminalSize.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/build.properties"));
+        properties.load(getResourceAsStream("/build.properties"));
         version = properties.getProperty("build.version");
 
         temp = new TemporaryFolder();

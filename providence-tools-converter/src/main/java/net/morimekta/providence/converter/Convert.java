@@ -51,7 +51,9 @@ public class Convert {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/build.properties"));
 
-            ArgumentParser cli = options.getArgumentParser("pvd", "v" + properties.getProperty("build.version"), "Providence Converter");
+            ArgumentParser cli = options.getArgumentParser("pvd",
+                                                           "v" + properties.getProperty("build.version"),
+                                                           "Providence Converter");
 
             cli.parse(args);
             if (options.isHelp()) {

@@ -1,20 +1,17 @@
 package net.morimekta.providence.converter;
 
 import net.morimekta.console.util.TerminalSize;
-import net.morimekta.testing.IntegrationExecutor;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

@@ -33,7 +33,6 @@ import net.morimekta.providence.rpc.options.Format;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 
-import ch.qos.logback.core.status.NopStatusListener;
 import com.google.api.client.http.HttpResponseException;
 
 import java.io.IOException;
@@ -54,7 +53,8 @@ public class RPC {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/build.properties"));
 
-            ArgumentParser cli = options.getArgumentParser("pvdrpc", "" + properties.getProperty("build.version"),
+            ArgumentParser cli = options.getArgumentParser("pvdrpc",
+                                                           "v" + properties.getProperty("build.version"),
                                                            "Providence RPC Tool");
 
             cli.parse(args);
