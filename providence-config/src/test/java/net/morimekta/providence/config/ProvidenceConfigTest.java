@@ -206,21 +206,39 @@ public class ProvidenceConfigTest {
                            "No message in config: test.cfg",
                            "");
         assertParseFailure("bad params number",
-                           "Invalid termination of number: '1f'",
+                           "Error in test.cfg on line 1, pos 14:\n" +
+                           "    Invalid termination of number: '1f'\n" +
+                           "params { n = 1f }\n" +
+                           "--------------^",
                            "params { n = 1f }");
         assertParseFailure("newline in string",
-                           "Unescaped non-printable char in literal: '\\n'",
+                           "Error in test.cfg on line 1, pos 14:\n" +
+                           "    Unexpected line break in literal\n" +
+                           "params { s = \"\n" +
+                           "--------------^",
                            "params { s = \"\n\"}");
+        assertParseFailure("newline in string",
+                           "Error in test.cfg on line 1, pos 14:\n" +
+                           "    Unescaped non-printable char in literal: '\\t'\n" +
+                           "params { s = \"\t\"}\n" +
+                           "--------------^",
+                           "params { s = \"\t\"}");
         assertParseFailure("unterminated string",
-                           "Unexpected end of stream in literal",
+                           "Error in test.cfg on line 1, pos 14:\n" +
+                           "    Unexpected end of stream in literal\n" +
+                           "params { s = \"a\n" +
+                           "--------------^",
                            "params { s = \"a");
         assertParseFailure("unknown identifier",
-                           "Invalid param value boo",
+                           "Error in test.cfg on line 1, pos 13:\n" +
+                           "    Invalid param value boo\n" +
+                           "params { s = boo }\n" +
+                           "-------------^",
                            "params { s = boo }");
     }
 
     private void assertParseFailure(String reason,
-                                    String exception,
+                                    String message,
                                     String pretty) throws IOException {
         File a = temp.newFile("test.cfg");
         writeConfig(a, pretty);
@@ -230,9 +248,12 @@ public class ProvidenceConfigTest {
         try {
             config.load(a);
             fail("no exception on " + reason);
-        } catch (SerializerException | ConfigException e) {
+        } catch (ConfigException e) {
             assertEquals("Wrong exception message on " + reason,
-                         exception, e.getMessage());
+                         message, e.getMessage());
+        } catch (SerializerException e) {
+            assertEquals("Wrong exception message on " + reason,
+                         message, e.toString());
         }
         a.delete();
     }

@@ -21,7 +21,6 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.config.ConfigException;
-import net.morimekta.config.IncompatibleValueException;
 import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.config.util.ConfigUtil;
 import net.morimekta.providence.PEnumValue;
@@ -176,168 +175,189 @@ public class ProvidenceConfig {
 
     private List<Param> loadParamsRecursively(File file, String... stack)
             throws SerializerException, IOException {
-        File canonicalFile = file.getCanonicalFile().getAbsoluteFile();
-        String filePath = canonicalFile.toString();
+        try {
+            File canonicalFile = file.getCanonicalFile()
+                                     .getAbsoluteFile();
+            String filePath = canonicalFile.toString();
 
-        List<String> stackList = new LinkedList<>();
-        Collections.addAll(stackList, stack);
-        if (stackList.contains(filePath)) {
-            stackList.add(filePath);
-            throw new SerializerException(
-                    "Circular includes detected: " +
-                    String.join(" -> ", stackList.stream()
-                                                 .map(p -> new File(p).getName())
-                                                 .collect(Collectors.toList())));
-        }
-
-        stackList.add(filePath);
-
-        Tokenizer tokenizer;
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(canonicalFile))) {
-            // Non-enclosed content, meaning we should read the whole file immediately.
-            tokenizer = new Tokenizer(in, false);
-        }
-
-        List<Param> result = new LinkedList<>();
-
-        Stage stage = Stage.PARAMS;
-
-        Token token = tokenizer.peek();
-        while (token != null) {
-            tokenizer.next();
-
-            if (token.isQualifiedIdentifier()) {
-                // if a.b (type identifier) --> MESSAGE
-                return result;
-            } else if (token.isIdentifier()) {
-                if (PARAMS.equals(token.asString())) {
-                    // if params && PARAMS --> PARAMS
-                    if (stage != Stage.PARAMS) {
-                        throw new TokenizerException(token, "Params already defined.")
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    stage = Stage.INCLUDES;
-                    parseParams(tokenizer).entrySet()
-                                          .forEach(e -> result.add(new Param(e.getKey(), e.getValue(), canonicalFile)));
-                } else if (INCLUDE.equals(token.asString())) {
-                    // if include && stage == INCLUDES --> INCLUDES
-                    token = tokenizer.expect("file to be included");
-                    File includedFile = new File(file.getParentFile(), token.decodeLiteral());
-
-                    result.addAll(loadParamsRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()])));
-
-                    if (!AS.equals(tokenizer.expectIdentifier("the token 'as'").asString())) {
-                        throw new TokenizerException(token, "Missing alias for included file " + includedFile)
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    tokenizer.expectIdentifier("Include alias").asString();
-                } else {
-                    throw new TokenizerException(token, "Unexpected token " + token.asString() + "expected include, params or message type")
-                            .setLine(tokenizer.getLine(token.getLineNo()));
-                }
-            } else {
-                throw new TokenizerException(token, "Unexpected token " + token.asString() + "expected include, params or message type")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+            List<String> stackList = new LinkedList<>();
+            Collections.addAll(stackList, stack);
+            if (stackList.contains(filePath)) {
+                stackList.add(filePath);
+                throw new SerializerException("Circular includes detected: " +
+                                              String.join(" -> ", stackList.stream()
+                                                                           .map(p -> new File(p).getName())
+                                                                           .collect(Collectors.toList())));
             }
 
-            token = tokenizer.peek();
-        }
+            stackList.add(filePath);
 
-        throw new ConfigException("No message in config: " + filePath);
+            Tokenizer tokenizer;
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(canonicalFile))) {
+                // Non-enclosed content, meaning we should read the whole file immediately.
+                tokenizer = new Tokenizer(in, false);
+            }
+
+            List<Param> result = new LinkedList<>();
+
+            Stage stage = Stage.PARAMS;
+
+            Token token = tokenizer.peek();
+            while (token != null) {
+                tokenizer.next();
+
+                if (token.isQualifiedIdentifier()) {
+                    // if a.b (type identifier) --> MESSAGE
+                    return result;
+                } else if (token.isIdentifier()) {
+                    if (PARAMS.equals(token.asString())) {
+                        // if params && PARAMS --> PARAMS
+                        if (stage != Stage.PARAMS) {
+                            throw new TokenizerException(token, "Params already defined.").setLine(tokenizer.getLine(
+                                    token.getLineNo()));
+                        }
+                        stage = Stage.INCLUDES;
+                        parseParams(tokenizer).entrySet()
+                                              .forEach(e -> result.add(new Param(e.getKey(), e.getValue(), canonicalFile)));
+                    } else if (INCLUDE.equals(token.asString())) {
+                        // if include && stage == INCLUDES --> INCLUDES
+                        token = tokenizer.expect("file to be included");
+                        File includedFile = new File(file.getParentFile(), token.decodeLiteral());
+
+                        result.addAll(loadParamsRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()])));
+
+                        if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
+                                                .asString())) {
+                            throw new TokenizerException(token, "Missing alias for included file " + includedFile).setLine(
+                                    tokenizer.getLine(token.getLineNo()));
+                        }
+                        tokenizer.expectIdentifier("Include alias")
+                                 .asString();
+                    } else {
+                        throw new TokenizerException(token,
+                                                     "Unexpected token " + token.asString() +
+                                                     "expected include, params or message type").setLine(tokenizer.getLine(
+                                token.getLineNo()));
+                    }
+                } else {
+                    throw new TokenizerException(token,
+                                                 "Unexpected token " + token.asString() +
+                                                 "expected include, params or message type").setLine(tokenizer.getLine(
+                            token.getLineNo()));
+                }
+
+                token = tokenizer.peek();
+            }
+
+            throw new ConfigException("No message in config: " + filePath);
+        } catch (TokenizerException e) {
+            throw new TokenizerException(e, file);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField> M loadConfigRecursively(File file, String... stack)
             throws IOException, SerializerException {
-        file = file.getCanonicalFile().getAbsoluteFile();
-        String filePath = file.toString();
-
-        List<String> stackList = new LinkedList<>();
-        Collections.addAll(stackList, stack);
-        if (stackList.contains(filePath)) {
-            stackList.add(filePath);
-            throw new SerializerException(
-                    "Circular includes detected: " +
-                    String.join(" -> ", stackList.stream()
-                                                 .map(p -> new File(p).getName())
-                                                 .collect(Collectors.toList())));
-        }
-        if (loaded.containsKey(filePath)) {
-            return (M) loaded.get(filePath);
-        }
-
-        stackList.add(filePath);
-
-        Tokenizer tokenizer;
-        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-            // Non-enclosed content, meaning we should read the whole file immediately.
-            tokenizer = new Tokenizer(in, false);
-        }
-
-        Map<String, Object> params = new HashMap<>();
-        Map<String, PMessage> includes = new HashMap<>();
         M result = null;
 
-        Stage stage = Stage.PARAMS;
+        try {
+            file = file.getCanonicalFile()
+                       .getAbsoluteFile();
+            String filePath = file.toString();
 
-        Token token = tokenizer.peek();
-        while (token != null) {
-            tokenizer.next();
-
-            if (stage == Stage.MESSAGE) {
-                throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected end of file.")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+            List<String> stackList = new LinkedList<>();
+            Collections.addAll(stackList, stack);
+            if (stackList.contains(filePath)) {
+                stackList.add(filePath);
+                throw new SerializerException("Circular includes detected: " + String.join(" -> ",
+                                                                                           stackList.stream()
+                                                                                                    .map(p -> new File(p).getName())
+                                                                                                    .collect(Collectors.toList())));
+            }
+            if (loaded.containsKey(filePath)) {
+                return (M) loaded.get(filePath);
             }
 
-            if (token.isQualifiedIdentifier()) {
-                // if a.b (type identifier) --> MESSAGE
-                stage = Stage.MESSAGE;
-                PStructDescriptor<M, F> descriptor = (PStructDescriptor) registry.getDeclaredType(token.asString());
-                result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
-            } else if (token.isIdentifier()) {
-                if (PARAMS.equals(token.asString())) {
-                    // if params && stage == PARAMS --> PARAMS
-                    if (stage != Stage.PARAMS) {
-                        throw new TokenizerException(token, "Params already defined, or passed; must be at head of file")
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    stage = Stage.INCLUDES;
-                    params = parseParams(tokenizer);
-                } else if (INCLUDE.equals(token.asString())) {
-                    // if include --> INCLUDES
-                    stage = Stage.INCLUDES;
-                    token = tokenizer.expectStringLiteral("file to be included");
-                    File includedFile = new File(file.getParentFile(), token.decodeLiteral());
-                    PMessage included;
-                    try {
-                        included = loadConfigRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()]));
-                    } catch (FileNotFoundException e) {
-                        throw new TokenizerException(token, "Included file \"%s\" not found", token.decodeLiteral())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    if (!AS.equals(tokenizer.expectIdentifier("the token 'as'").asString())) {
-                        throw new TokenizerException(token, "Missing alias for included file " + includedFile)
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    String alias = tokenizer.expectIdentifier("Include alias").asString();
-                    if (includes.containsKey(alias)) {
-                        throw new TokenizerException(token, "Alias \"" + alias + "\" is already used")
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
-                        throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word.")
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    includes.put(alias, included);
-                } else {
-                    throw new TokenizerException(token, "Unexpected token " + token.asString() + "expected include, params or message type")
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+            stackList.add(filePath);
+
+            Tokenizer tokenizer;
+            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+                // Non-enclosed content, meaning we should read the whole file immediately.
+                tokenizer = new Tokenizer(in, false);
+            }
+
+            Map<String, Object> params = new HashMap<>();
+            Map<String, PMessage> includes = new HashMap<>();
+
+            Stage stage = Stage.PARAMS;
+
+            Token token = tokenizer.peek();
+            while (token != null) {
+                tokenizer.next();
+
+                if (stage == Stage.MESSAGE) {
+                    throw new TokenizerException(token,
+                                                 "Unexpected token " + token.asString() + ", expected end of file.").setLine(tokenizer.getLine(token.getLineNo()));
                 }
-            } else {
-                throw new TokenizerException(token, "Unexpected token " + token.asString() + "expected include, params or message type")
-                        .setLine(tokenizer.getLine(token.getLineNo()));
-            }
 
-            token = tokenizer.peek();
+                if (token.isQualifiedIdentifier()) {
+                    // if a.b (type identifier) --> MESSAGE
+                    stage = Stage.MESSAGE;
+                    PStructDescriptor<M, F> descriptor = (PStructDescriptor) registry.getDeclaredType(token.asString());
+                    result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
+                } else if (token.isIdentifier()) {
+                    if (PARAMS.equals(token.asString())) {
+                        // if params && stage == PARAMS --> PARAMS
+                        if (stage != Stage.PARAMS) {
+                            throw new TokenizerException(token,
+                                                         "Params already defined, or passed; must be at head of file").setLine(
+                                    tokenizer.getLine(token.getLineNo()));
+                        }
+                        stage = Stage.INCLUDES;
+                        params = parseParams(tokenizer);
+                    } else if (INCLUDE.equals(token.asString())) {
+                        // if include --> INCLUDES
+                        stage = Stage.INCLUDES;
+                        token = tokenizer.expectStringLiteral("file to be included");
+                        File includedFile = new File(file.getParentFile(), token.decodeLiteral());
+                        PMessage included;
+                        try {
+                            included = loadConfigRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()]));
+                        } catch (FileNotFoundException e) {
+                            throw new TokenizerException(token, "Included file \"%s\" not found", token.decodeLiteral()).setLine(tokenizer.getLine(token.getLineNo()));
+                        }
+                        if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
+                                                .asString())) {
+                            throw new TokenizerException(token, "Missing alias for included file " + includedFile).setLine(
+                                    tokenizer.getLine(token.getLineNo()));
+                        }
+                        String alias = tokenizer.expectIdentifier("Include alias")
+                                                .asString();
+                        if (includes.containsKey(alias)) {
+                            throw new TokenizerException(token, "Alias \"" + alias + "\" is already used").setLine(
+                                    tokenizer.getLine(token.getLineNo()));
+                        } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
+                            throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word.").setLine(
+                                    tokenizer.getLine(token.getLineNo()));
+                        }
+                        includes.put(alias, included);
+                    } else {
+                        throw new TokenizerException(token,
+                                                     "Unexpected token " + token.asString() +
+                                                     "expected include, params or message type").setLine(tokenizer.getLine(
+                                token.getLineNo()));
+                    }
+                } else {
+                    throw new TokenizerException(token,
+                                                 "Unexpected token " + token.asString() +
+                                                 "expected include, params or message type").setLine(tokenizer.getLine(
+                            token.getLineNo()));
+                }
+
+                token = tokenizer.peek();
+            }
+        } catch (TokenizerException e) {
+            throw new TokenizerException(e, file);
         }
 
         if (result == null) {
@@ -418,7 +438,12 @@ public class ProvidenceConfig {
             Token token = tokenizer.expect("extension object");
             if (token.isReferenceIdentifier()) {
                 builder = descriptor.builder();
-                builder.merge(resolve(includes, params, token.asString()));
+                try {
+                    builder.merge(resolve(includes, params, token.asString()));
+                } catch (KeyNotFoundException e) {
+                    throw new TokenizerException(token, e.getMessage())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
                 throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected message begin")
@@ -468,7 +493,12 @@ public class ProvidenceConfig {
                     bld = ((PStructDescriptor) field.getDescriptor()).builder();
                     if (token.isReferenceIdentifier()) {
                         // Inherit from reference.
-                        bld.merge(resolve(includes, params, token.asString()));
+                        try {
+                            bld.merge(resolve(includes, params, token.asString()));
+                        } catch (KeyNotFoundException e) {
+                            throw new TokenizerException(token, e.getMessage())
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                        }
 
                         token = tokenizer.expect("after message reference");
                         // if the following symbol is *not* message start,
@@ -506,6 +536,9 @@ public class ProvidenceConfig {
                     if (token.isReferenceIdentifier()) {
                         try {
                             baseValue.putAll(resolve(includes, params, token.asString()));
+                        } catch (KeyNotFoundException e) {
+                            throw new TokenizerException(token, e.getMessage())
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
                         } catch (ClassCastException e) {
                             throw new TokenizerException(token, "Reference %s not pointing to a map.", token.asString())
                                     .setLine(tokenizer.getLine(token.getLineNo()));
@@ -573,157 +606,167 @@ public class ProvidenceConfig {
                                    Map<String, PMessage> includes,
                                    Map<String, Object> params,
                                    PDescriptor descriptor) throws IOException, SerializerException {
-        switch (descriptor.getType()) {
-            case BOOL:
-                if (TRUE.equals(next.asString())) {
-                    return true;
-                } else if (FALSE.equals(next.asString())) {
-                    return false;
-                } else if (next.isReferenceIdentifier()) {
-                    return asBoolean(resolve(includes, params, next.asString()));
-                }
-                break;
-            case BYTE:
-                if (next.isReferenceIdentifier()) {
-                    return (byte) asInteger(resolve(includes, params, next.asString()));
-                } else if (next.isInteger()) {
-                    return (byte) next.parseInteger();
-                }
-                break;
-            case I16:
-                if (next.isReferenceIdentifier()) {
-                    return (short) asInteger(resolve(includes, params, next.asString()));
-                } else if (next.isInteger()) {
-                    return (short) next.parseInteger();
-                }
-                break;
-            case I32:
-                if (next.isReferenceIdentifier()) {
-                    return asInteger(resolve(includes, params, next.asString()));
-                } else if (next.isInteger()) {
-                    return (int) next.parseInteger();
-                }
-                break;
-            case I64:
-                if (next.isReferenceIdentifier()) {
-                    return asLong(resolve(includes, params, next.asString()));
-                } else if (next.isInteger()) {
-                    return next.parseInteger();
-                }
-                break;
-            case DOUBLE:
-                if (next.isReferenceIdentifier()) {
-                    return asDouble(resolve(includes, params, next.asString()));
-                } else if (next.isInteger() || next.isReal()) {
-                    return next.parseDouble();
-                }
-                break;
-            case STRING:
-                if (next.isReferenceIdentifier()) {
-                    return asString(resolve(includes, params, next.asString()));
-                } else if (next.isStringLiteral()) {
-                    return next.decodeLiteral();
-                }
-                break;
-            case BINARY:
-                if (Token.B64.equals(next.asString())) {
-                    tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                    return Binary.fromBase64(tokenizer.readUntil(Token.kMethodEnd, false, false));
-                } else if (Token.HEX.equals(next.asString())) {
-                    tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                    return Binary.fromHexString(tokenizer.readUntil(Token.kMethodEnd, false, false));
-                } else if (next.isReferenceIdentifier()) {
-                    Object o = resolve(includes, params, next.asString());
-                    if (o instanceof Binary) {
-                        return o;
-                    } else if (o instanceof CharSequence) {
-                        return Binary.fromBase64((String) o);
+        try {
+            switch (descriptor.getType()) {
+                case BOOL:
+                    if (TRUE.equals(next.asString())) {
+                        return true;
+                    } else if (FALSE.equals(next.asString())) {
+                        return false;
+                    } else if (next.isReferenceIdentifier()) {
+                        return asBoolean(resolve(includes, params, next.asString()));
                     }
-                    throw new TokenizerException(next, "Reference %s (%s) is not a binary",
-                                                 next.asString(), o.getClass().getSimpleName())
-                            .setLine(tokenizer.getLine(next.getLineNo()));
-                }
-                break;
-            case ENUM: {
-                PEnumDescriptor ed = (PEnumDescriptor) descriptor;
-                if (next.isInteger()) {
-                    return ed.getValueById((int) next.parseInteger());
-                } else if (next.isIdentifier()) {
-                    // Check for VALUE.
-                    PEnumValue value = ed.getValueByName(next.asString());
-                    if (value != null) {
-                        return value;
-                    } else {
+                    break;
+                case BYTE:
+                    if (next.isReferenceIdentifier()) {
+                        return (byte) asInteger(resolve(includes, params, next.asString()));
+                    } else if (next.isInteger()) {
+                        return (byte) next.parseInteger();
+                    }
+                    break;
+                case I16:
+                    if (next.isReferenceIdentifier()) {
+                        return (short) asInteger(resolve(includes, params, next.asString()));
+                    } else if (next.isInteger()) {
+                        return (short) next.parseInteger();
+                    }
+                    break;
+                case I32:
+                    if (next.isReferenceIdentifier()) {
+                        return asInteger(resolve(includes, params, next.asString()));
+                    } else if (next.isInteger()) {
+                        return (int) next.parseInteger();
+                    }
+                    break;
+                case I64:
+                    if (next.isReferenceIdentifier()) {
+                        return asLong(resolve(includes, params, next.asString()));
+                    } else if (next.isInteger()) {
+                        return next.parseInteger();
+                    }
+                    break;
+                case DOUBLE:
+                    if (next.isReferenceIdentifier()) {
+                        return asDouble(resolve(includes, params, next.asString()));
+                    } else if (next.isInteger() || next.isReal()) {
+                        return next.parseDouble();
+                    }
+                    break;
+                case STRING:
+                    if (next.isReferenceIdentifier()) {
+                        return asString(resolve(includes, params, next.asString()));
+                    } else if (next.isStringLiteral()) {
+                        return next.decodeLiteral();
+                    }
+                    break;
+                case BINARY:
+                    if (Token.B64.equals(next.asString())) {
+                        tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
+                        return Binary.fromBase64(tokenizer.readUntil(Token.kMethodEnd, false, false));
+                    } else if (Token.HEX.equals(next.asString())) {
+                        tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
+                        return Binary.fromHexString(tokenizer.readUntil(Token.kMethodEnd, false, false));
+                    } else if (next.isReferenceIdentifier()) {
+                        Object o = resolve(includes, params, next.asString());
+                        if (o instanceof Binary) {
+                            return o;
+                        } else if (o instanceof CharSequence) {
+                            return Binary.fromBase64((String) o);
+                        }
+                        throw new TokenizerException(next,
+                                                     "Reference %s (%s) is not a binary",
+                                                     next.asString(),
+                                                     o.getClass()
+                                                      .getSimpleName()).setLine(tokenizer.getLine(next.getLineNo()));
+                    }
+                    break;
+                case ENUM: {
+                    PEnumDescriptor ed = (PEnumDescriptor) descriptor;
+                    if (next.isInteger()) {
+                        return ed.getValueById((int) next.parseInteger());
+                    } else if (next.isIdentifier()) {
+                        // Check for VALUE.
+                        PEnumValue value = ed.getValueByName(next.asString());
+                        if (value != null) {
+                            return value;
+                        } else {
+                            return resolve(includes, params, next.asString());
+                        }
+                    } else if (next.isReferenceIdentifier()) {
                         return resolve(includes, params, next.asString());
                     }
-                } else if (next.isReferenceIdentifier()) {
-                    return resolve(includes, params, next.asString());
+                    break;
                 }
-                break;
-            }
-            case MESSAGE:
-                if (next.isReferenceIdentifier()) {
-                    return resolve(includes, params, next.asString());
-                } else if (next.isSymbol(Token.kMessageStart)) {
-                    return parseMessage(tokenizer, includes, params, ((PStructDescriptor) descriptor).builder());
+                case MESSAGE:
+                    if (next.isReferenceIdentifier()) {
+                        return resolve(includes, params, next.asString());
+                    } else if (next.isSymbol(Token.kMessageStart)) {
+                        return parseMessage(tokenizer, includes, params, ((PStructDescriptor) descriptor).builder());
+                    }
+                    break;
+                case MAP: {
+                    if (next.isReferenceIdentifier()) {
+                        return asCollection(resolve(includes, params, next.asString()));
+                    } else if (next.isSymbol(Token.kMessageStart)) {
+                        return parseMapValue(tokenizer, includes, params, (PMap) descriptor, new HashMap());
+                    }
+                    break;
                 }
-                break;
-            case MAP: {
-                if (next.isReferenceIdentifier()) {
-                    return asCollection(resolve(includes, params, next.asString()));
-                } else if (next.isSymbol(Token.kMessageStart)) {
-                    return parseMapValue(tokenizer, includes, params, (PMap) descriptor, new HashMap());
-                }
-                break;
-            }
-            case SET: {
-                if (next.isReferenceIdentifier()) {
-                    return asCollection(resolve(includes, params, next.asString()));
-                } else if (next.isSymbol(Token.kListStart)) {
-                    @SuppressWarnings("unchecked")
-                    PSet<Object> ct = (PSet) descriptor;
-                    HashSet<Object> value = new HashSet<>();
+                case SET: {
+                    if (next.isReferenceIdentifier()) {
+                        return asCollection(resolve(includes, params, next.asString()));
+                    } else if (next.isSymbol(Token.kListStart)) {
+                        @SuppressWarnings("unchecked")
+                        PSet<Object> ct = (PSet) descriptor;
+                        HashSet<Object> value = new HashSet<>();
 
-                    next = tokenizer.expect("set value or end");
-                    while (!next.isSymbol(Token.kListEnd)) {
-                        value.add(parseFieldValue(next, tokenizer, includes, params, ct.itemDescriptor()));
-                        // sets require separator, and allows separator after last.
-                        if (tokenizer.expectSymbol("set separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
-                            break;
-                        }
                         next = tokenizer.expect("set value or end");
-                    }
-
-                    return ct.builder().addAll(value).build();
-                }
-                break;
-            }
-            case LIST: {
-                if (next.isReferenceIdentifier()) {
-                    return asCollection(resolve(includes, params, next.asString()));
-                } else if (next.isSymbol(Token.kListStart)) {
-                    @SuppressWarnings("unchecked")
-                    PList<Object> ct = (PList) descriptor;
-                    PList.Builder<Object> builder = ct.builder();
-
-                    next = tokenizer.expect("list value or end");
-                    while (!next.isSymbol(Token.kListEnd)) {
-                        builder.add(parseFieldValue(next, tokenizer, includes, params, ct.itemDescriptor()));
-                        // lists require separator, and allows separator after last.
-                        if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
-                            break;
+                        while (!next.isSymbol(Token.kListEnd)) {
+                            value.add(parseFieldValue(next, tokenizer, includes, params, ct.itemDescriptor()));
+                            // sets require separator, and allows separator after last.
+                            if (tokenizer.expectSymbol("set separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
+                                break;
+                            }
+                            next = tokenizer.expect("set value or end");
                         }
-                        next = tokenizer.expect("list value or end");
-                    }
 
-                    return builder.build();
+                        return ct.builder()
+                                 .addAll(value)
+                                 .build();
+                    }
+                    break;
                 }
-                break;
+                case LIST: {
+                    if (next.isReferenceIdentifier()) {
+                        return asCollection(resolve(includes, params, next.asString()));
+                    } else if (next.isSymbol(Token.kListStart)) {
+                        @SuppressWarnings("unchecked")
+                        PList<Object> ct = (PList) descriptor;
+                        PList.Builder<Object> builder = ct.builder();
+
+                        next = tokenizer.expect("list value or end");
+                        while (!next.isSymbol(Token.kListEnd)) {
+                            builder.add(parseFieldValue(next, tokenizer, includes, params, ct.itemDescriptor()));
+                            // lists require separator, and allows separator after last.
+                            if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) ==
+                                Token.kListEnd) {
+                                break;
+                            }
+                            next = tokenizer.expect("list value or end");
+                        }
+
+                        return builder.build();
+                    }
+                    break;
+                }
+                default: {
+                    throw new TokenizerException(next, descriptor.getType() + " not supported!").setLine(tokenizer.getLine(
+                            next.getLineNo()));
+                }
             }
-            default: {
-                throw new TokenizerException(next, descriptor.getType() + " not supported!")
-                        .setLine(tokenizer.getLine(next.getLineNo()));
-            }
+        } catch (KeyNotFoundException e) {
+            throw new TokenizerException(next, e.getMessage())
+                    .setLine(tokenizer.getLine(next.getLineNo()));
         }
 
         throw new TokenizerException(next, "Unhandled value \"%s\" for type %s",
@@ -768,28 +811,22 @@ public class ProvidenceConfig {
     private <V> V resolve(Map<String, PMessage> includes,
                           Map<String, Object> params,
                           String key) {
-        try {
-            if (key.contains(IDENTIFIER_SEP)) {
-                int idx = key.indexOf(IDENTIFIER_SEP);
-                String name = key.substring(0, idx);
-                String sub = key.substring(idx + 1);
-                if (PARAMS.equals(name)) {
-                    if (!params.containsKey(sub)) {
-                        throw new ConfigException("Name " + sub + " not in params (\"" + key + "\")");
-                    }
-                    return (V) params.get(sub);
-                } else if (includes.containsKey(name)) {
-                    return (V) getInMessage(includes.get(name), sub);
+        if (key.contains(IDENTIFIER_SEP)) {
+            int idx = key.indexOf(IDENTIFIER_SEP);
+            String name = key.substring(0, idx);
+            String sub = key.substring(idx + 1);
+            if (PARAMS.equals(name)) {
+                if (!params.containsKey(sub)) {
+                    throw new KeyNotFoundException("Name " + sub + " not in params (\"" + key + "\")");
                 }
-                throw new ConfigException("Name " + name + " not available in config: " + key);
-            } else if (includes.containsKey(key)) {
-                return (V) includes.get(key);
-            } else if (params.containsKey(key)) {
-                return (V) params.get(key);
+                return (V) params.get(sub);
+            } else if (includes.containsKey(name)) {
+                return (V) getInMessage(includes.get(name), sub);
             }
-            throw new ConfigException("Name " + key + " not available in config.");
-        } catch (KeyNotFoundException | IncompatibleValueException e) {
-            throw new ConfigException(e, e.getMessage() + ": " + key);
+            throw new KeyNotFoundException("Reference name " + key + " not declared.");
+        } else if (includes.containsKey(key)) {
+            return (V) includes.get(key);
         }
+        throw new KeyNotFoundException("Reference name " + key + " not declared.");
     }
 }

@@ -227,22 +227,31 @@ public class Tokenizer extends InputStream {
 
     private Token nextStringLiteral(int startQuote) throws TokenizerException {
         int startOffset = readOffset;
+        int startLineNo = lineNo;
         int startLinePos = linePos;
         boolean escaped = false;
         while (true) {
             int r = read();
             if (r < 0x20 || r == 0x7F) {
-                int pos = startOffset - readOffset;
+                int pos = startOffset - readOffset + 2;
                 if (r == -1) {
                     throw new TokenizerException("Unexpected end of stream in literal")
-                            .setLineNo(lineNo)
-                            .setLinePos(startLinePos + pos)
-                            .setLine(getLine(lineNo));
+                            .setLineNo(startLineNo)
+                            .setLinePos(startLinePos + pos + 1)
+                            .setLine(getLine(startLineNo));
                 } else {
-                    throw new TokenizerException("Unescaped non-printable char in literal: '%s'", Strings.escape(String.valueOf((char) r)))
-                            .setLineNo(lineNo)
-                            .setLinePos(startLinePos + pos)
-                            .setLine(getLine(lineNo));
+                    if (r == '\n') {
+                        throw new TokenizerException("Unexpected line break in literal")
+                                .setLineNo(startLineNo)
+                                .setLinePos(startLinePos + pos)
+                                .setLine(getLine(startLineNo));
+                    } else {
+                        throw new TokenizerException("Unescaped non-printable char in literal: '%s'",
+                                                     Strings.escape(String.valueOf((char) r)))
+                                .setLineNo(startLineNo)
+                                .setLinePos(startLinePos + pos)
+                                .setLine(getLine(startLineNo));
+                    }
                 }
             }
 
