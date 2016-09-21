@@ -62,38 +62,6 @@ pvd -i fast_binary,file:test.data -o pretty -I thrift/ test.MyData
 Which should read the data file serialized with the FastBinarySerializer format
 and print it out with the simple "pretty printer" format.
 
-## Config Helper
-
-Providence can be used as a base for generating config too. Related to this there
-is the providence config helper, or `pvdcfg`. The tool has a couple of main functions.
-
-- `params`: show the params available to be modified, and where they are defined.
-- `verify`: Verify a set of config files. This will simply print nothing if all is
-  OK, and a human readable error message if not.
-- `print`: Print the parsed config to standard out.
-
-Example calls:
-
-```sh
-$ pvdcfg -I providence/ params resources/my_service.cfg
-{
-  http_port = 8080 # resources/my_service.cfg
-  db_host = "localhost:1234" # resources/db.cfg
-}
-$ pvdcfg -I providence/ print resources/my_service.cfg
-{
-  http {
-    port = 8080
-    
-  }
-}
-$ pvdcfg -I providence/ verify --strict resources/*.cfg
-No such field 'blah' in config.Service
-resources/my_service.cfg line 23
-     blah = "nothing"
------^
-```
-
 ## RPC Tool
 
 The providence RPC tool `pvdrpc` is a program designed to test out thrift and
@@ -211,7 +179,59 @@ either the `request params wrapper` the `response wrapper`, or the
 
 #### Supported Protocols
 
+Short overview over the RPC protocols supported by the RPC tool.
+
 - `http://` and `https://`: Connects to a thrift `TServlet` or similar.
 - `thrift://`: Connects to a `TSimpleServer` type thrift server.
 - `thrift+nonblocking://`: Connects to a `TNonblockingServer` type thrift server,
   or a similar thrift server that wraps messages in `TFramedTransport`.
+
+## Config Helper
+
+Providence can be used as a base for generating config too. Take a look at the
+`providence-config` module for an in depth example of the config markup syntax.
+But using the config is not always preferrable, or trivial to utilize in it's raw
+form. So in order to transform / build the config, and in order to validate or test
+the config written before deployed, we have a "config helper tool", or `pvdcfg`.
+
+The tool have three main functions:
+
+- `pvdcfg print`: Parse and compile the target config and print it out to standard out.
+
+    ```sh
+    $ pvdcfg -I providence/ print resources/my_service.cfg
+    {
+      http {
+        port = 8080
+      }
+      db {
+        host = "localhost:1234"
+      }
+    }
+    ```
+
+- `pvdcfg params`: Show a list of params that can be used to augment the config, and in
+  which config file its defined.
+  
+    ```sh
+    $ pvdcfg -I providence/ params resources/my_service.cfg
+    http_port = 8080 (resources/my_service.cfg)
+    db_host = "localhost:1234" (resources/db.cfg)
+    ```
+
+- `pvdcfg validate`: Validate a set of config files from a base config. This is similar to
+  the 'print' command, but prints nothing on success, and only the error message if the parsing
+  fails at any step.
+
+    ```sh
+    $ pvdcfg -I providence/ validate resources/good.cfg
+    $ pvdcfg -I providence/ validate resources/*.cfg
+    Error in my_service.cfg line 23 position 6
+        No such field 'blah' in config.Service
+          blah = "nothing"
+    ------^
+    ```
+
+**TODO:** There are still quite a lot to explore related to the providence config. Among
+them is how to manage config root management, in such a way that we can merge configs that
+are not always in relative path to each other.
