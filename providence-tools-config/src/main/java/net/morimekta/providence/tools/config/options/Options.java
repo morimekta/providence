@@ -43,6 +43,8 @@ import net.morimekta.providence.tools.config.cmd.Validate;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -58,6 +60,7 @@ public class Options {
     private boolean             help     = false;
     private Map<String, File>   includes = new TreeMap<>();
     private Map<String, String> params   = new TreeMap<>();
+    private List<File>          roots    = new LinkedList<>();
     private Command             command  = null;
 
     private SubCommandSet<Command> commandSet;
@@ -67,13 +70,14 @@ public class Options {
         ArgumentParser parser = new ArgumentParser(prog, version, description, opts);
         parser.add(new Flag("--help", "h?", "This help message.", this::setHelp));
         parser.add(new Option("--include", "I", "dir", "Read config definitions from these directories.", dir().andApply(dir -> this.collectIncludes(dir, includes)), null, true, false, false));
-        parser.add(new Property("--param", 'P', "key", "value", "Config parameter override", params::put, false));
+        parser.add(new Option("--config", "C", "dir", "Config directory locations.", dir(roots::add), null, true, false, false));
+        parser.add(new Property("--param", 'P', "key", "value", "Config parameter override.", params::put, false));
 
-        commandSet = new SubCommandSet<>("cmd", "Config action", this::setCommand, null, true, opts);
-        commandSet.add(new SubCommand<>("help", "Show help for sub-commands", false, () -> new Help(commandSet, parser), cmd -> cmd.parser(parser)));
-        commandSet.add(new SubCommand<>("print", "Print the resulting config", false, Print::new, cmd -> cmd.parser(parser), "p", "pr"));
-        commandSet.add(new SubCommand<>("validate", "Validate the file, print an error if not valid", false, Validate::new, cmd -> cmd.parser(parser)));
-        commandSet.add(new SubCommand<>("params", "Show params that can be applied on the config", false, Params::new, cmd -> cmd.parser(parser)));
+        commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, opts);
+        commandSet.add(new SubCommand<>("help", "Show help for sub-commands.", false, () -> new Help(commandSet, parser), cmd -> cmd.parser(parser)));
+        commandSet.add(new SubCommand<>("print", "Print the resulting config.", false, Print::new, cmd -> cmd.parser(parser), "p", "pr"));
+        commandSet.add(new SubCommand<>("validate", "Validate the file, print an error if not valid.", false, Validate::new, cmd -> cmd.parser(parser)));
+        commandSet.add(new SubCommand<>("params", "Show params that can be applied on the config.", false, Params::new, cmd -> cmd.parser(parser)));
         parser.add(commandSet);
 
         return parser;
@@ -122,6 +126,6 @@ public class Options {
             }
         }
 
-        command.execute(new ProvidenceConfig(loader.getRegistry(), params));
+        command.execute(new ProvidenceConfig(loader.getRegistry(), params, roots));
     }
 }

@@ -104,18 +104,19 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg[-h] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg[-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help message.\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
-                " -Pkey=value        : Config parameter override\n" +
-                " cmd                : Config action\n" +
+                " --config (-C) dir  : Config directory locations.\n" +
+                " -Pkey=value        : Config parameter override.\n" +
+                " cmd                : Config action.\n" +
                 "\n" +
                 "Available Commands:\n" +
                 "\n" +
-                " help     : Show help for sub-commands\n" +
-                " print    : Print the resulting config\n" +
-                " validate : Validate the file, print an error if not valid\n" +
-                " params   : Show params that can be applied on the config\n",
+                " help     : Show help for sub-commands.\n" +
+                " print    : Print the resulting config.\n" +
+                " validate : Validate the file, print an error if not valid.\n" +
+                " params   : Show params that can be applied on the config.\n",
                 outContent.toString());
         assertEquals(0, exitCode);
     }
@@ -127,18 +128,19 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg[-h] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg[-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help message.\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
-                " -Pkey=value        : Config parameter override\n" +
-                " cmd                : Config action\n" +
+                " --config (-C) dir  : Config directory locations.\n" +
+                " -Pkey=value        : Config parameter override.\n" +
+                " cmd                : Config action.\n" +
                 "\n" +
                 "Available Commands:\n" +
                 "\n" +
-                " help     : Show help for sub-commands\n" +
-                " print    : Print the resulting config\n" +
-                " validate : Validate the file, print an error if not valid\n" +
-                " params   : Show params that can be applied on the config\n",
+                " help     : Show help for sub-commands.\n" +
+                " print    : Print the resulting config.\n" +
+                " validate : Validate the file, print an error if not valid.\n" +
+                " params   : Show params that can be applied on the config.\n",
                 outContent.toString());
         assertEquals(0, exitCode);
     }
