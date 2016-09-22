@@ -25,24 +25,22 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.test.config.Service;
 import net.morimekta.test.config.Value;
-import net.morimekta.util.io.IOUtils;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
+import static net.morimekta.providence.testing.util.ResourceUtils.writeContentTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -72,17 +70,17 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testParseSimple() throws IOException, SerializerException {
-        writeConfig("/net/morimekta/providence/config/base_service.cfg");
-        writeConfig("/net/morimekta/providence/config/prod_db.cfg");
-        writeConfig("/net/morimekta/providence/config/stage_db.cfg");
+        copyResourceTo("/net/morimekta/providence/config/base_service.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/prod_db.cfg", temp.getRoot());
+        copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
 
-        File prod = writeConfig("/net/morimekta/providence/config/prod.cfg");
-        File stage = writeConfig("/net/morimekta/providence/config/stage.cfg");
+        File prod = copyResourceTo("/net/morimekta/providence/config/prod.cfg", temp.getRoot());
+        File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
 
         Map<String,String> params = new HashMap<>();
         params.put("admin_port", "14256");
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, params);
+        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()));
         Service stage_service = config.load(stage);
         Service prod_service = config.load(prod);
 
@@ -102,25 +100,23 @@ public class ProvidenceConfigTest {
         File a = temp.newFile("a.cfg");
         File b = temp.newFile("b.cfg");
 
-        writeConfig(a,
-                    "params {\n" +
-                    "  a_number = 4321\n" +
-                    "  a_real = 43.21\n" +
-                    "  a_text = \"string\"\n" +
-                    "  a_enum = config.Value.SECOND\n" +
-                    "  a_bin = b64(dGVzdAo=)\n" +
-                    "}\n" + "config.Database {}\n");
-        writeConfig(b,
-                    "include \"a.cfg\" as a\n" +
-                    "\n" +
-                    "params {\n" +
-                    "  b_number = 4321\n" +
-                    "  b_real = 43.21\n" +
-                    "  b_text = \"string\"\n" +
-                    "  b_enum = config.Value.SECOND\n" +
-                    "  b_bin = hex(0123456789abcdef)\n" +
-                    "}\n" +
-                    "config.Database {}\n");
+        writeContentTo("params {\n" +
+                       "  a_number = 4321\n" +
+                       "  a_real = 43.21\n" +
+                       "  a_text = \"string\"\n" +
+                       "  a_enum = config.Value.SECOND\n" +
+                       "  a_bin = b64(dGVzdAo=)\n" +
+                       "}\n" + "config.Database {}\n", a);
+        writeContentTo("include \"a.cfg\" as a\n" +
+                       "\n" +
+                       "params {\n" +
+                       "  b_number = 4321\n" +
+                       "  b_real = 43.21\n" +
+                       "  b_text = \"string\"\n" +
+                       "  b_enum = config.Value.SECOND\n" +
+                       "  b_bin = hex(0123456789abcdef)\n" +
+                       "}\n" +
+                       "config.Database {}\n", b);
 
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
@@ -136,12 +132,12 @@ public class ProvidenceConfigTest {
               });
 
         assertEquals(
-                "a_bin = [dGVzdAo] (a.cfg)\n" +
+                "a_bin = b64(dGVzdAo) (a.cfg)\n" +
                 "a_enum = config.Value.SECOND (a.cfg)\n" +
                 "a_number = 4321 (a.cfg)\n" +
                 "a_real = 43.21 (a.cfg)\n" +
                 "a_text = \"string\" (a.cfg)\n" +
-                "b_bin = [ASNFZ4mrze8] (b.cfg)\n" +
+                "b_bin = b64(ASNFZ4mrze8) (b.cfg)\n" +
                 "b_enum = config.Value.SECOND (b.cfg)\n" +
                 "b_number = 4321 (b.cfg)\n" +
                 "b_real = 43.21 (b.cfg)\n" +
@@ -156,15 +152,12 @@ public class ProvidenceConfigTest {
         File b = temp.newFile("b.cfg");
         File c = temp.newFile("c.cfg");
 
-        writeConfig(a,
-                    "include \"b.cfg\" as a\n" +
-                    "config.Database {}\n");
-        writeConfig(b,
-                    "include \"c.cfg\" as a\n" +
-                    "config.Database {}\n");
-        writeConfig(c,
-                    "include \"a.cfg\" as a\n" +
-                    "config.Database {}\n");
+        writeContentTo("include \"b.cfg\" as a\n" +
+                       "config.Database {}\n", a);
+        writeContentTo("include \"c.cfg\" as a\n" +
+                       "config.Database {}\n", b);
+        writeContentTo("include \"a.cfg\" as a\n" +
+                       "config.Database {}\n", c);
 
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
@@ -186,9 +179,8 @@ public class ProvidenceConfigTest {
     @Test
     public void testIncludeNoSuchFile() throws IOException {
         File a = temp.newFile("a.cfg");
-        writeConfig(a,
-                    "include \"b.cfg\" as a\n" +
-                    "config.Database {}\n");
+        writeContentTo("include \"b.cfg\" as a\n" +
+                       "config.Database {}\n", a);
 
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
@@ -198,6 +190,59 @@ public class ProvidenceConfigTest {
         } catch (SerializerException e) {
             assertEquals("Included file \"b.cfg\" not found", e.getMessage());
         }
+    }
+
+    @Test
+    public void testResolveFile() throws IOException {
+        File test = temp.newFolder("test");
+        File other = temp.newFolder("other");
+
+        File f1_1 = new File(test, "test.cfg");
+        File f1_2 = new File(test, "same.cfg");
+        File f2_1 = new File(other, "other.cfg");
+        File f2_2 = temp.newFile("third.cfg");
+
+        writeContentTo("a", f1_1);
+        writeContentTo("a", f1_2);
+        writeContentTo("a", f2_1);
+
+        ProvidenceConfig config = new ProvidenceConfig(registry,
+                                                       new HashMap<>(),
+                                                       ImmutableList.of(temp.getRoot()));
+
+        assertEquals(f1_1.getAbsolutePath(), config.resolveFile(null, "test/test.cfg").getAbsolutePath());
+        assertEquals(f1_2.getAbsolutePath(), config.resolveFile(f1_1, "test/same.cfg").getAbsolutePath());
+        assertEquals(f1_2.getAbsolutePath(), config.resolveFile(f1_1, "same.cfg").getAbsolutePath());
+        assertEquals(f2_1.getAbsolutePath(), config.resolveFile(f1_1, "other/other.cfg").getAbsolutePath());
+        assertEquals(f2_2.getAbsolutePath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
+
+        assertFileNotResolved(f1_1, "../fourth.cfg", "File ../fourth.cfg not found in sources");
+        assertFileNotResolved(f1_1, "fourth.cfg", "File fourth.cfg not found in sources");
+        assertFileNotResolved(f1_1, "/fourth.cfg", "File /fourth.cfg not found in sources");
+        assertFileNotResolved(f1_1, "other/fourth.cfg", "File other/fourth.cfg not found in sources");
+        assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
+        assertFileNotResolved(f1_1, "other", "other is a directory, expected file");
+
+        assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found in sources");
+        assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found in sources");
+        assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found in sources");
+        assertFileNotResolved(null, "other/fourth.cfg", "File other/fourth.cfg not found in sources");
+        assertFileNotResolved(null, "../other", "File ../other not found in sources");
+        assertFileNotResolved(null, "other", "other is a directory, expected file");
+    }
+
+    private void assertFileNotResolved(File ref, String file, String message) throws IOException {
+        ProvidenceConfig config = new ProvidenceConfig(registry,
+                                                       new HashMap<>(),
+                                                       ImmutableList.of(temp.getRoot()));
+
+        try {
+            config.resolveFile(ref, file);
+            fail("no exception on unresolved file");
+        } catch (FileNotFoundException e) {
+            assertEquals(message, e.getMessage());
+        }
+
     }
 
     @Test
@@ -241,9 +286,10 @@ public class ProvidenceConfigTest {
                                     String message,
                                     String pretty) throws IOException {
         File a = temp.newFile("test.cfg");
-        writeConfig(a, pretty);
+        writeContentTo(pretty, a);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+        ProvidenceConfig config = new ProvidenceConfig(
+                registry, new HashMap<>());
 
         try {
             config.load(a);
@@ -257,36 +303,4 @@ public class ProvidenceConfigTest {
         }
         a.delete();
     }
-
-    private File writeConfig(String resource) throws IOException {
-        File file = temp.newFile(new File(resource).getName());
-
-        try (OutputStream out = new FileOutputStream(file);
-             InputStream in = ProvidenceConfigTest.class.getResourceAsStream(resource)) {
-            IOUtils.copy(in, out);
-        }
-
-        return file;
-    }
-
-    private File writeConfig(File file, String content) throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes(UTF_8));
-        try (OutputStream out = new FileOutputStream(file)) {
-            IOUtils.copy(in, out);
-        }
-
-        return file;
-    }
-
-    private File writeConfig(String resource, File folder) throws IOException {
-        File file = new File(folder, new File(resource).getName());
-
-        try (OutputStream out = new FileOutputStream(file);
-             InputStream in = ProvidenceConfigTest.class.getResourceAsStream(resource)) {
-            IOUtils.copy(in, out);
-        }
-
-        return file;
-    }
-
 }

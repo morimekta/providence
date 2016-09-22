@@ -170,7 +170,7 @@ $ pvdcfg -I . print myfile.cfg
 }
 ```
 
-#### Interface
+### Java Interface
 
 The interface for using this config in code should be fairly easy to use.
 In order to read a simple config structure, you can use a code snippet like
@@ -194,8 +194,20 @@ class Loader {
 }
 ```
 
-#### Future Work
+### Sources Root
 
-- Enable parameterizing directories to find config files. This way we can customize
-  "includes" the same way the providence compiler does without affecting the syntax
-  and strictness of the markup language itself.
+The providence config can be given a "sources root", each file included form the
+config can be found in one of three ways:
+
+- Absolute path: `/...`
+- File in a source root: `${source-root}/...`.
+- Relative to CWD of the running program: `...`
+
+With this path inclusion with ways of overriding, it should be possible to change
+what files are included based on a set of config source root directories, and swapping
+out directories based on the current "mode" of operation.
+
+Note that it is currently **not** possible to swap out individual config files without
+using symlinks or similar, and it is not possible to load config directly from resources.
+In those cases, you should use the "compiled" config output instead of the raw config
+files.

@@ -42,6 +42,7 @@ import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.BufferedInputStream;
@@ -83,6 +84,7 @@ public class ProvidenceConfig {
     private final Map<String, String>   inputParams;
     // Full file path to resolved instance.
     private final Map<String, PMessage> loaded;
+    private final List<File> sourceRoots;
 
     // simple stage separation. The content *must* come in this order.
     private enum Stage {
@@ -124,6 +126,8 @@ public class ProvidenceConfig {
         public String toString() {
             if (value == null) {
                 return String.format("%s = null (%s)", name, file.getName());
+            } else if (value instanceof Binary) {
+                return String.format("%s = b64(%s) (%s)", name, ((Binary) value).toBase64(), file.getName());
             } else if (value instanceof PEnumValue) {
                 return String.format("%s = %s.%s (%s)",
                                      name,
@@ -142,9 +146,13 @@ public class ProvidenceConfig {
     }
 
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams) {
+        this(registry, inputParams, ImmutableList.of());
+    }
+    public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots) {
         this.registry = registry;
         this.inputParams = ImmutableMap.copyOf(inputParams);
         this.loaded = new HashMap<>();
+        this.sourceRoots = ImmutableList.copyOf(sourceRoots);
     }
 
     /**
@@ -158,7 +166,12 @@ public class ProvidenceConfig {
      * @throws SerializerException If the file could not be parsed.
      */
     public <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException, SerializerException {
-        return loadConfigRecursively(file);
+        try {
+            return loadConfigRecursively(resolveFile(null, file.toString()));
+        } catch (FileNotFoundException e) {
+            throw new TokenizerException(e.getMessage())
+                    .setFile(file.toString());
+        }
     }
 
     /**
@@ -170,7 +183,58 @@ public class ProvidenceConfig {
      * @throws SerializerException If the file could not be parsed.
      */
     public List<Param> params(File file) throws IOException, SerializerException {
-        return loadParamsRecursively(file);
+        return loadParamsRecursively(resolveFile(null, file.toString()));
+    }
+
+    /**
+     * Resolve a file path within the source roots.
+     *
+     * @param ref A file or directory reference
+     * @param path The file reference to resolve.
+     * @return The resolved file.
+     * @throws FileNotFoundException When the file is not found.
+     * @throws IOException When unable to make canonical path.
+     */
+    public File resolveFile(File ref, String path) throws IOException {
+        // relative to reference file.
+        if (ref != null && !path.startsWith("/")) {
+            if (!ref.isDirectory()) {
+                ref = ref.getParentFile();
+            }
+            File tmp = new File(ref, path).getAbsoluteFile()
+                                          .getCanonicalFile();
+            if (tmp.exists()) {
+                if (tmp.isFile()) {
+                    return tmp;
+                }
+                throw new FileNotFoundException(path + " is a directory, expected file");
+            }
+        }
+
+        // relative to source roots.
+        if (!path.startsWith(".") && !path.startsWith("/")) {
+            for (File root : sourceRoots) {
+                File tmp = new File(root, path).getAbsoluteFile()
+                                               .getCanonicalFile();
+                if (tmp.exists()) {
+                    if (tmp.isFile()) {
+                        return tmp;
+                    }
+                    throw new FileNotFoundException(path + " is a directory, expected file");
+                }
+            }
+        }
+
+        // relative to PWD.
+        File tmp = new File(path);
+        if (tmp.exists()) {
+            if (tmp.isFile()) {
+                return tmp;
+            }
+            throw new FileNotFoundException(path + " is a directory, expected file");
+        }
+
+        throw new FileNotFoundException("File " + path + " not found in sources");
     }
 
     private List<Param> loadParamsRecursively(File file, String... stack)
@@ -222,9 +286,14 @@ public class ProvidenceConfig {
                     } else if (INCLUDE.equals(token.asString())) {
                         // if include && stage == INCLUDES --> INCLUDES
                         token = tokenizer.expect("file to be included");
-                        File includedFile = new File(file.getParentFile(), token.decodeLiteral());
-
-                        result.addAll(loadParamsRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()])));
+                        File includedFile;
+                        try {
+                            includedFile = resolveFile(file, token.decodeLiteral());
+                            result.addAll(loadParamsRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()])));
+                        } catch (FileNotFoundException e) {
+                            throw new TokenizerException(token, "Included file " + token.asString() + " not found")
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                        }
 
                         if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
                                                 .asString())) {
@@ -319,12 +388,14 @@ public class ProvidenceConfig {
                         // if include --> INCLUDES
                         stage = Stage.INCLUDES;
                         token = tokenizer.expectStringLiteral("file to be included");
-                        File includedFile = new File(file.getParentFile(), token.decodeLiteral());
+                        File includedFile;
                         PMessage included;
                         try {
+                            includedFile = resolveFile(file, token.decodeLiteral());
                             included = loadConfigRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()]));
                         } catch (FileNotFoundException e) {
-                            throw new TokenizerException(token, "Included file \"%s\" not found", token.decodeLiteral()).setLine(tokenizer.getLine(token.getLineNo()));
+                            throw new TokenizerException(token, "Included file " + token.asString() + " not found")
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
                         }
                         if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
                                                 .asString())) {

@@ -28,7 +28,7 @@ public class ResourceUtils {
      * @param resource The resource path.
      * @param dir Target directory.
      */
-    public static void copyResourceTo(String resource, File dir) {
+    public static File copyResourceTo(String resource, File dir) {
         if (!dir.exists()) {
             fail("Trying to copy resource " + resource + " to non-existing directory: " + dir);
         }
@@ -44,6 +44,7 @@ public class ResourceUtils {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+        return file;
     }
 
     /**
