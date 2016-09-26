@@ -196,12 +196,12 @@ class Loader {
 
 ### Sources Root
 
-The providence config can be given a "sources root", each file included form the
-config can be found in one of three ways:
+Files referenced in the include statements can follow one of two patterns."
 
-- Absolute path: `/...`
-- File in a source root: `${source-root}/...`.
-- Relative to CWD of the running program: `...`
+- Relative to the PWD directory of the including file.
+- Relative to (not including parent directories) of one of the "config roots".
+
+Each config root is simply a directory that contains configs, including subdirectories.
 
 With this path inclusion with ways of overriding, it should be possible to change
 what files are included based on a set of config source root directories, and swapping
