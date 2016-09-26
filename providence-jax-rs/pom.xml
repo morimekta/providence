@@ -37,15 +37,27 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>it-common</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
             <version>0.2.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-maven-plugin</artifactId>
+                <version>0.2.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
