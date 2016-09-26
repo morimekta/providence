@@ -1,0 +1,303 @@
+package net.morimekta.providence.it.serialization;
+
+import net.morimekta.console.chr.Char;
+import net.morimekta.providence.it.Format;
+import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.providence.serializer.FastBinarySerializer;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
+import net.morimekta.test.providence.Containers;
+import net.morimekta.util.Stringable;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TJSONProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.TTupleProtocol;
+import org.apache.thrift.transport.TIOStreamTransport;
+import org.apache.thrift.transport.TTransport;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Serialization Test result.
+ */
+public class TestSerialization implements Stringable, Comparable<TestSerialization> {
+    /**
+     * Which format was tested.
+     */
+    public final Format format;
+
+    /**
+     * Providence serializer.
+     */
+    public final Serializer serializer;
+
+    /**
+     * Thrift factory factory.
+     */
+    public final TProtocolFactory factory;
+
+    public final DescriptiveStatistics PwriteStat;
+    public final DescriptiveStatistics PtotalWriteStat;
+    public final DescriptiveStatistics PreadStat;
+    public final DescriptiveStatistics PtotalReadStat;
+    public final DescriptiveStatistics TwriteStat;
+    public final DescriptiveStatistics TtotalWriteStat;
+    public final DescriptiveStatistics TreadStat;
+    public final DescriptiveStatistics TtotalReadStat;
+
+    public TestSerialization(Format format, Serializer serializer, TProtocolFactory factory) {
+        this.format = format;
+        this.serializer = serializer;
+        this.factory = factory;
+
+        PwriteStat = new DescriptiveStatistics();
+        PtotalWriteStat = new DescriptiveStatistics();
+
+        PreadStat = new DescriptiveStatistics();
+        PtotalReadStat = new DescriptiveStatistics();
+
+        TwriteStat = new DescriptiveStatistics();
+        TtotalWriteStat = new DescriptiveStatistics();
+
+        TreadStat = new DescriptiveStatistics();
+        TtotalReadStat = new DescriptiveStatistics();
+    }
+
+    public double totalPvd() {
+        final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
+        final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
+        final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
+        final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
+
+        double read = ((double) PReadMs) / 1000;
+        double write = ((double) PWriteMs) / 1000;
+        double read_thrift = ((double) TReadMs) / 1000;
+        double write_thrift = ((double) TWriteMs) / 1000;
+
+        // if (read_thrift > 0 || write_thrift > 0) {
+        //     return Math.min(read + write, read_thrift + write_thrift);
+        // } else {
+            return read + write;
+        // }
+    }
+
+    @Override
+    public int compareTo(TestSerialization other) {
+        return Double.compare(totalPvd(), other.totalPvd());
+    }
+
+    @Override
+    public String asString() {
+        final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
+        final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
+        final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
+        final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
+
+        double read = ((double) PReadMs) / 1000;
+        double write = ((double) PWriteMs) / 1000;
+        double read_thrift = ((double) TReadMs) / 1000;
+        double write_thrift = ((double) TWriteMs) / 1000;
+
+        if (TReadMs > 0 || TWriteMs > 0) {
+            return String.format(
+                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f  (%3d kB)",
+                    format.name(),
+                    read,
+                    read_thrift,
+                    write,
+                    write_thrift,
+                    read + write,
+                    read_thrift + write_thrift,
+                    format.output_size / 1024);
+
+        } else {
+            return String.format(
+                    "%20s:  %5.2f       -- %5.2f        =  %5.2f        (%3d kB)",
+                    format.name(),
+                    read,
+                    write,
+                    read + write,
+                    format.output_size / 1024);
+        }
+    }
+
+    public void runProvidence(List<Containers> content) throws IOException, SerializerException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(format.output_size);
+
+        long totalTime = 0;
+        for (Containers c : content) {
+            long start = System.nanoTime();
+
+            serializer.serialize(baos, c);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            PwriteStat.addValue(time);
+
+            baos.write(serializer.binaryProtocol() ? Char.FS : '\n');
+        }
+
+        PtotalWriteStat.addValue(totalTime);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+        totalTime = 0;
+
+        List<Containers> result = new LinkedList<>();
+        while (bais.available() > 0) {
+            long start = System.nanoTime();
+
+            Containers c = serializer.deserialize(bais, Containers.kDescriptor);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            PreadStat.addValue(time);
+
+            if (bais.read() != (serializer.binaryProtocol() ? Char.FS : '\n')) {
+                throw new AssertionError("");
+            }
+
+            result.add(c);
+        }
+
+        PtotalReadStat.addValue(totalTime);
+
+        // validate?
+        if (baos.size() != format.output_size) {
+            System.out.println("Expected output size: " + format.output_size + ", got " + baos.size());
+        }
+        if (result.size() != content.size()) {
+            System.out.println("Number of parsed message " + result.size() + " does not match source " + content.size());
+        }
+    }
+
+    public void runThrift(List<net.morimekta.test.thrift.Containers> content)
+            throws TException {
+        if (factory == null) {
+            return;
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(format.output_size);
+        TTransport transport = new TIOStreamTransport(baos);
+        TProtocol protocol = factory.getProtocol(transport);
+
+        long totalTime = 0;
+        for (net.morimekta.test.thrift.Containers c : content) {
+            long start = System.nanoTime();
+
+            c.write(protocol);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            TwriteStat.addValue(time);
+
+            baos.write(serializer.binaryProtocol() ? Char.FS : '\n');
+        }
+
+        TtotalWriteStat.addValue(totalTime);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        transport = new TIOStreamTransport(bais);
+        protocol = factory.getProtocol(transport);
+
+        totalTime = 0;
+        List<net.morimekta.test.thrift.Containers> result = new LinkedList<>();
+        while (bais.available() > 0) {
+            long start = System.nanoTime();
+
+            net.morimekta.test.thrift.Containers c = new net.morimekta.test.thrift.Containers();
+            c.read(protocol);
+
+            long end = System.nanoTime();
+            long time = end - start;
+            totalTime += time;
+
+            TreadStat.addValue(time);
+
+            bais.read();
+
+            result.add(c);
+        }
+
+        TtotalReadStat.addValue(totalTime);
+
+        if (baos.size() != format.output_size) {
+            System.out.println("Expected output size: " + format.output_size + ", got " + baos.size());
+        }
+        if (result.size() != content.size()) {
+            System.out.println("Number of parsed message " + result.size() + " does not match source " + content.size());
+        }
+    }
+
+    public static TestSerialization forFormat(Format format) {
+        Serializer serializer;
+        TProtocolFactory factory;
+
+        switch (format) {
+            case binary:
+                serializer = new BinarySerializer();
+                factory = TBinaryProtocol::new;
+                break;
+            case json_pretty:
+                serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
+                factory = null;
+                break;
+            case json_named:
+                serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, false);
+                factory = null;
+                break;
+            case json:
+                serializer = new JsonSerializer(false, JsonSerializer.IdType.ID);
+                factory = null;
+                break;
+            case pretty:
+                serializer = new PrettySerializer();
+                factory = null;
+                break;
+            case fast_binary:
+                serializer = new FastBinarySerializer(false);
+                factory = null;
+                break;
+            case binary_protocol:
+                serializer = new TBinaryProtocolSerializer(false);
+                factory = TBinaryProtocol::new;
+                break;
+            case json_protocol:
+                serializer = new TJsonProtocolSerializer(false);
+                factory = TJSONProtocol::new;
+                break;
+            case compact_protocol:
+                serializer = new TCompactProtocolSerializer(false);
+                factory = TCompactProtocol::new;
+                break;
+            case tuple_protocol:
+                serializer = new TTupleProtocolSerializer(false);
+                factory = TTupleProtocol::new;
+                break;
+            default:
+                throw new IllegalStateException("Unhandled format " + format.toString());
+        }
+
+        return new TestSerialization(format, serializer, factory);
+    }
+}

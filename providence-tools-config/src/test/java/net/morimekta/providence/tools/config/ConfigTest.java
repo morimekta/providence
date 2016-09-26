@@ -104,7 +104,7 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg[-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg [-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help message.\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " --config (-C) dir  : Config directory locations.\n" +
@@ -128,7 +128,7 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg[-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg [-h] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help message.\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " --config (-C) dir  : Config directory locations.\n" +

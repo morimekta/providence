@@ -91,7 +91,11 @@
         <!-- slf4j API version must match the one logback uses -->
         <slf4j.version>1.7.20</slf4j.version>
 
-        <morimekta_utils.version>0.3.6</morimekta_utils.version>
+        <commons.lang3.version>3.4</commons.lang3.version>
+        <commons.math3.version>3.5</commons.math3.version>
+        <jackson.version>2.7.3</jackson.version>
+
+        <morimekta_utils.version>0.3.7</morimekta_utils.version>
     </properties>
 
     <groupId>net.morimekta.providence</groupId>
@@ -407,6 +411,7 @@
                 <module>providence-testing</module>
                 <module>providence-thrift</module>
                 <module>providence-config</module>
+                <module>providence-jax-rs</module>
             </modules>
         </profile>
         <profile>
@@ -418,6 +423,14 @@
                 <module>providence-tools-converter</module>
                 <module>providence-tools-rpc</module>
                 <module>providence-tools</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>it-common</module>
+                <module>it-serialization</module>
+                <module>it-generator</module>
             </modules>
         </profile>
         <profile>
