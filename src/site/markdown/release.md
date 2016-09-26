@@ -22,11 +22,11 @@ Proper releases are done with a branch cut.
 
 #### Making the release cut.
 
-* Run `# mvn -Pdev,cli clean verify install site` to build and verify the snapshot build
+* Run `# mvn -Pdev,cli,it clean verify install site` to build and verify the snapshot build
   you want to release.
-* Run `# mvn -Pdev,cli release:prepare`, which will create two new commits, one with the
+* Run `# mvn -Pdev,cli,it release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn -Pdev,cli release:perform` to generate the artifacts and push to sonatype
+* Run `# mvn -Pdev release:perform` to generate the artifacts and push to sonatype
   for staging.
 * Run `# git fetch origin` to update the local git cache (the release plugin uses
   JGit, which does not update the local git remote cache).
@@ -40,7 +40,7 @@ are correct, you're ready to make the release. First make the actual binary rele
 Now merge the last commit into `master`, and **go back to the release branch**
 to prepare the site release.
 
-* Run `# git reset --hard $(git log --oneline --format=%h -n 2 | tail -n 1)`.
+* Run `# git reset --hard HEAD~1`.
   This will check out the actual release commit.
 
 First build the release CLI packages, and update the GIT release info:

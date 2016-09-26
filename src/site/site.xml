@@ -10,7 +10,6 @@
         <menu name="Introduction" inherit="top">
 
             <item href="index.html" name="Providence" />
-            <item href="release.html" name="Release Process" />
             <item href="providence-tools.html" name="Providence Tools" />
             <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
@@ -36,6 +35,9 @@
         </menu>
 
         <menu name="Docs" inherit="top">
+
+            <item href="release.html" name="Release Process" />
+            <item href="integration-testing.html" name="Integration Testing" />
 
             <item href="serializer-binary.html" name="Serializer : Binary" />
             <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
