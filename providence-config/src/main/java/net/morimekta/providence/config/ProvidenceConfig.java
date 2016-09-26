@@ -196,8 +196,20 @@ public class ProvidenceConfig {
      * @throws IOException When unable to make canonical path.
      */
     public File resolveFile(File ref, String path) throws IOException {
-        // relative to reference file.
-        if (ref != null && !path.startsWith("/")) {
+        if (ref == null) {
+            // relative to PWD from initial load file path.
+            File tmp = new File(path);
+            if (tmp.exists()) {
+                if (tmp.isFile()) {
+                    return tmp;
+                }
+                throw new FileNotFoundException(path + " is a directory, expected file");
+            }
+        } else if (path.startsWith("/")) {
+            throw new FileNotFoundException("Absolute path includes not allowed: " + path);
+        } else {
+            // relative to reference file. Parent directory lookup (..) allowed.
+
             if (!ref.isDirectory()) {
                 ref = ref.getParentFile();
             }
@@ -211,11 +223,14 @@ public class ProvidenceConfig {
             }
         }
 
-        // relative to source roots.
-        if (!path.startsWith(".") && !path.startsWith("/")) {
+        // relative to source roots. Parent directory lookup (..) NOT allowed.
+        if (!path.startsWith(".")) {
+            if (path.contains("/../")) {
+                throw new ConfigException("Parent directory part not allowed: " + path);
+            }
             for (File root : sourceRoots) {
                 File tmp = new File(root, path).getAbsoluteFile()
-                                               .getCanonicalFile();
+                                          .getCanonicalFile();
                 if (tmp.exists()) {
                     if (tmp.isFile()) {
                         return tmp;
@@ -225,16 +240,11 @@ public class ProvidenceConfig {
             }
         }
 
-        // relative to PWD.
-        File tmp = new File(path);
-        if (tmp.exists()) {
-            if (tmp.isFile()) {
-                return tmp;
-            }
-            throw new FileNotFoundException(path + " is a directory, expected file");
+        if (ref == null) {
+            throw new FileNotFoundException("File " + path + " not found");
+        } else {
+            throw new FileNotFoundException("Included file " + path + " not found");
         }
-
-        throw new FileNotFoundException("File " + path + " not found in sources");
     }
 
     private List<Param> loadParamsRecursively(File file, String... stack)

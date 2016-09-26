@@ -216,18 +216,18 @@ public class ProvidenceConfigTest {
         assertEquals(f2_1.getAbsolutePath(), config.resolveFile(f1_1, "other/other.cfg").getAbsolutePath());
         assertEquals(f2_2.getAbsolutePath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
 
-        assertFileNotResolved(f1_1, "../fourth.cfg", "File ../fourth.cfg not found in sources");
-        assertFileNotResolved(f1_1, "fourth.cfg", "File fourth.cfg not found in sources");
-        assertFileNotResolved(f1_1, "/fourth.cfg", "File /fourth.cfg not found in sources");
-        assertFileNotResolved(f1_1, "other/fourth.cfg", "File other/fourth.cfg not found in sources");
+        assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
+        assertFileNotResolved(f1_1, "fourth.cfg", "Included file fourth.cfg not found");
+        assertFileNotResolved(f1_1, "/fourth.cfg", "Absolute path includes not allowed: /fourth.cfg");
+        assertFileNotResolved(f1_1, "other/fourth.cfg", "Included file other/fourth.cfg not found");
         assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
         assertFileNotResolved(f1_1, "other", "other is a directory, expected file");
 
-        assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found in sources");
-        assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found in sources");
-        assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found in sources");
-        assertFileNotResolved(null, "other/fourth.cfg", "File other/fourth.cfg not found in sources");
-        assertFileNotResolved(null, "../other", "File ../other not found in sources");
+        assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found");
+        assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found");
+        assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found");
+        assertFileNotResolved(null, "other/fourth.cfg", "File other/fourth.cfg not found");
+        assertFileNotResolved(null, "../other", "File ../other not found");
         assertFileNotResolved(null, "other", "other is a directory, expected file");
     }
 
@@ -242,7 +242,6 @@ public class ProvidenceConfigTest {
         } catch (FileNotFoundException e) {
             assertEquals(message, e.getMessage());
         }
-
     }
 
     @Test

@@ -237,6 +237,12 @@ The tool have three main functions:
     ------^
     ```
 
-**TODO:** There are still quite a lot to explore related to the providence config. Among
-them is how to manage config root management, in such a way that we can merge configs that
-are not always in relative path to each other.
+Included configs can be found in three ways from each file (and it's checked in this order):
+
+- Relative path from the parsed file. This includes parent directories (`..`).
+- Relative path from a config root. This does *not* allow parent directories.
+- Relative to the current (program) working directory (PWD).
+
+Note that the config's inclusion paths can *NOT* be parametrized. The only way to
+parametrize the included config is to set up the config roots or symlinks to have the
+expected files at the included locations.
