@@ -237,11 +237,10 @@ The tool have three main functions:
     ------^
     ```
 
-Included configs can be found in three ways from each file (and it's checked in this order):
+Included configs can be found in two ways from each file (and it's checked in this order):
 
 - Relative path from the parsed file. This includes parent directories (`..`).
 - Relative path from a config root. This does *not* allow parent directories.
-- Relative to the current (program) working directory (PWD).
 
 Note that the config's inclusion paths can *NOT* be parametrized. The only way to
 parametrize the included config is to set up the config roots or symlinks to have the
