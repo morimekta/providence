@@ -41,9 +41,8 @@ import java.util.Map;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
 import static net.morimekta.providence.testing.util.ResourceUtils.writeContentTo;
+import static net.morimekta.providence.util.PrettyPrinter.debugString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -84,15 +83,30 @@ public class ProvidenceConfigTest {
         Service stage_service = config.load(stage);
         Service prod_service = config.load(prod);
 
-        assertEquals("stage", stage_service.getName());
-        assertEquals("prod", prod_service.getName());
-
-        assertNotNull(prod_service.getAdmin());
-        assertNull(stage_service.getAdmin());
-
-        assertEquals((short) 8080, prod_service.getHttp().getPort());
-        assertEquals((short) 14256, prod_service.getAdmin().getPort());
-        assertEquals((short) 8080, stage_service.getHttp().getPort());
+        assertEquals("name = \"prod\"\n" +
+                     "http = {\n" +
+                     "  port = 8080\n" +
+                     "  context = \"/app\"\n" +
+                     "  signature_keys = {\n" +
+                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "  }\n" +
+                     "  signature_override_keys = \"not_really_app_1\"\n" +
+                     "}\n" +
+                     "admin = {\n" +
+                     "  port = 14256\n" +
+                     "  oauth_token_key = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "}",
+                     debugString(prod_service));
+        assertEquals("name = \"stage\"\n" +
+                     "http = {\n" +
+                     "  port = 8080\n" +
+                     "  context = \"/app\"\n" +
+                     "  signature_keys = {\n" +
+                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "  }\n" +
+                     "  signature_override_keys = \"not_really_app_1\"\n" +
+                     "}",
+                     debugString(stage_service));
     }
 
     @Test
@@ -279,6 +293,11 @@ public class ProvidenceConfigTest {
                            "params { s = boo }\n" +
                            "-------------^",
                            "params { s = boo }");
+    }
+
+    @Test
+    public void testBinary() {
+
     }
 
     private void assertParseFailure(String reason,

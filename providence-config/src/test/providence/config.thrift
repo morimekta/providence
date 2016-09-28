@@ -21,11 +21,9 @@ struct ServicePort {
     1: required i16 port;
     2: optional string context;
 
-    // TODO: Maps and lists not yet supported.
-    // 3: optional map<string,binary> signature_keys;
-    // 4: optional list<binary> signature_override_keys;
-    // TODO: Binary not yet supported.
-    // 5: optional binary oauth_token_key;
+    3: optional map<string,binary> signature_keys;
+    4: optional list<string> signature_override_keys;
+    5: optional binary oauth_token_key;
 }
 
 struct Service {

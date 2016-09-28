@@ -600,21 +600,17 @@ public class ProvidenceConfig {
                 builder.set(field.getKey(), parseMessage(tokenizer, includes, params, bld));
             } else if (field.getType() == PType.MAP) {
                 // maps can be extended the same way as
-                token = tokenizer.peek("field sep or value");
-                if (UNDEFINED.equals(token.asString())) {
-                    builder.clear(field.getKey());
-
-                    token = tokenizer.expect("message end or field");
-                    continue;
-                }
-
+                token = tokenizer.expect("field sep or value start");
                 Map baseValue = new HashMap();
-                if (!token.isSymbol(Token.kFieldValueSep)) {
-                    baseValue.putAll((Map) builder.build().get(field.getKey()));
-                } else {
-                    token = tokenizer.expect("map start or reference");
 
-                    if (token.isReferenceIdentifier()) {
+                if (token.isSymbol(Token.kFieldValueSep)) {
+                    token = tokenizer.expect("field id or start");
+                    if (UNDEFINED.equals(token.asString())) {
+                        builder.clear(field.getKey());
+
+                        token = tokenizer.expect("message end or field");
+                        continue;
+                    } else if (token.isReferenceIdentifier()) {
                         try {
                             baseValue.putAll(resolve(includes, params, token.asString()));
                         } catch (KeyNotFoundException e) {
@@ -629,11 +625,16 @@ public class ProvidenceConfig {
                         if (!token.isSymbol(Token.kMessageStart)) {
                             continue;
                         }
-                    } else if (!token.isSymbol(Token.kMessageStart)) {
-                        throw new TokenizerException(token, "Expected message start, but got '%s'", token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
                     }
+                } else {
+                    baseValue.putAll((Map) builder.build().get(field.getKey()));
                 }
+
+                if (!token.isSymbol(Token.kMessageStart)) {
+                    throw new TokenizerException(token, "Expected map start, but got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
+
                 builder.set(field.getKey(), parseMapValue(tokenizer, includes, params, (PMap) field.getDescriptor(), baseValue));
             } else {
                 // Simple fields *must* have the '=' separation.
