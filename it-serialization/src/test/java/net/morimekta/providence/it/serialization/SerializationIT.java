@@ -1,11 +1,12 @@
 package net.morimekta.providence.it.serialization;
 
-import com.google.common.collect.ImmutableList;
 import net.morimekta.providence.it.Format;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.test.providence.Containers;
+
+import com.google.common.collect.ImmutableList;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -23,10 +24,11 @@ import java.util.List;
 import static org.junit.Assert.fail;
 
 /**
- * Speed test running through: - Read a file for each factory / serialization format. - Write the same file back to a
- * temp file.
+ * Speed test running through:
+ * - Read a file for each factory / serialization format.
+ * - Write the same file back to a temp file.
  */
-public class SerializationTest {
+public class SerializationIT {
     private static List<Containers> providence;
     private static List<net.morimekta.test.thrift.Containers> thrift;
 
@@ -40,7 +42,7 @@ public class SerializationTest {
                 new BinarySerializer(true),
                 Containers.kDescriptor).forEachOrdered(providenceB::add);
 
-        try (InputStream in = SerializationTest.class.getResourceAsStream("/containers.bin")) {
+        try (InputStream in = SerializationIT.class.getResourceAsStream("/containers.bin")) {
             if (in == null) {
                 fail("Missing test data");
             }
