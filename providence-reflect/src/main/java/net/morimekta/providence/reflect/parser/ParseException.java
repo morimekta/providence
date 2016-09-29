@@ -21,6 +21,8 @@ package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
+import net.morimekta.util.Stringable;
+import net.morimekta.util.Strings;
 
 import java.io.IOException;
 
@@ -28,7 +30,7 @@ import java.io.IOException;
  * @author Stein Eldar Johnsen
  * @since 24.09.15
  */
-public class ParseException extends Exception {
+public class ParseException extends Exception implements Stringable {
     private final String line;
     private final Token token;
 
@@ -68,15 +70,32 @@ public class ParseException extends Exception {
     }
 
     @Override
-    public String toString() {
+    public String asString() {
         if (line != null && token != null) {
-            return String.format("ParseException(%s,%d:%d,\"%s\")",
-                                 getLocalizedMessage(),
+            return String.format("Parse error on line %d, pos %d: %s\n" +
+                                 "%s\n" +
+                                 "%s^",
                                  token.getLineNo(),
                                  token.getLinePos(),
-                                 line);
+                                 getLocalizedMessage(),
+                                 line,
+                                 Strings.times("-", token.getLinePos()));
         } else {
-            return String.format("ParseException(%s)", getLocalizedMessage());
+            return String.format("Parse error: %s", getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (line != null && token != null) {
+            return String.format("ParseException(\"%s\",%d:%d,\"%s\")",
+                                 Strings.escape(getLocalizedMessage()),
+                                 token.getLineNo(),
+                                 token.getLinePos(),
+                                 Strings.escape(line));
+        } else {
+            return String.format("ParseException(\"%s\")",
+                                 Strings.escape(getLocalizedMessage()));
         }
     }
 }

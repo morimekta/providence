@@ -28,7 +28,6 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
 import net.morimekta.providence.reflect.parser.DocumentParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.util.Strings;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,26 +114,7 @@ public class Compiler {
             System.err.println();
             System.err.println("Run $ pvdc --help # for available options.");
         } catch (ParseException e) {
-            e.printStackTrace();
-            if (e.getToken() != null) {
-                int lineNo = e.getToken().getLineNo();
-                int linePos = e.getToken().getLinePos();
-                int len = e.getToken().length();
-
-                System.err.format(
-                        "Error at line %d, pos %d-%d: %s\n" +
-                        "    %s\n"                          +
-                        "    %s%c\n",
-                        lineNo,
-                        linePos,
-                        linePos + len,
-                        e.getLocalizedMessage(),
-                        e.getLine(),
-                        Strings.times("~", linePos),
-                        '^');
-            } else {
-                System.err.println("Parser error: " + e.getLocalizedMessage());
-            }
+            System.err.println(e.asString());
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
         } catch (GeneratorException e) {

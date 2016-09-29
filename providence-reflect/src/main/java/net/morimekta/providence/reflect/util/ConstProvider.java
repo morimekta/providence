@@ -25,6 +25,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.internal.ConstParser;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -52,20 +53,13 @@ public class ConstProvider implements PValueProvider<Object> {
     public Object get() {
         if (mParsedValue == null) {
             ConstParser parser = new ConstParser();
-            ByteArrayInputStream in = new ByteArrayInputStream(mDefaultValue.getBytes(StandardCharsets.UTF_8));
             @SuppressWarnings("unchecked")
             PDescriptor type = mRegistry.getProvider(mTypeName, mPackageContext, Collections.EMPTY_MAP)
                                         .descriptor();
-            try {
+            try (ByteArrayInputStream in = new ByteArrayInputStream(mDefaultValue.getBytes(StandardCharsets.UTF_8))) {
                 mParsedValue = parser.parse(in, type);
-            } catch (ParseException e) {
+            } catch (ParseException | IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
 

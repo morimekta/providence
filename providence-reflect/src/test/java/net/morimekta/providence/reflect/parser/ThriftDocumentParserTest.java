@@ -325,24 +325,37 @@ public class ThriftDocumentParserTest {
 
     @Test
     public void testParseExceptions() {
-        assertBadThrfit("Field name separatedName conflicts with existing field in struct T",
+        assertBadThrfit("Parse error on line 5, pos 9: Field separatedName has field with conflicting name in T\n" +
+                        "  2: i32 separatedName;\n" +
+                        "---------^",
                         "/failure/conflicting_field_name.thrift");
-        assertBadThrfit("Field id 1 already exists in struct T",
+        assertBadThrfit("Parse error on line 6, pos 2: Field id 1 already exists in struct T\n" +
+                        "  1: i32 second;\n" +
+                        "--^",
                         "/failure/duplicate_field_id.thrift");
-        assertBadThrfit("Field name first conflicts with existing field in struct T",
+        assertBadThrfit("Parse error on line 5, pos 9: Field first already exists in struct T\n" +
+                        "  2: i32 first;\n" +
+                        "---------^",
                         "/failure/duplicate_field_name.thrift");
-        assertBadThrfit("Identifier with double '..' at line 1 pos 15",
+        assertBadThrfit("Parse error on line 1, pos 15: Identifier with double '..' at line 1 pos 15\n" +
+                        "namespace java org.apache..test.failure\n" +
+                        "---------------^",
                         "/failure/invalid_namespace.thrift");
-        assertBadThrfit("Unexpected token 'include', expected type declaration",
+        // assertBadThrfit("Unknown Type 'i128'",
+        //                 "/failure/unknown_type.thrift");
+        assertBadThrfit("Parse error on line 8, pos 0: Unexpected token 'include', expected type declaration\n" +
+                        "include \"valid_reference.thrift\"\n" +
+                        "^",
                         "/failure/invalid_include.thrift");
     }
 
     private void assertBadThrfit(String message, String resource) {
         try {
-            parser.parse(getClass().getResourceAsStream(resource),
-                         new File(resource).getName());
+            parser.parse(getClass().getResourceAsStream(resource), new File(resource).getName());
             fail("No exception on bad thrift: " + resource);
-        } catch (ParseException|IOException e) {
+        } catch (ParseException e) {
+            assertEquals(message, e.asString());
+        } catch (IOException e) {
             assertEquals(message, e.getMessage());
         }
     }

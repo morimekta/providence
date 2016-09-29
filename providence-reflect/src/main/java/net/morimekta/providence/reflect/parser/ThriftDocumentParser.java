@@ -67,13 +67,14 @@ public class ThriftDocumentParser implements DocumentParser {
     public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
         ThriftDocument._Builder doc = ThriftDocument.builder();
 
-        String packageName = ReflectionUtils.packageFromName(name);
+        String packageName = ReflectionUtils.packageFromName(name.replaceAll(".*/", ""));
         if (!VALID_PACKAGE.matcher(packageName).matches()) {
-            throw new ParseException("Package name %s derived from filename %s is not valid.",
-                                     packageName, name);
+            throw new ParseException("Package name \"%s\" derived from filename \"%s\" is not valid.",
+                                     Strings.escape(packageName),
+                                     Strings.escape(name));
         }
-        doc.setPackage(name.replaceAll(".*/", "")
-                           .replace(".thrift", ""));
+        doc.setPackage(packageName);
+
         List<String> includes = new LinkedList<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
 
@@ -134,9 +135,7 @@ public class ThriftDocumentParser implements DocumentParser {
                     hasHeader = true;
                     hasDeclaration = true;
                     EnumType et = parseEnum(tokenizer, comment);
-                    declarations.add(Declaration.builder()
-                                                .setDeclEnum(et)
-                                                .build());
+                    declarations.add(Declaration.withDeclEnum(et));
                     comment = null;
                     break;
                 case "struct":
@@ -145,33 +144,27 @@ public class ThriftDocumentParser implements DocumentParser {
                     hasHeader = true;
                     hasDeclaration = true;
                     StructType st = parseStruct(tokenizer, token.asString(), comment);
-                    declarations.add(Declaration.builder()
-                                                .setDeclStruct(st)
-                                                .build());
+                    declarations.add(Declaration.withDeclStruct(st));
                     comment = null;
                     break;
                 case "service":
                     hasHeader = true;
                     hasDeclaration = true;
                     ServiceType srv = parseService(tokenizer, comment);
-                    declarations.add(Declaration.builder()
-                                                .setDeclService(srv)
-                                                .build());
+                    declarations.add(Declaration.withDeclService(srv));
                     comment = null;
                     break;
                 case "const":
                     hasHeader = true;
                     hasDeclaration = true;
                     ThriftField cnst = parseConst(tokenizer, comment);
-                    declarations.add(Declaration.builder()
-                                                .setDeclConst(cnst)
-                                                .build());
+                    declarations.add(Declaration.withDeclConst(cnst));
                     comment = null;
                     break;
                 default:
                     throw new ParseException(tokenizer, token,
-                                             "Unexpected token '%s', expected type declaration",
-                                             token.asString());
+                                             "Expected type declaration, but got '%s'",
+                                             Strings.escape(token.asString()));
             }
         }
 
@@ -183,11 +176,11 @@ public class ThriftDocumentParser implements DocumentParser {
     }
 
     private ThriftField parseConst(Tokenizer tokenizer, String comment) throws IOException, ParseException {
-        Token token = tokenizer.expectQualifiedIdentifier("parsing const type");
+        Token token = tokenizer.expectQualifiedIdentifier("const typename");
         String type = parseType(tokenizer, token);
-        Token id = tokenizer.expectIdentifier("parsing const identifier");
+        Token id = tokenizer.expectIdentifier("const identifier");
 
-        tokenizer.expectSymbol("parsing const identifier", Token.kFieldValueSep);
+        tokenizer.expectSymbol("const value separator", Token.kFieldValueSep);
 
         String value = parseValue(tokenizer);
 
@@ -209,7 +202,7 @@ public class ThriftDocumentParser implements DocumentParser {
         Stack<Character> enclosures = new Stack<>();
         StringBuilder builder = new StringBuilder();
         while (true) {
-            Token token = tokenizer.expect("Parsing const value.");
+            Token token = tokenizer.expect("const value");
 
             if (token.startsBlockComment()) {
                 parseBlockComment(tokenizer);  // ignore.
@@ -263,10 +256,10 @@ public class ThriftDocumentParser implements DocumentParser {
             service.setComment(comment);
             comment = null;
         }
-        Token identifier = tokenizer.expectIdentifier("parsing service identifier");
+        Token identifier = tokenizer.expectIdentifier("service identifier");
         service.setName(identifier.asString());
 
-        if (tokenizer.peek().strEquals(Token.kExtends)) {
+        if (tokenizer.peek("service start or extends").strEquals(Token.kExtends)) {
             tokenizer.next();
             service.setExtend(tokenizer.expectQualifiedIdentifier("service extending identifier").asString());
         }
@@ -276,7 +269,7 @@ public class ThriftDocumentParser implements DocumentParser {
         Set<String> methodNames = new TreeSet<>();
 
         while (true) {
-            Token token = tokenizer.expect("reading service method");
+            Token token = tokenizer.expect("service method initializer");
             if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             } else if (token.startsLineComment()) {
@@ -295,25 +288,34 @@ public class ThriftDocumentParser implements DocumentParser {
 
             if (token.strEquals(Token.kOneway)) {
                 method.setOneWay(true);
-                token = tokenizer.expect("reading service method");
+                token = tokenizer.expect("service method type");
             }
 
             if (!token.strEquals(Token.kVoid)) {
+                if (method.isSetOneWay()) {
+                    throw new ParseException(tokenizer,
+                                             token,
+                                             "Oneway methods must have void return type, found '%s'",
+                                             Strings.escape(token.asString()));
+                }
                 method.setReturnType(parseType(tokenizer, token));
             }
 
-            String name = tokenizer.expectIdentifier("reading method name").asString();
-            if (methodNames.contains(name) || methodNames.contains(Strings.camelCase("", name))) {
-                throw new ParseException("");
+            String name = tokenizer.expectIdentifier("method name").asString();
+            String normalized = Strings.camelCase("", name);
+            if (methodNames.contains(normalized)) {
+                throw new ParseException(tokenizer,
+                                         token,
+                                         "Service method " + name +
+                                         " has normalized name conflict");
             }
-            methodNames.add(name);
-            methodNames.add(Strings.camelCase("", name));
+            methodNames.add(normalized);
 
             method.setName(name);
 
-            tokenizer.expectSymbol("reading method params begin", Token.kParamsStart);
+            tokenizer.expectSymbol("method params begin", Token.kParamsStart);
             while (true) {
-                token = tokenizer.expect("reading method params");
+                token = tokenizer.expect("method params");
                 if (token.isSymbol(Token.kParamsEnd)) {
                     break;
                 } else if (token.startsLineComment()) {
@@ -332,16 +334,16 @@ public class ThriftDocumentParser implements DocumentParser {
 
                 if (token.isInteger()) {
                     field.setKey((int) token.parseInteger());
-                    tokenizer.expectSymbol("reading method params (:)", Token.kFieldIdSep);
-                    token = tokenizer.expect("reading method param type");
+                    tokenizer.expectSymbol("method params (:)", Token.kFieldIdSep);
+                    token = tokenizer.expect("method param type");
                 }
 
                 field.setType(parseType(tokenizer, token));
-                field.setName(tokenizer.expectIdentifier("reading method param name")
+                field.setName(tokenizer.expectIdentifier("method param name")
                                        .asString());
 
                 // Annotations.
-                if (tokenizer.peek("reading method param annotation")
+                if (tokenizer.peek("method param annotation")
                              .isSymbol(Token.kParamsStart)) {
                     tokenizer.next();
                     char sep = Token.kParamsStart;
@@ -357,7 +359,7 @@ public class ThriftDocumentParser implements DocumentParser {
                     }
                 }
 
-                token = tokenizer.peek("reading method params");
+                token = tokenizer.peek("method params");
                 if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
                     tokenizer.next();
                 }
@@ -626,21 +628,22 @@ public class ThriftDocumentParser implements DocumentParser {
 
         Token id = tokenizer.expectIdentifier("parsing " + type + " identifier");
         if (!id.isIdentifier()) {
-            throw new ParseException("Struct name " + id.asString() + " is not valid identifier", tokenizer, id);
+            throw new ParseException(tokenizer, id,
+                                     "Invalid type identifier " + id.asString());
         }
         struct.setName(id.asString());
 
         // Unsigned short max value.
         int nextDefaultKey = (1 << 16) - 1;
 
-        tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kMessageStart);
+        tokenizer.expectSymbol("struct start", Token.kMessageStart);
 
         Set<String> fieldNames = new HashSet<>();
         Set<String> fieldNameVariants = new HashSet<>();
         Set<Integer> fieldIds = new HashSet<>();
 
         while (true) {
-            Token token = tokenizer.expect("parsing struct " + id.asString());
+            Token token = tokenizer.expect("field def");
             if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             } else if (token.startsLineComment()) {
@@ -658,18 +661,18 @@ public class ThriftDocumentParser implements DocumentParser {
             if (token.isInteger()) {
                 int fId = (int) token.parseInteger();
                 if (fId < 1) {
-                    throw new ParseException("Negative field id " + fId + " not allowed.",
-                                             token, tokenizer);
+                    throw new ParseException(tokenizer, token,
+                                             "Negative field id " + fId + " not allowed.");
                 }
                 if (fieldIds.contains(fId)) {
-                    throw new ParseException("Field id " + fId + " already exists in struct " + struct.build().getName(),
-                                             token, tokenizer);
+                    throw new ParseException(tokenizer, token,
+                                             "Field id " + fId + " already exists in struct " + struct.build().getName());
                 }
                 fieldIds.add(fId);
                 field.setKey(fId);
 
-                tokenizer.expectSymbol("parsing struct " + id.asString(), Token.kFieldIdSep);
-                token = tokenizer.expect("parsing struct " + id.asString());
+                tokenizer.expectSymbol("field id sep", Token.kFieldIdSep);
+                token = tokenizer.expect("field requirement or type");
             } else {
                 // TODO(steineldar): Maybe disallow for consistency?
                 field.setKey(nextDefaultKey--);
@@ -677,18 +680,17 @@ public class ThriftDocumentParser implements DocumentParser {
 
             if (token.strEquals(Token.kRequired)) {
                 if (union) {
-                    throw new ParseException("Found required field in union. Not allowed. " + token.asString(),
-                                             tokenizer,
-                                             token);
+                    throw new ParseException(tokenizer, token,
+                                             "Found required field in union");
                 }
                 field.setRequirement(Requirement.REQUIRED);
-                token = tokenizer.expect("parsing struct " + id.asString());
+                token = tokenizer.expect("field type");
             } else if (token.strEquals(Token.kOptional)) {
                 if (!union) {
                     // All union fields are optional regardless.
                     field.setRequirement(Requirement.OPTIONAL);
                 }
-                token = tokenizer.expect("parsing struct " + id.asString());
+                token = tokenizer.expect("field type");
             }
 
             // Get type.... This is mandatory.
@@ -696,13 +698,17 @@ public class ThriftDocumentParser implements DocumentParser {
 
             Token name = tokenizer.expectIdentifier("parsing struct " + id.asString());
             String fName = name.asString();
-            if (fieldNames.contains(name)) {
-                throw new ParseException("Field name " + fName + " already exists in struct " + struct.build().getName(),
-                                         token, tokenizer);
+            if (fieldNames.contains(fName)) {
+                throw new ParseException(tokenizer, name,
+                                         "Field %s already exists in struct %s",
+                                         fName,
+                                         struct.build().getName());
             }
             if (fieldNameVariants.contains(Strings.camelCase("get", fName))) {
-                throw new ParseException("Field name " + fName + " conflicts with existing field in struct " + struct.build().getName(),
-                                         token, tokenizer);
+                throw new ParseException(tokenizer, name,
+                                         "Field %s has field with conflicting name in %s",
+                                         fName,
+                                         struct.build().getName());
             }
             fieldNames.add(fName);
             fieldNameVariants.add(Strings.camelCase("get", fName));

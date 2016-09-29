@@ -88,7 +88,7 @@ public class Tokenizer extends InputStream {
 
     public Token expect(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         }
         Token next = nextToken;
         nextToken = null;
@@ -97,7 +97,7 @@ public class Tokenizer extends InputStream {
 
     public Token peek(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         }
         return nextToken;
     }
@@ -108,9 +108,7 @@ public class Tokenizer extends InputStream {
 
     public char expectSymbol(String message, char... symbols) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, expected one of ['%s'] while %s",
-                                     Strings.escape(Strings.join("', '", symbols)),
-                                     message);
+            throw new ParseException("Expected %s, but got end of file", message);
         } else {
             for (char symbol : symbols) {
                 if (nextToken.isSymbol(symbol)) {
@@ -120,61 +118,60 @@ public class Tokenizer extends InputStream {
             }
 
             throw new ParseException(this, nextToken,
-                                     "Expected one of ['%s'], but found '%s' while %s",
-                                     Strings.escape(Strings.join("', '", symbols)),
-                                     Strings.escape(nextToken.asString()),
-                                     message);
+                                     "Expected %s, but got '%s'",
+                                     message,
+                                     Strings.escape(nextToken.asString()));
         }
     }
 
     public Token expectIdentifier(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         } else if (nextToken.isIdentifier()) {
             Token next = nextToken;
             nextToken = null;
             return next;
         } else {
             throw new ParseException(this, nextToken,
-                                     "Expected identifier, but found '%s' while %s",
-                                     Strings.escape(nextToken.asString()),
-                                     message);
+                                     "Expected %s, but got '%s'",
+                                     message,
+                                     Strings.escape(nextToken.asString()));
         }
     }
 
     public Token expectQualifiedIdentifier(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         } else if (nextToken.isQualifiedIdentifier()) {
             Token next = nextToken;
             nextToken = null;
             return next;
         } else {
             throw new ParseException(this, nextToken,
-                                     "Expected qualified identifier, but found '%s' while %s",
-                                     Strings.escape(nextToken.asString()),
-                                     message);
+                                     "Expected %s, but got '%s'",
+                                     message,
+                                     Strings.escape(nextToken.asString()));
         }
     }
 
     public Token expectStringLiteral(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         } else if (nextToken.isStringLiteral()) {
             Token next = nextToken;
             nextToken = null;
             return next;
         } else {
             throw new ParseException(this, nextToken,
-                                     "Expected string literal, but found '%s' while %s",
-                                     Strings.escape(nextToken.asString()),
-                                     message);
+                                     "Expected %s, but got '%s'",
+                                     message,
+                                     Strings.escape(nextToken.asString()));
         }
     }
 
     public Token expectInteger(String message) throws IOException, ParseException {
         if (!hasNext()) {
-            throw new ParseException("Unexpected end of file, while %s", message);
+            throw new ParseException("Expected %s, but got end of file", message);
         } else if (nextToken.isInteger()) {
             Token next = nextToken;
             nextToken = null;
@@ -214,10 +211,14 @@ public class Tokenizer extends InputStream {
                 int pos = startOffset - readOffset;
                 if (r == -1) {
                     throw new ParseException(
-                            "Unexpected end of stream in string: line" + lineNo + " pos " + startLinePos + pos);
+                            this,
+                            new Token(buffer, readOffset, 1, lineNo, startLinePos + pos),
+                            "Expected end of literal, but got end of file");
                 } else {
                     throw new ParseException(
-                            "Invalid string literal char: " + r + " at line " + lineNo + " pos " + startLinePos + pos);
+                            this,
+                            new Token(buffer, readOffset, 1, lineNo, startLinePos + pos),
+                            "Invalid string literal char '" + Strings.escape(new String(new char[]{(char) r})) + "'");
                 }
             }
 
@@ -267,13 +268,17 @@ public class Tokenizer extends InputStream {
             // special case.
             int s = read();
             if (s == -1) {
-                throw new ParseException("Unexpected end of stream line " + lineNo + ", pos " + linePos + ".");
-            } else if (s == '/' || s == '*') {
-                return new Token(buffer, startOffset, 2, lineNo, linePos++);
+                throw new ParseException(this,
+                                         new Token(buffer, readOffset, 1, lineNo, linePos),
+                                         "Expected java comment continuation, got end of stream");
+            }
+            Token token = new Token(buffer, startOffset, 2, lineNo, linePos++);;
+            if (s == '/' || s == '*') {
+                return token;
             } else if (s < 32 || s >= 127) {
-                throw new ParseException("Invalid start of comment '\\x%x'. Must be '/*' or '//'", s);
+                throw new ParseException(this, token, "Invalid start of comment '/%s'", Strings.escape(String.valueOf((char)s)));
             } else {
-                throw new ParseException("Invalid start of comment '/%c'. Must be '/*' or '//'", (char) s);
+                throw new ParseException(this, token, "Invalid start of comment '/%c'. Must be '/*' or '//'", (char) s);
             }
         }
 
@@ -284,7 +289,9 @@ public class Tokenizer extends InputStream {
             return nextIdentifier();
         }
 
-        throw new ParseException(String.format("Unknown token initiator: %c, line %d, pos %d", r, lineNo, linePos));
+        throw new ParseException(this,
+                                 new Token(buffer, startOffset, readOffset - startOffset, lineNo, linePos),
+                                 String.format("Unknown token initiator: %s", Strings.escape(String.valueOf((char) r))));
     }
 
     private Token nextNumber(int lastByte) throws ParseException {
@@ -315,7 +322,9 @@ public class Tokenizer extends InputStream {
             }
 
             if (!(lastByte == '.' || (lastByte >= '0' && lastByte <= '9'))) {
-                throw new ParseException("No decimal after negative indicator.");
+                throw new ParseException(this,
+                                         new Token(buffer, startOffset, len, lineNo, startLinePos),
+                                         "No decimal after negative indicator.");
             }
         } else if (lastByte == '0') {
             lastByte = read();
