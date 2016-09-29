@@ -91,7 +91,6 @@
 
         <commons.lang3.version>3.4</commons.lang3.version>
         <commons.math3.version>3.6.1</commons.math3.version>
-        <jackson.version>2.7.3</jackson.version>
 
         <morimekta_utils.version>0.3.7</morimekta_utils.version>
     </properties>
@@ -178,7 +177,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.10</version>
+                    <version>1.12</version>
                 </plugin>
 
                 <plugin>
@@ -207,15 +206,15 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.2</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.5</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -231,11 +230,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
+                    <version>2.10.4</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
@@ -386,6 +385,10 @@
             <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>all</name>
+                    <value>true</value>
+                </property>
             </activation>
             <modules>
                 <!-- Core Modules -->
@@ -409,6 +412,12 @@
         </profile>
         <profile>
             <id>cli</id>
+            <activation>
+                <property>
+                    <name>all</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <modules>
                 <!-- CLI Tooling (not deployed as artifacts) -->
                 <module>providence-tools-compiler</module>
@@ -420,6 +429,12 @@
         </profile>
         <profile>
             <id>it</id>
+            <activation>
+                <property>
+                    <name>all</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <modules>
                 <module>it-common</module>
                 <module>it-serialization</module>

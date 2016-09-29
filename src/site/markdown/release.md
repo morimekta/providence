@@ -22,11 +22,11 @@ Proper releases are done with a branch cut.
 
 #### Making the release cut.
 
-* Run `# mvn -Pdev,cli,it clean verify install site` to build and verify the snapshot build
+* Run `# mvn -Dall clean install` to build and verify the snapshot build
   you want to release.
-* Run `# mvn -Pdev,cli,it release:prepare`, which will create two new commits, one with the
+* Run `# mvn -Dall release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn -Pdev release:perform` to generate the artifacts and push to sonatype
+* Run `# mvn release:perform` to generate the artifacts and push to sonatype
   for staging.
 * Run `# git fetch origin` to update the local git cache (the release plugin uses
   JGit, which does not update the local git remote cache).
@@ -45,7 +45,7 @@ to prepare the site release.
 
 First build the release CLI packages, and update the GIT release info:
 
-* Run `# mvn clean package -Pcli` to make sure the release-artifacts are
+* Run `# mvn -Pcli clean package` to make sure the release-artifacts are
   available locally.
 * Take out the two files: `providence-package/target/providence-{version}_all.deb`
   and `providence-package/target/rpm/providence/RPMS/noarch/providence-{version}_1.noarch.rpm`
