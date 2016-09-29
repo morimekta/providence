@@ -22,6 +22,8 @@ package net.morimekta.providence.serializer;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.util.Stringable;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 19.09.15
@@ -82,27 +84,21 @@ public class SerializerException extends Exception implements Stringable {
 
     @Override
     public String toString() {
-        return "SerializerException" + asString();
+        return MoreObjects.toStringHelper(getClass())
+                          .omitNullValues()
+                          .addValue(getMessage())
+                          .add("method", methodName)
+                          .add("type", callType)
+                          .add("seq", sequenceNo)
+                          .toString();
     }
 
     @Override
     public String asString() {
-        StringBuilder builder = new StringBuilder("{\"");
-        builder.append(getMessage());
-        builder.append("\"");
         if (methodName != null) {
-            builder.append(",method:")
-                   .append(methodName);
+            return "Error in " + methodName + ": " + getMessage();
+        } else {
+            return "Error: " + getMessage();
         }
-        if (callType != null) {
-            builder.append(",callType:")
-                   .append(callType.toString());
-        }
-        if (sequenceNo != 0) {
-            builder.append(",seq:")
-                   .append(sequenceNo);
-        }
-        builder.append('}');
-        return builder.toString();
     }
 }

@@ -3,6 +3,8 @@ package net.morimekta.providence.util.pretty;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.File;
 
 /**
@@ -77,7 +79,8 @@ public class TokenizerException extends SerializerException {
         return this;
     }
 
-    public String toString() {
+    @Override
+    public String asString() {
         if (lineNo > 0) {
             String fileSpec = "";
             if (file != null) {
@@ -104,5 +107,18 @@ public class TokenizerException extends SerializerException {
         } else {
             return getMessage();
         }
+    }
+
+    @Override
+    public String toString() {
+        MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(getClass())
+                          .omitNullValues()
+                          .addValue(getMessage())
+                          .add("file", file);
+        if (lineNo > 0) {
+            helper.add("lineNo", lineNo);
+            helper.add("linePos", linePos);
+        }
+        return helper.toString();
     }
 }

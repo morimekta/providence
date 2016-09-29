@@ -44,7 +44,7 @@ public class Config {
                 cli.validate();
                 op.execute();
             } catch (TokenizerException e) {
-                System.err.println(e.toString());
+                System.err.println(e.asString());
                 exit(1);
             } catch (SerializerException e) {
                 System.err.println("Serialization error: " + e.toString());

@@ -317,7 +317,7 @@ public class ProvidenceConfigTest {
                          message, e.getMessage());
         } catch (SerializerException e) {
             assertEquals("Wrong exception message on " + reason,
-                         message, e.toString());
+                         message, e.asString());
         }
         a.delete();
     }

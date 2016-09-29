@@ -41,29 +41,13 @@ really need scripting, you should use pure `java`, `groovy` or similar.
   config writer, which in turns had a tendency of making the config files
   almost unreadable and a pretty unpopular task of managing.
 
-So what options do you have? None of the popular config markup languages
-support all of these four requirements.
-
-- `YAML`: Is a real structural config markup language. But is does not
-  have native support for `1.` and `3.` And though it is no problem in merging
-  multiple .yaml files, there is no real type-checking of the config
-  input, which is pointing back to the problem in `1.`.
-- `JSON`: Is just a structured data markup language, so though `2.` is a given,
-  there is no option for commenting, which makes is a bad option for config in the
-  first place. But with `JsonMerge` and `JsonPatch` you get a pretty
-  wide toolset for solving `4.`. And with `JsonSchema` the problem in `1.`
-  can be partially solved. So unless you can generate `jackson` POJO classes
-  from the JSON schema, this is a no-go.
-- `TOML`: Is similar to the windows INI files, but has more value typing in
-  the config files, it is structured and has types in the config files themselves,
-  but other than that falls pretty short.
-- If you want to have a schema-defined, structured, type-safe config, you can
-  choose `thrift`, `protobuf` or `providence` serialized formats. All of these
-  fills `1.`, `2.` and `3.` natively. And they all support a "simple" modularization
-  by merging or "overloading" messages. Ignoring the "readable and writable config
-  format" part, there is the problem of modularizing a schema-defined system like
-  that: **Where is the definition for what module, and how do you merge them?**
-  And here lies the whole reason for `providence-config`.
+If you want to have a schema-defined, structured, type-safe config, you can
+choose `thrift`, `protobuf` or `providence` serialized formats. All of these
+fills `1.`, `2.` and `3.` natively. And they all support a "simple" modularization
+by merging or "overloading" messages. Ignoring the "readable and writable config
+format" part, there is the problem of modularizing a schema-defined system like
+that: **Where is the definition for what module, and how do you merge them?**
+And here lies the whole reason for `providence-config`.
 
 If you want to have a config that is type-safe both in the written config file
 input to the parser, to the code that uses that config, using a model builder
@@ -100,7 +84,7 @@ providence config file syntax:
 - The `include` section is a set of similarly included config files.
   Each file is given an `alias`. E.g. `include "other.cfg" as o` will
   make the 'o' reference point to the content of the "other.cfg" config.
-- the `message` is a providence message, and is declared with the
+- The `message` is a providence message, and is declared with the
   qualified typename (package.Name), and the content, following this
   syntax: `TYPENAME (':' EXTEND)? '{' FIELD_VALUE* '}'`, where the
   `FIELD_VALUE` part follows the 'pretty' serializer syntax (using the '='
