@@ -1,5 +1,6 @@
 package net.morimekta.providence.it.serialization;
 
+import net.morimekta.console.chr.Control;
 import net.morimekta.providence.it.Format;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.SerializerException;
@@ -70,6 +71,7 @@ public class SerializationIT {
 
             test.runProvidence(providence);
             test.runThrift(thrift);
+            test.calculate();
 
             System.out.println(test.asString());
         }
@@ -82,22 +84,29 @@ public class SerializationIT {
             formats.add(TestSerialization.forFormat(format));
         }
 
-        for (int i = 0; i < 10; ++i) {
+        char[] c = {'|', '/', '-', '\\'};
+
+        for (int i = 0; i < 80; ++i) {
             Collections.shuffle(formats);
             for (TestSerialization test : formats) {
-                for (int j = 0; j < 100; ++j) {
-                    if (i % 10 == 0) {
-                        System.out.print(".");
+                for (int j = 0; j < 40; ++j) {
+                    if (j % 10 == 0) {
+                        System.out.print(Control.LEFT);
+                        System.out.print(c[(j / 10) % 4]);
                         System.out.flush();
                     }
                     test.runProvidence(providence);
                     test.runThrift(thrift);
                 }
+                System.gc();
             }
+            System.out.print(Control.LEFT);
+            System.out.print("..");
         }
 
         System.out.println();
 
+        formats.forEach(TestSerialization::calculate);
         Collections.sort(formats);
 
         System.out.println(Format.header());

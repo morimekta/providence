@@ -14,6 +14,7 @@ import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Stringable;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -59,6 +60,11 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
     public final DescriptiveStatistics TreadStat;
     public final DescriptiveStatistics TtotalReadStat;
 
+    public double read;
+    public double read_thrift;
+    public double write;
+    public double write_thrift;
+
     public TestSerialization(Format format, Serializer serializer, TProtocolFactory factory) {
         this.format = format;
         this.serializer = serializer;
@@ -78,16 +84,6 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
     }
 
     public double totalPvd() {
-        final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
-        final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
-        final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
-        final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
-
-        double read = ((double) PReadMs) / 1000;
-        double write = ((double) PWriteMs) / 1000;
-        double read_thrift = ((double) TReadMs) / 1000;
-        double write_thrift = ((double) TWriteMs) / 1000;
-
         // if (read_thrift > 0 || write_thrift > 0) {
         //     return Math.min(read + write, read_thrift + write_thrift);
         // } else {
@@ -102,17 +98,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
 
     @Override
     public String asString() {
-        final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
-        final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
-        final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
-        final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
-
-        double read = ((double) PReadMs) / 1000;
-        double write = ((double) PWriteMs) / 1000;
-        double read_thrift = ((double) TReadMs) / 1000;
-        double write_thrift = ((double) TWriteMs) / 1000;
-
-        if (TReadMs > 0 || TWriteMs > 0) {
+        if (read_thrift > 0 || write_thrift > 0) {
             return String.format(
                     "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f  (%3d kB)",
                     format.name(),
@@ -299,5 +285,17 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
 
         return new TestSerialization(format, serializer, factory);
+    }
+
+    public void calculate() {
+        final long PReadMs = (long) PtotalReadStat.getSum() / 1000000;
+        final long PWriteMs = (long) PtotalWriteStat.getSum() / 1000000;
+        final long TReadMs = (long) TtotalReadStat.getSum() / 1000000;
+        final long TWriteMs = (long) TtotalWriteStat.getSum() / 1000000;
+
+        read = ((double) PReadMs) / 1000;
+        write = ((double) PWriteMs) / 1000;
+        read_thrift = ((double) TReadMs) / 1000;
+        write_thrift = ((double) TWriteMs) / 1000;
     }
 }

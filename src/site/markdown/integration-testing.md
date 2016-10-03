@@ -29,17 +29,20 @@ serialization time. Lower is better.
                            read          write            SUM
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr
 
-         fast_binary:   0.50       --  0.32        =   0.82        ( 18 kB)
-              binary:   0.59  0.38 --  0.39  0.23  =   0.98  0.60  ( 26 kB)
-     binary_protocol:   0.60  0.34 --  0.44  0.22  =   1.03  0.56  ( 26 kB)
-    compact_protocol:   0.68  0.38 --  0.45  0.23  =   1.13  0.61  ( 18 kB)
-      tuple_protocol:   0.72  0.42 --  0.43  0.28  =   1.15  0.71  ( 16 kB)
-                json:   1.69       --  1.34        =   3.03        ( 36 kB)
-       json_protocol:   2.18  1.82 --  1.57  1.23  =   3.74  3.04  ( 57 kB)
-          json_named:   2.34       --  2.20        =   4.54        ( 54 kB)
-              pretty:   3.06       --  1.99        =   5.05        ( 74 kB)
-         json_pretty:   3.01       --  2.59        =   5.60        ( 92 kB)
+         fast_binary:   1.34       --  0.84        =   2.18        ( 18 kB)
+              binary:   1.58  0.94 --  1.03  0.57  =   2.61  1.51  ( 26 kB)
+      tuple_protocol:   1.69  0.86 --  0.97  0.55  =   2.66  1.41  ( 16 kB)
+     binary_protocol:   1.72  0.92 --  1.16  0.55  =   2.88  1.47  ( 26 kB)
+    compact_protocol:   1.81  0.95 --  1.14  0.55  =   2.94  1.50  ( 18 kB)
+                json:   4.75       --  3.59        =   8.34        ( 36 kB)
+       json_protocol:   5.58  4.64 --  4.02  3.15  =   9.61  7.80  ( 57 kB)
+          json_named:   5.50       --  5.01        =  10.50        ( 54 kB)
+         json_pretty:   7.69       --  6.48        =  14.16        ( 92 kB)
+              pretty:   9.51       --  5.59        =  15.10        ( 74 kB)
 ```
+
+**TODO:** Fix so the numbers are all relative to *thrift binary protocol*,
+that should stabilize the test to make it an actual test.
 
 **NOTE:** Since the test is for the *speed* of the serialization, we are only
 interested in the comparison between the serializers, not the absolute values.
