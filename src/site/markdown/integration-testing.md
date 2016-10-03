@@ -29,24 +29,19 @@ serialization time. Lower is better.
                            read          write            SUM
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr
 
-         fast_binary:   1.34       --  0.84        =   2.18        ( 18 kB)
-              binary:   1.58  0.94 --  1.03  0.57  =   2.61  1.51  ( 26 kB)
-      tuple_protocol:   1.69  0.86 --  0.97  0.55  =   2.66  1.41  ( 16 kB)
-     binary_protocol:   1.72  0.92 --  1.16  0.55  =   2.88  1.47  ( 26 kB)
-    compact_protocol:   1.81  0.95 --  1.14  0.55  =   2.94  1.50  ( 18 kB)
-                json:   4.75       --  3.59        =   8.34        ( 36 kB)
-       json_protocol:   5.58  4.64 --  4.02  3.15  =   9.61  7.80  ( 57 kB)
-          json_named:   5.50       --  5.01        =  10.50        ( 54 kB)
-         json_pretty:   7.69       --  6.48        =  14.16        ( 92 kB)
-              pretty:   9.51       --  5.59        =  15.10        ( 74 kB)
+         fast_binary:   1.41       --  1.41        =   1.41        ( 18 kB)
+              binary:   1.69  1.00 --  1.68  1.00  =   1.69  1.00  ( 26 kB)
+      tuple_protocol:   1.82  0.90 --  1.60  0.89  =   1.74  0.89  ( 16 kB)
+     binary_protocol:   1.79  0.97 --  1.91  0.96  =   1.84  0.97  ( 26 kB)
+    compact_protocol:   1.95  1.04 --  1.93  0.96  =   1.94  1.01  ( 18 kB)
+                json:   4.92       --  6.02        =   5.35        ( 36 kB)
+       json_protocol:   5.85  4.84 --  6.54  5.28  =   6.11  5.01  ( 57 kB)
+          json_named:   5.78       --  8.50        =   6.83        ( 54 kB)
+         json_pretty:   8.00       -- 10.61        =   9.01        ( 92 kB)
+              pretty:   9.30       --  9.50        =   9.38        ( 74 kB)
 ```
-
-**TODO:** Fix so the numbers are all relative to *thrift binary protocol*,
-that should stabilize the test to make it an actual test.
 
 **NOTE:** Since the test is for the *speed* of the serialization, we are only
 interested in the comparison between the serializers, not the absolute values.
-For a future update of the IT, it should be updated to test against the
-binary_protocol using a ratio to verify that the serialization speed not to
-drift to become slower. **NOTE 2:** With this update, the test may become flaky,
-and should not necessarily be used to block or approve updates.
+All numbers have been normalised to be relative to the native thrift binary protocol
+implementation (that's why it's 1.00 for thrift binary).

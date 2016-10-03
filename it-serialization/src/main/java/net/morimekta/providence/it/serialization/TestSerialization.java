@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Serialization Test result.
@@ -84,11 +85,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
     }
 
     public double totalPvd() {
-        // if (read_thrift > 0 || write_thrift > 0) {
-        //     return Math.min(read + write, read_thrift + write_thrift);
-        // } else {
-            return read + write;
-        // }
+        return read + write;
     }
 
     @Override
@@ -117,6 +114,84 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
                     read,
                     write,
                     read + write,
+                    format.output_size / 1024);
+        }
+    }
+
+    public void verify(TestSerialization rel) {
+        if (format == Format.pretty) {
+            // This format cannot become too slow, as it's whole purpose is debugging
+            // and human readability.
+            return;
+        }
+
+        double r = read / rel.read_thrift;
+        double w = write / rel.write_thrift;
+
+        double ro = (r / format.read) - 1.00;
+        double wo = (w / format.write) - 1.00;
+
+        if (ro > 0.10) {
+            System.out.format(Locale.ENGLISH,
+                              "-- %20s read speed increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              format.toString(),
+                              (ro * 100),
+                              format.read,
+                              r);
+        }
+        if (wo > 0.10) {
+            System.out.format(Locale.ENGLISH,
+                              "-- %20s write speed increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              format.toString(),
+                              (wo * 100),
+                              format.write,
+                              w);
+        }
+        if (ro < -0.10) {
+            System.out.format(Locale.ENGLISH,
+                              "++ %20s read speed reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              format.toString(),
+                              (-ro * 100),
+                              format.read,
+                              r);
+        }
+        if (wo < -0.10) {
+            System.out.format(Locale.ENGLISH,
+                              "++ %20s write speed reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              format.toString(),
+                              (-wo * 100),
+                              format.write,
+                              w);
+        }
+    }
+
+    public String statistics(TestSerialization rel) {
+        double r = read / rel.read_thrift;
+        double w = write / rel.write_thrift;
+        double rw = (r + w) / 2;
+
+        if (read_thrift > 0 || write_thrift > 0) {
+            double rt = read_thrift / rel.read_thrift;
+            double wt = write_thrift / rel.write_thrift;
+            double rwt = (rt + wt) / 2;
+
+            return String.format(
+                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f  (%3d kB)",
+                    format.name(),
+                    r,
+                    rt,
+                    w,
+                    wt,
+                    rw,
+                    rwt,
+                    format.output_size / 1024);
+        } else {
+            return String.format(
+                    "%20s:  %5.2f       -- %5.2f        =  %5.2f        (%3d kB)",
+                    format.name(),
+                    r,
+                    w,
+                    rw,
                     format.output_size / 1024);
         }
     }

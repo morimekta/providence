@@ -8,29 +8,29 @@ import net.morimekta.util.Stringable;
 public enum Format implements Stringable, Comparable<Format> {
     // Common serialization formats.
     binary("bin", "Thrift Binary",
-            0.48, 0.49, 0.61, 0.39, 27441),
+            1.69, 1.00, 1.68, 1.00, 27441),
 
     // Unique providence formats.
     json_pretty("json", "Prettified JSON",
-            3.13, 0.00, 3.80, 0.00, 94490),
+            8.00, 0.00,10.61, 0.00, 94490),
     json_named("json", "Named JSON",
-            1.97, 0.00, 2.63, 0.00, 56246),
+            5.78, 0.00, 8.50, 0.00, 56246),
     json("json", "Compact JSON",
-            1.71, 0.00, 1.54, 0.00, 37848),
+            4.92, 0.00, 6.02, 0.00, 37848),
     pretty("pvd", "Pretty Readable",
-            0.00, 0.00, 0.00, 0.00, 76080),
+            9.30, 0.00, 9.50, 0.00, 76080),
     fast_binary("bin", "Fast Binary",
-            0.49, 0.00, 0.41, 0.00, 19062),
+            1.41, 0.00, 1.41, 0.00, 19062),
 
     // Unique thrift formats.
     binary_protocol("bin", "Thrift Binary (wrapper)",
-            0.62, 0.49, 0.49, 0.39, 27441),
+            1.79, 1.00, 1.91, 1.00, 27441),
     json_protocol("json", "Thrift JSON Protocol (wrapper)",
-            2.01, 2.57, 1.51, 1.48, 58378),
+            5.85, 4.84, 6.54, 5.28, 58378),
     compact_protocol("bin", "Thrift \"compact\" Protocol (wrapper)",
-            0.69, 0.63, 0.62, 0.54, 18512),
+            1.95, 1.04, 1.93, 0.96, 18512),
     tuple_protocol("tpl", "Thrift \"tuple\" Protocol (wrapper)",
-            0.69, 0.38, 0.42, 0.38, 16568);
+            1.82, 0.90, 1.60, 0.89, 16568);
 
     public final String suffix;
     public final String description;

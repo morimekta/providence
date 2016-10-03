@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.fail;
 
@@ -66,14 +67,22 @@ public class SerializationIT {
         System.out.println(Format.header());
         System.out.println();
 
+        TestSerialization rel = TestSerialization.forFormat(Format.binary);
+        rel.runProvidence(providence);
+        rel.runThrift(thrift);
+        rel.calculate();
+
+        System.out.println(rel.statistics(rel));
         for (Format format : Format.values()) {
-            TestSerialization test = TestSerialization.forFormat(format);
+            if (format != Format.binary) {
+                TestSerialization test = TestSerialization.forFormat(format);
 
-            test.runProvidence(providence);
-            test.runThrift(thrift);
-            test.calculate();
+                test.runProvidence(providence);
+                test.runThrift(thrift);
+                test.calculate();
 
-            System.out.println(test.asString());
+                System.out.println(test.statistics(rel));
+            }
         }
     }
 
@@ -104,6 +113,13 @@ public class SerializationIT {
             System.out.print("..");
         }
 
+        Optional<TestSerialization> opt = formats.stream().filter(f -> f.format == Format.binary).findFirst();
+        if (!opt.isPresent()) {
+            fail("Oops");
+            return;
+        }
+        TestSerialization rel = opt.get();
+
         System.out.println();
 
         formats.forEach(TestSerialization::calculate);
@@ -112,7 +128,10 @@ public class SerializationIT {
         System.out.println(Format.header());
         System.out.println();
         for (TestSerialization test : formats) {
-            System.out.println(test.asString());
+            System.out.println(test.statistics(rel));
+        }
+        for (TestSerialization test : formats) {
+            test.verify(rel);
         }
     }
 }
