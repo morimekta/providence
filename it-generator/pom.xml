@@ -17,13 +17,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence.git</url>
-      <tag>v0.2.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2-SNAPSHOT</version>
     </parent>
     <artifactId>it-generator</artifactId>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>it-common</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
