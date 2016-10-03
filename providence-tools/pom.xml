@@ -15,13 +15,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence-extra.git</url>
-      <tag>HEAD</tag>
+      <tag>v0.2.1</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.1</version>
     </parent>
     <artifactId>providence-tools</artifactId>
 
@@ -29,22 +29,22 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-compiler</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-config</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-converter</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-rpc</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.1</version>
         </dependency>
     </dependencies>
 
