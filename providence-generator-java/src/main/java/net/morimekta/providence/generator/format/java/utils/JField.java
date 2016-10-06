@@ -161,6 +161,20 @@ public class JField {
                ((PPrimitive) field.getDescriptor()).getDefaultValue() != null;
     }
 
+    public boolean isPrimitiveJavaValue() {
+        if (field.getDescriptor() instanceof PPrimitive) {
+            switch (field.getType()) {
+                case STRING:
+                case BINARY:
+                case VOID:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public String valueType() throws GeneratorException {
         return helper.getValueType(field.getDescriptor());
     }

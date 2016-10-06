@@ -2,6 +2,7 @@ package net.morimekta.providence.gentests;
 
 import net.morimekta.test.jackson.CompactFields;
 import net.morimekta.test.jackson.DefaultValues;
+import net.morimekta.test.jackson.OptionalFields;
 import net.morimekta.test.jackson.UnionFields;
 import net.morimekta.test.jackson.Value;
 import net.morimekta.util.Binary;
@@ -23,20 +24,20 @@ import static org.junit.Assert.assertEquals;
  * Jackson serialization and seserialization testing.
  */
 public class JacksonTest {
-    private DefaultValues primitives;
+    private OptionalFields primitives;
 
     @Before
     public void setUp() {
-        primitives = new DefaultValues(true,
-                                       (byte) 64,
-                                       (short) 12345,
-                                       1234567890,
-                                       1234567890123456789L,
-                                       1234567890.12345,
-                                       "Ûñı©óð€",
-                                       Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
-                                       Value.FIRST,
-                                       new CompactFields("Test", 4, null));
+        primitives = new OptionalFields(true,
+                                        (byte) 64,
+                                        (short) 12345,
+                                        1234567890,
+                                        1234567890123456789L,
+                                        1234567890.12345,
+                                        "Ûñı©óð€",
+                                        Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
+                                        Value.FIRST,
+                                        new CompactFields("Test", 4, null));
     }
 
     @Test
@@ -75,11 +76,23 @@ public class JacksonTest {
     public void testSerialize_union() throws IOException {
         assertEquals("{\"booleanValue\":true}", serialize(UnionFields.withBooleanValue(true)));
         assertEquals("{\"binaryValue\":\"AAECAwQFBgcICQA\"}", serialize(UnionFields.withBinaryValue(Binary.fromBase64("AAECAwQFBgcICQA"))));
-        assertEquals("{\"compactValue\":{\"name\":\"test\",\"id\":4}}", serialize(UnionFields.withCompactValue(new CompactFields("test", 4, null))));
+        assertEquals("{\"compactValue\":{\"name\":\"test\",\"id\":4}}",
+                     serialize(UnionFields.withCompactValue(new CompactFields("test", 4, null))));
     }
 
     @Test
     public void testDeserialize_primitives() throws IOException {
+        OptionalFields primitives = new OptionalFields(true,
+                                                       (byte) 64,
+                                                       (short) 12345,
+                                                       1234567890,
+                                                       1234567890123456789L,
+                                                       1234567890.12345,
+                                                       "Ûñı©óð€",
+                                                       Binary.wrap(new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0}),
+                                                       Value.FIRST,
+                                                       new CompactFields("Test", 4, null));
+
         String message = "{" +
                          "\"booleanValue\":true," +
                          "\"byteValue\":64," +
@@ -97,10 +110,9 @@ public class JacksonTest {
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
-        DefaultValues out = mapper.readValue(in, DefaultValues.class);
+        OptionalFields out = mapper.readValue(in, OptionalFields.class);
 
-        assertEquals(primitives.toString().replaceAll(",", ",\n"),
-                     out.toString().replaceAll(",", ",\n"));
+        assertEquals(primitives, out);
     }
 
     @Test
@@ -122,13 +134,15 @@ public class JacksonTest {
 
         ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8));
 
-        ArrayList<DefaultValues> out = mapper.readValue(in,
-                                                        mapper.getTypeFactory()
-                                                              .constructCollectionType(ArrayList.class,
-                                                                                       DefaultValues.class));
+        ArrayList<OptionalFields> out = mapper.readValue(in,
+                                                         mapper.getTypeFactory()
+                                                               .constructCollectionType(ArrayList.class, OptionalFields.class));
 
-        assertEquals(primitives.toString().replaceAll(",", ",\n"),
-                     out.get(0).toString().replaceAll(",", ",\n"));
+        assertEquals(primitives.toString()
+                               .replaceAll(",", ",\n"),
+                     out.get(0)
+                        .toString()
+                        .replaceAll(",", ",\n"));
     }
 
     private String serialize(Object value) throws IOException {

@@ -432,8 +432,8 @@ public class JMessageFormat {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
-            if (!field.container() && !field.alwaysPresent() && field.getPField()
-                                                                     .hasDefaultValue()) {
+            if (field.isPrimitiveJavaValue() || (
+                    !field.container() && !field.alwaysPresent() && field.getPField().hasDefaultValue())) {
                 writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
             } else {
                 writer.formatln("    return %s;", field.member());

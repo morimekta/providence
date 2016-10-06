@@ -4,7 +4,6 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.util.Binary;
@@ -30,7 +29,7 @@ public class ValueBuilder {
     public void appendDefaultConstants(List<JField> fields) throws GeneratorException {
         boolean hasDefault = false;
         for (JField field : fields) {
-            if (field.hasDefault()) {
+            if (field.hasDefault() || field.isPrimitiveJavaValue()) {
                 Object defaultValue = helper.getDefaultValue(field.getPField());
                 if (defaultValue != null) {
                     hasDefault = true;
