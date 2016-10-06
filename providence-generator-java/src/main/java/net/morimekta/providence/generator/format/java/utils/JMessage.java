@@ -31,6 +31,7 @@ import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,7 @@ public class JMessage<T extends CMessage<T, CField>> {
         for (int i = 0; i < fields.length; ++i) {
             this.fields.add(new JField(fields[i], helper, i));
         }
+        Collections.sort(this.fields, (a, b) -> Integer.compare(a.id(), b.id()));
     }
 
     public PStructDescriptor<?, ?> descriptor() {
@@ -95,7 +97,6 @@ public class JMessage<T extends CMessage<T, CField>> {
     }
 
     public String getProviderClass() throws GeneratorException {
-        String providerClass;
         switch (variant()) {
             case STRUCT:
                 return PStructDescriptorProvider.class.getName();
