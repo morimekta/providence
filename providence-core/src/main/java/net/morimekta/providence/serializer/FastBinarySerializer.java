@@ -287,7 +287,7 @@ public class FastBinarySerializer extends Serializer {
                 return len + writeContainerEntry(out, COLLECTION, descriptor, value);
             }
             default:
-                throw new SerializerException("");
+                throw new Error("Unreachable code reached");
         }
     }
 
@@ -364,13 +364,13 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @SuppressWarnings("unchecked")
-    private  <T> T readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
+    private Object readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
             throws IOException, SerializerException {
         switch (type) {
             case NONE:
-                return cast(false);
+                return Boolean.FALSE;
             case TRUE:
-                return cast(true);
+                return Boolean.TRUE;
             case VARINT: {
                 if (descriptor == null) {
                     if (readStrict) {
@@ -381,19 +381,19 @@ public class FastBinarySerializer extends Serializer {
                 }
                 switch (descriptor.getType()) {
                     case BOOL:
-                        return cast(in.readIntVarint() != 0);
+                        return in.readIntVarint() != 0;
                     case BYTE:
-                        return cast((byte) in.readIntZigzag());
+                        return (byte) in.readIntZigzag();
                     case I16:
-                        return cast((short) in.readIntZigzag());
+                        return (short) in.readIntZigzag();
                     case I32:
-                        return cast(in.readIntZigzag());
+                        return in.readIntZigzag();
                     case I64:
-                        return cast(in.readLongZigzag());
+                        return in.readLongZigzag();
                     case ENUM: {
                         PEnumBuilder<?> builder = ((PEnumDescriptor<?>) descriptor).builder();
                         builder.setByValue(in.readIntZigzag());
-                        return cast(builder.build());
+                        return builder.build();
                     }
                     default: {
                         throw new SerializerException("");
@@ -401,16 +401,16 @@ public class FastBinarySerializer extends Serializer {
                 }
             }
             case FIXED_64:
-                return cast(in.expectDouble());
+                return in.expectDouble();
             case BINARY: {
                 int len = in.readIntVarint();
                 byte[] data = in.expectBytes(len);
                 if (descriptor != null) {
                     switch (descriptor.getType()) {
                         case STRING:
-                            return cast(new String(data, StandardCharsets.UTF_8));
+                            return new String(data, StandardCharsets.UTF_8);
                         case BINARY:
-                            return cast(Binary.wrap(data));
+                            return Binary.wrap(data);
                         default:
                             throw new SerializerException("");
                     }
@@ -422,7 +422,7 @@ public class FastBinarySerializer extends Serializer {
                 }
             }
             case MESSAGE:
-                return cast(readMessage(in, (PStructDescriptor<?, ?>) descriptor));
+                return readMessage(in, (PStructDescriptor<?, ?>) descriptor);
             case COLLECTION:
                 if (descriptor == null) {
                     if (readStrict) {
@@ -455,7 +455,7 @@ public class FastBinarySerializer extends Serializer {
                         Object value = readFieldValue(in, vtype, vt);
                         out.put(key, value);
                     }
-                    return cast(out.build());
+                    return out.build();
                 } else if (descriptor.getType() == PType.LIST) {
                     PList<Object> ct = (PList<Object>) descriptor;
                     PDescriptor it = ct.itemDescriptor();
@@ -465,7 +465,7 @@ public class FastBinarySerializer extends Serializer {
                     for (int i = 0; i < len; ++i) {
                         out.add(readFieldValue(in, vtype, it));
                     }
-                    return cast(out.build());
+                    return out.build();
                 } else if (descriptor.getType() == PType.SET) {
                     PSet<Object> ct = (PSet<Object>) descriptor;
                     PDescriptor it = ct.itemDescriptor();
@@ -475,17 +475,17 @@ public class FastBinarySerializer extends Serializer {
                     for (int i = 0; i < len; ++i) {
                         out.add(readFieldValue(in, vtype, it));
                     }
-                    return cast(out.build());
+                    return out.build();
                 } else {
                     throw new SerializerException("Type " + descriptor.getType() +
                                                   " not compatible with collection data.");
                 }
             default:
-                throw new SerializerException("No handling for type " + type);
+                throw new Error("Unreachable code reached");
         }
     }
 
-    private static int itemType(PDescriptor descriptor) throws SerializerException {
+    private static int itemType(PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case BOOL:
             case BYTE:
@@ -506,7 +506,7 @@ public class FastBinarySerializer extends Serializer {
             case MAP:
                 return COLLECTION;
             default:
-                throw new SerializerException("");
+                throw new Error("Unreachable code reached");
         }
     }
 

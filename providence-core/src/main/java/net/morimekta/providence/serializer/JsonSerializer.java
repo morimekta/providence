@@ -179,6 +179,7 @@ public class JsonSerializer extends Serializer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends PMessage<T, TF>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws
                                                                                                                       SerializerException {
         try {
@@ -186,7 +187,7 @@ public class JsonSerializer extends Serializer {
             if (!tokenizer.hasNext()) {
                 return null;
             }
-            return parseTypedValue(tokenizer.next(), tokenizer, type);
+            return (T) parseTypedValue(tokenizer.next(), tokenizer, type);
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to parse JSON");
         } catch (IOException e) {
@@ -253,9 +254,9 @@ public class JsonSerializer extends Serializer {
             tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
             if (type == PServiceCallType.EXCEPTION) {
-                ApplicationException ex = parseTypedValue(tokenizer.expect("Message start"),
-                                                          tokenizer,
-                                                          ApplicationException.kDescriptor);
+                ApplicationException ex = (ApplicationException) parseTypedValue(tokenizer.expect("Message start"),
+                                                                                 tokenizer,
+                                                                                 ApplicationException.kDescriptor);
 
                 tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
@@ -270,7 +271,7 @@ public class JsonSerializer extends Serializer {
 
             @SuppressWarnings("unchecked")
             PStructDescriptor<T, F> descriptor = type.request ? method.getRequestType() : method.getResponseType();
-            T message = parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
+            T message = (T) parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
@@ -397,11 +398,11 @@ public class JsonSerializer extends Serializer {
         // Otherwise it is a simple value. No need to consume.
     }
 
-    private <T> T parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
+    private Object parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
             throws IOException, SerializerException {
         if (token.isNull()) {
             if (t.getType() == PType.VOID) {
-                return cast(Boolean.FALSE);
+                return Boolean.FALSE;
             }
             return null;
         }
@@ -410,45 +411,45 @@ public class JsonSerializer extends Serializer {
             switch (t.getType()) {
                 case BOOL:
                     if (token.isBoolean()) {
-                        return cast(token.booleanValue());
+                        return token.booleanValue();
                     } else if (token.isInteger()) {
-                        return cast(token.intValue() != 0);
+                        return token.intValue() != 0;
                     }
                     throw new SerializerException("Not boolean value for token: " + token.asString());
                 case BYTE:
                     if (token.isInteger()) {
-                        return cast(token.byteValue());
+                        return token.byteValue();
                     }
                     throw new SerializerException("Not a valid byte value: " + token.asString());
                 case I16:
                     if (token.isInteger()) {
-                        return cast(token.shortValue());
+                        return token.shortValue();
                     }
                     throw new SerializerException("Not a valid short value: " + token.asString());
                 case I32:
                     if (token.isInteger()) {
-                        return cast(token.intValue());
+                        return token.intValue();
                     }
                     throw new SerializerException("Not a valid int value: " + token.asString());
                 case I64:
                     if (token.isInteger()) {
-                        return cast(token.longValue());
+                        return token.longValue();
                     }
                     throw new SerializerException("Not a valid long value: " + token.asString());
                 case DOUBLE:
                     if (token.isNumber()) {
-                        return cast(token.doubleValue());
+                        return token.doubleValue();
                     }
                     throw new SerializerException("Not a valid double value: " + token.asString());
                 case STRING:
                     if (token.isLiteral()) {
-                        return cast(token.decodeJsonLiteral());
+                        return token.decodeJsonLiteral();
                     }
                     throw new SerializerException("Not a valid string value: " + token.asString());
                 case BINARY:
                     if (token.isLiteral()) {
-                        return cast(Binary.fromBase64(token.substring(1, -1)
-                                                           .asString()));
+                        return Binary.fromBase64(token.substring(1, -1)
+                                                      .asString());
                     }
                     throw new SerializerException("Not a valid binary value: " + token.asString());
                 case ENUM:
@@ -464,14 +465,14 @@ public class JsonSerializer extends Serializer {
                     if (readStrict && !eb.isValid()) {
                         throw new SerializerException(token.toString() + " is not a enum value");
                     }
-                    return cast(eb.build());
+                    return eb.build();
                 case MESSAGE: {
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) t;
                     if (token.isSymbol(JsonToken.kMapStart)) {
-                        return cast(parseMessage(tokenizer, st));
+                        return parseMessage(tokenizer, st);
                     } else if (token.isSymbol(JsonToken.kListStart)) {
                         if (st.isCompactible()) {
-                            return cast(parseCompactMessage(tokenizer, st));
+                            return parseCompactMessage(tokenizer, st);
                         } else {
                             throw new SerializerException(
                                     st.getName() + " is not compatible for compact struct notation.");
@@ -480,6 +481,7 @@ public class JsonSerializer extends Serializer {
                     throw new SerializerException(token + " not parsable message start.");
                 }
                 case MAP: {
+                    @SuppressWarnings("unchecked")
                     PMap<Object, Object> mapType = (PMap<Object, Object>) t;
                     PDescriptor itemType = mapType.itemDescriptor();
                     PDescriptor keyType = mapType.keyDescriptor();
@@ -499,13 +501,14 @@ public class JsonSerializer extends Serializer {
                             sep = tokenizer.expectSymbol("parsing map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
                         }
                     }
-                    return cast(map.build());
+                    return map.build();
                 }
                 case SET: {
                     PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new SerializerException("Incompatible start of list " + token);
                     }
+                    @SuppressWarnings("unchecked")
                     PSet.Builder<Object> set = ((PSet<Object>) t).builder();
 
                     if (!tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
@@ -515,13 +518,14 @@ public class JsonSerializer extends Serializer {
                             sep = tokenizer.expectSymbol("parsing set entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
-                    return cast(set.build());
+                    return set.build();
                 }
                 case LIST: {
                     PDescriptor itemType = ((PList<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
                         throw new SerializerException("Incompatible start of list " + token);
                     }
+                    @SuppressWarnings("unchecked")
                     PList.Builder<Object> list = ((PList<Object>) t).builder();
                     if (!tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
                         char sep = JsonToken.kListStart;
@@ -530,7 +534,7 @@ public class JsonSerializer extends Serializer {
                             sep = tokenizer.expectSymbol("parsing list entry sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
-                    return cast(list.build());
+                    return list.build();
                 }
             }
         } catch (JsonException je) {
@@ -598,7 +602,7 @@ public class JsonSerializer extends Serializer {
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
                         tokenizer.expectSymbol("Message start", JsonToken.kMapStart);
-                        return cast(parseMessage(tokenizer, st));
+                        return parseMessage(tokenizer, st);
                     } catch (IOException e) {
                         throw new SerializerException(e, "Unable to tokenize map key: %s", key);
                     } catch (JsonException e) {

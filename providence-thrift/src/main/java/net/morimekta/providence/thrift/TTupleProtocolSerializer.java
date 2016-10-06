@@ -268,27 +268,27 @@ public class TTupleProtocolSerializer extends Serializer {
         return builder.build();
     }
 
-    private <T> T readTypedValue(PDescriptor type, TTupleProtocol protocol)
+    private Object readTypedValue(PDescriptor type, TTupleProtocol protocol)
             throws TException, SerializerException {
         switch (type.getType()) {
             case BOOL:
-                return cast(protocol.readBool());
+                return protocol.readBool();
             case BYTE:
-                return cast(protocol.readByte());
+                return protocol.readByte();
             case I16:
-                return cast(protocol.readI16());
+                return protocol.readI16();
             case I32:
-                return cast(protocol.readI32());
+                return protocol.readI32();
             case I64:
-                return cast(protocol.readI64());
+                return protocol.readI64();
             case DOUBLE:
-                return cast(protocol.readDouble());
+                return protocol.readDouble();
             case BINARY: {
                 ByteBuffer buffer = protocol.readBinary();
-                return cast(Binary.wrap(buffer.array()));
+                return Binary.wrap(buffer.array());
             }
             case STRING:
-                return cast(protocol.readString());
+                return protocol.readString();
             case ENUM: {
                 PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
                 PEnumBuilder<?> eb = et.builder();
@@ -298,12 +298,13 @@ public class TTupleProtocolSerializer extends Serializer {
                     throw new SerializerException("Invalid enum value " + value + " for " +
                                                   et.getQualifiedName(null));
                 }
-                return cast(eb.build());
+                return eb.build();
             }
             case MESSAGE:
-                return cast(readMessage(protocol, (PStructDescriptor<?, ?>) type));
-            case LIST:
+                return readMessage(protocol, (PStructDescriptor<?, ?>) type);
+            case LIST: {
                 int lSize = protocol.readI32();
+                @SuppressWarnings("unchecked")
                 PList<Object> lDesc = (PList<Object>) type;
                 PDescriptor liDesc = lDesc.itemDescriptor();
 
@@ -312,9 +313,11 @@ public class TTupleProtocolSerializer extends Serializer {
                     list.add(readTypedValue(liDesc, protocol));
                 }
 
-                return cast(list.build());
-            case SET:
+                return list.build();
+            }
+            case SET: {
                 int sSize = protocol.readI32();
+                @SuppressWarnings("unchecked")
                 PSet<Object> sDesc = (PSet<Object>) type;
                 PDescriptor siDesc = sDesc.itemDescriptor();
 
@@ -323,9 +326,11 @@ public class TTupleProtocolSerializer extends Serializer {
                     set.add(readTypedValue(siDesc, protocol));
                 }
 
-                return cast(set.build());
-            case MAP:
+                return set.build();
+            }
+            case MAP: {
                 int mSize = protocol.readI32();
+                @SuppressWarnings("unchecked")
                 PMap<Object, Object> mDesc = (PMap<Object, Object>) type;
                 PDescriptor mkDesc = mDesc.keyDescriptor();
                 PDescriptor miDesc = mDesc.itemDescriptor();
@@ -338,7 +343,8 @@ public class TTupleProtocolSerializer extends Serializer {
                 }
 
                 protocol.readMapEnd();
-                return cast(map.build());
+                return map.build();
+            }
             default:
                 throw new SerializerException("Unsupported protocol field type: " + type.getType());
         }

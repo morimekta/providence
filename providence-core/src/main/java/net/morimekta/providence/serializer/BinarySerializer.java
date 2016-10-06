@@ -313,12 +313,11 @@ public class BinarySerializer extends Serializer {
      * @param in        The stream to consume.
      * @param fieldInfo The field info about the content.
      * @param type      The type to generate content for.
-     * @param <Type>    The field item type.
      * @return The field value, or null if no type.
      *
      * @throws IOException If unable to read from stream or invalid field type.
      */
-    private <Type> Type readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
+    private Object readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
             throws IOException, SerializerException {
         if (type == null) {
             if (readStrict) {
@@ -337,43 +336,43 @@ public class BinarySerializer extends Serializer {
 
         switch (PType.findById(fieldInfo.getType())) {
             case VOID:
-                return cast(Boolean.FALSE);
+                return Boolean.FALSE;
             case BOOL:
-                return cast(in.expectByte() != 0);
+                return in.expectByte() != 0;
             case BYTE:
-                return cast(in.expectByte());
+                return in.expectByte();
             case I16:
-                return cast(in.expectShort());
+                return in.expectShort();
             case ENUM:
             case I32:
                 int val = in.expectInt();
                 if (type != null && type instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
-                    PEnumBuilder<Type> builder = (PEnumBuilder<Type>) ((PEnumDescriptor<?>)type).builder();
+                    PEnumBuilder builder = ((PEnumDescriptor<?>)type).builder();
                     builder.setByValue(val);
-                    return cast(builder.build());
+                    return builder.build();
                 } else {
-                    return cast(val);
+                    return val;
                 }
             case I64:
-                return cast(in.expectLong());
+                return in.expectLong();
             case DOUBLE:
-                return cast(in.expectDouble());
+                return in.expectDouble();
             case STRING:
             case BINARY:
                 int len = in.expectUInt32();
                 byte[] data = in.expectBytes(len);
                 if (type != null && type.getType() == PType.STRING) {
-                    return cast(new String(data, StandardCharsets.UTF_8));
+                    return new String(data, StandardCharsets.UTF_8);
                 } else {
-                    return cast(Binary.wrap(data));
+                    return Binary.wrap(data);
                 }
             case MESSAGE: {
                 if (type == null) {
                     consumeMessage(in);
                     return null;
                 }
-                return cast(readMessage(in, (PStructDescriptor<?,?>) type, false));
+                return readMessage(in, (PStructDescriptor<?,?>) type, false);
             }
             case MAP: {
                 final byte keyT = in.expectByte();
@@ -410,7 +409,7 @@ public class BinarySerializer extends Serializer {
                         throw new SerializerException("Null key or value in map.");
                     }
                 }
-                return cast(out.build());
+                return out.build();
             }
             case SET: {
                 final byte itemT = in.expectByte();
@@ -437,7 +436,7 @@ public class BinarySerializer extends Serializer {
                     }
                 }
 
-                return cast(out.build());
+                return out.build();
             }
             case LIST: {
                 final byte itemT = in.expectByte();
@@ -464,7 +463,7 @@ public class BinarySerializer extends Serializer {
                     }
                 }
 
-                return cast(out.build());
+                return out.build();
             }
             default:
                 throw new SerializerException("unknown data type: " + fieldInfo.getType());

@@ -51,9 +51,4 @@ public abstract class Serializer {
     public abstract boolean binaryProtocol();
 
     public abstract String mimeType();
-
-    @SuppressWarnings("unchecked")
-    protected <Type> Type cast(Object o) {
-        return (Type) o;
-    }
 }
