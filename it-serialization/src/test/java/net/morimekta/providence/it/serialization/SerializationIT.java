@@ -31,6 +31,8 @@ import static org.junit.Assert.fail;
  * - Write the same file back to a temp file.
  */
 public class SerializationIT {
+    private static final char[] SWIRL = {'|', '/', '-', '\\'};
+
     private static List<Containers> providence;
     private static List<net.morimekta.test.thrift.Containers> thrift;
 
@@ -63,27 +65,24 @@ public class SerializationIT {
     }
 
     @Test
-    public void testSingleRun() throws IOException, SerializerException, TException {
+    public void testEachFormat() throws IOException, SerializerException, TException {
+        System.out.println("Test testEachFormat");
         System.out.println(Format.header());
         System.out.println();
 
-        TestSerialization rel = TestSerialization.forFormat(Format.binary);
-        rel.runProvidence(providence);
-        rel.runThrift(thrift);
-        rel.calculate();
-
-        System.out.println(rel.statistics(rel));
         for (Format format : Format.values()) {
-            if (format != Format.binary) {
-                TestSerialization test = TestSerialization.forFormat(format);
+            TestSerialization test = TestSerialization.forFormat(format);
 
+            // Just run enough tests that we have >1ms per format.
+            for (int i = 0; i < 10; ++i) {
                 test.runProvidence(providence);
                 test.runThrift(thrift);
-                test.calculate();
-
-                System.out.println(test.statistics(rel));
             }
+            test.calculate();
+
+            System.out.println(test.asString());
         }
+        System.out.println();
     }
 
     @Test
@@ -93,15 +92,15 @@ public class SerializationIT {
             formats.add(TestSerialization.forFormat(format));
         }
 
-        char[] c = {'|', '/', '-', '\\'};
-
-        for (int i = 0; i < 80; ++i) {
+        System.out.println("Test testManyRuns");
+        System.out.format(". ( 0%%)%s", Control.cursorLeft(6));
+        for (int i = 0; i < 100; ++i) {
             Collections.shuffle(formats);
             for (TestSerialization test : formats) {
                 for (int j = 0; j < 40; ++j) {
                     if (j % 10 == 0) {
                         System.out.print(Control.LEFT);
-                        System.out.print(c[(j / 10) % 4]);
+                        System.out.print(SWIRL[(j / 10) % 4]);
                         System.out.flush();
                     }
                     test.runProvidence(providence);
@@ -109,8 +108,7 @@ public class SerializationIT {
                 }
                 System.gc();
             }
-            System.out.print(Control.LEFT);
-            System.out.print("..");
+            System.out.format("%s.. (%2d%%)%s", Control.LEFT, i + 1, Control.cursorLeft(6));
         }
 
         Optional<TestSerialization> opt = formats.stream().filter(f -> f.format == Format.binary).findFirst();
@@ -133,5 +131,46 @@ public class SerializationIT {
         for (TestSerialization test : formats) {
             test.verify(rel);
         }
+        System.out.println();
+    }
+
+    @Test
+    public void testBinarySerializer() throws IOException, SerializerException, TException {
+        System.out.println("Test testBinarySerializer");
+        testSerializer(Format.binary);
+    }
+
+    @Test
+    public void testFastBinarySerializer() throws IOException, SerializerException, TException {
+        System.out.println("Test testFastBinarySerializer");
+        testSerializer(Format.fast_binary);
+    }
+
+    public void testSerializer(Format format) throws IOException, SerializerException, TException {
+        TestSerialization test = TestSerialization.forFormat(format);
+
+        System.out.format(". ( 0%%)%s", Control.cursorLeft(6));
+        for (int i = 0; i < 100; ++i) {
+            for (int j = 0; j < 80; ++j) {
+                if (j % 10 == 0) {
+                    System.out.print(Control.LEFT);
+                    System.out.print(SWIRL[(j / 10) % 4]);
+                    System.out.flush();
+                }
+                test.runProvidence(providence);
+                test.runThrift(thrift);
+            }
+
+            System.gc();
+            System.out.format("%s.. (%2d%%)%s", Control.LEFT, i + 1, Control.cursorLeft(6));
+        }
+        System.out.println();
+
+        test.calculate();
+
+        System.out.println(Format.header());
+        System.out.println();
+        System.out.println(test.asString());
+        System.out.println();
     }
 }

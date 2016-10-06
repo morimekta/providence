@@ -133,7 +133,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
 
         if (ro > 0.10) {
             System.out.format(Locale.ENGLISH,
-                              "-- %20s read speed increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              "-- %20s read time increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
                               format.toString(),
                               (ro * 100),
                               format.read,
@@ -141,7 +141,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
         if (wo > 0.10) {
             System.out.format(Locale.ENGLISH,
-                              "-- %20s write speed increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              "-- %20s write time increased by %.1f%%, expected %.2fx, seeing %.2fx\n",
                               format.toString(),
                               (wo * 100),
                               format.write,
@@ -149,7 +149,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
         if (ro < -0.10) {
             System.out.format(Locale.ENGLISH,
-                              "++ %20s read speed reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              "++ %20s read time reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
                               format.toString(),
                               (-ro * 100),
                               format.read,
@@ -157,7 +157,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
         if (wo < -0.10) {
             System.out.format(Locale.ENGLISH,
-                              "++ %20s write speed reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
+                              "++ %20s write time reduced by %.1f%%, expected %.2fx, seeing %.2fx\n",
                               format.toString(),
                               (-wo * 100),
                               format.write,
