@@ -46,7 +46,7 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
     protected IncludeExcludeFileSelector files;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (executeInternal(outputDir, files, "src/test/providence/**/*.thrift", true, false, null)) {
+        if (executeInternal(outputDir, files, "src/test/providence/**/*.thrift", true)) {
             project.addTestCompileSourceRoot(outputDir.getPath());
         }
     }

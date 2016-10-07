@@ -22,13 +22,13 @@ import net.morimekta.providence.generator.format.java.JOptions;
 import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
 import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.maven.util.ProvidenceAssemble;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.util.io.IOUtils;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -42,12 +42,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.DirectoryScanner;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -56,8 +59,9 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
@@ -99,6 +103,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean jackson;
 
     /**
+     * Dependencies to providence artifacts. 'providence' classifier and 'zip'
+     * type is implied here.
+     */
+    @Parameter
+    protected Dependency[] dependencies = new Dependency[0];
+
+    /**
      * If true will add the generated sources to be compiled.
      */
     @Parameter(defaultValue = "true")
@@ -106,18 +117,18 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
     /**
      * Additional directories to find include files for thrift compilation.
-     * The extra files there will <b>not</b> be compiled into source code.
+     * The extra files there will not be compiled into source code.
      */
     @Parameter
     protected IncludeExcludeFileSelector includeDirs;
+
+    // --- After here are internals, components and maven-set params.
 
     /**
      * Location of the output artifact.
      */
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    private File buildDir = null;
-
-    // --- After here are internals, components and maven-set params.
+    protected File buildDir = null;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project = null;
@@ -134,15 +145,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Component
     private RepositorySystem repositorySystem = null;
 
-    @Component
-    protected MavenProjectHelper projectHelper = null;
-
     boolean executeInternal(File outputDir,
                             IncludeExcludeFileSelector files,
                             String defaultInputIncludes,
-                            boolean testCompile,
-                            boolean assemble,
-                            String finalAssembleName) throws MojoExecutionException, MojoFailureException {
+                            boolean testCompile) throws MojoExecutionException, MojoFailureException {
         if (skip) {
             return false;
         }
@@ -172,18 +178,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         Set<Artifact> providenceArtifacts = new HashSet<>();
-        for (Dependency dep : project.getDependencies()) {
-            if (!ProvidenceAssemble.CLASSIFIER.equals(dep.getClassifier())) {
-                continue;
+        for (Dependency dep : dependencies) {
+            dep.setType(ProvidenceAssemblyMojo.TYPE);
+            if (dep.getClassifier() == null || dep.getClassifier().isEmpty()) {
+                dep.setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
             }
 
-            if (!(dep.getScope() == null ||
-                  "compile".equals(dep.getScope()) ||
-                  (testCompile && "test".equals(dep.getScope())))) {
-                continue;
-            }
-
-            // TODO: Handle exclusions?
             Artifact artifact = repositorySystem.createDependencyArtifact(dep);
             // Avoid resolving stuff we already have resolved.
             if (providenceArtifacts.contains(artifact)) {
@@ -198,11 +198,11 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
             ArtifactResolutionResult result = artifactResolver.resolve(request);
             for (Artifact providenceArtifact : result.getArtifacts()) {
-                if (ProvidenceAssemble.CLASSIFIER.equals(providenceArtifact.getClassifier())) {
+                if (ProvidenceAssemblyMojo.CLASSIFIER.equals(providenceArtifact.getClassifier())) {
                     providenceArtifacts.add(providenceArtifact);
-                    ProvidenceAssemble.addDependencyInclude(workingDir,
-                                                            includes,
-                                                            providenceArtifact);
+                    addDependencyInclude(workingDir,
+                                         includes,
+                                         providenceArtifact);
                 }
             }
         }
@@ -218,11 +218,11 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             for (String dir : includeScanner.getIncludedDirectories()) {
                 includes.add(new File(project.getBasedir(), dir));
             }
-        } else {
-            includes.addAll(inputs.stream()
-                                  .map(File::getParentFile)
-                                  .collect(Collectors.toList()));
+            for (String dir : includeScanner.getExcludedDirectories()) {
+                includes.remove(new File(project.getBasedir(), dir));
+            }
         }
+        inputs.stream().map(File::getParentFile).forEach(includes::add);
 
         FileManager fileManager = new FileManager(outputDir);
         DocumentParser parser = new ThriftDocumentParser();
@@ -239,14 +239,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                 getLog().warn(e.getMessage());
                 getLog().warn(".---------------------.");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
-            }
-        }
-
-        if (!testCompile) {
-            if (assemble) {
-                File target = new File(buildDir, finalAssembleName);
-                ProvidenceAssemble.generateProvidencePackageFile(inputs, project.getArtifact(), target);
-                projectHelper.attachArtifact(project, ProvidenceAssemble.TYPE, ProvidenceAssemble.CLASSIFIER, target);
             }
         }
 
@@ -282,4 +274,42 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         return compileOutput;
     }
+
+    private void addDependencyInclude(File workingDir, Set<File> includes, Artifact artifact)
+            throws MojoExecutionException {
+        // TODO: Figure out if this is the right way to name the output directories.
+        File outputDir = new File(workingDir, artifact.getGroupId().replaceAll("[.]", File.separator) + File.separator + artifact.getArtifactId());
+        if (!outputDir.exists()) {
+            if (!outputDir.mkdirs()) {
+                throw new MojoExecutionException("Unable to create output dir " + outputDir);
+            }
+        }
+
+        try (FileInputStream fis = new FileInputStream(artifact.getFile());
+             BufferedInputStream bis = new BufferedInputStream(fis);
+             ZipInputStream zis = new ZipInputStream(bis)) {
+
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    zis.closeEntry();
+                    continue;
+                }
+
+                File of = new File(outputDir, new File(entry.getName()).getName());
+
+                try (FileOutputStream fos = new FileOutputStream(of, false);
+                     BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                    IOUtils.copy(zis, bos);
+                }
+
+                zis.closeEntry();
+            }
+
+            includes.add(outputDir);
+        } catch (IOException e) {
+            throw new MojoExecutionException("" + e.getMessage(), e);
+        }
+    }
+
 }

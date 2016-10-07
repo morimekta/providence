@@ -84,6 +84,27 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>net.morimekta.providence</groupId>
+                <artifactId>providence-maven-plugin</artifactId>
+                <version>0.2.2-SNAPSHOT</version>
+                <configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.morimekta.providence</groupId>
+                            <artifactId>it-common</artifactId>
+                            <version>0.2.2-SNAPSHOT</version>
+                        </dependency>
+                    </dependencies>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

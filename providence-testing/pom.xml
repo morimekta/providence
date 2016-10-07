@@ -39,14 +39,6 @@
             <version>0.2.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-reflect</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
-            <classifier>providence</classifier>
-            <type>zip</type>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
@@ -103,6 +95,15 @@
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>0.2.2-SNAPSHOT</version>
+                <configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.morimekta.providence</groupId>
+                            <artifactId>providence-reflect</artifactId>
+                            <version>0.2.2-SNAPSHOT</version>
+                        </dependency>
+                    </dependencies>
+                </configuration>
                 <executions>
                     <execution>
                         <id>generate-jackson-sources-for-test</id>

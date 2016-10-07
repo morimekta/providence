@@ -15,11 +15,12 @@
  */
 package net.morimekta.providence.maven.plugin;
 
-import net.morimekta.providence.maven.util.ProvidenceAssemble;
 import net.morimekta.providence.maven.util.ProvidenceInput;
+import net.morimekta.util.Strings;
+import net.morimekta.util.io.IOUtils;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.InstantiationStrategy;
@@ -30,75 +31,119 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
- * Generate a zip file with the thrift source as an assembly step.
- * This assembly (using the 'pvd' or 'providence' classifier) can
- * then be dependent as for inclusing.
- *
- * TODO: Make the simple assembly work.
- * TODO: Add dependencies with 'pvd' or 'providence' assemblies to
- *       include path.
- *
- * mvn net.morimekta.providence:providence-maven-plugin:0.1.2-SNAPSHOT:assemble
+ * Generate providence sources from thrift definitions.
  */
-@Mojo(name = "assemble",
+@Mojo(name = ProvidenceAssemblyMojo.GOAL,
       defaultPhase = LifecyclePhase.PACKAGE,
       instantiationStrategy = InstantiationStrategy.PER_LOOKUP)
 public class ProvidenceAssemblyMojo extends AbstractMojo {
-    public static final String TYPE = "pom";
+    public static final String GOAL = "assemble";
+    public static final String TYPE = "zip";
     public static final String CLASSIFIER = "providence";
+
+    /**
+     * Skip the providence assembly step for this module.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean skipAssembly = false;
+
+    /**
+     * Files to assemble. By default will select all '.thrift' files in
+     * 'src/main/providence/' and subdirectories.
+     */
+    @Parameter(alias = "inputFiles")
+    protected IncludeExcludeFileSelector files = null;
+
+    /**
+     * Classifier name to use for the artifact. By default it's 'providence', but it can
+     * be replaced depending on needs (and if there are multiple artifacts to be exposed).
+     */
+    @Parameter(defaultValue = CLASSIFIER)
+    protected String classifier = CLASSIFIER;
+
+    // --- After here are internals, components and maven-set params.
 
     /**
      * Location of the output artifact.
      */
-    @Parameter(defaultValue = "${project.build.directory}")
-    private File outputDir = null;
-
-    /**
-     * Final name of the created assembly.
-     */
-    @Parameter(defaultValue = "${project.artifactId}-${project.version}-providence.zip")
-    private String finalName = null;
-
-    /**
-     * Skips the assembly, install & deploy step.
-     */
-    @Parameter(defaultValue = "false")
-    private boolean skipAssembly = false;
-
-    /**
-     * Files to include. By default will select all '.thrift' files in
-     * 'src/main/providence/' and subdirectories.
-     */
-    @Parameter
-    protected IncludeExcludeFileSelector files;
-
-    // ---
-
-    @Component
-    protected MavenProjectHelper projectHelper = null;
+    @Parameter(defaultValue = "${project.build.directory}", readonly = true)
+    protected File buildDir = null;
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project = null;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (skipAssembly) {
-            return;
-        }
+    @Component
+    protected MavenProjectHelper projectHelper = null;
 
-        File target = new File(outputDir, finalName);
-        if (!target.exists() || files != null) {
+    public void execute() throws MojoFailureException {
+        if (!skipAssembly) {
             Set<File> inputFiles = ProvidenceInput.getInputFiles(project, files, "src/main/providence/**/*.thrift");
             if (inputFiles.isEmpty()) {
+                getLog().info("No providence files, skipping assembly");
                 return;
             }
 
-            ProvidenceAssemble.generateProvidencePackageFile(inputFiles, project.getArtifact(), target);
-        }
+            File target = new File(buildDir, String.format("%s-%s-%s.%s",
+                                                           project.getArtifactId(),
+                                                           project.getVersion(),
+                                                           classifier,
+                                                           TYPE));
 
-        projectHelper.attachArtifact(project, TYPE, CLASSIFIER, target);
+            Artifact artifact = project.getArtifact();
+            String internalPath = Strings.join("/",
+                                               artifact.getGroupId().replaceAll("[.]", "/"),
+                                               artifact.getArtifactId());
+            int numFiles = 0;
+
+            try (FileOutputStream fos = new FileOutputStream(target, false);
+                 BufferedOutputStream bos = new BufferedOutputStream(fos);
+                 ZipOutputStream zos = new ZipOutputStream(bos)) {
+
+                String tmpPath = "";
+                for (String dir : internalPath.split("[/]")) {
+                    if (!dir.isEmpty()) {
+                        tmpPath = tmpPath + dir + File.separator;
+                        zos.putNextEntry(new ZipEntry(tmpPath));
+                        zos.closeEntry();
+                    }
+                }
+
+                for (File file : inputFiles) {
+                    Path thriftFilePath = Paths.get(file.getAbsolutePath());
+
+                    ZipEntry entry = new ZipEntry(internalPath + File.separator + file.getName());
+                    entry.setSize(Files.size(thriftFilePath));
+                    entry.setLastModifiedTime(Files.getLastModifiedTime(thriftFilePath));
+
+                    try (FileInputStream fis = new FileInputStream(file);
+                         BufferedInputStream bis = new BufferedInputStream(fis)) {
+                        zos.putNextEntry(entry);
+                        IOUtils.copy(bis, zos);
+                    }
+                    ++numFiles;
+                }
+
+                zos.flush();
+            } catch (IOException ie) {
+                throw new MojoFailureException("Unable to write providence assembly: " + ie.getMessage(), ie);
+            }
+
+            getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " files.");
+            projectHelper.attachArtifact(project, TYPE, classifier, target);
+        }
     }
 }

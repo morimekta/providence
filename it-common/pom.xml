@@ -113,9 +113,9 @@
                 <version>0.2.2-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>compile</goal>
+                            <goal>assemble</goal>
                         </goals>
                     </execution>
                 </executions>
