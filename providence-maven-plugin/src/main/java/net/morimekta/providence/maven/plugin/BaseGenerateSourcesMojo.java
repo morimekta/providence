@@ -68,12 +68,6 @@ import java.util.zip.ZipInputStream;
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     /**
-     * Skip the providence generator step for this module.
-     */
-    @Parameter(defaultValue = "false")
-    protected boolean skip;
-
-    /**
      * Use the "tiny java" generator version instead of the default. It has
      * minimal dependencies, and cannot be serialized using the providence
      * libraries. It will only require dependency on one library:
@@ -149,9 +143,6 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                             IncludeExcludeFileSelector files,
                             String defaultInputIncludes,
                             boolean testCompile) throws MojoExecutionException, MojoFailureException {
-        if (skip) {
-            return false;
-        }
 
         Set<File> inputs = ProvidenceInput.getInputFiles(project, files, defaultInputIncludes);
         if (inputs.isEmpty()) {
@@ -248,12 +239,15 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                 TinyOptions options = new TinyOptions();
                 options.jackson = jackson;
                 if (android) {
-                    throw new MojoExecutionException("Android option not compatible with pure-jackson.");
+                    throw new MojoExecutionException("Android option not compatible with 'tiny_java' variant.");
                 }
                 generator = new TinyGenerator(fileManager, loader.getRegistry(), options);
             } else {
                 JOptions options = new JOptions();
                 options.android = android;
+                if (jackson) {
+                    throw new MojoExecutionException("Jackson option not compatible with 'java' variant.");
+                }
                 generator = new JGenerator(fileManager, loader.getRegistry(), options);
             }
 

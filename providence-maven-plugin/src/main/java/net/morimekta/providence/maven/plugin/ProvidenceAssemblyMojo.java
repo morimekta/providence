@@ -58,7 +58,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     /**
      * Skip the providence assembly step for this module.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(alias = "skip", defaultValue = "false")
     protected boolean skipAssembly = false;
 
     /**

@@ -33,10 +33,16 @@ import java.io.File;
       instantiationStrategy = InstantiationStrategy.PER_LOOKUP)
 public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
     /**
+     * Skip the providence compile step for this module.
+     */
+    @Parameter(alias = "skip", defaultValue = "false")
+    protected boolean skipCompile = false;
+
+    /**
      * Location of the output java source.
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/providence")
-    private File outputDir = null;
+    protected File outputDir = null;
 
     /**
      * Files to compile. By default will select all '.thrift' files in
@@ -46,6 +52,11 @@ public class GenerateSourcesMojo extends BaseGenerateSourcesMojo {
     protected IncludeExcludeFileSelector files;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipCompile) {
+            getLog().info("Skipping providence:testCompile");
+            return;
+        }
+
         if (executeInternal(outputDir, files, "src/main/providence/**/*.thrift", false)) {
             project.addCompileSourceRoot(outputDir.getPath());
         }

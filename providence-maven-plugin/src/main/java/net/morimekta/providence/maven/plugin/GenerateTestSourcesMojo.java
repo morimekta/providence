@@ -33,6 +33,12 @@ import java.io.File;
       instantiationStrategy = InstantiationStrategy.PER_LOOKUP)
 public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
     /**
+     * Skip the providence test compile step for this module.
+     */
+    @Parameter(alias = "skip", defaultValue = "false")
+    protected boolean skipTestCompile = false;
+
+    /**
      * Location of the output java source.
      */
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/providence")
@@ -46,6 +52,10 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
     protected IncludeExcludeFileSelector files;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipTestCompile) {
+            getLog().info("Skipping providence:testCompile");
+            return;
+        }
         if (executeInternal(outputDir, files, "src/test/providence/**/*.thrift", true)) {
             project.addTestCompileSourceRoot(outputDir.getPath());
         }

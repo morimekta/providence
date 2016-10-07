@@ -1,0 +1,24 @@
+<component-set>
+    <components>
+        <component>
+            <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+            <role-hint>zip</role-hint>
+            <implementation>
+                org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+            </implementation>
+            <configuration>
+                <phases>
+                    <generate-sources>
+                        net.morimekta.providence:providence-maven-plugin:compile
+                    </generate-sources>
+                    <generate-test-sources>
+                        net.morimekta.providence:providence-maven-plugin:testCompile
+                    </generate-test-sources>
+                    <package>
+                        net.morimekta.providence:providence-maven-plugin:assemble
+                    </package>
+                </phases>
+            </configuration>
+        </component>
+    </components>
+</component-set>
