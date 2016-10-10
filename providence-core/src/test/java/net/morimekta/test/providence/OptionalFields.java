@@ -5,6 +5,13 @@ public class OptionalFields
         implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>, java.io.Serializable, Comparable<OptionalFields> {
     private final static long serialVersionUID = 206291416785618490L;
 
+    private final static boolean kDefaultBooleanValue = false;
+    private final static byte kDefaultByteValue = (byte)0;
+    private final static short kDefaultShortValue = (short)0;
+    private final static int kDefaultIntegerValue = 0;
+    private final static long kDefaultLongValue = 0L;
+    private final static double kDefaultDoubleValue = 0.0d;
+
     private final Boolean mBooleanValue;
     private final Byte mByteValue;
     private final Short mShortValue;
@@ -61,7 +68,7 @@ public class OptionalFields
      * @return The field value
      */
     public boolean isBooleanValue() {
-        return mBooleanValue;
+        return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
     }
 
     public boolean hasByteValue() {
@@ -72,7 +79,7 @@ public class OptionalFields
      * @return The field value
      */
     public byte getByteValue() {
-        return mByteValue;
+        return hasByteValue() ? mByteValue : kDefaultByteValue;
     }
 
     public boolean hasShortValue() {
@@ -83,7 +90,7 @@ public class OptionalFields
      * @return The field value
      */
     public short getShortValue() {
-        return mShortValue;
+        return hasShortValue() ? mShortValue : kDefaultShortValue;
     }
 
     public boolean hasIntegerValue() {
@@ -94,7 +101,7 @@ public class OptionalFields
      * @return The field value
      */
     public int getIntegerValue() {
-        return mIntegerValue;
+        return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
     }
 
     public boolean hasLongValue() {
@@ -105,7 +112,7 @@ public class OptionalFields
      * @return The field value
      */
     public long getLongValue() {
-        return mLongValue;
+        return hasLongValue() ? mLongValue : kDefaultLongValue;
     }
 
     public boolean hasDoubleValue() {
@@ -116,7 +123,7 @@ public class OptionalFields
      * @return The field value
      */
     public double getDoubleValue() {
-        return mDoubleValue;
+        return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
     }
 
     public boolean hasStringValue() {

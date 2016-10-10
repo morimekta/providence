@@ -432,7 +432,7 @@ public class JMessageFormat {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
-            if (field.isPrimitiveJavaValue() || (
+            if ((field.isPrimitiveJavaValue() && !field.alwaysPresent()) || (
                     !field.container() && !field.alwaysPresent() && field.getPField().hasDefaultValue())) {
                 writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
             } else {
