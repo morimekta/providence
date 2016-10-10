@@ -71,15 +71,7 @@
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>0.2.2-SNAPSHOT</version>
-                <executions>
-                    <execution>
-                        <id>generate-providence-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.apache.thrift.tools</groupId>

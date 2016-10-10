@@ -1,23 +1,33 @@
 <component-set>
     <components>
         <component>
-            <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-            <role-hint>zip</role-hint>
-            <implementation>
-                org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
-            </implementation>
+            <role>org.apache.maven.lifecycle.Lifecycle</role>
+            <implementation>org.apache.maven.lifecycle.Lifecycle</implementation>
+            <role-hint>providence</role-hint>
             <configuration>
+                <id>providence</id>
                 <phases>
                     <generate-sources>
-                        net.morimekta.providence:providence-maven-plugin:compile
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:compile
                     </generate-sources>
                     <generate-test-sources>
-                        net.morimekta.providence:providence-maven-plugin:testCompile
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:testCompile
                     </generate-test-sources>
                     <package>
-                        net.morimekta.providence:providence-maven-plugin:assemble
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:assemble
                     </package>
                 </phases>
+                <default-phases>
+                    <generate-sources>
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:compile
+                    </generate-sources>
+                    <generate-test-sources>
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:testCompile
+                    </generate-test-sources>
+                    <package>
+                        net.morimekta.providence:providence-maven-plugin:${project.version}:assemble
+                    </package>
+                </default-phases>
             </configuration>
         </component>
     </components>
