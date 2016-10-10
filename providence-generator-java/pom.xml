@@ -3,7 +3,7 @@
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -51,22 +51,22 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-jackson</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
 
         <dependency>

@@ -17,13 +17,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence.git</url>
-      <tag>HEAD</tag>
+      <tag>v0.2.2</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.2</version>
     </parent>
     <artifactId>it-serialization</artifactId>
 
@@ -31,12 +31,12 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>it-common</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
 
         <dependency>
@@ -87,7 +87,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.2-SNAPSHOT</version>
+                <version>0.2.2</version>
                 <extensions>true</extensions>
                 <configuration>
                     <dependencies>

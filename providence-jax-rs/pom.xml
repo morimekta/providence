@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.2-SNAPSHOT</version>
+        <version>0.2.2</version>
     </parent>
     <artifactId>providence-jax-rs</artifactId>
     <name>Providence Utils : JavaX WS RESTful compatibility</name>
@@ -13,7 +13,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -30,13 +30,13 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.2-SNAPSHOT</version>
+            <version>0.2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -46,7 +46,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.2-SNAPSHOT</version>
+                <version>0.2.2</version>
                 <executions>
                     <execution>
                         <goals>
