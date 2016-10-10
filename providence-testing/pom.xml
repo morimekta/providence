@@ -100,7 +100,7 @@
                         <dependency>
                             <groupId>net.morimekta.providence</groupId>
                             <artifactId>providence-reflect</artifactId>
-                            <version>0.2.2-SNAPSHOT</version>
+                            <version>${project.version}</version>
                         </dependency>
                     </dependencies>
                 </configuration>

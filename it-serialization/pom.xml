@@ -87,14 +87,14 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.2</version>
+                <version>${project.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <dependencies>
                         <dependency>
                             <groupId>net.morimekta.providence</groupId>
                             <artifactId>it-common</artifactId>
-                            <version>0.2.2-SNAPSHOT</version>
+                            <version>${project.version}</version>
                         </dependency>
                     </dependencies>
                 </configuration>
