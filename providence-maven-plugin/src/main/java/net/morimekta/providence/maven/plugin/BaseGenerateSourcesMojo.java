@@ -168,7 +168,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
                                        false).forEach(File::delete);
         }
 
-        Set<Artifact> providenceArtifacts = new HashSet<>();
+        Set<Artifact> resolvedArtifacts = new HashSet<>();
         for (Dependency dep : dependencies) {
             dep.setType(ProvidenceAssemblyMojo.TYPE);
             if (dep.getClassifier() == null || dep.getClassifier().isEmpty()) {
@@ -177,24 +177,31 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
             Artifact artifact = repositorySystem.createDependencyArtifact(dep);
             // Avoid resolving stuff we already have resolved.
-            if (providenceArtifacts.contains(artifact)) {
+            if (resolvedArtifacts.contains(artifact)) {
                 continue;
             }
 
             ArtifactResolutionRequest request = new ArtifactResolutionRequest();
             request.setLocalRepository(localRepository);
             request.setRemoteRepositories(remoteRepositories);
-            request.setResolveTransitively(true);
+            request.setResolveTransitively(false);
             request.setArtifact(artifact);
 
             ArtifactResolutionResult result = artifactResolver.resolve(request);
-            for (Artifact providenceArtifact : result.getArtifacts()) {
-                if (ProvidenceAssemblyMojo.CLASSIFIER.equals(providenceArtifact.getClassifier())) {
-                    providenceArtifacts.add(providenceArtifact);
-                    addDependencyInclude(workingDir,
-                                         includes,
-                                         providenceArtifact);
+
+            boolean found = false;
+            for (Artifact resolved : result.getArtifacts()) {
+                if (artifact.equals(resolved)) {
+                    resolvedArtifacts.add(resolved);
+                    addDependencyInclude(workingDir, includes, resolved);
+                    found = true;
+                    break;
                 }
+            }
+            if (!found) {
+                throw new MojoFailureException("Unable to resolve providence dependency: " +
+                                               artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" +
+                                               artifact.getVersion() + ":" + artifact.getClassifier());
             }
         }
 
