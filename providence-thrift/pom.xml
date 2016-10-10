@@ -24,7 +24,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.2</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
     <artifactId>providence-thrift</artifactId>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -70,7 +70,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.2</version>
+                <version>0.2.3-SNAPSHOT</version>
                 <!--
                     because of the chain of dependencies not necessary working
                     during releases, this cannot use the extensions for the

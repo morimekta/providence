@@ -18,7 +18,7 @@
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
-        <version>0.2.2</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
     <artifactId>providence-testing</artifactId>
 
@@ -26,17 +26,17 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-jackson</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -94,7 +94,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.2</version>
+                <version>0.2.3-SNAPSHOT</version>
                 <configuration>
                     <dependencies>
                         <dependency>

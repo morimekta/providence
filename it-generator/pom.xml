@@ -23,7 +23,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.2</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
     <artifactId>it-generator</artifactId>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>it-common</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
