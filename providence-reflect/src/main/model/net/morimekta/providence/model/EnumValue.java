@@ -564,6 +564,7 @@ public class EnumValue
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            optionals.set(3);
             return mAnnotations;
         }
 

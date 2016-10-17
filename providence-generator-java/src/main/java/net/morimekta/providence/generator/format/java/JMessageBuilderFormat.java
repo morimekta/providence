@@ -574,6 +574,15 @@ public class JMessageBuilderFormat {
                                 Strings.camelCase("mutable", field.name()))
                       .begin();
 
+                if (message.isUnion()) {
+                    writer.formatln("if (tUnionField != _Field.%s) {", field.fieldEnum())
+                          .formatln("    %s();", field.resetter())
+                          .appendln('}')
+                          .formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                } else {
+                    writer.formatln("optionals.set(%d);", field.index());
+                }
+
                 writer.formatln("return %s;", field.member());
 
                 writer.end()

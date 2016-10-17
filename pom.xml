@@ -255,7 +255,7 @@
                 <plugin>
                     <groupId>net.morimekta.providence</groupId>
                     <artifactId>providence-maven-plugin</artifactId>
-                    <version>0.2.3-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -761,6 +761,7 @@ public class ServiceMethod
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableParams() {
+            optionals.set(4);
             return mParams;
         }
 
@@ -817,6 +818,7 @@ public class ServiceMethod
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableExceptions() {
+            optionals.set(5);
             return mExceptions;
         }
 
@@ -872,6 +874,7 @@ public class ServiceMethod
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            optionals.set(6);
             return mAnnotations;
         }
 

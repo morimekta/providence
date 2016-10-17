@@ -412,6 +412,7 @@ public class Operation
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mutableOperands() {
+            optionals.set(1);
             return mOperands;
         }
 

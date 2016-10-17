@@ -558,6 +558,7 @@ public class EnumType
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.EnumValue> mutableValues() {
+            optionals.set(2);
             return mValues;
         }
 
@@ -613,6 +614,7 @@ public class EnumType
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            optionals.set(3);
             return mAnnotations;
         }
 

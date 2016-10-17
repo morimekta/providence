@@ -2398,6 +2398,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Boolean> mutableBooleanList() {
+            optionals.set(0);
             return mBooleanList;
         }
 
@@ -2454,6 +2455,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Byte> mutableByteList() {
+            optionals.set(1);
             return mByteList;
         }
 
@@ -2510,6 +2512,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Short> mutableShortList() {
+            optionals.set(2);
             return mShortList;
         }
 
@@ -2566,6 +2569,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Integer> mutableIntegerList() {
+            optionals.set(3);
             return mIntegerList;
         }
 
@@ -2622,6 +2626,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Long> mutableLongList() {
+            optionals.set(4);
             return mLongList;
         }
 
@@ -2678,6 +2683,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<Double> mutableDoubleList() {
+            optionals.set(5);
             return mDoubleList;
         }
 
@@ -2734,6 +2740,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<String> mutableStringList() {
+            optionals.set(6);
             return mStringList;
         }
 
@@ -2790,6 +2797,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mutableBinaryList() {
+            optionals.set(7);
             return mBinaryList;
         }
 
@@ -2856,6 +2864,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Boolean> mutableBooleanSet() {
+            optionals.set(8);
             return mBooleanSet;
         }
 
@@ -2912,6 +2921,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Byte> mutableByteSet() {
+            optionals.set(9);
             return mByteSet;
         }
 
@@ -2968,6 +2978,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Short> mutableShortSet() {
+            optionals.set(10);
             return mShortSet;
         }
 
@@ -3024,6 +3035,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Integer> mutableIntegerSet() {
+            optionals.set(11);
             return mIntegerSet;
         }
 
@@ -3080,6 +3092,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Long> mutableLongSet() {
+            optionals.set(12);
             return mLongSet;
         }
 
@@ -3136,6 +3149,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Double> mutableDoubleSet() {
+            optionals.set(13);
             return mDoubleSet;
         }
 
@@ -3192,6 +3206,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<String> mutableStringSet() {
+            optionals.set(14);
             return mStringSet;
         }
 
@@ -3248,6 +3263,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mutableBinarySet() {
+            optionals.set(15);
             return mBinarySet;
         }
 
@@ -3313,6 +3329,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mutableBooleanMap() {
+            optionals.set(16);
             return mBooleanMap;
         }
 
@@ -3368,6 +3385,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mutableByteMap() {
+            optionals.set(17);
             return mByteMap;
         }
 
@@ -3423,6 +3441,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mutableShortMap() {
+            optionals.set(18);
             return mShortMap;
         }
 
@@ -3478,6 +3497,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mutableIntegerMap() {
+            optionals.set(19);
             return mIntegerMap;
         }
 
@@ -3533,6 +3553,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mutableLongMap() {
+            optionals.set(20);
             return mLongMap;
         }
 
@@ -3588,6 +3609,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mutableDoubleMap() {
+            optionals.set(21);
             return mDoubleMap;
         }
 
@@ -3643,6 +3665,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableStringMap() {
+            optionals.set(22);
             return mStringMap;
         }
 
@@ -3698,6 +3721,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
+            optionals.set(23);
             return mBinaryMap;
         }
 
@@ -3764,6 +3788,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.Value> mutableEnumList() {
+            optionals.set(24);
             return mEnumList;
         }
 
@@ -3820,6 +3845,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.Value> mutableEnumSet() {
+            optionals.set(25);
             return mEnumSet;
         }
 
@@ -3875,6 +3901,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> mutableEnumMap() {
+            optionals.set(26);
             return mEnumMap;
         }
 
@@ -3941,6 +3968,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageList() {
+            optionals.set(27);
             return mMessageList;
         }
 
@@ -3997,6 +4025,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageSet() {
+            optionals.set(28);
             return mMessageSet;
         }
 
@@ -4052,6 +4081,7 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.DefaultFields> mutableMessageMap() {
+            optionals.set(29);
             return mMessageMap;
         }
 

@@ -808,6 +808,7 @@ public class ThriftField
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            optionals.set(6);
             return mAnnotations;
         }
 

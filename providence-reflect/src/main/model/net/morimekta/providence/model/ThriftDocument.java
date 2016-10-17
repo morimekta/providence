@@ -646,6 +646,7 @@ public class ThriftDocument
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<String> mutableIncludes() {
+            optionals.set(2);
             return mIncludes;
         }
 
@@ -711,6 +712,7 @@ public class ThriftDocument
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableNamespaces() {
+            optionals.set(3);
             return mNamespaces;
         }
 
@@ -767,6 +769,7 @@ public class ThriftDocument
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mutableDecl() {
+            optionals.set(4);
             return mDecl;
         }
 

@@ -638,6 +638,7 @@ public class StructType
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableFields() {
+            optionals.set(3);
             return mFields;
         }
 
@@ -693,6 +694,7 @@ public class StructType
          * @return The field builder
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
+            optionals.set(4);
             return mAnnotations;
         }
 
