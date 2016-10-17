@@ -82,10 +82,6 @@ public class ProvidenceConfigUtil {
             }
 
             if (!message.has(field.getKey())) {
-                if (defValue == null) {
-                    return null;
-                }
-
                 while (sub.contains(".")) {
                     if (fieldDesc.getType() != PType.MESSAGE) {
                         throw new IncompatibleValueException("Field " + name + " is not of message type in " +
@@ -146,7 +142,7 @@ public class ProvidenceConfigUtil {
 
     private static Object asFieldType(PField field, Object o) {
         if (o == null) {
-            return null;
+            return field.getDefaultValue();
         }
 
         switch (field.getType()) {
