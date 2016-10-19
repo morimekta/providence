@@ -65,7 +65,7 @@ public class JEnumFormat {
         for (CEnumValue v : type.getValues()) {
             if (v.getComment() != null) {
                 new BlockCommentBuilder(writer)
-                        .comment(type.getComment())
+                        .comment(v.getComment())
                         .finish();
             }
             if (JAnnotation.isDeprecated(v)) {

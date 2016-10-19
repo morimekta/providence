@@ -551,6 +551,10 @@ public class ThriftDocumentParser implements DocumentParser {
                 } else if (token.isIdentifier()) {
                     EnumValue._Builder evb = EnumValue.builder();
                     evb.setName(token.asString());
+                    if (comment != null) {
+                        evb.setComment(comment);
+                        comment = null;
+                    }
 
                     int value = nextValue++;
                     if (tokenizer.peek("parsing enum " + id)

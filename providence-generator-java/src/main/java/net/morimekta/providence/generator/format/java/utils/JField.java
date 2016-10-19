@@ -186,6 +186,13 @@ public class JField {
         return helper.getFieldType(field.getDescriptor());
     }
 
+    public String paramType() throws GeneratorException {
+        if (alwaysPresent() && isRequired()) {
+            return valueType();
+        }
+        return helper.getFieldType(field.getDescriptor());
+    }
+
     public String instanceType() throws GeneratorException {
         return helper.getInstanceClassName(field);
     }

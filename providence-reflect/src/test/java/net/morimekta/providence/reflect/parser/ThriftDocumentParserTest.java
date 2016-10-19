@@ -61,10 +61,12 @@ public class ThriftDocumentParserTest {
                      "    comment = \"Block comment on type.\"\n" +
                      "    name = \"Operator\"\n" +
                      "    values = {\n" +
+                     "      comment = \"line comment on enum\"\n" +
                      "      name = \"IDENTITY\"\n" +
                      "      value = 1\n" +
                      "    }\n" +
                      "    values = {\n" +
+                     "      comment = \"Block comment on enum.\"\n" +
                      "      name = \"ADD\"\n" +
                      "      value = 2\n" +
                      "    }\n" +

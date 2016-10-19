@@ -708,7 +708,7 @@ public class JMessageFormat {
                     writer.append(',')
                           .appendln();
                 }
-                writer.format("%s %s", field.valueType(), field.param());
+                writer.format("%s %s", field.paramType(), field.param());
             }
             writer.end()
                   .append(") {")
@@ -782,9 +782,18 @@ public class JMessageFormat {
                               .formatln("    %s = null;", field.member())
                               .appendln('}');
                         break;
-                    default:
-                        writer.formatln("%s = %s;", field.member(), field.param());
+                    default: {
+                        if (field.alwaysPresent() && !field.isRequired()){
+                            writer.formatln("if (%s != null) {", field.param())
+                                  .formatln("    %s = %s;", field.member(), field.param())
+                                  .appendln("} else {")
+                                  .formatln("    %s = %s;", field.member(), field.kDefault())
+                                  .appendln('}');
+                        } else {
+                            writer.formatln("%s = %s;", field.member(), field.param());
+                        }
                         break;
+                    }
                 }
             }
             writer.end()
