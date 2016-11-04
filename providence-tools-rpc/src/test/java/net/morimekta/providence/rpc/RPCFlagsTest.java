@@ -126,6 +126,7 @@ public class RPCFlagsTest {
                 " --header (-H) hdr         : Header to set on the request, K/V separated by ':'.\n" +
                 " --strict (-S)             : Read incoming messages strictly.\n" +
                 " --help (-h, -?)           : This help message.\n" +
+                " --verbose (-v)            : Show verbose output and error messages.\n" +
                 " URL                       : The endpoint URI\n" +
                 "\n" +
                 "Available formats are:\n" +

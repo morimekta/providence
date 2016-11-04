@@ -95,6 +95,9 @@ public class RPC {
         } catch (HttpResponseException e) {
             System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
             System.err.println(" - from: " + options.endpoint);
+            if (options.verbose) {
+                e.printStackTrace();
+            }
         } catch (ArgumentException e) {
             System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
             System.err.println(e.getMessage());
@@ -104,7 +107,9 @@ public class RPC {
             System.out.flush();
             System.err.println();
             System.err.println("Serialization error: " + e.getMessage());
-            e.printStackTrace();
+            if (options.verbose) {
+                e.printStackTrace();
+            }
         } catch (ParseException e) {
             System.out.flush();
             System.err.println();
@@ -129,14 +134,21 @@ public class RPC {
             } else {
                 System.err.println("Parser error: " + e.getLocalizedMessage());
             }
+            if (options.verbose) {
+                e.printStackTrace();
+            }
         } catch (IllegalArgumentException e) {
             System.out.flush();
             System.err.print(e.getMessage());
+            if (options.verbose) {
+                e.printStackTrace();
+            }
         } catch (UncheckedIOException | IOException e) {
             System.out.flush();
-            System.err.println();
             System.err.print("I/O error: ");
-            e.printStackTrace();
+            if (options.verbose) {
+                e.printStackTrace();
+            }
         }
         exit(1);
     }

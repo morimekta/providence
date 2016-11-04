@@ -98,6 +98,7 @@ public class RPCOptions {
     protected int read_timeout = 10000;
     protected List<String> headers = new LinkedList<>();
     protected String endpoint = "";
+    protected boolean verbose = false;
 
     public ArgumentParser getArgumentParser(String prog, String version, String description) {
         ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
@@ -113,9 +114,14 @@ public class RPCOptions {
         parser.add(new Option("--header", "H", "hdr", "Header to set on the request, K/V separated by ':'.", this::addHeaders, null, true, false, false));
         parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
         parser.add(new Flag("--help", "h?", "This help message.", this::setHelp));
+        parser.add(new Flag("--verbose", "v", "Show verbose output and error messages.", this::setVerbose));
         parser.add(new Argument("URL", "The endpoint URI", this::setEndpoint));
 
         return parser;
+    }
+
+    private void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public void setHelp(boolean mHelp) {
