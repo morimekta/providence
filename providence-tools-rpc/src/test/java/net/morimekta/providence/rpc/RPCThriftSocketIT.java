@@ -35,7 +35,9 @@ import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.rpc.util.TestUtil.findFreePort;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -251,8 +253,8 @@ public class RPCThriftSocketIT {
         verifyZeroInteractions(impl);
 
         assertEquals("", rpc.getOutput());
-        assertEquals("Unable to connect to thrift://localhost:" + (port - 10)+ ": Connection refused\n",
-                     rpc.getError());
+        assertThat(rpc.getError(),
+                   startsWith("Unable to connect to thrift://localhost:" + (port - 10)+ ": Connection refused"));
         assertEquals(1, exitCode);
     }
 }
