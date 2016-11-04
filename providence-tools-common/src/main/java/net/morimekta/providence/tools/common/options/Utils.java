@@ -51,7 +51,7 @@ public class Utils {
         return "v" + properties.getProperty("build.version");
     }
 
-    public HttpTransport createTransport() {
+    public static HttpTransport createTransport() {
         return new NetHttpTransport();
     }
 

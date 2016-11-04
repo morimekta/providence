@@ -57,12 +57,12 @@ import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.common.options.ConvertStream;
 import net.morimekta.providence.tools.common.options.ConvertStreamParser;
 import net.morimekta.providence.tools.common.options.Format;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -317,7 +317,7 @@ public class RPCOptions extends CommonOptions {
             hdrs.put(parts[0].trim(), parts[1].trim());
         }
 
-        HttpTransport transport = new NetHttpTransport();
+        HttpTransport transport = Utils.createTransport();
         HttpRequestFactory factory = transport.createRequestFactory(new SetHeadersInitializer(hdrs, connect_timeout, read_timeout));
         SerializerProvider serializerProvider = new ThriftSerializerProvider(serializer.mimeType());
         return new HttpClientHandler(() -> url, factory, serializerProvider);
