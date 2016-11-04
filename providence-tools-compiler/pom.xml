@@ -60,6 +60,12 @@
             <version>0.2.4-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-common</artifactId>
+            <version>0.2.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
             <version>${morimekta_utils.version}</version>
@@ -193,7 +199,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.morimekta.providence.compiler.Compiler</mainClass>
+                                    <mainClass>net.morimekta.providence.tools.compiler.Compiler</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

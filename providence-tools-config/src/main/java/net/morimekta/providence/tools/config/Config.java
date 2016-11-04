@@ -3,11 +3,11 @@ package net.morimekta.providence.tools.config;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.tools.config.options.Options;
 import net.morimekta.providence.util.pretty.TokenizerException;
 
 import java.io.IOException;
-import java.util.Properties;
+
+import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
 /**
  * Configuration Tool for Providence.
@@ -19,45 +19,54 @@ public class Config {
 
     public void run(String... args) {
         try {
-            Properties properties = new Properties();
-            properties.load(Config.class.getResourceAsStream("/build.properties"));
-
-            Options op = new Options();
+            ConfigOptions op = new ConfigOptions();
             ArgumentParser cli = op.getArgumentParser("pvdcfg",
-                                                      "v" + properties.getProperty("build.version"),
                                                       "Providence Config Tool");
             try {
                 cli.parse(args);
                 if (op.isHelp()) {
-                    System.out.println(cli.getDescription() + " - " + cli.getVersion());
+                    System.out.println(cli.getDescription() + " - " + getVersionString());
                     System.out.println("Usage: " + cli.getSingleLineUsage());
                     System.out.println();
                     cli.printUsage(System.out);
                     System.out.println();
                     System.out.println("Available Commands:");
                     System.out.println();
-                    op.getCommandSet()
-                      .printUsage(System.out);
+                    op.getCommandSet().printUsage(System.out);
+                    return;
+                } else if (op.version) {
+                    System.out.println(cli.getDescription() + " - " + getVersionString());
                     return;
                 }
 
                 cli.validate();
                 op.execute();
+                return;
             } catch (TokenizerException e) {
                 System.err.println(e.asString());
-                exit(1);
+                if (op.verbose) {
+                    e.printStackTrace();
+                }
             } catch (SerializerException e) {
                 System.err.println("Serialization error: " + e.toString());
-                exit(1);
+                if (op.verbose) {
+                    e.printStackTrace();
+                }
             } catch (ArgumentException e) {
                 System.err.println(e.toString());
-                // e.printStackTrace();
-                exit(1);
+                if (op.verbose) {
+                    e.printStackTrace();
+                }
+            } catch (IOException | RuntimeException e) {
+                System.err.println("IO Error: " + e.toString());
+                if (op.verbose) {
+                    e.printStackTrace();
+                }
             }
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
-            exit(1);
         }
+        exit(1);
     }
 
     protected void exit(int code) {

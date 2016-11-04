@@ -424,6 +424,7 @@
                 </property>
             </activation>
             <modules>
+                <module>providence-tools-common</module>
                 <!-- CLI Tooling (not deployed as artifacts) -->
                 <module>providence-tools-compiler</module>
                 <module>providence-tools-config</module>

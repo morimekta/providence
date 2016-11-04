@@ -50,6 +50,12 @@
             <version>0.2.4-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-common</artifactId>
+            <version>0.2.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
@@ -155,15 +161,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/build</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
         <testResources>
             <testResource>
                 <directory>src/test/thrift</directory>
@@ -255,7 +252,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.morimekta.providence.rpc.RPC</mainClass>
+                                    <mainClass>net.morimekta.providence.tools.rpc.RPC</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

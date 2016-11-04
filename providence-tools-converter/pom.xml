@@ -46,6 +46,12 @@
             <version>0.2.4-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-tools-common</artifactId>
+            <version>0.2.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
@@ -187,7 +193,7 @@
                             </filters>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.morimekta.providence.converter.Convert</mainClass>
+                                    <mainClass>net.morimekta.providence.tools.converter.Convert</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
