@@ -448,8 +448,12 @@ public class JsonSerializer extends Serializer {
                     throw new SerializerException("Not a valid string value: " + token.asString());
                 case BINARY:
                     if (token.isLiteral()) {
-                        return Binary.fromBase64(token.substring(1, -1)
-                                                      .asString());
+                        try {
+                            return Binary.fromBase64(token.substring(1, -1)
+                                                          .asString());
+                        } catch (IllegalArgumentException e) {
+                            throw new SerializerException(e, "Unable to parse Base64 data.");
+                        }
                     }
                     throw new SerializerException("Not a valid binary value: " + token.asString());
                 case ENUM:
