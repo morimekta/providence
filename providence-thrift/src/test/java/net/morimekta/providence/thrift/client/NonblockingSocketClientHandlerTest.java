@@ -35,7 +35,9 @@ import java.util.concurrent.Executors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.thrift.util.TestUtil.findFreePort;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
@@ -187,7 +189,7 @@ public class NonblockingSocketClientHandlerTest {
                               MyService.kDescriptor);
             fail("");
         } catch (ConnectException e) {
-            assertEquals("Connection refused", e.getMessage());
+            assertThat(e.getMessage(), startsWith("Connection refused"));
         }
 
         verifyZeroInteractions(impl);
