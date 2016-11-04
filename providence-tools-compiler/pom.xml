@@ -18,13 +18,13 @@
 
     <scm>
         <url>https://github.com/morimekta/providence-tools.git</url>
-      <tag>v0.2.2</tag>
+      <tag>v0.2.3</tag>
   </scm>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.2.3-SNAPSHOT</version>
+        <version>0.2.3</version>
     </parent>
     <artifactId>providence-tools-compiler</artifactId>
 
@@ -37,27 +37,27 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator-java</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-generator-json</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.3-SNAPSHOT</version>
+            <version>0.2.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
