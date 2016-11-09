@@ -43,14 +43,18 @@ public class ServiceMethod
     }
 
     public ServiceMethod(String pComment,
-                         boolean pOneWay,
+                         Boolean pOneWay,
                          String pReturnType,
                          String pName,
                          java.util.List<net.morimekta.providence.model.ThriftField> pParams,
                          java.util.List<net.morimekta.providence.model.ThriftField> pExceptions,
                          java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
-        mOneWay = pOneWay;
+        if (pOneWay != null) {
+            mOneWay = pOneWay;
+        } else {
+            mOneWay = kDefaultOneWay;
+        }
         mReturnType = pReturnType;
         mName = pName;
         if (pParams != null) {

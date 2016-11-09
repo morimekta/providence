@@ -1,22 +1,42 @@
 package net.morimekta.providence;
 
-import net.morimekta.providence.mio.MessageReader;
-import net.morimekta.providence.mio.MessageWriter;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PService;
+import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 
 /**
- * Stream processor interface for providence services.
+ * Service processor is an extension to the service call handler that can
+ * provide it's own service definition. This is the base interface for
+ * the handlers on the server side processing of a providence call.
  */
-@FunctionalInterface
-public interface PProcessor {
+public interface PProcessor extends PServiceCallHandler {
     /**
-     * Process message read from reader, and write response to writer.
+     * Get the descriptor for the given service.
      *
-     * @param reader The message reader for the request.
-     * @param writer The message writer for the response.
-     * @return True if the response written is appropriate response (if any).
-     * @throws IOException In failure to handle input or output.
+     * @return The service descriptor.
      */
-    boolean process(MessageReader reader, MessageWriter writer) throws IOException;
+    PService getDescriptor();
+
+    /**
+     * Handle a service call.
+     *
+     * @param call The request call.
+     * @param <Request> Request type.
+     * @param <Response> Response type.
+     * @param <RequestField> Request type.
+     * @param <ResponseField> Response type.
+     * @return The response service call object, or null if none (e.g. oneway).
+     * @throws IOException On read or write failure.
+     * @throws SerializerException On serialization problems.
+     */
+    default <Request extends PMessage<Request, RequestField>,
+             Response extends PMessage<Response, ResponseField>,
+             RequestField extends PField,
+             ResponseField extends PField>
+    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call)
+            throws IOException, SerializerException {
+        return handleCall(call, getDescriptor());
+    }
 }

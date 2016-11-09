@@ -18,7 +18,7 @@
  */
 package net.morimekta.providence.client;
 
-import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 /**
  * HTTP client handler using the google HTTP client interface.
  */
-public class HttpClientHandler implements PClientHandler {
+public class HttpClientHandler implements PServiceCallHandler {
     private final HttpRequestFactory   factory;
     private final SerializerProvider   serializerProvider;
     private final Serializer           requestSerializer;

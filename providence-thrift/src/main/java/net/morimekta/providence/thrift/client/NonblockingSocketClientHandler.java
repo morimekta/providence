@@ -1,6 +1,6 @@
 package net.morimekta.providence.thrift.client;
 
-import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
@@ -26,7 +26,7 @@ import java.nio.channels.SocketChannel;
  * When using this client handler make sure to close it when no longer in use.
  * Otherwise it will keep the socket channel open almost indefinitely.
  */
-public class NonblockingSocketClientHandler implements PClientHandler, Closeable {
+public class NonblockingSocketClientHandler implements PServiceCallHandler, Closeable {
     private final Serializer    serializer;
     private final SocketAddress address;
     private final int           connect_timeout;

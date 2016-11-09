@@ -43,11 +43,15 @@ import java.io.IOException;
  * Thrift's <code>org.apache.thrift.server.TServlet</code> server.
  */
 public class ProvidenceServlet extends HttpServlet {
-    private final PProcessor         processor;
+    private final ProcessorHandler   handler;
     private final SerializerProvider serializerProvider;
 
     public ProvidenceServlet(PProcessor processor, SerializerProvider serializerProvider) {
-        this.processor = processor;
+        this(new DefaultProcessorHandler(processor), serializerProvider);
+    }
+
+    public ProvidenceServlet(ProcessorHandler handler, SerializerProvider serializerProvider) {
+        this.handler = handler;
         this.serializerProvider = serializerProvider;
     }
 
@@ -82,7 +86,7 @@ public class ProvidenceServlet extends HttpServlet {
             MessageWriter writer = new IOMessageWriter(baos, responseSerializer);
 
             try {
-                processor.process(reader, writer);
+                handler.process(reader, writer);
             } catch (IOException ie) {
                 writer.write(new PServiceCall<>(
                         "", PServiceCallType.EXCEPTION, 0,

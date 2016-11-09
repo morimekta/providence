@@ -15,9 +15,9 @@ public class Calculator {
     public static class Client
             extends net.morimekta.providence.PClient
             implements Iface {
-        private final net.morimekta.providence.PClientHandler handler;
+        private final net.morimekta.providence.PServiceCallHandler handler;
 
-        public Client(net.morimekta.providence.PClientHandler handler) {
+        public Client(net.morimekta.providence.PServiceCallHandler handler) {
             this.handler = handler;
         }
 
@@ -72,63 +72,55 @@ public class Calculator {
         }
 
         @Override
-        public boolean process(net.morimekta.providence.mio.MessageReader reader, net.morimekta.providence.mio.MessageWriter writer) throws java.io.IOException {
-            try {
-                net.morimekta.providence.PServiceCall call;
-                try {
-                    call = reader.read(Calculator.kDescriptor);
-                } catch (net.morimekta.providence.serializer.SerializerException se) {
-                    writer.write(new net.morimekta.providence.PServiceCall(
-                            se.getMethodName(),
-                            net.morimekta.providence.PServiceCallType.EXCEPTION,
-                            se.getSequenceNo(),
-                            new net.morimekta.providence.serializer.ApplicationException(
-                                    se.getMessage(),
-                                    se.getExceptionType())));
-                    return true;
-                }
+        public net.morimekta.providence.descriptor.PService getDescriptor() {
+            return kDescriptor;
+        }
 
-                switch(call.getMethod()) {
-                    case "calculate": {
-                        Calculate_response._Builder rsp = Calculate_response.builder();
-                        try {
-                            Calculate_request req = (Calculate_request) call.getMessage();
-                            net.morimekta.test.calculator.Operand result =
-                                    impl.calculate(req.getOp());
-                            rsp.setSuccess(result);
-                        } catch (net.morimekta.test.calculator.CalculateException e) {
-                            rsp.setCe(e);
-                        }
-                        net.morimekta.providence.PServiceCall reply =
-                                new net.morimekta.providence.PServiceCall(call.getMethod(),
-                                                                          net.morimekta.providence.PServiceCallType.REPLY,
-                                                                          call.getSequence(),
-                                                                          rsp.build());
-                        writer.write(reply);
-                        break;
+        @Override
+        public <Request extends net.morimekta.providence.PMessage<Request, RequestField>,
+                Response extends net.morimekta.providence.PMessage<Response, ResponseField>,
+                RequestField extends net.morimekta.providence.descriptor.PField,
+                ResponseField extends net.morimekta.providence.descriptor.PField>
+        net.morimekta.providence.PServiceCall<Response, ResponseField> handleCall(
+                net.morimekta.providence.PServiceCall<Request, RequestField> call,
+                net.morimekta.providence.descriptor.PService service)
+                throws java.io.IOException,
+                       net.morimekta.providence.serializer.SerializerException {
+            switch(call.getMethod()) {
+                case "calculate": {
+                    Calculate_response._Builder rsp = Calculate_response.builder();
+                    try {
+                        Calculate_request req = (Calculate_request) call.getMessage();
+                        net.morimekta.test.calculator.Operand result =
+                                impl.calculate(req.getOp());
+                        rsp.setSuccess(result);
+                    } catch (net.morimekta.test.calculator.CalculateException e) {
+                        rsp.setCe(e);
                     }
-                    case "iamalive": {
-                        Iamalive_request req = (Iamalive_request) call.getMessage();
-                        impl.iamalive();
-                        break;
-                    }
-                    default: {
-                        net.morimekta.providence.serializer.ApplicationException ex =
-                                new net.morimekta.providence.serializer.ApplicationException(
-                                        "Unknown method \"" + call.getMethod() + "\" on calculator.Calculator.",
-                                        net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN_METHOD);
-                        net.morimekta.providence.PServiceCall reply =
-                                new net.morimekta.providence.PServiceCall(call.getMethod(),
-                                                                          net.morimekta.providence.PServiceCallType.EXCEPTION,
-                                                                          call.getSequence(),
-                                                                          ex);
-                        writer.write(reply);
-                        break;
-                    }
+                    net.morimekta.providence.PServiceCall reply =
+                            new net.morimekta.providence.PServiceCall(call.getMethod(),
+                                                                      net.morimekta.providence.PServiceCallType.REPLY,
+                                                                      call.getSequence(),
+                                                                      rsp.build());
+                    return reply;
                 }
-                return true;
-            } catch (net.morimekta.providence.serializer.SerializerException e) {
-                throw new java.io.IOException(e.getMessage(), e);
+                case "iamalive": {
+                    Iamalive_request req = (Iamalive_request) call.getMessage();
+                    impl.iamalive();
+                    return null;
+                }
+                default: {
+                    net.morimekta.providence.serializer.ApplicationException ex =
+                            new net.morimekta.providence.serializer.ApplicationException(
+                                    "Unknown method \"" + call.getMethod() + "\" on calculator.Calculator.",
+                                    net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN_METHOD);
+                    net.morimekta.providence.PServiceCall reply =
+                            new net.morimekta.providence.PServiceCall(call.getMethod(),
+                                                                      net.morimekta.providence.PServiceCallType.EXCEPTION,
+                                                                      call.getSequence(),
+                                                                      ex);
+                    return reply;
+                }
             }
         }
     }

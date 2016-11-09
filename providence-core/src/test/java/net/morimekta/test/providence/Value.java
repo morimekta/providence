@@ -13,6 +13,9 @@ public enum Value implements net.morimekta.providence.PEnumValue<Value> {
     TENTH(89, "TENTH"),
     ELEVENTH(144, "ELEVENTH"),
     TWELWETH(233, "TWELWETH"),
+    /**
+     * @Deprecated
+     */
     THIRTEENTH(377, "THIRTEENTH"),
     FOURTEENTH(610, "FOURTEENTH"),
     FIFTEENTH(987, "FIFTEENTH"),

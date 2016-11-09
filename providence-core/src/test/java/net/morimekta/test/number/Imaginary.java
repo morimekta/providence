@@ -19,9 +19,13 @@ public class Imaginary
     }
 
     public Imaginary(double pV,
-                     double pI) {
+                     Double pI) {
         mV = pV;
-        mI = pI;
+        if (pI != null) {
+            mI = pI;
+        } else {
+            mI = kDefaultI;
+        }
     }
 
     public boolean hasV() {

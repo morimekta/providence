@@ -30,11 +30,15 @@ public class EnumValue
 
     public EnumValue(String pComment,
                      String pName,
-                     int pValue,
+                     Integer pValue,
                      java.util.Map<String,String> pAnnotations) {
         mComment = pComment;
         mName = pName;
-        mValue = pValue;
+        if (pValue != null) {
+            mValue = pValue;
+        } else {
+            mValue = kDefaultValue;
+        }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
         } else {

@@ -1,10 +1,12 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.PClient;
-import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
+import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -16,8 +18,6 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JService;
 import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
-import net.morimekta.providence.mio.MessageReader;
-import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.serializer.ApplicationException;
 import net.morimekta.providence.serializer.ApplicationExceptionType;
@@ -73,10 +73,10 @@ public class JServiceFormat {
               .formatln("        implements Iface {")
               .begin();
 
-        writer.formatln("private final %s handler;", PClientHandler.class.getName())
+        writer.formatln("private final %s handler;", PServiceCallHandler.class.getName())
               .newline();
 
-        writer.formatln("public Client(%s handler) {", PClientHandler.class.getName())
+        writer.formatln("public Client(%s handler) {", PServiceCallHandler.class.getName())
               .appendln("    this.handler = handler;")
               .appendln('}')
               .newline();
@@ -215,33 +215,22 @@ public class JServiceFormat {
               .newline();
 
         writer.appendln("@Override")
-              .formatln("public boolean process(%s reader, %s writer) throws %s {",
-                        MessageReader.class.getName(),
-                        MessageWriter.class.getName(),
-                        IOException.class.getName())
-              .begin();
-
-        writer.appendln("try {")
-              .begin();
-
-        writer.formatln("%s call;",
-                        PServiceCall.class.getName())
-              .appendln("try {")
-              .formatln("    call = reader.read(%s.kDescriptor);",
-                        service.className())
-              .formatln("} catch (%s se) {", SerializerException.class.getName())
-              .formatln("    writer.write(new %s(", PServiceCall.class.getName())
-              .appendln("            se.getMethodName(),")
-              .formatln("            %s.%s,",
-                        PServiceCallType.class.getName(),
-                        PServiceCallType.EXCEPTION.name())
-              .appendln("            se.getSequenceNo(),")
-              .formatln("            new %s(", ApplicationException.class.getName())
-              .appendln("                    se.getMessage(),")
-              .appendln("                    se.getExceptionType())));")
-              .appendln("    return true;")
+              .formatln("public %s getDescriptor() {", PService.class.getName())
+              .appendln("    return kDescriptor;")
               .appendln('}')
               .newline();
+
+        writer.appendln("@Override")
+              .formatln("public <Request extends %s<Request, RequestField>,", PMessage.class.getName())
+              .formatln("        Response extends %s<Response, ResponseField>,", PMessage.class.getName())
+              .formatln("        RequestField extends %s,", PField.class.getName())
+              .formatln("        ResponseField extends %s>", PField.class.getName())
+              .formatln("%s<Response, ResponseField> handleCall(", PServiceCall.class.getName())
+              .formatln("        %s<Request, RequestField> call,", PServiceCall.class.getName())
+              .formatln("        %s service)", PService.class.getName())
+              .formatln("        throws %s,", IOException.class.getName())
+              .formatln("               %s {", SerializerException.class.getName())
+              .begin();
 
         writer.appendln("switch(call.getMethod()) {")
               .begin();
@@ -315,11 +304,13 @@ public class JServiceFormat {
                                 spaces)
                       .formatln("            %s rsp.build());",
                                 spaces)
-                      .appendln("writer.write(reply);");
+                      .appendln("return reply;");
+            } else {
+                // No reply, but it's fine.
+                writer.appendln("return null;");
             }
 
-            writer.formatln("break;")
-                  .end()
+            writer.end()
                   .appendln('}');
         }
 
@@ -345,21 +336,14 @@ public class JServiceFormat {
                         spaces)
               .formatln("            %s ex);",
                         spaces)
-              .appendln("writer.write(reply);");
+              .appendln("return reply;");
 
-        writer.appendln("break;")
-              .end()
+        writer.end()
               .appendln('}')
               .end()
               .appendln('}');
 
-        writer.appendln("return true;")
-              .end()
-              .formatln("} catch (%s e) {", SerializerException.class.getName())
-              .formatln("    throw new %s(e.getMessage(), e);",
-                        IOException.class.getName())
-              .appendln('}')
-              .end()
+        writer.end()
               .appendln('}');
 
         writer.end()

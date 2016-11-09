@@ -10,7 +10,7 @@ import java.io.IOException;
  * Interface for handling a call request from a synchronous client.
  */
 @FunctionalInterface
-public interface PClientHandler {
+public interface PServiceCallHandler {
     /**
      * Handle a service call.
      *

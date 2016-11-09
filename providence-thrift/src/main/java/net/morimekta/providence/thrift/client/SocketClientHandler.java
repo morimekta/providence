@@ -1,6 +1,6 @@
 package net.morimekta.providence.thrift.client;
 
-import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
@@ -21,7 +21,7 @@ import java.net.SocketAddress;
  * Client handler for thrift RPC using the TSimpleServer that does <b>not</b>
  * use the TFramedTransport message wrapper.
  */
-public class SocketClientHandler implements PClientHandler {
+public class SocketClientHandler implements PServiceCallHandler {
     private final Serializer    serializer;
     private final SocketAddress address;
     private final int connect_timeout;

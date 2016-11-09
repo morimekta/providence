@@ -38,22 +38,46 @@ public class DefaultFields
         mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
-    public DefaultFields(boolean pBooleanValue,
-                         byte pByteValue,
-                         short pShortValue,
-                         int pIntegerValue,
-                         long pLongValue,
-                         double pDoubleValue,
+    public DefaultFields(Boolean pBooleanValue,
+                         Byte pByteValue,
+                         Short pShortValue,
+                         Integer pIntegerValue,
+                         Long pLongValue,
+                         Double pDoubleValue,
                          String pStringValue,
                          net.morimekta.util.Binary pBinaryValue,
                          net.morimekta.test.providence.Value pEnumValue,
                          net.morimekta.test.providence.CompactFields pCompactValue) {
-        mBooleanValue = pBooleanValue;
-        mByteValue = pByteValue;
-        mShortValue = pShortValue;
-        mIntegerValue = pIntegerValue;
-        mLongValue = pLongValue;
-        mDoubleValue = pDoubleValue;
+        if (pBooleanValue != null) {
+            mBooleanValue = pBooleanValue;
+        } else {
+            mBooleanValue = kDefaultBooleanValue;
+        }
+        if (pByteValue != null) {
+            mByteValue = pByteValue;
+        } else {
+            mByteValue = kDefaultByteValue;
+        }
+        if (pShortValue != null) {
+            mShortValue = pShortValue;
+        } else {
+            mShortValue = kDefaultShortValue;
+        }
+        if (pIntegerValue != null) {
+            mIntegerValue = pIntegerValue;
+        } else {
+            mIntegerValue = kDefaultIntegerValue;
+        }
+        if (pLongValue != null) {
+            mLongValue = pLongValue;
+        } else {
+            mLongValue = kDefaultLongValue;
+        }
+        if (pDoubleValue != null) {
+            mDoubleValue = pDoubleValue;
+        } else {
+            mDoubleValue = kDefaultDoubleValue;
+        }
         mStringValue = pStringValue;
         mBinaryValue = pBinaryValue;
         mEnumValue = pEnumValue;

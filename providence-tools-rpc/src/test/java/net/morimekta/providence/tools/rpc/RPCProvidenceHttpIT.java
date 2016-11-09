@@ -1,8 +1,8 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.tools.rpc.util.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.server.ProvidenceServlet;
+import net.morimekta.providence.tools.rpc.util.NoLogging;
 import net.morimekta.providence.tools.rpc.util.TestUtil;
 import net.morimekta.test.providence.Failure;
 import net.morimekta.test.providence.MyService;

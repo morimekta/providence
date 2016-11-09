@@ -26,7 +26,7 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.providence.PClientHandler;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.mio.FileMessageReader;
@@ -276,7 +276,7 @@ public class RPCOptions extends CommonOptions {
         }
     }
 
-    public PClientHandler getHandler() {
+    public PServiceCallHandler getHandler() {
         Serializer serializer = getSerializer(format);
         URI uri = URI.create(endpoint);
         if (uri.getScheme() == null || uri.getScheme()

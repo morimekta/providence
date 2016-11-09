@@ -38,12 +38,12 @@ public class OptionalFields
         mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
-    public OptionalFields(boolean pBooleanValue,
-                          byte pByteValue,
-                          short pShortValue,
-                          int pIntegerValue,
-                          long pLongValue,
-                          double pDoubleValue,
+    public OptionalFields(Boolean pBooleanValue,
+                          Byte pByteValue,
+                          Short pShortValue,
+                          Integer pIntegerValue,
+                          Long pLongValue,
+                          Double pDoubleValue,
                           String pStringValue,
                           net.morimekta.util.Binary pBinaryValue,
                           net.morimekta.test.providence.Value pEnumValue,
