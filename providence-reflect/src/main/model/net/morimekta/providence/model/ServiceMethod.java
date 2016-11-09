@@ -5,7 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceMethod
-        implements net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field>, java.io.Serializable, Comparable<ServiceMethod> {
+        implements net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field>,
+                   java.io.Serializable,
+                   Comparable<ServiceMethod> {
     private final static long serialVersionUID = -8952857258512990537L;
 
     private final static boolean kDefaultOneWay = false;

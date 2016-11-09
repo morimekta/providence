@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class Containers
-        implements net.morimekta.providence.PMessage<Containers,Containers._Field>, java.io.Serializable, Comparable<Containers> {
+        implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
+                   java.io.Serializable,
+                   Comparable<Containers> {
     private final static long serialVersionUID = 3106880629763954881L;
 
     private final java.util.List<Boolean> mBooleanList;

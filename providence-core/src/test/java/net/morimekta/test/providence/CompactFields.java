@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class CompactFields
-        implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>, java.io.Serializable, Comparable<CompactFields> {
+        implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
+                   java.io.Serializable,
+                   Comparable<CompactFields> {
     private final static long serialVersionUID = -8473304196623780023L;
 
     private final static int kDefaultId = 0;

@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class DefaultValues
-        implements net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field>, java.io.Serializable, Comparable<DefaultValues> {
+        implements net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field>,
+                   java.io.Serializable,
+                   Comparable<DefaultValues> {
     private final static long serialVersionUID = 1589448735484096354L;
 
     private final static boolean kDefaultBooleanValue = true;

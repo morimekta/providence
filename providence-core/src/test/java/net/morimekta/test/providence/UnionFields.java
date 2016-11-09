@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class UnionFields
-        implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>, java.io.Serializable, Comparable<UnionFields> {
+        implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
+                   java.io.Serializable,
+                   Comparable<UnionFields> {
     private final static long serialVersionUID = -4125227148631020921L;
 
     private final static boolean kDefaultBooleanValue = false;

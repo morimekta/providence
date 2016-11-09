@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class OptionalFields
-        implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>, java.io.Serializable, Comparable<OptionalFields> {
+        implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>,
+                   java.io.Serializable,
+                   Comparable<OptionalFields> {
     private final static long serialVersionUID = 206291416785618490L;
 
     private final static boolean kDefaultBooleanValue = false;

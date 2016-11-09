@@ -2,7 +2,9 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operation
-        implements net.morimekta.providence.PMessage<Operation,Operation._Field>, java.io.Serializable, Comparable<Operation> {
+        implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
+                   java.io.Serializable,
+                   Comparable<Operation> {
     private final static long serialVersionUID = -2122462501055525645L;
 
     private final net.morimekta.test.calculator.Operator mOperator;

@@ -5,7 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class Declaration
-        implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>, java.io.Serializable, Comparable<Declaration> {
+        implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
+                   java.io.Serializable,
+                   Comparable<Declaration> {
     private final static long serialVersionUID = -6998763195276182553L;
 
     private final net.morimekta.providence.model.EnumType mDeclEnum;

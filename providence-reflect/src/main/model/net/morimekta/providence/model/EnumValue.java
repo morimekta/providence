@@ -5,7 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class EnumValue
-        implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>, java.io.Serializable, Comparable<EnumValue> {
+        implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>,
+                   java.io.Serializable,
+                   Comparable<EnumValue> {
     private final static long serialVersionUID = -4079600082644582517L;
 
     private final static int kDefaultValue = 0;

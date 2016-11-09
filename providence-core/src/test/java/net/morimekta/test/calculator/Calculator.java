@@ -183,7 +183,9 @@ public class Calculator {
     // type --> calculate___request
     @SuppressWarnings("unused")
     private static class Calculate_request
-            implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>, java.io.Serializable, Comparable<Calculate_request> {
+            implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>,
+                       java.io.Serializable,
+                       Comparable<Calculate_request> {
         private final static long serialVersionUID = -2850591557621395232L;
 
         private final net.morimekta.test.calculator.Operation mOp;
@@ -565,7 +567,9 @@ public class Calculator {
     // type <-- calculate___response
     @SuppressWarnings("unused")
     private static class Calculate_response
-            implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>, java.io.Serializable, Comparable<Calculate_response> {
+            implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>,
+                       java.io.Serializable,
+                       Comparable<Calculate_response> {
         private final static long serialVersionUID = 3839355577455995570L;
 
         private final net.morimekta.test.calculator.Operand mSuccess;
@@ -1085,7 +1089,9 @@ public class Calculator {
     // type --> iamalive___request
     @SuppressWarnings("unused")
     private static class Iamalive_request
-            implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>, java.io.Serializable, Comparable<Iamalive_request> {
+            implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>,
+                       java.io.Serializable,
+                       Comparable<Iamalive_request> {
         private final static long serialVersionUID = 7912890008187182926L;
 
         

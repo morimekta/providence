@@ -2,7 +2,9 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operand
-        implements net.morimekta.providence.PUnion<Operand,Operand._Field>, java.io.Serializable, Comparable<Operand> {
+        implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
+                   java.io.Serializable,
+                   Comparable<Operand> {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;

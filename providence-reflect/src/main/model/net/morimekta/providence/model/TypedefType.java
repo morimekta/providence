@@ -5,7 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class TypedefType
-        implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>, java.io.Serializable, Comparable<TypedefType> {
+        implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
+                   java.io.Serializable,
+                   Comparable<TypedefType> {
     private final static long serialVersionUID = 5431583053440540554L;
 
     private final String mComment;

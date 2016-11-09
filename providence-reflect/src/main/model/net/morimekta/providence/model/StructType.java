@@ -7,7 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements net.morimekta.providence.PMessage<StructType,StructType._Field>, java.io.Serializable, Comparable<StructType> {
+        implements net.morimekta.providence.PMessage<StructType,StructType._Field>,
+                   java.io.Serializable,
+                   Comparable<StructType> {
     private final static long serialVersionUID = -7531050363059752370L;
 
     private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;

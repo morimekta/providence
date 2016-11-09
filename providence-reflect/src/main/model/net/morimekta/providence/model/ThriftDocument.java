@@ -5,7 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>, java.io.Serializable, Comparable<ThriftDocument> {
+        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>,
+                   java.io.Serializable,
+                   Comparable<ThriftDocument> {
     private final static long serialVersionUID = -5731994850994905187L;
 
     private final String mComment;

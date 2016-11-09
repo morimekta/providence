@@ -110,16 +110,23 @@ public class JMessageFormat {
                    .equals(PMessageVariant.EXCEPTION)) {
             writer.appendln("extends " + PException.class.getName());
         }
-        writer.formatln("implements %s<%s,%s._Field>, %s, Comparable<%s>",
+        writer.formatln("implements %s<%s,%s._Field>,",
                         message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
                         message.instanceType(),
-                        message.instanceType(),
-                        Serializable.class.getName(),
-                        message.instanceType());
+                        message.instanceType())
+              .begin("           ")
+              .formatln("%s,", Serializable.class.getName())  // because it may be contained in an exception.
+              .formatln("Comparable<%s>", message.instanceType());
         if (options.android) {
-            writer.format(", android.os.Parcelable");
+            writer.append(",")
+                  .formatln("android.os.Parcelable");
         }
-        writer.append(" {")
+        if (message.extraImplements() != null) {
+            writer.append(",")
+                  .appendln(message.extraImplements());
+        }
+        writer.end()  // "implements" indent
+              .append(" {")
               .end()  // double indent.
               .begin();
 

@@ -3,7 +3,9 @@ package net.morimekta.test.providence;
 @SuppressWarnings("unused")
 public class ExceptionFields
         extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>, java.io.Serializable, Comparable<ExceptionFields> {
+        implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,
+                   java.io.Serializable,
+                   Comparable<ExceptionFields> {
     private final static long serialVersionUID = -4665960318174350293L;
 
     private final static boolean kDefaultBooleanValue = false;

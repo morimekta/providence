@@ -7,7 +7,9 @@ package net.morimekta.providence.serializer;
 @SuppressWarnings("unused")
 public class ApplicationException
         extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<ApplicationException,ApplicationException._Field>, java.io.Serializable, Comparable<ApplicationException> {
+        implements net.morimekta.providence.PMessage<ApplicationException,ApplicationException._Field>,
+                   java.io.Serializable,
+                   Comparable<ApplicationException> {
     private final static long serialVersionUID = 6590039153455193300L;
 
     private final static net.morimekta.providence.serializer.ApplicationExceptionType kDefaultId = net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN;

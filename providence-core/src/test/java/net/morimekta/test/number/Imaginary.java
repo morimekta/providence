@@ -2,7 +2,9 @@ package net.morimekta.test.number;
 
 @SuppressWarnings("unused")
 public class Imaginary
-        implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>, java.io.Serializable, Comparable<Imaginary> {
+        implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
+                   java.io.Serializable,
+                   Comparable<Imaginary> {
     private final static long serialVersionUID = 7869796731524194936L;
 
     private final static double kDefaultV = 0.0d;

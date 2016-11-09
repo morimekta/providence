@@ -7,7 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>, java.io.Serializable, Comparable<ServiceType> {
+        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
+                   java.io.Serializable,
+                   Comparable<ServiceType> {
     private final static long serialVersionUID = 789757775761432238L;
 
     private final String mComment;

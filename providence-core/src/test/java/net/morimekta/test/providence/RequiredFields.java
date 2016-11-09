@@ -2,7 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class RequiredFields
-        implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>, java.io.Serializable, Comparable<RequiredFields> {
+        implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
+                   java.io.Serializable,
+                   Comparable<RequiredFields> {
     private final static long serialVersionUID = -7378845554576050657L;
 
     private final static boolean kDefaultBooleanValue = false;

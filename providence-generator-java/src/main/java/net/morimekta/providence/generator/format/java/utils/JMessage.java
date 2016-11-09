@@ -29,6 +29,7 @@ import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,5 +108,12 @@ public class JMessage<T extends CMessage<T, CField>> {
             default:
                 throw new GeneratorException("Unable to determine type class for " + variant());
         }
+    }
+
+    public String extraImplements() {
+        if (struct instanceof CStructDescriptor) {
+            return ((CStructDescriptor) struct).getAnnotationValue("java.implements");
+        }
+        return null;
     }
 }

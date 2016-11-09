@@ -7,7 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class EnumType
-        implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>, java.io.Serializable, Comparable<EnumType> {
+        implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
+                   java.io.Serializable,
+                   Comparable<EnumType> {
     private final static long serialVersionUID = 5720337451968926862L;
 
     private final String mComment;

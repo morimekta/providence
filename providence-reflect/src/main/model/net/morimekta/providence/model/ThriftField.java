@@ -14,7 +14,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftField
-        implements net.morimekta.providence.PMessage<ThriftField,ThriftField._Field>, java.io.Serializable, Comparable<ThriftField> {
+        implements net.morimekta.providence.PMessage<ThriftField,ThriftField._Field>,
+                   java.io.Serializable,
+                   Comparable<ThriftField> {
     private final static long serialVersionUID = 5114028868232611868L;
 
     private final static int kDefaultKey = 0;
