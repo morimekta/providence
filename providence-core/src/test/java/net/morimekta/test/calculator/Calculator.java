@@ -30,7 +30,7 @@ public class Calculator {
                 Calculate_request._Builder rq = Calculate_request.builder();
                 rq.setOp(pOp);
 
-                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
+                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
                 net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
                 Calculate_response msg = (Calculate_response) resp.getMessage();
 
@@ -57,7 +57,7 @@ public class Calculator {
             try {
                 Iamalive_request._Builder rq = Iamalive_request.builder();
 
-                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
+                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
                 handler.handleCall(call, Calculator.kDescriptor);
             } catch (net.morimekta.providence.serializer.SerializerException e) {
                 throw new java.io.IOException(e);
@@ -98,10 +98,10 @@ public class Calculator {
                         rsp.setCe(e);
                     }
                     net.morimekta.providence.PServiceCall reply =
-                            new net.morimekta.providence.PServiceCall(call.getMethod(),
-                                                                      net.morimekta.providence.PServiceCallType.REPLY,
-                                                                      call.getSequence(),
-                                                                      rsp.build());
+                            new net.morimekta.providence.PServiceCall<>(call.getMethod(),
+                                                                        net.morimekta.providence.PServiceCallType.REPLY,
+                                                                        call.getSequence(),
+                                                                        rsp.build());
                     return reply;
                 }
                 case "iamalive": {

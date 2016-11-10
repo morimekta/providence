@@ -140,7 +140,7 @@ public class JServiceFormat {
                           ? PServiceCallType.ONEWAY.name()
                           : PServiceCallType.CALL.name();
             writer.newline()
-                  .formatln("%s call = new %s(\"%s\", %s.%s, getNextSequenceId(), rq.build());",
+                  .formatln("%s call = new %s<>(\"%s\", %s.%s, getNextSequenceId(), rq.build());",
                             PServiceCall.class.getName(),
                             PServiceCall.class.getName(),
                             method.name(),
@@ -294,15 +294,15 @@ public class JServiceFormat {
             if (method.getResponseClass() != null) {
                 String spaces = PServiceCall.class.getName().replaceAll("[\\S]", " ");
                 writer.formatln("%s reply =", PServiceCall.class.getName())
-                      .formatln("        new %s(call.getMethod(),",
+                      .formatln("        new %s<>(call.getMethod(),",
                                 PServiceCall.class.getName())
-                      .formatln("            %s %s.%s,",
+                      .formatln("            %s   %s.%s,",
                                 spaces,
                                 PServiceCallType.class.getName(),
                                 PServiceCallType.REPLY.name())
-                      .formatln("            %s call.getSequence(),",
+                      .formatln("            %s   call.getSequence(),",
                                 spaces)
-                      .formatln("            %s rsp.build());",
+                      .formatln("            %s   rsp.build());",
                                 spaces)
                       .appendln("return reply;");
             } else {

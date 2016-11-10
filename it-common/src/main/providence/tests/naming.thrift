@@ -19,7 +19,7 @@ enum EnumNames {
     Mixed_Case,
 }
 
-enum Fields {
+enum Enum {
   sDescriptor,
   mName,
   mValue,
@@ -33,14 +33,14 @@ exception Builder {
 }
 
 union Factory {
-    1: Provider Factory;
+    1: Factory Factory;
 }
 
-struct Provider {
-    1: Provider Provider;
+struct Field {
+    1: Field Field;
     2: Factory Factory;
     3: Builder Builder;
-    4: Fields Fields;
+    4: Enum Enum;
 
     5: i32 descriptor;
     6: i32 kDescriptor;
