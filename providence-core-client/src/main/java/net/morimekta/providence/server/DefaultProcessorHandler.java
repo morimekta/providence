@@ -10,6 +10,9 @@ import net.morimekta.providence.serializer.ApplicationException;
 import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.SerializerException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 /**
@@ -19,6 +22,8 @@ import java.io.IOException;
  * exception handling.
  */
 public class DefaultProcessorHandler implements ProcessorHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProcessorHandler.class);
+
     private final PProcessor processor;
 
     /**
@@ -33,69 +38,71 @@ public class DefaultProcessorHandler implements ProcessorHandler {
 
     @Override
     public boolean process(MessageReader reader, MessageWriter writer) throws IOException {
-        PServiceCall call, response, reply;
+        PServiceCall call, reply;
         try {
+            call = reader.read(processor.getDescriptor());
+        } catch (SerializerException e) {
+            if (e.getMethodName() != null) {
+                LOGGER.error("Error when reading service call " + processor.getDescriptor().getName() + "." + e.getMethodName() + "()", e);
+            } else {
+                LOGGER.error("Error when reading service call " + processor.getDescriptor().getName(), e);
+            }
             try {
-                call = reader.read(processor.getDescriptor());
-            } catch (SerializerException e) {
                 ApplicationException oe = ApplicationException.builder()
                                                               .setMessage(e.getMessage())
                                                               .setId(ApplicationExceptionType.INVALID_PROTOCOL)
                                                               .build();
                 reply = new PServiceCall<>(e.getMethodName(), PServiceCallType.EXCEPTION, e.getSequenceNo(), oe);
-                try {
-                    writer.write(reply);
-                    return false;
-                } catch (IOException | SerializerException e2) {
-                    IOException e3 = new IOException(e.getMessage(), e);
-                    e3.addSuppressed(e2);
-                    throw e3;
-                }
+                writer.write(reply);
+                return false;
+            } catch (Exception e2) {
+                IOException e3 = new IOException(e.getMessage(), e);
+                e3.addSuppressed(e2);
+                throw e3;
             }
+        }
 
+        try {
+            reply = processor.handleCall(call);
+        } catch (Exception e) {
+            LOGGER.error("Error when handling service call " + processor.getDescriptor().getName() + "." + call.getMethod() + "()", e);
             try {
-                response = processor.handleCall(call);
-            } catch (IOException | SerializerException e) {
                 ApplicationException oe = ApplicationException.builder()
                                                               .setMessage(e.getMessage())
                                                               .setId(ApplicationExceptionType.INTERNAL_ERROR)
                                                               .build();
                 reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
-                try {
-                    writer.write(reply);
-                    return false;
-                } catch (IOException | SerializerException e2) {
-                    IOException e3 = new IOException(e.getMessage(), e);
-                    e3.addSuppressed(e2);
-                    throw e3;
-                }
+                writer.write(reply);
+                return false;
+            } catch (Exception e2) {
+                IOException e3 = new IOException(e.getMessage(), e);
+                e3.addSuppressed(e2);
+                throw e3;
             }
+        }
 
-            if (response != null) {
+        if (reply != null) {
+            try {
+                writer.write(reply);
+            } catch (SerializerException e) {
+                LOGGER.error("Error when replying to service call " + processor.getDescriptor().getName() + "." + call.getMethod() + "()", e);
                 try {
-                    writer.write(response);
-                } catch (SerializerException e) {
                     ApplicationException oe = ApplicationException.builder()
                                                                   .setMessage(e.getMessage())
                                                                   .setId(ApplicationExceptionType.INVALID_TRANSFORM)
                                                                   .build();
                     reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
-                    try {
-                        writer.write(reply);
-                        // Even though the method returned, we didn't return the proper response.
-                        return false;
-                    } catch (Exception e2) {
-                        IOException e3 = new IOException(e.getMessage(), e);
-                        e3.addSuppressed(e2);
-                        throw e3;
-                    }
+                    writer.write(reply);
+                    // Even though the method returned, we didn't return the proper reply.
+                    return false;
+                } catch (Exception e2) {
+                    IOException e3 = new IOException(e.getMessage(), e);
+                    e3.addSuppressed(e2);
+                    throw e3;
                 }
             }
-
-            return true;
-        } catch (Exception e) {
-            // Unable to handle exception as part of the message channel, must rethrow.
-            throw new IOException(e.getMessage(), e);
         }
+
+        return true;
     }
 }
