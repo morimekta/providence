@@ -11,21 +11,20 @@ import net.morimekta.test.providence.srv.Response;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponseException;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
-import static net.morimekta.providence.testing.util.TestNetUtil.findFreePort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -38,9 +37,6 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class HttpClientHandlerTest {
-    @Rule
-    public TemporaryFolder temp;
-
     private static int             port;
     private static MyService.Iface impl;
     private static Server          server;
@@ -56,18 +52,28 @@ public class HttpClientHandlerTest {
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
 
-        port = findFreePort();
         impl = mock(MyService.Iface.class);
 
         provider = new DefaultSerializerProvider();
 
-        server = new Server(port);
+        server = new Server(0);
         ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new ProvidenceServlet(new MyService.Processor(impl), provider)),
                            "/" + ENDPOINT);
 
         server.setHandler(handler);
         server.start();
+
+        for (Connector connector : server.getConnectors()) {
+            if (connector instanceof ServerConnector) {
+                port = ((ServerConnector) connector).getLocalPort();
+                break;
+            }
+        }
+
+        if (port < 1000) {
+            fail("Unable to assign port to jetty.");
+        }
     }
 
     @Before
@@ -99,13 +105,13 @@ public class HttpClientHandlerTest {
 
     @Test
     public void testSimpleRequest_exception() throws IOException, Failure {
-        when(impl.test(any(Request.class)))
-                .thenThrow(Failure.builder()
-                                  .setText("failure")
-                                  .build());
+        when(impl.test(any(Request.class))).thenThrow(Failure.builder()
+                                                             .setText("failure")
+                                                             .build());
 
-        MyService.Iface client = new MyService.Client(new HttpClientHandler(
-                HttpClientHandlerTest::endpoint, factory(), provider));
+        MyService.Iface client = new MyService.Client(new HttpClientHandler(HttpClientHandlerTest::endpoint,
+                                                                            factory(),
+                                                                            provider));
 
         try {
             client.test(new Request("request"));
@@ -117,16 +123,14 @@ public class HttpClientHandlerTest {
 
     @Test
     public void testSimpleRequest_404() throws IOException, Failure {
-        when(impl.test(any(Request.class)))
-                .thenThrow(Failure.builder()
-                                  .setText("failure")
-                                  .build());
+        when(impl.test(any(Request.class))).thenThrow(Failure.builder()
+                                                             .setText("failure")
+                                                             .build());
 
         GenericUrl url = endpoint();
         url.setRawPath("/" + ENDPOINT + "/does_not_exists");
 
-        MyService.Iface client = new MyService.Client(new HttpClientHandler(
-                () -> url, factory(), provider));
+        MyService.Iface client = new MyService.Client(new HttpClientHandler(() -> url, factory(), provider));
 
         try {
             client.test(new Request("request"));

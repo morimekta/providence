@@ -19,16 +19,11 @@
 package net.morimekta.providence.server;
 
 import net.morimekta.providence.PProcessor;
-import net.morimekta.providence.PServiceCall;
-import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.mio.IOMessageReader;
 import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
-import net.morimekta.providence.serializer.ApplicationException;
-import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
 import javax.servlet.ServletException;
@@ -43,15 +38,35 @@ import java.io.IOException;
  * Thrift's <code>org.apache.thrift.server.TServlet</code> server.
  */
 public class ProvidenceServlet extends HttpServlet {
-    private final ProcessorHandler   handler;
-    private final SerializerProvider serializerProvider;
-
-    public ProvidenceServlet(PProcessor processor, SerializerProvider serializerProvider) {
-        this(new DefaultProcessorHandler(processor), serializerProvider);
+    /**
+     * Processor provider for generating per-request service processors.
+     */
+    public interface ProcessorProvider {
+        PProcessor processorForRequest(HttpServletRequest request);
     }
 
-    public ProvidenceServlet(ProcessorHandler handler, SerializerProvider serializerProvider) {
-        this.handler = handler;
+    private final ProcessorProvider  processorProvider;
+    private final SerializerProvider serializerProvider;
+
+    /**
+     * Creates a providence servlet that uses the same processor every time.
+     *
+     * @param processor The providence service processor.
+     * @param serializerProvider The serializer provider.
+     */
+    public ProvidenceServlet(PProcessor processor, SerializerProvider serializerProvider) {
+        // Default is to always use the same processor.
+        this(r -> processor, serializerProvider);
+    }
+
+    /**
+     * Creates a providence servlet that uses a per request processor.
+     *
+     * @param processorProvider The processor supplier.
+     * @param serializerProvider The serializer provider.
+     */
+    public ProvidenceServlet(ProcessorProvider processorProvider, SerializerProvider serializerProvider) {
+        this.processorProvider = processorProvider;
         this.serializerProvider = serializerProvider;
     }
 
@@ -85,19 +100,15 @@ public class ProvidenceServlet extends HttpServlet {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             MessageWriter writer = new IOMessageWriter(baos, responseSerializer);
 
-            try {
-                handler.process(reader, writer);
-            } catch (IOException ie) {
-                writer.write(new PServiceCall<>(
-                        "", PServiceCallType.EXCEPTION, 0,
-                        new ApplicationException(ie.getMessage(),
-                                                 ApplicationExceptionType.INTERNAL_ERROR)));
-                return;
-            }
+            // Create a new processor handler instance for each request, as
+            // they may be request context dependent. E.g. depends on
+            // information in header, servlet context etc.
+            new DefaultProcessorHandler(processorProvider.processorForRequest(req)).process(reader, writer);
+
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType(accept);
             resp.getOutputStream().write(baos.toByteArray());
-        } catch (IOException|SerializerException e) {
+        } catch (IOException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());
         }
     }
