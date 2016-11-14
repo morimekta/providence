@@ -22,9 +22,9 @@ Proper releases are done with a branch cut.
 
 #### Making the release cut.
 
-* Run `# mvn -Dall clean install` to build and verify the snapshot build
+* Run `# mvn -Pdev,cli,it clean install` to build and verify the snapshot build
   you want to release.
-* Run `# mvn -Dall release:prepare`, which will create two new commits, one with the
+* Run `# mvn -Pdev,cli,it release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
 * Run `# mvn release:perform` to generate the artifacts and push to sonatype
   for staging.
