@@ -564,6 +564,10 @@
                     <name>all</name>
                     <value>true</value>
                 </property>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
             </activation>
             <modules>
                 <!-- Core Modules -->
