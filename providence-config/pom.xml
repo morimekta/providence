@@ -46,6 +46,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -55,7 +56,21 @@
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <extensions>true</extensions>
+                <!--
+                    <extensions>true</extensions>
+
+                    because of the chain of dependencies not necessary working
+                    during releases, this cannot use the extensions for the
+                    plugin, and must declare executions itself.
+                -->
+                <executions>
+                    <execution>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

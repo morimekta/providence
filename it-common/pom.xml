@@ -96,7 +96,29 @@
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
                 <version>${project.version}</version>
-                <extensions>true</extensions>
+                <!--
+                    <extensions>true</extensions>
+
+                    because of the chain of dependencies not necessary working
+                    during releases, this cannot use the extensions for the
+                    plugin, and must declare executions itself.
+                -->
+                <executions>
+                    <execution>
+                        <id>generate-providence</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>assemble-providence</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
