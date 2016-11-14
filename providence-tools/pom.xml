@@ -5,19 +5,6 @@
     <name>Providence CLI : Packaging</name>
     <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), and an RPC tool (pvdrpc).</description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/morimekta/providence-extra.git</url>
-      <tag>v0.2.2</tag>
-  </scm>
-
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
@@ -29,22 +16,22 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-compiler</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-config</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-converter</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-rpc</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

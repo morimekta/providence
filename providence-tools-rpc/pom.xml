@@ -8,6 +8,13 @@
         but trying to call an RPC service in some fashion.
     </description>
 
+    <parent>
+        <groupId>net.morimekta.providence</groupId>
+        <artifactId>providence</artifactId>
+        <version>0.2.4-SNAPSHOT</version>
+    </parent>
+    <artifactId>providence-tools-rpc</artifactId>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -16,146 +23,117 @@
         </license>
     </licenses>
 
-    <scm>
-        <url>https://github.com/morimekta/providence-tools.git</url>
-      <tag>v0.2.2</tag>
-  </scm>
-
-    <parent>
-        <groupId>net.morimekta.providence</groupId>
-        <artifactId>providence</artifactId>
-        <version>0.2.4-SNAPSHOT</version>
-    </parent>
-    <artifactId>providence-tools-rpc</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-client</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-tools-common</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
-            <version>${thrift.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
-            <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
-            <version>${google-http.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${java.servlet.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>testing-util</artifactId>
-            <version>${morimekta_utils.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-testing</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4-rule</artifactId>
-            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -212,7 +190,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.4-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>

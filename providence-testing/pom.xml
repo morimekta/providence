@@ -7,14 +7,6 @@
         Helper libraries for testing and comparing providence structures.
     </description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
@@ -26,65 +18,56 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-jackson</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>android-util</artifactId>
-            <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
-            <version>${google-http.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>${hamcrest.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
-            <version>${thrift.version}</version>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -94,7 +77,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.4-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <configuration>
                     <dependencies>
                         <dependency>

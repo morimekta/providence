@@ -7,19 +7,6 @@
         Common utilities used by the providence CLI tools.
     </description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/morimekta/providence-tools.git</url>
-        <tag>v0.2.2</tag>
-    </scm>
-
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
@@ -31,43 +18,38 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
-            <version>${morimekta_utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
-            <version>${google-http.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 

@@ -1,42 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>Providence Utils : JavaX WS RESTful compatibility</name>
+    <description>
+        Compatibility layer for javax.rw.rs based servlet infrastructure.
+    </description>
+
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
         <version>0.2.4-SNAPSHOT</version>
     </parent>
     <artifactId>providence-jax-rs</artifactId>
-    <name>Providence Utils : JavaX WS RESTful compatibility</name>
 
     <dependencies>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.0</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-thrift</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -46,15 +49,8 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.4-SNAPSHOT</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <phase>generate-test-sources</phase>
-                    </execution>
-                </executions>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
             </plugin>
         </plugins>
     </build>

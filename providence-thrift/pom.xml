@@ -8,19 +8,6 @@
         structures.
     </description>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/morimekta/providence.git</url>
-      <tag>v0.2.2</tag>
-  </scm>
-
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
@@ -32,36 +19,32 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
-            <version>${thrift.version}</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>0.2.4-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
         </dependency>
     </dependencies>
 
@@ -70,7 +53,7 @@
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
                 <artifactId>providence-maven-plugin</artifactId>
-                <version>0.2.4-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <!--
                     because of the chain of dependencies not necessary working
                     during releases, this cannot use the extensions for the
