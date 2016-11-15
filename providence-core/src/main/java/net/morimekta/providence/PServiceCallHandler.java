@@ -29,5 +29,5 @@ public interface PServiceCallHandler {
             RequestField extends PField,
             ResponseField extends PField>
     PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call, PService service)
-            throws IOException, SerializerException;
+            throws IOException;
 }

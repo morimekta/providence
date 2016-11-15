@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptorProvider;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
 import net.morimekta.providence.reflect.contained.CStructDescriptor;
@@ -111,8 +112,8 @@ public class JMessage<T extends CMessage<T, CField>> {
     }
 
     public String extraImplements() {
-        if (struct instanceof CStructDescriptor) {
-            return ((CStructDescriptor) struct).getAnnotationValue("java.implements");
+        if (struct instanceof CAnnotatedDescriptor) {
+            return ((CAnnotatedDescriptor) struct).getAnnotationValue("java.implements");
         }
         return null;
     }
@@ -121,9 +122,9 @@ public class JMessage<T extends CMessage<T, CField>> {
         if (!isException()) {
             return null;
         }
-        if (struct instanceof CStructDescriptor) {
-            if (((CStructDescriptor) struct).hasAnnotation("java.exception.class")) {
-                return ((CStructDescriptor) struct).getAnnotationValue("java.exception.class");
+        if (struct instanceof CAnnotatedDescriptor) {
+            if (((CAnnotatedDescriptor) struct).hasAnnotation("java.exception.class")) {
+                return ((CAnnotatedDescriptor) struct).getAnnotationValue("java.exception.class");
             }
         }
         return Exception.class.getSimpleName();

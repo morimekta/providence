@@ -26,42 +26,36 @@ public class Calculator {
                 net.morimekta.test.calculator.Operation pOp)
                 throws java.io.IOException,
                        net.morimekta.test.calculator.CalculateException {
-            try {
-                Calculate_request._Builder rq = Calculate_request.builder();
-                rq.setOp(pOp);
+            Calculate_request._Builder rq = Calculate_request.builder();
+            rq.setOp(pOp);
 
-                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
-                net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
-                Calculate_response msg = (Calculate_response) resp.getMessage();
+            net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
+            net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
+            Calculate_response msg = (Calculate_response) resp.getMessage();
 
-                if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
-                    net.morimekta.providence.PApplicationException ex = (net.morimekta.providence.PApplicationException) resp.getMessage();
-                    throw new java.io.IOException(ex.getMessage(), ex);
-                }
-                if (msg.unionField() != null) {
-                    switch (msg.unionField()) {
-                        case CE:
-                            throw msg.getCe();
-                    }
-                }
-
-                return msg.getSuccess();
-            } catch (net.morimekta.providence.serializer.SerializerException e) {
-                throw new java.io.IOException(e);
+            if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
+                throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
+            if (msg.unionField() != null) {
+                switch (msg.unionField()) {
+                    case CE:
+                        throw msg.getCe();
+                    case SUCCESS:
+                        return msg.getSuccess();
+                }
+            }
+
+            throw new net.morimekta.providence.PApplicationException("Result field for calculator.Calculator.calculate() not set",
+                                                                     net.morimekta.providence.PApplicationExceptionType.MISSING_RESULT);
         }
 
         @Override
         public void iamalive()
                 throws java.io.IOException {
-            try {
-                Iamalive_request._Builder rq = Iamalive_request.builder();
+            Iamalive_request._Builder rq = Iamalive_request.builder();
 
-                net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
-                handler.handleCall(call, Calculator.kDescriptor);
-            } catch (net.morimekta.providence.serializer.SerializerException e) {
-                throw new java.io.IOException(e);
-            }
+            net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
+            handler.handleCall(call, Calculator.kDescriptor);
         }
     }
 

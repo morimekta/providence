@@ -413,7 +413,7 @@ public class JMessageFormat {
                           .appendln('}')
                           .newline();
                 }
-                if (field.alwaysPresent()) {
+                if (field.alwaysPresent() || field.isVoid()) {
                     writer.formatln("public boolean %s() {", field.presence())
                           .formatln("    return tUnionField == _Field.%s;", field.fieldEnum())
                           .appendln('}')
@@ -450,6 +450,11 @@ public class JMessageFormat {
                 }
             }
 
+            if (field.isVoid()) {
+                // Void fields have no value.
+                continue;
+            }
+
             BlockCommentBuilder comment = new BlockCommentBuilder(writer);
             if (field.hasComment()) {
                 comment.comment(field.comment())
@@ -482,6 +487,10 @@ public class JMessageFormat {
 
     private void appendFieldDeclarations(IndentedPrintWriter writer, JMessage<?> message) throws GeneratorException {
         for (JField field : message.fields()) {
+            if (field.isVoid()) {
+                // Void fields have no value.
+                continue;
+            }
             writer.formatln("private final %s %s;", field.fieldType(), field.member());
         }
         if (message.isUnion()) {
@@ -502,6 +511,9 @@ public class JMessageFormat {
 
             for (JField field : message.fields()) {
                 switch (field.type()) {
+                    case VOID:
+                        // Void fields have no value.
+                        break;
                     case LIST:
                         writer.formatln(
                                 "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
@@ -560,7 +572,8 @@ public class JMessageFormat {
                     if (field.container()) {
                         writer.format("builder.%s() ? builder.%s.build() : null",
                                       field.isSet(), field.member());
-                    } else {
+                    } else if (!field.isVoid()) {
+                        // Void fields have no value.
                         writer.format("builder.%s", field.member());
                     }
                 }
@@ -576,13 +589,12 @@ public class JMessageFormat {
                           .appendln("} else {")
                           .formatln("    %s = null;", field.member())
                           .appendln('}');
-                } else {
-                    if (field.type() == PType.MESSAGE) {
-                        writer.formatln("%s = builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
-                                        field.member(), field.member(), field.member(), field.member());
-                    } else {
-                        writer.formatln("%s = builder.%s;", field.member(), field.member());
-                    }
+                } else if (field.type() == PType.MESSAGE) {
+                    writer.formatln("%s = builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
+                                    field.member(), field.member(), field.member(), field.member());
+                } else if (!field.isVoid()){
+                    // Void fields have no value.
+                    writer.formatln("%s = builder.%s;", field.member(), field.member());
                 }
             }
         }
@@ -597,13 +609,16 @@ public class JMessageFormat {
 
         boolean first = true;
         for (JField fld : message.fields()) {
-            if (first) {
-                first = false;
-            } else {
-                writer.append(',')
-                      .appendln();
+            if (!fld.isVoid()) {
+                // Void fields have no value.
+                if (first) {
+                    first = false;
+                } else {
+                    writer.append(',')
+                          .appendln();
+                }
+                writer.format("%s %s", fld.valueType(), fld.param());
             }
-            writer.format("%s %s", fld.valueType(), fld.param());
         }
 
         writer.append(") {")
@@ -615,12 +630,18 @@ public class JMessageFormat {
         boolean firstFirstCheck = true;
         boolean alwaysAfter = false;
         boolean last;
-        JField[] fields = message.fields().toArray(new JField[message.fields().size()]);
-        for (int i = 0; i < fields.length; ++i) {
+        int i = 0;
+        int lastPos = message.fields().size() - 1;
+        for (JField field : message.fields()) {
+            if (field.isVoid()) {
+                // Void fields have no value.
+                lastPos--;
+                continue;
+            }
+            last  = i == lastPos;
             first = i == 0;
-            last  = i == (fields.length - 1);
+            ++i;
 
-            JField field = fields[i];
             if (!field.alwaysPresent()) {
                 if (!alwaysAfter && firstFirstCheck && !last) {
                     writer.appendln("boolean first = true;");
@@ -714,15 +735,26 @@ public class JMessageFormat {
                 block.param_("value", "The union value")
                      .return_("The created union.")
                      .finish();
-                writer.formatln("public static %s %s(%s value) {",
-                                message.instanceType(),
-                                camelCase("with", field.name()),
-                                field.valueType())
-                      .begin()
-                      .formatln("return new _Builder().%s(value).build();", field.setter())
-                      .end()
-                      .appendln('}')
-                      .newline();
+                if (field.isVoid()) {
+                    writer.formatln("public static %s %s() {",
+                                    message.instanceType(),
+                                    camelCase("with", field.name()))
+                          .begin()
+                          .formatln("return new _Builder().%s().build();", field.setter())
+                          .end()
+                          .appendln('}')
+                          .newline();
+                } else {
+                    writer.formatln("public static %s %s(%s value) {",
+                                    message.instanceType(),
+                                    camelCase("with", field.name()),
+                                    field.valueType())
+                          .begin()
+                          .formatln("return new _Builder().%s(value).build();", field.setter())
+                          .end()
+                          .appendln('}')
+                          .newline();
+                }
             }
         } else {
             String spaces = message.instanceType()
@@ -731,6 +763,10 @@ public class JMessageFormat {
                   .begin("        " + spaces);
             boolean first = true;
             for (JField field : message.fields()) {
+                if (field.isVoid()) {
+                    // Void fields have no value.
+                    continue;
+                }
                 if (first) {
                     first = false;
                 } else {
@@ -748,6 +784,11 @@ public class JMessageFormat {
                       .begin(   "                    ");
                 first = true;
                 for (JField field : message.fields()) {
+                    // Void fields have no value.
+                    if (field.isVoid()) {
+                        continue;
+                    }
+
                     if (first) {
                         first = false;
                     } else {
@@ -762,6 +803,10 @@ public class JMessageFormat {
             }
 
             for (JField field : message.fields()) {
+                // Void fields have no value.
+                if (field.isVoid()) {
+                    continue;
+                }
                 switch (field.type()) {
                     case LIST:
                         writer.formatln("if (%s != null) {", field.param())

@@ -22,6 +22,7 @@ package net.morimekta.providence.reflect.util;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -170,18 +171,26 @@ public class DocumentConverter {
                         CUnionDescriptor response = null;
                         if (!sm.isOneWay()) {
                             List<CField> rsFields = new LinkedList<>();
+                            CField success;
                             if (sm.getReturnType() != null) {
                                 PDescriptorProvider type = registry.getProvider(sm.getReturnType(), document.getPackage(), sm.getAnnotations());
-
-                                CField success = new CField(null,
-                                                            0,
-                                                            PRequirement.OPTIONAL,
-                                                            "success",
-                                                            type,
-                                                            null,
-                                                            null);
-                                rsFields.add(success);
+                                success = new CField(null,
+                                                     0,
+                                                     PRequirement.OPTIONAL,
+                                                     "success",
+                                                     type,
+                                                     null,
+                                                     null);
+                            } else {
+                                success = new CField(null,
+                                                     0,
+                                                     PRequirement.OPTIONAL,
+                                                     "success",
+                                                     PPrimitive.VOID.provider(),
+                                                     null,
+                                                     null);
                             }
+                            rsFields.add(success);
 
                             if (sm.numExceptions() > 0) {
                                 for (ThriftField field : sm.getExceptions()) {

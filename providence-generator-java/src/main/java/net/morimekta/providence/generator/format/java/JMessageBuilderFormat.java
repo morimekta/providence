@@ -111,6 +111,10 @@ public class JMessageBuilderFormat {
         }
         writer.newline();
         for (JField field : message.fields()) {
+            // Void fields have no value.
+            if (field.isVoid()) {
+                continue;
+            }
             writer.formatln("private %s %s;", field.builderFieldType(), field.member());
             if (field.type() == PType.MESSAGE) {
                 writer.formatln("private %s._Builder %s_builder;", field.builderFieldType(), field.member());
@@ -176,6 +180,9 @@ public class JMessageBuilderFormat {
                 writer.formatln("optionals.set(%d);", field.index());
             }
             switch (field.type()) {
+                case VOID:
+                    // Void fields have no value.
+                    break;
                 case LIST:
                 case SET:
                     writer.formatln("%s.addAll(base.%s);", field.member(), field.member());
@@ -217,6 +224,10 @@ public class JMessageBuilderFormat {
                       .begin();
 
                 switch (field.type()) {
+                    case VOID:
+                        // Void fields have no value.
+                        writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                        break;
                     case MESSAGE:
                         writer.formatln("if (tUnionField == _Field.%s && %s != null) {",
                                         field.fieldEnum(), field.member())
@@ -335,9 +346,12 @@ public class JMessageBuilderFormat {
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
-        if (field.type() == PType.SET || field.type() == PType.LIST) {
+        if (field.isVoid()) {
+            // Void fields have no value.
+            writer.formatln("public _Builder %s() {", field.setter());
+        } else if (field.type() == PType.SET || field.type() == PType.LIST) {
             PContainer<?> cType = (PContainer<?>) field.getPField()
-                                                             .getDescriptor();
+                                                       .getDescriptor();
             String iType = helper.getFieldType(cType.itemDescriptor());
             writer.formatln("public _Builder %s(%s<%s> value) {",
                             field.setter(), Collection.class.getName(), iType);
@@ -353,6 +367,9 @@ public class JMessageBuilderFormat {
         }
 
         switch (field.type()) {
+            case VOID:
+                // Void fields have no value.
+                break;
             case SET:
             case LIST:
                 writer.formatln("%s.clear();", field.member())
@@ -496,6 +513,8 @@ public class JMessageBuilderFormat {
 
         if (field.container()) {
             writer.formatln("%s.clear();", field.member());
+        } else if (field.isVoid()) {
+            // Void fields have no value.
         } else if (field.alwaysPresent()) {
             writer.formatln("%s = %s;", field.member(), field.kDefault());
         } else {
@@ -624,7 +643,12 @@ public class JMessageBuilderFormat {
               .appendln("switch (key) {")
               .begin();
         for (JField field : message.fields()) {
-            writer.formatln("case %d: %s((%s) value); break;", field.id(), field.setter(), field.valueType());
+            if (field.isVoid()) {
+                // Void fields have no value.
+                writer.formatln("case %d: %s(); break;", field.id(), field.setter(), field.valueType());
+            } else {
+                writer.formatln("case %d: %s((%s) value); break;", field.id(), field.setter(), field.valueType());
+            }
         }
         writer.end()
               .appendln('}')
@@ -692,7 +716,10 @@ public class JMessageBuilderFormat {
                    .stream()
                    .filter(field -> !field.alwaysPresent())
                    .forEachOrdered(field -> {
-                       if (field.type() == PType.MESSAGE) {
+                       if (field.isVoid()) {
+                           // Void fields have no value.
+                           writer.formatln("case %s: return true;", field.fieldEnum());
+                       } else if (field.type() == PType.MESSAGE) {
                            writer.formatln("case %s: return %s != null || %s_builder != null;",
                                            field.fieldEnum(),
                                            field.member(),

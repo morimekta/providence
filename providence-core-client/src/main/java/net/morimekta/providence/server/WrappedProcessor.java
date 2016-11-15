@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class WrappedProcessor implements PProcessor {
     public interface ProcessorWrapper {
-        PServiceCall handleWrappedCall(PServiceCall call, PProcessor processor) throws IOException, SerializerException;
+        PServiceCall handleWrappedCall(PServiceCall call, PProcessor processor) throws IOException;
     }
 
     private final PProcessor       processor;
@@ -38,7 +38,7 @@ public class WrappedProcessor implements PProcessor {
             ResponseField extends PField>
     PServiceCall<Response, ResponseField> handleCall(
             PServiceCall<Request, RequestField> call,
-            PService service) throws IOException, SerializerException {
+            PService service) throws IOException {
         return processorWrapper.handleWrappedCall(call, processor);
     }
 }

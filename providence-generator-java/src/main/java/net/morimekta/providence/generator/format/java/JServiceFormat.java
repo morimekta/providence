@@ -127,8 +127,6 @@ public class JServiceFormat {
 
             writer.format(" {")
                   .end()
-                  .begin()
-                  .appendln("try {")
                   .begin();
 
             writer.formatln("%s._Builder rq = %s.builder();", method.getRequestClass(), method.getRequestClass());
@@ -161,42 +159,48 @@ public class JServiceFormat {
 
                 writer.newline()
                       .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
-                      .formatln("    %s ex = (%s) resp.getMessage();",
-                                PApplicationException.class.getName(),
+                      .formatln("    throw (%s) resp.getMessage();",
                                 PApplicationException.class.getName())
-                      .formatln("    throw new %s(ex.getMessage(), ex);",
-                                IOException.class.getName())
                       .appendln('}');
 
+                writer.appendln("if (msg.unionField() != null) {")
+                      .begin()
+                      .appendln("switch (msg.unionField()) {")
+                      .begin();
                 if (method.exceptions().length > 0) {
-                    // In case there is no return value, and no exception,
-                    // the union field is not set.
-                    writer.appendln("if (msg.unionField() != null) {")
-                          .begin();
-                    writer.appendln("switch (msg.unionField()) {")
-                          .begin();
-
                     for (JField ex : method.exceptions()) {
                         writer.formatln("case %s:", ex.fieldEnum())
                               .formatln("    throw msg.%s();", ex.getter());
                     }
-                    writer.end()
-                          .appendln("}");
-                    writer.end()
-                          .appendln("}");
+                }
+                if (method.getResponse() != null) {
+                    writer.formatln("case %s:", method.getResponse().fieldEnum());
+                    if (method.getResponse().isVoid()) {
+                        writer.formatln("    return;");
+                    } else {
+                        writer.formatln("    return msg.%s();", method.getResponse().getter());
+                    }
                 }
 
-                if (method.getResponse() != null) {
-                    writer.newline()
-                          .formatln("return msg.%s();", method.getResponse().getter());
-                }
+                writer.end()
+                      .appendln("}")
+                      .end()
+                      .appendln("}")
+                      .newline();
+
+                // In case there is no return value, and no exception,
+                // the union field is not set. This *should* cause an error.
+                writer.formatln("throw new %s(\"Result field for %s.%s() not set\",",
+                                PApplicationException.class.getName(),
+                                service.getService().getQualifiedName(null),
+                                method.name())
+                      .formatln("          %s %s.%s);",
+                                PApplicationException.class.getName().replaceAll(".", " "),
+                                PApplicationExceptionType.class.getName(),
+                                PApplicationExceptionType.MISSING_RESULT.name());
             }
 
             writer.end()
-                  .formatln("} catch (%s e) {", SerializerException.class.getName())
-                  .formatln("    throw new %s(e);", IOException.class.getName())
-                  .appendln('}')
-                  .end()
                   .appendln('}');
         }
 
@@ -253,7 +257,7 @@ public class JServiceFormat {
                             method.getRequestClass());
 
             String indent = "      " + Strings.times(" ", method.methodName().length());
-            if (method.getResponse() != null) {
+            if (method.getResponse() != null && !method.getResponse().isVoid()) {
                 writer.formatln("%s result =", method.getResponse().valueType());
                 writer.appendln("        ");
                 indent += "        ";
@@ -278,7 +282,11 @@ public class JServiceFormat {
                   .append(");");
 
             if (method.getResponse() != null) {
-                writer.formatln("rsp.%s(result);", method.getResponse().setter());
+                if (method.getResponse().isVoid()) {
+                    writer.formatln("rsp.%s();", method.getResponse().setter());
+                } else {
+                    writer.formatln("rsp.%s(result);", method.getResponse().setter());
+                }
             }
 
             if (method.exceptions().length > 0) {

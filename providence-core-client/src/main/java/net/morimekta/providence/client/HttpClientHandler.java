@@ -63,8 +63,7 @@ public class HttpClientHandler implements PServiceCallHandler {
             RequestField extends PField,
             ResponseField extends PField>
     PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> pServiceCall,
-                                                     PService service)
-            throws IOException, SerializerException {
+                                                     PService service) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         requestSerializer.serialize(baos, pServiceCall);
 

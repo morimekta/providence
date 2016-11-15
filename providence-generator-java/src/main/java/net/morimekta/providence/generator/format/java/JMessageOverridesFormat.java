@@ -82,7 +82,13 @@ public class JMessageOverridesFormat {
               .begin();
 
         for (JField field : message.fields()) {
-            writer.formatln("case %d: return %s();", field.id(), field.getter());
+            if (field.isVoid()) {
+                // Void fields have no value.
+                writer.formatln("case %d: return %s() ? Boolean.FALSE : null;",
+                                field.id(), field.presence());
+            } else {
+                writer.formatln("case %d: return %s();", field.id(), field.getter());
+            }
         }
 
         writer.appendln("default: return null;")
@@ -160,6 +166,10 @@ public class JMessageOverridesFormat {
                 first = false;
             }
             for (JField field : message.fields()) {
+                // Void fields have no value.
+                if (field.isVoid()) {
+                    continue;
+                }
                 if (first) {
                     first = false;
                 } else {
@@ -198,6 +208,10 @@ public class JMessageOverridesFormat {
               .begin("        ")
               .formatln("%s.class", message.instanceType());
         for (JField field : message.fields()) {
+            // Void fields have no value.
+            if (field.isVoid()) {
+                continue;
+            }
             writer.append(",");
             writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
         }
@@ -242,6 +256,10 @@ public class JMessageOverridesFormat {
                       .formatln("out.append(\"%s:\")", field.name());
 
                 switch (field.type()) {
+                    case VOID:
+                        // Void fields have no value, and is always 'true' if present.
+                        writer.appendln("   .append(\"true\");");
+                        break;
                     case BOOL:
                     case I32:
                     case I64:
@@ -284,14 +302,20 @@ public class JMessageOverridesFormat {
         } else {
             boolean firstFirstCheck = true;
             boolean alwaysAfter = false;
-            boolean last, first;
-
-            JField[] fields = message.fields().toArray(new JField[message.fields().size()]);
-            for (int i = 0; i < fields.length; ++i) {
+            boolean last;
+            boolean first;
+            int i = 0;
+            int lastPos = message.fields().size() - 1;
+            for (JField field : message.fields()) {
+                // Void fields have no value.
+                if (field.isVoid()) {
+                    lastPos--;
+                    continue;
+                }
+                last  = i == lastPos;
                 first = i == 0;
-                last  = i == (fields.length - 1);
+                ++i;
 
-                JField field = fields[i];
                 if (!field.alwaysPresent()) {
                     if (!alwaysAfter && firstFirstCheck && !last) {
                         writer.appendln("boolean first = true;");
@@ -393,6 +417,10 @@ public class JMessageOverridesFormat {
                       .begin();
 
                 switch (field.type()) {
+                    case VOID:
+                        // Void is always equal to void.
+                        writer.appendln("return 0;");
+                        break;
                     case BOOL:
                         writer.formatln("return Boolean.compare(%s, other.%s);", field.member(), field.member());
                         break;
@@ -440,6 +468,11 @@ public class JMessageOverridesFormat {
             writer.appendln("int c;");
 
             for (JField field : message.fields()) {
+                // Void fields have no value.
+                if (field.isVoid()) {
+                    continue;
+                }
+
                 writer.newline();
 
                 if (!field.alwaysPresent()) {

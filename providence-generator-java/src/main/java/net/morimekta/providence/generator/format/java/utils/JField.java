@@ -384,4 +384,8 @@ public class JField {
     public String comment() {
         return field.getComment();
     }
+
+    public boolean isVoid() {
+        return field.getType() == PType.VOID;
+    }
 }

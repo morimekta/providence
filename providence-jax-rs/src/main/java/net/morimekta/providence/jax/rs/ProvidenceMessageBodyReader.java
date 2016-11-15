@@ -80,7 +80,7 @@ public abstract class ProvidenceMessageBodyReader<T extends PMessage<T, F>, F ex
             PStructDescriptor<T,F> descriptor = getDescriptor(type);
             return mSerializer.deserialize(entityStream, descriptor);
         } catch (SerializerException e) {
-            throw new ProcessingException("", e);
+            throw new ProcessingException("Unable to deserialize entity", e);
         }
     }
 }

@@ -76,6 +76,8 @@ public class JHelper {
 
     public String getInstanceClassName(PField field) throws GeneratorException {
         switch (field.getType()) {
+            case VOID:
+                return Void.class.getSimpleName();
             case BOOL:
                 return Boolean.class.getSimpleName();
             case BYTE:
@@ -130,6 +132,8 @@ public class JHelper {
 
     public String getValueType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
+            case VOID:
+                return Void.TYPE.getSimpleName();
             case BOOL:
                 return Boolean.TYPE.getSimpleName();
             case BYTE:
@@ -172,6 +176,8 @@ public class JHelper {
 
     public String getFieldType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
+            case VOID:
+                return Void.class.getSimpleName();
             case BOOL:
                 return Boolean.class.getSimpleName();
             case BYTE:
