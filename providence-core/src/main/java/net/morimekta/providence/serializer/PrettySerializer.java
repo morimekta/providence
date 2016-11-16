@@ -245,6 +245,20 @@ public class PrettySerializer extends Serializer {
 
     private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException, TokenizerException {
         switch (descriptor.getType()) {
+            case VOID: {
+                // Even void fields needs a value token...
+                // Allow any boolean true value that is an _identifier_. No numbers here.
+                Token t = tokenizer.expect("void value");
+                switch (t.asString().toLowerCase()) {
+                    case "t":
+                    case "true":
+                    case "y":
+                    case "yes":
+                        return Boolean.TRUE;
+                }
+                throw new TokenizerException(t, "Invalid void value " + t.asString())
+                        .setLine(tokenizer.getLine(t.getLineNo()));
+            }
             case BOOL: {
                 Token t = tokenizer.expect("boolean value");
                 switch (t.asString().toLowerCase()) {
@@ -253,13 +267,13 @@ public class PrettySerializer extends Serializer {
                     case "true":
                     case "y":
                     case "yes":
-                        return true;
+                        return Boolean.TRUE;
                     case "0":
                     case "f":
                     case "false":
                     case "n":
                     case "no":
-                        return false;
+                        return Boolean.FALSE;
                 }
                 throw new TokenizerException(t, "Invalid boolean value " + t.asString())
                         .setLine(tokenizer.getLine(t.getLineNo()));
@@ -609,6 +623,9 @@ public class PrettySerializer extends Serializer {
                       .appendln(Token.kMessageEnd);
                 break;
             }
+            case VOID:
+                writer.print(true);
+                break;
             case MESSAGE:
                 PMessage<?,?> message = (PMessage<?, ?>) o;
                 appendMessage(writer, message, true);

@@ -25,7 +25,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -401,14 +400,14 @@ public class JsonSerializer extends Serializer {
     private Object parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
             throws IOException, SerializerException {
         if (token.isNull()) {
-            if (t.getType() == PType.VOID) {
-                return Boolean.FALSE;
-            }
             return null;
         }
 
         try {
             switch (t.getType()) {
+                case VOID: {
+                    return token.booleanValue() ? Boolean.TRUE : null;
+                }
                 case BOOL:
                     if (token.isBoolean()) {
                         return token.booleanValue();
@@ -668,7 +667,7 @@ public class JsonSerializer extends Serializer {
             throws SerializerException, JsonException {
         switch (type.getType()) {
             case VOID:
-                writer.value((String) null);
+                writer.value(true);
                 break;
             case MESSAGE:
                 PMessage<?,?> message = (PMessage<?,?>) value;

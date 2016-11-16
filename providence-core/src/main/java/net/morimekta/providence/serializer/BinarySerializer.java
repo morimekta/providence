@@ -336,7 +336,7 @@ public class BinarySerializer extends Serializer {
 
         switch (PType.findById(fieldInfo.getType())) {
             case VOID:
-                return Boolean.FALSE;
+                return Boolean.TRUE;
             case BOOL:
                 return in.expectByte() != 0;
             case BYTE:
@@ -488,6 +488,8 @@ public class BinarySerializer extends Serializer {
     private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException,
                                                                                                SerializerException {
         switch (descriptor.getType()) {
+            case VOID:
+                return 0;
             case BOOL:
                 return out.writeByte(((Boolean) value) ? (byte) 1 : (byte) 0);
             case BYTE:
@@ -545,7 +547,7 @@ public class BinarySerializer extends Serializer {
                 return size;
             }
             default:
-                throw new SerializerException("");
+                throw new SerializerException("Unhandled field type: " + descriptor.getType());
         }
     }
 

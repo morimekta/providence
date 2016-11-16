@@ -233,7 +233,7 @@ public class FastBinarySerializer extends Serializer {
             throws IOException, SerializerException {
         switch (descriptor.getType()) {
             case VOID: {
-                return out.writeVarint(key << 3 | NONE);
+                return out.writeVarint(key << 3 | TRUE);
             }
             case BOOL: {
                 return out.writeVarint(key << 3 | ((Boolean) value ? TRUE : NONE));
