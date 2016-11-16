@@ -9,6 +9,7 @@ import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
+import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
@@ -429,7 +430,7 @@ public class JServiceFormat {
         if (service.getService().getExtendsService() != null) {
             CService other = (CService) service.getService().getExtendsService();
             inherits = helper.getJavaPackage(other) + "." +
-                       new JService(other, helper).className() + ".kDescriptor";
+                       new JService(other, helper).className() + ".provider()";
         }
 
         writer.formatln("private static class _Descriptor extends %s {",
@@ -450,8 +451,25 @@ public class JServiceFormat {
               .appendln('}')
               .newline();
 
+        writer.formatln("private static class _Provider implements %s {",
+                        PServiceProvider.class.getName())
+              .begin()
+              .appendln("@Override")
+              .formatln("public %s getService() {", PService.class.getName())
+              .appendln("    return kDescriptor;")
+              .appendln("}")
+              .end()
+              .appendln('}')
+              .newline();
+
         writer.formatln("public static final %s kDescriptor = new _Descriptor();",
                         PService.class.getName())
+              .newline();
+
+        writer.formatln("public static %s provider() {",
+                        PServiceProvider.class.getName())
+              .appendln("    return new _Provider();")
+              .appendln('}')
               .newline();
     }
 
@@ -483,7 +501,7 @@ public class JServiceFormat {
               .begin();
 
         boolean firstMethod = true;
-        for (JServiceMethod method : service.methods()) {
+        for (JServiceMethod method : service.declaredMethods()) {
             if (firstMethod) {
                 firstMethod = false;
             } else {

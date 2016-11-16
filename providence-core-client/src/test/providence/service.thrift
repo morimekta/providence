@@ -13,9 +13,11 @@ exception Failure {
     1: string text;
 }
 
-service MyService {
+service BaseService {
     oneway void ping();
+}
 
+service MyService extends BaseService {
     Response test(1: Request request) throws (1: Failure f);
 
     double test2(2: i64 a, 4: byte late);
