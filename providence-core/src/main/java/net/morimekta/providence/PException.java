@@ -20,21 +20,21 @@
 package net.morimekta.providence;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 13.09.15
+ * Base class for exception type struct classes to access exception methods
+ * that may be hidden by actual fields.
  */
-public abstract class PException extends Exception {
-    private static final long serialVersionUID = 1442914318188313667L;
+public interface PException {
+    /**
+     * Get the original message from the actual exception.
+     *
+     * @return The original message.
+     */
+    String origGetMessage();
 
-    protected PException(String message) {
-        super(message);
-    }
-
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
-    }
+    /**
+     * Get the original message from the actual exception.
+     *
+     * @return The original message.
+     */
+    String origGetLocalizedMessage();
 }

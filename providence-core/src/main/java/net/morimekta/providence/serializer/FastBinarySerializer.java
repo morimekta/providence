@@ -19,6 +19,8 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -79,7 +81,7 @@ public class FastBinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, Message message) throws IOException, SerializerException {
+    int serialize(OutputStream os, Message message) throws IOException {
         BinaryWriter out = new BinaryWriter(os);
         return writeMessage(out, message);
     }
@@ -87,10 +89,10 @@ public class FastBinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, PServiceCall<Message, Field> call)
-            throws IOException, SerializerException {
+            throws IOException {
         BinaryWriter out = new BinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
-        int len = out.writeVarint(method.length << 3 | call.getType().key);
+        int len = out.writeVarint(method.length << 3 | call.getType().getValue());
         len += method.length;
         out.write(method);
         len += out.writeInt(call.getSequence());
@@ -101,7 +103,7 @@ public class FastBinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream is, PStructDescriptor<Message, Field> descriptor)
-            throws SerializerException, IOException {
+            throws IOException {
         BinaryReader in = new BinaryReader(is);
         return readMessage(in, descriptor);
     }
@@ -123,13 +125,13 @@ public class FastBinarySerializer extends Serializer {
 
             methodName = new String(in.expectBytes(len), UTF_8);
             sequence = in.readIntVarint();
-            type = PServiceCallType.findByKey(typeKey);
+            type = PServiceCallType.forValue(typeKey);
 
             if (type == null) {
                 throw new SerializerException("Invalid call type " + typeKey)
-                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                        .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             } else if (type == PServiceCallType.EXCEPTION) {
-                ApplicationException ex = readMessage(in, ApplicationException.kDescriptor);
+                PApplicationException ex = readMessage(in, PApplicationException.kDescriptor);
                 return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             }
 
@@ -138,23 +140,21 @@ public class FastBinarySerializer extends Serializer {
                 throw new SerializerException("No such method %s on %s",
                                               methodName,
                                               service.getQualifiedName(null))
-                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD);
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<Message, Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(in, descriptor);
             return new PServiceCall<>(methodName, type, sequence, message);
-        } catch (IOException e) {
-            throw new SerializerException(e, e.getMessage())
-                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+        } catch (SerializerException e) {
+            throw new SerializerException(e)
                     .setCallType(type)
                     .setMethodName(methodName)
                     .setSequenceNo(sequence);
-        } catch (SerializerException e) {
+        } catch (IOException e) {
             throw new SerializerException(e, e.getMessage())
-                    .setExceptionType(e.getExceptionType())
                     .setCallType(type)
                     .setMethodName(methodName)
                     .setSequenceNo(sequence);
@@ -175,7 +175,7 @@ public class FastBinarySerializer extends Serializer {
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     int writeMessage(BinaryWriter out, Message message)
-            throws IOException, SerializerException {
+            throws IOException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -196,7 +196,7 @@ public class FastBinarySerializer extends Serializer {
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BinaryReader in, PStructDescriptor<Message, Field> descriptor)
-            throws SerializerException, IOException {
+            throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
         while ((tag = in.readIntVarint()) > STOP) {
@@ -230,7 +230,7 @@ public class FastBinarySerializer extends Serializer {
 
     @SuppressWarnings("unchecked")
     private int writeFieldValue(BinaryWriter out, int key, PDescriptor descriptor, Object value)
-            throws IOException, SerializerException {
+            throws IOException {
         switch (descriptor.getType()) {
             case VOID: {
                 return out.writeVarint(key << 3 | TRUE);
@@ -294,7 +294,7 @@ public class FastBinarySerializer extends Serializer {
 
     @SuppressWarnings("unchecked")
     private int writeContainerEntry(BinaryWriter out, int typeid, PDescriptor descriptor, Object value)
-            throws IOException, SerializerException {
+            throws IOException {
         switch (typeid) {
             case VARINT: {
                 if (value instanceof Boolean) {
@@ -365,7 +365,7 @@ public class FastBinarySerializer extends Serializer {
 
     @SuppressWarnings("unchecked")
     private Object readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
-            throws IOException, SerializerException {
+            throws IOException {
         switch (type) {
             case NONE:
                 return Boolean.FALSE;

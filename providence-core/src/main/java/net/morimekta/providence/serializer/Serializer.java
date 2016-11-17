@@ -21,6 +21,7 @@ package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -37,18 +38,33 @@ import java.io.OutputStream;
  */
 public abstract class Serializer {
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, Message message) throws IOException, SerializerException;
+    int serialize(OutputStream output, Message message) throws IOException;
 
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream output, PServiceCall<Message, Field> call) throws IOException, SerializerException;
+    int serialize(OutputStream output, PServiceCall<Message, Field> call) throws IOException;
 
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException;
+    Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException;
 
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> deserialize(InputStream input, PService service) throws SerializerException, IOException;
+    PServiceCall<Message, Field> deserialize(InputStream input, PService service) throws IOException;
 
     public abstract boolean binaryProtocol();
 
     public abstract String mimeType();
+
+    /**
+     * Utility method to check if a service call is a request type.
+     *
+     * @param type The service call type.
+     * @return If the service call is a request, and not a response.
+     */
+    protected boolean isRequestCallType(PServiceCallType type) {
+        switch (type) {
+            case CALL:
+            case ONEWAY:
+                return true;
+        }
+        return false;
+    }
 }

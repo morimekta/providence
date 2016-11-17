@@ -51,10 +51,6 @@ public class JMessageAndroidFormat {
               .end()
               .formatln("} catch (%s e) {", IOException.class.getName())
               .formatln("    throw new %s(e);", UncheckedIOException.class.getName())
-              .formatln("} catch (%s e) {", SerializerException.class.getName())
-              .formatln("    throw new %s(new %s(e));",
-                        UncheckedIOException.class.getName(),
-                        IOException.class.getName())
               .appendln("}")
               .end()
               .appendln('}');
@@ -78,10 +74,6 @@ public class JMessageAndroidFormat {
               .end()
               .formatln("} catch (%s e) {", IOException.class.getName())
               .formatln("    throw new %s(e);", UncheckedIOException.class.getName())
-              .formatln("} catch (%s e) {", SerializerException.class.getName())
-              .formatln("    throw new %s(new %s(e));",
-                        UncheckedIOException.class.getName(),
-                        IOException.class.getName())
               .appendln("}")
               .end()
               .appendln('}');

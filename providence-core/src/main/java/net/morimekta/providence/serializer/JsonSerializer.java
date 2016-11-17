@@ -19,6 +19,8 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -151,16 +153,16 @@ public class JsonSerializer extends Serializer {
 
     @Override
     public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, PServiceCall<T, F> call)
-            throws IOException, SerializerException {
+            throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             jsonWriter.array()
                       .value(call.getMethod());
             if (enumType == IdType.ID) {
-                jsonWriter.value(call.getType().key);
+                jsonWriter.value(call.getType().getValue());
             } else {
-                jsonWriter.value(call.getType().toString());
+                jsonWriter.value(call.getType().getName());
             }
             jsonWriter.value(call.getSequence());
 
@@ -196,7 +198,7 @@ public class JsonSerializer extends Serializer {
 
     @Override
     public <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> deserialize(InputStream input, PService service)
-            throws SerializerException {
+            throws IOException {
         JsonTokenizer tokenizer = new JsonTokenizer(input);
         return parseServiceCall(tokenizer, service);
     }
@@ -213,7 +215,7 @@ public class JsonSerializer extends Serializer {
 
     @SuppressWarnings("unchecked")
     private <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> parseServiceCall(JsonTokenizer tokenizer, PService service)
-            throws SerializerException {
+            throws IOException {
         PServiceCallType type = null;
         String methodName = null;
         int sequence = 0;
@@ -228,21 +230,21 @@ public class JsonSerializer extends Serializer {
             JsonToken callTypeToken = tokenizer.expect("Service call type");
             if (callTypeToken.isInteger()) {
                 int typeKey = callTypeToken.byteValue();
-                type = PServiceCallType.findByKey(typeKey);
+                type = PServiceCallType.forValue(typeKey);
                 if (type == null) {
                     throw new SerializerException("Service call type " + typeKey + " is not valid.")
-                            .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                            .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.decodeJsonLiteral();
-                type = PServiceCallType.findByName(typeName);
+                type = PServiceCallType.forName(typeName);
                 if (type == null) {
                     throw new SerializerException("Service call type " + typeName + " is not valid.")
-                            .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                            .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else {
                 throw new SerializerException("Invalid service call type token " + callTypeToken.asString())
-                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                        .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             }
 
             tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
@@ -253,9 +255,9 @@ public class JsonSerializer extends Serializer {
             tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
 
             if (type == PServiceCallType.EXCEPTION) {
-                ApplicationException ex = (ApplicationException) parseTypedValue(tokenizer.expect("Message start"),
-                                                                                 tokenizer,
-                                                                                 ApplicationException.kDescriptor);
+                PApplicationException ex = (PApplicationException) parseTypedValue(tokenizer.expect("Message start"),
+                                                                                   tokenizer,
+                                                                                   PApplicationException.kDescriptor);
 
                 tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
@@ -265,25 +267,23 @@ public class JsonSerializer extends Serializer {
             PServiceMethod method = service.getMethod(methodName);
             if (method == null) {
                 throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
-                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD);
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<T, F> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<T, F> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
             T message = (T) parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
 
             return new PServiceCall<>(methodName, type, sequence, message);
-        } catch (IOException | JsonException ie) {
-            throw new SerializerException(ie, ie.getMessage())
-                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+        } catch (SerializerException se) {
+            throw new SerializerException(se)
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
-        } catch (SerializerException se) {
-            throw new SerializerException(se, se.getMessage())
-                    .setExceptionType(se.getExceptionType())
+        } catch (IOException | JsonException ie) {
+            throw new SerializerException(ie, ie.getMessage())
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
@@ -291,7 +291,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private <T extends PMessage<T, F>, F extends PField> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, F> type)
-            throws SerializerException, JsonException, IOException {
+            throws JsonException, IOException {
         PMessageBuilder<T, F> builder = type.builder();
 
         if (tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
@@ -398,7 +398,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private Object parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t)
-            throws IOException, SerializerException {
+            throws IOException {
         if (token.isNull()) {
             return null;
         }

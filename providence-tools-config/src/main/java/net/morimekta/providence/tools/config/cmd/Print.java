@@ -23,12 +23,8 @@ public class Print implements Command {
     private File       file       = null;
 
     @Override
-    public void execute(ProvidenceConfig config) throws SerializerException {
-        try {
-            serializer.serialize(System.out, (PMessage) config.load(file));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    public void execute(ProvidenceConfig config) throws IOException {
+        serializer.serialize(System.out, (PMessage) config.load(file));
     }
 
     @Override

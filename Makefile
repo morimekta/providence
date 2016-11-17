@@ -13,8 +13,8 @@ models: compile
 	rm -rf providence-reflect/src/main/model/*
 	mv providence-reflect/target/generated-sources/providence/* \
 	   providence-reflect/src/main/model/
-	mv providence-core/target/generated-sources/providence/net/morimekta/providence/serializer/* \
-	   providence-core/src/main/java/net/morimekta/providence/serializer
+	mv providence-core/target/generated-sources/providence/net/morimekta/providence/* \
+	   providence-core/src/main/java/net/morimekta/providence
 
 test-models: test-compile
 	cp -R providence-core/target/generated-test-sources/providence/* \

@@ -22,7 +22,6 @@ package net.morimekta.providence.generator.format.java;
 import net.morimekta.providence.PException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PDefaultValueProvider;
@@ -94,10 +93,6 @@ public class JMessageFormat {
             writer.appendln(JAnnotation.DEPRECATED);
         }
 
-        if (JAnnotation.isDeprecated(message.descriptor())) {
-            writer.appendln(JAnnotation.DEPRECATED);
-        }
-
         String mod = "public";
         if (containingService != null) {
             mod = "private static";
@@ -106,21 +101,31 @@ public class JMessageFormat {
         writer.appendln("@SuppressWarnings(\"unused\")")
               .formatln("%s class %s", mod, message.instanceType())
               .begin(DBL_INDENT);
-        if (message.variant()
-                   .equals(PMessageVariant.EXCEPTION)) {
-            writer.appendln("extends " + PException.class.getName());
+        if (message.isException()) {
+            writer.appendln("extends " + message.exceptionBaseClass());
         }
-        writer.formatln("implements %s<%s,%s._Field>,",
+        writer.formatln("implements %s<%s,%s._Field>",
                         message.isUnion() ? PUnion.class.getName() : PMessage.class.getName(),
                         message.instanceType(),
                         message.instanceType())
-              .begin("           ")
-              .formatln("%s,", Serializable.class.getName())  // because it may be contained in an exception.
-              .formatln("Comparable<%s>", message.instanceType());
+              .begin("           ");
+        if (message.isException()) {
+            writer.append(',')
+                  .appendln(PException.class.getName());
+        } else {
+            // because it may be contained in an exception.
+            writer.append(',')
+                  .appendln(Serializable.class.getName());
+
+        }
         if (options.android) {
             writer.append(",")
                   .formatln("android.os.Parcelable");
         }
+
+        writer.append(',')
+              .formatln("Comparable<%s>", message.instanceType());
+
         if (message.extraImplements() != null) {
             writer.append(",")
                   .appendln(message.extraImplements());
@@ -154,10 +159,27 @@ public class JMessageFormat {
         if (options.android) {
             android.appendParcelable(message);
         }
+        if (message.isException()) {
+            appendOriginalGetMessage(writer);
+        }
 
         builder.appendBuilder(message);
 
         writer.end()
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendOriginalGetMessage(IndentedPrintWriter writer) {
+        writer.appendln("@Override")
+              .appendln("public String origGetMessage() {")
+              .appendln("    return super.getMessage();")
+              .appendln('}')
+              .newline();
+
+        writer.appendln("@Override")
+              .appendln("public String origGetLocalizedMessage() {")
+              .appendln("    return super.getLocalizedMessage();")
               .appendln('}')
               .newline();
     }

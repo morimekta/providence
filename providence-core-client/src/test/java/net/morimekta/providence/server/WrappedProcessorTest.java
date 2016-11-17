@@ -1,12 +1,12 @@
 package net.morimekta.providence.server;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
-import net.morimekta.providence.serializer.ApplicationException;
-import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.SerializerException;
 
 import org.junit.Test;
@@ -37,8 +37,8 @@ public class WrappedProcessorTest {
             return reply;
         });
 
-        ApplicationException c = new ApplicationException("call", ApplicationExceptionType.INTERNAL_ERROR);
-        ApplicationException r = new ApplicationException("call", ApplicationExceptionType.INTERNAL_ERROR);
+        PApplicationException c = new PApplicationException("call", PApplicationExceptionType.INTERNAL_ERROR);
+        PApplicationException r = new PApplicationException("call", PApplicationExceptionType.INTERNAL_ERROR);
 
         AtomicReference<PService> service = new AtomicReference<>();
         service.set(new PService("test", "Service", service::get, new PServiceMethod[]{}));

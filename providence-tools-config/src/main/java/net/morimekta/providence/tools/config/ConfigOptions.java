@@ -32,7 +32,6 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
@@ -42,7 +41,6 @@ import net.morimekta.providence.tools.config.cmd.Validate;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +104,7 @@ public class ConfigOptions extends CommonOptions {
         }
     }
 
-    public void execute() throws SerializerException {
+    public void execute() throws IOException {
         Set<File> rootSet = includes.values()
                                     .stream()
                                     .map(File::getParentFile)
@@ -115,8 +113,6 @@ public class ConfigOptions extends CommonOptions {
         for (File file : includes.values()) {
             try {
                 loader.load(file);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }

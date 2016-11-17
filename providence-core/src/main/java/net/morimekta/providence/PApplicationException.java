@@ -1,25 +1,25 @@
-package net.morimekta.providence.serializer;
+package net.morimekta.providence;
 
 /**
  * Base exception thrown on non-declared exceptions on a service call, and
  * other server-side service call issues.
  */
 @SuppressWarnings("unused")
-public class ApplicationException
-        extends net.morimekta.providence.PException
-        implements net.morimekta.providence.PMessage<ApplicationException,ApplicationException._Field>,
-                   java.io.Serializable,
-                   Comparable<ApplicationException> {
-    private final static long serialVersionUID = 6590039153455193300L;
+public class PApplicationException
+        extends java.io.IOException
+        implements net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
+                   net.morimekta.providence.PException,
+                   Comparable<PApplicationException> {
+    private final static long serialVersionUID = -8724424103018535688L;
 
-    private final static net.morimekta.providence.serializer.ApplicationExceptionType kDefaultId = net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN;
+    private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
 
     private final String mMessage;
-    private final net.morimekta.providence.serializer.ApplicationExceptionType mId;
+    private final net.morimekta.providence.PApplicationExceptionType mId;
     
     private volatile int tHashCode;
 
-    private ApplicationException(_Builder builder) {
+    private PApplicationException(_Builder builder) {
         super(createMessage(builder.mMessage,
                             builder.mId));
 
@@ -27,8 +27,8 @@ public class ApplicationException
         mId = builder.mId;
     }
 
-    public ApplicationException(String pMessage,
-                                net.morimekta.providence.serializer.ApplicationExceptionType pId) {
+    public PApplicationException(String pMessage,
+                                 net.morimekta.providence.PApplicationExceptionType pId) {
         super(createMessage(pMessage,
                             pId));
 
@@ -37,7 +37,7 @@ public class ApplicationException
     }
 
     private static String createMessage(String pMessage,
-                                        net.morimekta.providence.serializer.ApplicationExceptionType pId) {
+                                        net.morimekta.providence.PApplicationExceptionType pId) {
         StringBuilder out = new StringBuilder();
         out.append('{');
         boolean first = true;
@@ -62,6 +62,8 @@ public class ApplicationException
     }
 
     /**
+     * Exception message.
+     *
      * @return The field value
      */
     public String getMessage() {
@@ -73,9 +75,11 @@ public class ApplicationException
     }
 
     /**
+     * The application exception type.
+     *
      * @return The field value
      */
-    public net.morimekta.providence.serializer.ApplicationExceptionType getId() {
+    public net.morimekta.providence.PApplicationExceptionType getId() {
         return hasId() ? mId : kDefaultId;
     }
 
@@ -114,8 +118,8 @@ public class ApplicationException
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ApplicationException)) return false;
-        ApplicationException other = (ApplicationException) o;
+        if (o == null || !(o instanceof PApplicationException)) return false;
+        PApplicationException other = (PApplicationException) o;
         return java.util.Objects.equals(mMessage, other.mMessage) &&
                java.util.Objects.equals(mId, other.mId);
     }
@@ -124,7 +128,7 @@ public class ApplicationException
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    ApplicationException.class,
+                    PApplicationException.class,
                     _Field.MESSAGE, mMessage,
                     _Field.ID, mId);
         }
@@ -133,7 +137,7 @@ public class ApplicationException
 
     @Override
     public String toString() {
-        return "service.ApplicationException" + asString();
+        return "service.PApplicationException" + asString();
     }
 
     @Override
@@ -159,7 +163,7 @@ public class ApplicationException
     }
 
     @Override
-    public int compareTo(ApplicationException other) {
+    public int compareTo(PApplicationException other) {
         int c;
 
         c = Boolean.compare(mMessage != null, other.mMessage != null);
@@ -181,7 +185,7 @@ public class ApplicationException
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ID(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "id", net.morimekta.providence.serializer.ApplicationExceptionType.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
+        ID(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "id", net.morimekta.providence.PApplicationExceptionType.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
         ;
 
         private final int mKey;
@@ -240,21 +244,21 @@ public class ApplicationException
         }
     }
 
-    public static net.morimekta.providence.descriptor.PExceptionDescriptorProvider<ApplicationException,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PExceptionDescriptorProvider<PApplicationException,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> {
+            extends net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> {
         public _Descriptor() {
-            super("service", "ApplicationException", new _Factory(), true);
+            super("service", "PApplicationException", new _Factory(), true);
         }
 
         @Override
@@ -277,19 +281,29 @@ public class ApplicationException
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PExceptionDescriptorProvider<ApplicationException,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PExceptionDescriptorProvider<PApplicationException,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ApplicationException,_Field> {
+            extends net.morimekta.providence.PMessageBuilderFactory<PApplicationException,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
         }
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
     }
 
     @Override
@@ -298,7 +312,7 @@ public class ApplicationException
     }
 
     /**
-     * Make a service.ApplicationException builder.
+     * Make a service.PApplicationException builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -306,25 +320,25 @@ public class ApplicationException
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ApplicationException,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<PApplicationException,_Field> {
         private java.util.BitSet optionals;
 
         private String mMessage;
-        private net.morimekta.providence.serializer.ApplicationExceptionType mId;
+        private net.morimekta.providence.PApplicationExceptionType mId;
 
         /**
-         * Make a service.ApplicationException builder.
+         * Make a service.PApplicationException builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
         }
 
         /**
-         * Make a mutating builder off a base service.ApplicationException.
+         * Make a mutating builder off a base service.PApplicationException.
          *
-         * @param base The base ApplicationException
+         * @param base The base PApplicationException
          */
-        public _Builder(ApplicationException base) {
+        public _Builder(PApplicationException base) {
             this();
 
             if (base.hasMessage()) {
@@ -338,7 +352,7 @@ public class ApplicationException
         }
 
         @Override
-        public _Builder merge(ApplicationException from) {
+        public _Builder merge(PApplicationException from) {
             if (from.hasMessage()) {
                 optionals.set(0);
                 mMessage = from.getMessage();
@@ -352,7 +366,7 @@ public class ApplicationException
         }
 
         /**
-         * Sets the value of message.
+         * Exception message.
          *
          * @param value The new value
          * @return The builder
@@ -364,7 +378,7 @@ public class ApplicationException
         }
 
         /**
-         * Checks for presence of the message field.
+         * Exception message.
          *
          * @return True iff message has been set.
          */
@@ -373,7 +387,7 @@ public class ApplicationException
         }
 
         /**
-         * Clears the message field.
+         * Exception message.
          *
          * @return The builder
          */
@@ -384,19 +398,19 @@ public class ApplicationException
         }
 
         /**
-         * Sets the value of id.
+         * The application exception type.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setId(net.morimekta.providence.serializer.ApplicationExceptionType value) {
+        public _Builder setId(net.morimekta.providence.PApplicationExceptionType value) {
             optionals.set(1);
             mId = value;
             return this;
         }
 
         /**
-         * Checks for presence of the id field.
+         * The application exception type.
          *
          * @return True iff id has been set.
          */
@@ -405,7 +419,7 @@ public class ApplicationException
         }
 
         /**
-         * Clears the id field.
+         * The application exception type.
          *
          * @return The builder
          */
@@ -429,7 +443,7 @@ public class ApplicationException
             if (value == null) return clear(key);
             switch (key) {
                 case 1: setMessage((String) value); break;
-                case 2: setId((net.morimekta.providence.serializer.ApplicationExceptionType) value); break;
+                case 2: setId((net.morimekta.providence.PApplicationExceptionType) value); break;
             }
             return this;
         }
@@ -461,13 +475,13 @@ public class ApplicationException
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PExceptionDescriptor<ApplicationException,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> descriptor() {
             return kDescriptor;
         }
 
         @Override
-        public ApplicationException build() {
-            return new ApplicationException(this);
+        public PApplicationException build() {
+            return new PApplicationException(this);
         }
     }
 }

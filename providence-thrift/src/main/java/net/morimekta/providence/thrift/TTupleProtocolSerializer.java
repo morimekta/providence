@@ -1,5 +1,7 @@
 package net.morimekta.providence.thrift;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -18,8 +20,6 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.ApplicationException;
-import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Binary;
@@ -86,7 +86,7 @@ public class TTupleProtocolSerializer extends Serializer {
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
-            TMessage tm = new TMessage(call.getMethod(), (byte) call.getType().key, call.getSequence());
+            TMessage tm = new TMessage(call.getMethod(), (byte) call.getType().getValue(), call.getSequence());
 
             protocol.writeMessageBegin(tm);
             writeMessage(call.getMessage(), protocol);
@@ -128,11 +128,11 @@ public class TTupleProtocolSerializer extends Serializer {
 
             tm = protocol.readMessageBegin();
 
-            type = PServiceCallType.findByKey(tm.type);
+            type = PServiceCallType.forValue(tm.type);
             if (type == null) {
                 throw new SerializerException("Unknown call type for id " + tm.type);
             } else if (type == PServiceCallType.EXCEPTION) {
-                ApplicationException exception = readMessage(protocol, ApplicationException.kDescriptor);
+                PApplicationException exception = readMessage(protocol, PApplicationException.kDescriptor);
                 return new PServiceCall(tm.name, type, tm.seqid, exception);
             }
 
@@ -141,7 +141,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
             }
 
-            PStructDescriptor<Message,Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            PStructDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(protocol, descriptor);
 
@@ -150,13 +150,13 @@ public class TTupleProtocolSerializer extends Serializer {
             return new PServiceCall<>(tm.name, type, tm.seqid, message);
         } catch (TTransportException e) {
             throw new SerializerException(e, "Unable to serialize into transport protocol")
-                    .setExceptionType(ApplicationExceptionType.forValue(e.getType()))
+                    .setExceptionType(PApplicationExceptionType.forValue(e.getType()))
                     .setCallType(type)
                     .setMethodName(tm != null ? tm.name : "")
                     .setSequenceNo(tm != null ? tm.seqid : 0);
         } catch (TException e) {
             throw new SerializerException(e, "Transport exception in protocol")
-                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
+                    .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR)
                     .setCallType(type)
                     .setMethodName(tm != null ? tm.name : "")
                     .setSequenceNo(tm != null ? tm.seqid : 0);

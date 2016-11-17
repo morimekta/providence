@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class ExceptionFields
-        extends net.morimekta.providence.PException
+        extends Exception
         implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,
-                   java.io.Serializable,
+                   net.morimekta.providence.PException,
                    Comparable<ExceptionFields> {
     private final static long serialVersionUID = -4665960318174350293L;
 
@@ -611,6 +611,16 @@ public class ExceptionFields
         public _Builder builder() {
             return new _Builder();
         }
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
     }
 
     @Override

@@ -182,7 +182,7 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public List<Param> params(File file) throws IOException, SerializerException {
+    public List<Param> params(File file) throws IOException {
         return loadParamsRecursively(resolveFile(null, file.toString()));
     }
 
@@ -248,7 +248,7 @@ public class ProvidenceConfig {
     }
 
     private List<Param> loadParamsRecursively(File file, String... stack)
-            throws SerializerException, IOException {
+            throws IOException {
         try {
             File canonicalFile = file.getCanonicalFile()
                                      .getAbsoluteFile();

@@ -2,9 +2,9 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class CalculateException
-        extends net.morimekta.providence.PException
+        extends Exception
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
-                   java.io.Serializable,
+                   net.morimekta.providence.PException,
                    Comparable<CalculateException> {
     private final static long serialVersionUID = -3144631929815376595L;
 
@@ -284,6 +284,16 @@ public class CalculateException
         public _Builder builder() {
             return new _Builder();
         }
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
     }
 
     @Override

@@ -19,6 +19,8 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -107,7 +109,7 @@ public class BinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    int serialize(OutputStream os, Message message) throws IOException, SerializerException {
+    int serialize(OutputStream os, Message message) throws IOException {
         BinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
@@ -115,19 +117,19 @@ public class BinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, PServiceCall<Message, Field> call)
-            throws IOException, SerializerException {
+            throws IOException {
         BinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
 
         int len = method.length;
         if (versioned) {
-            len += out.writeInt(VERSION_1 | (byte) call.getType().key);
+            len += out.writeInt(VERSION_1 | (byte) call.getType().getValue());
             len += out.writeInt(method.length);
             out.write(method);
         } else {
             len += out.writeInt(method.length);
             out.write(method);
-            len += out.writeByte((byte) call.getType().key);
+            len += out.writeByte((byte) call.getType().getValue());
         }
         len += out.writeInt(call.getSequence());
         len += writeMessage(out, call.getMessage());
@@ -137,7 +139,7 @@ public class BinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor)
-            throws SerializerException, IOException {
+            throws IOException {
         BinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
     }
@@ -146,7 +148,7 @@ public class BinarySerializer extends Serializer {
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> deserialize(InputStream is, PService service)
-            throws SerializerException {
+            throws IOException {
         BinaryReader in = new BigEndianBinaryReader(is);
         String methodName = null;
         int sequence = 0;
@@ -163,11 +165,13 @@ public class BinarySerializer extends Serializer {
                     methodNameLen = in.expectInt();
                     methodName = new String(in.expectBytes(methodNameLen), UTF_8);
                 } else {
-                    throw new SerializerException("Bad protocol version: %08x", version >>> 16);
+                    throw new SerializerException("Bad protocol version: %08x", version >>> 16)
+                            .setExceptionType(PApplicationExceptionType.INVALID_PROTOCOL);
                 }
             } else {
                 if (readStrict && versioned) {
-                    throw new SerializerException("Missing protocol version");
+                    throw new SerializerException("Missing protocol version")
+                            .setExceptionType(PApplicationExceptionType.INVALID_PROTOCOL);
                 }
 
                 methodName = new String(in.expectBytes(methodNameLen), UTF_8);
@@ -175,40 +179,32 @@ public class BinarySerializer extends Serializer {
             }
             sequence = in.expectInt();
 
-            type = PServiceCallType.findByKey(typeKey);
+            type = PServiceCallType.forValue(typeKey);
             PServiceMethod method = service.getMethod(methodName);
             if (type == null) {
                 throw new SerializerException("Invalid call type " + typeKey)
-                        .setExceptionType(ApplicationExceptionType.INVALID_MESSAGE_TYPE)
-                        .setMethodName(methodName)
-                        .setSequenceNo(sequence);
+                        .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             } else if (type == PServiceCallType.EXCEPTION) {
-                ApplicationException ex = readMessage(in, ApplicationException.kDescriptor, false);
+                PApplicationException ex = readMessage(in, PApplicationException.kDescriptor, false);
                 return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             } else if (method == null) {
                 throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
-                        .setExceptionType(ApplicationExceptionType.UNKNOWN_METHOD)
-                        .setMethodName(methodName)
-                        .setCallType(type)
-                        .setSequenceNo(sequence);
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
-            try {
-                @SuppressWarnings("unchecked")
-                PStructDescriptor<Message, Field> descriptor = type.request ? method.getRequestType() : method.getResponseType();
+            @SuppressWarnings("unchecked")
+            PStructDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
-                Message message = readMessage(in, descriptor, false);
+            Message message = readMessage(in, descriptor, false);
 
-                return new PServiceCall<>(methodName, type, sequence, message);
-            } catch (SerializerException se) {
-                throw new SerializerException(se, se.getMessage())
-                        .setMethodName(methodName)
-                        .setCallType(type)
-                        .setSequenceNo(sequence);
-            }
+            return new PServiceCall<>(methodName, type, sequence, message);
+        } catch (SerializerException se) {
+            throw new SerializerException(se)
+                    .setMethodName(methodName)
+                    .setCallType(type)
+                    .setSequenceNo(sequence);
         } catch (IOException e) {
             throw new SerializerException(e, e.getMessage())
-                    .setExceptionType(ApplicationExceptionType.PROTOCOL_ERROR)
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
@@ -217,7 +213,7 @@ public class BinarySerializer extends Serializer {
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     int writeMessage(BinaryWriter writer, Message message)
-            throws IOException, SerializerException {
+            throws IOException {
         int len = 0;
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
@@ -228,8 +224,7 @@ public class BinarySerializer extends Serializer {
                                        field.getDescriptor());
             }
         } else {
-            for (PField field : message.descriptor()
-                                          .getFields()) {
+            for (PField field : message.descriptor().getFields()) {
                 if (message.has(field.getKey())) {
                     len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
                     len += writeFieldValue(writer,
@@ -245,7 +240,7 @@ public class BinarySerializer extends Serializer {
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BinaryReader input,
                         PStructDescriptor<Message, Field> descriptor,
-                        boolean nullable) throws SerializerException, IOException {
+                        boolean nullable) throws IOException {
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
             return null;
@@ -259,7 +254,7 @@ public class BinarySerializer extends Serializer {
             } else {
                 if (readStrict) {
                     throw new SerializerException(
-                            "Unknown field " + fieldInfo.getId() + " for type" + descriptor.getQualifiedName(null));
+                            "Unknown field " + fieldInfo.getId() + " for type " + descriptor.getQualifiedName(null));
                 }
                 readFieldValue(input, fieldInfo, null);
             }
@@ -285,7 +280,7 @@ public class BinarySerializer extends Serializer {
      *
      * @param in Stream to read message from.
      */
-    private void consumeMessage(BinaryReader in) throws IOException, SerializerException {
+    private void consumeMessage(BinaryReader in) throws IOException {
         FieldInfo fieldInfo;
         while ((fieldInfo = readFieldInfo(in)) != null) {
             readFieldValue(in, fieldInfo, null);
@@ -299,7 +294,7 @@ public class BinarySerializer extends Serializer {
      * @param in The stream to consume.
      * @return The field info or null.
      */
-    private FieldInfo readFieldInfo(BinaryReader in) throws IOException, SerializerException {
+    private FieldInfo readFieldInfo(BinaryReader in) throws IOException {
         byte type = in.expectByte();
         if (type == PType.STOP.id) {
             return null;
@@ -318,7 +313,7 @@ public class BinarySerializer extends Serializer {
      * @throws IOException If unable to read from stream or invalid field type.
      */
     private Object readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
-            throws IOException, SerializerException {
+            throws IOException {
         if (type == null) {
             if (readStrict) {
                 throw new SerializerException("Reading unknown field in strict mode.");
@@ -485,8 +480,7 @@ public class BinarySerializer extends Serializer {
      * @param value The value to write.
      * @return The number of bytes written.
      */
-    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException,
-                                                                                               SerializerException {
+    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
             case VOID:
                 return 0;

@@ -1,13 +1,13 @@
 package net.morimekta.providence.server;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
-import net.morimekta.providence.serializer.ApplicationException;
-import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.SerializerException;
 
 import org.slf4j.Logger;
@@ -48,10 +48,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
                 LOGGER.error("Error when reading service call " + processor.getDescriptor().getName(), e);
             }
             try {
-                ApplicationException oe = ApplicationException.builder()
-                                                              .setMessage(e.getMessage())
-                                                              .setId(ApplicationExceptionType.INVALID_PROTOCOL)
-                                                              .build();
+                PApplicationException oe = new PApplicationException(e.getMessage(), e.getExceptionType());
                 reply = new PServiceCall<>(e.getMethodName(), PServiceCallType.EXCEPTION, e.getSequenceNo(), oe);
                 writer.write(reply);
                 return false;
@@ -67,10 +64,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
         } catch (Exception e) {
             LOGGER.error("Error when handling service call " + processor.getDescriptor().getName() + "." + call.getMethod() + "()", e);
             try {
-                ApplicationException oe = ApplicationException.builder()
-                                                              .setMessage(e.getMessage())
-                                                              .setId(ApplicationExceptionType.INTERNAL_ERROR)
-                                                              .build();
+                PApplicationException oe = new PApplicationException(e.getMessage(), PApplicationExceptionType.INTERNAL_ERROR);
                 reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
                 writer.write(reply);
                 return false;
@@ -87,10 +81,7 @@ public class DefaultProcessorHandler implements ProcessorHandler {
             } catch (SerializerException e) {
                 LOGGER.error("Error when replying to service call " + processor.getDescriptor().getName() + "." + call.getMethod() + "()", e);
                 try {
-                    ApplicationException oe = ApplicationException.builder()
-                                                                  .setMessage(e.getMessage())
-                                                                  .setId(ApplicationExceptionType.INVALID_TRANSFORM)
-                                                                  .build();
+                    PApplicationException oe = new PApplicationException(e.getMessage(), e.getExceptionType());
                     reply = new PServiceCall<>(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), oe);
                     writer.write(reply);
                     // Even though the method returned, we didn't return the proper reply.

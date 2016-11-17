@@ -19,6 +19,8 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
@@ -105,13 +107,13 @@ public class PrettySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream out, PServiceCall<Message, Field> call)
-            throws IOException, TokenizerException {
+            throws IOException {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
 
         builder.format("%d: %s %s(",
                        call.getSequence(),
-                       call.getType().toString(),
+                       call.getType().getName(),
                        call.getMethod())
                .begin(indent + indent);
 
@@ -129,61 +131,77 @@ public class PrettySerializer extends Serializer {
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> deserialize(InputStream input, PService service)
-            throws TokenizerException, IOException {
-        // pretty printed service calls cannot be chained-serialized, so this should be totally safe.
-        Tokenizer tokenizer = new Tokenizer(input, false);
-
-        Token token = tokenizer.expect("Sequence or type");
+            throws IOException {
+        String methodName = null;
         int sequence = 0;
-        if (token.isInteger()) {
-            sequence = (int) token.parseInteger();
-            tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
-            token = tokenizer.expectIdentifier("Call Type");
+        PServiceCallType callType = null;
+        try {
+            // pretty printed service calls cannot be chained-serialized, so this should be totally safe.
+            Tokenizer tokenizer = new Tokenizer(input, false);
+
+            Token token = tokenizer.expect("Sequence or type");
+            if (token.isInteger()) {
+                sequence = (int) token.parseInteger();
+                tokenizer.expectSymbol("Sequence type sep", Token.kKeyValueSep);
+                token = tokenizer.expectIdentifier("Call Type");
+            }
+            callType = PServiceCallType.forName(token.asString());
+            if (callType == null) {
+                throw new TokenizerException(token, "No such call type " + token.asString())
+                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+            }
+
+            token = tokenizer.expectIdentifier("method name");
+            methodName = token.asString();
+
+            PServiceMethod method = service.getMethod(methodName);
+            if (method == null) {
+                throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName(null))
+                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
+            }
+
+            tokenizer.expectSymbol("call params start", Token.kMethodStart);
+            tokenizer.expectSymbol("message encloser", Token.kMessageStart);
+
+            Message message;
+            switch (callType) {
+                case CALL:
+                case ONEWAY:
+                    message = (Message) readMessage(tokenizer, method.getRequestType(), true);
+                    break;
+                case REPLY:
+                    message = (Message) readMessage(tokenizer, method.getResponseType(), true);
+                    break;
+                case EXCEPTION:
+                    message = (Message) readMessage(tokenizer, PApplicationException.kDescriptor, true);
+                    break;
+                default:
+                    throw new IllegalStateException("Unreachable code reached");
+            }
+
+            tokenizer.expectSymbol("Call params closing", Token.kMethodEnd);
+
+            return new PServiceCall<>(methodName, callType, sequence, message);
+        } catch (TokenizerException e) {
+            throw new TokenizerException(e, null)
+                    .setCallType(callType)
+                    .setSequenceNo(sequence)
+                    .setMethodName(methodName);
+        } catch (IOException e) {
+            throw new SerializerException(e, e.getMessage())
+                    .setCallType(callType)
+                    .setSequenceNo(sequence)
+                    .setMethodName(methodName);
         }
-        PServiceCallType callType = PServiceCallType.findByName(token.asString());
-        if (callType == null) {
-            throw new TokenizerException(token, "No such call type " + token.asString())
-                    .setLine(tokenizer.getLine(token.getLineNo()));
-        }
-
-        token = tokenizer.expectIdentifier("method name");
-        String methodName = token.asString();
-
-        PServiceMethod method = service.getMethod(methodName);
-        if (method == null) {
-            throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName(null))
-                    .setLine(tokenizer.getLine(token.getLineNo()));
-        }
-
-        tokenizer.expectSymbol("call params start", Token.kMethodStart);
-        tokenizer.expectSymbol("message encloser", Token.kMessageStart);
-
-        Message message;
-        switch (callType) {
-            case CALL:
-            case ONEWAY:
-                message = (Message) readMessage(tokenizer, method.getRequestType(), true);
-                break;
-            case REPLY:
-                message = (Message) readMessage(tokenizer, method.getResponseType(), true);
-                break;
-            case EXCEPTION:
-                message = (Message) readMessage(tokenizer, ApplicationException.kDescriptor, true);
-                break;
-            default:
-                throw new IllegalStateException("Unreachable code reached");
-        }
-
-        tokenizer.expectSymbol("Call params closing", Token.kMethodEnd);
-
-        return new PServiceCall<>(methodName, callType, sequence, message);
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input,
                         PStructDescriptor<Message, Field> descriptor)
-            throws IOException, TokenizerException {
+            throws IOException {
         Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
         if (first != null && first.isSymbol(Token.kMessageStart)) {
@@ -198,7 +216,7 @@ public class PrettySerializer extends Serializer {
     Message readMessage(Tokenizer tokenizer,
                         PStructDescriptor<Message, Field> descriptor,
                         boolean requireEnd)
-            throws IOException, TokenizerException {
+            throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
 
         for (;;) {
@@ -243,7 +261,7 @@ public class PrettySerializer extends Serializer {
         return builder.build();
     }
 
-    private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException, TokenizerException {
+    private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
             case VOID: {
                 // Even void fields needs a value token...

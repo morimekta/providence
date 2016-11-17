@@ -67,6 +67,14 @@ generated code. Currently the recognized annotations are:
   default hash-based container with an order-preserving container.
 * `container = "SORTED"`: On fields with set or map type only, will replace the
   default hash-based container with a sorted container.
+* `java.implements` Each java message (union, struct, exception) can implement
+  additional interfaces specified by this annotation. Full package and class name.
+  Note that the message is still a full implementation, so the interface methods
+  need to be implemented (declared) by the generated code, or have default
+  implementation.
+* `java.exception.class` Which exception class to inherit from. This must be the
+  full class path of an exception. Note that whether it is an exception is not
+  checked in the generator, it is plainly trusted as the exception class.  
 
 #### Circular containment
 

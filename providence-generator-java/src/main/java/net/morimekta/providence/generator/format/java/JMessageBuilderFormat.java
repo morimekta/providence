@@ -323,13 +323,13 @@ public class JMessageBuilderFormat {
 
     private void appendSetter(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Sets the value of " + field.name() + ".")
-               .newline();
         if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Sets the value of " + field.name() + ".");
         }
-        comment.param_("value", "The new value")
+        comment.newline()
+               .param_("value", "The new value")
                .return_("The builder")
                .finish();
         if (JAnnotation.isDeprecated(field)) {
@@ -378,18 +378,16 @@ public class JMessageBuilderFormat {
 
     private void appendAdder(JMessage message, JField field) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        if (field.type() == PType.MAP) {
-            comment.comment("Adds a mapping to " + field.name() + ".")
-                   .newline();
-        } else {
-            comment.comment("Adds entries to " + field.name() + ".")
-                   .newline();
-        }
 
         if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
+            comment.comment(field.comment());
+        } else if (field.type() == PType.MAP) {
+            comment.comment("Adds a mapping to " + field.name() + ".");
+        } else {
+            comment.comment("Adds entries to " + field.name() + ".");
         }
+        comment.newline();
+
         if (field.type() == PType.MAP) {
             comment.param_("key", "The inserted key")
                    .param_("value", "The inserted value");
@@ -455,13 +453,14 @@ public class JMessageBuilderFormat {
 
     private void appendIsSet(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Checks for presence of the " + field.name() + " field.")
-               .newline();
         if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Checks for presence of the " + field.name() + " field.");
         }
-        comment.return_(String.format("True iff %s has been set.", field.name()))
+
+        comment.newline()
+               .return_(String.format("True iff %s has been set.", field.name()))
                .finish();
         writer.formatln("public boolean %s() {", field.isSet())
               .begin();
@@ -478,13 +477,13 @@ public class JMessageBuilderFormat {
 
     private void appendResetter(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Clears the " + field.name() + " field.")
-               .newline();
         if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Clears the " + field.name() + " field.");
         }
-        comment.return_("The builder")
+        comment.newline()
+               .return_("The builder")
                .finish();
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
@@ -527,13 +526,13 @@ public class JMessageBuilderFormat {
         }
 
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Gets the builder for the contained " + field.name() + ".")
-               .newline();
         if (field.hasComment()) {
-            comment.comment(field.comment())
-                   .newline();
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Gets the builder for the contained " + field.name() + ".");
         }
-        comment.return_("The field builder")
+        comment.newline()
+               .return_("The field builder")
                .finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);

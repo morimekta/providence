@@ -510,8 +510,6 @@ public class ThriftDocument
         }
 
         /**
-         * Sets the value of comment.
-         *
          * Must come before the first statement of the header.
          *
          * @param value The new value
@@ -524,8 +522,6 @@ public class ThriftDocument
         }
 
         /**
-         * Checks for presence of the comment field.
-         *
          * Must come before the first statement of the header.
          *
          * @return True iff comment has been set.
@@ -535,8 +531,6 @@ public class ThriftDocument
         }
 
         /**
-         * Clears the comment field.
-         *
          * Must come before the first statement of the header.
          *
          * @return The builder
@@ -548,8 +542,6 @@ public class ThriftDocument
         }
 
         /**
-         * Sets the value of package.
-         *
          * Deducted from filename in .thrift IDL files.
          *
          * @param value The new value
@@ -562,8 +554,6 @@ public class ThriftDocument
         }
 
         /**
-         * Checks for presence of the package field.
-         *
          * Deducted from filename in .thrift IDL files.
          *
          * @return True iff package has been set.
@@ -573,8 +563,6 @@ public class ThriftDocument
         }
 
         /**
-         * Clears the package field.
-         *
          * Deducted from filename in .thrift IDL files.
          *
          * @return The builder
@@ -586,8 +574,6 @@ public class ThriftDocument
         }
 
         /**
-         * Sets the value of includes.
-         *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
          * @param value The new value
@@ -601,8 +587,6 @@ public class ThriftDocument
         }
 
         /**
-         * Adds entries to includes.
-         *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
          * @param values The added value
@@ -617,8 +601,6 @@ public class ThriftDocument
         }
 
         /**
-         * Checks for presence of the includes field.
-         *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
          * @return True iff includes has been set.
@@ -628,8 +610,6 @@ public class ThriftDocument
         }
 
         /**
-         * Clears the includes field.
-         *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
          * @return The builder
@@ -641,8 +621,6 @@ public class ThriftDocument
         }
 
         /**
-         * Gets the builder for the contained includes.
-         *
          * include &quot;&lt;package&gt;.thrift&quot;
          *
          * @return The field builder
@@ -653,8 +631,6 @@ public class ThriftDocument
         }
 
         /**
-         * Sets the value of namespaces.
-         *
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @param value The new value
@@ -668,8 +644,6 @@ public class ThriftDocument
         }
 
         /**
-         * Adds a mapping to namespaces.
-         *
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @param key The inserted key
@@ -683,8 +657,6 @@ public class ThriftDocument
         }
 
         /**
-         * Checks for presence of the namespaces field.
-         *
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return True iff namespaces has been set.
@@ -694,8 +666,6 @@ public class ThriftDocument
         }
 
         /**
-         * Clears the namespaces field.
-         *
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return The builder
@@ -707,8 +677,6 @@ public class ThriftDocument
         }
 
         /**
-         * Gets the builder for the contained namespaces.
-         *
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return The field builder

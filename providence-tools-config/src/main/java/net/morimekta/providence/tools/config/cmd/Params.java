@@ -18,15 +18,11 @@ public class Params implements Command {
     protected File file = null;
 
     @Override
-    public void execute(ProvidenceConfig config) throws SerializerException {
-        try {
-            List<ProvidenceConfig.Param> paramList = config.params(file);
-            paramList.sort((a, b) -> a.name.compareTo(b.name));
-            for (ProvidenceConfig.Param param : paramList) {
-                System.out.println(param.toString());
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+    public void execute(ProvidenceConfig config) throws IOException {
+        List<ProvidenceConfig.Param> paramList = config.params(file);
+        paramList.sort((a, b) -> a.name.compareTo(b.name));
+        for (ProvidenceConfig.Param param : paramList) {
+            System.out.println(param.toString());
         }
     }
 

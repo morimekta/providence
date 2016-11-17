@@ -17,12 +17,12 @@ public class TokenizerException extends SerializerException {
     private String file;
 
     public TokenizerException(TokenizerException e, File file) {
-        super(e, e.getMessage());
+        super(e);
         setLine(e.getLine());
         setLineNo(e.getLineNo());
         setLinePos(e.getLinePos());
         // Keep the specified file, if there is one.
-        if (e.getFile() == null) {
+        if (e.getFile() == null && file != null) {
             setFile(file.getName());
         } else {
             setFile(e.getFile());

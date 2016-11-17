@@ -59,7 +59,7 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
      * @throws SerializerException If message deserialization failed.
      */
     public MessageConfigSupplier(String prefix, PStructDescriptor<Message, Field> descriptor, MessageReader reader)
-            throws IOException, SerializerException {
+            throws IOException {
         this.prefix = prefix;
         this.descriptor = descriptor;
         this.reader = reader;
@@ -95,12 +95,10 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
             instance.set(loadInternal());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        } catch (SerializerException e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private MessageConfig<Message, Field> loadInternal() throws IOException, SerializerException {
+    private MessageConfig<Message, Field> loadInternal() throws IOException {
         try {
             return new MessageConfig<>(prefix, reader.read(descriptor));
         } finally {

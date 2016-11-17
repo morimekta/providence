@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNull;
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
-public class PJsonSerializerTest {
+public class JsonSerializerTest {
     @Test
     public void testSerialize_compactStruct() throws SerializerException {
         CompactFields cat1 = CompactFields.builder()

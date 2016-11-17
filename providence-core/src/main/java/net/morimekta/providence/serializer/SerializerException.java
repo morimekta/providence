@@ -19,31 +19,41 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.util.Stringable;
 
 import com.google.common.base.MoreObjects;
 
+import java.io.IOException;
+
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * Exception on serialization or deserialization.
  */
-public class SerializerException extends Exception implements Stringable {
+public class SerializerException extends IOException implements Stringable {
     private final static long serialVersionUID = 1442914425369642982L;
 
-    private String           methodName;
-    private PServiceCallType callType;
-    private int              sequenceNo;
-    private ApplicationExceptionType exceptionType;
+    private String                    methodName;
+    private PServiceCallType          callType;
+    private int                       sequenceNo;
+    private PApplicationExceptionType exceptionType;
 
     public SerializerException(String format, Object... args) {
         super(args.length == 0 ? format : String.format(format, args));
-        exceptionType = ApplicationExceptionType.PROTOCOL_ERROR;
+        exceptionType = PApplicationExceptionType.PROTOCOL_ERROR;
     }
 
     public SerializerException(Throwable cause, String format, Object... args) {
         super(args.length == 0 ? format : String.format(format, args), cause);
-        exceptionType = ApplicationExceptionType.PROTOCOL_ERROR;
+        exceptionType = PApplicationExceptionType.PROTOCOL_ERROR;
+    }
+
+    public SerializerException(SerializerException cause) {
+        super(cause.getMessage(), cause);
+        setCallType(cause.getCallType());
+        setMethodName(cause.getMethodName());
+        setSequenceNo(cause.getSequenceNo());
+        setExceptionType(cause.getExceptionType());
     }
 
     public String getMethodName() {
@@ -58,7 +68,7 @@ public class SerializerException extends Exception implements Stringable {
         return sequenceNo;
     }
 
-    public ApplicationExceptionType getExceptionType() {
+    public PApplicationExceptionType getExceptionType() {
         return exceptionType;
     }
 
@@ -77,7 +87,7 @@ public class SerializerException extends Exception implements Stringable {
         return this;
     }
 
-    public SerializerException setExceptionType(ApplicationExceptionType type) {
+    public SerializerException setExceptionType(PApplicationExceptionType type) {
         this.exceptionType = type;
         return this;
     }
@@ -87,9 +97,10 @@ public class SerializerException extends Exception implements Stringable {
         return MoreObjects.toStringHelper(getClass())
                           .omitNullValues()
                           .addValue(getMessage())
-                          .add("method", methodName)
-                          .add("type", callType)
-                          .add("seq", sequenceNo)
+                          .add("method", getMethodName())
+                          .add("type", getCallType())
+                          .add("seq", getSequenceNo())
+                          .add("exception", getExceptionType())
                           .toString();
     }
 

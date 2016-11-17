@@ -2338,8 +2338,6 @@ public class Containers
         }
 
         /**
-         * Sets the value of booleanList.
-         *
          * all types as list&lt;x&gt;.
          *
          * @param value The new value
@@ -2353,8 +2351,6 @@ public class Containers
         }
 
         /**
-         * Adds entries to booleanList.
-         *
          * all types as list&lt;x&gt;.
          *
          * @param values The added value
@@ -2369,8 +2365,6 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the booleanList field.
-         *
          * all types as list&lt;x&gt;.
          *
          * @return True iff booleanList has been set.
@@ -2380,8 +2374,6 @@ public class Containers
         }
 
         /**
-         * Clears the booleanList field.
-         *
          * all types as list&lt;x&gt;.
          *
          * @return The builder
@@ -2393,8 +2385,6 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained booleanList.
-         *
          * all types as list&lt;x&gt;.
          *
          * @return The field builder
@@ -2804,8 +2794,6 @@ public class Containers
         }
 
         /**
-         * Sets the value of booleanSet.
-         *
          * all types as set&lt;x&gt;.
          *
          * @param value The new value
@@ -2819,8 +2807,6 @@ public class Containers
         }
 
         /**
-         * Adds entries to booleanSet.
-         *
          * all types as set&lt;x&gt;.
          *
          * @param values The added value
@@ -2835,8 +2821,6 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the booleanSet field.
-         *
          * all types as set&lt;x&gt;.
          *
          * @return True iff booleanSet has been set.
@@ -2846,8 +2830,6 @@ public class Containers
         }
 
         /**
-         * Clears the booleanSet field.
-         *
          * all types as set&lt;x&gt;.
          *
          * @return The builder
@@ -2859,8 +2841,6 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained booleanSet.
-         *
          * all types as set&lt;x&gt;.
          *
          * @return The field builder
@@ -3270,8 +3250,6 @@ public class Containers
         }
 
         /**
-         * Sets the value of booleanMap.
-         *
          * all types as map&lt;x,x&gt;.
          *
          * @param value The new value
@@ -3285,8 +3263,6 @@ public class Containers
         }
 
         /**
-         * Adds a mapping to booleanMap.
-         *
          * all types as map&lt;x,x&gt;.
          *
          * @param key The inserted key
@@ -3300,8 +3276,6 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the booleanMap field.
-         *
          * all types as map&lt;x,x&gt;.
          *
          * @return True iff booleanMap has been set.
@@ -3311,8 +3285,6 @@ public class Containers
         }
 
         /**
-         * Clears the booleanMap field.
-         *
          * all types as map&lt;x,x&gt;.
          *
          * @return The builder
@@ -3324,8 +3296,6 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained booleanMap.
-         *
          * all types as map&lt;x,x&gt;.
          *
          * @return The field builder
@@ -3728,8 +3698,6 @@ public class Containers
         }
 
         /**
-         * Sets the value of enumList.
-         *
          * Using enum as key and value in containers.
          *
          * @param value The new value
@@ -3743,8 +3711,6 @@ public class Containers
         }
 
         /**
-         * Adds entries to enumList.
-         *
          * Using enum as key and value in containers.
          *
          * @param values The added value
@@ -3759,8 +3725,6 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the enumList field.
-         *
          * Using enum as key and value in containers.
          *
          * @return True iff enumList has been set.
@@ -3770,8 +3734,6 @@ public class Containers
         }
 
         /**
-         * Clears the enumList field.
-         *
          * Using enum as key and value in containers.
          *
          * @return The builder
@@ -3783,8 +3745,6 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained enumList.
-         *
          * Using enum as key and value in containers.
          *
          * @return The field builder
@@ -3908,8 +3868,6 @@ public class Containers
         }
 
         /**
-         * Sets the value of messageList.
-         *
          * Using struct as key and value in containers.
          *
          * @param value The new value
@@ -3923,8 +3881,6 @@ public class Containers
         }
 
         /**
-         * Adds entries to messageList.
-         *
          * Using struct as key and value in containers.
          *
          * @param values The added value
@@ -3939,8 +3895,6 @@ public class Containers
         }
 
         /**
-         * Checks for presence of the messageList field.
-         *
          * Using struct as key and value in containers.
          *
          * @return True iff messageList has been set.
@@ -3950,8 +3904,6 @@ public class Containers
         }
 
         /**
-         * Clears the messageList field.
-         *
          * Using struct as key and value in containers.
          *
          * @return The builder
@@ -3963,8 +3915,6 @@ public class Containers
         }
 
         /**
-         * Gets the builder for the contained messageList.
-         *
          * Using struct as key and value in containers.
          *
          * @return The field builder

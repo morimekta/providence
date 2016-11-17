@@ -4,11 +4,13 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.serializer.SerializerException;
 
+import java.io.IOException;
+
 /**
  *
  */
 public interface Command {
-    void execute(ProvidenceConfig config) throws SerializerException;
+    void execute(ProvidenceConfig config) throws IOException;
 
     ArgumentParser parser(ArgumentParser parent);
 }

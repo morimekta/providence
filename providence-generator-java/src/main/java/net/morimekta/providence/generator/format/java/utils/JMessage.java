@@ -116,4 +116,16 @@ public class JMessage<T extends CMessage<T, CField>> {
         }
         return null;
     }
+
+    public String exceptionBaseClass() {
+        if (!isException()) {
+            return null;
+        }
+        if (struct instanceof CStructDescriptor) {
+            if (((CStructDescriptor) struct).hasAnnotation("java.exception.class")) {
+                return ((CStructDescriptor) struct).getAnnotationValue("java.exception.class");
+            }
+        }
+        return Exception.class.getSimpleName();
+    }
 }

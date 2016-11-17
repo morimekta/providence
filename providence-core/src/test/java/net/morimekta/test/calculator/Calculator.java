@@ -35,7 +35,7 @@ public class Calculator {
                 Calculate_response msg = (Calculate_response) resp.getMessage();
 
                 if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
-                    net.morimekta.providence.serializer.ApplicationException ex = (net.morimekta.providence.serializer.ApplicationException) resp.getMessage();
+                    net.morimekta.providence.PApplicationException ex = (net.morimekta.providence.PApplicationException) resp.getMessage();
                     throw new java.io.IOException(ex.getMessage(), ex);
                 }
                 if (msg.unionField() != null) {
@@ -110,10 +110,10 @@ public class Calculator {
                     return null;
                 }
                 default: {
-                    net.morimekta.providence.serializer.ApplicationException ex =
-                            new net.morimekta.providence.serializer.ApplicationException(
+                    net.morimekta.providence.PApplicationException ex =
+                            new net.morimekta.providence.PApplicationException(
                                     "Unknown method \"" + call.getMethod() + "\" on calculator.Calculator.",
-                                    net.morimekta.providence.serializer.ApplicationExceptionType.UNKNOWN_METHOD);
+                                    net.morimekta.providence.PApplicationExceptionType.UNKNOWN_METHOD);
                     net.morimekta.providence.PServiceCall reply =
                             new net.morimekta.providence.PServiceCall(call.getMethod(),
                                                                       net.morimekta.providence.PServiceCallType.EXCEPTION,
@@ -178,7 +178,18 @@ public class Calculator {
         }
     }
 
+    private static class _Provider implements net.morimekta.providence.descriptor.PServiceProvider {
+        @Override
+        public net.morimekta.providence.descriptor.PService getService() {
+            return kDescriptor;
+        }
+    }
+
     public static final net.morimekta.providence.descriptor.PService kDescriptor = new _Descriptor();
+
+    public static net.morimekta.providence.descriptor.PServiceProvider provider() {
+        return new _Provider();
+    }
 
     // type --> calculate___request
     @SuppressWarnings("unused")

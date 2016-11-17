@@ -1,5 +1,7 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PClient;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PProcessor;
@@ -20,8 +22,6 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JService;
 import net.morimekta.providence.generator.format.java.utils.JServiceMethod;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.serializer.ApplicationException;
-import net.morimekta.providence.serializer.ApplicationExceptionType;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -162,8 +162,8 @@ public class JServiceFormat {
                 writer.newline()
                       .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
                       .formatln("    %s ex = (%s) resp.getMessage();",
-                                ApplicationException.class.getName(),
-                                ApplicationException.class.getName())
+                                PApplicationException.class.getName(),
+                                PApplicationException.class.getName())
                       .formatln("    throw new %s(ex.getMessage(), ex);",
                                 IOException.class.getName())
                       .appendln('}');
@@ -317,13 +317,13 @@ public class JServiceFormat {
 
         writer.appendln("default: {")
               .begin()
-              .formatln("%s ex =", ApplicationException.class.getName())
-              .formatln("        new %s(", ApplicationException.class.getName())
+              .formatln("%s ex =", PApplicationException.class.getName())
+              .formatln("        new %s(", PApplicationException.class.getName())
               .formatln("                \"Unknown method \\\"\" + call.getMethod() + \"\\\" on %s.\",",
                         service.getService().getQualifiedName(null))
               .formatln("                %s.%s);",
-                        ApplicationExceptionType.class.getName(),
-                        ApplicationExceptionType.UNKNOWN_METHOD.getName());
+                        PApplicationExceptionType.class.getName(),
+                        PApplicationExceptionType.UNKNOWN_METHOD.getName());
 
         String spaces = PServiceCall.class.getName().replaceAll("[\\S]", " ");
         writer.formatln("%s reply =", PServiceCall.class.getName())
