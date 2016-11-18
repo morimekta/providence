@@ -26,6 +26,9 @@ import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,12 +41,7 @@ import java.io.IOException;
  * Thrift's <code>org.apache.thrift.server.TServlet</code> server.
  */
 public class ProvidenceServlet extends HttpServlet {
-    /**
-     * Processor provider for generating per-request service processors.
-     */
-    public interface ProcessorProvider {
-        PProcessor processorForRequest(HttpServletRequest request);
-    }
+    private final static Logger LOGGER = LoggerFactory.getLogger(ProvidenceServlet.class);
 
     private final ProcessorProvider  processorProvider;
     private final SerializerProvider serializerProvider;
@@ -72,29 +70,30 @@ public class ProvidenceServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Serializer requestSerializer = serializerProvider.getDefault();
-        if (req.getContentType() != null) {
-            requestSerializer = serializerProvider.getSerializer(req.getContentType());
-
-            if (requestSerializer == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown content-type: " + req.getContentType());
-                return;
-            }
-        }
-
-        Serializer responseSerializer = requestSerializer;
-        String accept = resp.getHeader("Accept");
-        if (accept != null) {
-            responseSerializer = serializerProvider.getSerializer(accept);
-            if (responseSerializer == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown accept content-type: " + accept);
-                return;
-            }
-        } else {
-            accept = responseSerializer.mimeType();
-        }
-
+        PProcessor processor = processorProvider.processorForRequest(req);
         try {
+            Serializer requestSerializer = serializerProvider.getDefault();
+            if (req.getContentType() != null) {
+                requestSerializer = serializerProvider.getSerializer(req.getContentType());
+
+                if (requestSerializer == null) {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown content-type: " + req.getContentType());
+                    return;
+                }
+            }
+
+            Serializer responseSerializer = requestSerializer;
+            String accept = resp.getHeader("Accept");
+            if (accept != null) {
+                responseSerializer = serializerProvider.getSerializer(accept);
+                if (responseSerializer == null) {
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown accept content-type: " + accept);
+                    return;
+                }
+            } else {
+                accept = responseSerializer.mimeType();
+            }
+
             MessageReader reader = new IOMessageReader(req.getInputStream(), requestSerializer);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -103,12 +102,14 @@ public class ProvidenceServlet extends HttpServlet {
             // Create a new processor handler instance for each request, as
             // they may be request context dependent. E.g. depends on
             // information in header, servlet context etc.
-            new DefaultProcessorHandler(processorProvider.processorForRequest(req)).process(reader, writer);
+            new DefaultProcessorHandler(processor).process(reader, writer);
 
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType(accept);
+            resp.setContentLength(baos.size());
             resp.getOutputStream().write(baos.toByteArray());
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(null), e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());
         }
     }

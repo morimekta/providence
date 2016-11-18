@@ -71,7 +71,8 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
     }
 
     /**
-     * @return True iff the struct is simple. A simple struct contains no containers, and no
+     * @return True iff the message is simple. A simple message contains no
+     *         containers, and no sub-messages.
      */
     public boolean isSimple() {
         return simple;

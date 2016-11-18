@@ -18,13 +18,12 @@
  */
 package net.morimekta.providence.client;
 
-import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
 import com.google.api.client.http.ByteArrayContent;
