@@ -1,0 +1,1 @@
+../../../../providence-testing/src/test/thrift/service.thrift

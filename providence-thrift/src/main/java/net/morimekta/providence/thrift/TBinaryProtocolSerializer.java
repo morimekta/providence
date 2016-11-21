@@ -1,5 +1,7 @@
 package net.morimekta.providence.thrift;
 
+import net.morimekta.providence.serializer.BinarySerializer;
+
 import org.apache.thrift.protocol.TBinaryProtocol;
 
 /**
@@ -7,8 +9,8 @@ import org.apache.thrift.protocol.TBinaryProtocol;
  * @since 24.10.15.
  */
 public class TBinaryProtocolSerializer extends TProtocolSerializer {
-    public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
-    public static final String ALT_MIME_TYPE = "application/x-thrift";
+    public static final String MIME_TYPE = BinarySerializer.MIME_TYPE;
+    public static final String ALT_MIME_TYPE = BinarySerializer.ALT_MIME_TYPE;
 
     public TBinaryProtocolSerializer() {
         this(true);

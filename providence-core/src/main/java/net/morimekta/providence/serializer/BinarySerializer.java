@@ -63,6 +63,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class BinarySerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.binary";
+    public static final String ALT_MIME_TYPE = "application/x-thrift";
 
     private static final int VERSION_MASK = 0xffff0000;
     private static final int VERSION_1    = 0x80010000;

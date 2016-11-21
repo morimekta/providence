@@ -25,6 +25,7 @@
             <artifactId>providence-core-jackson</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-reflect</artifactId>
@@ -39,6 +40,10 @@
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

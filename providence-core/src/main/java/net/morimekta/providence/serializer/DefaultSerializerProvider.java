@@ -26,7 +26,7 @@ public class DefaultSerializerProvider implements SerializerProvider {
         this.defaultContentType = defaultContentType;
         this.serializerMap = new HashMap<>();
 
-        register(new BinarySerializer(), BinarySerializer.MIME_TYPE);
+        register(new BinarySerializer(), BinarySerializer.MIME_TYPE, BinarySerializer.ALT_MIME_TYPE);
         register(new FastBinarySerializer(), FastBinarySerializer.MIME_TYPE);
         register(new JsonSerializer(), JsonSerializer.MIME_TYPE, JsonSerializer.JSON_MIME_TYPE);
     }

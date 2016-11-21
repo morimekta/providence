@@ -36,7 +36,7 @@ public interface PProcessor extends PServiceCallHandler {
              RequestField extends PField,
              ResponseField extends PField>
     PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call)
-            throws IOException, SerializerException {
+            throws IOException {
         return handleCall(call, getDescriptor());
     }
 }

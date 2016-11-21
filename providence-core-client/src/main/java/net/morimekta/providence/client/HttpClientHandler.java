@@ -18,9 +18,12 @@
  */
 package net.morimekta.providence.client;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallHandler;
+import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
@@ -61,10 +64,15 @@ public class HttpClientHandler implements PServiceCallHandler {
             Response extends PMessage<Response, ResponseField>,
             RequestField extends PField,
             ResponseField extends PField>
-    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> pServiceCall,
+    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call,
                                                      PService service) throws IOException {
+        if (call.getType() == PServiceCallType.EXCEPTION || call.getType() == PServiceCallType.REPLY) {
+            throw new PApplicationException("Request with invalid call type: " + call.getType(),
+                                            PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        requestSerializer.serialize(baos, pServiceCall);
+        requestSerializer.serialize(baos, call);
 
         ByteArrayContent content = new ByteArrayContent(requestSerializer.mimeType(), baos.toByteArray());
 
@@ -75,10 +83,27 @@ public class HttpClientHandler implements PServiceCallHandler {
         if (response.getContentType() != null) {
             responseSerializer = serializerProvider.getSerializer(response.getContentType());
             if (responseSerializer == null) {
-                throw new IOException("Unknown mime type in response: " + response.getContentType());
+                throw new PApplicationException("Unknown mime type in response: " + response.getContentType(),
+                                                PApplicationExceptionType.INVALID_PROTOCOL);
             }
         }
 
-        return responseSerializer.deserialize(response.getContent(), service);
+        PServiceCall<Response, ResponseField> reply = null;
+        if (call.getType() == PServiceCallType.CALL) {
+            // non 200 responses should have triggered a HttpResponseException,
+            // so this is safe.
+            reply = responseSerializer.deserialize(response.getContent(), service);
+
+            if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+            }
+            if (reply.getSequence() != call.getSequence()) {
+                throw new PApplicationException("Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                                                PApplicationExceptionType.BAD_SEQUENCE_ID);
+            }
+        }
+
+        return reply;
     }
 }

@@ -1,5 +1,7 @@
 package net.morimekta.providence.thrift.client;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
@@ -76,20 +78,35 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
     public <Request extends PMessage<Request, RequestField>,
             Response extends PMessage<Response, ResponseField>,
             RequestField extends PField,
-            ResponseField extends PField> PServiceCall<Response, ResponseField>
-    handleCall(PServiceCall<Request, RequestField> call, PService service)
-            throws IOException, SerializerException {
+            ResponseField extends PField>
+    PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call, PService service)
+            throws IOException {
+        if (call.getType() == PServiceCallType.EXCEPTION || call.getType() == PServiceCallType.REPLY) {
+            throw new PApplicationException("Request with invalid call type: " + call.getType(),
+                                            PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+        }
+
         SocketChannel channel = connect();
 
         OutputStream out = new FramedBufferOutputStream(channel);
         serializer.serialize(out, call);
         out.flush();
 
-        if (call.getType() != PServiceCallType.ONEWAY) {
+        PServiceCall<Response, ResponseField> reply = null;
+        if (call.getType() == PServiceCallType.CALL) {
             InputStream in = new FramedBufferInputSteram(channel);
-            return serializer.deserialize(in, service);
+            reply = serializer.deserialize(in, service);
+
+            if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+            }
+            if (reply.getSequence() != call.getSequence()) {
+                throw new PApplicationException("Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                                                PApplicationExceptionType.BAD_SEQUENCE_ID);
+            }
         }
 
-        return null;
+        return reply;
     }
 }

@@ -1,13 +1,14 @@
 package net.morimekta.providence.thrift.client;
 
-import net.morimekta.providence.PServiceCallHandler;
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -54,17 +55,32 @@ public class SocketClientHandler implements PServiceCallHandler {
             RequestField extends PField,
             ResponseField extends PField>
     PServiceCall<Response, ResponseField> handleCall(PServiceCall<Request, RequestField> call, PService service)
-            throws IOException, SerializerException {
+            throws IOException {
+        if (call.getType() == PServiceCallType.EXCEPTION || call.getType() == PServiceCallType.REPLY) {
+            throw new PApplicationException("Request with invalid call type: " + call.getType(),
+                                            PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+        }
+
         try (Socket socket = connect()) {
             OutputStream out = new BufferedOutputStream(socket.getOutputStream());
             serializer.serialize(out, call);
             out.flush();
 
-            if (call.getType() != PServiceCallType.ONEWAY) {
+            PServiceCall<Response, ResponseField> reply = null;
+            if (call.getType() == PServiceCallType.CALL) {
                 InputStream in = new BufferedInputStream(socket.getInputStream());
-                return serializer.deserialize(in, service);
+                reply = serializer.deserialize(in, service);
+
+                if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                    throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                    PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                }
+                if (reply.getSequence() != call.getSequence()) {
+                    throw new PApplicationException("Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                                                    PApplicationExceptionType.BAD_SEQUENCE_ID);
+                }
             }
-            return null;
+            return reply;
         }
     }
 }
