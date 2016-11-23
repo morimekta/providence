@@ -17,10 +17,8 @@ package net.morimekta.providence.maven.plugin;
 
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.JGenerator;
-import net.morimekta.providence.generator.format.java.JOptions;
-import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
-import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
+import net.morimekta.providence.generator.format.java.JavaGenerator;
+import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -68,17 +66,6 @@ import java.util.zip.ZipInputStream;
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     /**
-     * Use the "tiny java" generator version instead of the default. It has
-     * minimal dependencies, and cannot be serialized using the providence
-     * libraries. It will only require dependency on one library:
-     * <ul>
-     *     <li><code>net.morimekta.utils:io-util:0.2.3</code>
-     * </ul>
-     */
-    @Parameter(defaultValue = "false")
-    protected boolean tiny;
-
-    /**
      * Adds android.os.Parcelable support. Not compatible with 'tiny'.
      */
     @Parameter(defaultValue = "false")
@@ -86,11 +73,11 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
     /**
      * If set to true will add jackson 2 annotations to messages and enums.
-     * Required additional dependency on jackson 2 core libraries:
+     * Required additional dependency on jackson 2 extra libraries:
      * <ul>
-     *     <li><code>com.fasterxml.jackson.core:jackson-annotations:2.x</code>
-     *     <li><code>com.fasterxml.jackson.core:jackson-core:2.x</code>
-     *     <li><code>com.fasterxml.jackson.core:jackson-databind:2.x</code>
+     *     <li><code>com.fasterxml.jackson.extra:jackson-annotations:2.x</code>
+     *     <li><code>com.fasterxml.jackson.extra:jackson-extra:2.x</code>
+     *     <li><code>com.fasterxml.jackson.extra:jackson-databind:2.x</code>
      * </ul>
      */
     @Parameter(defaultValue = "false")
@@ -241,22 +228,11 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         try {
-            Generator generator;
-            if (tiny) {
-                TinyOptions options = new TinyOptions();
-                options.jackson = jackson;
-                if (android) {
-                    throw new MojoExecutionException("Android option not compatible with 'tiny_java' variant.");
-                }
-                generator = new TinyGenerator(fileManager, loader.getRegistry(), options);
-            } else {
-                JOptions options = new JOptions();
-                options.android = android;
-                if (jackson) {
-                    throw new MojoExecutionException("Jackson option not compatible with 'java' variant.");
-                }
-                generator = new JGenerator(fileManager, loader.getRegistry(), options);
-            }
+            JavaOptions options = new JavaOptions();
+            options.android = android;
+            options.jackson = jackson;
+
+            Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 
             for (CDocument doc : documents) {
                 try {

@@ -25,17 +25,10 @@ import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
-import net.morimekta.providence.tools.compiler.options.GeneratorSpecParser;
-import net.morimekta.providence.tools.compiler.options.HelpOption;
-import net.morimekta.providence.tools.compiler.options.HelpSpec;
-import net.morimekta.providence.tools.compiler.options.Syntax;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.JGenerator;
-import net.morimekta.providence.generator.format.java.JOptions;
-import net.morimekta.providence.generator.format.java.tiny.TinyGenerator;
-import net.morimekta.providence.generator.format.java.tiny.TinyOptions;
+import net.morimekta.providence.generator.format.java.JavaGenerator;
+import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -44,6 +37,11 @@ import net.morimekta.providence.reflect.parser.MessageDocumentParser;
 import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.tools.common.options.Utils;
+import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
+import net.morimekta.providence.tools.compiler.options.GeneratorSpecParser;
+import net.morimekta.providence.tools.compiler.options.HelpOption;
+import net.morimekta.providence.tools.compiler.options.HelpSpec;
+import net.morimekta.providence.tools.compiler.options.Syntax;
 
 import java.io.File;
 import java.io.IOException;
@@ -157,30 +155,20 @@ public class CompilerOptions {
             case json:
                 return new JsonGenerator(getFileManager(), loader);
             case java: {
-                JOptions options = new JOptions();
+                JavaOptions options = new JavaOptions();
                 for (String opt : gen.options) {
                     switch (opt) {
                         case "android":
                             options.android = true;
                             break;
-                        default:
-                            throw new ArgumentException("No such option for java generator: " + opt);
-                    }
-                }
-                return new JGenerator(getFileManager(), loader.getRegistry(), options);
-            }
-            case tiny_java: {
-                TinyOptions options = new TinyOptions();
-                for (String opt : gen.options) {
-                    switch (opt) {
                         case "jackson":
                             options.jackson = true;
                             break;
                         default:
-                            throw new ArgumentException("No such option for tiny_java generator: " + opt);
+                            throw new ArgumentException("No such option for java generator: " + opt);
                     }
                 }
-                return new TinyGenerator(getFileManager(), loader.getRegistry(), options);
+                return new JavaGenerator(getFileManager(), loader.getRegistry(), options);
             }
             default:
                 throw new ArgumentException("Unknown language %s.", gen.generator.name());

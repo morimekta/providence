@@ -64,8 +64,6 @@ public class Compiler {
                     switch (options.help.generator) {
                         case java:
                             System.out.println(" - android : Add android parcelable interface to model classes.");
-                            break;
-                        case tiny_java:
                             System.out.println(" - jackson : Add jackson 2 annotations to model classes.");
                             break;
                         default:

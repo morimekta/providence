@@ -131,7 +131,6 @@ public class CompilerTest {
                      "\n" +
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
-                     " - tiny_java  : Minimalistic java (1.7+) code generator.\n" +
                      " - json       : Generates JSON specification files.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());
@@ -148,22 +147,7 @@ public class CompilerTest {
                      "java : Main java (1.8+) code generator.\n" +
                      "Available options\n" +
                      "\n" +
-                     " - android : Add android parcelable interface to model classes.\n",
-                     outContent.toString());
-        assertEquals("", errContent.toString());
-        assertEquals(0, exitCode);
-    }
-
-    @Test
-    public void testHelp_tiny_java() {
-        compiler.run("--help", "tiny_java");
-
-        assertEquals("Providence compiler - v" + version + "\n" +
-                     "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "\n" +
-                     "tiny_java : Minimalistic java (1.7+) code generator.\n" +
-                     "Available options\n" +
-                     "\n" +
+                     " - android : Add android parcelable interface to model classes.\n" +
                      " - jackson : Add jackson 2 annotations to model classes.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());

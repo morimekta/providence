@@ -174,6 +174,7 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
      *
      * @param message The message to stringify.
      * @param <T> The message type.
+     * @param <F> The field type.
      * @return The resulting string.
      */
     protected static <T extends PMessage<T, F>, F extends PField> String asString(T message) {

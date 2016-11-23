@@ -27,6 +27,7 @@ public class ResourceUtils {
      *
      * @param resource The resource path.
      * @param dir Target directory.
+     * @return The copied file.
      */
     public static File copyResourceTo(String resource, File dir) {
         if (!dir.exists()) {

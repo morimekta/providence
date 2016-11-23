@@ -8,7 +8,7 @@ import java.util.Collection;
  * Convert params for input or output of providence data.
  */
 public class GeneratorSpec {
-    // expected format.
+    // expected appendEnumClass.
     public final Language           generator;
     public final Collection<String> options;
 

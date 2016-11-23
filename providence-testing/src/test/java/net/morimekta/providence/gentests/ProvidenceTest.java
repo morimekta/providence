@@ -154,6 +154,7 @@ public class ProvidenceTest {
         assertEquals("test\\twith escapes\\nand\\u00a0ũñı©ôðé.", dv.getStringValue());
 
         assertFalse(dv.hasBinaryValue());
+        // No default on binary.
         assertNull(dv.getBinaryValue());
 
         assertFalse(dv.hasEnumValue());

@@ -17,20 +17,16 @@
  * under the License.
  */
 
-package net.morimekta.providence.generator;
+package net.morimekta.providence.generator.format.java;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * Options class for java 2 generator.
  */
-public class GeneratorException extends RuntimeException {
-    private static final long serialVersionUID = 1441965857338834100L;
+public class JavaOptions {
+    /**
+     * Android option for the
+     */
+    public boolean android = false;
 
-    public GeneratorException(String message) {
-        super(message);
-    }
-
-    public GeneratorException(String message, Throwable th) {
-        super(message, th);
-    }
+    public boolean jackson = false;
 }

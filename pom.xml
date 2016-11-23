@@ -574,7 +574,6 @@
             <modules>
                 <!-- Core Modules -->
                 <module>providence-core</module>
-                <module>providence-core-jackson</module>
                 <module>providence-core-client</module>
                 <module>providence-core-server</module>
 

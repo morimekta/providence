@@ -30,7 +30,6 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
-import net.morimekta.providence.reflect.contained.CStructDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,18 +41,21 @@ import java.util.List;
 public class JMessage<T extends CMessage<T, CField>> {
     private final PStructDescriptor<?, ?> struct;
     private final JHelper                 helper;
-    private final ArrayList<JField>       fields;
+    private final ArrayList<JField>       declaredFields;
+    private final ArrayList<JField>       numericalFields;
 
     public JMessage(PStructDescriptor<T, CField> struct, JHelper helper) {
         this.struct = struct;
         this.helper = helper;
-        this.fields = new ArrayList<>(struct.getFields().length);
+        this.declaredFields = new ArrayList<>(struct.getFields().length);
 
         CField[] fields = struct.getFields();
         for (int i = 0; i < fields.length; ++i) {
-            this.fields.add(new JField(fields[i], helper, i));
+            this.declaredFields.add(new JField(fields[i], helper, i));
         }
-        Collections.sort(this.fields, (a, b) -> Integer.compare(a.id(), b.id()));
+        // The same declaredFields, but in ID numerical order.
+        this.numericalFields = new ArrayList<>(this.declaredFields);
+        Collections.sort(this.numericalFields, (a, b) -> Integer.compare(a.id(), b.id()));
     }
 
     public PStructDescriptor<?, ?> descriptor() {
@@ -81,9 +83,14 @@ public class JMessage<T extends CMessage<T, CField>> {
         return JUtils.getClassName(struct);
     }
 
-    public List<JField> fields() {
-        return fields;
+    public List<JField> declaredOrderFields() {
+        return declaredFields;
     }
+
+    public List<JField> numericalOrderedFields() {
+        return numericalFields;
+    }
+
 
     public String getDescriptorClass() throws GeneratorException {
         switch (variant()) {

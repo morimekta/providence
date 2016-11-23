@@ -93,7 +93,7 @@ public class ValueBuilder {
                     json.value(value.toString());
                     json.flush();
                 } catch (JsonException je) {
-                    throw new GeneratorException("Unable to format string value");
+                    throw new GeneratorException("Unable to appendEnumClass string value");
                 }
                 break;
             case ENUM:

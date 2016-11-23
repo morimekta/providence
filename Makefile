@@ -3,6 +3,12 @@ VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::
 clean:
 	mvn clean
 
+resources:
+	cp providence-testing/src/test/providence/service.thrift providence-core-client/src/test/providence/
+	cp providence-testing/src/test/providence/service.thrift providence-core-server/src/test/providence/
+	cp providence-testing/src/test/thrift/service.thrift providence-core-client/src/test/thrift/
+	cp providence-testing/src/test/thrift/service.thrift providence-core-server/src/test/thrift/
+
 compile:
 	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 

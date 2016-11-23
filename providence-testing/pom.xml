@@ -100,7 +100,6 @@
                             <goal>testCompile</goal>
                         </goals>
                         <configuration>
-                            <tiny>true</tiny>
                             <jackson>true</jackson>
                             <inputFiles>
                                 <includes>

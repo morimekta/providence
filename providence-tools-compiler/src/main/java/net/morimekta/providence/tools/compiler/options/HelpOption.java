@@ -8,7 +8,7 @@ import net.morimekta.providence.generator.Language;
 import java.util.function.Consumer;
 
 /**
- * Cli options handler for stream specification (file / url, format).
+ * Cli options handler for stream specification (file / url, appendEnumClass).
  */
 public class HelpOption extends BaseOption {
     private final Consumer<HelpSpec> consumer;
