@@ -3,7 +3,8 @@ package net.morimekta.providence.model;
 /**
  * The requirement of the field.
  */
-public enum Requirement implements net.morimekta.providence.PEnumValue<Requirement> {
+public enum Requirement
+        implements net.morimekta.providence.PEnumValue<Requirement> {
     DEFAULT(0, "DEFAULT"),
     OPTIONAL(1, "OPTIONAL"),
     REQUIRED(2, "REQUIRED"),

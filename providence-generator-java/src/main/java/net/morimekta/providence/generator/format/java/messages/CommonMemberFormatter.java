@@ -27,6 +27,7 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -57,6 +58,11 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
 
     @Override
     public void appendConstants(JMessage<?> message) throws GeneratorException {
+        // Because of Serializable.
+        writer.formatln("private final static long serialVersionUID = %dL;",
+                        JUtils.generateSerialVersionUID(message.descriptor()))
+              .newline();
+
         appendFieldDefaultValues(message);
     }
 
@@ -170,6 +176,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             }
             writer.formatln("private final %s %s;", field.fieldType(), field.member());
         }
+        writer.newline();
     }
 
     private void appendCreateMessage(JMessage<?> message) throws GeneratorException {

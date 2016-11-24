@@ -49,7 +49,7 @@ public class CommonBuilderFormatter
 
     @Override
     protected void appendClassExtends(JMessage<?> message) throws GeneratorException {
-        writer.formatln("    extends %s<%s,_Field>",
+        writer.formatln("extends %s<%s,_Field>",
                         PMessageBuilder.class.getName(),
                         message.instanceType());
     }

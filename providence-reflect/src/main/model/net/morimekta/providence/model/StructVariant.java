@@ -8,7 +8,8 @@ package net.morimekta.providence.model;
  * UNION: No required fields. Only one field set to be valid.
  * EXCEPTION: No &#39;cause&#39; field, &#39;message&#39; field *must* be a string (java).
  */
-public enum StructVariant implements net.morimekta.providence.PEnumValue<StructVariant> {
+public enum StructVariant
+        implements net.morimekta.providence.PEnumValue<StructVariant> {
     STRUCT(1, "STRUCT"),
     UNION(2, "UNION"),
     EXCEPTION(3, "EXCEPTION"),

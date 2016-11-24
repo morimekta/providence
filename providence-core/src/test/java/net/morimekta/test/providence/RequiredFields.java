@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class RequiredFields
-        implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
+        implements Comparable<RequiredFields>,
                    java.io.Serializable,
-                   Comparable<RequiredFields> {
+                   net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field> {
     private final static long serialVersionUID = -7378845554576050657L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -13,6 +13,7 @@ public class RequiredFields
     private final static int kDefaultIntegerValue = 0;
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
+
 
     private final boolean mBooleanValue;
     private final byte mByteValue;
@@ -24,21 +25,8 @@ public class RequiredFields
     private final net.morimekta.util.Binary mBinaryValue;
     private final net.morimekta.test.providence.Value mEnumValue;
     private final net.morimekta.test.providence.CompactFields mCompactValue;
-    
-    private volatile int tHashCode;
 
-    private RequiredFields(_Builder builder) {
-        mBooleanValue = builder.mBooleanValue;
-        mByteValue = builder.mByteValue;
-        mShortValue = builder.mShortValue;
-        mIntegerValue = builder.mIntegerValue;
-        mLongValue = builder.mLongValue;
-        mDoubleValue = builder.mDoubleValue;
-        mStringValue = builder.mStringValue;
-        mBinaryValue = builder.mBinaryValue;
-        mEnumValue = builder.mEnumValue;
-        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
-    }
+    private volatile int tHashCode;
 
     public RequiredFields(boolean pBooleanValue,
                           byte pByteValue,
@@ -60,6 +48,19 @@ public class RequiredFields
         mBinaryValue = pBinaryValue;
         mEnumValue = pEnumValue;
         mCompactValue = pCompactValue;
+    }
+
+    private RequiredFields(_Builder builder) {
+        mBooleanValue = builder.mBooleanValue;
+        mByteValue = builder.mByteValue;
+        mShortValue = builder.mShortValue;
+        mIntegerValue = builder.mIntegerValue;
+        mLongValue = builder.mLongValue;
+        mDoubleValue = builder.mDoubleValue;
+        mStringValue = builder.mStringValue;
+        mBinaryValue = builder.mBinaryValue;
+        mEnumValue = builder.mEnumValue;
+        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     public boolean hasBooleanValue() {
@@ -173,62 +174,6 @@ public class RequiredFields
     }
 
     @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return true;
-            case 2: return true;
-            case 3: return true;
-            case 4: return true;
-            case 5: return true;
-            case 6: return true;
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof RequiredFields)) return false;
@@ -308,7 +253,7 @@ public class RequiredFields
         if (mEnumValue != null) {
             out.append(',');
             out.append("enumValue:")
-               .append(mEnumValue.toString());
+               .append(mEnumValue.asString());
         }
         if (mCompactValue != null) {
             out.append(',');
@@ -358,7 +303,7 @@ public class RequiredFields
         c = Boolean.compare(mEnumValue != null, other.mEnumValue != null);
         if (c != 0) return c;
         if (mEnumValue != null) {
-            c = Integer.compare(mEnumValue.getValue(), mEnumValue.getValue());
+            c = Integer.compare(mEnumValue.ordinal(), mEnumValue.ordinal());
             if (c != 0) return c;
         }
 
@@ -370,6 +315,67 @@ public class RequiredFields
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return true;
+            case 2: return true;
+            case 3: return true;
+            case 4: return true;
+            case 5: return true;
+            case 6: return true;
+            case 7: return hasStringValue();
+            case 8: return hasBinaryValue();
+            case 9: return hasEnumValue();
+            case 10: return hasCompactValue();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return 1;
+            case 2: return 1;
+            case 3: return 1;
+            case 4: return 1;
+            case 5: return 1;
+            case 6: return 1;
+            case 7: return hasStringValue() ? 1 : 0;
+            case 8: return hasBinaryValue() ? 1 : 0;
+            case 9: return hasEnumValue() ? 1 : 0;
+            case 10: return hasCompactValue() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return isBooleanValue();
+            case 2: return getByteValue();
+            case 3: return getShortValue();
+            case 4: return getIntegerValue();
+            case 5: return getLongValue();
+            case 6: return getDoubleValue();
+            case 7: return getStringValue();
+            case 8: return getBinaryValue();
+            case 9: return getEnumValue();
+            case 10: return getCompactValue();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -507,11 +513,6 @@ public class RequiredFields
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

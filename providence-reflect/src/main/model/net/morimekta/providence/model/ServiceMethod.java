@@ -5,12 +5,13 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceMethod
-        implements net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field>,
+        implements Comparable<ServiceMethod>,
                    java.io.Serializable,
-                   Comparable<ServiceMethod> {
+                   net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field> {
     private final static long serialVersionUID = -8952857258512990537L;
 
     private final static boolean kDefaultOneWay = false;
+
 
     private final String mComment;
     private final boolean mOneWay;
@@ -19,30 +20,8 @@ public class ServiceMethod
     private final java.util.List<net.morimekta.providence.model.ThriftField> mParams;
     private final java.util.List<net.morimekta.providence.model.ThriftField> mExceptions;
     private final java.util.Map<String,String> mAnnotations;
-    
-    private volatile int tHashCode;
 
-    private ServiceMethod(_Builder builder) {
-        mComment = builder.mComment;
-        mOneWay = builder.mOneWay;
-        mReturnType = builder.mReturnType;
-        mName = builder.mName;
-        if (builder.isSetParams()) {
-            mParams = builder.mParams.build();
-        } else {
-            mParams = null;
-        }
-        if (builder.isSetExceptions()) {
-            mExceptions = builder.mExceptions.build();
-        } else {
-            mExceptions = null;
-        }
-        if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
-        } else {
-            mAnnotations = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public ServiceMethod(String pComment,
                          Boolean pOneWay,
@@ -71,6 +50,28 @@ public class ServiceMethod
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
+    }
+
+    private ServiceMethod(_Builder builder) {
+        mComment = builder.mComment;
+        mOneWay = builder.mOneWay;
+        mReturnType = builder.mReturnType;
+        mName = builder.mName;
+        if (builder.isSetParams()) {
+            mParams = builder.mParams.build();
+        } else {
+            mParams = null;
+        }
+        if (builder.isSetExceptions()) {
+            mExceptions = builder.mExceptions.build();
+        } else {
+            mExceptions = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
         } else {
             mAnnotations = null;
         }
@@ -163,53 +164,6 @@ public class ServiceMethod
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return true;
-            case 3: return hasReturnType();
-            case 4: return hasName();
-            case 5: return numParams() > 0;
-            case 6: return numExceptions() > 0;
-            case 7: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasReturnType() ? 1 : 0;
-            case 4: return hasName() ? 1 : 0;
-            case 5: return numParams();
-            case 6: return numExceptions();
-            case 7: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return isOneWay();
-            case 3: return getReturnType();
-            case 4: return getName();
-            case 5: return getParams();
-            case 6: return getExceptions();
-            case 7: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -347,6 +301,58 @@ public class ServiceMethod
         return 0;
     }
 
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return true;
+            case 3: return hasReturnType();
+            case 4: return hasName();
+            case 5: return numParams() > 0;
+            case 6: return numExceptions() > 0;
+            case 7: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return 1;
+            case 3: return hasReturnType() ? 1 : 0;
+            case 4: return hasName() ? 1 : 0;
+            case 5: return numParams();
+            case 6: return numExceptions();
+            case 7: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return isOneWay();
+            case 3: return getReturnType();
+            case 4: return getName();
+            case 5: return getParams();
+            case 6: return getExceptions();
+            case 7: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
+    }
+
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ONE_WAY(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "one_way", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultOneWay)),
@@ -475,11 +481,6 @@ public class ServiceMethod
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.ServiceMethod builder.
      * @return The builder instance.
@@ -488,6 +489,9 @@ public class ServiceMethod
         return new _Builder();
     }
 
+    /**
+     * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<ServiceMethod,_Field> {
         private java.util.BitSet optionals;

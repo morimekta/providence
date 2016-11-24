@@ -2,30 +2,31 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operation
-        implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
+        implements Comparable<Operation>,
                    java.io.Serializable,
-                   Comparable<Operation> {
+                   net.morimekta.providence.PMessage<Operation,Operation._Field> {
     private final static long serialVersionUID = -2122462501055525645L;
+
 
     private final net.morimekta.test.calculator.Operator mOperator;
     private final java.util.List<net.morimekta.test.calculator.Operand> mOperands;
-    
-    private volatile int tHashCode;
 
-    private Operation(_Builder builder) {
-        mOperator = builder.mOperator;
-        if (builder.isSetOperands()) {
-            mOperands = builder.mOperands.build();
-        } else {
-            mOperands = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public Operation(net.morimekta.test.calculator.Operator pOperator,
                      java.util.List<net.morimekta.test.calculator.Operand> pOperands) {
         mOperator = pOperator;
         if (pOperands != null) {
             mOperands = com.google.common.collect.ImmutableList.copyOf(pOperands);
+        } else {
+            mOperands = null;
+        }
+    }
+
+    private Operation(_Builder builder) {
+        mOperator = builder.mOperator;
+        if (builder.isSetOperands()) {
+            mOperands = builder.mOperands.build();
         } else {
             mOperands = null;
         }
@@ -55,38 +56,6 @@ public class Operation
      */
     public java.util.List<net.morimekta.test.calculator.Operand> getOperands() {
         return mOperands;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasOperator();
-            case 2: return numOperands() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperator() ? 1 : 0;
-            case 2: return numOperands();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getOperator();
-            case 2: return getOperands();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -123,7 +92,7 @@ public class Operation
         if (mOperator != null) {
             first = false;
             out.append("operator:")
-               .append(mOperator.toString());
+               .append(mOperator.asString());
         }
         if (mOperands != null && mOperands.size() > 0) {
             if (!first) out.append(',');
@@ -141,7 +110,7 @@ public class Operation
         c = Boolean.compare(mOperator != null, other.mOperator != null);
         if (c != 0) return c;
         if (mOperator != null) {
-            c = Integer.compare(mOperator.getValue(), mOperator.getValue());
+            c = Integer.compare(mOperator.ordinal(), mOperator.ordinal());
             if (c != 0) return c;
         }
 
@@ -153,6 +122,43 @@ public class Operation
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasOperator();
+            case 2: return numOperands() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasOperator() ? 1 : 0;
+            case 2: return numOperands();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getOperator();
+            case 2: return getOperands();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -266,11 +272,6 @@ public class Operation
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

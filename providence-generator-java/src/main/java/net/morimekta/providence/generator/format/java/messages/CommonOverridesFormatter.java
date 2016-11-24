@@ -4,7 +4,6 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -33,7 +32,6 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
     public Collection<String> getExtraImplements(JMessage<?> message) throws GeneratorException {
         LinkedList<String> impl = new LinkedList<>();
 
-        impl.add(Stringable.class.getName());
         impl.add(Comparable.class.getSimpleName() + "<" + message.instanceType() + ">");
         if (!message.isException()) {
             impl.add(Serializable.class.getName());
@@ -55,17 +53,8 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
     }
 
     @Override
-    public void appendConstants(JMessage<?> message) throws GeneratorException {
-        // Because of Serializable.
-        writer.formatln("private final static long serialVersionUID = %dL;",
-                        JUtils.generateSerialVersionUID(message.descriptor()))
-              .newline();
-    }
-
-    @Override
     public void appendFields(JMessage<?> message) throws GeneratorException {
-        writer.newline()
-              .appendln("private volatile int tHashCode;")
+        writer.appendln("private volatile int tHashCode;")
               .newline();
     }
 

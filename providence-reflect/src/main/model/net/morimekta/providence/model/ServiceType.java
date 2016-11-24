@@ -7,34 +7,19 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
+        implements Comparable<ServiceType>,
                    java.io.Serializable,
-                   Comparable<ServiceType> {
+                   net.morimekta.providence.PMessage<ServiceType,ServiceType._Field> {
     private final static long serialVersionUID = 789757775761432238L;
+
 
     private final String mComment;
     private final String mName;
     private final String mExtend;
     private final java.util.List<net.morimekta.providence.model.ServiceMethod> mMethods;
     private final java.util.Map<String,String> mAnnotations;
-    
-    private volatile int tHashCode;
 
-    private ServiceType(_Builder builder) {
-        mComment = builder.mComment;
-        mName = builder.mName;
-        mExtend = builder.mExtend;
-        if (builder.isSetMethods()) {
-            mMethods = builder.mMethods.build();
-        } else {
-            mMethods = null;
-        }
-        if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
-        } else {
-            mAnnotations = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public ServiceType(String pComment,
                        String pName,
@@ -51,6 +36,22 @@ public class ServiceType
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
+    }
+
+    private ServiceType(_Builder builder) {
+        mComment = builder.mComment;
+        mName = builder.mName;
+        mExtend = builder.mExtend;
+        if (builder.isSetMethods()) {
+            mMethods = builder.mMethods.build();
+        } else {
+            mMethods = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
         } else {
             mAnnotations = null;
         }
@@ -117,47 +118,6 @@ public class ServiceType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return hasExtend();
-            case 4: return numMethods() > 0;
-            case 5: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return hasExtend() ? 1 : 0;
-            case 4: return numMethods();
-            case 5: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getExtend();
-            case 4: return getMethods();
-            case 5: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -275,6 +235,52 @@ public class ServiceType
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasName();
+            case 3: return hasExtend();
+            case 4: return numMethods() > 0;
+            case 5: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasName() ? 1 : 0;
+            case 3: return hasExtend() ? 1 : 0;
+            case 4: return numMethods();
+            case 5: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getName();
+            case 3: return getExtend();
+            case 4: return getMethods();
+            case 5: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -399,11 +405,6 @@ public class ServiceType
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.ServiceType builder.
      * @return The builder instance.
@@ -412,6 +413,11 @@ public class ServiceType
         return new _Builder();
     }
 
+    /**
+     * service (extends &lt;extend&gt;)? {
+     *   (&lt;method&gt; [;,]?)*
+     * }
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field> {
         private java.util.BitSet optionals;

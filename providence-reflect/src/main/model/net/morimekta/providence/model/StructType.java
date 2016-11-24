@@ -7,36 +7,21 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements net.morimekta.providence.PMessage<StructType,StructType._Field>,
+        implements Comparable<StructType>,
                    java.io.Serializable,
-                   Comparable<StructType> {
+                   net.morimekta.providence.PMessage<StructType,StructType._Field> {
     private final static long serialVersionUID = -7531050363059752370L;
 
     private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;
+
 
     private final String mComment;
     private final net.morimekta.providence.model.StructVariant mVariant;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.ThriftField> mFields;
     private final java.util.Map<String,String> mAnnotations;
-    
-    private volatile int tHashCode;
 
-    private StructType(_Builder builder) {
-        mComment = builder.mComment;
-        mVariant = builder.mVariant;
-        mName = builder.mName;
-        if (builder.isSetFields()) {
-            mFields = builder.mFields.build();
-        } else {
-            mFields = null;
-        }
-        if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
-        } else {
-            mAnnotations = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public StructType(String pComment,
                       net.morimekta.providence.model.StructVariant pVariant,
@@ -53,6 +38,22 @@ public class StructType
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
+    }
+
+    private StructType(_Builder builder) {
+        mComment = builder.mComment;
+        mVariant = builder.mVariant;
+        mName = builder.mName;
+        if (builder.isSetFields()) {
+            mFields = builder.mFields.build();
+        } else {
+            mFields = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
         } else {
             mAnnotations = null;
         }
@@ -122,47 +123,6 @@ public class StructType
     }
 
     @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasVariant();
-            case 3: return hasName();
-            case 4: return numFields() > 0;
-            case 5: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasVariant() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
-            case 4: return numFields();
-            case 5: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getVariant();
-            case 3: return getName();
-            case 4: return getFields();
-            case 5: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof StructType)) return false;
@@ -210,7 +170,7 @@ public class StructType
             if (first) first = false;
             else out.append(',');
             out.append("variant:")
-               .append(mVariant.toString());
+               .append(mVariant.asString());
         }
         if (mName != null) {
             if (first) first = false;
@@ -249,7 +209,7 @@ public class StructType
         c = Boolean.compare(mVariant != null, other.mVariant != null);
         if (c != 0) return c;
         if (mVariant != null) {
-            c = Integer.compare(mVariant.getValue(), mVariant.getValue());
+            c = Integer.compare(mVariant.ordinal(), mVariant.ordinal());
             if (c != 0) return c;
         }
 
@@ -275,6 +235,52 @@ public class StructType
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasVariant();
+            case 3: return hasName();
+            case 4: return numFields() > 0;
+            case 5: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasVariant() ? 1 : 0;
+            case 3: return hasName() ? 1 : 0;
+            case 4: return numFields();
+            case 5: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getVariant();
+            case 3: return getName();
+            case 4: return getFields();
+            case 5: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -399,11 +405,6 @@ public class StructType
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.StructType builder.
      * @return The builder instance.
@@ -412,6 +413,11 @@ public class StructType
         return new _Builder();
     }
 
+    /**
+     * &lt;variant&gt; {
+     *   (&lt;field&gt; ([,;])?)*
+     * }
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<StructType,_Field> {
         private java.util.BitSet optionals;

@@ -2,23 +2,19 @@ package net.morimekta.test.number;
 
 @SuppressWarnings("unused")
 public class Imaginary
-        implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
+        implements Comparable<Imaginary>,
                    java.io.Serializable,
-                   Comparable<Imaginary> {
+                   net.morimekta.providence.PMessage<Imaginary,Imaginary._Field> {
     private final static long serialVersionUID = 7869796731524194936L;
 
     private final static double kDefaultV = 0.0d;
     private final static double kDefaultI = 0.0d;
 
+
     private final double mV;
     private final double mI;
-    
-    private volatile int tHashCode;
 
-    private Imaginary(_Builder builder) {
-        mV = builder.mV;
-        mI = builder.mI;
-    }
+    private volatile int tHashCode;
 
     public Imaginary(double pV,
                      Double pI) {
@@ -28,6 +24,11 @@ public class Imaginary
         } else {
             mI = kDefaultI;
         }
+    }
+
+    private Imaginary(_Builder builder) {
+        mV = builder.mV;
+        mI = builder.mI;
     }
 
     public boolean hasV() {
@@ -50,38 +51,6 @@ public class Imaginary
      */
     public double getI() {
         return mI;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return true;
-            case 2: return true;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getV();
-            case 2: return getI();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -134,6 +103,43 @@ public class Imaginary
         if (c != 0) return c;
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return true;
+            case 2: return true;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return 1;
+            case 2: return 1;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getV();
+            case 2: return getI();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -247,11 +253,6 @@ public class Imaginary
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

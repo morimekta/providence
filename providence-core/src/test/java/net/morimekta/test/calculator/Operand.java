@@ -2,32 +2,21 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operand
-        implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
+        implements Comparable<Operand>,
                    java.io.Serializable,
-                   Comparable<Operand> {
+                   net.morimekta.providence.PUnion<Operand,Operand._Field> {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;
+
 
     private final net.morimekta.test.calculator.Operation mOperation;
     private final double mNumber;
     private final net.morimekta.test.number.Imaginary mImaginary;
 
-    private final _Field tUnionField;
-    
     private volatile int tHashCode;
 
-    private Operand(_Builder builder) {
-        tUnionField = builder.tUnionField;
-
-        mOperation = tUnionField != _Field.OPERATION
-                ? null
-                : builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
-        mNumber = tUnionField == _Field.NUMBER ? builder.mNumber : kDefaultNumber;
-        mImaginary = tUnionField != _Field.IMAGINARY
-                ? null
-                : builder.mImaginary_builder != null ? builder.mImaginary_builder.build() : builder.mImaginary;
-    }
+    private final _Field tUnionField;
 
     /**
      * @param value The union value
@@ -51,6 +40,18 @@ public class Operand
      */
     public static Operand withImaginary(net.morimekta.test.number.Imaginary value) {
         return new _Builder().setImaginary(value).build();
+    }
+
+    private Operand(_Builder builder) {
+        tUnionField = builder.tUnionField;
+
+        mOperation = tUnionField != _Field.OPERATION
+                ? null
+                : builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
+        mNumber = tUnionField == _Field.NUMBER ? builder.mNumber : kDefaultNumber;
+        mImaginary = tUnionField != _Field.IMAGINARY
+                ? null
+                : builder.mImaginary_builder != null ? builder.mImaginary_builder.build() : builder.mImaginary;
     }
 
     public boolean hasOperation() {
@@ -84,46 +85,6 @@ public class Operand
      */
     public net.morimekta.test.number.Imaginary getImaginary() {
         return mImaginary;
-    }
-
-    @Override
-    public _Field unionField() {
-        return tUnionField;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasOperation();
-            case 2: return hasNumber();
-            case 3: return hasImaginary();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperation() ? 1 : 0;
-            case 2: return hasNumber() ? 1 : 0;
-            case 3: return hasImaginary() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getOperation();
-            case 2: return getNumber();
-            case 3: return getImaginary();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -182,7 +143,7 @@ public class Operand
 
     @Override
     public int compareTo(Operand other) {
-        int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());
+        int c = tUnionField.compareTo(other.tUnionField);
         if (c != 0) return c;
 
         switch (tUnionField) {
@@ -194,6 +155,51 @@ public class Operand
                 return mImaginary.compareTo(other.mImaginary);
             default: return 0;
         }
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasOperation();
+            case 2: return hasNumber();
+            case 3: return hasImaginary();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasOperation() ? 1 : 0;
+            case 2: return hasNumber() ? 1 : 0;
+            case 3: return hasImaginary() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getOperation();
+            case 2: return getNumber();
+            case 3: return getImaginary();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Field unionField() {
+        return tUnionField;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -310,11 +316,6 @@ public class Operand
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

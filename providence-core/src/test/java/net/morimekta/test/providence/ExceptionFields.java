@@ -3,9 +3,9 @@ package net.morimekta.test.providence;
 @SuppressWarnings("unused")
 public class ExceptionFields
         extends Exception
-        implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,
-                   net.morimekta.providence.PException,
-                   Comparable<ExceptionFields> {
+        implements Comparable<ExceptionFields>,
+                   net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,
+                   net.morimekta.providence.PException {
     private final static long serialVersionUID = -4665960318174350293L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -14,6 +14,7 @@ public class ExceptionFields
     private final static int kDefaultIntegerValue = 0;
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
+
 
     private final boolean mBooleanValue;
     private final byte mByteValue;
@@ -25,32 +26,8 @@ public class ExceptionFields
     private final net.morimekta.util.Binary mBinaryValue;
     private final net.morimekta.test.providence.Value mEnumValue;
     private final net.morimekta.test.providence.CompactFields mCompactValue;
-    
+
     private volatile int tHashCode;
-
-    private ExceptionFields(_Builder builder) {
-        super(createMessage(builder.mBooleanValue,
-                            builder.mByteValue,
-                            builder.mShortValue,
-                            builder.mIntegerValue,
-                            builder.mLongValue,
-                            builder.mDoubleValue,
-                            builder.mStringValue,
-                            builder.mBinaryValue,
-                            builder.mEnumValue,
-                            builder.mCompactValue));
-
-        mBooleanValue = builder.mBooleanValue;
-        mByteValue = builder.mByteValue;
-        mShortValue = builder.mShortValue;
-        mIntegerValue = builder.mIntegerValue;
-        mLongValue = builder.mLongValue;
-        mDoubleValue = builder.mDoubleValue;
-        mStringValue = builder.mStringValue;
-        mBinaryValue = builder.mBinaryValue;
-        mEnumValue = builder.mEnumValue;
-        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
-    }
 
     public ExceptionFields(Boolean pBooleanValue,
                            Byte pByteValue,
@@ -109,61 +86,28 @@ public class ExceptionFields
         mCompactValue = pCompactValue;
     }
 
-    private static String createMessage(boolean pBooleanValue,
-                                        byte pByteValue,
-                                        short pShortValue,
-                                        int pIntegerValue,
-                                        long pLongValue,
-                                        double pDoubleValue,
-                                        String pStringValue,
-                                        net.morimekta.util.Binary pBinaryValue,
-                                        net.morimekta.test.providence.Value pEnumValue,
-                                        net.morimekta.test.providence.CompactFields pCompactValue) {
-        StringBuilder out = new StringBuilder();
-        out.append('{');
-        out.append("booleanValue:")
-           .append(pBooleanValue);
-        out.append(',');
-        out.append("byteValue:")
-           .append((int) pByteValue);
-        out.append(',');
-        out.append("shortValue:")
-           .append((int) pShortValue);
-        out.append(',');
-        out.append("integerValue:")
-           .append(pIntegerValue);
-        out.append(',');
-        out.append("longValue:")
-           .append(pLongValue);
-        out.append(',');
-        out.append("doubleValue:")
-           .append(net.morimekta.util.Strings.asString(pDoubleValue));
-        if (pStringValue != null) {
-            out.append(',');
-            out.append("stringValue:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(pStringValue))
-               .append('\"');
-        }
-        if (pBinaryValue != null) {
-            out.append(',');
-            out.append("binaryValue:")
-               .append("b64(")
-               .append(pBinaryValue.toBase64())
-               .append(')');
-        }
-        if (pEnumValue != null) {
-            out.append(',');
-            out.append("enumValue:")
-               .append(pEnumValue.toString());
-        }
-        if (pCompactValue != null) {
-            out.append(',');
-            out.append("compactValue:")
-               .append(pCompactValue.asString());
-        }
-        out.append('}');
-        return out.toString();
+    private ExceptionFields(_Builder builder) {
+        super(createMessage(builder.mBooleanValue,
+                            builder.mByteValue,
+                            builder.mShortValue,
+                            builder.mIntegerValue,
+                            builder.mLongValue,
+                            builder.mDoubleValue,
+                            builder.mStringValue,
+                            builder.mBinaryValue,
+                            builder.mEnumValue,
+                            builder.mCompactValue));
+
+        mBooleanValue = builder.mBooleanValue;
+        mByteValue = builder.mByteValue;
+        mShortValue = builder.mShortValue;
+        mIntegerValue = builder.mIntegerValue;
+        mLongValue = builder.mLongValue;
+        mDoubleValue = builder.mDoubleValue;
+        mStringValue = builder.mStringValue;
+        mBinaryValue = builder.mBinaryValue;
+        mEnumValue = builder.mEnumValue;
+        mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
 
     public boolean hasBooleanValue() {
@@ -276,60 +220,61 @@ public class ExceptionFields
         return mCompactValue;
     }
 
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return true;
-            case 2: return true;
-            case 3: return true;
-            case 4: return true;
-            case 5: return true;
-            case 6: return true;
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
-            default: return false;
+    private static String createMessage(boolean pBooleanValue,
+                                        byte pByteValue,
+                                        short pShortValue,
+                                        int pIntegerValue,
+                                        long pLongValue,
+                                        double pDoubleValue,
+                                        String pStringValue,
+                                        net.morimekta.util.Binary pBinaryValue,
+                                        net.morimekta.test.providence.Value pEnumValue,
+                                        net.morimekta.test.providence.CompactFields pCompactValue) {
+        StringBuilder out = new StringBuilder();
+        out.append('{');
+        out.append("booleanValue:")
+           .append(pBooleanValue);
+        out.append(',');
+        out.append("byteValue:")
+           .append((int) pByteValue);
+        out.append(',');
+        out.append("shortValue:")
+           .append((int) pShortValue);
+        out.append(',');
+        out.append("integerValue:")
+           .append(pIntegerValue);
+        out.append(',');
+        out.append("longValue:")
+           .append(pLongValue);
+        out.append(',');
+        out.append("doubleValue:")
+           .append(net.morimekta.util.Strings.asString(pDoubleValue));
+        if (pStringValue != null) {
+            out.append(',');
+            out.append("stringValue:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(pStringValue))
+               .append('\"');
         }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
+        if (pBinaryValue != null) {
+            out.append(',');
+            out.append("binaryValue:")
+               .append("b64(")
+               .append(pBinaryValue.toBase64())
+               .append(')');
         }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
-            default: return null;
+        if (pEnumValue != null) {
+            out.append(',');
+            out.append("enumValue:")
+               .append(pEnumValue.toString());
         }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
+        if (pCompactValue != null) {
+            out.append(',');
+            out.append("compactValue:")
+               .append(pCompactValue.asString());
+        }
+        out.append('}');
+        return out.toString();
     }
 
     @Override
@@ -412,7 +357,7 @@ public class ExceptionFields
         if (mEnumValue != null) {
             out.append(',');
             out.append("enumValue:")
-               .append(mEnumValue.toString());
+               .append(mEnumValue.asString());
         }
         if (mCompactValue != null) {
             out.append(',');
@@ -462,7 +407,7 @@ public class ExceptionFields
         c = Boolean.compare(mEnumValue != null, other.mEnumValue != null);
         if (c != 0) return c;
         if (mEnumValue != null) {
-            c = Integer.compare(mEnumValue.getValue(), mEnumValue.getValue());
+            c = Integer.compare(mEnumValue.ordinal(), mEnumValue.ordinal());
             if (c != 0) return c;
         }
 
@@ -474,6 +419,77 @@ public class ExceptionFields
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return true;
+            case 2: return true;
+            case 3: return true;
+            case 4: return true;
+            case 5: return true;
+            case 6: return true;
+            case 7: return hasStringValue();
+            case 8: return hasBinaryValue();
+            case 9: return hasEnumValue();
+            case 10: return hasCompactValue();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return 1;
+            case 2: return 1;
+            case 3: return 1;
+            case 4: return 1;
+            case 5: return 1;
+            case 6: return 1;
+            case 7: return hasStringValue() ? 1 : 0;
+            case 8: return hasBinaryValue() ? 1 : 0;
+            case 9: return hasEnumValue() ? 1 : 0;
+            case 10: return hasCompactValue() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return isBooleanValue();
+            case 2: return getByteValue();
+            case 3: return getShortValue();
+            case 4: return getIntegerValue();
+            case 5: return getLongValue();
+            case 6: return getDoubleValue();
+            case 7: return getStringValue();
+            case 8: return getBinaryValue();
+            case 9: return getEnumValue();
+            case 10: return getCompactValue();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -611,21 +627,6 @@ public class ExceptionFields
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    @Override
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

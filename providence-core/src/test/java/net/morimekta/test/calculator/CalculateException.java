@@ -3,23 +3,16 @@ package net.morimekta.test.calculator;
 @SuppressWarnings("unused")
 public class CalculateException
         extends Exception
-        implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
-                   net.morimekta.providence.PException,
-                   Comparable<CalculateException> {
+        implements Comparable<CalculateException>,
+                   net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
+                   net.morimekta.providence.PException {
     private final static long serialVersionUID = -3144631929815376595L;
+
 
     private final String mMessage;
     private final net.morimekta.test.calculator.Operation mOperation;
-    
+
     private volatile int tHashCode;
-
-    private CalculateException(_Builder builder) {
-        super(createMessage(builder.mMessage,
-                            builder.mOperation));
-
-        mMessage = builder.mMessage;
-        mOperation = builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
-    }
 
     public CalculateException(String pMessage,
                               net.morimekta.test.calculator.Operation pOperation) {
@@ -30,25 +23,12 @@ public class CalculateException
         mOperation = pOperation;
     }
 
-    private static String createMessage(String pMessage,
-                                        net.morimekta.test.calculator.Operation pOperation) {
-        StringBuilder out = new StringBuilder();
-        out.append('{');
-        boolean first = true;
-        if (pMessage != null) {
-            first = false;
-            out.append("message:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(pMessage))
-               .append('\"');
-        }
-        if (pOperation != null) {
-            if (!first) out.append(',');
-            out.append("operation:")
-               .append(pOperation.asString());
-        }
-        out.append('}');
-        return out.toString();
+    private CalculateException(_Builder builder) {
+        super(createMessage(builder.mMessage,
+                            builder.mOperation));
+
+        mMessage = builder.mMessage;
+        mOperation = builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
     }
 
     public boolean hasMessage() {
@@ -73,36 +53,25 @@ public class CalculateException
         return mOperation;
     }
 
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasMessage();
-            case 2: return hasOperation();
-            default: return false;
+    private static String createMessage(String pMessage,
+                                        net.morimekta.test.calculator.Operation pOperation) {
+        StringBuilder out = new StringBuilder();
+        out.append('{');
+        boolean first = true;
+        if (pMessage != null) {
+            first = false;
+            out.append("message:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(pMessage))
+               .append('\"');
         }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
-            case 2: return hasOperation() ? 1 : 0;
-            default: return 0;
+        if (pOperation != null) {
+            if (!first) out.append(',');
+            out.append("operation:")
+               .append(pOperation.asString());
         }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getMessage();
-            case 2: return getOperation();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
+        out.append('}');
+        return out.toString();
     }
 
     @Override
@@ -171,6 +140,53 @@ public class CalculateException
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasMessage();
+            case 2: return hasOperation();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasMessage() ? 1 : 0;
+            case 2: return hasOperation() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getMessage();
+            case 2: return getOperation();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -284,21 +300,6 @@ public class CalculateException
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    @Override
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

@@ -188,21 +188,22 @@ public class Calculator {
     // type --> calculate___request
     @SuppressWarnings("unused")
     private static class Calculate_request
-            implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>,
+            implements Comparable<Calculate_request>,
                        java.io.Serializable,
-                       Comparable<Calculate_request> {
+                       net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field> {
         private final static long serialVersionUID = -2850591557621395232L;
 
-        private final net.morimekta.test.calculator.Operation mOp;
-        
-        private volatile int tHashCode;
 
-        private Calculate_request(_Builder builder) {
-            mOp = builder.mOp_builder != null ? builder.mOp_builder.build() : builder.mOp;
-        }
+        private final net.morimekta.test.calculator.Operation mOp;
+
+        private volatile int tHashCode;
 
         public Calculate_request(net.morimekta.test.calculator.Operation pOp) {
             mOp = pOp;
+        }
+
+        private Calculate_request(_Builder builder) {
+            mOp = builder.mOp_builder != null ? builder.mOp_builder.build() : builder.mOp;
         }
 
         public boolean hasOp() {
@@ -214,35 +215,6 @@ public class Calculator {
          */
         public net.morimekta.test.calculator.Operation getOp() {
             return mOp;
-        }
-
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                case 1: return hasOp();
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 1: return hasOp() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                case 1: return getOp();
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
         }
 
         @Override
@@ -293,6 +265,40 @@ public class Calculator {
             }
 
             return 0;
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                case 1: return hasOp();
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                case 1: return hasOp() ? 1 : 0;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                case 1: return getOp();
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
+        }
+
+        @Override
+        public _Builder mutate() {
+            return new _Builder(this);
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -403,11 +409,6 @@ public class Calculator {
             public _Builder builder() {
                 return new _Builder();
             }
-        }
-
-        @Override
-        public _Builder mutate() {
-            return new _Builder(this);
         }
 
         /**
@@ -568,32 +569,21 @@ public class Calculator {
             }
         }
     }
-
     // type <-- calculate___response
     @SuppressWarnings("unused")
     private static class Calculate_response
-            implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>,
+            implements Comparable<Calculate_response>,
                        java.io.Serializable,
-                       Comparable<Calculate_response> {
+                       net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field> {
         private final static long serialVersionUID = 3839355577455995570L;
+
 
         private final net.morimekta.test.calculator.Operand mSuccess;
         private final net.morimekta.test.calculator.CalculateException mCe;
 
-        private final _Field tUnionField;
-        
         private volatile int tHashCode;
 
-        private Calculate_response(_Builder builder) {
-            tUnionField = builder.tUnionField;
-
-            mSuccess = tUnionField != _Field.SUCCESS
-                    ? null
-                    : builder.mSuccess_builder != null ? builder.mSuccess_builder.build() : builder.mSuccess;
-            mCe = tUnionField != _Field.CE
-                    ? null
-                    : builder.mCe_builder != null ? builder.mCe_builder.build() : builder.mCe;
-        }
+        private final _Field tUnionField;
 
         /**
          * @param value The union value
@@ -609,6 +599,17 @@ public class Calculator {
          */
         public static Calculate_response withCe(net.morimekta.test.calculator.CalculateException value) {
             return new _Builder().setCe(value).build();
+        }
+
+        private Calculate_response(_Builder builder) {
+            tUnionField = builder.tUnionField;
+
+            mSuccess = tUnionField != _Field.SUCCESS
+                    ? null
+                    : builder.mSuccess_builder != null ? builder.mSuccess_builder.build() : builder.mSuccess;
+            mCe = tUnionField != _Field.CE
+                    ? null
+                    : builder.mCe_builder != null ? builder.mCe_builder.build() : builder.mCe;
         }
 
         public boolean hasSuccess() {
@@ -631,43 +632,6 @@ public class Calculator {
          */
         public net.morimekta.test.calculator.CalculateException getCe() {
             return mCe;
-        }
-
-        @Override
-        public _Field unionField() {
-            return tUnionField;
-        }
-
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                case 0: return hasSuccess();
-                case 1: return hasCe();
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                case 1: return hasCe() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                case 0: return getSuccess();
-                case 1: return getCe();
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
         }
 
         @Override
@@ -719,7 +683,7 @@ public class Calculator {
 
         @Override
         public int compareTo(Calculate_response other) {
-            int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());
+            int c = tUnionField.compareTo(other.tUnionField);
             if (c != 0) return c;
 
             switch (tUnionField) {
@@ -729,6 +693,48 @@ public class Calculator {
                     return mCe.compareTo(other.mCe);
                 default: return 0;
             }
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                case 0: return hasSuccess();
+                case 1: return hasCe();
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                case 0: return hasSuccess() ? 1 : 0;
+                case 1: return hasCe() ? 1 : 0;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                case 0: return getSuccess();
+                case 1: return getCe();
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
+        }
+
+        @Override
+        public _Field unionField() {
+            return tUnionField;
+        }
+
+        @Override
+        public _Builder mutate() {
+            return new _Builder(this);
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -842,11 +848,6 @@ public class Calculator {
             public _Builder builder() {
                 return new _Builder();
             }
-        }
-
-        @Override
-        public _Builder mutate() {
-            return new _Builder(this);
         }
 
         /**
@@ -1090,48 +1091,22 @@ public class Calculator {
             }
         }
     }
-
     // type --> iamalive___request
     @SuppressWarnings("unused")
     private static class Iamalive_request
-            implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>,
+            implements Comparable<Iamalive_request>,
                        java.io.Serializable,
-                       Comparable<Iamalive_request> {
+                       net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field> {
         private final static long serialVersionUID = 7912890008187182926L;
 
-        
-        private volatile int tHashCode;
 
-        private Iamalive_request(_Builder builder) {
-        }
+
+        private volatile int tHashCode;
 
         public Iamalive_request() {
         }
 
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
+        private Iamalive_request(_Builder builder) {
         }
 
         @Override
@@ -1169,6 +1144,37 @@ public class Calculator {
             int c;
 
             return 0;
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
+        }
+
+        @Override
+        public _Builder mutate() {
+            return new _Builder(this);
         }
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -1278,11 +1284,6 @@ public class Calculator {
             }
         }
 
-        @Override
-        public _Builder mutate() {
-            return new _Builder(this);
-        }
-
         /**
          * Make a calculator.iamalive___request builder.
          * @return The builder instance.
@@ -1369,6 +1370,5 @@ public class Calculator {
             }
         }
     }
-
     private Calculator() {}
 }

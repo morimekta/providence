@@ -5,22 +5,17 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class TypedefType
-        implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
+        implements Comparable<TypedefType>,
                    java.io.Serializable,
-                   Comparable<TypedefType> {
+                   net.morimekta.providence.PMessage<TypedefType,TypedefType._Field> {
     private final static long serialVersionUID = 5431583053440540554L;
+
 
     private final String mComment;
     private final String mType;
     private final String mName;
-    
-    private volatile int tHashCode;
 
-    private TypedefType(_Builder builder) {
-        mComment = builder.mComment;
-        mType = builder.mType;
-        mName = builder.mName;
-    }
+    private volatile int tHashCode;
 
     public TypedefType(String pComment,
                        String pType,
@@ -28,6 +23,12 @@ public class TypedefType
         mComment = pComment;
         mType = pType;
         mName = pName;
+    }
+
+    private TypedefType(_Builder builder) {
+        mComment = builder.mComment;
+        mType = builder.mType;
+        mName = builder.mName;
     }
 
     public boolean hasComment() {
@@ -61,41 +62,6 @@ public class TypedefType
      */
     public String getName() {
         return mName;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasType();
-            case 3: return hasName();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasType() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getType();
-            case 3: return getName();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -183,6 +149,46 @@ public class TypedefType
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasType();
+            case 3: return hasName();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasType() ? 1 : 0;
+            case 3: return hasName() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getType();
+            case 3: return getName();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -301,11 +307,6 @@ public class TypedefType
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.TypedefType builder.
      * @return The builder instance.
@@ -314,6 +315,9 @@ public class TypedefType
         return new _Builder();
     }
 
+    /**
+     * typedef &lt;type&gt; &lt;name&gt;
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<TypedefType,_Field> {
         private java.util.BitSet optionals;

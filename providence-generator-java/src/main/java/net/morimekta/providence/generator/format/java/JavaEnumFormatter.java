@@ -21,7 +21,6 @@ package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.generator.format.java.enums.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.enums.CoreMemberFormatter;
-import net.morimekta.providence.generator.format.java.enums.extras.AndroidEnumFormatter;
 import net.morimekta.providence.generator.format.java.enums.extras.JacksonEnumFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseEnumFormatter;
 import net.morimekta.providence.generator.format.java.shared.EnumMemberFormatter;
@@ -42,14 +41,11 @@ public class JavaEnumFormatter extends BaseEnumFormatter {
     }
 
     private static List<EnumMemberFormatter> getFormatters(IndentedPrintWriter writer, JavaOptions options) {
-        ImmutableList.Builder builder = ImmutableList.builder();
+        ImmutableList.Builder<EnumMemberFormatter> builder = ImmutableList.builder();
 
         builder.add(new CommonMemberFormatter(writer))
                .add(new CoreMemberFormatter(writer));
 
-        if (options.android) {
-            builder.add(new AndroidEnumFormatter(writer));
-        }
         if (options.jackson) {
             builder.add(new JacksonEnumFormatter(writer));
         }

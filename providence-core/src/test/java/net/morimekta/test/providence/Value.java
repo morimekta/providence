@@ -1,6 +1,7 @@
 package net.morimekta.test.providence;
 
-public enum Value implements net.morimekta.providence.PEnumValue<Value> {
+public enum Value
+        implements net.morimekta.providence.PEnumValue<Value> {
     FIRST(1, "FIRST"),
     SECOND(2, "SECOND"),
     THIRD(3, "THIRD"),

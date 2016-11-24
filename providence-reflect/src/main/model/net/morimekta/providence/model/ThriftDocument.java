@@ -5,38 +5,19 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>,
+        implements Comparable<ThriftDocument>,
                    java.io.Serializable,
-                   Comparable<ThriftDocument> {
+                   net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field> {
     private final static long serialVersionUID = -5731994850994905187L;
+
 
     private final String mComment;
     private final String mPackage;
     private final java.util.List<String> mIncludes;
     private final java.util.Map<String,String> mNamespaces;
     private final java.util.List<net.morimekta.providence.model.Declaration> mDecl;
-    
-    private volatile int tHashCode;
 
-    private ThriftDocument(_Builder builder) {
-        mComment = builder.mComment;
-        mPackage = builder.mPackage;
-        if (builder.isSetIncludes()) {
-            mIncludes = builder.mIncludes.build();
-        } else {
-            mIncludes = null;
-        }
-        if (builder.isSetNamespaces()) {
-            mNamespaces = builder.mNamespaces.build();
-        } else {
-            mNamespaces = null;
-        }
-        if (builder.isSetDecl()) {
-            mDecl = builder.mDecl.build();
-        } else {
-            mDecl = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public ThriftDocument(String pComment,
                           String pPackage,
@@ -57,6 +38,26 @@ public class ThriftDocument
         }
         if (pDecl != null) {
             mDecl = com.google.common.collect.ImmutableList.copyOf(pDecl);
+        } else {
+            mDecl = null;
+        }
+    }
+
+    private ThriftDocument(_Builder builder) {
+        mComment = builder.mComment;
+        mPackage = builder.mPackage;
+        if (builder.isSetIncludes()) {
+            mIncludes = builder.mIncludes.build();
+        } else {
+            mIncludes = null;
+        }
+        if (builder.isSetNamespaces()) {
+            mNamespaces = builder.mNamespaces.build();
+        } else {
+            mNamespaces = null;
+        }
+        if (builder.isSetDecl()) {
+            mDecl = builder.mDecl.build();
         } else {
             mDecl = null;
         }
@@ -135,47 +136,6 @@ public class ThriftDocument
      */
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
         return mDecl;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasPackage();
-            case 3: return numIncludes() > 0;
-            case 4: return numNamespaces() > 0;
-            case 5: return numDecl() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasPackage() ? 1 : 0;
-            case 3: return numIncludes();
-            case 4: return numNamespaces();
-            case 5: return numDecl();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getPackage();
-            case 3: return getIncludes();
-            case 4: return getNamespaces();
-            case 5: return getDecl();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -291,6 +251,52 @@ public class ThriftDocument
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasPackage();
+            case 3: return numIncludes() > 0;
+            case 4: return numNamespaces() > 0;
+            case 5: return numDecl() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasPackage() ? 1 : 0;
+            case 3: return numIncludes();
+            case 4: return numNamespaces();
+            case 5: return numDecl();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getPackage();
+            case 3: return getIncludes();
+            case 4: return getNamespaces();
+            case 5: return getDecl();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -415,11 +421,6 @@ public class ThriftDocument
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.ThriftDocument builder.
      * @return The builder instance.
@@ -428,6 +429,9 @@ public class ThriftDocument
         return new _Builder();
     }
 
+    /**
+     * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<ThriftDocument,_Field> {
         private java.util.BitSet optionals;

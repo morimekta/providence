@@ -5,10 +5,11 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class Declaration
-        implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
+        implements Comparable<Declaration>,
                    java.io.Serializable,
-                   Comparable<Declaration> {
+                   net.morimekta.providence.PUnion<Declaration,Declaration._Field> {
     private final static long serialVersionUID = -6998763195276182553L;
+
 
     private final net.morimekta.providence.model.EnumType mDeclEnum;
     private final net.morimekta.providence.model.TypedefType mDeclTypedef;
@@ -16,29 +17,9 @@ public class Declaration
     private final net.morimekta.providence.model.ServiceType mDeclService;
     private final net.morimekta.providence.model.ThriftField mDeclConst;
 
-    private final _Field tUnionField;
-    
     private volatile int tHashCode;
 
-    private Declaration(_Builder builder) {
-        tUnionField = builder.tUnionField;
-
-        mDeclEnum = tUnionField != _Field.DECL_ENUM
-                ? null
-                : builder.mDeclEnum_builder != null ? builder.mDeclEnum_builder.build() : builder.mDeclEnum;
-        mDeclTypedef = tUnionField != _Field.DECL_TYPEDEF
-                ? null
-                : builder.mDeclTypedef_builder != null ? builder.mDeclTypedef_builder.build() : builder.mDeclTypedef;
-        mDeclStruct = tUnionField != _Field.DECL_STRUCT
-                ? null
-                : builder.mDeclStruct_builder != null ? builder.mDeclStruct_builder.build() : builder.mDeclStruct;
-        mDeclService = tUnionField != _Field.DECL_SERVICE
-                ? null
-                : builder.mDeclService_builder != null ? builder.mDeclService_builder.build() : builder.mDeclService;
-        mDeclConst = tUnionField != _Field.DECL_CONST
-                ? null
-                : builder.mDeclConst_builder != null ? builder.mDeclConst_builder.build() : builder.mDeclConst;
-    }
+    private final _Field tUnionField;
 
     /**
      * @param value The union value
@@ -78,6 +59,26 @@ public class Declaration
      */
     public static Declaration withDeclConst(net.morimekta.providence.model.ThriftField value) {
         return new _Builder().setDeclConst(value).build();
+    }
+
+    private Declaration(_Builder builder) {
+        tUnionField = builder.tUnionField;
+
+        mDeclEnum = tUnionField != _Field.DECL_ENUM
+                ? null
+                : builder.mDeclEnum_builder != null ? builder.mDeclEnum_builder.build() : builder.mDeclEnum;
+        mDeclTypedef = tUnionField != _Field.DECL_TYPEDEF
+                ? null
+                : builder.mDeclTypedef_builder != null ? builder.mDeclTypedef_builder.build() : builder.mDeclTypedef;
+        mDeclStruct = tUnionField != _Field.DECL_STRUCT
+                ? null
+                : builder.mDeclStruct_builder != null ? builder.mDeclStruct_builder.build() : builder.mDeclStruct;
+        mDeclService = tUnionField != _Field.DECL_SERVICE
+                ? null
+                : builder.mDeclService_builder != null ? builder.mDeclService_builder.build() : builder.mDeclService;
+        mDeclConst = tUnionField != _Field.DECL_CONST
+                ? null
+                : builder.mDeclConst_builder != null ? builder.mDeclConst_builder.build() : builder.mDeclConst;
     }
 
     public boolean hasDeclEnum() {
@@ -133,52 +134,6 @@ public class Declaration
      */
     public net.morimekta.providence.model.ThriftField getDeclConst() {
         return mDeclConst;
-    }
-
-    @Override
-    public _Field unionField() {
-        return tUnionField;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasDeclEnum();
-            case 2: return hasDeclTypedef();
-            case 3: return hasDeclStruct();
-            case 4: return hasDeclService();
-            case 5: return hasDeclConst();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDeclEnum() ? 1 : 0;
-            case 2: return hasDeclTypedef() ? 1 : 0;
-            case 3: return hasDeclStruct() ? 1 : 0;
-            case 4: return hasDeclService() ? 1 : 0;
-            case 5: return hasDeclConst() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getDeclEnum();
-            case 2: return getDeclTypedef();
-            case 3: return getDeclStruct();
-            case 4: return getDeclService();
-            case 5: return getDeclConst();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -251,7 +206,7 @@ public class Declaration
 
     @Override
     public int compareTo(Declaration other) {
-        int c = Integer.compare(tUnionField.getKey(), other.tUnionField.getKey());
+        int c = tUnionField.compareTo(other.tUnionField);
         if (c != 0) return c;
 
         switch (tUnionField) {
@@ -267,6 +222,57 @@ public class Declaration
                 return mDeclConst.compareTo(other.mDeclConst);
             default: return 0;
         }
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasDeclEnum();
+            case 2: return hasDeclTypedef();
+            case 3: return hasDeclStruct();
+            case 4: return hasDeclService();
+            case 5: return hasDeclConst();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasDeclEnum() ? 1 : 0;
+            case 2: return hasDeclTypedef() ? 1 : 0;
+            case 3: return hasDeclStruct() ? 1 : 0;
+            case 4: return hasDeclService() ? 1 : 0;
+            case 5: return hasDeclConst() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getDeclEnum();
+            case 2: return getDeclTypedef();
+            case 3: return getDeclStruct();
+            case 4: return getDeclService();
+            case 5: return getDeclConst();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Field unionField() {
+        return tUnionField;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -391,11 +397,6 @@ public class Declaration
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.Declaration builder.
      * @return The builder instance.
@@ -404,6 +405,9 @@ public class Declaration
         return new _Builder();
     }
 
+    /**
+     * ( &lt;enum&gt; | &lt;typedef&gt; | &lt;struct&gt; | &lt;service&gt; | &lt;const&gt; )
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<Declaration,_Field> {
         private _Field tUnionField;

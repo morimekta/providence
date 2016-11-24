@@ -2,10 +2,11 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class Containers
-        implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
+        implements Comparable<Containers>,
                    java.io.Serializable,
-                   Comparable<Containers> {
+                   net.morimekta.providence.PMessage<Containers,Containers._Field> {
     private final static long serialVersionUID = 3106880629763954881L;
+
 
     private final java.util.List<Boolean> mBooleanList;
     private final java.util.List<Byte> mByteList;
@@ -43,167 +44,8 @@ public class Containers
     private final net.morimekta.test.providence.UnionFields mUnionFields;
     private final net.morimekta.test.providence.ExceptionFields mExceptionFields;
     private final net.morimekta.test.providence.DefaultValues mDefaultValues;
-    
-    private volatile int tHashCode;
 
-    private Containers(_Builder builder) {
-        if (builder.isSetBooleanList()) {
-            mBooleanList = builder.mBooleanList.build();
-        } else {
-            mBooleanList = null;
-        }
-        if (builder.isSetByteList()) {
-            mByteList = builder.mByteList.build();
-        } else {
-            mByteList = null;
-        }
-        if (builder.isSetShortList()) {
-            mShortList = builder.mShortList.build();
-        } else {
-            mShortList = null;
-        }
-        if (builder.isSetIntegerList()) {
-            mIntegerList = builder.mIntegerList.build();
-        } else {
-            mIntegerList = null;
-        }
-        if (builder.isSetLongList()) {
-            mLongList = builder.mLongList.build();
-        } else {
-            mLongList = null;
-        }
-        if (builder.isSetDoubleList()) {
-            mDoubleList = builder.mDoubleList.build();
-        } else {
-            mDoubleList = null;
-        }
-        if (builder.isSetStringList()) {
-            mStringList = builder.mStringList.build();
-        } else {
-            mStringList = null;
-        }
-        if (builder.isSetBinaryList()) {
-            mBinaryList = builder.mBinaryList.build();
-        } else {
-            mBinaryList = null;
-        }
-        if (builder.isSetBooleanSet()) {
-            mBooleanSet = builder.mBooleanSet.build();
-        } else {
-            mBooleanSet = null;
-        }
-        if (builder.isSetByteSet()) {
-            mByteSet = builder.mByteSet.build();
-        } else {
-            mByteSet = null;
-        }
-        if (builder.isSetShortSet()) {
-            mShortSet = builder.mShortSet.build();
-        } else {
-            mShortSet = null;
-        }
-        if (builder.isSetIntegerSet()) {
-            mIntegerSet = builder.mIntegerSet.build();
-        } else {
-            mIntegerSet = null;
-        }
-        if (builder.isSetLongSet()) {
-            mLongSet = builder.mLongSet.build();
-        } else {
-            mLongSet = null;
-        }
-        if (builder.isSetDoubleSet()) {
-            mDoubleSet = builder.mDoubleSet.build();
-        } else {
-            mDoubleSet = null;
-        }
-        if (builder.isSetStringSet()) {
-            mStringSet = builder.mStringSet.build();
-        } else {
-            mStringSet = null;
-        }
-        if (builder.isSetBinarySet()) {
-            mBinarySet = builder.mBinarySet.build();
-        } else {
-            mBinarySet = null;
-        }
-        if (builder.isSetBooleanMap()) {
-            mBooleanMap = builder.mBooleanMap.build();
-        } else {
-            mBooleanMap = null;
-        }
-        if (builder.isSetByteMap()) {
-            mByteMap = builder.mByteMap.build();
-        } else {
-            mByteMap = null;
-        }
-        if (builder.isSetShortMap()) {
-            mShortMap = builder.mShortMap.build();
-        } else {
-            mShortMap = null;
-        }
-        if (builder.isSetIntegerMap()) {
-            mIntegerMap = builder.mIntegerMap.build();
-        } else {
-            mIntegerMap = null;
-        }
-        if (builder.isSetLongMap()) {
-            mLongMap = builder.mLongMap.build();
-        } else {
-            mLongMap = null;
-        }
-        if (builder.isSetDoubleMap()) {
-            mDoubleMap = builder.mDoubleMap.build();
-        } else {
-            mDoubleMap = null;
-        }
-        if (builder.isSetStringMap()) {
-            mStringMap = builder.mStringMap.build();
-        } else {
-            mStringMap = null;
-        }
-        if (builder.isSetBinaryMap()) {
-            mBinaryMap = builder.mBinaryMap.build();
-        } else {
-            mBinaryMap = null;
-        }
-        if (builder.isSetEnumList()) {
-            mEnumList = builder.mEnumList.build();
-        } else {
-            mEnumList = null;
-        }
-        if (builder.isSetEnumSet()) {
-            mEnumSet = builder.mEnumSet.build();
-        } else {
-            mEnumSet = null;
-        }
-        if (builder.isSetEnumMap()) {
-            mEnumMap = builder.mEnumMap.build();
-        } else {
-            mEnumMap = null;
-        }
-        if (builder.isSetMessageList()) {
-            mMessageList = builder.mMessageList.build();
-        } else {
-            mMessageList = null;
-        }
-        if (builder.isSetMessageSet()) {
-            mMessageSet = builder.mMessageSet.build();
-        } else {
-            mMessageSet = null;
-        }
-        if (builder.isSetMessageMap()) {
-            mMessageMap = builder.mMessageMap.build();
-        } else {
-            mMessageMap = null;
-        }
-        mRequiredFields = builder.mRequiredFields_builder != null ? builder.mRequiredFields_builder.build() : builder.mRequiredFields;
-        mDefaultFields = builder.mDefaultFields_builder != null ? builder.mDefaultFields_builder.build() : builder.mDefaultFields;
-        mOptionalFields = builder.mOptionalFields_builder != null ? builder.mOptionalFields_builder.build() : builder.mOptionalFields;
-        mUnionFields = builder.mUnionFields_builder != null ? builder.mUnionFields_builder.build() : builder.mUnionFields;
-        mExceptionFields = builder.mExceptionFields_builder != null ? builder.mExceptionFields_builder.build() : builder.mExceptionFields;
-        mDefaultValues = builder.mDefaultValues_builder != null ? builder.mDefaultValues_builder.build() : builder.mDefaultValues;
-    }
+    private volatile int tHashCode;
 
     public Containers(java.util.List<Boolean> pBooleanList,
                       java.util.List<Byte> pByteList,
@@ -397,6 +239,165 @@ public class Containers
         mUnionFields = pUnionFields;
         mExceptionFields = pExceptionFields;
         mDefaultValues = pDefaultValues;
+    }
+
+    private Containers(_Builder builder) {
+        if (builder.isSetBooleanList()) {
+            mBooleanList = builder.mBooleanList.build();
+        } else {
+            mBooleanList = null;
+        }
+        if (builder.isSetByteList()) {
+            mByteList = builder.mByteList.build();
+        } else {
+            mByteList = null;
+        }
+        if (builder.isSetShortList()) {
+            mShortList = builder.mShortList.build();
+        } else {
+            mShortList = null;
+        }
+        if (builder.isSetIntegerList()) {
+            mIntegerList = builder.mIntegerList.build();
+        } else {
+            mIntegerList = null;
+        }
+        if (builder.isSetLongList()) {
+            mLongList = builder.mLongList.build();
+        } else {
+            mLongList = null;
+        }
+        if (builder.isSetDoubleList()) {
+            mDoubleList = builder.mDoubleList.build();
+        } else {
+            mDoubleList = null;
+        }
+        if (builder.isSetStringList()) {
+            mStringList = builder.mStringList.build();
+        } else {
+            mStringList = null;
+        }
+        if (builder.isSetBinaryList()) {
+            mBinaryList = builder.mBinaryList.build();
+        } else {
+            mBinaryList = null;
+        }
+        if (builder.isSetBooleanSet()) {
+            mBooleanSet = builder.mBooleanSet.build();
+        } else {
+            mBooleanSet = null;
+        }
+        if (builder.isSetByteSet()) {
+            mByteSet = builder.mByteSet.build();
+        } else {
+            mByteSet = null;
+        }
+        if (builder.isSetShortSet()) {
+            mShortSet = builder.mShortSet.build();
+        } else {
+            mShortSet = null;
+        }
+        if (builder.isSetIntegerSet()) {
+            mIntegerSet = builder.mIntegerSet.build();
+        } else {
+            mIntegerSet = null;
+        }
+        if (builder.isSetLongSet()) {
+            mLongSet = builder.mLongSet.build();
+        } else {
+            mLongSet = null;
+        }
+        if (builder.isSetDoubleSet()) {
+            mDoubleSet = builder.mDoubleSet.build();
+        } else {
+            mDoubleSet = null;
+        }
+        if (builder.isSetStringSet()) {
+            mStringSet = builder.mStringSet.build();
+        } else {
+            mStringSet = null;
+        }
+        if (builder.isSetBinarySet()) {
+            mBinarySet = builder.mBinarySet.build();
+        } else {
+            mBinarySet = null;
+        }
+        if (builder.isSetBooleanMap()) {
+            mBooleanMap = builder.mBooleanMap.build();
+        } else {
+            mBooleanMap = null;
+        }
+        if (builder.isSetByteMap()) {
+            mByteMap = builder.mByteMap.build();
+        } else {
+            mByteMap = null;
+        }
+        if (builder.isSetShortMap()) {
+            mShortMap = builder.mShortMap.build();
+        } else {
+            mShortMap = null;
+        }
+        if (builder.isSetIntegerMap()) {
+            mIntegerMap = builder.mIntegerMap.build();
+        } else {
+            mIntegerMap = null;
+        }
+        if (builder.isSetLongMap()) {
+            mLongMap = builder.mLongMap.build();
+        } else {
+            mLongMap = null;
+        }
+        if (builder.isSetDoubleMap()) {
+            mDoubleMap = builder.mDoubleMap.build();
+        } else {
+            mDoubleMap = null;
+        }
+        if (builder.isSetStringMap()) {
+            mStringMap = builder.mStringMap.build();
+        } else {
+            mStringMap = null;
+        }
+        if (builder.isSetBinaryMap()) {
+            mBinaryMap = builder.mBinaryMap.build();
+        } else {
+            mBinaryMap = null;
+        }
+        if (builder.isSetEnumList()) {
+            mEnumList = builder.mEnumList.build();
+        } else {
+            mEnumList = null;
+        }
+        if (builder.isSetEnumSet()) {
+            mEnumSet = builder.mEnumSet.build();
+        } else {
+            mEnumSet = null;
+        }
+        if (builder.isSetEnumMap()) {
+            mEnumMap = builder.mEnumMap.build();
+        } else {
+            mEnumMap = null;
+        }
+        if (builder.isSetMessageList()) {
+            mMessageList = builder.mMessageList.build();
+        } else {
+            mMessageList = null;
+        }
+        if (builder.isSetMessageSet()) {
+            mMessageSet = builder.mMessageSet.build();
+        } else {
+            mMessageSet = null;
+        }
+        if (builder.isSetMessageMap()) {
+            mMessageMap = builder.mMessageMap.build();
+        } else {
+            mMessageMap = null;
+        }
+        mRequiredFields = builder.mRequiredFields_builder != null ? builder.mRequiredFields_builder.build() : builder.mRequiredFields;
+        mDefaultFields = builder.mDefaultFields_builder != null ? builder.mDefaultFields_builder.build() : builder.mDefaultFields;
+        mOptionalFields = builder.mOptionalFields_builder != null ? builder.mOptionalFields_builder.build() : builder.mOptionalFields;
+        mUnionFields = builder.mUnionFields_builder != null ? builder.mUnionFields_builder.build() : builder.mUnionFields;
+        mExceptionFields = builder.mExceptionFields_builder != null ? builder.mExceptionFields_builder.build() : builder.mExceptionFields;
+        mDefaultValues = builder.mDefaultValues_builder != null ? builder.mDefaultValues_builder.build() : builder.mDefaultValues;
     }
 
     public int numBooleanList() {
@@ -923,140 +924,6 @@ public class Containers
      */
     public net.morimekta.test.providence.DefaultValues getDefaultValues() {
         return mDefaultValues;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return numBooleanList() > 0;
-            case 2: return numByteList() > 0;
-            case 3: return numShortList() > 0;
-            case 4: return numIntegerList() > 0;
-            case 5: return numLongList() > 0;
-            case 6: return numDoubleList() > 0;
-            case 7: return numStringList() > 0;
-            case 8: return numBinaryList() > 0;
-            case 11: return numBooleanSet() > 0;
-            case 12: return numByteSet() > 0;
-            case 13: return numShortSet() > 0;
-            case 14: return numIntegerSet() > 0;
-            case 15: return numLongSet() > 0;
-            case 16: return numDoubleSet() > 0;
-            case 17: return numStringSet() > 0;
-            case 18: return numBinarySet() > 0;
-            case 21: return numBooleanMap() > 0;
-            case 22: return numByteMap() > 0;
-            case 23: return numShortMap() > 0;
-            case 24: return numIntegerMap() > 0;
-            case 25: return numLongMap() > 0;
-            case 26: return numDoubleMap() > 0;
-            case 27: return numStringMap() > 0;
-            case 28: return numBinaryMap() > 0;
-            case 31: return numEnumList() > 0;
-            case 32: return numEnumSet() > 0;
-            case 33: return numEnumMap() > 0;
-            case 41: return numMessageList() > 0;
-            case 42: return numMessageSet() > 0;
-            case 43: return numMessageMap() > 0;
-            case 51: return hasRequiredFields();
-            case 52: return hasDefaultFields();
-            case 53: return hasOptionalFields();
-            case 54: return hasUnionFields();
-            case 55: return hasExceptionFields();
-            case 56: return hasDefaultValues();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return numBooleanList();
-            case 2: return numByteList();
-            case 3: return numShortList();
-            case 4: return numIntegerList();
-            case 5: return numLongList();
-            case 6: return numDoubleList();
-            case 7: return numStringList();
-            case 8: return numBinaryList();
-            case 11: return numBooleanSet();
-            case 12: return numByteSet();
-            case 13: return numShortSet();
-            case 14: return numIntegerSet();
-            case 15: return numLongSet();
-            case 16: return numDoubleSet();
-            case 17: return numStringSet();
-            case 18: return numBinarySet();
-            case 21: return numBooleanMap();
-            case 22: return numByteMap();
-            case 23: return numShortMap();
-            case 24: return numIntegerMap();
-            case 25: return numLongMap();
-            case 26: return numDoubleMap();
-            case 27: return numStringMap();
-            case 28: return numBinaryMap();
-            case 31: return numEnumList();
-            case 32: return numEnumSet();
-            case 33: return numEnumMap();
-            case 41: return numMessageList();
-            case 42: return numMessageSet();
-            case 43: return numMessageMap();
-            case 51: return hasRequiredFields() ? 1 : 0;
-            case 52: return hasDefaultFields() ? 1 : 0;
-            case 53: return hasOptionalFields() ? 1 : 0;
-            case 54: return hasUnionFields() ? 1 : 0;
-            case 55: return hasExceptionFields() ? 1 : 0;
-            case 56: return hasDefaultValues() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getBooleanList();
-            case 2: return getByteList();
-            case 3: return getShortList();
-            case 4: return getIntegerList();
-            case 5: return getLongList();
-            case 6: return getDoubleList();
-            case 7: return getStringList();
-            case 8: return getBinaryList();
-            case 11: return getBooleanSet();
-            case 12: return getByteSet();
-            case 13: return getShortSet();
-            case 14: return getIntegerSet();
-            case 15: return getLongSet();
-            case 16: return getDoubleSet();
-            case 17: return getStringSet();
-            case 18: return getBinarySet();
-            case 21: return getBooleanMap();
-            case 22: return getByteMap();
-            case 23: return getShortMap();
-            case 24: return getIntegerMap();
-            case 25: return getLongMap();
-            case 26: return getDoubleMap();
-            case 27: return getStringMap();
-            case 28: return getBinaryMap();
-            case 31: return getEnumList();
-            case 32: return getEnumSet();
-            case 33: return getEnumMap();
-            case 41: return getMessageList();
-            case 42: return getMessageSet();
-            case 43: return getMessageMap();
-            case 51: return getRequiredFields();
-            case 52: return getDefaultFields();
-            case 53: return getOptionalFields();
-            case 54: return getUnionFields();
-            case 55: return getExceptionFields();
-            case 56: return getDefaultValues();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -1635,6 +1502,145 @@ public class Containers
         return 0;
     }
 
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return numBooleanList() > 0;
+            case 2: return numByteList() > 0;
+            case 3: return numShortList() > 0;
+            case 4: return numIntegerList() > 0;
+            case 5: return numLongList() > 0;
+            case 6: return numDoubleList() > 0;
+            case 7: return numStringList() > 0;
+            case 8: return numBinaryList() > 0;
+            case 11: return numBooleanSet() > 0;
+            case 12: return numByteSet() > 0;
+            case 13: return numShortSet() > 0;
+            case 14: return numIntegerSet() > 0;
+            case 15: return numLongSet() > 0;
+            case 16: return numDoubleSet() > 0;
+            case 17: return numStringSet() > 0;
+            case 18: return numBinarySet() > 0;
+            case 21: return numBooleanMap() > 0;
+            case 22: return numByteMap() > 0;
+            case 23: return numShortMap() > 0;
+            case 24: return numIntegerMap() > 0;
+            case 25: return numLongMap() > 0;
+            case 26: return numDoubleMap() > 0;
+            case 27: return numStringMap() > 0;
+            case 28: return numBinaryMap() > 0;
+            case 31: return numEnumList() > 0;
+            case 32: return numEnumSet() > 0;
+            case 33: return numEnumMap() > 0;
+            case 41: return numMessageList() > 0;
+            case 42: return numMessageSet() > 0;
+            case 43: return numMessageMap() > 0;
+            case 51: return hasRequiredFields();
+            case 52: return hasDefaultFields();
+            case 53: return hasOptionalFields();
+            case 54: return hasUnionFields();
+            case 55: return hasExceptionFields();
+            case 56: return hasDefaultValues();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return numBooleanList();
+            case 2: return numByteList();
+            case 3: return numShortList();
+            case 4: return numIntegerList();
+            case 5: return numLongList();
+            case 6: return numDoubleList();
+            case 7: return numStringList();
+            case 8: return numBinaryList();
+            case 11: return numBooleanSet();
+            case 12: return numByteSet();
+            case 13: return numShortSet();
+            case 14: return numIntegerSet();
+            case 15: return numLongSet();
+            case 16: return numDoubleSet();
+            case 17: return numStringSet();
+            case 18: return numBinarySet();
+            case 21: return numBooleanMap();
+            case 22: return numByteMap();
+            case 23: return numShortMap();
+            case 24: return numIntegerMap();
+            case 25: return numLongMap();
+            case 26: return numDoubleMap();
+            case 27: return numStringMap();
+            case 28: return numBinaryMap();
+            case 31: return numEnumList();
+            case 32: return numEnumSet();
+            case 33: return numEnumMap();
+            case 41: return numMessageList();
+            case 42: return numMessageSet();
+            case 43: return numMessageMap();
+            case 51: return hasRequiredFields() ? 1 : 0;
+            case 52: return hasDefaultFields() ? 1 : 0;
+            case 53: return hasOptionalFields() ? 1 : 0;
+            case 54: return hasUnionFields() ? 1 : 0;
+            case 55: return hasExceptionFields() ? 1 : 0;
+            case 56: return hasDefaultValues() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getBooleanList();
+            case 2: return getByteList();
+            case 3: return getShortList();
+            case 4: return getIntegerList();
+            case 5: return getLongList();
+            case 6: return getDoubleList();
+            case 7: return getStringList();
+            case 8: return getBinaryList();
+            case 11: return getBooleanSet();
+            case 12: return getByteSet();
+            case 13: return getShortSet();
+            case 14: return getIntegerSet();
+            case 15: return getLongSet();
+            case 16: return getDoubleSet();
+            case 17: return getStringSet();
+            case 18: return getBinarySet();
+            case 21: return getBooleanMap();
+            case 22: return getByteMap();
+            case 23: return getShortMap();
+            case 24: return getIntegerMap();
+            case 25: return getLongMap();
+            case 26: return getDoubleMap();
+            case 27: return getStringMap();
+            case 28: return getBinaryMap();
+            case 31: return getEnumList();
+            case 32: return getEnumSet();
+            case 33: return getEnumMap();
+            case 41: return getMessageList();
+            case 42: return getMessageSet();
+            case 43: return getMessageMap();
+            case 51: return getRequiredFields();
+            case 52: return getDefaultFields();
+            case 53: return getOptionalFields();
+            case 54: return getUnionFields();
+            case 55: return getExceptionFields();
+            case 56: return getDefaultValues();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
+    }
+
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         BOOLEAN_LIST(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "booleanList", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.BOOL.provider()), null),
         BYTE_LIST(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "byteList", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.BYTE.provider()), null),
@@ -1848,11 +1854,6 @@ public class Containers
         public _Builder builder() {
             return new _Builder();
         }
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
     }
 
     /**

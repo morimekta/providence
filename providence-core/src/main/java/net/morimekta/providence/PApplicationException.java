@@ -7,25 +7,18 @@ package net.morimekta.providence;
 @SuppressWarnings("unused")
 public class PApplicationException
         extends java.io.IOException
-        implements net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
-                   net.morimekta.providence.PException,
-                   Comparable<PApplicationException> {
+        implements Comparable<PApplicationException>,
+                   net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
+                   net.morimekta.providence.PException {
     private final static long serialVersionUID = -8724424103018535688L;
 
     private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
 
+
     private final String mMessage;
     private final net.morimekta.providence.PApplicationExceptionType mId;
-    
+
     private volatile int tHashCode;
-
-    private PApplicationException(_Builder builder) {
-        super(createMessage(builder.mMessage,
-                            builder.mId));
-
-        mMessage = builder.mMessage;
-        mId = builder.mId;
-    }
 
     public PApplicationException(String pMessage,
                                  net.morimekta.providence.PApplicationExceptionType pId) {
@@ -36,25 +29,12 @@ public class PApplicationException
         mId = pId;
     }
 
-    private static String createMessage(String pMessage,
-                                        net.morimekta.providence.PApplicationExceptionType pId) {
-        StringBuilder out = new StringBuilder();
-        out.append('{');
-        boolean first = true;
-        if (pMessage != null) {
-            first = false;
-            out.append("message:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(pMessage))
-               .append('\"');
-        }
-        if (pId != null) {
-            if (!first) out.append(',');
-            out.append("id:")
-               .append(pId.toString());
-        }
-        out.append('}');
-        return out.toString();
+    private PApplicationException(_Builder builder) {
+        super(createMessage(builder.mMessage,
+                            builder.mId));
+
+        mMessage = builder.mMessage;
+        mId = builder.mId;
     }
 
     public boolean hasMessage() {
@@ -83,36 +63,25 @@ public class PApplicationException
         return hasId() ? mId : kDefaultId;
     }
 
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasMessage();
-            case 2: return hasId();
-            default: return false;
+    private static String createMessage(String pMessage,
+                                        net.morimekta.providence.PApplicationExceptionType pId) {
+        StringBuilder out = new StringBuilder();
+        out.append('{');
+        boolean first = true;
+        if (pMessage != null) {
+            first = false;
+            out.append("message:")
+               .append('\"')
+               .append(net.morimekta.util.Strings.escape(pMessage))
+               .append('\"');
         }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
-            case 2: return hasId() ? 1 : 0;
-            default: return 0;
+        if (pId != null) {
+            if (!first) out.append(',');
+            out.append("id:")
+               .append(pId.toString());
         }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getMessage();
-            case 2: return getId();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
+        out.append('}');
+        return out.toString();
     }
 
     @Override
@@ -156,7 +125,7 @@ public class PApplicationException
         if (mId != null) {
             if (!first) out.append(',');
             out.append("id:")
-               .append(mId.toString());
+               .append(mId.asString());
         }
         out.append('}');
         return out.toString();
@@ -176,11 +145,58 @@ public class PApplicationException
         c = Boolean.compare(mId != null, other.mId != null);
         if (c != 0) return c;
         if (mId != null) {
-            c = Integer.compare(mId.getValue(), mId.getValue());
+            c = Integer.compare(mId.ordinal(), mId.ordinal());
             if (c != 0) return c;
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasMessage();
+            case 2: return hasId();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasMessage() ? 1 : 0;
+            case 2: return hasId() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getMessage();
+            case 2: return getId();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -296,21 +312,6 @@ public class PApplicationException
         }
     }
 
-    @Override
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    @Override
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
-    }
-
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a service.PApplicationException builder.
      * @return The builder instance.
@@ -319,6 +320,10 @@ public class PApplicationException
         return new _Builder();
     }
 
+    /**
+     * Base exception thrown on non-declared exceptions on a service call, and
+     * other server-side service call issues.
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<PApplicationException,_Field> {
         private java.util.BitSet optionals;

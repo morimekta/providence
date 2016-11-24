@@ -3,7 +3,8 @@ package net.morimekta.providence;
 /**
  * General type of exception on the application level.
  */
-public enum PApplicationExceptionType implements net.morimekta.providence.PEnumValue<PApplicationExceptionType> {
+public enum PApplicationExceptionType
+        implements net.morimekta.providence.PEnumValue<PApplicationExceptionType> {
     /**
      * Unknown or unidentified exception, should usually not be uased.
      */

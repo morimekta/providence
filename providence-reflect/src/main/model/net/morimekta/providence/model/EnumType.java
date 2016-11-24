@@ -7,32 +7,18 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class EnumType
-        implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
+        implements Comparable<EnumType>,
                    java.io.Serializable,
-                   Comparable<EnumType> {
+                   net.morimekta.providence.PMessage<EnumType,EnumType._Field> {
     private final static long serialVersionUID = 5720337451968926862L;
+
 
     private final String mComment;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;
     private final java.util.Map<String,String> mAnnotations;
-    
-    private volatile int tHashCode;
 
-    private EnumType(_Builder builder) {
-        mComment = builder.mComment;
-        mName = builder.mName;
-        if (builder.isSetValues()) {
-            mValues = builder.mValues.build();
-        } else {
-            mValues = null;
-        }
-        if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
-        } else {
-            mAnnotations = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public EnumType(String pComment,
                     String pName,
@@ -47,6 +33,21 @@ public class EnumType
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
+    }
+
+    private EnumType(_Builder builder) {
+        mComment = builder.mComment;
+        mName = builder.mName;
+        if (builder.isSetValues()) {
+            mValues = builder.mValues.build();
+        } else {
+            mValues = null;
+        }
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
         } else {
             mAnnotations = null;
         }
@@ -102,44 +103,6 @@ public class EnumType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return numValues() > 0;
-            case 4: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return numValues();
-            case 4: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getValues();
-            case 4: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
@@ -240,6 +203,49 @@ public class EnumType
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasName();
+            case 3: return numValues() > 0;
+            case 4: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasName() ? 1 : 0;
+            case 3: return numValues();
+            case 4: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getName();
+            case 3: return getValues();
+            case 4: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -361,11 +367,6 @@ public class EnumType
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.EnumType builder.
      * @return The builder instance.
@@ -374,6 +375,11 @@ public class EnumType
         return new _Builder();
     }
 
+    /**
+     * enum {
+     *   (&lt;value&gt; ([;,])?)*
+     * }
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<EnumType,_Field> {
         private java.util.BitSet optionals;

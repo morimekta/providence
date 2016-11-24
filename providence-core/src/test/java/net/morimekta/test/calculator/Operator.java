@@ -1,6 +1,7 @@
 package net.morimekta.test.calculator;
 
-public enum Operator implements net.morimekta.providence.PEnumValue<Operator> {
+public enum Operator
+        implements net.morimekta.providence.PEnumValue<Operator> {
     IDENTITY(1, "IDENTITY"),
     ADD(2, "ADD"),
     SUBTRACT(3, "SUBTRACT"),

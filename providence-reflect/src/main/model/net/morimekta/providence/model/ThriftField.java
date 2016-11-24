@@ -14,13 +14,14 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftField
-        implements net.morimekta.providence.PMessage<ThriftField,ThriftField._Field>,
+        implements Comparable<ThriftField>,
                    java.io.Serializable,
-                   Comparable<ThriftField> {
+                   net.morimekta.providence.PMessage<ThriftField,ThriftField._Field> {
     private final static long serialVersionUID = 5114028868232611868L;
 
     private final static int kDefaultKey = 0;
     private final static net.morimekta.providence.model.Requirement kDefaultRequirement = net.morimekta.providence.model.Requirement.DEFAULT;
+
 
     private final String mComment;
     private final int mKey;
@@ -29,22 +30,8 @@ public class ThriftField
     private final String mName;
     private final String mDefaultValue;
     private final java.util.Map<String,String> mAnnotations;
-    
-    private volatile int tHashCode;
 
-    private ThriftField(_Builder builder) {
-        mComment = builder.mComment;
-        mKey = builder.mKey;
-        mRequirement = builder.mRequirement;
-        mType = builder.mType;
-        mName = builder.mName;
-        mDefaultValue = builder.mDefaultValue;
-        if (builder.isSetAnnotations()) {
-            mAnnotations = builder.mAnnotations.build();
-        } else {
-            mAnnotations = null;
-        }
-    }
+    private volatile int tHashCode;
 
     public ThriftField(String pComment,
                        int pKey,
@@ -61,6 +48,20 @@ public class ThriftField
         mDefaultValue = pDefaultValue;
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
+        } else {
+            mAnnotations = null;
+        }
+    }
+
+    private ThriftField(_Builder builder) {
+        mComment = builder.mComment;
+        mKey = builder.mKey;
+        mRequirement = builder.mRequirement;
+        mType = builder.mType;
+        mName = builder.mName;
+        mDefaultValue = builder.mDefaultValue;
+        if (builder.isSetAnnotations()) {
+            mAnnotations = builder.mAnnotations.build();
         } else {
             mAnnotations = null;
         }
@@ -148,53 +149,6 @@ public class ThriftField
     }
 
     @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return true;
-            case 3: return hasRequirement();
-            case 4: return hasType();
-            case 5: return hasName();
-            case 6: return hasDefaultValue();
-            case 7: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasRequirement() ? 1 : 0;
-            case 4: return hasType() ? 1 : 0;
-            case 5: return hasName() ? 1 : 0;
-            case 6: return hasDefaultValue() ? 1 : 0;
-            case 7: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getKey();
-            case 3: return getRequirement();
-            case 4: return getType();
-            case 5: return getName();
-            case 6: return getDefaultValue();
-            case 7: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof ThriftField)) return false;
@@ -247,7 +201,7 @@ public class ThriftField
         if (mRequirement != null) {
             out.append(',');
             out.append("requirement:")
-               .append(mRequirement.toString());
+               .append(mRequirement.asString());
         }
         if (mType != null) {
             out.append(',');
@@ -296,7 +250,7 @@ public class ThriftField
         c = Boolean.compare(mRequirement != null, other.mRequirement != null);
         if (c != 0) return c;
         if (mRequirement != null) {
-            c = Integer.compare(mRequirement.getValue(), mRequirement.getValue());
+            c = Integer.compare(mRequirement.ordinal(), mRequirement.ordinal());
             if (c != 0) return c;
         }
 
@@ -329,6 +283,58 @@ public class ThriftField
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return true;
+            case 3: return hasRequirement();
+            case 4: return hasType();
+            case 5: return hasName();
+            case 6: return hasDefaultValue();
+            case 7: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return 1;
+            case 3: return hasRequirement() ? 1 : 0;
+            case 4: return hasType() ? 1 : 0;
+            case 5: return hasName() ? 1 : 0;
+            case 6: return hasDefaultValue() ? 1 : 0;
+            case 7: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getKey();
+            case 3: return getRequirement();
+            case 4: return getType();
+            case 5: return getName();
+            case 6: return getDefaultValue();
+            case 7: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Builder mutate() {
+        return new _Builder(this);
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
@@ -459,11 +465,6 @@ public class ThriftField
         }
     }
 
-    @Override
-    public _Builder mutate() {
-        return new _Builder(this);
-    }
-
     /**
      * Make a model.ThriftField builder.
      * @return The builder instance.
@@ -472,6 +473,18 @@ public class ThriftField
         return new _Builder();
     }
 
+    /**
+     * For fields:
+     *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
+     * For const:
+     *   const &lt;type&gt; &lt;name&gt; = &lt;default_value&gt;
+     * <p>
+     * Fields without key is assigned values ranging from 65335 and down (2^16-1)
+     * in order of appearance. Because of the &quot;in order of appearance&quot; the field
+     * *must* be filled by the IDL parser.
+     * <p>
+     * Consts are always given the key &#39;0&#39;.
+     */
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<ThriftField,_Field> {
         private java.util.BitSet optionals;
