@@ -65,14 +65,14 @@ public class ThriftProgramParser implements ProgramParser {
             "([_a-zA-Z][-_a-zA-Z0-9]*[.])*[_a-zA-Z][-_a-zA-Z0-9]*");
 
     @Override
-    public ProgramType parse(InputStream in, String name) throws IOException, ParseException {
+    public ProgramType parse(InputStream in, String filePath) throws IOException, ParseException {
         ProgramType._Builder program = ProgramType.builder();
 
-        String programName = ReflectionUtils.packageFromName(name.replaceAll(".*/", ""));
+        String programName = ReflectionUtils.programNameFromPath(filePath);
         if (!VALID_PROGRAM_NAME.matcher(programName).matches()) {
             throw new ParseException("Program name \"%s\" derived from filename \"%s\" is not valid.",
                                      Strings.escape(programName),
-                                     Strings.escape(name));
+                                     Strings.escape(filePath));
         }
         program.setProgramName(programName);
 

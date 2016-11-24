@@ -99,7 +99,7 @@ public class ConfigOptions extends CommonOptions {
                 continue;
             }
             if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
-                includes.put(ReflectionUtils.packageFromName(file.getName()), file);
+                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file);
             }
         }
     }

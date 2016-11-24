@@ -4,22 +4,29 @@ package net.morimekta.providence.reflect.util;
  * Simple utility for type checking and matching.
  */
 public class ReflectionUtils {
-    public static boolean isThriftFile(String name) {
-        return name.endsWith(".providence") ||
-               name.endsWith(".thrift") ||
-               name.endsWith(".thr") ||
-               name.endsWith(".pvd");
+    public static boolean isThriftFile(String filePath) {
+        // This is in case windows has default upper-cased the file name.
+        filePath = filePath.toLowerCase();
+
+        return filePath.endsWith(".providence") ||
+               filePath.endsWith(".thrift") ||
+               filePath.endsWith(".thr") ||
+               filePath.endsWith(".pvd");
     }
 
-    public static String packageFromName(String name) {
-        if (name.endsWith(".providence")) {
-            name = name.substring(0, name.length() - 11);
-        } else if (name.endsWith(".thrift")) {
-            name = name.substring(0, name.length() - 7);
-        } else if (name.endsWith(".thr") || name.endsWith(".pvd")) {
-            name = name.substring(0, name.length() - 4);
+    public static String programNameFromPath(String filePath) {
+        String lowerCased = filePath.toLowerCase();
+        if (lowerCased.endsWith(".providence")) {
+            filePath = filePath.substring(0, filePath.length() - 11);
+        } else if (lowerCased.endsWith(".thrift")) {
+            filePath = filePath.substring(0, filePath.length() - 7);
+        } else if (lowerCased.endsWith(".thr") || lowerCased.endsWith(".pvd")) {
+            filePath = filePath.substring(0, filePath.length() - 4);
+        }
+        if (filePath.contains("/")) {
+            filePath = filePath.replaceAll(".*[/]", "");
         }
 
-        return name.replaceAll("[-.]", "_");
+        return filePath.replaceAll("[-.]", "_");
     }
 }
