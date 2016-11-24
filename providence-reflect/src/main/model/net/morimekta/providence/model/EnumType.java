@@ -12,7 +12,6 @@ public class EnumType
                    java.io.Serializable {
     private final static long serialVersionUID = 5720337451968926862L;
 
-
     private final String mComment;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;

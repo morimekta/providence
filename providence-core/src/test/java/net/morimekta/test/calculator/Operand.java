@@ -9,7 +9,6 @@ public class Operand
 
     private final static double kDefaultNumber = 0.0d;
 
-
     private final net.morimekta.test.calculator.Operation mOperation;
     private final double mNumber;
     private final net.morimekta.test.number.Imaginary mImaginary;

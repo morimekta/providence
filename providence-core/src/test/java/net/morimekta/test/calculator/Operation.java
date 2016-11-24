@@ -7,7 +7,6 @@ public class Operation
                    java.io.Serializable {
     private final static long serialVersionUID = -2122462501055525645L;
 
-
     private final net.morimekta.test.calculator.Operator mOperator;
     private final java.util.List<net.morimekta.test.calculator.Operand> mOperands;
 

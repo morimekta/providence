@@ -10,7 +10,6 @@ public class Imaginary
     private final static double kDefaultV = 0.0d;
     private final static double kDefaultI = 0.0d;
 
-
     private final double mV;
     private final double mI;
 

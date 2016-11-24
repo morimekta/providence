@@ -12,7 +12,6 @@ public class ServiceType
                    java.io.Serializable {
     private final static long serialVersionUID = 789757775761432238L;
 
-
     private final String mComment;
     private final String mName;
     private final String mExtend;

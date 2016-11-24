@@ -14,7 +14,6 @@ public class PApplicationException
 
     private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
 
-
     private final String mMessage;
     private final net.morimekta.providence.PApplicationExceptionType mId;
 

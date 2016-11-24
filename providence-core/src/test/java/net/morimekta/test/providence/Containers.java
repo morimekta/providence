@@ -7,7 +7,6 @@ public class Containers
                    java.io.Serializable {
     private final static long serialVersionUID = 3106880629763954881L;
 
-
     private final java.util.List<Boolean> mBooleanList;
     private final java.util.List<Byte> mByteList;
     private final java.util.List<Short> mShortList;

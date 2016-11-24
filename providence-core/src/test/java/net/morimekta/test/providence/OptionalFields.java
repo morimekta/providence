@@ -14,7 +14,6 @@ public class OptionalFields
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
 
-
     private final Boolean mBooleanValue;
     private final Byte mByteValue;
     private final Short mShortValue;

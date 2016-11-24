@@ -22,7 +22,6 @@ public class ThriftField
     private final static int kDefaultKey = 0;
     private final static net.morimekta.providence.model.Requirement kDefaultRequirement = net.morimekta.providence.model.Requirement.DEFAULT;
 
-
     private final String mComment;
     private final int mKey;
     private final net.morimekta.providence.model.Requirement mRequirement;

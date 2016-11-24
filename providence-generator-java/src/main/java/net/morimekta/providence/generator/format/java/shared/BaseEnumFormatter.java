@@ -66,7 +66,8 @@ public class BaseEnumFormatter {
         formatters.forEach(f -> f.appendExtraProperties(type));
 
         writer.end()
-              .appendln('}');
+              .appendln('}')
+              .newline();
     }
 
     private void appendEnumValues(CEnumDescriptor type) {

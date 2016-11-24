@@ -193,7 +193,6 @@ public class Calculator {
                        java.io.Serializable {
         private final static long serialVersionUID = -2850591557621395232L;
 
-
         private final net.morimekta.test.calculator.Operation mOp;
 
         private volatile int tHashCode;
@@ -569,6 +568,7 @@ public class Calculator {
             }
         }
     }
+
     // type <-- calculate___response
     @SuppressWarnings("unused")
     private static class Calculate_response
@@ -576,7 +576,6 @@ public class Calculator {
                        Comparable<Calculate_response>,
                        java.io.Serializable {
         private final static long serialVersionUID = 3839355577455995570L;
-
 
         private final net.morimekta.test.calculator.Operand mSuccess;
         private final net.morimekta.test.calculator.CalculateException mCe;
@@ -1091,6 +1090,7 @@ public class Calculator {
             }
         }
     }
+
     // type --> iamalive___request
     @SuppressWarnings("unused")
     private static class Iamalive_request
@@ -1098,7 +1098,6 @@ public class Calculator {
                        Comparable<Iamalive_request>,
                        java.io.Serializable {
         private final static long serialVersionUID = 7912890008187182926L;
-
 
 
         private volatile int tHashCode;
@@ -1370,5 +1369,6 @@ public class Calculator {
             }
         }
     }
+
     private Calculator() {}
 }

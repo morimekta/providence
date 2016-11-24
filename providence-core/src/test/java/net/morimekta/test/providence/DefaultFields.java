@@ -14,7 +14,6 @@ public class DefaultFields
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
 
-
     private final boolean mBooleanValue;
     private final byte mByteValue;
     private final short mShortValue;

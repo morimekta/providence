@@ -10,7 +10,6 @@ public class ThriftDocument
                    java.io.Serializable {
     private final static long serialVersionUID = -5731994850994905187L;
 
-
     private final String mComment;
     private final String mPackage;
     private final java.util.List<String> mIncludes;

@@ -14,7 +14,6 @@ public class StructType
 
     private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;
 
-
     private final String mComment;
     private final net.morimekta.providence.model.StructVariant mVariant;
     private final String mName;

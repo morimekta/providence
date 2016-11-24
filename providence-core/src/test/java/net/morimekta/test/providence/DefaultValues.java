@@ -16,7 +16,6 @@ public class DefaultValues
     private final static String kDefaultStringValue = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
     private final static net.morimekta.test.providence.Value kDefaultEnumValue = net.morimekta.test.providence.Value.SECOND;
 
-
     private final boolean mBooleanValue;
     private final byte mByteValue;
     private final short mShortValue;

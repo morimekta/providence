@@ -12,7 +12,6 @@ public class ServiceMethod
 
     private final static boolean kDefaultOneWay = false;
 
-
     private final String mComment;
     private final boolean mOneWay;
     private final String mReturnType;

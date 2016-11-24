@@ -10,7 +10,6 @@ public class Declaration
                    java.io.Serializable {
     private final static long serialVersionUID = -6998763195276182553L;
 
-
     private final net.morimekta.providence.model.EnumType mDeclEnum;
     private final net.morimekta.providence.model.TypedefType mDeclTypedef;
     private final net.morimekta.providence.model.StructType mDeclStruct;

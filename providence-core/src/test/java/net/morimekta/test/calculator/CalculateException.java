@@ -8,7 +8,6 @@ public class CalculateException
                    Comparable<CalculateException> {
     private final static long serialVersionUID = -3144631929815376595L;
 
-
     private final String mMessage;
     private final net.morimekta.test.calculator.Operation mOperation;
 

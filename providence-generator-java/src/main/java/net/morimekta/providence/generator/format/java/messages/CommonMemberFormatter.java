@@ -89,8 +89,6 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
         ValueBuilder values = new ValueBuilder(writer, helper);
 
         values.appendDefaultConstants(message.declaredOrderFields());
-
-        writer.newline();
     }
 
     private void appendFieldGetters(JMessage<?> message) throws GeneratorException {

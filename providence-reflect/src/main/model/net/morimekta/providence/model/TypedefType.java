@@ -10,7 +10,6 @@ public class TypedefType
                    java.io.Serializable {
     private final static long serialVersionUID = 5431583053440540554L;
 
-
     private final String mComment;
     private final String mType;
     private final String mName;

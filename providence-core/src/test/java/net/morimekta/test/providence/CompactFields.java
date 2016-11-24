@@ -9,7 +9,6 @@ public class CompactFields
 
     private final static int kDefaultId = 0;
 
-
     private final String mName;
     private final int mId;
     private final String mLabel;

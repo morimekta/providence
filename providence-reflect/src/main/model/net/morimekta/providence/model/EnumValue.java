@@ -12,7 +12,6 @@ public class EnumValue
 
     private final static int kDefaultValue = 0;
 
-
     private final String mComment;
     private final String mName;
     private final int mValue;
