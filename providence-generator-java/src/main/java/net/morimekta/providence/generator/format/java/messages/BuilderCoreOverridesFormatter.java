@@ -18,11 +18,11 @@ import java.util.LinkedList;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class CoreBuilderOverridesFormatter implements MessageMemberFormatter {
+public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
-    public CoreBuilderOverridesFormatter(IndentedPrintWriter writer, JHelper helper) {
+    public BuilderCoreOverridesFormatter(IndentedPrintWriter writer, JHelper helper) {
         this.writer = writer;
         this.helper = helper;
     }

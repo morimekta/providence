@@ -21,11 +21,11 @@ import java.util.Collection;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class CommonBuilderMemberFormatter implements MessageMemberFormatter {
+public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     protected final IndentedPrintWriter        writer;
     protected final JHelper                    helper;
 
-    public CommonBuilderMemberFormatter(IndentedPrintWriter writer,
+    public BuilderCommonMemberFormatter(IndentedPrintWriter writer,
                                         JHelper helper) {
         this.writer = writer;
         this.helper = helper;

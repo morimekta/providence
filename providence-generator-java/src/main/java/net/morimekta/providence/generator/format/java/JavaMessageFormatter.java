@@ -1,15 +1,15 @@
 package net.morimekta.providence.generator.format.java;
 
+import net.morimekta.providence.generator.format.java.messages.BuilderCommonMemberFormatter;
+import net.morimekta.providence.generator.format.java.messages.BuilderCoreOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonBuilderFormatter;
-import net.morimekta.providence.generator.format.java.messages.CommonBuilderMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
-import net.morimekta.providence.generator.format.java.messages.CoreBuilderOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
-import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.extra.AndroidMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extra.JacksonMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
+import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -44,13 +44,13 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
                                                               JHelper helper,
                                                               JavaOptions options) {
         ImmutableList.Builder<MessageMemberFormatter> builderFormatters = ImmutableList.builder();
-        builderFormatters.add(new CommonBuilderMemberFormatter(writer, helper))
-                         .add(new CoreBuilderOverridesFormatter(writer, helper));
+        builderFormatters.add(new BuilderCommonMemberFormatter(writer, helper))
+                         .add(new BuilderCoreOverridesFormatter(writer, helper));
 
         ImmutableList.Builder<MessageMemberFormatter> formatters = ImmutableList.builder();
         formatters.add(new CommonMemberFormatter(writer, helper))
-                  .add(new CommonOverridesFormatter(writer))
                   .add(new CoreOverridesFormatter(writer))
+                  .add(new CommonOverridesFormatter(writer))
                   .add(new CommonBuilderFormatter(writer, helper, builderFormatters.build()));
 
         if (options.android) {
