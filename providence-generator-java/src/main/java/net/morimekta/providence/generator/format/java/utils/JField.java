@@ -378,11 +378,11 @@ public class JField {
     }
 
     public boolean hasComment() {
-        return field.getComment() != null;
+        return field.getDocumentation() != null;
     }
 
     public String comment() {
-        return field.getComment();
+        return field.getDocumentation();
     }
 
     public boolean isVoid() {

@@ -30,7 +30,7 @@ import net.morimekta.console.args.SubCommandSet;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.config.cmd.Command;
@@ -109,7 +109,7 @@ public class ConfigOptions extends CommonOptions {
                                     .stream()
                                     .map(File::getParentFile)
                                     .collect(Collectors.toSet());
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftDocumentParser());
+        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
         for (File file : includes.values()) {
             try {
                 loader.load(file);

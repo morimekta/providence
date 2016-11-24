@@ -4,32 +4,32 @@ package net.morimekta.providence.model;
  * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
  */
 @SuppressWarnings("unused")
-public class ServiceMethod
-        implements net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field>,
-                   Comparable<ServiceMethod>,
+public class FunctionType
+        implements net.morimekta.providence.PMessage<FunctionType,FunctionType._Field>,
+                   Comparable<FunctionType>,
                    java.io.Serializable {
-    private final static long serialVersionUID = -8952857258512990537L;
+    private final static long serialVersionUID = 6135149631417317609L;
 
     private final static boolean kDefaultOneWay = false;
 
-    private final String mComment;
+    private final String mDocumentation;
     private final boolean mOneWay;
     private final String mReturnType;
     private final String mName;
-    private final java.util.List<net.morimekta.providence.model.ThriftField> mParams;
-    private final java.util.List<net.morimekta.providence.model.ThriftField> mExceptions;
+    private final java.util.List<net.morimekta.providence.model.FieldType> mParams;
+    private final java.util.List<net.morimekta.providence.model.FieldType> mExceptions;
     private final java.util.Map<String,String> mAnnotations;
 
     private volatile int tHashCode;
 
-    public ServiceMethod(String pComment,
-                         Boolean pOneWay,
-                         String pReturnType,
-                         String pName,
-                         java.util.List<net.morimekta.providence.model.ThriftField> pParams,
-                         java.util.List<net.morimekta.providence.model.ThriftField> pExceptions,
-                         java.util.Map<String,String> pAnnotations) {
-        mComment = pComment;
+    public FunctionType(String pDocumentation,
+                        Boolean pOneWay,
+                        String pReturnType,
+                        String pName,
+                        java.util.List<net.morimekta.providence.model.FieldType> pParams,
+                        java.util.List<net.morimekta.providence.model.FieldType> pExceptions,
+                        java.util.Map<String,String> pAnnotations) {
+        mDocumentation = pDocumentation;
         if (pOneWay != null) {
             mOneWay = pOneWay;
         } else {
@@ -54,8 +54,8 @@ public class ServiceMethod
         }
     }
 
-    private ServiceMethod(_Builder builder) {
-        mComment = builder.mComment;
+    private FunctionType(_Builder builder) {
+        mDocumentation = builder.mDocumentation;
         mOneWay = builder.mOneWay;
         mReturnType = builder.mReturnType;
         mName = builder.mName;
@@ -76,15 +76,15 @@ public class ServiceMethod
         }
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasDocumentation() {
+        return mDocumentation != null;
     }
 
     /**
      * @return The field value
      */
-    public String getComment() {
-        return mComment;
+    public String getDocumentation() {
+        return mDocumentation;
     }
 
     public boolean hasOneWay() {
@@ -131,7 +131,7 @@ public class ServiceMethod
     /**
      * @return The field value
      */
-    public java.util.List<net.morimekta.providence.model.ThriftField> getParams() {
+    public java.util.List<net.morimekta.providence.model.FieldType> getParams() {
         return mParams;
     }
 
@@ -146,7 +146,7 @@ public class ServiceMethod
     /**
      * @return The field value
      */
-    public java.util.List<net.morimekta.providence.model.ThriftField> getExceptions() {
+    public java.util.List<net.morimekta.providence.model.FieldType> getExceptions() {
         return mExceptions;
     }
 
@@ -168,7 +168,7 @@ public class ServiceMethod
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
+            case 1: return hasDocumentation();
             case 2: return true;
             case 3: return hasReturnType();
             case 4: return hasName();
@@ -182,7 +182,7 @@ public class ServiceMethod
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
+            case 1: return hasDocumentation() ? 1 : 0;
             case 2: return 1;
             case 3: return hasReturnType() ? 1 : 0;
             case 4: return hasName() ? 1 : 0;
@@ -196,7 +196,7 @@ public class ServiceMethod
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
+            case 1: return getDocumentation();
             case 2: return isOneWay();
             case 3: return getReturnType();
             case 4: return getName();
@@ -215,9 +215,9 @@ public class ServiceMethod
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ServiceMethod)) return false;
-        ServiceMethod other = (ServiceMethod) o;
-        return java.util.Objects.equals(mComment, other.mComment) &&
+        if (o == null || !(o instanceof FunctionType)) return false;
+        FunctionType other = (FunctionType) o;
+        return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mOneWay, other.mOneWay) &&
                java.util.Objects.equals(mReturnType, other.mReturnType) &&
                java.util.Objects.equals(mName, other.mName) &&
@@ -230,8 +230,8 @@ public class ServiceMethod
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    ServiceMethod.class,
-                    _Field.COMMENT, mComment,
+                    FunctionType.class,
+                    _Field.DOCUMENTATION, mDocumentation,
                     _Field.ONE_WAY, mOneWay,
                     _Field.RETURN_TYPE, mReturnType,
                     _Field.NAME, mName,
@@ -244,7 +244,7 @@ public class ServiceMethod
 
     @Override
     public String toString() {
-        return "model.ServiceMethod" + asString();
+        return "model.FunctionType" + asString();
     }
 
     @Override
@@ -253,11 +253,11 @@ public class ServiceMethod
         out.append("{");
 
         boolean first = true;
-        if (mComment != null) {
+        if (mDocumentation != null) {
             first = false;
-            out.append("comment:")
+            out.append("documentation:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mComment))
+               .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
         out.append("one_way:")
@@ -296,13 +296,13 @@ public class ServiceMethod
     }
 
     @Override
-    public int compareTo(ServiceMethod other) {
+    public int compareTo(FunctionType other) {
         int c;
 
-        c = Boolean.compare(mComment != null, other.mComment != null);
+        c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
         if (c != 0) return c;
-        if (mComment != null) {
-            c = mComment.compareTo(other.mComment);
+        if (mDocumentation != null) {
+            c = mDocumentation.compareTo(other.mDocumentation);
             if (c != 0) return c;
         }
 
@@ -353,12 +353,12 @@ public class ServiceMethod
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ONE_WAY(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "one_way", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultOneWay)),
         RETURN_TYPE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "return_type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        PARAMS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "params", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.ThriftField.provider()), null),
-        EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.ThriftField.provider()), null),
+        PARAMS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "params", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
+        EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
         ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
@@ -403,7 +403,7 @@ public class ServiceMethod
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
+                case 1: return _Field.DOCUMENTATION;
                 case 2: return _Field.ONE_WAY;
                 case 3: return _Field.RETURN_TYPE;
                 case 4: return _Field.NAME;
@@ -416,7 +416,7 @@ public class ServiceMethod
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
+                case "documentation": return _Field.DOCUMENTATION;
                 case "one_way": return _Field.ONE_WAY;
                 case "return_type": return _Field.RETURN_TYPE;
                 case "name": return _Field.NAME;
@@ -428,21 +428,21 @@ public class ServiceMethod
         }
     }
 
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceMethod,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<FunctionType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> {
         public _Descriptor() {
-            super("model", "ServiceMethod", new _Factory(), false, false);
+            super("model", "FunctionType", new _Factory(), false, false);
         }
 
         @Override
@@ -465,15 +465,15 @@ public class ServiceMethod
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ServiceMethod,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<FunctionType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ServiceMethod,_Field> {
+            extends net.morimekta.providence.PMessageBuilderFactory<FunctionType,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -481,7 +481,7 @@ public class ServiceMethod
     }
 
     /**
-     * Make a model.ServiceMethod builder.
+     * Make a model.FunctionType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -492,19 +492,19 @@ public class ServiceMethod
      * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ServiceMethod,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<FunctionType,_Field> {
         private java.util.BitSet optionals;
 
-        private String mComment;
+        private String mDocumentation;
         private boolean mOneWay;
         private String mReturnType;
         private String mName;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mParams;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mExceptions;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mParams;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mExceptions;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
         /**
-         * Make a model.ServiceMethod builder.
+         * Make a model.FunctionType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
@@ -515,16 +515,16 @@ public class ServiceMethod
         }
 
         /**
-         * Make a mutating builder off a base model.ServiceMethod.
+         * Make a mutating builder off a base model.FunctionType.
          *
-         * @param base The base ServiceMethod
+         * @param base The base FunctionType
          */
-        public _Builder(ServiceMethod base) {
+        public _Builder(FunctionType base) {
             this();
 
-            if (base.hasComment()) {
+            if (base.hasDocumentation()) {
                 optionals.set(0);
-                mComment = base.mComment;
+                mDocumentation = base.mDocumentation;
             }
             optionals.set(1);
             mOneWay = base.mOneWay;
@@ -551,10 +551,10 @@ public class ServiceMethod
         }
 
         @Override
-        public _Builder merge(ServiceMethod from) {
-            if (from.hasComment()) {
+        public _Builder merge(FunctionType from) {
+            if (from.hasDocumentation()) {
                 optionals.set(0);
-                mComment = from.getComment();
+                mDocumentation = from.getDocumentation();
             }
 
             optionals.set(1);
@@ -590,34 +590,34 @@ public class ServiceMethod
         }
 
         /**
-         * Sets the value of comment.
+         * Sets the value of documentation.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setComment(String value) {
+        public _Builder setDocumentation(String value) {
             optionals.set(0);
-            mComment = value;
+            mDocumentation = value;
             return this;
         }
 
         /**
-         * Checks for presence of the comment field.
+         * Checks for presence of the documentation field.
          *
-         * @return True iff comment has been set.
+         * @return True iff documentation has been set.
          */
-        public boolean isSetComment() {
+        public boolean isSetDocumentation() {
             return optionals.get(0);
         }
 
         /**
-         * Clears the comment field.
+         * Clears the documentation field.
          *
          * @return The builder
          */
-        public _Builder clearComment() {
+        public _Builder clearDocumentation() {
             optionals.clear(0);
-            mComment = null;
+            mDocumentation = null;
             return this;
         }
 
@@ -723,7 +723,7 @@ public class ServiceMethod
          * @param value The new value
          * @return The builder
          */
-        public _Builder setParams(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
+        public _Builder setParams(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(4);
             mParams.clear();
             mParams.addAll(value);
@@ -736,9 +736,9 @@ public class ServiceMethod
          * @param values The added value
          * @return The builder
          */
-        public _Builder addToParams(net.morimekta.providence.model.ThriftField... values) {
+        public _Builder addToParams(net.morimekta.providence.model.FieldType... values) {
             optionals.set(4);
-            for (net.morimekta.providence.model.ThriftField item : values) {
+            for (net.morimekta.providence.model.FieldType item : values) {
                 mParams.add(item);
             }
             return this;
@@ -769,7 +769,7 @@ public class ServiceMethod
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableParams() {
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableParams() {
             optionals.set(4);
             return mParams;
         }
@@ -780,7 +780,7 @@ public class ServiceMethod
          * @param value The new value
          * @return The builder
          */
-        public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.ThriftField> value) {
+        public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(5);
             mExceptions.clear();
             mExceptions.addAll(value);
@@ -793,9 +793,9 @@ public class ServiceMethod
          * @param values The added value
          * @return The builder
          */
-        public _Builder addToExceptions(net.morimekta.providence.model.ThriftField... values) {
+        public _Builder addToExceptions(net.morimekta.providence.model.FieldType... values) {
             optionals.set(5);
-            for (net.morimekta.providence.model.ThriftField item : values) {
+            for (net.morimekta.providence.model.FieldType item : values) {
                 mExceptions.add(item);
             }
             return this;
@@ -826,7 +826,7 @@ public class ServiceMethod
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ThriftField> mutableExceptions() {
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableExceptions() {
             optionals.set(5);
             return mExceptions;
         }
@@ -900,12 +900,12 @@ public class ServiceMethod
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setComment((String) value); break;
+                case 1: setDocumentation((String) value); break;
                 case 2: setOneWay((boolean) value); break;
                 case 3: setReturnType((String) value); break;
                 case 4: setName((String) value); break;
-                case 5: setParams((java.util.List<net.morimekta.providence.model.ThriftField>) value); break;
-                case 6: setExceptions((java.util.List<net.morimekta.providence.model.ThriftField>) value); break;
+                case 5: setParams((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
+                case 6: setExceptions((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
@@ -914,8 +914,8 @@ public class ServiceMethod
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 5: addToParams((net.morimekta.providence.model.ThriftField) value); break;
-                case 6: addToExceptions((net.morimekta.providence.model.ThriftField) value); break;
+                case 5: addToParams((net.morimekta.providence.model.FieldType) value); break;
+                case 6: addToExceptions((net.morimekta.providence.model.FieldType) value); break;
                 default: break;
             }
             return this;
@@ -924,7 +924,7 @@ public class ServiceMethod
         @Override
         public _Builder clear(int key) {
             switch (key) {
-                case 1: clearComment(); break;
+                case 1: clearDocumentation(); break;
                 case 2: clearOneWay(); break;
                 case 3: clearReturnType(); break;
                 case 4: clearName(); break;
@@ -952,18 +952,18 @@ public class ServiceMethod
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message model.ServiceMethod");
+                        " in message model.FunctionType");
             }
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ServiceMethod,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
             return kDescriptor;
         }
 
         @Override
-        public ServiceMethod build() {
-            return new ServiceMethod(this);
+        public FunctionType build() {
+            return new FunctionType(this);
         }
     }
 }

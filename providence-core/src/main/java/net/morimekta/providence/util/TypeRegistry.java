@@ -101,7 +101,7 @@ public class TypeRegistry {
         if (declaredTypes.containsKey(declaredTypeName)) {
             throw new IllegalStateException("Type " + declaredTypeName + " already exists");
         }
-        knownPackages.add(declaredType.getPackageName());
+        knownPackages.add(declaredType.getProgramName());
         declaredTypes.put(declaredTypeName, declaredType);
     }
 

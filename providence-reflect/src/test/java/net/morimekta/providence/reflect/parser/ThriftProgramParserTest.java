@@ -19,8 +19,7 @@
 
 package net.morimekta.providence.reflect.parser;
 
-import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.model.ProgramType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,37 +35,35 @@ import static org.junit.Assert.fail;
  * @author Stein Eldar Johnsen
  * @since 05.09.15
  */
-public class ThriftDocumentParserTest {
-    private PrettySerializer     printer;
-    private ThriftDocumentParser parser;
+public class ThriftProgramParserTest {
+    private ThriftProgramParser parser;
 
     @Before
     public void setUp() {
-        this.printer = new PrettySerializer();
-        this.parser = new ThriftDocumentParser();
+        this.parser = new ThriftProgramParser();
     }
 
     @Test
     public void testParse_calculator() throws IOException, ParseException {
-        ThriftDocument calculator = parser.parse(getClass().getResourceAsStream("/parser/calculator/calculator.thrift"),
-                                                 "calculator.thrift");
+        ProgramType calculator = parser.parse(getClass().getResourceAsStream("/parser/calculator/calculator.thrift"),
+                                              "calculator.thrift");
 
-        assertEquals("package = \"calculator\"\n" +
+        assertEquals("program_name = \"calculator\"\n" +
                      "includes = \"number.thrift\"\n" +
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.calculator\"\n" +
                      "}\n" +
                      "decl = {\n" +
                      "  decl_enum = {\n" +
-                     "    comment = \"Block comment on type.\"\n" +
+                     "    documentation = \"Block comment on type.\"\n" +
                      "    name = \"Operator\"\n" +
                      "    values = {\n" +
-                     "      comment = \"line comment on enum\"\n" +
+                     "      documentation = \"line comment on enum\"\n" +
                      "      name = \"IDENTITY\"\n" +
                      "      value = 1\n" +
                      "    }\n" +
                      "    values = {\n" +
-                     "      comment = \"Block comment on enum.\"\n" +
+                     "      documentation = \"Block comment on enum.\"\n" +
                      "      name = \"ADD\"\n" +
                      "      value = 2\n" +
                      "    }\n" +
@@ -86,17 +83,17 @@ public class ThriftDocumentParserTest {
                      "}\n" +
                      "decl = {\n" +
                      "  decl_struct = {\n" +
-                     "    comment = \"Line comment on type.\"\n" +
+                     "    documentation = \"Line comment on type.\"\n" +
                      "    variant = UNION\n" +
                      "    name = \"Operand\"\n" +
                      "    fields = {\n" +
-                     "      comment = \"Double line\\ncomment on field.\"\n" +
+                     "      documentation = \"Double line\\ncomment on field.\"\n" +
                      "      key = 1\n" +
                      "      type = \"Operation\"\n" +
                      "      name = \"operation\"\n" +
                      "    }\n" +
                      "    fields = {\n" +
-                     "      comment = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
+                     "      documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
                      "      key = 2\n" +
                      "      type = \"double\"\n" +
                      "      name = \"number\"\n" +
@@ -147,7 +144,7 @@ public class ThriftDocumentParserTest {
                      "  decl_service = {\n" +
                      "    name = \"Calculator\"\n" +
                      "    methods = {\n" +
-                     "      comment = \"Block comment on method.\"\n" +
+                     "      documentation = \"Block comment on method.\"\n" +
                      "      one_way = false\n" +
                      "      return_type = \"Operand\"\n" +
                      "      name = \"calculate\"\n" +
@@ -163,7 +160,7 @@ public class ThriftDocumentParserTest {
                      "      }\n" +
                      "    }\n" +
                      "    methods = {\n" +
-                     "      comment = \"line comment on method.\"\n" +
+                     "      documentation = \"line comment on method.\"\n" +
                      "      one_way = true\n" +
                      "      name = \"iamalive\"\n" +
                      "    }\n" +
@@ -171,30 +168,28 @@ public class ThriftDocumentParserTest {
                      "}\n" +
                      "decl = {\n" +
                      "  decl_const = {\n" +
-                     "    comment = \"Block comment on constant.\"\n" +
-                     "    key = -1\n" +
+                     "    documentation = \"Block comment on constant.\"\n" +
                      "    type = \"Operand\"\n" +
                      "    name = \"PI\"\n" +
-                     "    default_value = \"{\\\"number\\\":3.141592}\"\n" +
+                     "    value = \"{\\\"number\\\":3.141592}\"\n" +
                      "  }\n" +
                      "}\n" +
                      "decl = {\n" +
                      "  decl_const = {\n" +
-                     "    comment = \"Line comment on constant.\"\n" +
-                     "    key = -1\n" +
+                     "    documentation = \"Line comment on constant.\"\n" +
                      "    type = \"set<Operator>\"\n" +
                      "    name = \"kComplexOperands\"\n" +
-                     "    default_value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
+                     "    value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
                      "  }\n" +
                      "}", debugString(calculator));
     }
 
     @Test
     public void testParse_number() throws IOException, ParseException {
-        ThriftDocument number = parser.parse(getClass().getResourceAsStream("/parser/calculator/number.thrift"),
-                                             "number.thrift");
+        ProgramType number = parser.parse(getClass().getResourceAsStream("/parser/calculator/number.thrift"),
+                                          "number.thrift");
 
-        assertEquals("package = \"number\"\n" +
+        assertEquals("program_name = \"number\"\n" +
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.number\"\n" +
                      "}\n" +
@@ -226,20 +221,19 @@ public class ThriftDocumentParserTest {
                      "}\n" +
                      "decl = {\n" +
                      "  decl_const = {\n" +
-                     "    key = -1\n" +
                      "    type = \"Imaginary\"\n" +
                      "    name = \"kSqrtMinusOne\"\n" +
-                     "    default_value = \"{\\\"v\\\":0.,\\\"i\\\":-1.0}\"\n" +
+                     "    value = \"{\\\"v\\\":0.,\\\"i\\\":-1.0}\"\n" +
                      "  }\n" +
                      "}", debugString(number));
     }
 
     @Test
     public void testParser_annotations() throws IOException, ParseException {
-        ThriftDocument annotations = parser.parse(getClass().getResourceAsStream("/parser/tests/annotations.thrift"),
-                                                  "annotations.thrift");
+        ProgramType annotations = parser.parse(getClass().getResourceAsStream("/parser/tests/annotations.thrift"),
+                                               "annotations.thrift");
 
-        assertEquals("package = \"annotations\"\n" +
+        assertEquals("program_name = \"annotations\"\n" +
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.annotations\"\n" +
                      "}\n" +
@@ -343,7 +337,7 @@ public class ThriftDocumentParserTest {
                         "namespace java org.apache..test.failure\n" +
                         "---------------^",
                         "/failure/invalid_namespace.thrift");
-        // assertBadThrfit("Unknown Type 'i128'",
+        // assertBadThrift("Unknown Type 'i128'",
         //                 "/failure/unknown_type.thrift");
         assertBadThrfit("Parse error on line 8, pos 0: Unexpected token 'include', expected type declaration\n" +
                         "include \"valid_reference.thrift\"\n" +

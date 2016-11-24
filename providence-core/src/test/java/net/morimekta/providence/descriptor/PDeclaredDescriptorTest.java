@@ -42,7 +42,7 @@ public class PDeclaredDescriptorTest {
 
     @Test
     public void testGetPackageName() {
-        assertEquals("test", mockType.getPackageName());
+        assertEquals("test", mockType.getProgramName());
     }
 
     @Test

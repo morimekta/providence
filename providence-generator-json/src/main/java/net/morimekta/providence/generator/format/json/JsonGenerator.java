@@ -22,9 +22,9 @@ package net.morimekta.providence.generator.format.json;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.model.ThriftDocument;
+import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.SerializerException;
 
@@ -46,11 +46,11 @@ public class JsonGenerator extends Generator {
     }
 
     @Override
-    public void generate(CDocument document) throws IOException, GeneratorException {
-        for (ThriftDocument doc : typeLoader.loadedDocuments()) {
-            if (doc.getPackage()
-                   .equals(document.getPackageName())) {
-                OutputStream out = getFileManager().create(null, doc.getPackage() + ".json");
+    public void generate(CProgram document) throws IOException, GeneratorException {
+        for (ProgramType doc : typeLoader.loadedPrograms()) {
+            if (doc.getProgramName()
+                   .equals(document.getProgramName())) {
+                OutputStream out = getFileManager().create(null, doc.getProgramName() + ".json");
                 try {
                     serializer.serialize(out, doc);
                     out.write('\n');

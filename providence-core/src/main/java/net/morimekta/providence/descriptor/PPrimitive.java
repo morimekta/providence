@@ -59,7 +59,7 @@ public class PPrimitive implements PDescriptor {
     }
 
     @Override
-    public String getPackageName() {
+    public String getProgramName() {
         return null;
     }
 
@@ -69,7 +69,7 @@ public class PPrimitive implements PDescriptor {
     }
 
     @Override
-    public String getQualifiedName(String packageName) {
+    public String getQualifiedName(String programContext) {
         return mType.name;
     }
 

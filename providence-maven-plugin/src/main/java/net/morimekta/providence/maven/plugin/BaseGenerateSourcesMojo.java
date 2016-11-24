@@ -22,10 +22,10 @@ import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.util.io.IOUtils;
 
 import org.apache.maven.artifact.Artifact;
@@ -210,10 +210,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         inputs.stream().map(File::getParentFile).forEach(includes::add);
 
         FileManager fileManager = new FileManager(outputDir);
-        DocumentParser parser = new ThriftDocumentParser();
+        ProgramParser parser = new ThriftProgramParser();
         TypeLoader loader = new TypeLoader(includes, parser);
 
-        LinkedList<CDocument> documents = new LinkedList<>();
+        LinkedList<CProgram> documents = new LinkedList<>();
 
         for (File in : inputs) {
             try {
@@ -234,14 +234,14 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 
-            for (CDocument doc : documents) {
+            for (CProgram doc : documents) {
                 try {
                     generator.generate(doc);
                 } catch (IOException e) {
-                    throw new MojoExecutionException("Failed to write document: " + doc.getPackageName(), e);
+                    throw new MojoExecutionException("Failed to write document: " + doc.getProgramName(), e);
                 } catch (GeneratorException e) {
                     getLog().warn(e.getMessage());
-                    throw new MojoFailureException("Failed to generate document: " + doc.getPackageName(), e);
+                    throw new MojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
                 }
             }
         } catch (GeneratorException e) {

@@ -55,9 +55,9 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
     }
 
     @Override
-    public String getQualifiedName(String packageName) {
-        return "map<" + keyDescriptor().getQualifiedName(packageName) + "," +
-               itemDescriptor().getQualifiedName(packageName) + ">";
+    public String getQualifiedName(String programContext) {
+        return "map<" + keyDescriptor().getQualifiedName(programContext) + "," +
+               itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
     @Override

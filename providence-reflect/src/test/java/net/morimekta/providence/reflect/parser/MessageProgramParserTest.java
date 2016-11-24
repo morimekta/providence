@@ -19,30 +19,15 @@
 
 package net.morimekta.providence.reflect.parser;
 
-import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.serializer.Serializer;
-
-import java.io.IOException;
-import java.io.InputStream;
+import org.junit.Test;
 
 /**
  * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * @since 05.09.15
  */
-public class MessageDocumentParser implements DocumentParser {
-    private final Serializer mSerializer;
+public class MessageProgramParserTest {
+    @Test
+    public void testParse() {
 
-    public MessageDocumentParser(Serializer serializer) {
-        mSerializer = serializer;
-    }
-
-    @Override
-    public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
-        try {
-            return mSerializer.deserialize(in, ThriftDocument.kDescriptor);
-        } catch (SerializerException tse) {
-            throw new ParseException("Failed to deserialize definition file.", tse);
-        }
     }
 }

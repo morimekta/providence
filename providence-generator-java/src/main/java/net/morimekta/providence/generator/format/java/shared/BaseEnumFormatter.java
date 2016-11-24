@@ -29,9 +29,9 @@ public class BaseEnumFormatter {
     public void appendEnumClass(CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
 
-        if (type.getComment() != null) {
+        if (type.getDocumentation() != null) {
             new BlockCommentBuilder(writer)
-                    .comment(type.getComment())
+                    .comment(type.getDocumentation())
                     .finish();
         }
         formatters.forEach(f -> f.appendClassAnnotations(type));
@@ -72,9 +72,9 @@ public class BaseEnumFormatter {
 
     private void appendEnumValues(CEnumDescriptor type) {
         for (CEnumValue v : type.getValues()) {
-            if (v.getComment() != null) {
+            if (v.getDocumentation() != null) {
                 new BlockCommentBuilder(writer)
-                        .comment(v.getComment())
+                        .comment(v.getDocumentation())
                         .finish();
             }
             if (JAnnotation.isDeprecated(v)) {

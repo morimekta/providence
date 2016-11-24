@@ -12,20 +12,20 @@ public class ServiceType
                    java.io.Serializable {
     private final static long serialVersionUID = 789757775761432238L;
 
-    private final String mComment;
+    private final String mDocumentation;
     private final String mName;
     private final String mExtend;
-    private final java.util.List<net.morimekta.providence.model.ServiceMethod> mMethods;
+    private final java.util.List<net.morimekta.providence.model.FunctionType> mMethods;
     private final java.util.Map<String,String> mAnnotations;
 
     private volatile int tHashCode;
 
-    public ServiceType(String pComment,
+    public ServiceType(String pDocumentation,
                        String pName,
                        String pExtend,
-                       java.util.List<net.morimekta.providence.model.ServiceMethod> pMethods,
+                       java.util.List<net.morimekta.providence.model.FunctionType> pMethods,
                        java.util.Map<String,String> pAnnotations) {
-        mComment = pComment;
+        mDocumentation = pDocumentation;
         mName = pName;
         mExtend = pExtend;
         if (pMethods != null) {
@@ -41,7 +41,7 @@ public class ServiceType
     }
 
     private ServiceType(_Builder builder) {
-        mComment = builder.mComment;
+        mDocumentation = builder.mDocumentation;
         mName = builder.mName;
         mExtend = builder.mExtend;
         if (builder.isSetMethods()) {
@@ -56,15 +56,15 @@ public class ServiceType
         }
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasDocumentation() {
+        return mDocumentation != null;
     }
 
     /**
      * @return The field value
      */
-    public String getComment() {
-        return mComment;
+    public String getDocumentation() {
+        return mDocumentation;
     }
 
     public boolean hasName() {
@@ -100,7 +100,7 @@ public class ServiceType
     /**
      * @return The field value
      */
-    public java.util.List<net.morimekta.providence.model.ServiceMethod> getMethods() {
+    public java.util.List<net.morimekta.providence.model.FunctionType> getMethods() {
         return mMethods;
     }
 
@@ -122,7 +122,7 @@ public class ServiceType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
+            case 1: return hasDocumentation();
             case 2: return hasName();
             case 3: return hasExtend();
             case 4: return numMethods() > 0;
@@ -134,7 +134,7 @@ public class ServiceType
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
+            case 1: return hasDocumentation() ? 1 : 0;
             case 2: return hasName() ? 1 : 0;
             case 3: return hasExtend() ? 1 : 0;
             case 4: return numMethods();
@@ -146,7 +146,7 @@ public class ServiceType
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
+            case 1: return getDocumentation();
             case 2: return getName();
             case 3: return getExtend();
             case 4: return getMethods();
@@ -165,7 +165,7 @@ public class ServiceType
         if (o == this) return true;
         if (o == null || !(o instanceof ServiceType)) return false;
         ServiceType other = (ServiceType) o;
-        return java.util.Objects.equals(mComment, other.mComment) &&
+        return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mExtend, other.mExtend) &&
                java.util.Objects.equals(mMethods, other.mMethods) &&
@@ -177,7 +177,7 @@ public class ServiceType
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
                     ServiceType.class,
-                    _Field.COMMENT, mComment,
+                    _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
                     _Field.EXTEND, mExtend,
                     _Field.METHODS, mMethods,
@@ -197,11 +197,11 @@ public class ServiceType
         out.append("{");
 
         boolean first = true;
-        if (mComment != null) {
+        if (mDocumentation != null) {
             first = false;
-            out.append("comment:")
+            out.append("documentation:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mComment))
+               .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
         if (mName != null) {
@@ -239,10 +239,10 @@ public class ServiceType
     public int compareTo(ServiceType other) {
         int c;
 
-        c = Boolean.compare(mComment != null, other.mComment != null);
+        c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
         if (c != 0) return c;
-        if (mComment != null) {
-            c = mComment.compareTo(other.mComment);
+        if (mDocumentation != null) {
+            c = mDocumentation.compareTo(other.mDocumentation);
             if (c != 0) return c;
         }
 
@@ -283,10 +283,10 @@ public class ServiceType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         EXTEND(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.ServiceMethod.provider()), null),
+        METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FunctionType.provider()), null),
         ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
@@ -331,7 +331,7 @@ public class ServiceType
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
+                case 1: return _Field.DOCUMENTATION;
                 case 2: return _Field.NAME;
                 case 3: return _Field.EXTEND;
                 case 4: return _Field.METHODS;
@@ -342,7 +342,7 @@ public class ServiceType
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
+                case "documentation": return _Field.DOCUMENTATION;
                 case "name": return _Field.NAME;
                 case "extend": return _Field.EXTEND;
                 case "methods": return _Field.METHODS;
@@ -421,10 +421,10 @@ public class ServiceType
             extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field> {
         private java.util.BitSet optionals;
 
-        private String mComment;
+        private String mDocumentation;
         private String mName;
         private String mExtend;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ServiceMethod> mMethods;
+        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FunctionType> mMethods;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
         /**
@@ -444,9 +444,9 @@ public class ServiceType
         public _Builder(ServiceType base) {
             this();
 
-            if (base.hasComment()) {
+            if (base.hasDocumentation()) {
                 optionals.set(0);
-                mComment = base.mComment;
+                mDocumentation = base.mDocumentation;
             }
             if (base.hasName()) {
                 optionals.set(1);
@@ -468,9 +468,9 @@ public class ServiceType
 
         @Override
         public _Builder merge(ServiceType from) {
-            if (from.hasComment()) {
+            if (from.hasDocumentation()) {
                 optionals.set(0);
-                mComment = from.getComment();
+                mDocumentation = from.getDocumentation();
             }
 
             if (from.hasName()) {
@@ -497,34 +497,34 @@ public class ServiceType
         }
 
         /**
-         * Sets the value of comment.
+         * Sets the value of documentation.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setComment(String value) {
+        public _Builder setDocumentation(String value) {
             optionals.set(0);
-            mComment = value;
+            mDocumentation = value;
             return this;
         }
 
         /**
-         * Checks for presence of the comment field.
+         * Checks for presence of the documentation field.
          *
-         * @return True iff comment has been set.
+         * @return True iff documentation has been set.
          */
-        public boolean isSetComment() {
+        public boolean isSetDocumentation() {
             return optionals.get(0);
         }
 
         /**
-         * Clears the comment field.
+         * Clears the documentation field.
          *
          * @return The builder
          */
-        public _Builder clearComment() {
+        public _Builder clearDocumentation() {
             optionals.clear(0);
-            mComment = null;
+            mDocumentation = null;
             return this;
         }
 
@@ -598,7 +598,7 @@ public class ServiceType
          * @param value The new value
          * @return The builder
          */
-        public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.ServiceMethod> value) {
+        public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.FunctionType> value) {
             optionals.set(3);
             mMethods.clear();
             mMethods.addAll(value);
@@ -611,9 +611,9 @@ public class ServiceType
          * @param values The added value
          * @return The builder
          */
-        public _Builder addToMethods(net.morimekta.providence.model.ServiceMethod... values) {
+        public _Builder addToMethods(net.morimekta.providence.model.FunctionType... values) {
             optionals.set(3);
-            for (net.morimekta.providence.model.ServiceMethod item : values) {
+            for (net.morimekta.providence.model.FunctionType item : values) {
                 mMethods.add(item);
             }
             return this;
@@ -644,7 +644,7 @@ public class ServiceType
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.ServiceMethod> mutableMethods() {
+        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FunctionType> mutableMethods() {
             optionals.set(3);
             return mMethods;
         }
@@ -718,10 +718,10 @@ public class ServiceType
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setComment((String) value); break;
+                case 1: setDocumentation((String) value); break;
                 case 2: setName((String) value); break;
                 case 3: setExtend((String) value); break;
-                case 4: setMethods((java.util.List<net.morimekta.providence.model.ServiceMethod>) value); break;
+                case 4: setMethods((java.util.List<net.morimekta.providence.model.FunctionType>) value); break;
                 case 5: setAnnotations((java.util.Map<String,String>) value); break;
             }
             return this;
@@ -730,7 +730,7 @@ public class ServiceType
         @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
-                case 4: addToMethods((net.morimekta.providence.model.ServiceMethod) value); break;
+                case 4: addToMethods((net.morimekta.providence.model.FunctionType) value); break;
                 default: break;
             }
             return this;
@@ -739,7 +739,7 @@ public class ServiceType
         @Override
         public _Builder clear(int key) {
             switch (key) {
-                case 1: clearComment(); break;
+                case 1: clearDocumentation(); break;
                 case 2: clearName(); break;
                 case 3: clearExtend(); break;
                 case 4: clearMethods(); break;

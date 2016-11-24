@@ -4,10 +4,10 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -30,13 +30,13 @@ public class JavaGeneratorTest {
     @Rule
     public  TemporaryFolder tmp;
 
-    private FileManager      fileManager;
-    private File             out;
-    private DocumentRegistry documentRegistry;
-    private File             file;
-    private File             inc;
-    private TypeLoader       typeLoader;
-    private DocumentParser   parser;
+    private FileManager     fileManager;
+    private File            out;
+    private ProgramRegistry programRegistry;
+    private File            file;
+    private File            inc;
+    private TypeLoader      typeLoader;
+    private ProgramParser   parser;
 
     @Before
     public void setUp() throws IOException {
@@ -54,16 +54,16 @@ public class JavaGeneratorTest {
         inc = tmp.newFolder("includes");
 
         fileManager = new FileManager(out);
-        parser = new ThriftDocumentParser();
+        parser = new ThriftProgramParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        documentRegistry = new DocumentRegistry();
+        programRegistry = new ProgramRegistry();
     }
 
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
         JavaOptions options = new JavaOptions();
 
-        Generator generator = new JavaGenerator(fileManager, documentRegistry, options);
+        Generator generator = new JavaGenerator(fileManager, programRegistry, options);
         generator.generate(typeLoader.load(file));
 
         File test = new File(out, "net/morimekta/test/java/Test.java");

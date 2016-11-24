@@ -59,14 +59,14 @@ public class PPrimitiveTest {
 
     @Test
     public void testGetPackageName() {
-        assertNull(PPrimitive.BOOL.getPackageName());
-        assertNull(PPrimitive.BYTE.getPackageName());
-        assertNull(PPrimitive.I16.getPackageName());
-        assertNull(PPrimitive.I32.getPackageName());
-        assertNull(PPrimitive.I64.getPackageName());
-        assertNull(PPrimitive.DOUBLE.getPackageName());
-        assertNull(PPrimitive.STRING.getPackageName());
-        assertNull(PPrimitive.BINARY.getPackageName());
+        assertNull(PPrimitive.BOOL.getProgramName());
+        assertNull(PPrimitive.BYTE.getProgramName());
+        assertNull(PPrimitive.I16.getProgramName());
+        assertNull(PPrimitive.I32.getProgramName());
+        assertNull(PPrimitive.I64.getProgramName());
+        assertNull(PPrimitive.DOUBLE.getProgramName());
+        assertNull(PPrimitive.STRING.getProgramName());
+        assertNull(PPrimitive.BINARY.getProgramName());
     }
 
     @Test

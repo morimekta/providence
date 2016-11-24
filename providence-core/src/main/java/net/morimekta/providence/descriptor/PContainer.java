@@ -41,7 +41,7 @@ public abstract class PContainer<Container> implements PDescriptor {
     }
 
     @Override
-    public String getPackageName() {
+    public String getProgramName() {
         return null;
     }
 

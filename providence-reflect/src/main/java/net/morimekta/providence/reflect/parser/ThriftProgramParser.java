@@ -20,17 +20,18 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.model.EnumType;
 import net.morimekta.providence.model.EnumValue;
+import net.morimekta.providence.model.FieldRequirement;
+import net.morimekta.providence.model.FieldType;
+import net.morimekta.providence.model.FunctionType;
+import net.morimekta.providence.model.MessageType;
+import net.morimekta.providence.model.MessageVariant;
 import net.morimekta.providence.model.Model_Constants;
-import net.morimekta.providence.model.Requirement;
-import net.morimekta.providence.model.ServiceMethod;
+import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.model.ServiceType;
-import net.morimekta.providence.model.StructType;
-import net.morimekta.providence.model.StructVariant;
-import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.model.ThriftField;
 import net.morimekta.providence.model.TypedefType;
 import net.morimekta.providence.reflect.parser.internal.Token;
 import net.morimekta.providence.reflect.parser.internal.Tokenizer;
@@ -54,9 +55,9 @@ import java.util.regex.Pattern;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class ThriftDocumentParser implements DocumentParser {
+public class ThriftProgramParser implements ProgramParser {
     private final static Pattern RE_BLOCK_LINE        = Pattern.compile("^([\\s]*[*])?[\\s]?");
-    private static final Pattern VALID_PACKAGE        = Pattern.compile(
+    private static final Pattern VALID_PROGRAM_NAME   = Pattern.compile(
             "[-._a-zA-Z0-9]+");
     public static final Pattern  VALID_IDENTIFIER     = Pattern.compile(
             "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
@@ -64,16 +65,16 @@ public class ThriftDocumentParser implements DocumentParser {
             "([_a-zA-Z][-_a-zA-Z0-9]*[.])*[_a-zA-Z][-_a-zA-Z0-9]*");
 
     @Override
-    public ThriftDocument parse(InputStream in, String name) throws IOException, ParseException {
-        ThriftDocument._Builder doc = ThriftDocument.builder();
+    public ProgramType parse(InputStream in, String name) throws IOException, ParseException {
+        ProgramType._Builder program = ProgramType.builder();
 
-        String packageName = ReflectionUtils.packageFromName(name.replaceAll(".*/", ""));
-        if (!VALID_PACKAGE.matcher(packageName).matches()) {
-            throw new ParseException("Package name \"%s\" derived from filename \"%s\" is not valid.",
-                                     Strings.escape(packageName),
+        String programName = ReflectionUtils.packageFromName(name.replaceAll(".*/", ""));
+        if (!VALID_PROGRAM_NAME.matcher(programName).matches()) {
+            throw new ParseException("Program name \"%s\" derived from filename \"%s\" is not valid.",
+                                     Strings.escape(programName),
                                      Strings.escape(name));
         }
-        doc.setPackage(packageName);
+        program.setProgramName(programName);
 
         List<String> includes = new LinkedList<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
@@ -85,14 +86,14 @@ public class ThriftDocumentParser implements DocumentParser {
         boolean hasHeader = false;
         boolean hasDeclaration = false;
 
-        String comment = null;
+        String documentation = null;
         Token token;
         while ((token = tokenizer.next()) != null) {
             if (token.startsLineComment()) {
-                comment = parseLineComment(tokenizer, comment);
+                documentation = parseLineComment(tokenizer, documentation);
                 continue;
             } else if (token.startsBlockComment()) {
-                comment = parseBlockComment(tokenizer);
+                documentation = parseBlockComment(tokenizer);
                 continue;
             }
 
@@ -106,10 +107,10 @@ public class ThriftDocumentParser implements DocumentParser {
                         throw new ParseException(tokenizer, token,
                                                  "Unexpected token 'namespace', expected type declaration");
                     }
-                    if (comment != null && !hasHeader) {
-                        doc.setComment(comment);
+                    if (documentation != null && !hasHeader) {
+                        program.setDocumentation(documentation);
                     }
-                    comment = null;
+                    documentation = null;
                     hasHeader = true;
                     parseNamespace(tokenizer, namespaces);
                     break;
@@ -118,48 +119,48 @@ public class ThriftDocumentParser implements DocumentParser {
                         throw new ParseException(tokenizer, token,
                                                  "Unexpected token 'include', expected type declaration");
                     }
-                    if (comment != null && !hasHeader) {
-                        doc.setComment(comment);
+                    if (documentation != null && !hasHeader) {
+                        program.setDocumentation(documentation);
                     }
-                    comment = null;
+                    documentation = null;
                     hasHeader = true;
                     parseIncludes(tokenizer, includes);
                     break;
                 case "typedef":
                     hasHeader = true;
                     hasDeclaration = true;
-                    parseTypedef(tokenizer, comment, declarations);
-                    comment = null;
+                    parseTypedef(tokenizer, documentation, declarations);
+                    documentation = null;
                     break;
                 case "enum":
                     hasHeader = true;
                     hasDeclaration = true;
-                    EnumType et = parseEnum(tokenizer, comment);
+                    EnumType et = parseEnum(tokenizer, documentation);
                     declarations.add(Declaration.withDeclEnum(et));
-                    comment = null;
+                    documentation = null;
                     break;
                 case "struct":
                 case "union":
                 case "exception":
                     hasHeader = true;
                     hasDeclaration = true;
-                    StructType st = parseStruct(tokenizer, token.asString(), comment);
+                    MessageType st = parseMessage(tokenizer, token.asString(), documentation);
                     declarations.add(Declaration.withDeclStruct(st));
-                    comment = null;
+                    documentation = null;
                     break;
                 case "service":
                     hasHeader = true;
                     hasDeclaration = true;
-                    ServiceType srv = parseService(tokenizer, comment);
+                    ServiceType srv = parseService(tokenizer, documentation);
                     declarations.add(Declaration.withDeclService(srv));
-                    comment = null;
+                    documentation = null;
                     break;
                 case "const":
                     hasHeader = true;
                     hasDeclaration = true;
-                    ThriftField cnst = parseConst(tokenizer, comment);
+                    ConstType cnst = parseConst(tokenizer, documentation);
                     declarations.add(Declaration.withDeclConst(cnst));
-                    comment = null;
+                    documentation = null;
                     break;
                 default:
                     throw new ParseException(tokenizer, token,
@@ -168,14 +169,14 @@ public class ThriftDocumentParser implements DocumentParser {
             }
         }
 
-        doc.setNamespaces(namespaces);
-        doc.setIncludes(includes);
-        doc.setDecl(declarations);
+        program.setNamespaces(namespaces);
+        program.setIncludes(includes);
+        program.setDecl(declarations);
 
-        return doc.build();
+        return program.build();
     }
 
-    private ThriftField parseConst(Tokenizer tokenizer, String comment) throws IOException, ParseException {
+    private ConstType parseConst(Tokenizer tokenizer, String comment) throws IOException, ParseException {
         Token token = tokenizer.expectQualifiedIdentifier("const typename");
         String type = parseType(tokenizer, token);
         Token id = tokenizer.expectIdentifier("const identifier");
@@ -189,12 +190,11 @@ public class ThriftDocumentParser implements DocumentParser {
             tokenizer.next();
         }
 
-        return ThriftField.builder()
-                          .setComment(comment)
-                          .setKey(-1)
+        return ConstType.builder()
+                          .setDocumentation(comment)
                           .setName(id.asString())
                           .setType(type)
-                          .setDefaultValue(value)
+                          .setValue(value)
                           .build();
     }
 
@@ -253,7 +253,7 @@ public class ThriftDocumentParser implements DocumentParser {
         ServiceType._Builder service = ServiceType.builder();
 
         if (comment != null) {
-            service.setComment(comment);
+            service.setDocumentation(comment);
             comment = null;
         }
         Token identifier = tokenizer.expectIdentifier("service identifier");
@@ -280,9 +280,9 @@ public class ThriftDocumentParser implements DocumentParser {
                 continue;
             }
 
-            ServiceMethod._Builder method = ServiceMethod.builder();
+            FunctionType._Builder method = FunctionType.builder();
             if (comment != null) {
-                method.setComment(comment);
+                method.setDocumentation(comment);
                 comment = null;
             }
 
@@ -326,9 +326,9 @@ public class ThriftDocumentParser implements DocumentParser {
                     continue;
                 }
 
-                ThriftField._Builder field = ThriftField.builder();
+                FieldType._Builder field = FieldType.builder();
                 if (comment != null) {
-                    field.setComment(comment);
+                    field.setDocumentation(comment);
                     comment = null;
                 }
 
@@ -386,9 +386,9 @@ public class ThriftDocumentParser implements DocumentParser {
                         continue;
                     }
 
-                    ThriftField._Builder field = ThriftField.builder();
+                    FieldType._Builder field = FieldType.builder();
                     if (comment != null) {
-                        field.setComment(comment);
+                        field.setDocumentation(comment);
                         comment = null;
                     }
 
@@ -518,7 +518,7 @@ public class ThriftDocumentParser implements DocumentParser {
         Token id = tokenizer.expectIdentifier("parsing typedef identifier.");
 
         TypedefType typedef = TypedefType.builder()
-                                         .setComment(comment)
+                                         .setDocumentation(comment)
                                          .setType(type)
                                          .setName(id.asString())
                                          .build();
@@ -530,7 +530,7 @@ public class ThriftDocumentParser implements DocumentParser {
 
         EnumType._Builder etb = EnumType.builder();
         if (comment != null) {
-            etb.setComment(comment);
+            etb.setDocumentation(comment);
             comment = null;
         }
         etb.setName(id);
@@ -552,7 +552,7 @@ public class ThriftDocumentParser implements DocumentParser {
                     EnumValue._Builder evb = EnumValue.builder();
                     evb.setName(token.asString());
                     if (comment != null) {
-                        evb.setComment(comment);
+                        evb.setDocumentation(comment);
                         comment = null;
                     }
 
@@ -618,16 +618,16 @@ public class ThriftDocumentParser implements DocumentParser {
         return etb.build();
     }
 
-    private StructType parseStruct(Tokenizer tokenizer, String type, String comment)
+    private MessageType parseMessage(Tokenizer tokenizer, String type, String comment)
             throws IOException, ParseException {
-        StructType._Builder struct = StructType.builder();
+        MessageType._Builder struct = MessageType.builder();
         if (comment != null) {
-            struct.setComment(comment);
+            struct.setDocumentation(comment);
             comment = null;
         }
         boolean union = type.equals("union");
         if (!type.equals("struct")) {
-            struct.setVariant(StructVariant.forName(type.toUpperCase()));
+            struct.setVariant(MessageVariant.forName(type.toUpperCase()));
         }
 
         Token id = tokenizer.expectIdentifier("parsing " + type + " identifier");
@@ -658,8 +658,8 @@ public class ThriftDocumentParser implements DocumentParser {
                 continue;
             }
 
-            ThriftField._Builder field = ThriftField.builder();
-            field.setComment(comment);
+            FieldType._Builder field = FieldType.builder();
+            field.setDocumentation(comment);
             comment = null;
 
             if (token.isInteger()) {
@@ -687,12 +687,12 @@ public class ThriftDocumentParser implements DocumentParser {
                     throw new ParseException(tokenizer, token,
                                              "Found required field in union");
                 }
-                field.setRequirement(Requirement.REQUIRED);
+                field.setRequirement(FieldRequirement.REQUIRED);
                 token = tokenizer.expect("field type");
             } else if (token.strEquals(Token.kOptional)) {
                 if (!union) {
                     // All union fields are optional regardless.
-                    field.setRequirement(Requirement.OPTIONAL);
+                    field.setRequirement(FieldRequirement.OPTIONAL);
                 }
                 token = tokenizer.expect("field type");
             }

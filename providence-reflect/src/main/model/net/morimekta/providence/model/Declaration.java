@@ -12,9 +12,9 @@ public class Declaration
 
     private final net.morimekta.providence.model.EnumType mDeclEnum;
     private final net.morimekta.providence.model.TypedefType mDeclTypedef;
-    private final net.morimekta.providence.model.StructType mDeclStruct;
+    private final net.morimekta.providence.model.MessageType mDeclStruct;
     private final net.morimekta.providence.model.ServiceType mDeclService;
-    private final net.morimekta.providence.model.ThriftField mDeclConst;
+    private final net.morimekta.providence.model.ConstType mDeclConst;
 
     private final _Field tUnionField;
 
@@ -40,7 +40,7 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
-    public static Declaration withDeclStruct(net.morimekta.providence.model.StructType value) {
+    public static Declaration withDeclStruct(net.morimekta.providence.model.MessageType value) {
         return new _Builder().setDeclStruct(value).build();
     }
 
@@ -56,7 +56,7 @@ public class Declaration
      * @param value The union value
      * @return The created union.
      */
-    public static Declaration withDeclConst(net.morimekta.providence.model.ThriftField value) {
+    public static Declaration withDeclConst(net.morimekta.providence.model.ConstType value) {
         return new _Builder().setDeclConst(value).build();
     }
 
@@ -109,7 +109,7 @@ public class Declaration
     /**
      * @return The field value
      */
-    public net.morimekta.providence.model.StructType getDeclStruct() {
+    public net.morimekta.providence.model.MessageType getDeclStruct() {
         return mDeclStruct;
     }
 
@@ -131,7 +131,7 @@ public class Declaration
     /**
      * @return The field value
      */
-    public net.morimekta.providence.model.ThriftField getDeclConst() {
+    public net.morimekta.providence.model.ConstType getDeclConst() {
         return mDeclConst;
     }
 
@@ -277,9 +277,9 @@ public class Declaration
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DECL_ENUM(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_enum", net.morimekta.providence.model.EnumType.provider(), null),
         DECL_TYPEDEF(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_typedef", net.morimekta.providence.model.TypedefType.provider(), null),
-        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_struct", net.morimekta.providence.model.StructType.provider(), null),
+        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_struct", net.morimekta.providence.model.MessageType.provider(), null),
         DECL_SERVICE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_service", net.morimekta.providence.model.ServiceType.provider(), null),
-        DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_const", net.morimekta.providence.model.ThriftField.provider(), null),
+        DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_const", net.morimekta.providence.model.ConstType.provider(), null),
         ;
 
         private final int mKey;
@@ -415,12 +415,12 @@ public class Declaration
         private net.morimekta.providence.model.EnumType._Builder mDeclEnum_builder;
         private net.morimekta.providence.model.TypedefType mDeclTypedef;
         private net.morimekta.providence.model.TypedefType._Builder mDeclTypedef_builder;
-        private net.morimekta.providence.model.StructType mDeclStruct;
-        private net.morimekta.providence.model.StructType._Builder mDeclStruct_builder;
+        private net.morimekta.providence.model.MessageType mDeclStruct;
+        private net.morimekta.providence.model.MessageType._Builder mDeclStruct_builder;
         private net.morimekta.providence.model.ServiceType mDeclService;
         private net.morimekta.providence.model.ServiceType._Builder mDeclService_builder;
-        private net.morimekta.providence.model.ThriftField mDeclConst;
-        private net.morimekta.providence.model.ThriftField._Builder mDeclConst_builder;
+        private net.morimekta.providence.model.ConstType mDeclConst;
+        private net.morimekta.providence.model.ConstType._Builder mDeclConst_builder;
 
         /**
          * Make a model.Declaration builder.
@@ -610,7 +610,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
-        public _Builder setDeclStruct(net.morimekta.providence.model.StructType value) {
+        public _Builder setDeclStruct(net.morimekta.providence.model.MessageType value) {
             tUnionField = _Field.DECL_STRUCT;
             mDeclStruct_builder = null;
             mDeclStruct = value;
@@ -643,7 +643,7 @@ public class Declaration
          *
          * @return The field builder
          */
-        public net.morimekta.providence.model.StructType._Builder mutableDeclStruct() {
+        public net.morimekta.providence.model.MessageType._Builder mutableDeclStruct() {
             if (tUnionField != _Field.DECL_STRUCT) {
                 clearDeclStruct();
             }
@@ -653,7 +653,7 @@ public class Declaration
                 mDeclStruct_builder = mDeclStruct.mutate();
                 mDeclStruct = null;
             } else if (mDeclStruct_builder == null) {
-                mDeclStruct_builder = net.morimekta.providence.model.StructType.builder();
+                mDeclStruct_builder = net.morimekta.providence.model.MessageType.builder();
             }
             return mDeclStruct_builder;
         }
@@ -718,7 +718,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
-        public _Builder setDeclConst(net.morimekta.providence.model.ThriftField value) {
+        public _Builder setDeclConst(net.morimekta.providence.model.ConstType value) {
             tUnionField = _Field.DECL_CONST;
             mDeclConst_builder = null;
             mDeclConst = value;
@@ -751,7 +751,7 @@ public class Declaration
          *
          * @return The field builder
          */
-        public net.morimekta.providence.model.ThriftField._Builder mutableDeclConst() {
+        public net.morimekta.providence.model.ConstType._Builder mutableDeclConst() {
             if (tUnionField != _Field.DECL_CONST) {
                 clearDeclConst();
             }
@@ -761,7 +761,7 @@ public class Declaration
                 mDeclConst_builder = mDeclConst.mutate();
                 mDeclConst = null;
             } else if (mDeclConst_builder == null) {
-                mDeclConst_builder = net.morimekta.providence.model.ThriftField.builder();
+                mDeclConst_builder = net.morimekta.providence.model.ConstType.builder();
             }
             return mDeclConst_builder;
         }
@@ -786,9 +786,9 @@ public class Declaration
             switch (key) {
                 case 1: setDeclEnum((net.morimekta.providence.model.EnumType) value); break;
                 case 2: setDeclTypedef((net.morimekta.providence.model.TypedefType) value); break;
-                case 3: setDeclStruct((net.morimekta.providence.model.StructType) value); break;
+                case 3: setDeclStruct((net.morimekta.providence.model.MessageType) value); break;
                 case 4: setDeclService((net.morimekta.providence.model.ServiceType) value); break;
-                case 5: setDeclConst((net.morimekta.providence.model.ThriftField) value); break;
+                case 5: setDeclConst((net.morimekta.providence.model.ConstType) value); break;
             }
             return this;
         }

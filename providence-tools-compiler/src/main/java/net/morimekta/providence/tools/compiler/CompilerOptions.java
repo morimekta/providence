@@ -32,9 +32,9 @@ import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.DocumentParser;
-import net.morimekta.providence.reflect.parser.MessageDocumentParser;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.parser.ProgramParser;
+import net.morimekta.providence.reflect.parser.MessageProgramParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.compiler.options.GeneratorSpec;
@@ -139,12 +139,12 @@ public class CompilerOptions {
         return new FileManager(out);
     }
 
-    public DocumentParser getParser() throws ArgumentException {
+    public ProgramParser getParser() throws ArgumentException {
         switch (syntax) {
             case thrift:
-                return new ThriftDocumentParser();
+                return new ThriftProgramParser();
             case json:
-                return new MessageDocumentParser(new JsonSerializer());
+                return new MessageProgramParser(new JsonSerializer());
             default:
                 throw new ArgumentException("Unknown SLI syntax %s.", syntax.name());
         }

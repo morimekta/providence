@@ -26,17 +26,17 @@ import net.morimekta.providence.PBuilder;
  * derived from a thrift definition.
  */
 public abstract class PDeclaredDescriptor<T> implements PDescriptor {
-    private final String packageName;
+    private final String programName;
     private final String name;
 
-    protected PDeclaredDescriptor(String packageName, String name) {
-        this.packageName = packageName;
+    protected PDeclaredDescriptor(String programName, String name) {
+        this.programName = programName;
         this.name = name;
     }
 
     @Override
-    public final String getPackageName() {
-        return packageName;
+    public final String getProgramName() {
+        return programName;
     }
 
     @Override
@@ -45,9 +45,9 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor {
     }
 
     @Override
-    public final String getQualifiedName(String packageName) {
-        if (!this.packageName.equals(packageName)) {
-            return getPackageName() + "." + getName();
+    public final String getQualifiedName(String programContext) {
+        if (!this.programName.equals(programContext)) {
+            return getProgramName() + "." + getName();
         }
         return getName();
     }

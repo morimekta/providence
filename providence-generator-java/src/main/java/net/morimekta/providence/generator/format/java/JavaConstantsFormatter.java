@@ -11,7 +11,7 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -34,7 +34,7 @@ public class JavaConstantsFormatter implements BaseConstantsFormatter {
     }
 
     @Override
-    public void appendConstantsClass(CDocument document) throws GeneratorException {
+    public void appendConstantsClass(CProgram document) throws GeneratorException {
         ValueBuilder value = new ValueBuilder(writer, helper);
 
         if (document.getComment() != null) {

@@ -125,7 +125,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .appendln("public _Descriptor() {")
               .begin()
               .formatln("super(\"%s\", \"%s\", new _Factory());",
-                        type.getPackageName(),
+                        type.getProgramName(),
                         type.getName(),
                         simpleClass)
               .end()

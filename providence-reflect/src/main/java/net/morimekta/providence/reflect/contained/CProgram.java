@@ -23,38 +23,43 @@ import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contained document. It contains everything that is parsed out of a single
  * thrift file.
  */
 @SuppressWarnings("unused")
-public class CDocument {
+public class CProgram {
     private final String                       comment;
-    private final String                       packageName;
-    private final List<String>                 includes;
+    private final String                       programName;
+    private final Set<String>                  includedPrograms;
+    private final List<String>                 includedFiles;
     private final Map<String, String>          namespaces;
     private final Map<String, String>          typedefs;
     private final List<PDeclaredDescriptor<?>> declaredTypes;
     private final List<CService>               services;
-    private final List<CField>              constants;
+    private final List<CConst>                 constants;
 
-    public CDocument(String comment,
-                     String packageName,
-                     Map<String, String> namespaces,
-                     Collection<String> includes,
-                     Map<String, String> typedefs,
-                     Collection<PDeclaredDescriptor<?>> declaredTypes,
-                     Collection<CService> services,
-                     Collection<CField> constants) {
+    public CProgram(String comment,
+                    String programName,
+                    Map<String, String> namespaces,
+                    Collection<String> includedPrograms,
+                    Collection<String> includedFies,
+                    Map<String, String> typedefs,
+                    Collection<PDeclaredDescriptor<?>> declaredTypes,
+                    Collection<CService> services,
+                    Collection<CConst> constants) {
         this.comment = comment;
-        this.packageName = packageName;
+        this.programName = programName;
         this.namespaces = ImmutableMap.copyOf(namespaces);
-        this.includes = ImmutableList.copyOf(includes);
+        this.includedPrograms = ImmutableSet.copyOf(includedPrograms);
+        this.includedFiles = ImmutableList.copyOf(includedFies);
         this.typedefs = ImmutableMap.copyOf(typedefs);
         this.declaredTypes = ImmutableList.copyOf(declaredTypes);
         this.services = ImmutableList.copyOf(services);
@@ -65,12 +70,16 @@ public class CDocument {
         return comment;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public String getProgramName() {
+        return programName;
     }
 
-    public List<String> getIncludes() {
-        return includes;
+    public Set<String> getIncludedPrograms() {
+        return includedPrograms;
+    }
+
+    public List<String> getIncludedFiles() {
+        return includedFiles;
     }
 
     public Map<String, String> getNamespaces() {
@@ -89,7 +98,7 @@ public class CDocument {
         return services;
     }
 
-    public List<CField> getConstants() {
+    public List<CConst> getConstants() {
         return constants;
     }
 

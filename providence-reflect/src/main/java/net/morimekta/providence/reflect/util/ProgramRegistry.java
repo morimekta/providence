@@ -26,8 +26,8 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.util.TypeRegistry;
 
 import java.util.Collections;
@@ -38,10 +38,10 @@ import java.util.Map;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class DocumentRegistry extends TypeRegistry {
-    private final Map<String, CDocument>              documents;
+public class ProgramRegistry extends TypeRegistry {
+    private final Map<String, CProgram> documents;
 
-    public DocumentRegistry() {
+    public ProgramRegistry() {
         documents = new LinkedHashMap<>();
     }
 
@@ -52,7 +52,7 @@ public class DocumentRegistry extends TypeRegistry {
      * @param doc The contained document.
      * @return True if the document was not already there.
      */
-    public boolean putDocument(String path, CDocument doc) {
+    public boolean putDocument(String path, CProgram doc) {
         if (!documents.containsKey(path)) {
             documents.put(path, doc);
             return true;
@@ -66,13 +66,13 @@ public class DocumentRegistry extends TypeRegistry {
      * @param path The file path.
      * @return The contained document, or null if not found.
      */
-    public CDocument getDocument(String path) {
+    public CProgram getDocument(String path) {
         return documents.get(path);
     }
 
-    public CDocument getDocumentForPackage(String packageContext) {
-        for (CDocument document : documents.values()) {
-            if (document.getPackageName()
+    public CProgram getDocumentForPackage(String packageContext) {
+        for (CProgram document : documents.values()) {
+            if (document.getProgramName()
                         .equals(packageContext)) {
                 return document;
             }
@@ -139,7 +139,7 @@ public class DocumentRegistry extends TypeRegistry {
             return PList.provider(getProvider(itemType, context, null));
         }
 
-        if (!ThriftDocumentParser.VALID_IDENTIFIER.matcher(name).matches()) {
+        if (!ThriftProgramParser.VALID_IDENTIFIER.matcher(name).matches()) {
             throw new IllegalArgumentException(name + " is not a valid declared type identifier.");
         }
 

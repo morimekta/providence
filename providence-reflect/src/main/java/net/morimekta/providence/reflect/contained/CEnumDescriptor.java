@@ -57,7 +57,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     }
 
     @Override
-    public final String getComment() {
+    public final String getDocumentation() {
         return comment;
     }
 

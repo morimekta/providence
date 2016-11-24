@@ -4,27 +4,27 @@ package net.morimekta.providence.model;
  * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
  */
 @SuppressWarnings("unused")
-public class ThriftDocument
-        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>,
-                   Comparable<ThriftDocument>,
+public class ProgramType
+        implements net.morimekta.providence.PMessage<ProgramType,ProgramType._Field>,
+                   Comparable<ProgramType>,
                    java.io.Serializable {
-    private final static long serialVersionUID = -5731994850994905187L;
+    private final static long serialVersionUID = 2224801959218006031L;
 
-    private final String mComment;
-    private final String mPackage;
+    private final String mDocumentation;
+    private final String mProgramName;
     private final java.util.List<String> mIncludes;
     private final java.util.Map<String,String> mNamespaces;
     private final java.util.List<net.morimekta.providence.model.Declaration> mDecl;
 
     private volatile int tHashCode;
 
-    public ThriftDocument(String pComment,
-                          String pPackage,
-                          java.util.List<String> pIncludes,
-                          java.util.Map<String,String> pNamespaces,
-                          java.util.List<net.morimekta.providence.model.Declaration> pDecl) {
-        mComment = pComment;
-        mPackage = pPackage;
+    public ProgramType(String pDocumentation,
+                       String pProgramName,
+                       java.util.List<String> pIncludes,
+                       java.util.Map<String,String> pNamespaces,
+                       java.util.List<net.morimekta.providence.model.Declaration> pDecl) {
+        mDocumentation = pDocumentation;
+        mProgramName = pProgramName;
         if (pIncludes != null) {
             mIncludes = com.google.common.collect.ImmutableList.copyOf(pIncludes);
         } else {
@@ -42,9 +42,9 @@ public class ThriftDocument
         }
     }
 
-    private ThriftDocument(_Builder builder) {
-        mComment = builder.mComment;
-        mPackage = builder.mPackage;
+    private ProgramType(_Builder builder) {
+        mDocumentation = builder.mDocumentation;
+        mProgramName = builder.mProgramName;
         if (builder.isSetIncludes()) {
             mIncludes = builder.mIncludes.build();
         } else {
@@ -62,30 +62,30 @@ public class ThriftDocument
         }
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasDocumentation() {
+        return mDocumentation != null;
     }
 
     /**
-     * Must come before the first statement of the header.
+     * Program documentation must come before the first statement of the header.
      *
      * @return The field value
      */
-    public String getComment() {
-        return mComment;
+    public String getDocumentation() {
+        return mDocumentation;
     }
 
-    public boolean hasPackage() {
-        return mPackage != null;
+    public boolean hasProgramName() {
+        return mProgramName != null;
     }
 
     /**
-     * Deducted from filename in .thrift IDL files.
+     * The program name, deducted from the .thrift IDL file name.
      *
      * @return The field value
      */
-    public String getPackage() {
-        return mPackage;
+    public String getProgramName() {
+        return mProgramName;
     }
 
     public int numIncludes() {
@@ -97,7 +97,9 @@ public class ThriftDocument
     }
 
     /**
-     * include &quot;&lt;package&gt;.thrift&quot;
+     * List of included thrift files. Same as from the actual thrift file.
+     * <p>
+     * include &quot;&lt;program&gt;.thrift&quot;
      *
      * @return The field value
      */
@@ -114,6 +116,8 @@ public class ThriftDocument
     }
 
     /**
+     * Map of language to laguage dependent namespace identifier.
+     * <p>
      * namespace &lt;key&gt; &lt;value&gt;
      *
      * @return The field value
@@ -131,6 +135,8 @@ public class ThriftDocument
     }
 
     /**
+     * List of declarations in the program file. Same order as in the thrift file.
+     *
      * @return The field value
      */
     public java.util.List<net.morimekta.providence.model.Declaration> getDecl() {
@@ -140,8 +146,8 @@ public class ThriftDocument
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
-            case 2: return hasPackage();
+            case 1: return hasDocumentation();
+            case 2: return hasProgramName();
             case 3: return numIncludes() > 0;
             case 4: return numNamespaces() > 0;
             case 5: return numDecl() > 0;
@@ -152,8 +158,8 @@ public class ThriftDocument
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasPackage() ? 1 : 0;
+            case 1: return hasDocumentation() ? 1 : 0;
+            case 2: return hasProgramName() ? 1 : 0;
             case 3: return numIncludes();
             case 4: return numNamespaces();
             case 5: return numDecl();
@@ -164,8 +170,8 @@ public class ThriftDocument
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
-            case 2: return getPackage();
+            case 1: return getDocumentation();
+            case 2: return getProgramName();
             case 3: return getIncludes();
             case 4: return getNamespaces();
             case 5: return getDecl();
@@ -181,10 +187,10 @@ public class ThriftDocument
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ThriftDocument)) return false;
-        ThriftDocument other = (ThriftDocument) o;
-        return java.util.Objects.equals(mComment, other.mComment) &&
-               java.util.Objects.equals(mPackage, other.mPackage) &&
+        if (o == null || !(o instanceof ProgramType)) return false;
+        ProgramType other = (ProgramType) o;
+        return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+               java.util.Objects.equals(mProgramName, other.mProgramName) &&
                java.util.Objects.equals(mIncludes, other.mIncludes) &&
                java.util.Objects.equals(mNamespaces, other.mNamespaces) &&
                java.util.Objects.equals(mDecl, other.mDecl);
@@ -194,9 +200,9 @@ public class ThriftDocument
     public int hashCode() {
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
-                    ThriftDocument.class,
-                    _Field.COMMENT, mComment,
-                    _Field.PACKAGE, mPackage,
+                    ProgramType.class,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.PROGRAM_NAME, mProgramName,
                     _Field.INCLUDES, mIncludes,
                     _Field.NAMESPACES, mNamespaces,
                     _Field.DECL, mDecl);
@@ -206,7 +212,7 @@ public class ThriftDocument
 
     @Override
     public String toString() {
-        return "model.ThriftDocument" + asString();
+        return "model.ProgramType" + asString();
     }
 
     @Override
@@ -215,19 +221,19 @@ public class ThriftDocument
         out.append("{");
 
         boolean first = true;
-        if (mComment != null) {
+        if (mDocumentation != null) {
             first = false;
-            out.append("comment:")
+            out.append("documentation:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mComment))
+               .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mPackage != null) {
+        if (mProgramName != null) {
             if (first) first = false;
             else out.append(',');
-            out.append("package:")
+            out.append("program_name:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mPackage))
+               .append(net.morimekta.util.Strings.escape(mProgramName))
                .append('\"');
         }
         if (mIncludes != null && mIncludes.size() > 0) {
@@ -252,20 +258,20 @@ public class ThriftDocument
     }
 
     @Override
-    public int compareTo(ThriftDocument other) {
+    public int compareTo(ProgramType other) {
         int c;
 
-        c = Boolean.compare(mComment != null, other.mComment != null);
+        c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
         if (c != 0) return c;
-        if (mComment != null) {
-            c = mComment.compareTo(other.mComment);
+        if (mDocumentation != null) {
+            c = mDocumentation.compareTo(other.mDocumentation);
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mPackage != null, other.mPackage != null);
+        c = Boolean.compare(mProgramName != null, other.mProgramName != null);
         if (c != 0) return c;
-        if (mPackage != null) {
-            c = mPackage.compareTo(other.mPackage);
+        if (mProgramName != null) {
+            c = mProgramName.compareTo(other.mProgramName);
             if (c != 0) return c;
         }
 
@@ -299,8 +305,8 @@ public class ThriftDocument
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        PACKAGE(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "package", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        PROGRAM_NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "program_name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         INCLUDES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "includes", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         NAMESPACES(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "namespaces", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         DECL(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.Declaration.provider()), null),
@@ -347,8 +353,8 @@ public class ThriftDocument
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
-                case 2: return _Field.PACKAGE;
+                case 1: return _Field.DOCUMENTATION;
+                case 2: return _Field.PROGRAM_NAME;
                 case 3: return _Field.INCLUDES;
                 case 4: return _Field.NAMESPACES;
                 case 5: return _Field.DECL;
@@ -358,8 +364,8 @@ public class ThriftDocument
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
-                case "package": return _Field.PACKAGE;
+                case "documentation": return _Field.DOCUMENTATION;
+                case "program_name": return _Field.PROGRAM_NAME;
                 case "includes": return _Field.INCLUDES;
                 case "namespaces": return _Field.NAMESPACES;
                 case "decl": return _Field.DECL;
@@ -368,21 +374,21 @@ public class ThriftDocument
         }
     }
 
-    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftDocument,_Field> provider() {
+    public static net.morimekta.providence.descriptor.PStructDescriptorProvider<ProgramType,_Field> provider() {
         return new _Provider();
     }
 
     @Override
-    public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
+    public net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> descriptor() {
         return kDescriptor;
     }
 
-    public static final net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> kDescriptor;
+    public static final net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> {
         public _Descriptor() {
-            super("model", "ThriftDocument", new _Factory(), false, false);
+            super("model", "ProgramType", new _Factory(), false, false);
         }
 
         @Override
@@ -405,15 +411,15 @@ public class ThriftDocument
         kDescriptor = new _Descriptor();
     }
 
-    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ThriftDocument,_Field> {
+    private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<ProgramType,_Field> {
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> descriptor() {
             return kDescriptor;
         }
     }
 
     private final static class _Factory
-            extends net.morimekta.providence.PMessageBuilderFactory<ThriftDocument,_Field> {
+            extends net.morimekta.providence.PMessageBuilderFactory<ProgramType,_Field> {
         @Override
         public _Builder builder() {
             return new _Builder();
@@ -421,7 +427,7 @@ public class ThriftDocument
     }
 
     /**
-     * Make a model.ThriftDocument builder.
+     * Make a model.ProgramType builder.
      * @return The builder instance.
      */
     public static _Builder builder() {
@@ -432,17 +438,17 @@ public class ThriftDocument
      * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<ThriftDocument,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<ProgramType,_Field> {
         private java.util.BitSet optionals;
 
-        private String mComment;
-        private String mPackage;
+        private String mDocumentation;
+        private String mProgramName;
         private net.morimekta.providence.descriptor.PList.Builder<String> mIncludes;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mNamespaces;
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mDecl;
 
         /**
-         * Make a model.ThriftDocument builder.
+         * Make a model.ProgramType builder.
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
@@ -452,20 +458,20 @@ public class ThriftDocument
         }
 
         /**
-         * Make a mutating builder off a base model.ThriftDocument.
+         * Make a mutating builder off a base model.ProgramType.
          *
-         * @param base The base ThriftDocument
+         * @param base The base ProgramType
          */
-        public _Builder(ThriftDocument base) {
+        public _Builder(ProgramType base) {
             this();
 
-            if (base.hasComment()) {
+            if (base.hasDocumentation()) {
                 optionals.set(0);
-                mComment = base.mComment;
+                mDocumentation = base.mDocumentation;
             }
-            if (base.hasPackage()) {
+            if (base.hasProgramName()) {
                 optionals.set(1);
-                mPackage = base.mPackage;
+                mProgramName = base.mProgramName;
             }
             if (base.numIncludes() > 0) {
                 optionals.set(2);
@@ -482,15 +488,15 @@ public class ThriftDocument
         }
 
         @Override
-        public _Builder merge(ThriftDocument from) {
-            if (from.hasComment()) {
+        public _Builder merge(ProgramType from) {
+            if (from.hasDocumentation()) {
                 optionals.set(0);
-                mComment = from.getComment();
+                mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasPackage()) {
+            if (from.hasProgramName()) {
                 optionals.set(1);
-                mPackage = from.getPackage();
+                mProgramName = from.getProgramName();
             }
 
             if (from.hasIncludes()) {
@@ -513,71 +519,73 @@ public class ThriftDocument
         }
 
         /**
-         * Must come before the first statement of the header.
+         * Program documentation must come before the first statement of the header.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setComment(String value) {
+        public _Builder setDocumentation(String value) {
             optionals.set(0);
-            mComment = value;
+            mDocumentation = value;
             return this;
         }
 
         /**
-         * Must come before the first statement of the header.
+         * Program documentation must come before the first statement of the header.
          *
-         * @return True iff comment has been set.
+         * @return True iff documentation has been set.
          */
-        public boolean isSetComment() {
+        public boolean isSetDocumentation() {
             return optionals.get(0);
         }
 
         /**
-         * Must come before the first statement of the header.
+         * Program documentation must come before the first statement of the header.
          *
          * @return The builder
          */
-        public _Builder clearComment() {
+        public _Builder clearDocumentation() {
             optionals.clear(0);
-            mComment = null;
+            mDocumentation = null;
             return this;
         }
 
         /**
-         * Deducted from filename in .thrift IDL files.
+         * The program name, deducted from the .thrift IDL file name.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setPackage(String value) {
+        public _Builder setProgramName(String value) {
             optionals.set(1);
-            mPackage = value;
+            mProgramName = value;
             return this;
         }
 
         /**
-         * Deducted from filename in .thrift IDL files.
+         * The program name, deducted from the .thrift IDL file name.
          *
-         * @return True iff package has been set.
+         * @return True iff program_name has been set.
          */
-        public boolean isSetPackage() {
+        public boolean isSetProgramName() {
             return optionals.get(1);
         }
 
         /**
-         * Deducted from filename in .thrift IDL files.
+         * The program name, deducted from the .thrift IDL file name.
          *
          * @return The builder
          */
-        public _Builder clearPackage() {
+        public _Builder clearProgramName() {
             optionals.clear(1);
-            mPackage = null;
+            mProgramName = null;
             return this;
         }
 
         /**
-         * include &quot;&lt;package&gt;.thrift&quot;
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
          *
          * @param value The new value
          * @return The builder
@@ -590,7 +598,9 @@ public class ThriftDocument
         }
 
         /**
-         * include &quot;&lt;package&gt;.thrift&quot;
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
          *
          * @param values The added value
          * @return The builder
@@ -604,7 +614,9 @@ public class ThriftDocument
         }
 
         /**
-         * include &quot;&lt;package&gt;.thrift&quot;
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
          *
          * @return True iff includes has been set.
          */
@@ -613,7 +625,9 @@ public class ThriftDocument
         }
 
         /**
-         * include &quot;&lt;package&gt;.thrift&quot;
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
          *
          * @return The builder
          */
@@ -624,7 +638,9 @@ public class ThriftDocument
         }
 
         /**
-         * include &quot;&lt;package&gt;.thrift&quot;
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
          *
          * @return The field builder
          */
@@ -634,6 +650,8 @@ public class ThriftDocument
         }
 
         /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @param value The new value
@@ -647,6 +665,8 @@ public class ThriftDocument
         }
 
         /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @param key The inserted key
@@ -660,6 +680,8 @@ public class ThriftDocument
         }
 
         /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return True iff namespaces has been set.
@@ -669,6 +691,8 @@ public class ThriftDocument
         }
 
         /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return The builder
@@ -680,6 +704,8 @@ public class ThriftDocument
         }
 
         /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
          * @return The field builder
@@ -690,7 +716,7 @@ public class ThriftDocument
         }
 
         /**
-         * Sets the value of decl.
+         * List of declarations in the program file. Same order as in the thrift file.
          *
          * @param value The new value
          * @return The builder
@@ -703,7 +729,7 @@ public class ThriftDocument
         }
 
         /**
-         * Adds entries to decl.
+         * List of declarations in the program file. Same order as in the thrift file.
          *
          * @param values The added value
          * @return The builder
@@ -717,7 +743,7 @@ public class ThriftDocument
         }
 
         /**
-         * Checks for presence of the decl field.
+         * List of declarations in the program file. Same order as in the thrift file.
          *
          * @return True iff decl has been set.
          */
@@ -726,7 +752,7 @@ public class ThriftDocument
         }
 
         /**
-         * Clears the decl field.
+         * List of declarations in the program file. Same order as in the thrift file.
          *
          * @return The builder
          */
@@ -737,7 +763,7 @@ public class ThriftDocument
         }
 
         /**
-         * Gets the builder for the contained decl.
+         * List of declarations in the program file. Same order as in the thrift file.
          *
          * @return The field builder
          */
@@ -759,8 +785,8 @@ public class ThriftDocument
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setComment((String) value); break;
-                case 2: setPackage((String) value); break;
+                case 1: setDocumentation((String) value); break;
+                case 2: setProgramName((String) value); break;
                 case 3: setIncludes((java.util.List<String>) value); break;
                 case 4: setNamespaces((java.util.Map<String,String>) value); break;
                 case 5: setDecl((java.util.List<net.morimekta.providence.model.Declaration>) value); break;
@@ -781,8 +807,8 @@ public class ThriftDocument
         @Override
         public _Builder clear(int key) {
             switch (key) {
-                case 1: clearComment(); break;
-                case 2: clearPackage(); break;
+                case 1: clearDocumentation(); break;
+                case 2: clearProgramName(); break;
                 case 3: clearIncludes(); break;
                 case 4: clearNamespaces(); break;
                 case 5: clearDecl(); break;
@@ -801,24 +827,24 @@ public class ThriftDocument
                 java.util.LinkedList<String> missing = new java.util.LinkedList<>();
 
                 if (!optionals.get(1)) {
-                    missing.add("package");
+                    missing.add("program_name");
                 }
 
                 throw new java.lang.IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message model.ThriftDocument");
+                        " in message model.ProgramType");
             }
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<ThriftDocument,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> descriptor() {
             return kDescriptor;
         }
 
         @Override
-        public ThriftDocument build() {
-            return new ThriftDocument(this);
+        public ProgramType build() {
+            return new ProgramType(this);
         }
     }
 }

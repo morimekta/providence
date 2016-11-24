@@ -19,15 +19,30 @@
 
 package net.morimekta.providence.reflect.parser;
 
-import org.junit.Test;
+import net.morimekta.providence.model.ProgramType;
+import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.serializer.SerializerException;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Stein Eldar Johnsen
- * @since 05.09.15
+ * @since 07.09.15
  */
-public class MessageDocumentParserTest {
-    @Test
-    public void testParse() {
+public class MessageProgramParser implements ProgramParser {
+    private final Serializer mSerializer;
 
+    public MessageProgramParser(Serializer serializer) {
+        mSerializer = serializer;
+    }
+
+    @Override
+    public ProgramType parse(InputStream in, String name) throws IOException, ParseException {
+        try {
+            return mSerializer.deserialize(in, ProgramType.kDescriptor);
+        } catch (SerializerException tse) {
+            throw new ParseException("Failed to deserialize definition file.", tse);
+        }
     }
 }

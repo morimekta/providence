@@ -33,10 +33,10 @@ public interface PDescriptor {
      * if read from serialized format is explicit. Note that there may be
      * package name conflicts globally.
      *
-     * @return The package of the type. If empty the type is not in any
-     *         namespace.
+     * @return The program name of the type. If empty the type is not in any
+     *         named program, e.g. primitives.
      */
-    String getPackageName();
+    String getProgramName();
 
     /**
      * The name of the type is the Identifier string from the IDL.
@@ -46,13 +46,13 @@ public interface PDescriptor {
     String getName();
 
     /**
-     * This will return the qualifying name of the type given package context.
+     * This will return the qualified name of the type given the program context.
      *
-     * @param packageContext The package which the name should be referenced from.
-     * @return The name of the type. Including package if not matching with
-     *         packageContext.
+     * @param programContext The program which the type should be referenced from.
+     * @return The qualified name of the type. Including program if not matching with
+     *         programContext.
      */
-    String getQualifiedName(String packageContext);
+    String getQualifiedName(String programContext);
 
     /**
      * @return Get the field type.

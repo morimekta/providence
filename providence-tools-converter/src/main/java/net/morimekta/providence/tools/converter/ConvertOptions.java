@@ -31,7 +31,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.common.options.ConvertStream;
@@ -125,7 +125,7 @@ public class ConvertOptions extends CommonOptions {
         String namespace = type.substring(0, type.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftDocumentParser());
+        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
 
         try {
             loader.load(includeMap.get(namespace));

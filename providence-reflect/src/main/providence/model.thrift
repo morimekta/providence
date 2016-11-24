@@ -11,24 +11,10 @@
 namespace java net.morimekta.providence.model
 
 /**
- * Struct variant for StructType. The lower-case of the enum value is the
- * thrift keyword.
- *
- * struct: No 'required' fields must be present (set to non-null value).
- * UNION: No required fields. Only one field set to be valid.
- * EXCEPTION: No 'cause' field, 'message' field *must* be a string (java).
- */
-enum StructVariant {
-    STRUCT = 1,
-    UNION,
-    EXCEPTION,
-}
-
-/**
  * <name> (= <value>)
  */
 struct EnumValue {
-    1: string comment;
+    1: string documentation;
     2: required string name;
     3: i32 value;
     4: map<string,string> annotations;
@@ -40,7 +26,7 @@ struct EnumValue {
  * }
  */
 struct EnumType {
-    1: string comment;
+    1: string documentation;
     2: required string name;
     3: list<EnumValue> values;
     4: map<string,string> annotations;
@@ -50,15 +36,29 @@ struct EnumType {
  * typedef <type> <name>
  */
 struct TypedefType {
-    1: string comment;
+    1: string documentation;
     2: string type;
     3: string name;
 }
 
 /**
+ * Struct variant for StructType. The lower-case of the enum value is the
+ * thrift keyword.
+ *
+ * struct: No 'required' fields must be present (set to non-null value).
+ * UNION: No required fields. Only one field set to be valid.
+ * EXCEPTION: No 'cause' field, 'message' field *must* be a string (java).
+ */
+enum MessageVariant {
+    STRUCT = 1,
+    UNION,
+    EXCEPTION,
+}
+
+/**
  * The requirement of the field.
  */
-enum Requirement {
+enum FieldRequirement {
     DEFAULT = 0,
     OPTIONAL = 1,
     REQUIRED = 2,
@@ -76,10 +76,10 @@ enum Requirement {
  *
  * Consts are always given the key '0'.
  */
-struct ThriftField {
-    1: string comment;
+struct FieldType {
+    1: string documentation;
     2: required i32 key;
-    3: Requirement requirement = DEFAULT;
+    3: FieldRequirement requirement = DEFAULT;
     4: required string type;
     5: required string name;
     6: string default_value;
@@ -91,24 +91,24 @@ struct ThriftField {
  *   (<field> ([,;])?)*
  * }
  */
-struct StructType {
-    1: string comment;
-    2: StructVariant variant = StructVariant.STRUCT;
+struct MessageType {
+    1: string documentation;
+    2: MessageVariant variant = MessageVariant.STRUCT;
     3: required string name;
-    4: list<ThriftField> fields;
+    4: list<FieldType> fields;
     5: map<string,string> annotations;
 }
 
 /**
  * (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')?
  */
-struct ServiceMethod {
-    1: string comment;
+struct FunctionType {
+    1: string documentation;
     2: bool one_way = false;
     3: string return_type
     4: required string name;
-    5: list<ThriftField> params;
-    6: list<ThriftField> exceptions;
+    5: list<FieldType> params;
+    6: list<FieldType> exceptions;
     7: map<string,string> annotations;
 }
 
@@ -118,11 +118,22 @@ struct ServiceMethod {
  * }
  */
 struct ServiceType {
-    1: string comment;
+    1: string documentation;
     2: required string name;
     3: string extend;
-    4: list<ServiceMethod> methods;
+    4: list<FunctionType> methods;
     5: map<string,string> annotations;
+}
+
+/**
+ * const <type> <name> = <value>
+ */
+struct ConstType {
+    1: string documentation;
+    4: required string type;
+    5: required string name;
+    6: required string value;
+    7: map<string,string> annotations;
 }
 
 /**
@@ -131,23 +142,42 @@ struct ServiceType {
 union Declaration {
     1: EnumType decl_enum;
     2: TypedefType decl_typedef;
-    3: StructType decl_struct;
+    3: MessageType decl_struct;
     4: ServiceType decl_service;
-    5: ThriftField decl_const;
+    5: ConstType decl_const;
 }
 
 /**
  * <namespace>* <include>* <declataion>*
  */
-struct ThriftDocument {
-    // Must come before the first statement of the header.
-    1: string comment;
-    // Deducted from filename in .thrift IDL files.
-    2: required string package;
-    // include "<package>.thrift"
+struct ProgramType {
+    /**
+     * Program documentation must come before the first statement of the header.
+     */
+    1: string documentation;
+
+    /**
+     * The program name, deducted from the .thrift IDL file name.
+     */
+    2: required string program_name;
+
+    /**
+     * List of included thrift files. Same as from the actual thrift file.
+     *
+     * include "<program>.thrift"
+     */
     3: list<string> includes;
-    // namespace <key> <value>
+
+    /**
+     * Map of language to laguage dependent namespace identifier.
+     *
+     * namespace <key> <value>
+     */
     4: map<string,string> namespaces;
+
+    /**
+     * List of declarations in the program file. Same order as in the thrift file.
+     */
     5: list<Declaration> decl;
 }
 

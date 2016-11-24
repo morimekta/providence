@@ -24,7 +24,7 @@ import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.util.Strings;
 
 import java.io.File;
@@ -54,10 +54,10 @@ public class JUtils {
         return camelCase("", service.getName());
     }
 
-    public static String getJavaPackage(CDocument document) throws GeneratorException {
+    public static String getJavaPackage(CProgram document) throws GeneratorException {
         String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
-            throw new GeneratorException("No java namespace for thrift package " + document.getPackageName());
+            throw new GeneratorException("No java namespace for thrift package " + document.getProgramName());
         }
         return javaPackage;
     }

@@ -26,10 +26,10 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.providence.reflect.contained.CService;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ import java.io.OutputStream;
 public abstract class BaseGenerator extends Generator {
     protected final JHelper helper;
 
-    public BaseGenerator(FileManager manager, DocumentRegistry registry) throws GeneratorException {
+    public BaseGenerator(FileManager manager, ProgramRegistry registry) throws GeneratorException {
         super(manager);
 
         this.helper = new JHelper(registry);
@@ -58,7 +58,7 @@ public abstract class BaseGenerator extends Generator {
 
     @Override
     @SuppressWarnings("resource")
-    public void generate(CDocument document) throws IOException, GeneratorException {
+    public void generate(CProgram document) throws IOException, GeneratorException {
         String javaPackage = JUtils.getJavaPackage(document);
 
         String path = JUtils.getPackageClassPath(javaPackage);
@@ -131,7 +131,7 @@ public abstract class BaseGenerator extends Generator {
     }
 
     private void appendFileHeader(IndentedPrintWriter writer,
-                                  CDocument document)
+                                  CProgram document)
             throws GeneratorException, IOException {
         writer.format("package %s;", helper.getJavaPackage(document))
               .newline();

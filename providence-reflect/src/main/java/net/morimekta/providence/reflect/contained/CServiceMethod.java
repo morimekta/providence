@@ -79,7 +79,7 @@ public class CServiceMethod implements PServiceMethod,
     }
 
     @Override
-    public String getComment() {
+    public String getDocumentation() {
         return comment;
     }
 }

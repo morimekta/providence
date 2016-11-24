@@ -19,12 +19,12 @@
 
 package net.morimekta.providence.reflect;
 
-import net.morimekta.providence.model.ThriftDocument;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.model.ProgramType;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.util.DocumentConverter;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.util.ProgramConverter;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -42,12 +42,12 @@ import java.util.Map;
  * @since 07.09.15
  */
 public class TypeLoader {
-    private final DocumentRegistry mRegistry;
+    private final ProgramRegistry mRegistry;
 
-    private final DocumentConverter           mConverter;
-    private final DocumentParser              mParser;
-    private final Map<String, ThriftDocument> mLoadedDocuments;
-    private final Collection<File>            mIncludes;
+    private final ProgramConverter         mConverter;
+    private final ProgramParser            mParser;
+    private final Map<String, ProgramType> mLoadedDocuments;
+    private final Collection<File>         mIncludes;
 
     /**
      * Construct a type loader for file types matches with the given parser.
@@ -56,8 +56,8 @@ public class TypeLoader {
      *                 search these in order.
      * @param parser   The thrift file parser.
      */
-    public TypeLoader(Collection<File> includes, DocumentParser parser) {
-        this(includes, parser, new DocumentRegistry());
+    public TypeLoader(Collection<File> includes, ProgramParser parser) {
+        this(includes, parser, new ProgramRegistry());
     }
 
     /**
@@ -68,8 +68,8 @@ public class TypeLoader {
      * @param parser   The thrift file parser.
      * @param registry Type registry to keep parsed types in.
      */
-    private TypeLoader(Collection<File> includes, DocumentParser parser, DocumentRegistry registry) {
-        this(includes, parser, registry, new DocumentConverter(registry));
+    private TypeLoader(Collection<File> includes, ProgramParser parser, ProgramRegistry registry) {
+        this(includes, parser, registry, new ProgramConverter(registry));
     }
 
     /**
@@ -81,7 +81,7 @@ public class TypeLoader {
      * @param registry  The type registry.
      * @param converter The document converter
      */
-    protected TypeLoader(Collection<File> includes, DocumentParser parser, DocumentRegistry registry, DocumentConverter converter) {
+    protected TypeLoader(Collection<File> includes, ProgramParser parser, ProgramRegistry registry, ProgramConverter converter) {
         mIncludes = includes;
         mParser = parser;
         mRegistry = registry;
@@ -93,7 +93,7 @@ public class TypeLoader {
     /**
      * @return Set of loaded documents.
      */
-    public Collection<ThriftDocument> loadedDocuments() {
+    public Collection<ProgramType> loadedPrograms() {
         return mLoadedDocuments.values();
     }
 
@@ -105,7 +105,7 @@ public class TypeLoader {
      * @throws IOException If the file could not be read.
      * @throws ParseException If the file could not be parsed.
      */
-    public CDocument load(File file) throws IOException, ParseException {
+    public CProgram load(File file) throws IOException, ParseException {
         file = file.getCanonicalFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
@@ -115,13 +115,13 @@ public class TypeLoader {
                     "Unable to load thrift definition from directory: " + file.getCanonicalPath());
         }
 
-        CDocument cdoc = mRegistry.getDocument(file.getCanonicalPath());
+        CProgram cdoc = mRegistry.getDocument(file.getCanonicalPath());
         if (cdoc != null) {
             return cdoc;
         }
 
         InputStream in = new BufferedInputStream(new FileInputStream(file));
-        ThriftDocument doc = mParser.parse(in, file.getName());
+        ProgramType doc = mParser.parse(in, file.getName());
 
         LinkedList<File> queue = new LinkedList<>();
         for (String include : doc.getIncludes()) {
@@ -161,7 +161,7 @@ public class TypeLoader {
     /**
      * @return The local registry.
      */
-    public DocumentRegistry getRegistry() {
+    public ProgramRegistry getRegistry() {
         return mRegistry;
     }
 }

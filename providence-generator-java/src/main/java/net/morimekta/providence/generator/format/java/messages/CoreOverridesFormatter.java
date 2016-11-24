@@ -126,7 +126,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         if (message.isException() || message.isUnion()) {
             writer.formatln("super(\"%s\", \"%s\", new _Factory(), %s);",
                             message.descriptor()
-                                   .getPackageName(),
+                                   .getProgramName(),
                             message.descriptor()
                                    .getName(),
                             message.descriptor()
@@ -134,7 +134,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         } else {
             writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b, %b);",
                             message.descriptor()
-                                   .getPackageName(),
+                                   .getProgramName(),
                             message.descriptor()
                                    .getName(),
                             message.descriptor()

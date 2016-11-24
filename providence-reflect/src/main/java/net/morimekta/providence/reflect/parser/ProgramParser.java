@@ -17,16 +17,26 @@
  * under the License.
  */
 
-package net.morimekta.providence.reflect.util;
+package net.morimekta.providence.reflect.parser;
 
-import org.junit.Test;
+import net.morimekta.providence.model.ProgramType;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Tests for the document registry.
+ * Document parser interface.
  */
-public class DocumentRegistryTest {
-    @Test
-    public void testRegisterType() {
-
-    }
+@FunctionalInterface
+public interface ProgramParser {
+    /**
+     * Parse input stream to document declaration model.
+     *
+     * @param in The stream to parse.
+     * @param name The file name that is being parsed.
+     * @return The declared document model.
+     * @throws IOException When the stream was unreadable.
+     * @throws ParseException When the document could not be parsed.
+     */
+    ProgramType parse(InputStream in, String name) throws IOException, ParseException;
 }

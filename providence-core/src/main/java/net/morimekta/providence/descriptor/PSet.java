@@ -49,8 +49,8 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     }
 
     @Override
-    public String getQualifiedName(String packageName) {
-        return "set<" + itemDescriptor().getQualifiedName(packageName) + ">";
+    public String getQualifiedName(String programContext) {
+        return "set<" + itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
     @Override

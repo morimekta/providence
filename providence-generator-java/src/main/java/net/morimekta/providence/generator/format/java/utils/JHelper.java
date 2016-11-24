@@ -28,8 +28,8 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,25 +52,25 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
 public class JHelper {
     public static String packageSeparator = ".";
 
-    private final DocumentRegistry mRegistry;
+    private final ProgramRegistry mRegistry;
 
-    public JHelper(DocumentRegistry registry) {
+    public JHelper(ProgramRegistry registry) {
         mRegistry = registry;
     }
 
     public String getJavaPackage(PDeclaredDescriptor<?> type) throws GeneratorException {
-        String packageContext = type.getPackageName();
-        CDocument document = mRegistry.getDocumentForPackage(packageContext);
+        String packageContext = type.getProgramName();
+        CProgram document = mRegistry.getDocumentForPackage(packageContext);
         return JUtils.getJavaPackage(document);
     }
 
     public String getJavaPackage(PService type) throws GeneratorException {
         String packageContext = type.getPackageName();
-        CDocument document = mRegistry.getDocumentForPackage(packageContext);
+        CProgram document = mRegistry.getDocumentForPackage(packageContext);
         return JUtils.getJavaPackage(document);
     }
 
-    public String getJavaPackage(CDocument document) throws GeneratorException {
+    public String getJavaPackage(CProgram document) throws GeneratorException {
         return JUtils.getJavaPackage(document);
     }
 
@@ -126,8 +126,8 @@ public class JHelper {
         throw new IllegalArgumentException("Unhandled type group" + field.getType());
     }
 
-    public String getConstantsClassName(CDocument document) {
-        return camelCase("", document.getPackageName()) + "_Constants";
+    public String getConstantsClassName(CProgram document) {
+        return camelCase("", document.getProgramName()) + "_Constants";
     }
 
     public String getValueType(PDescriptor type) throws GeneratorException {

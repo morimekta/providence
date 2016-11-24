@@ -36,9 +36,9 @@ import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
@@ -208,7 +208,7 @@ public class RPCOptions extends CommonOptions {
         String namespace = service.substring(0, service.lastIndexOf("."));
         namespace = namespace.replaceAll("[-.]", "_");
 
-        TypeLoader loader = new TypeLoader(rootSet, new ThriftDocumentParser());
+        TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
 
         try {
             if (!includeMap.containsKey(namespace)) {
@@ -223,7 +223,7 @@ public class RPCOptions extends CommonOptions {
 
         PService srv = loader.getRegistry().getServiceProvider(service, null).getService();
         if (srv == null) {
-            CDocument document = loader.getRegistry().getDocumentForPackage(namespace);
+            CProgram document = loader.getRegistry().getDocumentForPackage(namespace);
             Set<String> services = new TreeSet<>(
                     document.getServices()
                             .stream().map(s -> s.getQualifiedName(null))

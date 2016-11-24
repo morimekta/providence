@@ -61,7 +61,7 @@ public class CField implements PField, CAnnotatedDescriptor {
     }
 
     @Override
-    public String getComment() {
+    public String getDocumentation() {
         return comment;
     }
 

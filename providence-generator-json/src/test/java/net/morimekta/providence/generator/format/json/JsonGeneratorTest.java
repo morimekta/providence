@@ -4,9 +4,9 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
-import net.morimekta.providence.reflect.parser.DocumentParser;
-import net.morimekta.providence.reflect.parser.ThriftDocumentParser;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.parser.ProgramParser;
+import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -29,14 +29,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class JsonGeneratorTest {
     @Rule
-    public  TemporaryFolder  tmp;
-    private FileManager      fileManager;
-    private File             out;
-    private TypeLoader       typeLoader;
-    private File             inc;
-    private DocumentParser   parser;
-    private File             file;
-    private DocumentRegistry documentRegistry;
+    public  TemporaryFolder tmp;
+    private FileManager     fileManager;
+    private File            out;
+    private TypeLoader      typeLoader;
+    private File            inc;
+    private ProgramParser   parser;
+    private File            file;
+    private ProgramRegistry programRegistry;
 
     @Before
     public void setUp() throws IOException {
@@ -54,9 +54,9 @@ public class JsonGeneratorTest {
         inc = tmp.newFolder("includes");
 
         fileManager = new FileManager(out);
-        parser = new ThriftDocumentParser();
+        parser = new ThriftProgramParser();
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        documentRegistry = new DocumentRegistry();
+        programRegistry = new ProgramRegistry();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class JsonGeneratorTest {
         assertTrue(test.exists());
 
         assertEquals("{\n" +
-                     "    \"package\": \"test\",\n" +
+                     "    \"program_name\": \"test\",\n" +
                      "    \"namespaces\": {\n" +
                      "        \"java\": \"net.morimekta.test.json\"\n" +
                      "    },\n" +

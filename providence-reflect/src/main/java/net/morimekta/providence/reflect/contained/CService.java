@@ -57,7 +57,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
     }
 
     @Override
-    public String getComment() {
+    public String getDocumentation() {
         return comment;
     }
 }

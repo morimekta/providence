@@ -13,7 +13,7 @@ public interface CAnnotatedDescriptor {
      * @return The comment string containing all formatting (not including the
      *         comment delimiter and the leading space.
      */
-    String getComment();
+    String getDocumentation();
 
     /**
      * Get set of available annotations.

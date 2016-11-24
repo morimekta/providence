@@ -64,7 +64,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
     }
 
     @Override
-    public final String getComment() {
+    public final String getDocumentation() {
         return comment;
     }
 

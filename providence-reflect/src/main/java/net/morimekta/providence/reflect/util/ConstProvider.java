@@ -34,14 +34,14 @@ import java.util.Collections;
  * @since 07.09.15
  */
 public class ConstProvider implements PValueProvider<Object> {
-    private final DocumentRegistry mRegistry;
-    private final String           mTypeName;
-    private final String           mPackageContext;
-    private final String           mDefaultValue;
+    private final ProgramRegistry mRegistry;
+    private final String          mTypeName;
+    private final String          mPackageContext;
+    private final String          mDefaultValue;
 
     private Object mParsedValue;
 
-    public ConstProvider(DocumentRegistry registry, String typeName, String packageContext, String defaultValue) {
+    public ConstProvider(ProgramRegistry registry, String typeName, String packageContext, String defaultValue) {
         mRegistry = registry;
         mTypeName = typeName;
         mPackageContext = packageContext;

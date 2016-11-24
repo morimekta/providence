@@ -20,7 +20,7 @@
 package net.morimekta.providence.generator;
 
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.contained.CDocument;
+import net.morimekta.providence.reflect.contained.CProgram;
 
 import java.io.IOException;
 
@@ -47,5 +47,5 @@ public abstract class Generator {
      * @throws IOException If a file could not be written.
      * @throws GeneratorException If some part of the file code could not be generated (invalid content).
      */
-    public abstract void generate(CDocument document) throws IOException, GeneratorException;
+    public abstract void generate(CProgram document) throws IOException, GeneratorException;
 }

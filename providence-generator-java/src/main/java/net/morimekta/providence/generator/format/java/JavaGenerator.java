@@ -26,7 +26,7 @@ import net.morimekta.providence.generator.format.java.shared.BaseGenerator;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseServiceFormatter;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.util.DocumentRegistry;
+import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
@@ -36,7 +36,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 public class JavaGenerator extends BaseGenerator {
     private final JavaOptions options;
 
-    public JavaGenerator(FileManager manager, DocumentRegistry registry, JavaOptions options) throws GeneratorException {
+    public JavaGenerator(FileManager manager, ProgramRegistry registry, JavaOptions options) throws GeneratorException {
         super(manager, registry);
 
         this.options = options;

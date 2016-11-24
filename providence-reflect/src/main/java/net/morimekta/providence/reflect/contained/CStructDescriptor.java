@@ -64,7 +64,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     }
 
     @Override
-    public final String getComment() {
+    public final String getDocumentation() {
         return comment;
     }
 

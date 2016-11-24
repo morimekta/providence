@@ -53,9 +53,9 @@ public abstract class BaseMessageFormatter {
 
         if (message.descriptor() instanceof CAnnotatedDescriptor) {
             CAnnotatedDescriptor annotatedDescriptor = (CAnnotatedDescriptor) message.descriptor();
-            if (annotatedDescriptor.getComment() != null) {
+            if (annotatedDescriptor.getDocumentation() != null) {
                 new BlockCommentBuilder(writer)
-                        .comment(annotatedDescriptor.getComment())
+                        .comment(annotatedDescriptor.getDocumentation())
                         .finish();
             }
         }

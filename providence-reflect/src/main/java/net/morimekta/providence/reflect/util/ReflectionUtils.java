@@ -8,7 +8,7 @@ public class ReflectionUtils {
         return name.endsWith(".providence") ||
                name.endsWith(".thrift") ||
                name.endsWith(".thr") ||
-               name.endsWith(".thr");
+               name.endsWith(".pvd");
     }
 
     public static String packageFromName(String name) {

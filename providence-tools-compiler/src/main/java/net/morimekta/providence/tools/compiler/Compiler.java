@@ -25,8 +25,8 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.Language;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.contained.CDocument;
-import net.morimekta.providence.reflect.parser.DocumentParser;
+import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.tools.common.options.Utils;
 
@@ -89,19 +89,19 @@ public class Compiler {
 
             cli.validate();
 
-            DocumentParser parser = options.getParser();
+            ProgramParser parser = options.getParser();
             List<File> includes = options.getIncludes();
             List<File> input = options.getInputFiles();
 
             TypeLoader loader = new TypeLoader(includes, parser);
             Generator generator = options.getGenerator(loader);
 
-            List<CDocument> docs = new LinkedList<>();
+            List<CProgram> docs = new LinkedList<>();
             for (File f : input) {
                 docs.add(loader.load(f));
             }
 
-            for (CDocument doc : docs) {
+            for (CProgram doc : docs) {
                 generator.generate(doc);
             }
 

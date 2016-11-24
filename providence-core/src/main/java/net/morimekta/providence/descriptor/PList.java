@@ -46,8 +46,8 @@ public class PList<Item> extends PContainer<List<Item>> {
     }
 
     @Override
-    public String getQualifiedName(String packageName) {
-        return "list<" + itemDescriptor().getQualifiedName(packageName) + ">";
+    public String getQualifiedName(String programContext) {
+        return "list<" + itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
     @Override

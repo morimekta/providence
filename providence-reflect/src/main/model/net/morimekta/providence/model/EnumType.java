@@ -12,18 +12,18 @@ public class EnumType
                    java.io.Serializable {
     private final static long serialVersionUID = 5720337451968926862L;
 
-    private final String mComment;
+    private final String mDocumentation;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;
     private final java.util.Map<String,String> mAnnotations;
 
     private volatile int tHashCode;
 
-    public EnumType(String pComment,
+    public EnumType(String pDocumentation,
                     String pName,
                     java.util.List<net.morimekta.providence.model.EnumValue> pValues,
                     java.util.Map<String,String> pAnnotations) {
-        mComment = pComment;
+        mDocumentation = pDocumentation;
         mName = pName;
         if (pValues != null) {
             mValues = com.google.common.collect.ImmutableList.copyOf(pValues);
@@ -38,7 +38,7 @@ public class EnumType
     }
 
     private EnumType(_Builder builder) {
-        mComment = builder.mComment;
+        mDocumentation = builder.mDocumentation;
         mName = builder.mName;
         if (builder.isSetValues()) {
             mValues = builder.mValues.build();
@@ -52,15 +52,15 @@ public class EnumType
         }
     }
 
-    public boolean hasComment() {
-        return mComment != null;
+    public boolean hasDocumentation() {
+        return mDocumentation != null;
     }
 
     /**
      * @return The field value
      */
-    public String getComment() {
-        return mComment;
+    public String getDocumentation() {
+        return mDocumentation;
     }
 
     public boolean hasName() {
@@ -107,7 +107,7 @@ public class EnumType
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasComment();
+            case 1: return hasDocumentation();
             case 2: return hasName();
             case 3: return numValues() > 0;
             case 4: return numAnnotations() > 0;
@@ -118,7 +118,7 @@ public class EnumType
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasComment() ? 1 : 0;
+            case 1: return hasDocumentation() ? 1 : 0;
             case 2: return hasName() ? 1 : 0;
             case 3: return numValues();
             case 4: return numAnnotations();
@@ -129,7 +129,7 @@ public class EnumType
     @Override
     public Object get(int key) {
         switch(key) {
-            case 1: return getComment();
+            case 1: return getDocumentation();
             case 2: return getName();
             case 3: return getValues();
             case 4: return getAnnotations();
@@ -147,7 +147,7 @@ public class EnumType
         if (o == this) return true;
         if (o == null || !(o instanceof EnumType)) return false;
         EnumType other = (EnumType) o;
-        return java.util.Objects.equals(mComment, other.mComment) &&
+        return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mValues, other.mValues) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations);
@@ -158,7 +158,7 @@ public class EnumType
         if (tHashCode == 0) {
             tHashCode = java.util.Objects.hash(
                     EnumType.class,
-                    _Field.COMMENT, mComment,
+                    _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
                     _Field.VALUES, mValues,
                     _Field.ANNOTATIONS, mAnnotations);
@@ -177,11 +177,11 @@ public class EnumType
         out.append("{");
 
         boolean first = true;
-        if (mComment != null) {
+        if (mDocumentation != null) {
             first = false;
-            out.append("comment:")
+            out.append("documentation:")
                .append('\"')
-               .append(net.morimekta.util.Strings.escape(mComment))
+               .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
         if (mName != null) {
@@ -211,10 +211,10 @@ public class EnumType
     public int compareTo(EnumType other) {
         int c;
 
-        c = Boolean.compare(mComment != null, other.mComment != null);
+        c = Boolean.compare(mDocumentation != null, other.mDocumentation != null);
         if (c != 0) return c;
-        if (mComment != null) {
-            c = mComment.compareTo(other.mComment);
+        if (mDocumentation != null) {
+            c = mDocumentation.compareTo(other.mDocumentation);
             if (c != 0) return c;
         }
 
@@ -248,7 +248,7 @@ public class EnumType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        COMMENT(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "comment", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "values", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.EnumValue.provider()), null),
         ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
@@ -295,7 +295,7 @@ public class EnumType
 
         public static _Field forKey(int key) {
             switch (key) {
-                case 1: return _Field.COMMENT;
+                case 1: return _Field.DOCUMENTATION;
                 case 2: return _Field.NAME;
                 case 3: return _Field.VALUES;
                 case 4: return _Field.ANNOTATIONS;
@@ -305,7 +305,7 @@ public class EnumType
 
         public static _Field forName(String name) {
             switch (name) {
-                case "comment": return _Field.COMMENT;
+                case "documentation": return _Field.DOCUMENTATION;
                 case "name": return _Field.NAME;
                 case "values": return _Field.VALUES;
                 case "annotations": return _Field.ANNOTATIONS;
@@ -383,7 +383,7 @@ public class EnumType
             extends net.morimekta.providence.PMessageBuilder<EnumType,_Field> {
         private java.util.BitSet optionals;
 
-        private String mComment;
+        private String mDocumentation;
         private String mName;
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.EnumValue> mValues;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
@@ -405,9 +405,9 @@ public class EnumType
         public _Builder(EnumType base) {
             this();
 
-            if (base.hasComment()) {
+            if (base.hasDocumentation()) {
                 optionals.set(0);
-                mComment = base.mComment;
+                mDocumentation = base.mDocumentation;
             }
             if (base.hasName()) {
                 optionals.set(1);
@@ -425,9 +425,9 @@ public class EnumType
 
         @Override
         public _Builder merge(EnumType from) {
-            if (from.hasComment()) {
+            if (from.hasDocumentation()) {
                 optionals.set(0);
-                mComment = from.getComment();
+                mDocumentation = from.getDocumentation();
             }
 
             if (from.hasName()) {
@@ -449,34 +449,34 @@ public class EnumType
         }
 
         /**
-         * Sets the value of comment.
+         * Sets the value of documentation.
          *
          * @param value The new value
          * @return The builder
          */
-        public _Builder setComment(String value) {
+        public _Builder setDocumentation(String value) {
             optionals.set(0);
-            mComment = value;
+            mDocumentation = value;
             return this;
         }
 
         /**
-         * Checks for presence of the comment field.
+         * Checks for presence of the documentation field.
          *
-         * @return True iff comment has been set.
+         * @return True iff documentation has been set.
          */
-        public boolean isSetComment() {
+        public boolean isSetDocumentation() {
             return optionals.get(0);
         }
 
         /**
-         * Clears the comment field.
+         * Clears the documentation field.
          *
          * @return The builder
          */
-        public _Builder clearComment() {
+        public _Builder clearDocumentation() {
             optionals.clear(0);
-            mComment = null;
+            mDocumentation = null;
             return this;
         }
 
@@ -638,7 +638,7 @@ public class EnumType
         public _Builder set(int key, Object value) {
             if (value == null) return clear(key);
             switch (key) {
-                case 1: setComment((String) value); break;
+                case 1: setDocumentation((String) value); break;
                 case 2: setName((String) value); break;
                 case 3: setValues((java.util.List<net.morimekta.providence.model.EnumValue>) value); break;
                 case 4: setAnnotations((java.util.Map<String,String>) value); break;
@@ -658,7 +658,7 @@ public class EnumType
         @Override
         public _Builder clear(int key) {
             switch (key) {
-                case 1: clearComment(); break;
+                case 1: clearDocumentation(); break;
                 case 2: clearName(); break;
                 case 3: clearValues(); break;
                 case 4: clearAnnotations(); break;

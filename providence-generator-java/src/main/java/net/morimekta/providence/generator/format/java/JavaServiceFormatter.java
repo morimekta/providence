@@ -44,9 +44,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
     public void appendServiceClass(CService cs) throws GeneratorException, IOException {
         JService service = new JService(cs, helper);
 
-        if (cs.getComment() != null) {
+        if (cs.getDocumentation() != null) {
             new BlockCommentBuilder(writer)
-                    .comment(cs.getComment())
+                    .comment(cs.getDocumentation())
                     .finish();
         }
 
@@ -519,9 +519,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 writer.newline();
             }
 
-            if (method.getMethod().getComment() != null) {
+            if (method.getMethod().getDocumentation() != null) {
                 new BlockCommentBuilder(writer)
-                        .comment(method.getMethod().getComment())
+                        .comment(method.getMethod().getDocumentation())
                         .finish();
             }
 

@@ -51,7 +51,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
-    public String getComment() {
+    public String getDocumentation() {
         return comment;
     }
 
