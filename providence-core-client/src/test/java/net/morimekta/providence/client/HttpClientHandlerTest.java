@@ -1,8 +1,8 @@
 package net.morimekta.providence.client;
 
-import net.morimekta.providence.client.util.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
@@ -14,9 +14,7 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServlet;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
@@ -28,6 +26,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
+import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -66,17 +65,7 @@ public class HttpClientHandlerTest {
 
         server.setHandler(handler);
         server.start();
-
-        for (Connector connector : server.getConnectors()) {
-            if (connector instanceof ServerConnector) {
-                port = ((ServerConnector) connector).getLocalPort();
-                break;
-            }
-        }
-
-        if (port < 1000) {
-            fail("Unable to assign port to jetty.");
-        }
+        port = getExposedPort(server);
     }
 
     @Before

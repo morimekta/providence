@@ -2,8 +2,7 @@ package net.morimekta.providence.tools.rpc;
 
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.server.ProvidenceServlet;
-import net.morimekta.providence.tools.rpc.util.NoLogging;
-import net.morimekta.providence.tools.rpc.util.TestUtil;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.providence.Failure;
 import net.morimekta.test.providence.MyService;
 import net.morimekta.test.providence.Request;
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
@@ -58,10 +58,9 @@ public class RPCProvidenceHttpIT {
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
 
-        port = TestUtil.findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
 
-        server = new Server(port);
+        server = new Server(0);
         DefaultSerializerProvider provider = new DefaultSerializerProvider();
 
         ServletContextHandler handler = new ServletContextHandler();
@@ -70,6 +69,7 @@ public class RPCProvidenceHttpIT {
 
         server.setHandler(handler);
         server.start();
+        port = getExposedPort(server);
         Thread.sleep(1);
     }
 

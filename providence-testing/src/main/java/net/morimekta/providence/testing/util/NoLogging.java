@@ -1,4 +1,4 @@
-package net.morimekta.providence.client.util;
+package net.morimekta.providence.testing.util;
 
 import org.eclipse.jetty.util.log.Logger;
 

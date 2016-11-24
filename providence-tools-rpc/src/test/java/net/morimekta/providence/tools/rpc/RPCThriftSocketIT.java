@@ -1,7 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.tools.rpc.util.NoLogging;
-import net.morimekta.providence.tools.rpc.util.TestUtil;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -64,10 +63,9 @@ public class RPCThriftSocketIT {
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
 
-        port = TestUtil.findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
 
-        TServerSocket transport = new TServerSocket(port);
+        TServerSocket transport = new TServerSocket(0);
         server = new TSimpleServer(
                 new TServer.Args(transport)
                         .protocolFactory(new TBinaryProtocol.Factory())
@@ -75,6 +73,7 @@ public class RPCThriftSocketIT {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(server::serve);
         Thread.sleep(1);
+        port = transport.getServerSocket().getLocalPort();
     }
 
     @Before

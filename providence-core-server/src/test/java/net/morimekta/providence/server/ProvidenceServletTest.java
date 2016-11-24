@@ -1,7 +1,7 @@
 package net.morimekta.providence.server;
 
 import net.morimekta.providence.client.HttpClientHandler;
-import net.morimekta.providence.server.util.NoLogging;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.test.providence.service.Failure;
@@ -25,6 +25,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
+import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -63,17 +64,7 @@ public class ProvidenceServletTest {
 
         server.setHandler(handler);
         server.start();
-
-        for (Connector connector : server.getConnectors()) {
-            if (connector instanceof ServerConnector) {
-                port = ((ServerConnector) connector).getLocalPort();
-                break;
-            }
-        }
-
-        if (port < 1000) {
-            fail("Unable to assign port to jetty.");
-        }
+        port = getExposedPort(server);
     }
 
     @Before

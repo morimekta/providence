@@ -4,9 +4,9 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
-
-import java.io.IOException;
-import java.net.ServerSocket;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 import static org.junit.Assert.fail;
 
@@ -14,14 +14,14 @@ import static org.junit.Assert.fail;
  * Networking utility for testing.
  */
 public class TestNetUtil {
-    public static int findFreePort() {
-        int port = -1;
-        try (ServerSocket socket = new ServerSocket(0)) {
-            port = socket.getLocalPort();
-        } catch (IOException e) {
-            fail("Unable to locate free port.");
+    public static int getExposedPort(Server server) {
+        for (Connector connector : server.getConnectors()) {
+            if (connector instanceof ServerConnector) {
+                return  ((ServerConnector) connector).getLocalPort();
+            }
         }
-        return port;
+        fail("Unable to determine port of server");
+        return -1;
     }
 
     public static HttpRequestFactory factory() {

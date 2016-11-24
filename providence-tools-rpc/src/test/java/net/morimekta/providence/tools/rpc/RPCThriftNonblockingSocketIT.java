@@ -1,7 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.tools.rpc.util.NoLogging;
-import net.morimekta.providence.tools.rpc.util.TestUtil;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -15,7 +14,6 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -65,16 +63,16 @@ public class RPCThriftNonblockingSocketIT {
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
 
-        port = TestUtil.findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
 
-        TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
+        TNonblockingServerSocket transport = new TNonblockingServerSocket(0);
         server = new TNonblockingServer(new TNonblockingServer.Args(transport).protocolFactory(new TBinaryProtocol.Factory())
                                                                               .processor(new MyService.Processor<>(impl)));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(server::serve);
         Thread.sleep(1);
+        port = transport.getPort();
     }
 
     @Before

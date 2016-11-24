@@ -1,7 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.tools.rpc.util.NoLogging;
-import net.morimekta.providence.tools.rpc.util.TestUtil;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;
@@ -59,7 +59,6 @@ public class RPCThriftHttpIT {
     public static void setUpServer() throws Exception {
         Log.setLog(new NoLogging());
 
-        port = TestUtil.findFreePort();
         impl = Mockito.mock(MyService.Iface.class);
 
         server = new Server(port);
@@ -69,6 +68,7 @@ public class RPCThriftHttpIT {
 
         server.setHandler(handler);
         server.start();
+        port = getExposedPort(server);
         Thread.sleep(1);
     }
 
