@@ -8,8 +8,8 @@ import net.morimekta.providence.generator.format.java.messages.CommonBuilderForm
 import net.morimekta.providence.generator.format.java.messages.CommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
-import net.morimekta.providence.generator.format.java.messages.extra.AndroidMessageFormatter;
-import net.morimekta.providence.generator.format.java.messages.extra.JacksonMessageFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.AndroidMessageFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.JacksonMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JHelper;

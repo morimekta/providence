@@ -1,4 +1,4 @@
-package net.morimekta.providence.generator.format.java.messages.extra;
+package net.morimekta.providence.generator.format.java.messages.extras;
 
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;

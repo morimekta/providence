@@ -1,4 +1,4 @@
-package net.morimekta.providence.generator.format.java.messages.extra;
+package net.morimekta.providence.generator.format.java.messages.extras;
 
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;

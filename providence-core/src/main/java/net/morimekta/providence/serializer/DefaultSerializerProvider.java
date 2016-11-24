@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Default serializer provider for extra serializers.
+ * Default serializer provider for core serializers.
  */
 public class DefaultSerializerProvider implements SerializerProvider {
     private final Map<String, Serializer> serializerMap;
