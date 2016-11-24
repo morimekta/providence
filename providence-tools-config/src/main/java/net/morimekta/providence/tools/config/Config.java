@@ -42,6 +42,12 @@ public class Config {
                 cli.validate();
                 op.execute();
                 return;
+            } catch (ArgumentException e) {
+                System.err.println("Invalid argument: " + e.getMessage());
+                System.err.println("Usage: " + cli.getSingleLineUsage());
+                if (op.verbose) {
+                    e.printStackTrace();
+                }
             } catch (TokenizerException e) {
                 System.err.println(e.asString());
                 if (op.verbose) {
@@ -49,11 +55,6 @@ public class Config {
                 }
             } catch (SerializerException e) {
                 System.err.println("Serialization error: " + e.toString());
-                if (op.verbose) {
-                    e.printStackTrace();
-                }
-            } catch (ArgumentException e) {
-                System.err.println(e.toString());
                 if (op.verbose) {
                     e.printStackTrace();
                 }
