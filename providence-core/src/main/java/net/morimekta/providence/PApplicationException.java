@@ -7,9 +7,9 @@ package net.morimekta.providence;
 @SuppressWarnings("unused")
 public class PApplicationException
         extends java.io.IOException
-        implements Comparable<PApplicationException>,
-                   net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
-                   net.morimekta.providence.PException {
+        implements net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
+                   net.morimekta.providence.PException,
+                   Comparable<PApplicationException> {
     private final static long serialVersionUID = -8724424103018535688L;
 
     private final static net.morimekta.providence.PApplicationExceptionType kDefaultId = net.morimekta.providence.PApplicationExceptionType.UNKNOWN;
@@ -85,6 +85,48 @@ public class PApplicationException
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasMessage();
+            case 2: return hasId();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasMessage() ? 1 : 0;
+            case 2: return hasId() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getMessage();
+            case 2: return getId();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof PApplicationException)) return false;
@@ -150,48 +192,6 @@ public class PApplicationException
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasMessage();
-            case 2: return hasId();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
-            case 2: return hasId() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getMessage();
-            case 2: return getId();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    @Override
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
     }
 
     @Override

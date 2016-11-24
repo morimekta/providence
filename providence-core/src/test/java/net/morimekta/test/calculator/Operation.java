@@ -2,9 +2,9 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operation
-        implements Comparable<Operation>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<Operation,Operation._Field> {
+        implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
+                   Comparable<Operation>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -2122462501055525645L;
 
 
@@ -56,6 +56,38 @@ public class Operation
      */
     public java.util.List<net.morimekta.test.calculator.Operand> getOperands() {
         return mOperands;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasOperator();
+            case 2: return numOperands() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasOperator() ? 1 : 0;
+            case 2: return numOperands();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getOperator();
+            case 2: return getOperands();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -122,38 +154,6 @@ public class Operation
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasOperator();
-            case 2: return numOperands() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperator() ? 1 : 0;
-            case 2: return numOperands();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getOperator();
-            case 2: return getOperands();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

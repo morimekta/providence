@@ -7,9 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class StructType
-        implements Comparable<StructType>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<StructType,StructType._Field> {
+        implements net.morimekta.providence.PMessage<StructType,StructType._Field>,
+                   Comparable<StructType>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -7531050363059752370L;
 
     private final static net.morimekta.providence.model.StructVariant kDefaultVariant = net.morimekta.providence.model.StructVariant.STRUCT;
@@ -120,6 +120,47 @@ public class StructType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasVariant();
+            case 3: return hasName();
+            case 4: return numFields() > 0;
+            case 5: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasVariant() ? 1 : 0;
+            case 3: return hasName() ? 1 : 0;
+            case 4: return numFields();
+            case 5: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getVariant();
+            case 3: return getName();
+            case 4: return getFields();
+            case 5: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -235,47 +276,6 @@ public class StructType
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasVariant();
-            case 3: return hasName();
-            case 4: return numFields() > 0;
-            case 5: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasVariant() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
-            case 4: return numFields();
-            case 5: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getVariant();
-            case 3: return getName();
-            case 4: return getFields();
-            case 5: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

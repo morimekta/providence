@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class DefaultValues
-        implements Comparable<DefaultValues>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field> {
+        implements net.morimekta.providence.PMessage<DefaultValues,DefaultValues._Field>,
+                   Comparable<DefaultValues>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 1589448735484096354L;
 
     private final static boolean kDefaultBooleanValue = true;
@@ -200,6 +200,62 @@ public class DefaultValues
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return true;
+            case 2: return true;
+            case 3: return true;
+            case 4: return true;
+            case 5: return true;
+            case 6: return true;
+            case 7: return hasStringValue();
+            case 8: return hasBinaryValue();
+            case 9: return hasEnumValue();
+            case 10: return hasCompactValue();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return 1;
+            case 2: return 1;
+            case 3: return 1;
+            case 4: return 1;
+            case 5: return 1;
+            case 6: return 1;
+            case 7: return hasStringValue() ? 1 : 0;
+            case 8: return hasBinaryValue() ? 1 : 0;
+            case 9: return hasEnumValue() ? 1 : 0;
+            case 10: return hasCompactValue() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return isBooleanValue();
+            case 2: return getByteValue();
+            case 3: return getShortValue();
+            case 4: return getIntegerValue();
+            case 5: return getLongValue();
+            case 6: return getDoubleValue();
+            case 7: return getStringValue();
+            case 8: return getBinaryValue();
+            case 9: return getEnumValue();
+            case 10: return getCompactValue();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof DefaultValues)) return false;
@@ -341,62 +397,6 @@ public class DefaultValues
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return true;
-            case 2: return true;
-            case 3: return true;
-            case 4: return true;
-            case 5: return true;
-            case 6: return true;
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return 1;
-            case 5: return 1;
-            case 6: return 1;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

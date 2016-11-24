@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class Containers
-        implements Comparable<Containers>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<Containers,Containers._Field> {
+        implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
+                   Comparable<Containers>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 3106880629763954881L;
 
 
@@ -927,6 +927,140 @@ public class Containers
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return numBooleanList() > 0;
+            case 2: return numByteList() > 0;
+            case 3: return numShortList() > 0;
+            case 4: return numIntegerList() > 0;
+            case 5: return numLongList() > 0;
+            case 6: return numDoubleList() > 0;
+            case 7: return numStringList() > 0;
+            case 8: return numBinaryList() > 0;
+            case 11: return numBooleanSet() > 0;
+            case 12: return numByteSet() > 0;
+            case 13: return numShortSet() > 0;
+            case 14: return numIntegerSet() > 0;
+            case 15: return numLongSet() > 0;
+            case 16: return numDoubleSet() > 0;
+            case 17: return numStringSet() > 0;
+            case 18: return numBinarySet() > 0;
+            case 21: return numBooleanMap() > 0;
+            case 22: return numByteMap() > 0;
+            case 23: return numShortMap() > 0;
+            case 24: return numIntegerMap() > 0;
+            case 25: return numLongMap() > 0;
+            case 26: return numDoubleMap() > 0;
+            case 27: return numStringMap() > 0;
+            case 28: return numBinaryMap() > 0;
+            case 31: return numEnumList() > 0;
+            case 32: return numEnumSet() > 0;
+            case 33: return numEnumMap() > 0;
+            case 41: return numMessageList() > 0;
+            case 42: return numMessageSet() > 0;
+            case 43: return numMessageMap() > 0;
+            case 51: return hasRequiredFields();
+            case 52: return hasDefaultFields();
+            case 53: return hasOptionalFields();
+            case 54: return hasUnionFields();
+            case 55: return hasExceptionFields();
+            case 56: return hasDefaultValues();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return numBooleanList();
+            case 2: return numByteList();
+            case 3: return numShortList();
+            case 4: return numIntegerList();
+            case 5: return numLongList();
+            case 6: return numDoubleList();
+            case 7: return numStringList();
+            case 8: return numBinaryList();
+            case 11: return numBooleanSet();
+            case 12: return numByteSet();
+            case 13: return numShortSet();
+            case 14: return numIntegerSet();
+            case 15: return numLongSet();
+            case 16: return numDoubleSet();
+            case 17: return numStringSet();
+            case 18: return numBinarySet();
+            case 21: return numBooleanMap();
+            case 22: return numByteMap();
+            case 23: return numShortMap();
+            case 24: return numIntegerMap();
+            case 25: return numLongMap();
+            case 26: return numDoubleMap();
+            case 27: return numStringMap();
+            case 28: return numBinaryMap();
+            case 31: return numEnumList();
+            case 32: return numEnumSet();
+            case 33: return numEnumMap();
+            case 41: return numMessageList();
+            case 42: return numMessageSet();
+            case 43: return numMessageMap();
+            case 51: return hasRequiredFields() ? 1 : 0;
+            case 52: return hasDefaultFields() ? 1 : 0;
+            case 53: return hasOptionalFields() ? 1 : 0;
+            case 54: return hasUnionFields() ? 1 : 0;
+            case 55: return hasExceptionFields() ? 1 : 0;
+            case 56: return hasDefaultValues() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getBooleanList();
+            case 2: return getByteList();
+            case 3: return getShortList();
+            case 4: return getIntegerList();
+            case 5: return getLongList();
+            case 6: return getDoubleList();
+            case 7: return getStringList();
+            case 8: return getBinaryList();
+            case 11: return getBooleanSet();
+            case 12: return getByteSet();
+            case 13: return getShortSet();
+            case 14: return getIntegerSet();
+            case 15: return getLongSet();
+            case 16: return getDoubleSet();
+            case 17: return getStringSet();
+            case 18: return getBinarySet();
+            case 21: return getBooleanMap();
+            case 22: return getByteMap();
+            case 23: return getShortMap();
+            case 24: return getIntegerMap();
+            case 25: return getLongMap();
+            case 26: return getDoubleMap();
+            case 27: return getStringMap();
+            case 28: return getBinaryMap();
+            case 31: return getEnumList();
+            case 32: return getEnumSet();
+            case 33: return getEnumMap();
+            case 41: return getMessageList();
+            case 42: return getMessageSet();
+            case 43: return getMessageMap();
+            case 51: return getRequiredFields();
+            case 52: return getDefaultFields();
+            case 53: return getOptionalFields();
+            case 54: return getUnionFields();
+            case 55: return getExceptionFields();
+            case 56: return getDefaultValues();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof Containers)) return false;
@@ -1500,140 +1634,6 @@ public class Containers
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return numBooleanList() > 0;
-            case 2: return numByteList() > 0;
-            case 3: return numShortList() > 0;
-            case 4: return numIntegerList() > 0;
-            case 5: return numLongList() > 0;
-            case 6: return numDoubleList() > 0;
-            case 7: return numStringList() > 0;
-            case 8: return numBinaryList() > 0;
-            case 11: return numBooleanSet() > 0;
-            case 12: return numByteSet() > 0;
-            case 13: return numShortSet() > 0;
-            case 14: return numIntegerSet() > 0;
-            case 15: return numLongSet() > 0;
-            case 16: return numDoubleSet() > 0;
-            case 17: return numStringSet() > 0;
-            case 18: return numBinarySet() > 0;
-            case 21: return numBooleanMap() > 0;
-            case 22: return numByteMap() > 0;
-            case 23: return numShortMap() > 0;
-            case 24: return numIntegerMap() > 0;
-            case 25: return numLongMap() > 0;
-            case 26: return numDoubleMap() > 0;
-            case 27: return numStringMap() > 0;
-            case 28: return numBinaryMap() > 0;
-            case 31: return numEnumList() > 0;
-            case 32: return numEnumSet() > 0;
-            case 33: return numEnumMap() > 0;
-            case 41: return numMessageList() > 0;
-            case 42: return numMessageSet() > 0;
-            case 43: return numMessageMap() > 0;
-            case 51: return hasRequiredFields();
-            case 52: return hasDefaultFields();
-            case 53: return hasOptionalFields();
-            case 54: return hasUnionFields();
-            case 55: return hasExceptionFields();
-            case 56: return hasDefaultValues();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return numBooleanList();
-            case 2: return numByteList();
-            case 3: return numShortList();
-            case 4: return numIntegerList();
-            case 5: return numLongList();
-            case 6: return numDoubleList();
-            case 7: return numStringList();
-            case 8: return numBinaryList();
-            case 11: return numBooleanSet();
-            case 12: return numByteSet();
-            case 13: return numShortSet();
-            case 14: return numIntegerSet();
-            case 15: return numLongSet();
-            case 16: return numDoubleSet();
-            case 17: return numStringSet();
-            case 18: return numBinarySet();
-            case 21: return numBooleanMap();
-            case 22: return numByteMap();
-            case 23: return numShortMap();
-            case 24: return numIntegerMap();
-            case 25: return numLongMap();
-            case 26: return numDoubleMap();
-            case 27: return numStringMap();
-            case 28: return numBinaryMap();
-            case 31: return numEnumList();
-            case 32: return numEnumSet();
-            case 33: return numEnumMap();
-            case 41: return numMessageList();
-            case 42: return numMessageSet();
-            case 43: return numMessageMap();
-            case 51: return hasRequiredFields() ? 1 : 0;
-            case 52: return hasDefaultFields() ? 1 : 0;
-            case 53: return hasOptionalFields() ? 1 : 0;
-            case 54: return hasUnionFields() ? 1 : 0;
-            case 55: return hasExceptionFields() ? 1 : 0;
-            case 56: return hasDefaultValues() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getBooleanList();
-            case 2: return getByteList();
-            case 3: return getShortList();
-            case 4: return getIntegerList();
-            case 5: return getLongList();
-            case 6: return getDoubleList();
-            case 7: return getStringList();
-            case 8: return getBinaryList();
-            case 11: return getBooleanSet();
-            case 12: return getByteSet();
-            case 13: return getShortSet();
-            case 14: return getIntegerSet();
-            case 15: return getLongSet();
-            case 16: return getDoubleSet();
-            case 17: return getStringSet();
-            case 18: return getBinarySet();
-            case 21: return getBooleanMap();
-            case 22: return getByteMap();
-            case 23: return getShortMap();
-            case 24: return getIntegerMap();
-            case 25: return getLongMap();
-            case 26: return getDoubleMap();
-            case 27: return getStringMap();
-            case 28: return getBinaryMap();
-            case 31: return getEnumList();
-            case 32: return getEnumSet();
-            case 33: return getEnumMap();
-            case 41: return getMessageList();
-            case 42: return getMessageSet();
-            case 43: return getMessageMap();
-            case 51: return getRequiredFields();
-            case 52: return getDefaultFields();
-            case 53: return getOptionalFields();
-            case 54: return getUnionFields();
-            case 55: return getExceptionFields();
-            case 56: return getDefaultValues();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

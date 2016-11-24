@@ -188,9 +188,9 @@ public class Calculator {
     // type --> calculate___request
     @SuppressWarnings("unused")
     private static class Calculate_request
-            implements Comparable<Calculate_request>,
-                       java.io.Serializable,
-                       net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field> {
+            implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>,
+                       Comparable<Calculate_request>,
+                       java.io.Serializable {
         private final static long serialVersionUID = -2850591557621395232L;
 
 
@@ -215,6 +215,35 @@ public class Calculator {
          */
         public net.morimekta.test.calculator.Operation getOp() {
             return mOp;
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                case 1: return hasOp();
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                case 1: return hasOp() ? 1 : 0;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                case 1: return getOp();
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
         }
 
         @Override
@@ -265,35 +294,6 @@ public class Calculator {
             }
 
             return 0;
-        }
-
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                case 1: return hasOp();
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 1: return hasOp() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                case 1: return getOp();
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
         }
 
         @Override
@@ -572,18 +572,18 @@ public class Calculator {
     // type <-- calculate___response
     @SuppressWarnings("unused")
     private static class Calculate_response
-            implements Comparable<Calculate_response>,
-                       java.io.Serializable,
-                       net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field> {
+            implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>,
+                       Comparable<Calculate_response>,
+                       java.io.Serializable {
         private final static long serialVersionUID = 3839355577455995570L;
 
 
         private final net.morimekta.test.calculator.Operand mSuccess;
         private final net.morimekta.test.calculator.CalculateException mCe;
 
-        private volatile int tHashCode;
-
         private final _Field tUnionField;
+
+        private volatile int tHashCode;
 
         /**
          * @param value The union value
@@ -632,6 +632,43 @@ public class Calculator {
          */
         public net.morimekta.test.calculator.CalculateException getCe() {
             return mCe;
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                case 0: return hasSuccess();
+                case 1: return hasCe();
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                case 0: return hasSuccess() ? 1 : 0;
+                case 1: return hasCe() ? 1 : 0;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                case 0: return getSuccess();
+                case 1: return getCe();
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
+        }
+
+        @Override
+        public _Field unionField() {
+            return tUnionField;
         }
 
         @Override
@@ -693,43 +730,6 @@ public class Calculator {
                     return mCe.compareTo(other.mCe);
                 default: return 0;
             }
-        }
-
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                case 0: return hasSuccess();
-                case 1: return hasCe();
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                case 0: return hasSuccess() ? 1 : 0;
-                case 1: return hasCe() ? 1 : 0;
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                case 0: return getSuccess();
-                case 1: return getCe();
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
-        }
-
-        @Override
-        public _Field unionField() {
-            return tUnionField;
         }
 
         @Override
@@ -1094,9 +1094,9 @@ public class Calculator {
     // type --> iamalive___request
     @SuppressWarnings("unused")
     private static class Iamalive_request
-            implements Comparable<Iamalive_request>,
-                       java.io.Serializable,
-                       net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field> {
+            implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>,
+                       Comparable<Iamalive_request>,
+                       java.io.Serializable {
         private final static long serialVersionUID = 7912890008187182926L;
 
 
@@ -1107,6 +1107,32 @@ public class Calculator {
         }
 
         private Iamalive_request(_Builder builder) {
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean compact() {
+            return false;
         }
 
         @Override
@@ -1144,32 +1170,6 @@ public class Calculator {
             int c;
 
             return 0;
-        }
-
-        @Override
-        public boolean has(int key) {
-            switch(key) {
-                default: return false;
-            }
-        }
-
-        @Override
-        public int num(int key) {
-            switch(key) {
-                default: return 0;
-            }
-        }
-
-        @Override
-        public Object get(int key) {
-            switch(key) {
-                default: return null;
-            }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
         }
 
         @Override

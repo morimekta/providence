@@ -14,9 +14,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftField
-        implements Comparable<ThriftField>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<ThriftField,ThriftField._Field> {
+        implements net.morimekta.providence.PMessage<ThriftField,ThriftField._Field>,
+                   Comparable<ThriftField>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 5114028868232611868L;
 
     private final static int kDefaultKey = 0;
@@ -146,6 +146,53 @@ public class ThriftField
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return true;
+            case 3: return hasRequirement();
+            case 4: return hasType();
+            case 5: return hasName();
+            case 6: return hasDefaultValue();
+            case 7: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return 1;
+            case 3: return hasRequirement() ? 1 : 0;
+            case 4: return hasType() ? 1 : 0;
+            case 5: return hasName() ? 1 : 0;
+            case 6: return hasDefaultValue() ? 1 : 0;
+            case 7: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getKey();
+            case 3: return getRequirement();
+            case 4: return getType();
+            case 5: return getName();
+            case 6: return getDefaultValue();
+            case 7: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -283,53 +330,6 @@ public class ThriftField
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return true;
-            case 3: return hasRequirement();
-            case 4: return hasType();
-            case 5: return hasName();
-            case 6: return hasDefaultValue();
-            case 7: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasRequirement() ? 1 : 0;
-            case 4: return hasType() ? 1 : 0;
-            case 5: return hasName() ? 1 : 0;
-            case 6: return hasDefaultValue() ? 1 : 0;
-            case 7: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getKey();
-            case 3: return getRequirement();
-            case 4: return getType();
-            case 5: return getName();
-            case 6: return getDefaultValue();
-            case 7: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

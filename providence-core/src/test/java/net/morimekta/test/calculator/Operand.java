@@ -2,9 +2,9 @@ package net.morimekta.test.calculator;
 
 @SuppressWarnings("unused")
 public class Operand
-        implements Comparable<Operand>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PUnion<Operand,Operand._Field> {
+        implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
+                   Comparable<Operand>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;
@@ -14,9 +14,9 @@ public class Operand
     private final double mNumber;
     private final net.morimekta.test.number.Imaginary mImaginary;
 
-    private volatile int tHashCode;
-
     private final _Field tUnionField;
+
+    private volatile int tHashCode;
 
     /**
      * @param value The union value
@@ -88,6 +88,46 @@ public class Operand
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasOperation();
+            case 2: return hasNumber();
+            case 3: return hasImaginary();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasOperation() ? 1 : 0;
+            case 2: return hasNumber() ? 1 : 0;
+            case 3: return hasImaginary() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getOperation();
+            case 2: return getNumber();
+            case 3: return getImaginary();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Field unionField() {
+        return tUnionField;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof Operand)) return false;
@@ -155,46 +195,6 @@ public class Operand
                 return mImaginary.compareTo(other.mImaginary);
             default: return 0;
         }
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasOperation();
-            case 2: return hasNumber();
-            case 3: return hasImaginary();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasOperation() ? 1 : 0;
-            case 2: return hasNumber() ? 1 : 0;
-            case 3: return hasImaginary() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getOperation();
-            case 2: return getNumber();
-            case 3: return getImaginary();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
-    public _Field unionField() {
-        return tUnionField;
     }
 
     @Override

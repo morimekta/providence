@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class UnionFields
-        implements Comparable<UnionFields>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PUnion<UnionFields,UnionFields._Field> {
+        implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
+                   Comparable<UnionFields>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -4125227148631020921L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -26,9 +26,9 @@ public class UnionFields
     private final net.morimekta.test.providence.Value mEnumValue;
     private final net.morimekta.test.providence.CompactFields mCompactValue;
 
-    private volatile int tHashCode;
-
     private final _Field tUnionField;
+
+    private volatile int tHashCode;
 
     /**
      * @param value The union value
@@ -238,6 +238,67 @@ public class UnionFields
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasBooleanValue();
+            case 2: return hasByteValue();
+            case 3: return hasShortValue();
+            case 4: return hasIntegerValue();
+            case 5: return hasLongValue();
+            case 6: return hasDoubleValue();
+            case 7: return hasStringValue();
+            case 8: return hasBinaryValue();
+            case 9: return hasEnumValue();
+            case 10: return hasCompactValue();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasBooleanValue() ? 1 : 0;
+            case 2: return hasByteValue() ? 1 : 0;
+            case 3: return hasShortValue() ? 1 : 0;
+            case 4: return hasIntegerValue() ? 1 : 0;
+            case 5: return hasLongValue() ? 1 : 0;
+            case 6: return hasDoubleValue() ? 1 : 0;
+            case 7: return hasStringValue() ? 1 : 0;
+            case 8: return hasBinaryValue() ? 1 : 0;
+            case 9: return hasEnumValue() ? 1 : 0;
+            case 10: return hasCompactValue() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return isBooleanValue();
+            case 2: return getByteValue();
+            case 3: return getShortValue();
+            case 4: return getIntegerValue();
+            case 5: return getLongValue();
+            case 6: return getDoubleValue();
+            case 7: return getStringValue();
+            case 8: return getBinaryValue();
+            case 9: return getEnumValue();
+            case 10: return getCompactValue();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Field unionField() {
+        return tUnionField;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof UnionFields)) return false;
@@ -368,67 +429,6 @@ public class UnionFields
                 return mCompactValue.compareTo(other.mCompactValue);
             default: return 0;
         }
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasBooleanValue();
-            case 2: return hasByteValue();
-            case 3: return hasShortValue();
-            case 4: return hasIntegerValue();
-            case 5: return hasLongValue();
-            case 6: return hasDoubleValue();
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
-            case 9: return hasEnumValue();
-            case 10: return hasCompactValue();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasBooleanValue() ? 1 : 0;
-            case 2: return hasByteValue() ? 1 : 0;
-            case 3: return hasShortValue() ? 1 : 0;
-            case 4: return hasIntegerValue() ? 1 : 0;
-            case 5: return hasLongValue() ? 1 : 0;
-            case 6: return hasDoubleValue() ? 1 : 0;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
-            case 9: return hasEnumValue() ? 1 : 0;
-            case 10: return hasCompactValue() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return isBooleanValue();
-            case 2: return getByteValue();
-            case 3: return getShortValue();
-            case 4: return getIntegerValue();
-            case 5: return getLongValue();
-            case 6: return getDoubleValue();
-            case 7: return getStringValue();
-            case 8: return getBinaryValue();
-            case 9: return getEnumValue();
-            case 10: return getCompactValue();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
-    public _Field unionField() {
-        return tUnionField;
     }
 
     @Override

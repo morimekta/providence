@@ -5,9 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class Declaration
-        implements Comparable<Declaration>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PUnion<Declaration,Declaration._Field> {
+        implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
+                   Comparable<Declaration>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -6998763195276182553L;
 
 
@@ -17,9 +17,9 @@ public class Declaration
     private final net.morimekta.providence.model.ServiceType mDeclService;
     private final net.morimekta.providence.model.ThriftField mDeclConst;
 
-    private volatile int tHashCode;
-
     private final _Field tUnionField;
+
+    private volatile int tHashCode;
 
     /**
      * @param value The union value
@@ -137,6 +137,52 @@ public class Declaration
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasDeclEnum();
+            case 2: return hasDeclTypedef();
+            case 3: return hasDeclStruct();
+            case 4: return hasDeclService();
+            case 5: return hasDeclConst();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasDeclEnum() ? 1 : 0;
+            case 2: return hasDeclTypedef() ? 1 : 0;
+            case 3: return hasDeclStruct() ? 1 : 0;
+            case 4: return hasDeclService() ? 1 : 0;
+            case 5: return hasDeclConst() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getDeclEnum();
+            case 2: return getDeclTypedef();
+            case 3: return getDeclStruct();
+            case 4: return getDeclService();
+            case 5: return getDeclConst();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public _Field unionField() {
+        return tUnionField;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof Declaration)) return false;
@@ -222,52 +268,6 @@ public class Declaration
                 return mDeclConst.compareTo(other.mDeclConst);
             default: return 0;
         }
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasDeclEnum();
-            case 2: return hasDeclTypedef();
-            case 3: return hasDeclStruct();
-            case 4: return hasDeclService();
-            case 5: return hasDeclConst();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasDeclEnum() ? 1 : 0;
-            case 2: return hasDeclTypedef() ? 1 : 0;
-            case 3: return hasDeclStruct() ? 1 : 0;
-            case 4: return hasDeclService() ? 1 : 0;
-            case 5: return hasDeclConst() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getDeclEnum();
-            case 2: return getDeclTypedef();
-            case 3: return getDeclStruct();
-            case 4: return getDeclService();
-            case 5: return getDeclConst();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
-    public _Field unionField() {
-        return tUnionField;
     }
 
     @Override

@@ -7,9 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class EnumType
-        implements Comparable<EnumType>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<EnumType,EnumType._Field> {
+        implements net.morimekta.providence.PMessage<EnumType,EnumType._Field>,
+                   Comparable<EnumType>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 5720337451968926862L;
 
 
@@ -103,6 +103,44 @@ public class EnumType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasName();
+            case 3: return numValues() > 0;
+            case 4: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasName() ? 1 : 0;
+            case 3: return numValues();
+            case 4: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getName();
+            case 3: return getValues();
+            case 4: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -203,44 +241,6 @@ public class EnumType
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return numValues() > 0;
-            case 4: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return numValues();
-            case 4: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getValues();
-            case 4: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

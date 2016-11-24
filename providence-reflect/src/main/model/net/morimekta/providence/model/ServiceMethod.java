@@ -5,9 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceMethod
-        implements Comparable<ServiceMethod>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field> {
+        implements net.morimekta.providence.PMessage<ServiceMethod,ServiceMethod._Field>,
+                   Comparable<ServiceMethod>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -8952857258512990537L;
 
     private final static boolean kDefaultOneWay = false;
@@ -167,6 +167,53 @@ public class ServiceMethod
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return true;
+            case 3: return hasReturnType();
+            case 4: return hasName();
+            case 5: return numParams() > 0;
+            case 6: return numExceptions() > 0;
+            case 7: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return 1;
+            case 3: return hasReturnType() ? 1 : 0;
+            case 4: return hasName() ? 1 : 0;
+            case 5: return numParams();
+            case 6: return numExceptions();
+            case 7: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return isOneWay();
+            case 3: return getReturnType();
+            case 4: return getName();
+            case 5: return getParams();
+            case 6: return getExceptions();
+            case 7: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof ServiceMethod)) return false;
@@ -299,53 +346,6 @@ public class ServiceMethod
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return true;
-            case 3: return hasReturnType();
-            case 4: return hasName();
-            case 5: return numParams() > 0;
-            case 6: return numExceptions() > 0;
-            case 7: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasReturnType() ? 1 : 0;
-            case 4: return hasName() ? 1 : 0;
-            case 5: return numParams();
-            case 6: return numExceptions();
-            case 7: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return isOneWay();
-            case 3: return getReturnType();
-            case 4: return getName();
-            case 5: return getParams();
-            case 6: return getExceptions();
-            case 7: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

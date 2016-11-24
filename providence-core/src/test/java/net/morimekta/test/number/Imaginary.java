@@ -2,9 +2,9 @@ package net.morimekta.test.number;
 
 @SuppressWarnings("unused")
 public class Imaginary
-        implements Comparable<Imaginary>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<Imaginary,Imaginary._Field> {
+        implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
+                   Comparable<Imaginary>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 7869796731524194936L;
 
     private final static double kDefaultV = 0.0d;
@@ -51,6 +51,38 @@ public class Imaginary
      */
     public double getI() {
         return mI;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return true;
+            case 2: return true;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return 1;
+            case 2: return 1;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getV();
+            case 2: return getI();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -103,38 +135,6 @@ public class Imaginary
         if (c != 0) return c;
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return true;
-            case 2: return true;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return 1;
-            case 2: return 1;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getV();
-            case 2: return getI();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

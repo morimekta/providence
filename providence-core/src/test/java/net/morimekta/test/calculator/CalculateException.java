@@ -3,9 +3,9 @@ package net.morimekta.test.calculator;
 @SuppressWarnings("unused")
 public class CalculateException
         extends Exception
-        implements Comparable<CalculateException>,
-                   net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
-                   net.morimekta.providence.PException {
+        implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
+                   net.morimekta.providence.PException,
+                   Comparable<CalculateException> {
     private final static long serialVersionUID = -3144631929815376595L;
 
 
@@ -75,6 +75,48 @@ public class CalculateException
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasMessage();
+            case 2: return hasOperation();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasMessage() ? 1 : 0;
+            case 2: return hasOperation() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getMessage();
+            case 2: return getOperation();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
+    public String origGetMessage() {
+        return super.getMessage();
+    }
+
+    @Override
+    public String origGetLocalizedMessage() {
+        return super.getLocalizedMessage();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof CalculateException)) return false;
@@ -140,48 +182,6 @@ public class CalculateException
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasMessage();
-            case 2: return hasOperation();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
-            case 2: return hasOperation() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getMessage();
-            case 2: return getOperation();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
-    public String origGetMessage() {
-        return super.getMessage();
-    }
-
-    @Override
-    public String origGetLocalizedMessage() {
-        return super.getLocalizedMessage();
     }
 
     @Override

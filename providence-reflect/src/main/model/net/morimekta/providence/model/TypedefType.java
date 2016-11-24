@@ -5,9 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class TypedefType
-        implements Comparable<TypedefType>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<TypedefType,TypedefType._Field> {
+        implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
+                   Comparable<TypedefType>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 5431583053440540554L;
 
 
@@ -62,6 +62,41 @@ public class TypedefType
      */
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasType();
+            case 3: return hasName();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasType() ? 1 : 0;
+            case 3: return hasName() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getType();
+            case 3: return getName();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -149,41 +184,6 @@ public class TypedefType
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasType();
-            case 3: return hasName();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasType() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getType();
-            case 3: return getName();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

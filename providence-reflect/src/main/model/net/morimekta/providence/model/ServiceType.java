@@ -7,9 +7,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ServiceType
-        implements Comparable<ServiceType>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<ServiceType,ServiceType._Field> {
+        implements net.morimekta.providence.PMessage<ServiceType,ServiceType._Field>,
+                   Comparable<ServiceType>,
+                   java.io.Serializable {
     private final static long serialVersionUID = 789757775761432238L;
 
 
@@ -118,6 +118,47 @@ public class ServiceType
      */
     public java.util.Map<String,String> getAnnotations() {
         return mAnnotations;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasName();
+            case 3: return hasExtend();
+            case 4: return numMethods() > 0;
+            case 5: return numAnnotations() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasName() ? 1 : 0;
+            case 3: return hasExtend() ? 1 : 0;
+            case 4: return numMethods();
+            case 5: return numAnnotations();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getName();
+            case 3: return getExtend();
+            case 4: return getMethods();
+            case 5: return getAnnotations();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
     }
 
     @Override
@@ -235,47 +276,6 @@ public class ServiceType
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasName();
-            case 3: return hasExtend();
-            case 4: return numMethods() > 0;
-            case 5: return numAnnotations() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return hasExtend() ? 1 : 0;
-            case 4: return numMethods();
-            case 5: return numAnnotations();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getName();
-            case 3: return getExtend();
-            case 4: return getMethods();
-            case 5: return getAnnotations();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override

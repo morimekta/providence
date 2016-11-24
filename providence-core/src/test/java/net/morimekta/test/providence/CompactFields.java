@@ -2,9 +2,9 @@ package net.morimekta.test.providence;
 
 @SuppressWarnings("unused")
 public class CompactFields
-        implements Comparable<CompactFields>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<CompactFields,CompactFields._Field> {
+        implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
+                   Comparable<CompactFields>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -8473304196623780023L;
 
     private final static int kDefaultId = 0;
@@ -61,6 +61,53 @@ public class CompactFields
      */
     public String getLabel() {
         return mLabel;
+    }
+
+    @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasName();
+            case 2: return true;
+            case 3: return hasLabel();
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasName() ? 1 : 0;
+            case 2: return 1;
+            case 3: return hasLabel() ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getName();
+            case 2: return getId();
+            case 3: return getLabel();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        boolean missing = false;
+        if (hasName()) {
+            if (missing) return false;
+        } else {
+            missing = true;
+        }
+        if (missing) return false;
+        if (hasLabel()) {
+            if (missing) return false;
+        } else {
+            missing = true;
+        }
+        return true;
     }
 
     @Override
@@ -138,53 +185,6 @@ public class CompactFields
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasName();
-            case 2: return true;
-            case 3: return hasLabel();
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasName() ? 1 : 0;
-            case 2: return 1;
-            case 3: return hasLabel() ? 1 : 0;
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getName();
-            case 2: return getId();
-            case 3: return getLabel();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        boolean missing = false;
-        if (hasName()) {
-            if (missing) return false;
-        } else {
-            missing = true;
-        }
-        if (missing) return false;
-        if (hasLabel()) {
-            if (missing) return false;
-        } else {
-            missing = true;
-        }
-        return true;
     }
 
     @Override

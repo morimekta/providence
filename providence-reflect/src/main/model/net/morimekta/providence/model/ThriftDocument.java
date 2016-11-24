@@ -5,9 +5,9 @@ package net.morimekta.providence.model;
  */
 @SuppressWarnings("unused")
 public class ThriftDocument
-        implements Comparable<ThriftDocument>,
-                   java.io.Serializable,
-                   net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field> {
+        implements net.morimekta.providence.PMessage<ThriftDocument,ThriftDocument._Field>,
+                   Comparable<ThriftDocument>,
+                   java.io.Serializable {
     private final static long serialVersionUID = -5731994850994905187L;
 
 
@@ -139,6 +139,47 @@ public class ThriftDocument
     }
 
     @Override
+    public boolean has(int key) {
+        switch(key) {
+            case 1: return hasComment();
+            case 2: return hasPackage();
+            case 3: return numIncludes() > 0;
+            case 4: return numNamespaces() > 0;
+            case 5: return numDecl() > 0;
+            default: return false;
+        }
+    }
+
+    @Override
+    public int num(int key) {
+        switch(key) {
+            case 1: return hasComment() ? 1 : 0;
+            case 2: return hasPackage() ? 1 : 0;
+            case 3: return numIncludes();
+            case 4: return numNamespaces();
+            case 5: return numDecl();
+            default: return 0;
+        }
+    }
+
+    @Override
+    public Object get(int key) {
+        switch(key) {
+            case 1: return getComment();
+            case 2: return getPackage();
+            case 3: return getIncludes();
+            case 4: return getNamespaces();
+            case 5: return getDecl();
+            default: return null;
+        }
+    }
+
+    @Override
+    public boolean compact() {
+        return false;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !(o instanceof ThriftDocument)) return false;
@@ -251,47 +292,6 @@ public class ThriftDocument
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean has(int key) {
-        switch(key) {
-            case 1: return hasComment();
-            case 2: return hasPackage();
-            case 3: return numIncludes() > 0;
-            case 4: return numNamespaces() > 0;
-            case 5: return numDecl() > 0;
-            default: return false;
-        }
-    }
-
-    @Override
-    public int num(int key) {
-        switch(key) {
-            case 1: return hasComment() ? 1 : 0;
-            case 2: return hasPackage() ? 1 : 0;
-            case 3: return numIncludes();
-            case 4: return numNamespaces();
-            case 5: return numDecl();
-            default: return 0;
-        }
-    }
-
-    @Override
-    public Object get(int key) {
-        switch(key) {
-            case 1: return getComment();
-            case 2: return getPackage();
-            case 3: return getIncludes();
-            case 4: return getNamespaces();
-            case 5: return getDecl();
-            default: return null;
-        }
-    }
-
-    @Override
-    public boolean compact() {
-        return false;
     }
 
     @Override
