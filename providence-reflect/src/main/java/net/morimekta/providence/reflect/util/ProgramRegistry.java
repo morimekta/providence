@@ -111,7 +111,7 @@ public class ProgramRegistry extends TypeRegistry {
             }
             String keyType = parts[0];
             String valueType = parts[1];
-            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.COLLECTION.id))) {
+            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
                 case SORTED:
                     return PMap.sortedProvider(getProvider(keyType, context, null),
                                                getProvider(valueType, context, null));
@@ -125,7 +125,7 @@ public class ProgramRegistry extends TypeRegistry {
         }
         if (name.startsWith("set<") && name.endsWith(">")) {
             String itemType = name.substring(4, name.length() - 1);
-            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.COLLECTION.id))) {
+            switch (ThriftCollection.forName(annotations.get(ThriftAnnotation.CONTAINER.tag))) {
                 case SORTED:
                     return PSet.sortedProvider(getProvider(itemType, context, null));
                 case ORDERED:

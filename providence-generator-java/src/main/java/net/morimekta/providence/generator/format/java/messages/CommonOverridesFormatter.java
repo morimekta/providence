@@ -4,7 +4,6 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.util.Stringable;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -76,7 +75,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .begin()
               .appendln("if (o == this) return true;")
               .formatln("if (o == null || !(o instanceof %s)) return false;", message.instanceType());
-        if (message.numericalOrderedFields()
+        if (message.numericalOrderFields()
                    .size() > 0) {
             boolean first = true;
             writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
@@ -118,7 +117,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                         Objects.class.getName())
               .begin("        ")
               .formatln("%s.class", message.instanceType());
-        message.numericalOrderedFields()
+        message.numericalOrderFields()
                .stream()
                .filter(field -> !field.isVoid())
                .forEach(field -> {
@@ -319,7 +318,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                   .appendln("switch (tUnionField) {")
                   .begin();
 
-            for (JField field : message.numericalOrderedFields()) {
+            for (JField field : message.numericalOrderFields()) {
                 writer.formatln("case %s:", caseFieldConstant(field))
                       .begin();
 
@@ -370,7 +369,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
         } else {
             writer.appendln("int c;");
 
-            for (JField field : message.numericalOrderedFields()) {
+            for (JField field : message.numericalOrderFields()) {
                 writer.newline();
 
                 if (!field.alwaysPresent()) {

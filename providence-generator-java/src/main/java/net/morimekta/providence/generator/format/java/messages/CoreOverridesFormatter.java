@@ -211,7 +211,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         writer.formatln("public enum _Field implements %s {", PField.class.getName())
               .begin();
 
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             String provider = field.getProvider();
             String defValue = "null";
             if (field.getPField()

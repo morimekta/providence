@@ -5,18 +5,46 @@ package net.morimekta.providence.reflect.util;
  */
 public enum ThriftAnnotation {
     NONE(null),
-    COLLECTION("collection"),
-    COMPACT("compact");
+    /**
+     * Whether a set-like container are normal (hash-), ordered (linked-hash-)
+     * or sorted (tree-). Valid for set and map type fields.
+     *
+     * container = "ORDERED"
+     */
+    CONTAINER("container"),
 
-    public final String id;
+    /**
+     * If the field, message, service or method is not supposed to be used any
+     * more. Whatever is in the value part may be used as the 'deprecated'
+     * reason.
+     */
+    DEPRECATED("deprecated"),
 
-    ThriftAnnotation(String id) {
-        this.id = id;
+    /**
+     * If a struct can use a compact serialized format. Only valid for struct,
+     * not for union and exception.
+     *
+     * compact = ""
+     */
+    COMPACT("compact"),
+
+    /**
+     * Add extra interfaces to
+     */
+    JAVA_IMPLEMENTS("java.implements"),
+
+    JAVA_EXCEPTION_CLASS("java.exception.class"),
+    ;
+
+    public final String tag;
+
+    ThriftAnnotation(String tag) {
+        this.tag = tag;
     }
 
-    public static ThriftAnnotation forIdentifier(String id) {
-        switch (id) {
-            case "collection": return COLLECTION;
+    public static ThriftAnnotation forTag(String tag) {
+        switch (tag) {
+            case "collection": return CONTAINER;
             case "compact": return COMPACT;
         }
         return NONE;

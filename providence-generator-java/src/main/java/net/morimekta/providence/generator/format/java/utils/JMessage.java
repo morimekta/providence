@@ -30,6 +30,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessage;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,10 +88,9 @@ public class JMessage<T extends CMessage<T, CField>> {
         return declaredFields;
     }
 
-    public List<JField> numericalOrderedFields() {
+    public List<JField> numericalOrderFields() {
         return numericalFields;
     }
-
 
     public String getDescriptorClass() throws GeneratorException {
         switch (variant()) {
@@ -120,7 +120,7 @@ public class JMessage<T extends CMessage<T, CField>> {
 
     public String extraImplements() {
         if (struct instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) struct).getAnnotationValue("java.implements");
+            return ((CAnnotatedDescriptor) struct).getAnnotationValue(ThriftAnnotation.JAVA_IMPLEMENTS);
         }
         return null;
     }
@@ -130,8 +130,8 @@ public class JMessage<T extends CMessage<T, CField>> {
             return null;
         }
         if (struct instanceof CAnnotatedDescriptor) {
-            if (((CAnnotatedDescriptor) struct).hasAnnotation("java.exception.class")) {
-                return ((CAnnotatedDescriptor) struct).getAnnotationValue("java.exception.class");
+            if (((CAnnotatedDescriptor) struct).hasAnnotation(ThriftAnnotation.JAVA_EXCEPTION_CLASS)) {
+                return ((CAnnotatedDescriptor) struct).getAnnotationValue(ThriftAnnotation.JAVA_EXCEPTION_CLASS);
             }
         }
         return Exception.class.getSimpleName();

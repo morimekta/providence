@@ -1,5 +1,7 @@
 package net.morimekta.providence.reflect.contained;
 
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
+
 import java.util.Set;
 
 /**
@@ -31,7 +33,25 @@ public interface CAnnotatedDescriptor {
     /**
      * Get the given annotation value.
      * @param name Name of annotation.
-     * @return The annotation value.
+     * @return The annotation value or null.
      */
     String getAnnotationValue(String name);
+
+    /**
+     * Get the given annotation value.
+     * @param annotation The annotation.
+     * @return If the annotation is present.
+     */
+    default boolean hasAnnotation(ThriftAnnotation annotation) {
+        return hasAnnotation(annotation.tag);
+    }
+
+    /**
+     * Get the given annotation value.
+     * @param annotation The annotation.
+     * @return The annotation value or null.
+     */
+    default String getAnnotationValue(ThriftAnnotation annotation) {
+        return getAnnotationValue(annotation.tag);
+    }
 }
