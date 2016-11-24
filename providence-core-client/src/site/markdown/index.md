@@ -1,7 +1,6 @@
 Providence Core : Client
 ========================
 
-Code for handling client-server communication. It contains actual client
-handlers and server implementations. Since some of this require a fait bit of
-dependencies it may drag in a bit. Therefore I like to keep it separate from the
-main core module.
+Code for handling client side of client-server communication. It contains the
+actual client handlers. It should only require the google-http-client library
+and otherwise rely on the same dependencies as core providence.

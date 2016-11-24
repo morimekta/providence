@@ -20,11 +20,6 @@
             <artifactId>providence-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-core-jackson</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>net.morimekta.providence</groupId>

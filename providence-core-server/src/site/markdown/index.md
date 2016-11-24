@@ -1,7 +1,7 @@
-Providence Core : Client
+Providence Core : Server
 ========================
 
-Code for handling client-server communication. It contains actual client
-handlers and server implementations. Since some of this require a fait bit of
-dependencies it may drag in a bit. Therefore I like to keep it separate from the
-main core module.
+Code for handling the server side of client-server communication. It contains
+the actual server implementations, and helpers to make working with the
+providence services more powerful. Since some of this require a fair bit of
+dependencies it is kept separate from the rest of providence.
