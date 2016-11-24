@@ -324,24 +324,55 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                   .appendln('}')
                   .appendln("generator.writeEndObject();");
         } else {
-            // if (message.descriptor().isCompactible()) {
-            //     writer.formatln("if (compact()) {")
-            //           .begin();
-            //
-            //     // TODO: Make compact
-            // }
+            if (message.descriptor().isCompactible()) {
+                writer.formatln("if (instance.compact()) {")
+                      .begin()
+                      .formatln("generator.writeStartArray();");
+
+                int ifStack = 0;
+
+                for (JField field : message.numericalOrderFields()) {
+                    if (!(field.alwaysPresent() || field.isRequired())) {
+                        writer.formatln("if (instance.%s != null) {", field.member())
+                              .begin();
+                        ++ifStack;
+                    }
+
+                    switch (field.type()) {
+                        case BINARY:
+                            writer.formatln("provider.defaultSerializeValue(instance.%s.toBase64(), generator);",
+                                            field.member());
+                            break;
+                        default:
+                            writer.formatln("provider.defaultSerializeValue(instance.%s, generator);",
+                                            field.member());
+                            break;
+                    }
+                }
+
+                while (ifStack-- > 0) {
+                    writer.end()
+                          .appendln('}');
+                }
+
+                writer.formatln("generator.writeEndArray();");
+
+                writer.end()
+                      .appendln("} else {")
+                      .begin();
+            }
 
             writer.formatln("generator.writeStartObject();");
 
-            for (JField field : message.declaredOrderFields()) {
-                if (!field.alwaysPresent()) {
+            for (JField field : message.numericalOrderFields()) {
+                if (!(field.alwaysPresent() || field.isRequired())) {
                     writer.formatln("if (instance.%s != null) {", field.member())
                           .begin();
                 }
 
                 appendWriteValue(field);
 
-                if (!field.alwaysPresent()) {
+                if (!(field.alwaysPresent() || field.isRequired())) {
                     writer.end()
                           .appendln('}');
                 }
@@ -349,10 +380,10 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
 
             writer.appendln("generator.writeEndObject();");
 
-            // if (message.descriptor().isCompactible()) {
-            //     writer.end()
-            //           .appendln('}');
-            // }
+            if (message.descriptor().isCompactible()) {
+                writer.end()
+                      .appendln('}');
+            }
         }
 
         writer.end()

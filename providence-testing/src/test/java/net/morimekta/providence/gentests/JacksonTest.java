@@ -52,7 +52,7 @@ public class JacksonTest {
                      "\"stringValue\":\"Ûñı©óð€\"," +
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
                      "\"enumValue\":1," +
-                     "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                     "\"compactValue\":[\"Test\",4]" +
                      "}", serialize(primitives));
     }
 
@@ -68,7 +68,7 @@ public class JacksonTest {
                      "\"stringValue\":\"Ûñı©óð€\"," +
                      "\"binaryValue\":\"AAECAwQFBgcICQA\"," +
                      "\"enumValue\":1," +
-                     "\"compactValue\":{\"name\":\"Test\",\"id\":4}" +
+                     "\"compactValue\":[\"Test\",4]" +
                      "}]", serialize(Collections.singletonList(primitives)));
     }
 
@@ -76,7 +76,7 @@ public class JacksonTest {
     public void testSerialize_union() throws IOException {
         assertEquals("{\"booleanValue\":true}", serialize(UnionFields.withBooleanValue(true)));
         assertEquals("{\"binaryValue\":\"AAECAwQFBgcICQA\"}", serialize(UnionFields.withBinaryValue(Binary.fromBase64("AAECAwQFBgcICQA"))));
-        assertEquals("{\"compactValue\":{\"name\":\"test\",\"id\":4}}",
+        assertEquals("{\"compactValue\":[\"test\",4]}",
                      serialize(UnionFields.withCompactValue(new CompactFields("test", 4, null))));
     }
 
