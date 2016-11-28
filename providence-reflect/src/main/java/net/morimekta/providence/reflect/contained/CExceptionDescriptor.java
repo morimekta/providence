@@ -25,6 +25,7 @@ import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +71,7 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
 
     @Override
     public CField[] getFields() {
-        return fields;
+        return Arrays.copyOf(fields, fields.length);
     }
 
     @Override

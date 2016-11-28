@@ -23,6 +23,9 @@ package net.morimekta.providence.util.pretty;
 import net.morimekta.util.Slice;
 import net.morimekta.util.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +70,27 @@ public class Token extends Slice {
         super(fb, off, len);
         this.lineNo = lineNo;
         this.linePos = linePos;
+    }
+
+    @Override
+    @SuppressFBWarnings(justification = "TODO: Need to fix utils' Slice equals method.",
+                        value = "EQ_OVERRIDING_EQUALS_NOT_SYMMETRIC")
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !(o instanceof Token)) return false;
+
+        Token other = (Token) o;
+
+        return (fb == other.fb) &&
+               (off == other.off) &&
+               (len == other.len) &&
+               (lineNo == other.lineNo) &&
+               (linePos == other.linePos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Token.class, fb, off, len, lineNo, linePos);
     }
 
     public int getLineNo() {

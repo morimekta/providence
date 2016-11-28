@@ -241,6 +241,8 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
                     ((PList.Builder) this.currentValue).add(value);
                     break;
                 }
+                default:
+                    break;
             }
             return this;
         }

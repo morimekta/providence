@@ -22,6 +22,9 @@ package net.morimekta.providence;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.meta.When;
+
 /**
  * Base class for message builders.
  */
@@ -53,6 +56,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param value The field value.
      * @return The message builder.
      */
+    @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> set(int key, Object value);
 
     /**
@@ -63,6 +67,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return The message builder.
      * @throws IllegalArgumentException if the field is not a list or set.
      */
+    @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> addTo(int key, Object value);
 
     /**
@@ -71,6 +76,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param key The field key.
      * @return The message builder.
      */
+    @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> clear(int key);
 
     /**
@@ -80,6 +86,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @param from The message to merge values from.
      */
+    @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> merge(T from);
 
     /**

@@ -723,6 +723,7 @@ public class ServiceType
                 case 3: setExtend((String) value); break;
                 case 4: setMethods((java.util.List<net.morimekta.providence.model.FunctionType>) value); break;
                 case 5: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -744,6 +745,7 @@ public class ServiceType
                 case 3: clearExtend(); break;
                 case 4: clearMethods(); break;
                 case 5: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

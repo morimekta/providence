@@ -72,8 +72,8 @@ public class ParseException extends Exception implements Stringable {
     @Override
     public String asString() {
         if (line != null && token != null) {
-            return String.format("Parse error on line %d, pos %d: %s\n" +
-                                 "%s\n" +
+            return String.format("Parse error on line %d, pos %d: %s%n" +
+                                 "%s%n" +
                                  "%s^",
                                  token.getLineNo(),
                                  token.getLinePos(),

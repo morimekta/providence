@@ -790,6 +790,7 @@ public class ProgramType
                 case 3: setIncludes((java.util.List<String>) value); break;
                 case 4: setNamespaces((java.util.Map<String,String>) value); break;
                 case 5: setDecl((java.util.List<net.morimekta.providence.model.Declaration>) value); break;
+                default: break;
             }
             return this;
         }
@@ -812,6 +813,7 @@ public class ProgramType
                 case 3: clearIncludes(); break;
                 case 4: clearNamespaces(); break;
                 case 5: clearDecl(); break;
+                default: break;
             }
             return this;
         }

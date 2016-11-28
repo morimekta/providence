@@ -32,9 +32,9 @@ public enum PRequirement {
     OPTIONAL(false, false, "optional"),
     REQUIRED(false, true, "required");
 
-    public boolean fieldIsValueType;
-    public boolean presenceRequired;
-    public String  label;
+    public final boolean fieldIsValueType;
+    public final boolean presenceRequired;
+    public final String  label;
 
     PRequirement(boolean value, boolean presence, String name) {
         fieldIsValueType = value;

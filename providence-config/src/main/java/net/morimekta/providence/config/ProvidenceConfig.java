@@ -336,7 +336,7 @@ public class ProvidenceConfig {
 
     @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField> M loadConfigRecursively(File file, String... stack)
-            throws IOException, SerializerException {
+            throws IOException {
         M result = null;
 
         try {
@@ -449,7 +449,7 @@ public class ProvidenceConfig {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Object> parseParams(Tokenizer tokenizer) throws IOException, SerializerException {
+    private Map<String,Object> parseParams(Tokenizer tokenizer) throws IOException {
         Map<String,Object> out = new HashMap<>();
 
         tokenizer.expectSymbol("params start", Token.kMessageStart);
@@ -512,7 +512,7 @@ public class ProvidenceConfig {
                                                                               Map<String, PMessage> includes,
                                                                               Map<String, Object> params,
                                                                               PMessageBuilder<M, F> builder)
-            throws IOException, SerializerException {
+            throws IOException {
         PStructDescriptor<M, F> descriptor = builder.descriptor();
 
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
@@ -540,7 +540,7 @@ public class ProvidenceConfig {
                                                                         Map<String, PMessage> includes,
                                                                         Map<String, Object> params,
                                                                         PMessageBuilder<M, F> builder)
-            throws IOException, SerializerException {
+            throws IOException {
         PStructDescriptor<M, F> descriptor = builder.descriptor();
 
         Token token = tokenizer.expect("object end or field");
@@ -661,7 +661,7 @@ public class ProvidenceConfig {
                               Map<String, PMessage> includes,
                               Map<String, Object> params,
                               PMap descriptor,
-                              Map builder) throws IOException, SerializerException {
+                              Map builder) throws IOException {
         Token next = tokenizer.expect("map key or end");
         while (!next.isSymbol(Token.kMessageEnd)) {
             Object key = parseFieldValue(next, tokenizer, includes, params, descriptor.keyDescriptor());
@@ -687,7 +687,7 @@ public class ProvidenceConfig {
                                    Tokenizer tokenizer,
                                    Map<String, PMessage> includes,
                                    Map<String, Object> params,
-                                   PDescriptor descriptor) throws IOException, SerializerException {
+                                   PDescriptor descriptor) throws IOException {
         try {
             switch (descriptor.getType()) {
                 case BOOL:
@@ -859,8 +859,9 @@ public class ProvidenceConfig {
 
     private Map<String, Object> mkParams(Map<String,Object> declared) {
         ImmutableMap.Builder<String,Object> builder = ImmutableMap.builder();
-        for (String key : declared.keySet()) {
-            Object orig = declared.get(key);
+        for (Map.Entry<String,Object> entry : declared.entrySet()) {
+            Object orig = entry.getValue();
+            String key = entry.getKey();
             if (this.inputParams.containsKey(key)) {
                 if (orig instanceof CharSequence) {
                     builder.put(key, this.inputParams.get(key));

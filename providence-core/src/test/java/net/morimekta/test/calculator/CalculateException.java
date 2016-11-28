@@ -462,6 +462,7 @@ public class CalculateException
             switch (key) {
                 case 1: setMessage((String) value); break;
                 case 2: setOperation((net.morimekta.test.calculator.Operation) value); break;
+                default: break;
             }
             return this;
         }
@@ -479,6 +480,7 @@ public class CalculateException
             switch (key) {
                 case 1: clearMessage(); break;
                 case 2: clearOperation(); break;
+                default: break;
             }
             return this;
         }

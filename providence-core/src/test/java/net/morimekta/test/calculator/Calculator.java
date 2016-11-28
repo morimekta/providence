@@ -528,6 +528,7 @@ public class Calculator {
                 if (value == null) return clear(key);
                 switch (key) {
                     case 1: setOp((net.morimekta.test.calculator.Operation) value); break;
+                    default: break;
                 }
                 return this;
             }
@@ -544,6 +545,7 @@ public class Calculator {
             public _Builder clear(int key) {
                 switch (key) {
                     case 1: clearOp(); break;
+                    default: break;
                 }
                 return this;
             }
@@ -1038,6 +1040,7 @@ public class Calculator {
                 switch (key) {
                     case 0: setSuccess((net.morimekta.test.calculator.Operand) value); break;
                     case 1: setCe((net.morimekta.test.calculator.CalculateException) value); break;
+                    default: break;
                 }
                 return this;
             }
@@ -1055,6 +1058,7 @@ public class Calculator {
                 switch (key) {
                     case 0: clearSuccess(); break;
                     case 1: clearCe(); break;
+                    default: break;
                 }
                 return this;
             }
@@ -1330,6 +1334,7 @@ public class Calculator {
             public _Builder set(int key, Object value) {
                 if (value == null) return clear(key);
                 switch (key) {
+                    default: break;
                 }
                 return this;
             }
@@ -1345,6 +1350,7 @@ public class Calculator {
             @Override
             public _Builder clear(int key) {
                 switch (key) {
+                    default: break;
                 }
                 return this;
             }

@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +71,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
 
     @Override
     public CField[] getFields() {
-        return fields;
+        return Arrays.copyOf(fields, fields.length);
     }
 
     @Override

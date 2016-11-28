@@ -50,7 +50,7 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
  *
  */
 public class JHelper {
-    public static String packageSeparator = ".";
+    public static final String packageSeparator = ".";
 
     private final ProgramRegistry mRegistry;
 

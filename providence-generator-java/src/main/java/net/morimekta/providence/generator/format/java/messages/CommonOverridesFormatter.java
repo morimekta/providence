@@ -359,6 +359,8 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                                         field.member(),
                                         field.member());
                         break;
+                    default:
+                        break;
                 }
 
                 writer.end();
@@ -415,6 +417,8 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                         writer.formatln("c = Integer.compare(%s.hashCode(), other.%s.hashCode());",
                                         field.member(),
                                         field.member());
+                        break;
+                    default:
                         break;
                 }
                 writer.appendln("if (c != 0) return c;");

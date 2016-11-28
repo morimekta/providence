@@ -564,7 +564,7 @@ public class JsonSerializer extends Serializer {
                     return Long.parseLong(key);
                 case DOUBLE:
                     try {
-                        JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes()));
+                        JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes(StandardCharsets.US_ASCII)));
                         JsonToken token = tokenizer.next();
                         if (!token.isNumber()) {
                             throw new SerializerException(key + " is not a number");

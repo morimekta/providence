@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,7 +74,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
 
     @Override
     public CField[] getFields() {
-        return fields;
+        return Arrays.copyOf(fields, fields.length);
     }
 
     @Override

@@ -19,6 +19,7 @@ import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
@@ -86,6 +87,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project = null;
 
+    @SuppressFBWarnings("UWF_NULL_FIELD")
     @Component
     protected MavenProjectHelper projectHelper = null;
 
@@ -113,11 +115,11 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
                  BufferedOutputStream bos = new BufferedOutputStream(fos);
                  ZipOutputStream zos = new ZipOutputStream(bos)) {
 
-                String tmpPath = "";
+                StringBuilder tmpPath = new StringBuilder();
                 for (String dir : internalPath.split("[/]")) {
                     if (!dir.isEmpty()) {
-                        tmpPath = tmpPath + dir + File.separator;
-                        zos.putNextEntry(new ZipEntry(tmpPath));
+                        tmpPath.append(dir).append(File.separator);
+                        zos.putNextEntry(new ZipEntry(tmpPath.toString()));
                         zos.closeEntry();
                     }
                 }

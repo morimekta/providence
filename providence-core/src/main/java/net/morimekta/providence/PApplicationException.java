@@ -448,6 +448,7 @@ public class PApplicationException
             switch (key) {
                 case 1: setMessage((String) value); break;
                 case 2: setId((net.morimekta.providence.PApplicationExceptionType) value); break;
+                default: break;
             }
             return this;
         }
@@ -465,6 +466,7 @@ public class PApplicationException
             switch (key) {
                 case 1: clearMessage(); break;
                 case 2: clearId(); break;
+                default: break;
             }
             return this;
         }

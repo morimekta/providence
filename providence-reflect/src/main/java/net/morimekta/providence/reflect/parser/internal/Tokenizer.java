@@ -38,8 +38,6 @@ public class Tokenizer extends InputStream {
     private int lineNo;
     private int linePos;
 
-    private boolean mSlash;
-
     private       Token             nextToken;
 
     public Tokenizer(InputStream in) throws IOException {

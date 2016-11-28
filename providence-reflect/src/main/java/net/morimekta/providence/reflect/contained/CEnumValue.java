@@ -25,6 +25,7 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -107,6 +108,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
 
     @Override
     public boolean equals(Object o) {
+        if (o == this) return true;
         if (o == null || !(o instanceof CEnumValue)) {
             return false;
         }
@@ -117,6 +119,13 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
                other.getName()
                     .equals(name) &&
                other.getValue() == value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(CEnumValue.class,
+                            descriptor().getQualifiedName(null),
+                            name, value);
     }
 
     @Override

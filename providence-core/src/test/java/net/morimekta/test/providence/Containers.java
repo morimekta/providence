@@ -4398,6 +4398,7 @@ public class Containers
                 case 54: setUnionFields((net.morimekta.test.providence.UnionFields) value); break;
                 case 55: setExceptionFields((net.morimekta.test.providence.ExceptionFields) value); break;
                 case 56: setDefaultValues((net.morimekta.test.providence.DefaultValues) value); break;
+                default: break;
             }
             return this;
         }
@@ -4469,6 +4470,7 @@ public class Containers
                 case 54: clearUnionFields(); break;
                 case 55: clearExceptionFields(); break;
                 case 56: clearDefaultValues(); break;
+                default: break;
             }
             return this;
         }

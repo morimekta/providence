@@ -846,6 +846,7 @@ public class FieldType
                 case 5: setName((String) value); break;
                 case 6: setDefaultValue((String) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -868,6 +869,7 @@ public class FieldType
                 case 5: clearName(); break;
                 case 6: clearDefaultValue(); break;
                 case 7: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

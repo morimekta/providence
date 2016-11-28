@@ -51,6 +51,8 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 07.09.15
@@ -235,7 +237,7 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private String parseBlockComment(Tokenizer tokenizer) throws IOException {
-        String block = IOUtils.readString(tokenizer, new String(Token.kBlockCommentEnd)).trim();
+        String block = IOUtils.readString(tokenizer, new String(Token.kBlockCommentEnd, US_ASCII)).trim();
         String[] lines = block.split("\n");
         StringBuilder builder = new StringBuilder();
 

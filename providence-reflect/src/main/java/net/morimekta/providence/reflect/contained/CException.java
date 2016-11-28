@@ -45,7 +45,7 @@ import java.util.TreeMap;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CException extends Throwable implements PMessage<CException, CField> {
+public class CException extends Exception implements PMessage<CException, CField> {
     private final CExceptionDescriptor descriptor;
     private final Map<Integer, Object> values;
 

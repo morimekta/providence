@@ -480,6 +480,7 @@ public class CompactFields
                 case 1: setName((String) value); break;
                 case 2: setId((int) value); break;
                 case 3: setLabel((String) value); break;
+                default: break;
             }
             return this;
         }
@@ -498,6 +499,7 @@ public class CompactFields
                 case 1: clearName(); break;
                 case 2: clearId(); break;
                 case 3: clearLabel(); break;
+                default: break;
             }
             return this;
         }

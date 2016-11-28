@@ -23,11 +23,12 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.util.io.IOUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -114,16 +115,20 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project = null;
 
+    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
     protected ArtifactRepository localRepository = null;
 
+    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     @Parameter(defaultValue = "${project.remoteRepositories}", readonly = true, required = true)
     protected List<ArtifactRepository> remoteRepositories = null;
 
     @Component
+    @SuppressFBWarnings("URF_UNREAD_FIELD")
     private ArtifactResolver artifactResolver = null;
 
     @Component
+    @SuppressFBWarnings("URF_UNREAD_FIELD")
     private RepositorySystem repositorySystem = null;
 
     boolean executeInternal(File outputDir,

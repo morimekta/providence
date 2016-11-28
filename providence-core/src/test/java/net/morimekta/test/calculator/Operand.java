@@ -546,6 +546,7 @@ public class Operand
                 case 1: setOperation((net.morimekta.test.calculator.Operation) value); break;
                 case 2: setNumber((double) value); break;
                 case 3: setImaginary((net.morimekta.test.number.Imaginary) value); break;
+                default: break;
             }
             return this;
         }
@@ -564,6 +565,7 @@ public class Operand
                 case 1: clearOperation(); break;
                 case 2: clearNumber(); break;
                 case 3: clearImaginary(); break;
+                default: break;
             }
             return this;
         }

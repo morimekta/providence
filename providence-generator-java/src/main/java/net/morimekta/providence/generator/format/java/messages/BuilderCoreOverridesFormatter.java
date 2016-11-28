@@ -206,7 +206,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 writer.formatln("case %d: %s((%s) value); break;", field.id(), field.setter(), field.valueType());
             }
         }
-        writer.end()
+        writer.appendln("default: break;")
+              .end()
               .appendln('}')
               .appendln("return this;")
               .end()
@@ -250,7 +251,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
         for (JField field : message.declaredOrderFields()) {
             writer.formatln("case %d: %s(); break;", field.id(), field.resetter());
         }
-        writer.end()
+        writer.appendln("default: break;")
+              .end()
               .appendln('}')
               .appendln("return this;")
               .end()

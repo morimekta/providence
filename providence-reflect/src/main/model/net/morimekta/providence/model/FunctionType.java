@@ -907,6 +907,7 @@ public class FunctionType
                 case 5: setParams((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 6: setExceptions((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -931,6 +932,7 @@ public class FunctionType
                 case 5: clearParams(); break;
                 case 6: clearExceptions(); break;
                 case 7: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

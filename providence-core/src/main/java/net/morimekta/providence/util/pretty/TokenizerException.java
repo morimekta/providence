@@ -87,9 +87,9 @@ public class TokenizerException extends SerializerException {
                 fileSpec = " in " + file;
             }
             if (line != null) {
-                return String.format("Error%s on line %d, pos %d:\n" +
-                                     "    %s\n" +
-                                     "%s\n" +
+                return String.format("Error%s on line %d, pos %d:%n" +
+                                     "    %s%n" +
+                                     "%s%n" +
                                      "%s^",
                                      fileSpec,
                                      getLineNo(),

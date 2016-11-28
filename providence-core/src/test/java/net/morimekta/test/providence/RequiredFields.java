@@ -1001,6 +1001,7 @@ public class RequiredFields
                 case 8: setBinaryValue((net.morimekta.util.Binary) value); break;
                 case 9: setEnumValue((net.morimekta.test.providence.Value) value); break;
                 case 10: setCompactValue((net.morimekta.test.providence.CompactFields) value); break;
+                default: break;
             }
             return this;
         }
@@ -1026,6 +1027,7 @@ public class RequiredFields
                 case 8: clearBinaryValue(); break;
                 case 9: clearEnumValue(); break;
                 case 10: clearCompactValue(); break;
+                default: break;
             }
             return this;
         }

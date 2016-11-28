@@ -124,7 +124,7 @@ public class BinarySerializer extends Serializer {
 
         int len = method.length;
         if (versioned) {
-            len += out.writeInt(VERSION_1 | (byte) call.getType().getValue());
+            len += out.writeInt(VERSION_1 | call.getType().getValue());
             len += out.writeInt(method.length);
             out.write(method);
         } else {

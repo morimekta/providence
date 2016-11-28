@@ -21,11 +21,14 @@ package net.morimekta.providence.reflect.parser.internal;
 
 import net.morimekta.util.Slice;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.regex.Pattern;
 
 /**
  * Thrift token. Returned from the thrift tokenizer for each real "token".
  */
+@SuppressFBWarnings(value = {"MS_MUTABLE_ARRAY", "MS_PKGPROTECT"})
 public class Token extends Slice {
     // Various symbols.
     public static final char kMessageStart  = '{';
@@ -105,6 +108,16 @@ public class Token extends Slice {
         super(fb, off, len);
         this.lineNo = lineNo;
         this.linePos = linePos;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public int getLineNo() {

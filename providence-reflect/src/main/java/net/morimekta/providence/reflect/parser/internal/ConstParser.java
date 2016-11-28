@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
+
 /**
  * Parsing thrift constants from string to actual value. This uses the JSON
  * format with some allowed special references. So enum values are always
@@ -271,7 +273,7 @@ public class ConstParser {
                 return Long.parseLong(key);
             case DOUBLE:
                 try {
-                    ByteArrayInputStream bais = new ByteArrayInputStream(key.getBytes());
+                    ByteArrayInputStream bais = new ByteArrayInputStream(key.getBytes(US_ASCII));
                     JsonTokenizer tokener = new JsonTokenizer(bais);
                     JsonToken token = tokener.expect("parsing double value");
                     return token.doubleValue();

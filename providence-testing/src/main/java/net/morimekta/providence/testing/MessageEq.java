@@ -176,19 +176,19 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
                                                           xPath))
                                 .collect(Collectors.toList()));
 
-        for (K key : expected.keySet()) {
+        for (Map.Entry<K,V> entry : expected.entrySet()) {
             if (!actual.keySet()
-                       .contains(key)) {
+                       .contains(entry.getKey())) {
                 mismatches.add(String.format("did not find entry (%s, %s) in in %s",
-                                             toString(key),
-                                             toString(expected.get(key)),
+                                             toString(entry.getKey()),
+                                             toString(expected.get(entry.getKey())),
                                              xPath));
             } else {
-                V exp = expected.get(key);
-                V act = actual.get(key);
+                V exp = entry.getValue();
+                V act = actual.get(entry.getKey());
                 if (!Objects.equals(exp, act)) {
                     // value differs.
-                    String keyedXPath = String.format("%s[%s]", xPath, toString(key));
+                    String keyedXPath = String.format("%s[%s]", xPath, toString(entry));
                     if (exp == null || act == null) {
                         mismatches.add(String.format("%s was %s, should be %s",
                                                      keyedXPath,

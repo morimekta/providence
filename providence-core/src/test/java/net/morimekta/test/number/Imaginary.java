@@ -381,6 +381,7 @@ public class Imaginary
             switch (key) {
                 case 1: setV((double) value); break;
                 case 2: setI((double) value); break;
+                default: break;
             }
             return this;
         }
@@ -398,6 +399,7 @@ public class Imaginary
             switch (key) {
                 case 1: clearV(); break;
                 case 2: clearI(); break;
+                default: break;
             }
             return this;
         }

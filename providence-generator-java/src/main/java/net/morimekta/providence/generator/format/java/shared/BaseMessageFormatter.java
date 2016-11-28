@@ -39,9 +39,7 @@ public abstract class BaseMessageFormatter {
 
     protected void appendClassExtends(JMessage<?> message) {
         if (message.isException()) {
-            if (message.isException()) {
-                writer.appendln("extends " + message.exceptionBaseClass());
-            }
+            writer.appendln("extends " + message.exceptionBaseClass());
         }
     }
 

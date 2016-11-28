@@ -433,6 +433,7 @@ public class Operation
             switch (key) {
                 case 1: setOperator((net.morimekta.test.calculator.Operator) value); break;
                 case 2: setOperands((java.util.List<net.morimekta.test.calculator.Operand>) value); break;
+                default: break;
             }
             return this;
         }
@@ -451,6 +452,7 @@ public class Operation
             switch (key) {
                 case 1: clearOperator(); break;
                 case 2: clearOperands(); break;
+                default: break;
             }
             return this;
         }

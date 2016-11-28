@@ -23,6 +23,7 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
 
     @Override
     public CEnumValue[] getValues() {
-        return values;
+        return Arrays.copyOf(values, values.length);
     }
 
     @Override

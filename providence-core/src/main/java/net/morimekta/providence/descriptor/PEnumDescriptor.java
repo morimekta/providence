@@ -24,6 +24,8 @@ import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
 
+import java.util.Objects;
+
 /**
  * The definition of a thrift enum.
  */
@@ -88,6 +90,11 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
         }
 
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(PEnumDescriptor.class, getQualifiedName(null));
     }
 
     protected PEnumBuilderFactory<T> getFactoryInternal() {

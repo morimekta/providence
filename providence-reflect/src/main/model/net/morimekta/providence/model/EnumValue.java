@@ -594,6 +594,7 @@ public class EnumValue
                 case 2: setName((String) value); break;
                 case 3: setValue((int) value); break;
                 case 4: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -613,6 +614,7 @@ public class EnumValue
                 case 2: clearName(); break;
                 case 3: clearValue(); break;
                 case 4: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

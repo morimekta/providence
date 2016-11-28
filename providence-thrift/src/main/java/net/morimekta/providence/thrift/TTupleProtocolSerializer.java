@@ -64,7 +64,7 @@ public class TTupleProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> int
-    serialize(OutputStream output, Message message) throws IOException, SerializerException {
+    serialize(OutputStream output, Message message) throws IOException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -81,7 +81,7 @@ public class TTupleProtocolSerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream output, PServiceCall<Message, Field> call)
-            throws IOException, SerializerException {
+            throws IOException {
         CountingOutputStream wrapper = new CountingOutputStream(output);
         TTransport transport = new TIOStreamTransport(wrapper);
         try {
@@ -102,7 +102,7 @@ public class TTupleProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> Message
-    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException, SerializerException {
+    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
@@ -411,6 +411,8 @@ public class TTupleProtocolSerializer extends Serializer {
                 }
 
                 protocol.writeMapEnd();
+                break;
+            default:
                 break;
         }
     }

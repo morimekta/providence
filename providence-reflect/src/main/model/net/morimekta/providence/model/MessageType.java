@@ -723,6 +723,7 @@ public class MessageType
                 case 3: setName((String) value); break;
                 case 4: setFields((java.util.List<net.morimekta.providence.model.FieldType>) value); break;
                 case 5: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -744,6 +745,7 @@ public class MessageType
                 case 3: clearName(); break;
                 case 4: clearFields(); break;
                 case 5: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

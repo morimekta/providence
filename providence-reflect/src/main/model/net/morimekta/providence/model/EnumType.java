@@ -642,6 +642,7 @@ public class EnumType
                 case 2: setName((String) value); break;
                 case 3: setValues((java.util.List<net.morimekta.providence.model.EnumValue>) value); break;
                 case 4: setAnnotations((java.util.Map<String,String>) value); break;
+                default: break;
             }
             return this;
         }
@@ -662,6 +663,7 @@ public class EnumType
                 case 2: clearName(); break;
                 case 3: clearValues(); break;
                 case 4: clearAnnotations(); break;
+                default: break;
             }
             return this;
         }

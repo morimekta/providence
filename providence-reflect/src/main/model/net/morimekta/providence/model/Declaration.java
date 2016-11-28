@@ -789,6 +789,7 @@ public class Declaration
                 case 3: setDeclStruct((net.morimekta.providence.model.MessageType) value); break;
                 case 4: setDeclService((net.morimekta.providence.model.ServiceType) value); break;
                 case 5: setDeclConst((net.morimekta.providence.model.ConstType) value); break;
+                default: break;
             }
             return this;
         }
@@ -809,6 +810,7 @@ public class Declaration
                 case 3: clearDeclStruct(); break;
                 case 4: clearDeclService(); break;
                 case 5: clearDeclConst(); break;
+                default: break;
             }
             return this;
         }

@@ -485,6 +485,7 @@ public class TypedefType
                 case 1: setDocumentation((String) value); break;
                 case 2: setType((String) value); break;
                 case 3: setName((String) value); break;
+                default: break;
             }
             return this;
         }
@@ -503,6 +504,7 @@ public class TypedefType
                 case 1: clearDocumentation(); break;
                 case 2: clearType(); break;
                 case 3: clearName(); break;
+                default: break;
             }
             return this;
         }

@@ -308,10 +308,6 @@ public class JField {
         String containerProvider = "provider";
         if (container != null) {
             ContainerType containerType = ContainerType.valueOf(container.toUpperCase());
-            if (containerType == null) {
-                throw new GeneratorException("Unknown container type: " + container);
-            }
-
             switch (containerType) {
                 case DEFAULT:
                     containerProvider = "provider";
@@ -321,6 +317,8 @@ public class JField {
                     break;
                 case ORDERED:
                     containerProvider = "orderedProvider";
+                    break;
+                default:
                     break;
             }
         }
