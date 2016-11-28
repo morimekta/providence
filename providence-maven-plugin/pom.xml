@@ -10,7 +10,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.3.0</version>
+        <version>0.3.1-SNAPSHOT</version>
     </parent>
     <artifactId>providence-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
