@@ -23,6 +23,7 @@ import net.morimekta.util.Slice;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -112,12 +113,18 @@ public class Token extends Slice {
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if (o == this) return true;
+        if (o == null || !getClass().equals(o.getClass())) return false;
+
+        Token other = (Token) o;
+        return super.equals(o) &&
+               (lineNo == other.lineNo) &&
+               (linePos == other.linePos);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(Token.class, super.hashCode(), lineNo, linePos);
     }
 
     public int getLineNo() {
