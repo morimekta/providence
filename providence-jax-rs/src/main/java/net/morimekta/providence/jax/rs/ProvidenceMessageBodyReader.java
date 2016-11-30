@@ -20,10 +20,9 @@
 package net.morimekta.providence.jax.rs;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.SerializerProvider;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -37,25 +36,24 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * Base message body reader for providence objects.
  */
-public abstract class ProvidenceMessageBodyReader<T extends PMessage<T, F>, F extends PField> implements MessageBodyReader<T> {
-    private final Serializer mSerializer;
+public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<PMessage> {
+    private final SerializerProvider provider;
 
-    public ProvidenceMessageBodyReader(Serializer serializer) {
-        mSerializer = serializer;
+    ProvidenceMessageBodyReader(SerializerProvider provider) {
+        this.provider = provider;
     }
 
-    @SuppressWarnings("unchecked")
-    private PStructDescriptor<T,F> getDescriptor(Class<?> type) {
+    private PStructDescriptor getDescriptor(Class<?> type) {
         try {
-            if (!PMessage.class.isAssignableFrom(type))
+            if (!PMessage.class.isAssignableFrom(type)) {
                 return null;
+            }
             Field descField = type.getDeclaredField("kDescriptor");
             Object desc = descField.get(null);
             if (desc instanceof PStructDescriptor) {
-                return (PStructDescriptor<T,F>) desc;
+                return (PStructDescriptor) desc;
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             // e.printStackTrace();
@@ -69,16 +67,20 @@ public abstract class ProvidenceMessageBodyReader<T extends PMessage<T, F>, F ex
     }
 
     @Override
-    public T readFrom(Class<T> type,
+    public PMessage readFrom(Class<PMessage> type,
                       Type genericType,
                       Annotation[] annotations,
                       MediaType mediaType,
                       MultivaluedMap<String, String> httpHeaders,
                       InputStream entityStream) throws IOException, WebApplicationException {
-        // We need to get the "DESCRIPTOR" static field form the type class.
+        String contentType = mediaType.toString();
+
         try {
-            PStructDescriptor<T,F> descriptor = getDescriptor(type);
-            return mSerializer.deserialize(entityStream, descriptor);
+            PStructDescriptor descriptor = getDescriptor(type);
+            return provider.getSerializer(contentType)
+                           .deserialize(entityStream, descriptor);
+        } catch (NullPointerException e) {
+            throw new ProcessingException("Unknown media type: " + mediaType, e);
         } catch (SerializerException e) {
             throw new ProcessingException("Unable to deserialize entity", e);
         }

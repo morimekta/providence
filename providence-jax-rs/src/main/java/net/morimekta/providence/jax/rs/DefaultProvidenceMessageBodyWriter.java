@@ -19,18 +19,25 @@
 
 package net.morimekta.providence.jax.rs;
 
-import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.providence.serializer.DefaultSerializerProvider;
+import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 
-import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * Default message body writer for standard providence serializers.
  */
-@Consumes({JsonSerializer.JSON_MIME_TYPE, JsonSerializer.MIME_TYPE})
-public class JsonMessageBodyReader<T extends PMessage<T, F>, F extends PField> extends ProvidenceMessageBodyReader<T, F> {
-    public JsonMessageBodyReader() {
-        super(new JsonSerializer(false, JsonSerializer.IdType.NAME));
-    }}
+@Produces({
+                  BinarySerializer.MIME_TYPE,
+                  BinarySerializer.ALT_MIME_TYPE,
+                  FastBinarySerializer.MIME_TYPE,
+                  JsonSerializer.MIME_TYPE,
+                  JsonSerializer.MIME_TYPE
+          })
+public class DefaultProvidenceMessageBodyWriter extends ProvidenceMessageBodyWriter {
+    public DefaultProvidenceMessageBodyWriter() {
+        super(new DefaultSerializerProvider());
+    }
+}

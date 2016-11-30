@@ -12,11 +12,11 @@ import static org.junit.Assert.assertTrue;
  * @author Stein Eldar Johnsen
  * @since 23.10.15
  */
-public class JsonMessageBodyReaderTest {
+public class ProvidenceMessageBodyReaderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testGetDescriptor() {
-        JsonMessageBodyReader reader = new JsonMessageBodyReader();
+        ProvidenceMessageBodyReader reader = new DefaultProvidenceMessageBodyReader();
 
         assertTrue(reader.isReadable(Operand.class, null, null, null));
         assertFalse(reader.isReadable(PMap.class, null, null, null));

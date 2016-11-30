@@ -20,9 +20,8 @@
 package net.morimekta.providence.jax.rs;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.SerializerProvider;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -35,14 +34,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 19.09.15
+ * Base message body writer for providence objects.
  */
-public abstract class ProvidenceMessageBodyWriter<T extends PMessage<T, F>, F extends PField> implements MessageBodyWriter<T> {
-    private final Serializer mSerializer;
+public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<PMessage> {
+    private final SerializerProvider provider;
 
-    public ProvidenceMessageBodyWriter(Serializer serializer) {
-        mSerializer = serializer;
+    public ProvidenceMessageBodyWriter(SerializerProvider provider) {
+        this.provider = provider;
     }
 
     @Override
@@ -51,21 +49,26 @@ public abstract class ProvidenceMessageBodyWriter<T extends PMessage<T, F>, F ex
     }
 
     @Override
-    public long getSize(T t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(PMessage t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         // deprecated by JAX-RS 2.0 and ignored by Jersey runtime
         return 0;
     }
 
     @Override
-    public void writeTo(T entity,
+    public void writeTo(PMessage entity,
                         Class<?> type,
                         Type genericType,
                         Annotation[] annotations,
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
+        String contentType = mediaType.toString();
+
         try {
-            mSerializer.serialize(entityStream, entity);
+            provider.getSerializer(contentType)
+                    .serialize(entityStream, entity);
+        } catch (NullPointerException e) {
+            throw new ProcessingException("Unknown media type: " + mediaType, e);
         } catch (SerializerException se) {
             throw new ProcessingException("Unable to serialize entity", se);
         }

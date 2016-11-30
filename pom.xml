@@ -89,6 +89,7 @@
         <thrift.version>0.9.3</thrift.version>
         <google-http.version>1.22.0</google-http.version>
         <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
+        <dropwizard.version>1.0.5</dropwizard.version>
 
         <!-- compile dependencies -->
         <jackson.version>2.8.5</jackson.version>
@@ -309,7 +310,7 @@
                 <version>${powermock.version}</version>
             </dependency>
 
-            <!-- USING JETTY FOR TESTING SERVLETS -->
+            <!-- USING JETTY AND DROPWIZARD FOR TESTING SERVLETS -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
@@ -324,6 +325,21 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlets</artifactId>
                 <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-client</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-testing</artifactId>
+                <version>${dropwizard.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
