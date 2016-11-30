@@ -101,6 +101,7 @@ public class Token extends Slice {
     private static final Pattern RE_QUALIFIED_IDENTIFIER = Pattern.compile(
             "([_a-zA-Z][_a-zA-Z0-9]*[.])*[_a-zA-Z][_a-zA-Z0-9]*");
     private static final Pattern RE_INTEGER              = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
+    private static final Pattern RE_DOUBLE               = Pattern.compile("-?((0|[1-9][0-9]*)[.]|([0-9]*[.][0-9][0-9]*))([eE][-+]?[0-9][0-9]*)?");
 
     private final int lineNo;
     private final int linePos;
@@ -149,8 +150,8 @@ public class Token extends Slice {
 
     public boolean isStringLiteral() {
         return (length() > 1 &&
-                charAt(0) == '\"' &&
-                charAt(-1) == '\"');
+                ((charAt(0) == '\"' && charAt(-1) == '\"') ||
+                 (charAt(0) == '\'' && charAt(-1) == '\'')));
     }
 
     public boolean isIdentifier() {
@@ -168,12 +169,17 @@ public class Token extends Slice {
                          .matches();
     }
 
+    public boolean isDouble() {
+        return RE_DOUBLE.matcher(asString())
+                        .matches();
+    }
+
     /**
      * Get the whole slice as a string.
      *
      * @return Slice decoded as UTF_8 string.
      */
-    public String decodeLiteral() {
+    public String decodeStringLiteral() {
         // This decodes the string from UTF_8 bytes.
         String tmp = substring(1, -1).asString();
         final int l = tmp.length();

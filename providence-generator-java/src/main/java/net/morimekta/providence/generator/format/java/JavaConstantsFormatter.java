@@ -11,8 +11,8 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
-import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CField;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Collection;
@@ -51,109 +51,109 @@ public class JavaConstantsFormatter implements BaseConstantsFormatter {
         for (CField c : document.getConstants()) {
             writer.newline();
 
-            String name = c.getName();
-            JField constant = new JField(c, helper, 1);
-            switch (c.getType()) {
-                case MESSAGE: {
-                    String instance = helper.getValueType(c.getDescriptor());
-                    writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
-                          .appendln("static {")
-                          .begin()
-                          .formatln("%s = %s.builder()", name, instance)
-                          .begin(DBL_INDENT);
+            try {
+                String name = c.getName();
+                JField constant = new JField(c, helper, 1);
+                switch (c.getType()) {
+                    case MESSAGE: {
+                        String instance = helper.getValueType(c.getDescriptor());
+                        writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
+                              .appendln("static {")
+                              .begin()
+                              .formatln("%s = %s.builder()", name, instance)
+                              .begin(DBL_INDENT);
 
-                    PMessage<?,?> message = (PMessage<?,?>) c.getDefaultValue();
-                    int i = 0;
-                    for (PField f : message.descriptor()
-                                           .getFields()) {
-                        CField cField = (CField) f;
-                        JField field = new JField(cField, helper, i++);
-                        if (message.has(f.getKey())) {
-                            writer.formatln(".%s(", field.setter());
-                            value.appendTypedValue(message.get(f.getKey()), f.getDescriptor());
-                            writer.append(")");
+                        PMessage<?, ?> message = (PMessage<?, ?>) c.getDefaultValue();
+                        int i = 0;
+                        for (PField f : message.descriptor()
+                                               .getFields()) {
+                            CField cField = (CField) f;
+                            JField field = new JField(cField, helper, i++);
+                            if (message.has(f.getKey())) {
+                                writer.formatln(".%s(", field.setter());
+                                value.appendTypedValue(message.get(f.getKey()), f.getDescriptor());
+                                writer.append(")");
+                            }
                         }
+
+                        writer.formatln(".build();", name)
+                              .end()
+                              .end()
+                              .appendln('}');
+                        break;
                     }
+                    case LIST:
+                    case SET: {
+                        PContainer<?> lDesc = (PContainer<?>) c.getDescriptor();
+                        PDescriptor itemDesc = lDesc.itemDescriptor();
 
-                    writer.formatln(".build();", name)
-                          .end()
-                          .end()
-                          .appendln('}');
-                    break;
-                }
-                case LIST:
-                case SET: {
-                    PContainer<?> lDesc = (PContainer<?>) c.getDescriptor();
-                    PDescriptor itemDesc = lDesc.itemDescriptor();
+                        writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
+                              .appendln("static {")
+                              .begin()
+                              .formatln("%s = new %s<%s>()", name, constant.builderInstanceType(), helper.getFieldType(itemDesc))
+                              .begin(DBL_INDENT);
 
-                    writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
-                          .appendln("static {")
-                          .begin()
-                          .formatln("%s = new %s<%s>()",
-                                    name,
-                                    constant.builderInstanceType(),
-                                    helper.getFieldType(itemDesc))
-                          .begin(DBL_INDENT);
+                        @SuppressWarnings("unchecked")
+                        Collection<Object> items = (Collection<Object>) c.getDefaultValue();
+                        for (Object item : items) {
+                            writer.appendln(".add(")
+                                  .begin();
 
-                    @SuppressWarnings("unchecked")
-                    Collection<Object> items = (Collection<Object>) c.getDefaultValue();
-                    for (Object item : items) {
-                        writer.appendln(".add(")
-                              .begin();
+                            value.appendTypedValue(item, itemDesc);
 
-                        value.appendTypedValue(item, itemDesc);
+                            writer.end()
+                                  .append(")");
+                        }
 
+                        writer.formatln(".build();", name);
                         writer.end()
-                              .append(")");
+                              .end()
+                              .appendln('}');
+                        break;
                     }
+                    case MAP: {
+                        PMap<?, ?> mDesc = (PMap<?, ?>) c.getDescriptor();
+                        PDescriptor itemDesc = mDesc.itemDescriptor();
+                        PDescriptor keyDesc = mDesc.keyDescriptor();
 
-                    writer.formatln(".build();", name);
-                    writer.end()
-                          .end()
-                          .appendln('}');
-                    break;
-                }
-                case MAP: {
-                    JField field = new JField(c, helper, 1);
+                        writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
+                              .appendln("static {")
+                              .begin()
+                              .formatln("%s = new %s<>()", name, constant.builderInstanceType())
+                              .begin(DBL_INDENT);
 
-                    PMap<?,?> mDesc = (PMap<?,?>) c.getDescriptor();
-                    PDescriptor itemDesc = mDesc.itemDescriptor();
-                    PDescriptor keyDesc = mDesc.keyDescriptor();
+                        @SuppressWarnings("unchecked")
+                        Map<Object, Object> items = (Map<Object, Object>) c.getDefaultValue();
+                        for (Map.Entry<Object, Object> item : items.entrySet()) {
+                            writer.appendln(".put(")
+                                  .begin();
 
-                    writer.formatln("public static final %s %s;", helper.getValueType(c.getDescriptor()), name)
-                          .appendln("static {")
-                          .begin()
-                          .formatln("%s = new %s<>()", name, field.builderInstanceType())
-                          .begin(DBL_INDENT);
+                            value.appendTypedValue(item.getKey(), keyDesc);
 
-                    @SuppressWarnings("unchecked")
-                    Map<Object, Object> items = (Map<Object, Object>) c.getDefaultValue();
-                    for (Map.Entry<Object, Object> item : items.entrySet()) {
-                        writer.appendln(".put(")
-                              .begin();
+                            writer.append(", ");
 
-                        value.appendTypedValue(item.getKey(), keyDesc);
+                            value.appendTypedValue(item.getValue(), itemDesc);
 
-                        writer.append(", ");
+                            writer.end()
+                                  .append(")");
+                        }
 
-                        value.appendTypedValue(item.getValue(), itemDesc);
-
+                        writer.formatln(".build();", name);
                         writer.end()
-                              .append(")");
+                              .end()
+                              .appendln('}');
+                        break;
                     }
-
-                    writer.formatln(".build();", name);
-                    writer.end()
-                          .end()
-                          .appendln('}');
-                    break;
+                    default:
+                        writer.formatln("public static final %s %s = ", helper.getValueType(c.getDescriptor()), c.getName())
+                              .begin(DBL_INDENT);
+                        value.appendTypedValue(c.getDefaultValue(), c.getDescriptor());
+                        writer.append(';')
+                              .end();
                 }
-                default:
-                    writer.formatln("public static final %s %s = ", helper.getValueType(c.getDescriptor()), c.getName())
-                          .begin(DBL_INDENT);
-                    value.appendTypedValue(c.getDefaultValue(), c.getDescriptor());
-                    writer.append(';')
-                          .end();
+            } catch (Exception e) {
+                throw new GeneratorException("Unable to generate constant " + document.getProgramName() + "." + c.getName(),
+                                             e);
             }
         }
 

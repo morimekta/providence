@@ -36,13 +36,13 @@ import java.util.Set;
  * @since 25.08.15
  */
 public class CField implements PField, CAnnotatedDescriptor {
-    private final String                 comment;
-    private final int                    key;
-    private final PRequirement           requirement;
+    private final String              comment;
+    private final int                 key;
+    private final PRequirement        requirement;
     private final PDescriptorProvider typeProvider;
-    private final String                 name;
+    private final String              name;
     private final PValueProvider      defaultValue;
-    private final Map<String, String>    annotations;
+    private final Map<String, String> annotations;
 
     public CField(String comment,
                   int key,
@@ -98,7 +98,11 @@ public class CField implements PField, CAnnotatedDescriptor {
 
     @Override
     public Object getDefaultValue() {
-        return hasDefaultValue() ? defaultValue.get() : null;
+        try {
+            return hasDefaultValue() ? defaultValue.get() : null;
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to parse default value " + getName(), e);
+        }
     }
 
     @Override
@@ -174,13 +178,7 @@ public class CField implements PField, CAnnotatedDescriptor {
      * @return If the two types are the same.
      */
     private static boolean equalsQualifiedName(PDescriptor a, PDescriptor b) {
-        if ((a == null) != (b == null)) {
-            return false;
-        }
-        if (a == null) {
-            return true;
-        }
-        return a.getQualifiedName(null)
-                .equals(b.getQualifiedName(null));
+        return (a != null) && (b != null) && (a.getQualifiedName(null)
+                                               .equals(b.getQualifiedName(null)));
     }
 }

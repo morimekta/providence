@@ -34,35 +34,35 @@ import java.util.Collections;
  * @since 07.09.15
  */
 public class ConstProvider implements PValueProvider<Object> {
-    private final ProgramRegistry mRegistry;
-    private final String          mTypeName;
-    private final String          mPackageContext;
-    private final String          mDefaultValue;
+    private final ProgramRegistry registry;
+    private final String          typeName;
+    private final String          programContext;
+    private final String          defaultValue;
 
-    private Object mParsedValue;
+    private Object parsedValue;
 
-    public ConstProvider(ProgramRegistry registry, String typeName, String packageContext, String defaultValue) {
-        mRegistry = registry;
-        mTypeName = typeName;
-        mPackageContext = packageContext;
-        mDefaultValue = defaultValue;
-        mParsedValue = null;
+    public ConstProvider(ProgramRegistry registry, String typeName, String programContext, String defaultValue) {
+        this.registry = registry;
+        this.typeName = typeName;
+        this.programContext = programContext;
+        this.defaultValue = defaultValue;
+        this.parsedValue = null;
     }
 
     @Override
     public Object get() {
-        if (mParsedValue == null) {
-            ConstParser parser = new ConstParser();
+        if (parsedValue == null) {
+            ConstParser parser = new ConstParser(registry, programContext);
             @SuppressWarnings("unchecked")
-            PDescriptor type = mRegistry.getProvider(mTypeName, mPackageContext, Collections.EMPTY_MAP)
-                                        .descriptor();
-            try (ByteArrayInputStream in = new ByteArrayInputStream(mDefaultValue.getBytes(StandardCharsets.UTF_8))) {
-                mParsedValue = parser.parse(in, type);
+            PDescriptor type = registry.getProvider(typeName, programContext, Collections.EMPTY_MAP)
+                                       .descriptor();
+            try (ByteArrayInputStream in = new ByteArrayInputStream(defaultValue.getBytes(StandardCharsets.UTF_8))) {
+                parsedValue = parser.parse(in, type);
             } catch (ParseException | IOException e) {
                 e.printStackTrace();
             }
         }
 
-        return mParsedValue;
+        return parsedValue;
     }
 }
