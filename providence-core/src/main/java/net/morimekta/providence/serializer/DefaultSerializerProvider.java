@@ -32,8 +32,8 @@ public class DefaultSerializerProvider implements SerializerProvider {
     }
 
     @Override
-    public Serializer getSerializer(String mimeType) {
-        return serializerMap.get(mimeType);
+    public Serializer getSerializer(String mediaType) {
+        return serializerMap.get(mediaType);
     }
 
     @Override

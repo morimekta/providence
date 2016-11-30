@@ -22,8 +22,8 @@ public class ThriftSerializerProvider extends DefaultSerializerProvider {
     }
 
     @Override
-    public Serializer getSerializer(String contentType) {
-        switch (contentType) {
+    public Serializer getSerializer(String mediaType) {
+        switch (mediaType) {
             case TBinaryProtocolSerializer.MIME_TYPE:
             case TBinaryProtocolSerializer.ALT_MIME_TYPE:
                 return new TBinaryProtocolSerializer();
@@ -34,7 +34,7 @@ public class ThriftSerializerProvider extends DefaultSerializerProvider {
             case TSimpleJsonProtocolSerializer.MIME_TYPE:
                 return new TSimpleJsonProtocolSerializer();
             default:
-                return baseProvider.getSerializer(contentType);
+                return baseProvider.getSerializer(mediaType);
         }
     }
 }

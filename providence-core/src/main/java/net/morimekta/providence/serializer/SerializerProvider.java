@@ -8,10 +8,10 @@ public interface SerializerProvider {
     /**
      * Get serializer for the given mime-type
      *
-     * @param mimeType The mime-type to get serializer for.
+     * @param mediaType The media-type to get serializer for.
      * @return The serializer, or null if not found.
      */
-    Serializer getSerializer(String mimeType);
+    Serializer getSerializer(String mediaType);
 
     /**
      * @return The default serializer.
