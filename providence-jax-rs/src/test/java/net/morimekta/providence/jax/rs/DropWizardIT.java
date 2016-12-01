@@ -16,6 +16,7 @@ import net.morimekta.test.number.Imaginary;
 import com.google.api.client.http.GenericUrl;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.Rule;
@@ -43,7 +44,8 @@ public class DropWizardIT {
     public DropwizardAppRule<TestConfiguration> drop_wizard =
         new DropwizardAppRule<>(
                 TestApplication.class,
-                ResourceHelpers.resourceFilePath("test-app-config.yaml"));
+                ResourceHelpers.resourceFilePath("test-app-config.yaml"),
+                ConfigOverride.config("server.applicationConnectors[0].port", "0"));
 
     private String uri(String service) {
         return String.format("http://localhost:%d/%s", drop_wizard.getLocalPort(), service);
@@ -51,7 +53,7 @@ public class DropWizardIT {
 
     @Test
     public void testProvidenceJson() throws IOException {
-        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
+        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("test-json");
 
         Response response = client.target(uri("calculator/calculate"))
                                   .register(DefaultProvidenceMessageBodyWriter.class)
@@ -79,7 +81,7 @@ public class DropWizardIT {
 
     @Test
     public void testProvidenceBinary() throws IOException {
-        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
+        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("test-binary");
 
         Response response = client.target(uri("calculator/calculate"))
                                   .register(DefaultProvidenceMessageBodyWriter.class)
@@ -105,7 +107,7 @@ public class DropWizardIT {
 
     @Test
     public void testProvidenceJson_exception() throws IOException {
-        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
+        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("test-json-exception");
 
         Response response = client.target(uri("calculator/calculate"))
                                   .register(DefaultProvidenceMessageBodyWriter.class)
