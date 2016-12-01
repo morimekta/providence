@@ -36,7 +36,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * Javax.WE.RS integration testing using io.dropwizard.
+ * Javax.WS.RS integration testing using io.dropwizard.
  */
 public class DropWizardIT {
     @Rule
