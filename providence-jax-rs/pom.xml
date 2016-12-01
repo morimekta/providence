@@ -43,7 +43,13 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>providence-thrift</artifactId>
+            <artifactId>providence-core-client</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-core-server</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
