@@ -128,7 +128,7 @@ public class ValueBuilder {
 
                 JField constant = new JField(new CConst("", "", () -> type, () -> value, null), helper, 0);
 
-                writer.formatln("new %s<%s,%s>()",
+                writer.format("new %s<%s,%s>()",
                                 constant.builderInstanceType(),
                                 helper.getFieldType(keyDesc),
                                 helper.getFieldType(itemDesc))
@@ -138,11 +138,12 @@ public class ValueBuilder {
                 Map<Object, Object> map = (Map<Object, Object>) value;
                 for (Map.Entry<Object,Object> entry : map.entrySet()) {
                     writer.appendln(".put(")
-                          .begin();
+                          .begin("     ");
 
                     appendTypedValue(entry.getKey(), keyDesc);
 
-                    writer.appendln(", ");
+                    writer.append(",")
+                          .appendln();
 
                     appendTypedValue(entry.getValue(), itemDesc);
 
@@ -161,14 +162,14 @@ public class ValueBuilder {
 
                 JField constant = new JField(new CConst("", "", () -> type, () -> value, null), helper, 0);
 
-                writer.formatln("new %s<%s>()", constant.builderInstanceType(), helper.getFieldType(itemDesc))
+                writer.format("new %s<%s>()", constant.builderInstanceType(), helper.getFieldType(itemDesc))
                       .begin();
 
                 @SuppressWarnings("unchecked")
                 Collection<Object> items = (Collection<Object>) value;
                 for (Object item : items) {
                     writer.appendln(".add(")
-                          .begin();
+                          .begin("     ");
 
                     appendTypedValue(item, itemDesc);
 
