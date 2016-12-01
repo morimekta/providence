@@ -8,7 +8,7 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CField;
-import net.morimekta.providence.reflect.contained.CStructDescriptor;
+import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.IndentedPrintWriter;
 import net.morimekta.util.json.JsonException;
@@ -109,7 +109,7 @@ public class ValueBuilder {
                       .begin();
                 PMessage message = (PMessage) value;
                 int i = 0;
-                for (CField field : ((CStructDescriptor) type).getFields()) {
+                for (CField field : ((CMessageDescriptor) type).getFields()) {
                     JField fld = new JField(field, helper, i++);
                     if (message.has(field.getKey())) {
                         writer.formatln(".%s(", fld.setter());
@@ -132,7 +132,7 @@ public class ValueBuilder {
                                 constant.builderInstanceType(),
                                 helper.getFieldType(keyDesc),
                                 helper.getFieldType(itemDesc))
-                      .begin("        ");
+                      .begin();
 
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) value;
@@ -162,7 +162,7 @@ public class ValueBuilder {
                 JField constant = new JField(new CConst("", "", () -> type, () -> value, null), helper, 0);
 
                 writer.formatln("new %s<%s>()", constant.builderInstanceType(), helper.getFieldType(itemDesc))
-                      .begin("        ");
+                      .begin();
 
                 @SuppressWarnings("unchecked")
                 Collection<Object> items = (Collection<Object>) value;

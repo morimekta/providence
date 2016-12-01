@@ -35,6 +35,13 @@ const Operand PI = {
   "number": 3.141592
 };
 
+const map<i32, number.Imaginary> imaginaries = {
+    Operator.IDENTITY: {
+        'v': 3.141592;
+        'i': -2.71828;
+    },
+}
+
 const set<Operator> kComplexOperands = [
     Operator.MULTIPLY,
     Operator.DIVIDE

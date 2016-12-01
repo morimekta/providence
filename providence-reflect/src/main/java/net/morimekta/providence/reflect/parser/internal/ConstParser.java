@@ -50,13 +50,17 @@ import java.util.LinkedList;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
 /**
- * Parsing thrift constants from string to actual value. This uses the JSON
- * format with some allowed special references. So enum values are always
- * expected to be 'EnumName.VALUE' (quotes or no quotes), and map keys are not
- * expected to be string literals.
+ * Parsing thrift constants from string to actual value. This uses a JSON like
+ * format with some allowed special references.
  *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * <ul>
+ *   <li> Enums can be 'EnumName.VALUE' or 'program.EnumName.VALUE', no quotes.
+ *   <li> Enums values can be used as number constants.
+ *   <li> String literals can be single-quoted.
+ *   <li> Lists and map entries have optional separator ',', ';' and none.
+ *   <li> Last element of list or map may have an ending list separator.
+ *   <li> Map keys may be non-string values like numbers or enum value reference.
+ * </ul>
  */
 public class ConstParser {
     private final TypeRegistry registry;
@@ -90,24 +94,31 @@ public class ConstParser {
                          PStructDescriptor<Message, Field> type) throws ParseException, IOException {
         PMessageBuilder<Message, Field> builder = type.builder();
 
-        if (tokenizer.peek("checking for empty").isSymbol(JsonToken.kMapEnd)) {
+        if (tokenizer.peek("checking for empty").isSymbol(Token.kMessageEnd)) {
             tokenizer.next();
             return builder.build();
         }
 
-        char sep = JsonToken.kMapStart;
-        while (sep != JsonToken.kMapEnd) {
+        while (true) {
             Token token = tokenizer.expectStringLiteral("message field name");
             Field field = type.getField(token.decodeStringLiteral());
             if (field == null) {
                 throw new ParseException(tokenizer, token, "Not a valid field name: " + token.decodeStringLiteral());
             }
-            tokenizer.expectSymbol("parsing message key-value sep", JsonToken.kKeyValSep);
+            tokenizer.expectSymbol("parsing message key-value sep", Token.kFieldIdSep);
 
             builder.set(field.getKey(),
                         parseTypedValue(tokenizer.expect("parsing field value"), tokenizer, field.getDescriptor()));
 
-            sep = tokenizer.expectSymbol("", JsonToken.kListSep, JsonToken.kMapEnd);
+            token = tokenizer.peek("optional line sep or message end");
+            if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
+                tokenizer.next();
+                token = tokenizer.peek("optional message end");
+            }
+            if (token.isSymbol(Token.kMessageEnd)) {
+                tokenizer.next();
+                break;
+            }
         }
 
         return builder.build();
@@ -174,7 +185,7 @@ public class ConstParser {
                 return ev;
             }
             case MESSAGE: {
-                if (token.isSymbol(JsonToken.kMapStart)) {
+                if (token.isSymbol(Token.kMessageStart)) {
                     return parseMessage(tokenizer, (PStructDescriptor<?, ?>) valueType);
                 }
                 throw new ParseException(tokenizer, token, "Not a valid message start.");
@@ -184,7 +195,7 @@ public class ConstParser {
                 LinkedList<Object> list = new LinkedList<>();
 
                 if (tokenizer.peek("checking for empty list")
-                             .isSymbol(JsonToken.kListEnd)) {
+                             .isSymbol(Token.kListEnd)) {
                     tokenizer.next();
                     return list;
                 }
@@ -210,7 +221,7 @@ public class ConstParser {
                 HashSet<Object> set = new HashSet<>();
 
                 if (tokenizer.peek("checking for empty list")
-                             .isSymbol(JsonToken.kListEnd)) {
+                             .isSymbol(Token.kListEnd)) {
                     tokenizer.next();
                     return set;
                 }
@@ -237,7 +248,7 @@ public class ConstParser {
                 HashMap<Object, Object> map = new HashMap<>();
 
                 if (tokenizer.peek("checking for empty map")
-                             .isSymbol(JsonToken.kMapEnd)) {
+                             .isSymbol(Token.kMessageEnd)) {
                     tokenizer.next();
                     return map;
                 }
@@ -254,7 +265,7 @@ public class ConstParser {
                         }
                         key = parsePrimitiveKey(token.asString(), token, tokenizer, keyType);
                     }
-                    tokenizer.expectSymbol("map key-value separator", JsonToken.kKeyValSep);
+                    tokenizer.expectSymbol("map key-value separator", Token.kFieldIdSep);
                     map.put(key, parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType));
 
                     Token sep = tokenizer.peek("optional item sep");
