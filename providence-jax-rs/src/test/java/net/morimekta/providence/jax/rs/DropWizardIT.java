@@ -97,6 +97,7 @@ public class DropWizardIT {
                 "  i = -1\n" +
                 "}")));
     }
+
     @Test
     public void testProvidenceJson_exception() throws IOException {
         Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
