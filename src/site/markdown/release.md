@@ -26,21 +26,16 @@ Proper releases are done with a branch cut.
   you want to release.
 * Run `# mvn -Pdev,cli,it release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn release:perform` to generate the artifacts and push to sonatype
+* Run `# mvn -Pdev release:perform` to generate the artifacts and push to sonatype
   for staging.
 * Run `# git fetch origin` to update the local git cache (the release plugin uses
-  JGit, which does not update the local git remote cache).
+  JGit, which does not update the local git remote cache, as it uses SSH against github
+  directly).
 
 If the artifacts found at the [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
 are correct, you're ready to make the release. First make the actual binary release:
 
-* Select artifact and push `release` in the top action bar to push the artifacts
-  to the maven repository of sonatype.
-
-Now merge the last commit into `master`, and **go back to the release branch**
-to prepare the site release.
-
-* Run `# git reset --hard HEAD~1`.
+* Run `# git checkout HEAD~1 -b release-${version}`.
   This will check out the actual release commit.
 
 First build the release CLI packages, and update the GIT release info:
