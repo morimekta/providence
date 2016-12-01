@@ -138,7 +138,7 @@ public class TTupleProtocolSerializer extends Serializer {
 
             PServiceMethod method = service.getMethod(tm.name);
             if (method == null) {
-                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName(null));
+                throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName());
             }
 
             PStructDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();

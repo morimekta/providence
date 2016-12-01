@@ -226,7 +226,7 @@ public class RPCOptions extends CommonOptions {
             CProgram document = loader.getRegistry().getDocumentForPackage(namespace);
             Set<String> services = new TreeSet<>(
                     document.getServices()
-                            .stream().map(s -> s.getQualifiedName(null))
+                            .stream().map(s -> s.getQualifiedName())
                             .collect(Collectors.toSet()));
 
             throw new ArgumentException(

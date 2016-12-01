@@ -117,7 +117,7 @@ public class TypeRegistry {
         }
         // Services cannot be aliased with typedefs, so no need to resolve the
         // qualified or final name.
-        String name = service.getQualifiedName(null);
+        String name = service.getQualifiedName();
         if (services.containsKey(name)) {
             throw new IllegalStateException("Service " + name + " already registered");
         }

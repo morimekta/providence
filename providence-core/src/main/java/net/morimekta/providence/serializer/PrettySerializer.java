@@ -157,7 +157,7 @@ public class PrettySerializer extends Serializer {
 
             PServiceMethod method = service.getMethod(methodName);
             if (method == null) {
-                throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName(null))
+                throw new TokenizerException(token, "no such method " + methodName + " on service " + service.getQualifiedName())
                         .setLine(tokenizer.getLine(token.getLineNo()))
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }

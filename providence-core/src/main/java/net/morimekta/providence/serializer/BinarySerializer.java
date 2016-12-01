@@ -189,7 +189,7 @@ public class BinarySerializer extends Serializer {
                 PApplicationException ex = readMessage(in, PApplicationException.kDescriptor, false);
                 return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             } else if (method == null) {
-                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
+                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName())
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 

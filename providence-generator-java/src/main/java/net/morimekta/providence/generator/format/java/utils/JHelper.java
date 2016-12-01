@@ -65,7 +65,7 @@ public class JHelper {
     }
 
     public String getJavaPackage(PService type) throws GeneratorException {
-        String packageContext = type.getPackageName();
+        String packageContext = type.getProgramName();
         CProgram document = mRegistry.getDocumentForPackage(packageContext);
         return JUtils.getJavaPackage(document);
     }

@@ -26,8 +26,22 @@ exception CalculateException {
     2: Operation operation;
 }
 
+/**
+ * A real calculator. does calculating stuff.
+ */
 service Calculator {
+    /**
+     * This is a real method with a real implementation.
+     *
+     * @calculating
+     */
     Operand calculate(1: Operation op) throws (1: CalculateException ce);
+
+    /**
+     * Don't kill me!
+     *
+     * @deprecated
+     */
     oneway void iamalive();
 }
 

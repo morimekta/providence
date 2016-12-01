@@ -72,6 +72,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
     }
 
     private void appendClient(IndentedPrintWriter writer, JService service) throws GeneratorException {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        if (service.getService()
+                   .getDocumentation() != null) {
+            comment.comment(service.getService().getDocumentation())
+                   .newline();
+        }
+        comment.comment("Client implementation for " + service.getService().getQualifiedName())
+               .finish();
+
         writer.appendln("public static class Client")
               .formatln("        extends %s", PClient.class.getName())
               .formatln("        implements Iface {")
@@ -79,6 +88,12 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
 
         writer.formatln("private final %s handler;", PServiceCallHandler.class.getName())
               .newline();
+
+        new BlockCommentBuilder(writer)
+                .comment("Create " + service.getService().getQualifiedName() + " service client.")
+                .newline()
+                .param_("handler", "The client handler.")
+                .finish();
 
         writer.formatln("public Client(%s handler) {", PServiceCallHandler.class.getName())
               .appendln("    this.handler = handler;")
@@ -195,7 +210,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 // the union field is not set. This *should* cause an error.
                 writer.formatln("throw new %s(\"Result field for %s.%s() not set\",",
                                 PApplicationException.class.getName(),
-                                service.getService().getQualifiedName(null),
+                                service.getService().getQualifiedName(),
                                 method.name())
                       .formatln("          %s %s.%s);",
                                 PApplicationException.class.getName().replaceAll(".", " "),
@@ -331,7 +346,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
               .formatln("%s ex =", PApplicationException.class.getName())
               .formatln("        new %s(", PApplicationException.class.getName())
               .formatln("                \"Unknown method \\\"\" + call.getMethod() + \"\\\" on %s.\",",
-                        service.getService().getQualifiedName(null))
+                        service.getService().getQualifiedName())
               .formatln("                %s.%s);",
                         PApplicationExceptionType.class.getName(),
                         PApplicationExceptionType.UNKNOWN_METHOD.getName());
@@ -449,7 +464,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
               .begin()
               .appendln("private _Descriptor() {")
               .formatln("    super(\"%s\", \"%s\", %s, Method.values());",
-                        service.getService().getPackageName(),
+                        service.getService().getProgramName(),
                         service.getService().getName(),
                         inherits)
               .appendln('}')
@@ -508,6 +523,12 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                        new JService(other, helper).className() + ".Iface ";
         }
 
+        if (service.getService().getDocumentation() != null) {
+            new BlockCommentBuilder(writer)
+                    .comment(service.getService().getDocumentation())
+                    .finish();
+        }
+
         writer.formatln("public interface Iface %s{", inherits)
               .begin();
 
@@ -519,11 +540,35 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 writer.newline();
             }
 
+            BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+
             if (method.getMethod().getDocumentation() != null) {
-                new BlockCommentBuilder(writer)
-                        .comment(method.getMethod().getDocumentation())
-                        .finish();
+                comment.comment(method.getMethod().getDocumentation())
+                       .newline();
             }
+
+            for (JField param : method.params()) {
+                if (param.comment() != null) {
+                    comment.param_(param.name(), param.comment());
+                } else {
+                    comment.param_(param.name(), "The " + param.name() + " value.");
+                }
+            }
+
+            if (method.getResponse() != null &&
+                    !method.getResponse().isVoid()) {
+                comment.return_("The " + method.name() + " result.");
+            }
+
+            for (JField param : method.exceptions()) {
+                if (param.comment() != null) {
+                    comment.throws_(param.fieldType(), param.comment());
+                } else {
+                    comment.throws_(param.fieldType(), "The " + param.name() + " exception.");
+                }
+            }
+            comment.throws_(IOException.class, "On providence or non-declared exceptions.")
+                   .finish();
 
             JField ret = method.getResponse();
             if (ret != null) {

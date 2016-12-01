@@ -8,37 +8,48 @@ import java.util.Collection;
  * Descriptor for a complete service.
  */
 public class PService {
-    private final String name;
-    private final String packageName;
-    private final PServiceProvider extendsService;
+    private final String                               name;
+    private final String                               programName;
+    private final PServiceProvider                     extendsService;
     private final Collection<? extends PServiceMethod> methods;
 
-    public PService(String packageName,
+    public PService(String programName,
                     String name,
                     PServiceProvider extendsService,
                     Collection<? extends PServiceMethod> methods) {
         this.name = name;
-        this.packageName = packageName;
+        this.programName = programName;
         this.extendsService = extendsService;
         this.methods = methods;
     }
 
-    public PService(String packageName,
+    public PService(String programName,
              String name,
              PServiceProvider extendsService,
              PServiceMethod[] methods) {
         this.name = name;
-        this.packageName = packageName;
+        this.programName = programName;
         this.extendsService = extendsService;
         this.methods = ImmutableList.copyOf(methods);
     }
 
-    public String getPackageName() {
-        return packageName;
+    public String getProgramName() {
+        return programName;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getQualifiedName(String packageContext) {
+        if (programName.equals(packageContext)) {
+            return name;
+        }
+        return programName + "." + name;
+    }
+
+    public String getQualifiedName() {
+        return getQualifiedName(null);
     }
 
     public PService getExtendsService() {
@@ -62,12 +73,5 @@ public class PService {
             return extendsService.getService().getMethod(name);
         }
         return null;
-    }
-
-    public String getQualifiedName(String packageContext) {
-        if (packageName.equals(packageContext)) {
-            return name;
-        }
-        return packageName + "." + name;
     }
 }

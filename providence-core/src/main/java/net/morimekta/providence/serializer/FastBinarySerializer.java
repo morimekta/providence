@@ -139,7 +139,7 @@ public class FastBinarySerializer extends Serializer {
             if (method == null) {
                 throw new SerializerException("No such method %s on %s",
                                               methodName,
-                                              service.getQualifiedName(null))
+                                              service.getQualifiedName())
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 

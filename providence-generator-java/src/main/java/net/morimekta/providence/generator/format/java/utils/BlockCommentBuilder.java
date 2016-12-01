@@ -6,7 +6,7 @@ import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
 
 /**
- * Created by morimekta on 5/3/16.
+ * Builds a proper block javadoc-compatible comment.
  */
 public class BlockCommentBuilder {
     private final IndentedPrintWriter writer;
@@ -21,12 +21,12 @@ public class BlockCommentBuilder {
     }
 
     public BlockCommentBuilder comment(String comment) {
-        String escaped = html.escape(comment);
+        String escaped = html.escape(comment).replaceAll("[@]", "&at;");
         for (String line : escaped.trim().split("\r?\n")) {
-            if (line.length() == 0) {
+            if (line.trim().length() == 0) {
                 writer.appendln(" <p>");
             } else {
-                writer.appendln(" " + line);
+                writer.appendln(" " + line.replaceAll("[ ]*$", ""));
             }
         }
 
@@ -49,14 +49,12 @@ public class BlockCommentBuilder {
     }
 
     public BlockCommentBuilder throws_(Class<?> klass, String comment) {
-        writer.formatln(" @throws %s %s",
-                        klass.getName().replaceAll("[$]", "."),
-                        html.escape(comment));
-        return this;
+        return throws_(klass.getName().replaceAll("[$]", "."), comment);
     }
 
     public BlockCommentBuilder throws_(String klass, String comment) {
         writer.formatln(" @throws %s %s",
+                        klass,
                         html.escape(comment));
         return this;
     }

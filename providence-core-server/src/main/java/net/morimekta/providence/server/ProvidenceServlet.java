@@ -109,7 +109,7 @@ public class ProvidenceServlet extends HttpServlet {
             resp.setContentLength(baos.size());
             resp.getOutputStream().write(baos.toByteArray());
         } catch (Exception e) {
-            LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(null), e);
+            LOGGER.error("Exception in service call for " + processor.getDescriptor().getQualifiedName(), e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error: " + e.getMessage());
         }
     }

@@ -266,7 +266,7 @@ public class JsonSerializer extends Serializer {
 
             PServiceMethod method = service.getMethod(methodName);
             if (method == null) {
-                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName(null))
+                throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName())
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
