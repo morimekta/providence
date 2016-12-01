@@ -2,6 +2,7 @@ package net.morimekta.providence.jax.rs;
 
 import net.morimekta.providence.jax.rs.test_web_app.TestApplication;
 import net.morimekta.providence.jax.rs.test_web_app.TestConfiguration;
+import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.test.calculator.CalculateException;
 import net.morimekta.test.calculator.Operand;
@@ -59,6 +60,7 @@ public class DropWizardIT {
                                                       JsonSerializer.MIME_TYPE));
 
         assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MIME_TYPE)));
         Operand op = response.readEntity(Operand.class);
 
         assertThat(debugString(op), is(equalTo(
@@ -68,6 +70,33 @@ public class DropWizardIT {
                 "}")));
     }
 
+    @Test
+    public void testProvidenceBinary() throws IOException {
+        Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
+
+        Response response = client.target(uri("calculate"))
+                                  .register(DefaultProvidenceMessageBodyWriter.class)
+                                  .register(DefaultProvidenceMessageBodyReader.class)
+                                  .request()
+                                  .accept(BinarySerializer.MIME_TYPE)
+                                  .post(Entity.entity(Operation.builder()
+                                                               .setOperator(Operator.ADD)
+                                                               .addToOperands(Operand.withNumber(52d),
+                                                                              Operand.withImaginary(new Imaginary(1d, -1d)),
+                                                                              Operand.withNumber(15d))
+                                                               .build(),
+                                                      BinarySerializer.MIME_TYPE));
+
+        assertThat(response.getStatus(), is(equalTo(200)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(BinarySerializer.MIME_TYPE)));
+        Operand op = response.readEntity(Operand.class);
+
+        assertThat(debugString(op), is(equalTo(
+                "imaginary = {\n" +
+                "  v = 68\n" +
+                "  i = -1\n" +
+                "}")));
+    }
     @Test
     public void testProvidenceJson_exception() throws IOException {
         Client client = new JerseyClientBuilder(drop_wizard.getEnvironment()).build("");
@@ -88,6 +117,7 @@ public class DropWizardIT {
                                                       JsonSerializer.MIME_TYPE));
 
         assertThat(response.getStatus(), is(equalTo(400)));
+        assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MIME_TYPE)));
         CalculateException ex = response.readEntity(CalculateException.class);
 
         assertThat(debugString(ex), is(equalTo(
