@@ -141,7 +141,7 @@ public class CField implements PField, CAnnotatedDescriptor {
             builder.append(requirement.label)
                    .append(" ");
         }
-        builder.append(getDescriptor().getQualifiedName(null))
+        builder.append(getDescriptor().getQualifiedName())
                .append(" ")
                .append(name)
                .append("}");
@@ -178,7 +178,7 @@ public class CField implements PField, CAnnotatedDescriptor {
      * @return If the two types are the same.
      */
     private static boolean equalsQualifiedName(PDescriptor a, PDescriptor b) {
-        return (a != null) && (b != null) && (a.getQualifiedName(null)
-                                               .equals(b.getQualifiedName(null)));
+        return (a != null) && (b != null) && (a.getQualifiedName()
+                                               .equals(b.getQualifiedName()));
     }
 }

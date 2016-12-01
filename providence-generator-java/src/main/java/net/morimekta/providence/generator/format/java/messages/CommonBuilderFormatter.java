@@ -66,7 +66,7 @@ public class CommonBuilderFormatter
 
     protected void appendStaticMakeBuilder(JMessage message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
+        comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder.")
                .return_("The builder instance.")
                .finish();
         writer.formatln("public static _Builder builder() {")

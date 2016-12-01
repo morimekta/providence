@@ -180,7 +180,7 @@ public class ConstParser {
                 Object ev = eb.setByName(name)
                               .build();
                 if (ev == null) {
-                    throw new ParseException(tokenizer, token, "No such " + valueType.getQualifiedName(null) + " enum value.");
+                    throw new ParseException(tokenizer, token, "No such " + valueType.getQualifiedName() + " enum value.");
                 }
                 return ev;
             }
@@ -282,7 +282,7 @@ public class ConstParser {
                 return map;
             }
             default:
-                throw new IllegalArgumentException("Unhandled item type " + valueType.getQualifiedName(null));
+                throw new IllegalArgumentException("Unhandled item type " + valueType.getQualifiedName());
         }
     }
 

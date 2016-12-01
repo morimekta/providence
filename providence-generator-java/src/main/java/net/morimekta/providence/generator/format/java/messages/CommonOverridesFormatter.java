@@ -141,7 +141,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .begin()
               .formatln("return \"%s\" + asString();",
                         message.descriptor()
-                               .getQualifiedName(null))
+                               .getQualifiedName())
               .end()
               .appendln('}')
               .newline();

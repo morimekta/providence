@@ -109,7 +109,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a " + message.descriptor().getQualifiedName(null) + " builder.")
+        comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder.")
                .finish();
         writer.appendln("public _Builder() {")
               .begin();
@@ -134,7 +134,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendMutateConstructor(JMessage<?> message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
-        comment.comment("Make a mutating builder off a base " + message.descriptor().getQualifiedName(null) + ".")
+        comment.comment("Make a mutating builder off a base " + message.descriptor().getQualifiedName() + ".")
                .newline()
                .param_("base", "The base " + message.descriptor().getName())
                .finish();

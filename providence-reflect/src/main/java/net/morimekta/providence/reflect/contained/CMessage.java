@@ -126,9 +126,9 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
 
         CMessage other = (CMessage) o;
         PStructDescriptor<?, ?> type = other.descriptor();
-        if (!descriptor().getQualifiedName(null)
-                         .equals(type.getQualifiedName(null)) || !descriptor().getVariant()
-                                                                              .equals(type.getVariant())) {
+        if (!descriptor().getQualifiedName()
+                         .equals(type.getQualifiedName()) || !descriptor().getVariant()
+                                                                          .equals(type.getVariant())) {
             return false;
         }
 
@@ -161,7 +161,7 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + asString();
+        return descriptor().getQualifiedName() + asString();
     }
 
     @Override
@@ -225,9 +225,9 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
     private static <T extends PMessage<T, F>, F extends PField> int compareMessages(T m1, T m2) {
         int c = 0;
         c = m1.descriptor()
-              .getQualifiedName(null)
+              .getQualifiedName()
               .compareTo(m2.descriptor()
-                           .getQualifiedName(null));
+                           .getQualifiedName());
         if (c != 0) {
             return c;
         }

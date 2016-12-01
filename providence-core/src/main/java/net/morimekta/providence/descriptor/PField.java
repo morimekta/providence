@@ -81,7 +81,7 @@ public interface PField {
         if (field.getRequirement() != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {
             builder.append(field.getRequirement().label).append(" ");
         }
-        builder.append(field.getDescriptor().getQualifiedName(null))
+        builder.append(field.getDescriptor().getQualifiedName())
                .append(' ')
                .append(field.getName())
                .append(')');

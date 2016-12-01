@@ -114,8 +114,8 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
         }
         CEnumValue other = (CEnumValue) o;
         return other.descriptor()
-                    .getQualifiedName(null)
-                    .equals(type.getQualifiedName(null)) &&
+                    .getQualifiedName()
+                    .equals(type.getQualifiedName()) &&
                other.getName()
                     .equals(name) &&
                other.getValue() == value;
@@ -124,7 +124,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     @Override
     public int hashCode() {
         return Objects.hash(CEnumValue.class,
-                            descriptor().getQualifiedName(null),
+                            descriptor().getQualifiedName(),
                             name, value);
     }
 

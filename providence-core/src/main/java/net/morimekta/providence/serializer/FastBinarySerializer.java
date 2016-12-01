@@ -209,7 +209,7 @@ public class FastBinarySerializer extends Serializer {
             } else {
                 if (readStrict) {
                     throw new SerializerException(
-                            "Unknown field ID %d in type %s", id, descriptor.getQualifiedName(null));
+                            "Unknown field ID %d in type %s", id, descriptor.getQualifiedName());
                 }
                 readFieldValue(in, tag, null);
             }

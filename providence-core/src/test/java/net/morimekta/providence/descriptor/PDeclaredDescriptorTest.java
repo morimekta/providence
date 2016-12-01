@@ -46,11 +46,12 @@ public class PDeclaredDescriptorTest {
     }
 
     @Test
-    public void testGetName() {
+    public void testGetQualifiedName() {
         assertEquals("MockDescriptor", mockType.getName());
         assertEquals("MockDescriptor", mockType.getQualifiedName("test"));
         assertEquals("test.MockDescriptor", mockType.getQualifiedName("not_test"));
         assertEquals("test.MockDescriptor", mockType.getQualifiedName(null));
+        assertEquals("test.MockDescriptor", mockType.getQualifiedName());
     }
 
     @Test

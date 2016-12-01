@@ -130,9 +130,9 @@ public class CException extends Exception implements PMessage<CException, CField
 
         CException other = (CException) o;
         PStructDescriptor<?, ?> type = other.descriptor();
-        if (!descriptor().getQualifiedName(null)
-                         .equals(type.getQualifiedName(null)) || !descriptor().getVariant()
-                                                                              .equals(type.getVariant())) {
+        if (!descriptor().getQualifiedName()
+                         .equals(type.getQualifiedName()) || !descriptor().getVariant()
+                                                                          .equals(type.getVariant())) {
             return false;
         }
 
@@ -165,7 +165,7 @@ public class CException extends Exception implements PMessage<CException, CField
 
     @Override
     public String toString() {
-        return descriptor().getQualifiedName(null) + asString();
+        return descriptor().getQualifiedName() + asString();
     }
 
     @Override
@@ -263,7 +263,7 @@ public class CException extends Exception implements PMessage<CException, CField
                 throw new IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message " + descriptor().getQualifiedName(null));
+                        " in message " + descriptor().getQualifiedName());
             }
         }
 

@@ -47,7 +47,7 @@ public abstract class PContainer<Container> implements PDescriptor {
 
     @Override
     public String toString() {
-        return getQualifiedName(null);
+        return getQualifiedName();
     }
 
     /**

@@ -97,7 +97,7 @@ public class TypeRegistry {
      * @param <T> The descriptor object type.
      */
     public <T> void putDeclaredType(PDeclaredDescriptor<T> declaredType) {
-        String declaredTypeName = declaredType.getQualifiedName(null);
+        String declaredTypeName = declaredType.getQualifiedName();
         if (declaredTypes.containsKey(declaredTypeName)) {
             throw new IllegalStateException("Type " + declaredTypeName + " already exists");
         }
@@ -143,7 +143,7 @@ public class TypeRegistry {
      * @param <T> The declared java type.
      */
     public <T> void registerRecursively(PDeclaredDescriptor<T> declaredType) {
-        String declaredTypeName = declaredType.getQualifiedName(null);
+        String declaredTypeName = declaredType.getQualifiedName();
         if (declaredTypes.containsKey(declaredTypeName)) {
             return;
         }

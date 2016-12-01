@@ -198,7 +198,7 @@ class TProtocolSerializer extends Serializer {
         PStructDescriptor<?, ?> type = message.descriptor();
 
         protocol.writeStructBegin(new TStruct(message.descriptor()
-                                                     .getQualifiedName(null)));
+                                                     .getQualifiedName()));
 
         for (PField field : type.getFields()) {
             if (!message.has(field.getKey())) {
@@ -234,13 +234,13 @@ class TProtocolSerializer extends Serializer {
             if (f.id != 0) {
                 field = descriptor.getField(f.id);
                 if (field == null) {
-                    throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName(null));
+                    throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName());
                 }
             } else {
                 field = descriptor.getField(f.name);
                 if (field == null) {
                     throw new SerializerException(
-                            "No such field " + f.name + " in " + descriptor.getQualifiedName(null));
+                            "No such field " + f.name + " in " + descriptor.getQualifiedName());
                 }
             }
 
@@ -289,7 +289,7 @@ class TProtocolSerializer extends Serializer {
                     eb.setByValue(value);
                     if (!eb.isValid() && readStrict) {
                         throw new SerializerException("Invalid enum value " + value + " for " +
-                                                      et.getQualifiedName(null));
+                                                      et.getQualifiedName());
                     }
                     return eb.build();
                 } else {

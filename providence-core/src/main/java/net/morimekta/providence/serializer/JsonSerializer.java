@@ -314,7 +314,7 @@ public class JsonSerializer extends Serializer {
                     Object value = parseTypedValue(tokenizer.expect("parsing message field value"), tokenizer, field.getDescriptor());
                     builder.set(field.getKey(), value);
                 } else if (readStrict) {
-                    throw new SerializerException("Unknown field " + key + " for type " + type.getQualifiedName(null));
+                    throw new SerializerException("Unknown field " + key + " for type " + type.getQualifiedName());
                 } else {
                     consume(tokenizer.expect("consuming unknown message value"), tokenizer);
                 }
@@ -349,7 +349,7 @@ public class JsonSerializer extends Serializer {
                 builder.set(i, value);
             } else if (readStrict) {
                 throw new SerializerException("Compact Field ID " + (i) + " outside field spectrum for type " +
-                                              type.getQualifiedName(null));
+                                              type.getQualifiedName());
             } else {
                 consume(tokenizer.expect("consuming compact message field value"), tokenizer);
             }
@@ -543,10 +543,10 @@ public class JsonSerializer extends Serializer {
         } catch (JsonException je) {
             throw new SerializerException(je, "Unable to parse type value.");
         } catch (ClassCastException ce) {
-            throw new SerializerException(ce, "Serialized type  not compatible with " + t.getQualifiedName(null));
+            throw new SerializerException(ce, "Serialized type  not compatible with " + t.getQualifiedName());
         }
 
-        throw new SerializerException("Unhandled item type " + t.getQualifiedName(null));
+        throw new SerializerException("Unhandled item type " + t.getQualifiedName());
     }
 
     private Object parseMapKey(String key, PDescriptor keyType) throws SerializerException {
@@ -592,14 +592,14 @@ public class JsonSerializer extends Serializer {
                     }
                     if (readStrict && !eb.isValid()) {
                         throw new SerializerException("%s is not a valid enum value for %s",
-                                                      key, keyType.getQualifiedName(null));
+                                                      key, keyType.getQualifiedName());
                     }
                     return eb.build();
                 case MESSAGE:
                     PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
                         throw new SerializerException("Only simple structs can be used as map key. %s is not.",
-                                                      st.getQualifiedName(null));
+                                                      st.getQualifiedName());
                     }
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
@@ -738,7 +738,7 @@ public class JsonSerializer extends Serializer {
             if (!message.descriptor().isSimple()) {
                 throw new SerializerException("Only simple messages can be used as map keys. " +
                                               message.descriptor()
-                                                     .getQualifiedName(null) + " is not.");
+                                                     .getQualifiedName() + " is not.");
             }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonWriter json = new JsonWriter(baos);

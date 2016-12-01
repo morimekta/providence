@@ -69,7 +69,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
 
     @Override
     public String toString() {
-        return getQualifiedName(null);
+        return getQualifiedName();
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
             return false;
         }
         PEnumDescriptor<?> other = (PEnumDescriptor<?>) o;
-        if (!getQualifiedName(null).equals(other.getQualifiedName(null)) ||
+        if (!getQualifiedName().equals(other.getQualifiedName()) ||
             getValues().length != other.getValues().length) {
             return false;
         }
@@ -94,7 +94,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
 
     @Override
     public int hashCode() {
-        return Objects.hash(PEnumDescriptor.class, getQualifiedName(null));
+        return Objects.hash(PEnumDescriptor.class, getQualifiedName());
     }
 
     protected PEnumBuilderFactory<T> getFactoryInternal() {

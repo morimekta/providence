@@ -36,7 +36,7 @@ import java.io.File;
 public class JUtils {
     public static long generateSerialVersionUID(PStructDescriptor<?, ?> type) {
         String string = type.getVariant()
-                            .getName() + " " + type.getQualifiedName(null);
+                            .getName() + " " + type.getQualifiedName();
 
         long hash = 1125899906842597L; // prime
         final int len = string.length();
