@@ -234,7 +234,7 @@ public class PrettySerializer extends Serializer {
             }
             PField field = descriptor.getField(t.asString());
             if (field == null) {
-                throw new TokenizerException(t, "No such field %s on %s", t.asString(), descriptor.getQualifiedName(null))
+                throw new TokenizerException(t, "No such field %s on %s", t.asString(), descriptor.getQualifiedName())
                         .setLine(tokenizer.getLine(t.getLineNo()));
             }
 
@@ -380,7 +380,7 @@ public class PrettySerializer extends Serializer {
                 PEnumBuilder b = ((PEnumDescriptor) descriptor).builder();
                 b.setByName(t.asString());
                 if (!b.isValid()) {
-                    throw new TokenizerException(t, "No such " + descriptor.getQualifiedName(null) + " value " + t.asString())
+                    throw new TokenizerException(t, "No such " + descriptor.getQualifiedName() + " value " + t.asString())
                             .setLine(tokenizer.getLine(t.getLineNo()));
                 }
                 return b.build();

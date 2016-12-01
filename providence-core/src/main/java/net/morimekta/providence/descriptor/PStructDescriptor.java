@@ -33,12 +33,12 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
     private final boolean                      compactible;
     private final boolean                      simple;
 
-    public PStructDescriptor(String packageName,
+    public PStructDescriptor(String programName,
                              String name,
                              PMessageBuilderFactory<T, F> factory,
                              boolean simple,
                              boolean compactible) {
-        super(packageName, name);
+        super(programName, name);
 
         this.factory = factory;
         this.simple = simple;
@@ -101,7 +101,7 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
             return false;
         }
         PStructDescriptor<?, ?> other = (PStructDescriptor<?, ?>) o;
-        if (!getQualifiedName(null).equals(other.getQualifiedName(null)) ||
+        if (!getQualifiedName().equals(other.getQualifiedName()) ||
             !getVariant().equals(other.getVariant()) ||
             getFields().length != other.getFields().length) {
             return false;
@@ -117,7 +117,7 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
     @Override
     public int hashCode() {
         int hash = PStructDescriptor.class.hashCode() +
-                   getQualifiedName(null).hashCode() +
+                   getQualifiedName().hashCode() +
                    getVariant().hashCode();
         for (PField field : getFields()) {
             hash += field.hashCode();

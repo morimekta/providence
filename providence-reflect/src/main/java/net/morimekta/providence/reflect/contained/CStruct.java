@@ -164,7 +164,7 @@ public class CStruct extends CMessage<CStruct,CField> {
                 throw new IllegalStateException(
                         "Missing required fields " +
                         String.join(",", missing) +
-                        " in message " + descriptor().getQualifiedName(null));
+                        " in message " + descriptor().getQualifiedName());
             }
         }
 

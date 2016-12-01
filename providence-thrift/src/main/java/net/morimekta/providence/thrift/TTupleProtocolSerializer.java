@@ -296,7 +296,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 eb.setByValue(value);
                 if (readStrict && !eb.isValid()) {
                     throw new SerializerException("Invalid enum value " + value + " for " +
-                                                  et.getQualifiedName(null));
+                                                  et.getQualifiedName());
                 }
                 return eb.build();
             }

@@ -54,7 +54,7 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor {
 
     @Override
     public String toString() {
-        return getQualifiedName(null);
+        return getQualifiedName();
     }
 
     /**

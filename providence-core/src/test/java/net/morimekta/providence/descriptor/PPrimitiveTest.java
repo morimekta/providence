@@ -47,14 +47,14 @@ public class PPrimitiveTest {
 
     @Test
     public void testGetName_noPackage() {
-        assertEquals("bool", PPrimitive.BOOL.getQualifiedName(null));
-        assertEquals("byte", PPrimitive.BYTE.getQualifiedName(null));
-        assertEquals("i16", PPrimitive.I16.getQualifiedName(null));
-        assertEquals("i32", PPrimitive.I32.getQualifiedName(null));
-        assertEquals("i64", PPrimitive.I64.getQualifiedName(null));
-        assertEquals("double", PPrimitive.DOUBLE.getQualifiedName(null));
-        assertEquals("string", PPrimitive.STRING.getQualifiedName(null));
-        assertEquals("binary", PPrimitive.BINARY.getQualifiedName(null));
+        assertEquals("bool", PPrimitive.BOOL.getQualifiedName());
+        assertEquals("byte", PPrimitive.BYTE.getQualifiedName());
+        assertEquals("i16", PPrimitive.I16.getQualifiedName());
+        assertEquals("i32", PPrimitive.I32.getQualifiedName());
+        assertEquals("i64", PPrimitive.I64.getQualifiedName());
+        assertEquals("double", PPrimitive.DOUBLE.getQualifiedName());
+        assertEquals("string", PPrimitive.STRING.getQualifiedName());
+        assertEquals("binary", PPrimitive.BINARY.getQualifiedName());
     }
 
     @Test

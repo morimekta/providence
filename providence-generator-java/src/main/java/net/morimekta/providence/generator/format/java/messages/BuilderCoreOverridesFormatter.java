@@ -324,7 +324,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
             writer.appendln("if (!isValid()) {")
                   .formatln("    throw new %s(\"No union field set in %s\");",
                             IllegalStateException.class.getName(),
-                            message.descriptor().getQualifiedName(null))
+                            message.descriptor().getQualifiedName())
                   .appendln("}");
         } else {
             boolean hasRequired =
@@ -353,7 +353,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 writer.formatln("throw new %s(", IllegalStateException.class.getName())
                       .appendln("        \"Missing required fields \" +")
                       .appendln("        String.join(\",\", missing) +")
-                      .formatln("        \" in message %s\");", message.descriptor().getQualifiedName(null))
+                      .formatln("        \" in message %s\");", message.descriptor().getQualifiedName())
                       .end()
                       .appendln("}");
             }

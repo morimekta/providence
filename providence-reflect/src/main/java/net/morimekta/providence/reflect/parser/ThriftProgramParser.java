@@ -355,7 +355,7 @@ public class ThriftProgramParser implements ProgramParser {
                         tokenizer.expectSymbol("", Token.kFieldValueSep);
                         Token value = tokenizer.expectStringLiteral("annotation value");
 
-                        field.putInAnnotations(name, value.decodeLiteral());
+                        field.putInAnnotations(name, value.decodeStringLiteral());
 
                         sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                     }
@@ -415,7 +415,7 @@ public class ThriftProgramParser implements ProgramParser {
                             tokenizer.expectSymbol("", Token.kFieldValueSep);
                             Token value = tokenizer.expectStringLiteral("exception annotation value");
 
-                            field.putInAnnotations(name, value.decodeLiteral());
+                            field.putInAnnotations(name, value.decodeStringLiteral());
 
                             sep = tokenizer.expectSymbol("exception annotation sep",
                                                          Token.kParamsEnd,
@@ -444,7 +444,7 @@ public class ThriftProgramParser implements ProgramParser {
                     tokenizer.expectSymbol("", Token.kFieldValueSep);
                     Token value = tokenizer.expectStringLiteral("annotation value");
 
-                    method.putInAnnotations(name, value.decodeLiteral());
+                    method.putInAnnotations(name, value.decodeStringLiteral());
 
                     sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                 }
@@ -470,7 +470,7 @@ public class ThriftProgramParser implements ProgramParser {
                     tokenizer.expectSymbol("", Token.kFieldValueSep);
                     Token value = tokenizer.expectStringLiteral("annotation value");
 
-                    service.putInAnnotations(name, value.decodeLiteral());
+                    service.putInAnnotations(name, value.decodeStringLiteral());
 
                     sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                 }
@@ -580,7 +580,7 @@ public class ThriftProgramParser implements ProgramParser {
                             tokenizer.expectSymbol("", Token.kFieldValueSep);
                             Token val = tokenizer.expectStringLiteral("annotation value");
 
-                            evb.putInAnnotations(name, val.decodeLiteral());
+                            evb.putInAnnotations(name, val.decodeStringLiteral());
 
                             sep2 = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                         }
@@ -611,7 +611,7 @@ public class ThriftProgramParser implements ProgramParser {
                 tokenizer.expectSymbol("", Token.kFieldValueSep);
                 Token val = tokenizer.expectStringLiteral("annotation value");
 
-                etb.putInAnnotations(name, val.decodeLiteral());
+                etb.putInAnnotations(name, val.decodeStringLiteral());
 
                 sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
             }
@@ -740,7 +740,7 @@ public class ThriftProgramParser implements ProgramParser {
                     tokenizer.expectSymbol("", Token.kFieldValueSep);
                     Token val = tokenizer.expectStringLiteral("annotation value");
 
-                    field.putInAnnotations(aName, val.decodeLiteral());
+                    field.putInAnnotations(aName, val.decodeStringLiteral());
 
                     sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
                 }
@@ -764,7 +764,7 @@ public class ThriftProgramParser implements ProgramParser {
                 tokenizer.expectSymbol("", Token.kFieldValueSep);
                 Token val = tokenizer.expectStringLiteral("annotation value");
 
-                struct.putInAnnotations(name, val.decodeLiteral());
+                struct.putInAnnotations(name, val.decodeStringLiteral());
 
                 sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
             }

@@ -72,20 +72,20 @@ public class ProvidenceConfigUtil {
 
             PField field = descriptor.getField(name);
             if (field == null) {
-                throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName(null) + " has no field named " +
+                throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName() + " has no field named " +
                                                name);
             }
             PDescriptor fieldDesc = field.getDescriptor();
             if (fieldDesc.getType() != PType.MESSAGE) {
                 throw new IncompatibleValueException("Field " + name + " is not of message type in " +
-                                                     descriptor.getQualifiedName(null));
+                                                     descriptor.getQualifiedName());
             }
 
             if (!message.has(field.getKey())) {
                 while (sub.contains(".")) {
                     if (fieldDesc.getType() != PType.MESSAGE) {
                         throw new IncompatibleValueException("Field " + name + " is not of message type in " +
-                                                             descriptor.getQualifiedName(null));
+                                                             descriptor.getQualifiedName());
                     }
 
                     idx = sub.indexOf(".");
@@ -102,7 +102,7 @@ public class ProvidenceConfigUtil {
 
         PField field = message.descriptor().getField(key);
         if (field == null) {
-            throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName(null) + " has no field named " +
+            throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName() + " has no field named " +
                                            key);
         }
 

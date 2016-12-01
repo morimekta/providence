@@ -131,8 +131,7 @@ public class ProvidenceConfig {
             } else if (value instanceof PEnumValue) {
                 return String.format("%s = %s.%s (%s)",
                                      name,
-                                     ((PEnumValue) value).descriptor()
-                                                         .getQualifiedName(null),
+                                     ((PEnumValue) value).descriptor().getQualifiedName(),
                                      asString(value),
                                      file.getName());
             } else if (value instanceof CharSequence) {
@@ -552,7 +551,7 @@ public class ProvidenceConfig {
 
             F field = descriptor.getField(token.asString());
             if (field == null) {
-                throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName(null))
+                throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())
                         .setLine(tokenizer.getLine(token.getLineNo()));
             }
 

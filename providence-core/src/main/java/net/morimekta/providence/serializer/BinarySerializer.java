@@ -255,7 +255,7 @@ public class BinarySerializer extends Serializer {
             } else {
                 if (readStrict) {
                     throw new SerializerException(
-                            "Unknown field " + fieldInfo.getId() + " for type " + descriptor.getQualifiedName(null));
+                            "Unknown field " + fieldInfo.getId() + " for type " + descriptor.getQualifiedName());
                 }
                 readFieldValue(input, fieldInfo, null);
             }

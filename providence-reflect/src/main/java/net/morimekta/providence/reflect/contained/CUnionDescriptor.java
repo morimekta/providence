@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implements CAnnotatedDescriptor {
+public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implements CMessageDescriptor {
     private final CField[]             fields;
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
