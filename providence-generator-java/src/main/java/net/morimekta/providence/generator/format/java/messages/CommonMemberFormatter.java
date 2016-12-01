@@ -191,7 +191,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                     writer.append(',')
                           .appendln();
                 }
-                writer.format("%s %s", fld.valueType(), fld.param());
+                writer.format("%s %s", fld.fieldType(), fld.param());
             }
         }
 
