@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +182,7 @@ public class TTupleProtocolSerializer extends Serializer {
             writeTypedValue(message.get(fld.getKey()), fld.getDescriptor(), protocol);
         } else {
             PField[] fields = descriptor.getFields();
+            Arrays.sort(fields, (a, b) -> Integer.compare(a.getKey(), b.getKey()));
             int numOptionals = countOptionals(fields);
             BitSet optionals = new BitSet();
             if (numOptionals > 0) {

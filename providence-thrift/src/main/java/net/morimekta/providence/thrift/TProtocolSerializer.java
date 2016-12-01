@@ -226,22 +226,15 @@ class TProtocolSerializer extends Serializer {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         protocol.readStructBegin();  // ignored.
         while ((f = protocol.readFieldBegin()) != null) {
-            if (f.type == PType.STOP.id) {
+            if (f.type == TType.STOP) {
                 break;
             }
 
             PField field;
-            if (f.id != 0) {
-                field = descriptor.getField(f.id);
-                if (field == null) {
-                    throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName());
-                }
-            } else {
-                field = descriptor.getField(f.name);
-                if (field == null) {
-                    throw new SerializerException(
-                            "No such field " + f.name + " in " + descriptor.getQualifiedName());
-                }
+            // f.name is never fulled out, rely on f.id being correct.
+            field = descriptor.getField(f.id);
+            if (field == null) {
+                throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName());
             }
 
             if (f.type != getFieldType(field.getDescriptor())) {
