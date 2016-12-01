@@ -1,9 +1,9 @@
 package net.morimekta.providence.server;
 
 import net.morimekta.providence.client.HttpClientHandler;
-import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
@@ -11,9 +11,11 @@ import net.morimekta.test.providence.service.TestService;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponseException;
-import org.eclipse.jetty.server.Connector;
+import com.google.api.client.http.apache.ApacheHttpTransport;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.transport.THttpClient;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
@@ -30,8 +32,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -129,5 +134,41 @@ public class ProvidenceServletTest {
         } catch (HttpResponseException ex) {
             assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
         }
+    }
+
+    @Test
+    public void testThriftClient_void() throws TException, IOException, Failure {
+        ApacheHttpTransport transport = new ApacheHttpTransport();
+        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
+        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
+        net.morimekta.test.providence.thrift.TestService.Iface client =
+                new net.morimekta.test.providence.thrift.TestService.Client(protocol);
+
+        client.voidMethod(55);
+
+        verify(impl).voidMethod(55);
+        verifyNoMoreInteractions(impl);
+    }
+
+    @Test
+    public void testThriftClient_failure() throws TException, IOException, Failure {
+        ApacheHttpTransport transport = new ApacheHttpTransport();
+        THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
+        TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
+        net.morimekta.test.providence.thrift.TestService.Iface client =
+                new net.morimekta.test.providence.thrift.TestService.Client(protocol);
+
+        doThrow(new Failure("test"))
+                .when(impl)
+                .voidMethod(55);
+
+        try {
+            client.voidMethod(55);
+        } catch (net.morimekta.test.providence.thrift.Failure e) {
+            assertEquals("test", e.getText());
+        }
+
+        verify(impl).voidMethod(55);
+        verifyNoMoreInteractions(impl);
     }
 }
