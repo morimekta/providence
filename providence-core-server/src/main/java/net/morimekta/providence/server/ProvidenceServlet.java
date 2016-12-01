@@ -26,6 +26,7 @@ import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
 
+import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,15 +84,29 @@ public class ProvidenceServlet extends HttpServlet {
             }
 
             Serializer responseSerializer = requestSerializer;
-            String accept = resp.getHeader("Accept");
-            if (accept != null) {
-                responseSerializer = serializerProvider.getSerializer(accept);
+            String acceptHeader = resp.getHeader("Accept");
+            if (acceptHeader != null) {
+                String[] entries = acceptHeader.split("[,]");
+                for (String entry : entries) {
+                    if (entry.trim().isEmpty()) {
+                        continue;
+                    }
+
+                    try {
+                        MediaType mediaType = MediaType.parse(entry.trim());
+                        Serializer tmp = serializerProvider.getSerializer(mediaType.type() + "/" + mediaType.subtype());
+                        if (tmp != null) {
+                            responseSerializer = tmp;
+                            break;
+                        }
+                    } catch (IllegalArgumentException ignore) {
+                        // Ignore. Bad header input is pretty common.
+                    }
+                }
                 if (responseSerializer == null) {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown accept content-type: " + accept);
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No supported accept media-type: " + acceptHeader);
                     return;
                 }
-            } else {
-                accept = responseSerializer.mimeType();
             }
 
             MessageReader reader = new IOMessageReader(req.getInputStream(), requestSerializer);
@@ -105,7 +120,7 @@ public class ProvidenceServlet extends HttpServlet {
             new DefaultProcessorHandler(processor).process(reader, writer);
 
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType(accept);
+            resp.setContentType(responseSerializer.mimeType());
             resp.setContentLength(baos.size());
             resp.getOutputStream().write(baos.toByteArray());
         } catch (Exception e) {

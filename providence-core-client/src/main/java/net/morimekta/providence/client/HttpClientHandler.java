@@ -77,13 +77,15 @@ public class HttpClientHandler implements PServiceCallHandler {
         ByteArrayContent content = new ByteArrayContent(requestSerializer.mimeType(), baos.toByteArray());
 
         HttpRequest request = factory.buildPostRequest(urlSupplier.get(), content);
+        request.getHeaders().setContentType(requestSerializer.mimeType());
+        request.getHeaders().setAccept(requestSerializer.mimeType());
         HttpResponse response = request.execute();
 
         Serializer responseSerializer = requestSerializer;
         if (response.getContentType() != null) {
             responseSerializer = serializerProvider.getSerializer(response.getContentType());
             if (responseSerializer == null) {
-                throw new PApplicationException("Unknown mime type in response: " + response.getContentType(),
+                throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
                                                 PApplicationExceptionType.INVALID_PROTOCOL);
             }
         }

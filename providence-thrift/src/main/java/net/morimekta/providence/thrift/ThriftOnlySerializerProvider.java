@@ -1,24 +1,17 @@
-package net.morimekta.providence.thrift.client;
+package net.morimekta.providence.thrift;
 
+import net.morimekta.providence.serializer.BaseSerializerProvider;
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerProvider;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
 import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by morimekta on 5/4/16.
  */
-public class ThriftOnlySerializerProvider implements SerializerProvider {
-    private final Map<String, Serializer> serializerMap;
-    private final String                  defaultContentType;
-
+public class ThriftOnlySerializerProvider extends BaseSerializerProvider {
     /**
      * Get the default serializer provider.
      */
@@ -32,8 +25,7 @@ public class ThriftOnlySerializerProvider implements SerializerProvider {
      * @param defaultContentType The default mime-type.
      */
     public ThriftOnlySerializerProvider(String defaultContentType) {
-        this.defaultContentType = defaultContentType;
-        this.serializerMap = new HashMap<>();
+        super(defaultContentType);
 
         // The BinarySerializer is identical to the TBinaryProtocolSerializer,
         // except that it is "native providence".
@@ -43,26 +35,5 @@ public class ThriftOnlySerializerProvider implements SerializerProvider {
         register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
         // Even though it's a write-only protocol.
         register(new TSimpleJsonProtocolSerializer(), TSimpleJsonProtocolSerializer.MIME_TYPE);
-    }
-
-    @Override
-    public Serializer getSerializer(String mediaType) {
-        return serializerMap.get(mediaType);
-    }
-
-    @Override
-    public Serializer getDefault() {
-        return getSerializer(defaultContentType);
-    }
-
-    /**
-     * Register the serializer with a given set of mime-types.
-     * @param serializer The serializer to register.
-     * @param mimeTypes The mime types to register it for.
-     */
-    protected void register(Serializer serializer, String... mimeTypes) {
-        for (String mimeType : mimeTypes) {
-            this.serializerMap.put(mimeType, serializer);
-        }
     }
 }

@@ -1,40 +1,25 @@
 package net.morimekta.providence.thrift;
 
+import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
-import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerProvider;
+import net.morimekta.providence.thrift.TCompactProtocolSerializer;
+import net.morimekta.providence.thrift.TJsonProtocolSerializer;
+import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
 /**
- * Created by morimekta on 5/2/16.
+ *
  */
 public class ThriftSerializerProvider extends DefaultSerializerProvider {
-    private final SerializerProvider baseProvider;
-
     public ThriftSerializerProvider() {
-        this(new DefaultSerializerProvider() {});
+        this(BinarySerializer.MIME_TYPE);
     }
 
-    public ThriftSerializerProvider(SerializerProvider base) {
-        if (base instanceof ThriftSerializerProvider) {
-            throw new IllegalArgumentException();
-        }
-        baseProvider = base;
-    }
+    public ThriftSerializerProvider(String mimeType) {
+        super(mimeType);
 
-    @Override
-    public Serializer getSerializer(String mediaType) {
-        switch (mediaType) {
-            case TBinaryProtocolSerializer.MIME_TYPE:
-            case TBinaryProtocolSerializer.ALT_MIME_TYPE:
-                return new TBinaryProtocolSerializer();
-            case TCompactProtocolSerializer.MIME_TYPE:
-                return new TCompactProtocolSerializer();
-            case TJsonProtocolSerializer.MIME_TYPE:
-                return new TJsonProtocolSerializer();
-            case TSimpleJsonProtocolSerializer.MIME_TYPE:
-                return new TSimpleJsonProtocolSerializer();
-            default:
-                return baseProvider.getSerializer(mediaType);
-        }
+        // Just add the thrift-only serializers.
+        register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);
+        register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
+        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
     }
 }
