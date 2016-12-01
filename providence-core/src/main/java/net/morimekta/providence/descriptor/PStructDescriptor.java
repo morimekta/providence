@@ -33,12 +33,12 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
     private final boolean                      compactible;
     private final boolean                      simple;
 
-    public PStructDescriptor(String packageName,
+    public PStructDescriptor(String programName,
                              String name,
                              PMessageBuilderFactory<T, F> factory,
                              boolean simple,
                              boolean compactible) {
-        super(packageName, name);
+        super(programName, name);
 
         this.factory = factory;
         this.simple = simple;

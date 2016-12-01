@@ -55,6 +55,15 @@ public interface PDescriptor {
     String getQualifiedName(String programContext);
 
     /**
+     * This will return the globally qualified name of the type given the program context.
+     *
+     * @return The qualified name of the type, including program name.
+     */
+    default String getQualifiedName() {
+        return getQualifiedName(null);
+    }
+
+    /**
      * @return Get the field type.
      */
     PType getType();

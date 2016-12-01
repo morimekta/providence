@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CAnnotatedDescriptor {
+public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CMessageDescriptor {
     public static final int     MAX_COMPACT_FIELDS = 10;
 
     private final String               comment;
