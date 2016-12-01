@@ -7,7 +7,6 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
-import net.morimekta.providence.serializer.SerializerException;
 
 import org.junit.Test;
 
@@ -27,12 +26,12 @@ import static org.mockito.Mockito.when;
  */
 public class WrappedProcessorTest {
     @Test
-    public void testWrapper() throws IOException, SerializerException {
+    public void testWrapper() throws IOException {
         PProcessor processor = mock(PProcessor.class);
 
         WrappedProcessor wrap = new WrappedProcessor(processor, (call, p) -> {
             // before call
-            PServiceCall reply = processor.handleCall(call, processor.getDescriptor());
+            PServiceCall reply = p.handleCall(call, p.getDescriptor());
             // after call
             return reply;
         });

@@ -5,7 +5,6 @@ import net.morimekta.providence.PProcessor;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.IOException;
 
@@ -13,6 +12,7 @@ import java.io.IOException;
  * Wrapping processor in a callback style
  */
 public class WrappedProcessor implements PProcessor {
+    @FunctionalInterface
     public interface ProcessorWrapper {
         PServiceCall handleWrappedCall(PServiceCall call, PProcessor processor) throws IOException;
     }
