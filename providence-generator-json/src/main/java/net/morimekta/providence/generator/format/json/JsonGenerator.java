@@ -1,4 +1,6 @@
 /*
+ * Copyright 2015 Providence Authors
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.generator.format.json;
 
 import net.morimekta.providence.generator.Generator;
@@ -32,8 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 22.09.15
+ * Generate a simple JSON model of the program structure.
  */
 public class JsonGenerator extends Generator {
     private final TypeLoader     typeLoader;
