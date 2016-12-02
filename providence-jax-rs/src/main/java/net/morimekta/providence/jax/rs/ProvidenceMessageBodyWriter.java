@@ -39,7 +39,7 @@ import java.lang.reflect.Type;
 public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<PMessage> {
     private final SerializerProvider provider;
 
-    public ProvidenceMessageBodyWriter(SerializerProvider provider) {
+    protected ProvidenceMessageBodyWriter(SerializerProvider provider) {
         this.provider = provider;
     }
 

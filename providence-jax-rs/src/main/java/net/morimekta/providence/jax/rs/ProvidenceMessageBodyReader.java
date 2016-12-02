@@ -41,7 +41,7 @@ import java.lang.reflect.Type;
 public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<PMessage> {
     private final SerializerProvider provider;
 
-    ProvidenceMessageBodyReader(SerializerProvider provider) {
+    protected ProvidenceMessageBodyReader(SerializerProvider provider) {
         this.provider = provider;
     }
 
