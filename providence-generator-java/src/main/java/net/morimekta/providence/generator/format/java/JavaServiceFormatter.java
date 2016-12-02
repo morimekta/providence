@@ -549,9 +549,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
 
             for (JField param : method.params()) {
                 if (param.comment() != null) {
-                    comment.param_(param.name(), param.comment());
+                    comment.param_(param.param(), param.comment());
                 } else {
-                    comment.param_(param.name(), "The " + param.name() + " value.");
+                    comment.param_(param.param(), "The " + param.name() + " value.");
                 }
             }
 
