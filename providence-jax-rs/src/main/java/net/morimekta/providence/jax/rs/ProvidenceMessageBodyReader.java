@@ -63,7 +63,11 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type != null && getDescriptor(type) != null;
+        if (type == null || getDescriptor(type) == null) {
+            return false;
+        }
+        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
+        return provider.getSerializer(contentType) != null;
     }
 
     @Override
@@ -73,7 +77,7 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
                       MediaType mediaType,
                       MultivaluedMap<String, String> httpHeaders,
                       InputStream entityStream) throws IOException, WebApplicationException {
-        String contentType = mediaType.toString();
+        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
 
         try {
             PStructDescriptor descriptor = getDescriptor(type);

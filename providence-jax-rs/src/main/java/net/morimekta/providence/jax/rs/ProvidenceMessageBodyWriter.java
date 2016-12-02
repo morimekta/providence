@@ -45,7 +45,11 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return PMessage.class.isAssignableFrom(type);
+        if (!PMessage.class.isAssignableFrom(type)) {
+            return false;
+        }
+        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
+        return provider.getSerializer(contentType) != null;
     }
 
     @Override
@@ -62,7 +66,7 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
-        String contentType = mediaType.toString();
+        String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
 
         try {
             provider.getSerializer(contentType)
