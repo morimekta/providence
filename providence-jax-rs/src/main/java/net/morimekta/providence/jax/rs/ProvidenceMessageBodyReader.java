@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
+import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -84,7 +85,7 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
             return provider.getSerializer(contentType)
                            .deserialize(entityStream, descriptor);
         } catch (NullPointerException e) {
-            throw new ProcessingException("Unknown media type: " + mediaType, e);
+            throw new NotSupportedException("Unknown media type: " + mediaType, e);
         } catch (SerializerException e) {
             throw new ProcessingException("Unable to deserialize entity", e);
         }
