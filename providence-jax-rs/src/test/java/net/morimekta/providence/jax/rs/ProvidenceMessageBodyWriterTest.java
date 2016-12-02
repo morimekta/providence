@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class ProvidenceMessageBodyWriterTest {
     @Test
     @SuppressWarnings("unchecked")
-    public void testGetDescriptor() {
+    public void testIsWritable() {
         ProvidenceMessageBodyWriter reader = new DefaultProvidenceMessageBodyWriter();
         Annotation[] annotations = new Annotation[0];
 
