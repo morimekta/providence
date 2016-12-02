@@ -21,7 +21,7 @@ public class BlockCommentBuilder {
     }
 
     public BlockCommentBuilder comment(String comment) {
-        String escaped = html.escape(comment).replaceAll("[@]", "&at;");
+        String escaped = html.escape(comment).replaceAll("[@]", "&#64;");
         for (String line : escaped.trim().split("\r?\n")) {
             if (line.trim().length() == 0) {
                 writer.appendln(" <p>");
