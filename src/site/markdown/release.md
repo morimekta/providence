@@ -22,11 +22,11 @@ Proper releases are done with a branch cut.
 
 #### Making the release cut.
 
-* Run `# mvn -Pdev,cli,it clean install` to build and verify the snapshot build
+* Run `# mvn -Plib,cli,it clean install` to build and verify the snapshot build
   you want to release.
-* Run `# mvn -Pdev,cli,it release:prepare`, which will create two new commits, one with the
+* Run `# mvn -Plib,cli,it release:prepare`, which will create two new commits, one with the
   actual release, and one with the "next development cycle".
-* Run `# mvn -Pdev release:perform` to generate the artifacts and push to sonatype
+* Run `# mvn -Plib release:perform` to generate the artifacts and push to sonatype
   for staging.
 * Run `# git fetch origin` to update the local git cache (the release plugin uses
   JGit, which does not update the local git remote cache, as it uses SSH against github
