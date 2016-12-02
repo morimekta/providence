@@ -13,9 +13,6 @@
                     <generate-test-sources>
                         net.morimekta.providence:providence-maven-plugin:${project.version}:testCompile
                     </generate-test-sources>
-                    <package>
-                        net.morimekta.providence:providence-maven-plugin:${project.version}:assemble
-                    </package>
                 </phases>
                 <default-phases>
                     <generate-sources>
@@ -24,9 +21,6 @@
                     <generate-test-sources>
                         net.morimekta.providence:providence-maven-plugin:${project.version}:testCompile
                     </generate-test-sources>
-                    <package>
-                        net.morimekta.providence:providence-maven-plugin:${project.version}:assemble
-                    </package>
                 </default-phases>
             </configuration>
         </component>
