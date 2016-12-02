@@ -7,7 +7,6 @@ import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
 import net.morimekta.providence.thrift.TCompactProtocolSerializer;
 import net.morimekta.providence.thrift.TJsonProtocolSerializer;
@@ -32,6 +31,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Serialization Test result.
@@ -90,7 +90,28 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
 
     @Override
     public int compareTo(TestSerialization other) {
-        return Double.compare(totalPvd(), other.totalPvd());
+        int c = Double.compare(totalPvd(), other.totalPvd());
+        if (c != 0) {
+            return c;
+        }
+        // If the same, sort DESC after original read + write time.
+        c = Double.compare(other.format.read + other.format.write,
+                           format.read + format.write);
+        return c != 0 ? c : format.compareTo(other.format);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !getClass().equals(o.getClass())) return false;
+
+        TestSerialization other = (TestSerialization) o;
+        return format == other.format;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(TestSerialization.class, format);
     }
 
     @Override
@@ -196,7 +217,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
     }
 
-    public void runProvidence(List<Containers> content) throws IOException, SerializerException {
+    public void runProvidence(List<Containers> content) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(format.output_size);
 
         long totalTime = 0;

@@ -3,7 +3,6 @@ package net.morimekta.providence.it.serialization;
 import net.morimekta.console.chr.Control;
 import net.morimekta.providence.it.Format;
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.test.providence.Containers;
 
@@ -18,11 +17,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static net.morimekta.providence.it.serialization.TestSerialization.forFormat;
 import static org.junit.Assert.fail;
 
 /**
@@ -65,13 +66,13 @@ public class SerializationIT {
     }
 
     @Test
-    public void testEachFormat() throws IOException, SerializerException, TException {
+    public void testEachFormat() throws IOException, TException {
         System.out.println("Test testEachFormat");
         System.out.println(Format.header());
         System.out.println();
 
         for (Format format : Format.values()) {
-            TestSerialization test = TestSerialization.forFormat(format);
+            TestSerialization test = forFormat(format);
 
             // Just run enough tests that we have >1ms per format.
             for (int i = 0; i < 10; ++i) {
@@ -86,11 +87,9 @@ public class SerializationIT {
     }
 
     @Test
-    public void testManyRuns() throws IOException, SerializerException, TException {
-        LinkedList<TestSerialization> formats = new LinkedList<>();
-        for (Format format : Format.values()) {
-            formats.add(TestSerialization.forFormat(format));
-        }
+    public void testManyRuns() throws IOException, TException {
+        ArrayList<TestSerialization> formats = new ArrayList<>();
+        asList(Format.values()).forEach(f -> formats.add(forFormat(f)));
 
         System.out.println("Test testManyRuns");
         System.out.format(". ( 0%%)%s", Control.cursorLeft(6));
@@ -111,43 +110,40 @@ public class SerializationIT {
             System.out.format("%s.. (%2d%%)%s", Control.LEFT, i + 1, Control.cursorLeft(6));
         }
 
+        System.out.println();
+
+        formats.forEach(TestSerialization::calculate);
+
         Optional<TestSerialization> opt = formats.stream().filter(f -> f.format == Format.binary).findFirst();
         if (!opt.isPresent()) {
             fail("Oops");
             return;
         }
         TestSerialization rel = opt.get();
-
-        System.out.println();
-
-        formats.forEach(TestSerialization::calculate);
-        Collections.sort(formats);
+        formats.sort(TestSerialization::compareTo);
 
         System.out.println(Format.header());
         System.out.println();
-        for (TestSerialization test : formats) {
-            System.out.println(test.statistics(rel));
-        }
-        for (TestSerialization test : formats) {
-            test.verify(rel);
-        }
+        formats.forEach(f -> f.statistics(rel));
+        System.out.println();
+        formats.forEach(f -> f.verify(rel));
         System.out.println();
     }
 
     @Test
-    public void testBinarySerializer() throws IOException, SerializerException, TException {
+    public void testBinarySerializer() throws IOException, TException {
         System.out.println("Test testBinarySerializer");
         testSerializer(Format.binary);
     }
 
     @Test
-    public void testFastBinarySerializer() throws IOException, SerializerException, TException {
+    public void testFastBinarySerializer() throws IOException, TException {
         System.out.println("Test testFastBinarySerializer");
         testSerializer(Format.fast_binary);
     }
 
-    public void testSerializer(Format format) throws IOException, SerializerException, TException {
-        TestSerialization test = TestSerialization.forFormat(format);
+    public void testSerializer(Format format) throws IOException, TException {
+        TestSerialization test = forFormat(format);
 
         System.out.format(". ( 0%%)%s", Control.cursorLeft(6));
         for (int i = 0; i < 100; ++i) {
