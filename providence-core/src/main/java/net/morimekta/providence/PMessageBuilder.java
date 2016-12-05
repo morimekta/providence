@@ -61,6 +61,14 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     public abstract PMessageBuilder<T, F> set(int key, Object value);
 
     /**
+     * Checks if a specific field is set on the builder.
+     *
+     * @param key The key of the field to check.
+     * @return True if the field is set.
+     */
+    public abstract boolean isSet(int key);
+
+    /**
      * Adds a value to a set or list container.
      *
      * @param key The field key.

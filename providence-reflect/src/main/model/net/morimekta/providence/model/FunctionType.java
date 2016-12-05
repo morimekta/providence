@@ -913,6 +913,21 @@ public class FunctionType
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return optionals.get(0);
+                case 2: return optionals.get(1);
+                case 3: return optionals.get(2);
+                case 4: return optionals.get(3);
+                case 5: return optionals.get(4);
+                case 6: return optionals.get(5);
+                case 7: return optionals.get(6);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 case 5: addToParams((net.morimekta.providence.model.FieldType) value); break;

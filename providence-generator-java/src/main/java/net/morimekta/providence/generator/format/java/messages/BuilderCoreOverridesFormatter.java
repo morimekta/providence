@@ -56,6 +56,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     public void appendMethods(JMessage<?> message) throws GeneratorException {
         appendOverrideMutator(message);
         appendOverrideSetter(message);
+        appendOverrideIsSet(message);
         appendOverrideAdder(message);
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
@@ -196,7 +197,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .begin()
               .appendln("switch (key) {")
               .begin();
-        message.declaredOrderFields()
+        message.numericalOrderFields()
                .stream()
                .filter(field -> field.type() == PType.MESSAGE)
                .forEachOrdered(field -> writer.formatln("case %d: return %s();",
@@ -218,7 +219,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("if (value == null) return clear(key);")
               .appendln("switch (key) {")
               .begin();
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             if (field.isVoid()) {
                 // Void fields have no value.
                 writer.formatln("case %d: %s(); break;", field.id(), field.setter(), field.valueType());
@@ -235,13 +236,37 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .newline();
     }
 
+    private void appendOverrideIsSet(JMessage<?> message) throws GeneratorException {
+        writer.appendln("@Override")
+              .appendln("public boolean isSet(int key) {")
+              .begin()
+              .appendln("switch (key) {")
+              .begin();
+        if (message.isUnion()) {
+            for (JField field : message.numericalOrderFields()) {
+                writer.formatln("case %d: return tUnionField == _Field.%s;", field.id(), field.fieldEnum());
+            }
+        } else {
+            for (JField field : message.numericalOrderFields()) {
+                writer.formatln("case %d: return optionals.get(%d);", field.id(), field.index());
+            }
+        }
+        writer.appendln("default: break;")
+              .end()
+              .appendln('}')
+              .appendln("return false;")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
     private void appendOverrideAdder(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public _Builder addTo(int key, Object value) {")
               .begin()
               .appendln("switch (key) {")
               .begin();
-        message.declaredOrderFields()
+        message.numericalOrderFields()
                .stream()
                .filter(field -> field.type() == PType.LIST || field.type() == PType.SET)
                .forEachOrdered(field -> {
@@ -268,7 +293,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .begin()
               .appendln("switch (key) {")
               .begin();
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             writer.formatln("case %d: %s(); break;", field.id(), field.resetter());
         }
         writer.appendln("default: break;")
@@ -291,7 +316,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                   .newline()
                   .appendln("switch (tUnionField) {")
                   .begin();
-            message.declaredOrderFields()
+            message.numericalOrderFields()
                    .stream()
                    .filter(field -> !field.alwaysPresent())
                    .forEachOrdered(field -> {

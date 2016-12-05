@@ -3,20 +3,37 @@ package net.morimekta.test.calculator;
 @SuppressWarnings("unused")
 public class Calculator {
     public interface Iface {
+        /**
+         * @param pOp The op value.
+         * @return The calculate result.
+         * @throws net.morimekta.test.calculator.CalculateException The ce exception.
+         * @throws java.io.IOException On providence or non-declared exceptions.
+         */
         net.morimekta.test.calculator.Operand calculate(
                 net.morimekta.test.calculator.Operation pOp)
                 throws java.io.IOException,
                        net.morimekta.test.calculator.CalculateException;
 
+        /**
+         * @throws java.io.IOException On providence or non-declared exceptions.
+         */
         void iamalive()
                 throws java.io.IOException;
     }
 
+    /**
+     * Client implementation for calculator.Calculator
+     */
     public static class Client
             extends net.morimekta.providence.PClient
             implements Iface {
         private final net.morimekta.providence.PServiceCallHandler handler;
 
+        /**
+         * Create calculator.Calculator service client.
+         *
+         * @param handler The client handler.
+         */
         public Client(net.morimekta.providence.PServiceCallHandler handler) {
             this.handler = handler;
         }
@@ -534,6 +551,15 @@ public class Calculator {
             }
 
             @Override
+            public boolean isSet(int key) {
+                switch (key) {
+                    case 1: return optionals.get(0);
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
             public _Builder addTo(int key, Object value) {
                 switch (key) {
                     default: break;
@@ -1046,6 +1072,16 @@ public class Calculator {
             }
 
             @Override
+            public boolean isSet(int key) {
+                switch (key) {
+                    case 0: return tUnionField == _Field.SUCCESS;
+                    case 1: return tUnionField == _Field.CE;
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
             public _Builder addTo(int key, Object value) {
                 switch (key) {
                     default: break;
@@ -1337,6 +1373,14 @@ public class Calculator {
                     default: break;
                 }
                 return this;
+            }
+
+            @Override
+            public boolean isSet(int key) {
+                switch (key) {
+                    default: break;
+                }
+                return false;
             }
 
             @Override

@@ -795,6 +795,19 @@ public class Declaration
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return tUnionField == _Field.DECL_ENUM;
+                case 2: return tUnionField == _Field.DECL_TYPEDEF;
+                case 3: return tUnionField == _Field.DECL_STRUCT;
+                case 4: return tUnionField == _Field.DECL_SERVICE;
+                case 5: return tUnionField == _Field.DECL_CONST;
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 default: break;

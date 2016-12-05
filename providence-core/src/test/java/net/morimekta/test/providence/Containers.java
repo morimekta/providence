@@ -4404,6 +4404,50 @@ public class Containers
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return optionals.get(0);
+                case 2: return optionals.get(1);
+                case 3: return optionals.get(2);
+                case 4: return optionals.get(3);
+                case 5: return optionals.get(4);
+                case 6: return optionals.get(5);
+                case 7: return optionals.get(6);
+                case 8: return optionals.get(7);
+                case 11: return optionals.get(8);
+                case 12: return optionals.get(9);
+                case 13: return optionals.get(10);
+                case 14: return optionals.get(11);
+                case 15: return optionals.get(12);
+                case 16: return optionals.get(13);
+                case 17: return optionals.get(14);
+                case 18: return optionals.get(15);
+                case 21: return optionals.get(16);
+                case 22: return optionals.get(17);
+                case 23: return optionals.get(18);
+                case 24: return optionals.get(19);
+                case 25: return optionals.get(20);
+                case 26: return optionals.get(21);
+                case 27: return optionals.get(22);
+                case 28: return optionals.get(23);
+                case 31: return optionals.get(24);
+                case 32: return optionals.get(25);
+                case 33: return optionals.get(26);
+                case 41: return optionals.get(27);
+                case 42: return optionals.get(28);
+                case 43: return optionals.get(29);
+                case 51: return optionals.get(30);
+                case 52: return optionals.get(31);
+                case 53: return optionals.get(32);
+                case 54: return optionals.get(33);
+                case 55: return optionals.get(34);
+                case 56: return optionals.get(35);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 case 1: addToBooleanList((boolean) value); break;

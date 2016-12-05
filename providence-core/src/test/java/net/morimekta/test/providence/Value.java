@@ -15,7 +15,7 @@ public enum Value
     ELEVENTH(144, "ELEVENTH"),
     TWELWETH(233, "TWELWETH"),
     /**
-     * @Deprecated
+     * &#64;Deprecated
      */
     THIRTEENTH(377, "THIRTEENTH"),
     FOURTEENTH(610, "FOURTEENTH"),

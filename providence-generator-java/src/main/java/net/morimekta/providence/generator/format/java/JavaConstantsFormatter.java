@@ -75,8 +75,8 @@ public class JavaConstantsFormatter implements BaseConstantsFormatter {
 
                 writer.append(';')
                       .end()
-                      .appendln('}')
-                      .end();
+                      .end()
+                      .appendln('}');
 
             } catch (Exception e) {
                 throw new GeneratorException("Unable to generate constant " + document.getProgramName() + "." + c.getName(),

@@ -208,6 +208,11 @@ public class CStruct extends CMessage<CStruct,CField> {
         }
 
         @Override
+        public boolean isSet(int key) {
+            return values.containsKey(key);
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
             PField field = descriptor.getField(key);

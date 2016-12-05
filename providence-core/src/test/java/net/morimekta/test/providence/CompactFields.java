@@ -486,6 +486,17 @@ public class CompactFields
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return optionals.get(0);
+                case 2: return optionals.get(1);
+                case 3: return optionals.get(2);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 default: break;

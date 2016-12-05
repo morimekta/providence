@@ -206,6 +206,11 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         }
 
         @Override
+        public boolean isSet(int key) {
+            return unionField != null && unionField.getKey() == key;
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
             CField field = descriptor.getField(key);

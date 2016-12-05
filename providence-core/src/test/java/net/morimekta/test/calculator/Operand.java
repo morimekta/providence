@@ -552,6 +552,17 @@ public class Operand
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return tUnionField == _Field.OPERATION;
+                case 2: return tUnionField == _Field.NUMBER;
+                case 3: return tUnionField == _Field.IMAGINARY;
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 default: break;

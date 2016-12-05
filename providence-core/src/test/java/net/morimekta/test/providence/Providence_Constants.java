@@ -8,14 +8,14 @@ public class Providence_Constants {
     static {
         kDefaultCompactFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.test.providence.CompactFields>()
                 .add(net.morimekta.test.providence.CompactFields.builder()
-                        .setName("Tut-Ankh-Amon")
-                        .setId(1333)
-                        .setLabel("dead")
-                        .build())
+                         .setName("Tut-Ankh-Amon")
+                         .setId(1333)
+                         .setLabel("dead")
+                         .build())
                 .add(net.morimekta.test.providence.CompactFields.builder()
-                        .setName("Ramses II")
-                        .setId(1279)
-                        .build())
+                         .setName("Ramses II")
+                         .setId(1279)
+                         .build())
                 .build();
     }
 }

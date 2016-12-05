@@ -1057,6 +1057,24 @@ public class UnionFields
         }
 
         @Override
+        public boolean isSet(int key) {
+            switch (key) {
+                case 1: return tUnionField == _Field.BOOLEAN_VALUE;
+                case 2: return tUnionField == _Field.BYTE_VALUE;
+                case 3: return tUnionField == _Field.SHORT_VALUE;
+                case 4: return tUnionField == _Field.INTEGER_VALUE;
+                case 5: return tUnionField == _Field.LONG_VALUE;
+                case 6: return tUnionField == _Field.DOUBLE_VALUE;
+                case 7: return tUnionField == _Field.STRING_VALUE;
+                case 8: return tUnionField == _Field.BINARY_VALUE;
+                case 9: return tUnionField == _Field.ENUM_VALUE;
+                case 10: return tUnionField == _Field.COMPACT_VALUE;
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
         public _Builder addTo(int key, Object value) {
             switch (key) {
                 default: break;
