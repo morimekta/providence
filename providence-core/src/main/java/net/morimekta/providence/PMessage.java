@@ -24,6 +24,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Stringable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Base class for all messages.
  *
@@ -39,16 +41,40 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
     boolean has(int key);
 
     /**
+     * @param field The field.
+     * @return Whether the field is present.
+     */
+    default boolean has(@Nonnull Field field) {
+        return has(field.getKey());
+    }
+
+    /**
      * @param key The key of the field.
      * @return Number of values for the field.
      */
     int num(int key);
 
     /**
+     * @param field The field.
+     * @return Whether the field is present.
+     */
+    default int num(@Nonnull Field field) {
+        return num(field.getKey());
+    }
+
+    /**
      * @param key The key of the field.
      * @return The value of the field.
      */
     Object get(int key);
+
+    /**
+     * @param field The field.
+     * @return Whether the field is present.
+     */
+    default Object get(@Nonnull Field field) {
+        return get(field.getKey());
+    }
 
     /**
      * Get a builder that extends the current object.

@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.annotation.meta.When;
 
 /**
@@ -53,12 +54,23 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     /**
      * Set the provided field value.
      *
-     * @param key The field key.
-     * @param value The field value.
+     * @param key The key of the field to set.
+     * @param value The new field value.
      * @return The message builder.
      */
     @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> set(int key, Object value);
+
+    /**
+     * Set the provided field value.
+     *
+     * @param field The field to set.
+     * @return True if the field is set.
+     */
+    @CheckReturnValue(when = When.NEVER)
+    public PMessageBuilder<T, F> set(@Nonnull F field, Object value) {
+        return set(field.getKey(), value);
+    }
 
     /**
      * Checks if a specific field is set on the builder.
@@ -67,6 +79,16 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return True if the field is set.
      */
     public abstract boolean isSet(int key);
+
+    /**
+     * Checks if a specific field is set on the builder.
+     *
+     * @param field The field to check.
+     * @return True if the field is set.
+     */
+    public boolean isSet(@Nonnull F field) {
+        return isSet(field.getKey());
+    }
 
     /**
      * Adds a value to a set or list container.
@@ -80,13 +102,37 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     public abstract PMessageBuilder<T, F> addTo(int key, Object value);
 
     /**
-     * clear the provided field value.
+     * Checks if a specific field is set on the builder.
+     *
+     * @param field The field to check.
+     * @return True if the field is set.
+     */
+    @CheckReturnValue(when = When.NEVER)
+    public PMessageBuilder<T, F> addTo(@Nonnull F field, Object value) {
+        return addTo(field.getKey(), value);
+    }
+
+    /**
+     * Clear the provided field value.
      *
      * @param key The field key.
      * @return The message builder.
      */
     @CheckReturnValue(when = When.NEVER)
     public abstract PMessageBuilder<T, F> clear(int key);
+
+
+    /**
+     * Clear the provided field value.
+     *
+     * @param field The field to clear.
+     * @return The message builder.
+     */
+    @CheckReturnValue(when = When.NEVER)
+    public PMessageBuilder<T, F> clear(@Nonnull F field) {
+        return clear(field.getKey());
+    }
+
 
     /**
      * Merges the provided message into the builder. Contained messages should
@@ -107,6 +153,18 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return The builder.
      */
     public abstract PMessageBuilder mutator(int key);
+
+    /**
+     * Get the builder for the given message contained in this builder. If
+     * the sub-builder does not exist, create, either from existing instance
+     * or from scratch.
+     *
+     * @param field The field to mutate.
+     * @return The builder.
+     */
+    public PMessageBuilder mutator(@Nonnull F field) {
+        return mutator(field.getKey());
+    }
 
     /**
      * Get the descriptor for the message being built.
