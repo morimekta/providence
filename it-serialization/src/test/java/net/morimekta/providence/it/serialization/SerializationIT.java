@@ -124,7 +124,7 @@ public class SerializationIT {
 
         System.out.println(Format.header());
         System.out.println();
-        formats.forEach(f -> f.statistics(rel));
+        formats.forEach(f -> System.out.println(f.statistics(rel)));
         System.out.println();
         formats.forEach(f -> f.verify(rel));
         System.out.println();
