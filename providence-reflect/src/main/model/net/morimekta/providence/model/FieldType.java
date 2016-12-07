@@ -156,7 +156,7 @@ public class FieldType
             case 4: return hasType();
             case 5: return hasName();
             case 6: return hasDefaultValue();
-            case 7: return numAnnotations() > 0;
+            case 7: return hasAnnotations();
             default: return false;
         }
     }

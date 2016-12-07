@@ -102,7 +102,7 @@ public class EnumValue
             case 1: return hasDocumentation();
             case 2: return hasName();
             case 3: return true;
-            case 4: return numAnnotations() > 0;
+            case 4: return hasAnnotations();
             default: return false;
         }
     }

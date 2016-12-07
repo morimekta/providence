@@ -251,15 +251,17 @@ public class ProgramConverter {
 
     private Set<String> getIncludedProgramNames(ProgramType document) {
         Set<String> out = new TreeSet<>();
-        for (String include : document.getIncludes()) {
-            int i = include.lastIndexOf('.');
-            if (i > 0) {
-                include = include.substring(0, i);
+        if (document.hasIncludes()) {
+            for (String include : document.getIncludes()) {
+                int i = include.lastIndexOf('.');
+                if (i > 0) {
+                    include = include.substring(0, i);
+                }
+                if (include.contains("/")) {
+                    include = include.replaceAll(".*[/]", "");
+                }
+                out.add(include);
             }
-            if (include.contains("/")) {
-                include = include.replaceAll(".*[/]", "");
-            }
-            out.add(include);
         }
         return out;
     }

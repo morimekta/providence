@@ -148,9 +148,9 @@ public class ProgramType
         switch(key) {
             case 1: return hasDocumentation();
             case 2: return hasProgramName();
-            case 3: return numIncludes() > 0;
-            case 4: return numNamespaces() > 0;
-            case 5: return numDecl() > 0;
+            case 3: return hasIncludes();
+            case 4: return hasNamespaces();
+            case 5: return hasDecl();
             default: return false;
         }
     }

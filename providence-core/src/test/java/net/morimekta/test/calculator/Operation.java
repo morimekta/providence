@@ -61,7 +61,7 @@ public class Operation
     public boolean has(int key) {
         switch(key) {
             case 1: return hasOperator();
-            case 2: return numOperands() > 0;
+            case 2: return hasOperands();
             default: return false;
         }
     }

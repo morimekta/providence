@@ -127,8 +127,8 @@ public class MessageType
             case 1: return hasDocumentation();
             case 2: return hasVariant();
             case 3: return hasName();
-            case 4: return numFields() > 0;
-            case 5: return numAnnotations() > 0;
+            case 4: return hasFields();
+            case 5: return hasAnnotations();
             default: return false;
         }
     }

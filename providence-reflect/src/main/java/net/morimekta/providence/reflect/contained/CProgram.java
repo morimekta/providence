@@ -51,20 +51,20 @@ public class CProgram {
                     String programName,
                     Map<String, String> namespaces,
                     Collection<String> includedPrograms,
-                    Collection<String> includedFies,
+                    Collection<String> includedFiles,
                     Map<String, String> typedefs,
                     Collection<PDeclaredDescriptor<?>> declaredTypes,
                     Collection<CService> services,
                     Collection<CConst> constants) {
-        this.comment = comment;
-        this.programName = programName;
-        this.namespaces = ImmutableMap.copyOf(namespaces);
-        this.includedPrograms = ImmutableSet.copyOf(includedPrograms);
-        this.includedFiles = ImmutableList.copyOf(includedFies);
-        this.typedefs = ImmutableMap.copyOf(typedefs);
-        this.declaredTypes = ImmutableList.copyOf(declaredTypes);
-        this.services = ImmutableList.copyOf(services);
-        this.constants = ImmutableList.copyOf(constants);
+        this.comment          = comment;
+        this.programName      = programName;
+        this.namespaces       = namespaces       == null ? ImmutableMap.of()  : ImmutableMap.copyOf(namespaces);
+        this.includedPrograms = includedPrograms == null ? ImmutableSet.of()  : ImmutableSet.copyOf(includedPrograms);
+        this.includedFiles    = includedFiles    == null ? ImmutableList.of() : ImmutableList.copyOf(includedFiles);
+        this.typedefs         = typedefs         == null ? ImmutableMap.of()  : ImmutableMap.copyOf(typedefs);
+        this.declaredTypes    = declaredTypes    == null ? ImmutableList.of() : ImmutableList.copyOf(declaredTypes);
+        this.services         = services         == null ? ImmutableList.of() : ImmutableList.copyOf(services);
+        this.constants        = constants        == null ? ImmutableList.of() : ImmutableList.copyOf(constants);
     }
 
     public String getComment() {

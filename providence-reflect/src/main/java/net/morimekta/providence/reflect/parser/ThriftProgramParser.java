@@ -172,9 +172,15 @@ public class ThriftProgramParser implements ProgramParser {
             }
         }
 
-        program.setNamespaces(namespaces);
-        program.setIncludes(includes);
-        program.setDecl(declarations);
+        if (namespaces.size() > 0) {
+            program.setNamespaces(namespaces);
+        }
+        if (includes.size() > 0) {
+            program.setIncludes(includes);
+        }
+        if (declarations.size() > 0) {
+            program.setDecl(declarations);
+        }
 
         return program.build();
     }

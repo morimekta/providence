@@ -109,8 +109,8 @@ public class EnumType
         switch(key) {
             case 1: return hasDocumentation();
             case 2: return hasName();
-            case 3: return numValues() > 0;
-            case 4: return numAnnotations() > 0;
+            case 3: return hasValues();
+            case 4: return hasAnnotations();
             default: return false;
         }
     }

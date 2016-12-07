@@ -22,8 +22,8 @@ package net.morimekta.providence.reflect;
 
 import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.util.ProgramConverter;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 
@@ -125,20 +125,22 @@ public class TypeLoader {
         ProgramType doc = mParser.parse(in, file.getName());
 
         LinkedList<File> queue = new LinkedList<>();
-        for (String include : doc.getIncludes()) {
-            File location = new File(file.getParent(), include).getCanonicalFile();
-            if (!location.exists()) {
-                for (File inc : mIncludes) {
-                    File i = new File(inc, include);
-                    if (i.exists()) {
-                        location = i.getCanonicalFile();
-                        break;
+        if (doc.hasIncludes()) {
+            for (String include : doc.getIncludes()) {
+                File location = new File(file.getParent(), include).getCanonicalFile();
+                if (!location.exists()) {
+                    for (File inc : mIncludes) {
+                        File i = new File(inc, include);
+                        if (i.exists()) {
+                            location = i.getCanonicalFile();
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (location.exists() && !queue.contains(location)) {
-                queue.add(location);
+                if (location.exists() && !queue.contains(location)) {
+                    queue.add(location);
+                }
             }
         }
 

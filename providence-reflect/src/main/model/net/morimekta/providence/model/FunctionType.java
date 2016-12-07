@@ -172,9 +172,9 @@ public class FunctionType
             case 2: return true;
             case 3: return hasReturnType();
             case 4: return hasName();
-            case 5: return numParams() > 0;
-            case 6: return numExceptions() > 0;
-            case 7: return numAnnotations() > 0;
+            case 5: return hasParams();
+            case 6: return hasExceptions();
+            case 7: return hasAnnotations();
             default: return false;
         }
     }

@@ -125,8 +125,8 @@ public class ServiceType
             case 1: return hasDocumentation();
             case 2: return hasName();
             case 3: return hasExtend();
-            case 4: return numMethods() > 0;
-            case 5: return numAnnotations() > 0;
+            case 4: return hasMethods();
+            case 5: return hasAnnotations();
             default: return false;
         }
     }
