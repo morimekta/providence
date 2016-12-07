@@ -401,9 +401,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .begin();
 
         for (JField field : message.declaredOrderFields()) {
-            if (field.container()) {
-                writer.formatln("case %d: return %s() > 0;", field.id(), field.counter());
-            } else if (field.alwaysPresent() && !message.isUnion()) {
+            if (field.alwaysPresent() && !message.isUnion()) {
                 writer.formatln("case %d: return true;", field.id());
             } else {
                 writer.formatln("case %d: return %s();", field.id(), field.presence());
