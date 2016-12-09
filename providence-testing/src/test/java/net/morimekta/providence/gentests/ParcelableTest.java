@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import android.os.Parcel;
 
-import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -36,7 +36,7 @@ public class ParcelableTest {
                                               .build();
         original.writeToParcel(parcel, 0);
         DefaultValues copy = DefaultValues.CREATOR.createFromParcel(parcel);
-        assertThat(copy, messageEq(original));
+        assertThat(copy, equalToMessage(original));
     }
 
     @Test
@@ -67,6 +67,6 @@ public class ParcelableTest {
 
         original.writeToParcel(parcel, 0);
         Operation copy = Operation.CREATOR.createFromParcel(parcel);
-        assertThat(copy, messageEq(original));
+        assertThat(copy, equalToMessage(original));
     }
 }

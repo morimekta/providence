@@ -10,6 +10,7 @@ import net.morimekta.test.providence.service.TestService;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponseException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -25,14 +26,18 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
 import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -92,8 +97,7 @@ public class HttpClientHandlerTest {
 
         Response response = client.test(new Request("request"));
 
-        assertNotNull(response);
-        assertEquals("{text:\"response\"}", response.asString());
+        assertThat(response, is(equalToMessage(new Response("response"))));
     }
 
     @Test
@@ -113,14 +117,27 @@ public class HttpClientHandlerTest {
     }
 
     @Test
+    public void testSimpleRequest_connectionRefused() throws IOException, Failure, TException {
+        GenericUrl url = new GenericUrl("http://localhost:" + (port - 10) + "/" + ENDPOINT);
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                () -> url, factory(), provider));
+
+        try {
+            client.test(new Request("request"));
+            fail("No exception");
+        } catch (HttpHostConnectException ex) {
+            assertThat(ex.getMessage(), is(equalTo("Connection to http://localhost:" + (port - 10) + " refused")));
+        }
+
+        verifyZeroInteractions(impl);
+    }
+
+    @Test
     public void testSimpleRequest_404() throws IOException, Failure, TException {
         GenericUrl url = endpoint();
         url.setRawPath("/" + ENDPOINT + "/does_not_exists");
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 () -> url, factory(), provider));
-
-        when(impl.test(any(net.morimekta.test.providence.thrift.Request.class)))
-                .thenReturn(new net.morimekta.test.providence.thrift.Response("response"));
 
         try {
             client.test(new Request("request"));
@@ -128,5 +145,7 @@ public class HttpClientHandlerTest {
         } catch (HttpResponseException ex) {
             assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
         }
+
+        verifyZeroInteractions(impl);
     }
 }

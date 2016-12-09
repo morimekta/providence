@@ -50,11 +50,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Stein Eldar Johnsen
  * @since 21.01.16.
  */
-public class MessageEq<Message extends PMessage<Message, Field>, Field extends PField>
+public class EqualToMessage<Message extends PMessage<Message, Field>, Field extends PField>
         extends BaseMatcher<Message> {
     private final Message expected;
 
-    public MessageEq(Message expected) {
+    public EqualToMessage(Message expected) {
         this.expected = expected;
     }
 
@@ -111,11 +111,8 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
         }
     }
 
-    protected static <T extends PMessage<T, F>, F extends PField>
-    void collectMismatches(String xPath,
-                           T expected,
-                           T actual,
-                           LinkedList<String> mismatches) {
+    private static <T extends PMessage<T, F>, F extends PField>
+    void collectMismatches(String xPath, T expected, T actual, LinkedList<String> mismatches) {
         // This is pretty heavy calculation, but since it's only done on
         // mismatch / test failure, it should be fine.
         if (expected.descriptor()
@@ -182,10 +179,10 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
         }
     }
 
-    protected static <K, V> void collectMapMismatches(String xPath,
-                                                      Map<K, V> expected,
-                                                      Map<K, V> actual,
-                                                      LinkedList<String> mismatches) {
+    private static <K, V> void collectMapMismatches(String xPath,
+                                                    Map<K, V> expected,
+                                                    Map<K, V> actual,
+                                                    LinkedList<String> mismatches) {
         mismatches.addAll(actual.keySet()
                                 .stream()
                                 .filter(key -> !expected.keySet()
@@ -227,10 +224,10 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
         }
     }
 
-    protected static <T> void collectSetMismatches(String xPath,
-                                                   Set<T> expected,
-                                                   Set<T> actual,
-                                                   LinkedList<String> mismatches) {
+    private static <T> void collectSetMismatches(String xPath,
+                                                 Set<T> expected,
+                                                 Set<T> actual,
+                                                 LinkedList<String> mismatches) {
         // order does NOT matter regardless of type. The only
         // errors are missing and unexpected values. Partial
         // matches are not checked.
@@ -248,10 +245,10 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
 
     }
 
-    protected static <T> void collectListMismatches(String xPath,
-                                                    List<T> expected,
-                                                    List<T> actual,
-                                                    LinkedList<String> mismatches) {
+    private static <T> void collectListMismatches(String xPath,
+                                                  List<T> expected,
+                                                  List<T> actual,
+                                                  LinkedList<String> mismatches) {
         Set<T> handledItems = new HashSet<>();
 
         boolean hasReorder = false;
@@ -330,9 +327,9 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
                                                      .collect(Collectors.toList())) + "}";
         } else if (o instanceof Collection) {
             return "[" + Strings.join(",",
-                                      (Collection<String>) ((Collection<?>) o).stream()
-                                                                              .map(MessageEq::toString)
-                                                                              .collect(Collectors.toList())) + "]";
+                                      ((Collection<?>) o).stream()
+                                                         .map(EqualToMessage::toString)
+                                                         .collect(Collectors.toList())) + "]";
         } else if (o instanceof CharSequence) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JsonWriter writer = new JsonWriter(baos);
@@ -365,7 +362,7 @@ public class MessageEq<Message extends PMessage<Message, Field>, Field extends P
         }
     }
 
-    protected static String limitToString(PMessage<?,?> message) {
+    private static String limitToString(PMessage<?, ?> message) {
         String tos = message == null ? "null" : message.asString();
         if (tos.length() > 120) {
             tos = tos.substring(0, 110) + "...}";

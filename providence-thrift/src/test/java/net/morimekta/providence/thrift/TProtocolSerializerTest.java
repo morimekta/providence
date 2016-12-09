@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -178,7 +178,7 @@ public class TProtocolSerializerTest {
         ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
         for (int i = 0; i < containers.size(); ++i) {
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
-            assertThat(back, messageEq(containers.get(i)));
+            assertThat(back, equalToMessage(containers.get(i)));
             if (!serializer.binaryProtocol()) {
                 assertEquals('\n', in.read());
             }
@@ -213,7 +213,7 @@ public class TProtocolSerializerTest {
         in = new ByteArrayInputStream(baos.toByteArray());
         for (int i = 0; i < containers.size(); ++i) {
             Containers back = serializer.deserialize(in, Containers.kDescriptor);
-            assertThat(back, messageEq(containers.get(i)));
+            assertThat(back, equalToMessage(containers.get(i)));
             if (!serializer.binaryProtocol()) {
                 assertEquals('\n', in.read());
             }

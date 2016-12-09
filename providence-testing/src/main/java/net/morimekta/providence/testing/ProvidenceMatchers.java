@@ -30,7 +30,7 @@ import org.hamcrest.Matcher;
  */
 public class ProvidenceMatchers {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Matcher<Message> messageEq(Message expected) {
-        return new MessageEq<>(expected);
+    Matcher<Message> equalToMessage(Message expected) {
+        return new EqualToMessage<>(expected);
     }
 }

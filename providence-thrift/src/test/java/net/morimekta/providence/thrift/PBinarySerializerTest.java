@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
-import static net.morimekta.providence.testing.ProvidenceMatchers.messageEq;
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -54,7 +54,7 @@ public class PBinarySerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         Request out = providence.deserialize(bais, Request.kDescriptor);
 
-        assertThat(out, messageEq(request));
+        assertThat(out, equalToMessage(request));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class PBinarySerializerTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         Request out = thrift.deserialize(bais, Request.kDescriptor);
 
-        assertThat(out, messageEq(request));
+        assertThat(out, equalToMessage(request));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class PBinarySerializerTest {
 
         assertEquals(containers.size(), out.size());
         for (int i = 0; i < containers.size(); ++i) {
-            assertThat(containers.get(i), messageEq(out.get(i)));
+            assertThat(containers.get(i), equalToMessage(out.get(i)));
         }
     }
 
@@ -94,7 +94,7 @@ public class PBinarySerializerTest {
 
         assertEquals(containers.size(), out.size());
         for (int i = 0; i < containers.size(); ++i) {
-            assertThat(containers.get(i), messageEq(out.get(i)));
+            assertThat(containers.get(i), equalToMessage(out.get(i)));
         }
     }
 }
