@@ -192,14 +192,14 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             writer.format("handler.handleCall(call, %s.kDescriptor);", service.className());
 
             if (method.getResponseClass() != null) {
-                writer.formatln("%s msg = (%s) resp.getMessage();",
-                                method.getResponseClass(), method.getResponseClass());
-
                 writer.newline()
                       .formatln("if (resp.getType() == %s.%s) {", PServiceCallType.class.getName(), PServiceCallType.EXCEPTION.name())
                       .formatln("    throw (%s) resp.getMessage();",
                                 PApplicationException.class.getName())
-                      .appendln('}');
+                      .appendln('}')
+                      .newline()
+                      .formatln("%s msg = (%s) resp.getMessage();",
+                                method.getResponseClass(), method.getResponseClass());
 
                 writer.appendln("if (msg.unionField() != null) {")
                       .begin()
