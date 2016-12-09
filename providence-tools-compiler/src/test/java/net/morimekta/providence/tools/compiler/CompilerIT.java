@@ -1,6 +1,5 @@
 package net.morimekta.providence.tools.compiler;
 
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.testing.IntegrationExecutor;
 import net.morimekta.util.io.IOUtils;
 
@@ -8,9 +7,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,14 +15,10 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by morimekta on 4/26/16.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TerminalSize.class)
 public class CompilerIT {
     private TemporaryFolder temp;
 
@@ -38,9 +30,6 @@ public class CompilerIT {
 
     @Before
     public void setUp() throws IOException {
-        mockStatic(TerminalSize.class);
-        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
-
         temp = new TemporaryFolder();
         temp.create();
 
