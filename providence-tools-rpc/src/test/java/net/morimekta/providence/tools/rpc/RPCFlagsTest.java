@@ -1,5 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
+import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
@@ -8,10 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,15 +20,12 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the flag values for .
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TerminalSize.class)
-@PowerMockIgnore("javax.net.ssl.*")
 public class RPCFlagsTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
@@ -46,6 +40,7 @@ public class RPCFlagsTest {
     private RPC rpc;
     private File thriftFile;
     private String version;
+    private STTY tty;
 
     public String endpoint() {
         return "http://localhost:8080/test";
@@ -60,9 +55,9 @@ public class RPCFlagsTest {
 
     @Before
     public void setUp() throws IOException {
-        mockStatic(TerminalSize.class);
-        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
-        when(TerminalSize.isInteractive()).thenReturn(true);
+        tty = mock(STTY.class);
+        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
+        when(tty.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
@@ -85,7 +80,7 @@ public class RPCFlagsTest {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
-        rpc = new RPC() {
+        rpc = new RPC(tty) {
             @Override
             protected void exit(int i) {
                 exitCode = i;

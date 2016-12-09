@@ -23,6 +23,7 @@ package net.morimekta.providence.tools.converter;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.tools.common.options.Format;
 import net.morimekta.util.Strings;
@@ -42,8 +43,12 @@ import static net.morimekta.providence.tools.common.options.Utils.getVersionStri
 public class Convert {
     private final ConvertOptions options;
 
-    Convert() {
-        options = new ConvertOptions();
+    public Convert() {
+        this(new STTY());
+    }
+
+    protected Convert(STTY tty) {
+        options = new ConvertOptions(tty);
     }
 
     @SuppressWarnings("unchecked")

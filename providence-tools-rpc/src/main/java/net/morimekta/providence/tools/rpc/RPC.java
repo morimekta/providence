@@ -23,8 +23,9 @@ package net.morimekta.providence.tools.rpc;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
-import net.morimekta.providence.PServiceCallHandler;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.mio.MessageWriter;
@@ -45,7 +46,11 @@ public class RPC {
     private final RPCOptions options;
 
     protected RPC() {
-        options = new RPCOptions();
+        this(new STTY());
+    }
+
+    protected RPC(STTY tty) {
+        options = new RPCOptions(tty);
     }
 
     @SuppressWarnings("unchecked")

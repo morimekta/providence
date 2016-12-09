@@ -1,5 +1,6 @@
 package net.morimekta.providence.tools.config;
 
+import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
@@ -8,9 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,14 +21,12 @@ import java.util.Properties;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test the providence converter (pvd) command.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TerminalSize.class)
 public class ConfigTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
@@ -45,6 +41,7 @@ public class ConfigTest {
     private Config config;
     private File   thriftFile;
     private String version;
+    private STTY tty;
 
     @BeforeClass
     public static void setUpIO() {
@@ -55,9 +52,9 @@ public class ConfigTest {
 
     @Before
     public void setUp() throws IOException {
-        mockStatic(TerminalSize.class);
-        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
-        when(TerminalSize.isInteractive()).thenReturn(true);
+        tty = mock(STTY.class);
+        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
+        when(tty.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getResourceAsStream("/build.properties"));
@@ -80,7 +77,7 @@ public class ConfigTest {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
-        config = new Config() {
+        config = new Config(tty) {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -104,7 +101,8 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg [-hVv] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg [-hVv] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n" +

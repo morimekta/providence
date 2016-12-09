@@ -21,12 +21,12 @@
 
 package net.morimekta.providence.tools.config;
 
-import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Option;
 import net.morimekta.console.args.Property;
 import net.morimekta.console.args.SubCommand;
 import net.morimekta.console.args.SubCommandSet;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
@@ -62,6 +62,10 @@ public class ConfigOptions extends CommonOptions {
 
     private SubCommandSet<Command> commandSet;
 
+    public ConfigOptions(STTY tty) {
+        super(tty);
+    }
+
     @Override
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
         ArgumentParser parser = super.getArgumentParser(prog, description);
@@ -70,8 +74,7 @@ public class ConfigOptions extends CommonOptions {
         parser.add(new Option("--config", "C", "dir", "Config directory locations.", dir(roots::add), null, true, false, false));
         parser.add(new Property("--param", 'P', "key", "value", "Config parameter override.", params::put, false));
 
-        ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
-        commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, opts);
+        commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, getArgumentOptions());
         commandSet.add(new SubCommand<>("help", "Show help for sub-commands.", false, () -> new Help(commandSet, parser), cmd -> cmd.parser(parser)));
         commandSet.add(new SubCommand<>("print", "Print the resulting config.", false, Print::new, cmd -> cmd.parser(parser), "p", "pr"));
         commandSet.add(new SubCommand<>("validate", "Validate the file, print an error if not valid.", false, Validate::new, cmd -> cmd.parser(parser)));

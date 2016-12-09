@@ -25,6 +25,7 @@ import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.JavaGenerator;
@@ -32,8 +33,8 @@ import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.json.JsonGenerator;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.MessageProgramParser;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.tools.common.options.Utils;
@@ -58,7 +59,9 @@ import static net.morimekta.console.util.Parser.oneOf;
  */
 @SuppressWarnings("all")
 public class CompilerOptions {
-    protected File          out      = new File(".");
+    private final STTY tty;
+
+    protected File out = new File(".");
     protected List<File>    includes = new LinkedList<>();
     protected Syntax        syntax   = Syntax.thrift;
     protected HelpSpec      help     = null;
@@ -68,7 +71,7 @@ public class CompilerOptions {
     protected boolean       verbose;
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
-        ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
+        ArgumentOptions opts = ArgumentOptions.defaults(tty).withMaxUsageWidth(120);
         ArgumentParser parser = new ArgumentParser(prog, Utils.getVersionString(), description, opts);
 
         parser.add(new Option("--gen", "g", "generator", "Generate files for this language spec.",
@@ -115,7 +118,8 @@ public class CompilerOptions {
         this.files.add(files);
     }
 
-    public CompilerOptions() {
+    public CompilerOptions(STTY tty) {
+        this.tty = tty;
     }
 
     public boolean isHelp() {

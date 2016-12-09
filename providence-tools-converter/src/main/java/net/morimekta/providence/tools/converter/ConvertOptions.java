@@ -26,6 +26,7 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -64,6 +65,10 @@ public class ConvertOptions extends CommonOptions {
     protected ConvertStream out = new ConvertStream(Format.pretty, null);
     protected boolean strict = false;
     protected String type;
+
+    public ConvertOptions(STTY tty) {
+        super(tty);
+    }
 
     @Override
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {

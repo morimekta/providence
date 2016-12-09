@@ -1,5 +1,6 @@
 package net.morimekta.providence.tools.converter;
 
+import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
@@ -8,9 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,14 +20,12 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test the providence converter (pvd) command.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TerminalSize.class)
 public class ConvertTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
@@ -44,6 +40,7 @@ public class ConvertTest {
     private Convert convert;
     private File    thriftFile;
     private String  version;
+    private STTY tty;
 
     @BeforeClass
     public static void setUpIO() {
@@ -54,9 +51,9 @@ public class ConvertTest {
 
     @Before
     public void setUp() throws IOException {
-        mockStatic(TerminalSize.class);
-        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
-        when(TerminalSize.isInteractive()).thenReturn(true);
+        tty = mock(STTY.class);
+        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
+        when(tty.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/build.properties"));
@@ -79,7 +76,7 @@ public class ConvertTest {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
-        convert = new Convert() {
+        convert = new Convert(tty) {
             @Override
             protected void exit(int i) {
                 exitCode = i;

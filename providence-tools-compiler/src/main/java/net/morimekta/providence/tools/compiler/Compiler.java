@@ -21,13 +21,14 @@ package net.morimekta.providence.tools.compiler;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.Language;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.tools.common.options.Utils;
 
 import java.io.File;
@@ -43,7 +44,11 @@ public class Compiler {
     private final CompilerOptions options;
 
     public Compiler() {
-        options = new CompilerOptions();
+        this(new STTY());
+    }
+
+    protected Compiler(STTY tty) {
+        options = new CompilerOptions(tty);
     }
 
     public void run(String... args) {

@@ -24,6 +24,7 @@ package net.morimekta.providence.tools.common.options;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
+import net.morimekta.console.util.STTY;
 
 import java.io.IOException;
 
@@ -37,10 +38,18 @@ public class CommonOptions {
     public boolean help;
     public boolean verbose;
     public boolean version;
+    public STTY    tty;
+
+    public CommonOptions(STTY tty) {
+        this.tty = tty;
+    }
+
+    public ArgumentOptions getArgumentOptions() {
+        return ArgumentOptions.defaults(tty).withMaxUsageWidth(120);
+    }
 
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
-        ArgumentOptions opts = ArgumentOptions.defaults().withMaxUsageWidth(120);
-        ArgumentParser parser = new ArgumentParser(prog, getVersionString(), description, opts);
+        ArgumentParser parser = new ArgumentParser(prog, getVersionString(), description, getArgumentOptions());
 
         parser.add(new Flag("--help", "h?", "This help listing.", this::setHelp));
         parser.add(new Flag("--verbose", "V", "Show verbose output and error messages.", this::setVerbose));

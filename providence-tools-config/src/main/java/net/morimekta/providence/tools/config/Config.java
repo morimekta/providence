@@ -2,6 +2,7 @@ package net.morimekta.providence.tools.config;
 
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.pretty.TokenizerException;
 
@@ -13,13 +14,23 @@ import static net.morimekta.providence.tools.common.options.Utils.getVersionStri
  * Configuration Tool for Providence.
  */
 public class Config {
+    private final STTY tty;
+
+    public Config() {
+        this(new STTY());
+    }
+
+    protected Config(STTY tty) {
+        this.tty = tty;
+    }
+
     public static void main(String... args) {
         new Config().run(args);
     }
 
     public void run(String... args) {
         try {
-            ConfigOptions op = new ConfigOptions();
+            ConfigOptions op = new ConfigOptions(tty);
             ArgumentParser cli = op.getArgumentParser("pvdcfg",
                                                       "Providence Config Tool");
             try {

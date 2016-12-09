@@ -1,5 +1,6 @@
 package net.morimekta.providence.tools.compiler;
 
+import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
 import net.morimekta.util.io.IOUtils;
 
@@ -8,9 +9,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,19 +17,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.*;
 import java.util.Properties;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by morimekta on 4/26/16.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(TerminalSize.class)
 public class CompilerTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;
@@ -49,6 +44,7 @@ public class CompilerTest {
     private String   version;
     private File     include;
     private File     output;
+    private STTY tty;
 
     @BeforeClass
     public static void setUpIO() {
@@ -59,9 +55,9 @@ public class CompilerTest {
 
     @Before
     public void setUp() throws IOException {
-        mockStatic(TerminalSize.class);
-        when(TerminalSize.get()).thenReturn(new TerminalSize(40, 100));
-        when(TerminalSize.isInteractive()).thenReturn(true);
+        tty = mock(STTY.class);
+        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
+        when(tty.isInteractive()).thenReturn(true);
 
         Properties properties = new Properties();
         properties.load(getResourceAsStream("/build.properties"));
@@ -94,7 +90,7 @@ public class CompilerTest {
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
-        compiler = new Compiler() {
+        compiler = new Compiler(tty) {
             @Override
             protected void exit(int i) {
                 exitCode = i;

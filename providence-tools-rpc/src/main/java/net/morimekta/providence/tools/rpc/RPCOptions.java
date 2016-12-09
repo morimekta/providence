@@ -26,6 +26,7 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
+import net.morimekta.console.util.STTY;
 import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.descriptor.PService;
@@ -97,6 +98,10 @@ public class RPCOptions extends CommonOptions {
     protected int read_timeout = 10000;
     protected List<String> headers = new LinkedList<>();
     protected String endpoint = "";
+
+    public RPCOptions(STTY tty) {
+        super(tty);
+    }
 
     @Override
     public ArgumentParser getArgumentParser(String prog, String description) throws IOException {
