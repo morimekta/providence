@@ -48,11 +48,12 @@ public class Calculator {
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
-            Calculate_response msg = (Calculate_response) resp.getMessage();
 
             if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
+
+            Calculate_response msg = (Calculate_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case CE:

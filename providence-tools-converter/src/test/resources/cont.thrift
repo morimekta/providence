@@ -105,16 +105,16 @@ exception ExceptionFields {
 typedef double real
 
 struct DefaultValues {
-    1:  bool          booleanValue = true;
-    2:  byte          byteValue    = -125,
-    3:  i16           shortValue   = 13579
-    4:  i32           integerValue = 1234567890;
-    5:  i64           longValue    = 1234567891,
-    6:  real          doubleValue  = 2.99792458e+8
-    7:  string        stringValue  = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
-    8:  binary        binaryValue;
-    9:  Value         enumValue    = Value.SECOND;
-    10: CompactFields compactValue
+    1:  optional bool          booleanValue = true;
+    2:  optional byte          byteValue    = -125,
+    3:  optional i16           shortValue   = 13579
+    4:  optional i32           integerValue = 1234567890;
+    5:  optional i64           longValue    = 1234567891,
+    6:  optional real          doubleValue  = 2.99792458e+8
+    7:  optional string        stringValue  = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
+    8:  optional binary        binaryValue;
+    9:  optional Value         enumValue    = Value.SECOND;
+    10: optional CompactFields compactValue
 }
 
 struct Containers {
