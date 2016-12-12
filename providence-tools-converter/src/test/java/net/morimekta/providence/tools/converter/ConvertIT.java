@@ -37,8 +37,8 @@ public class ConvertIT {
         file.close();
 
         convert = new IntegrationExecutor("providence-tools-converter", "providence-tools-converter.jar");
-        // 1 second deadline.
-        convert.setDeadlineMs(1000L);
+        // 2 second deadline.
+        convert.setDeadlineMs(2000L);
     }
 
     @After
