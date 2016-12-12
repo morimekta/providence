@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.ConnectException;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
@@ -127,6 +128,8 @@ public class HttpClientHandlerTest {
             fail("No exception");
         } catch (HttpHostConnectException ex) {
             assertThat(ex.getMessage(), is(equalTo("Connection to http://localhost:" + (port - 10) + " refused")));
+        } catch (ConnectException ex) {
+            assertThat(ex.getMessage(), is(equalTo("Connection refused ()")));
         }
 
         verifyZeroInteractions(impl);

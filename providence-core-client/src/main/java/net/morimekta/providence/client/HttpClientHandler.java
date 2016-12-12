@@ -36,9 +36,13 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.HttpHostConnectException;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.function.Supplier;
 
 /**
@@ -78,36 +82,49 @@ public class HttpClientHandler implements PServiceCallHandler {
 
         ByteArrayContent content = new ByteArrayContent(requestSerializer.mimeType(), baos.toByteArray());
 
-        HttpRequest request = factory.buildPostRequest(urlSupplier.get(), content);
-        request.getHeaders().setContentType(requestSerializer.mimeType());
-        request.getHeaders().setAccept(requestSerializer.mimeType());
-        HttpResponse response = request.execute();
+        @Nonnull
+        GenericUrl url = urlSupplier.get();
+        try {
+            HttpRequest request = factory.buildPostRequest(url, content);
+            request.getHeaders()
+                   .setContentType(requestSerializer.mimeType());
+            request.getHeaders()
+                   .setAccept(requestSerializer.mimeType());
+            HttpResponse response = request.execute();
 
-        Serializer responseSerializer = requestSerializer;
-        if (response.getContentType() != null) {
-            responseSerializer = serializerProvider.getSerializer(response.getContentType());
-            if (responseSerializer == null) {
-                throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
-                                                PApplicationExceptionType.INVALID_PROTOCOL);
+            Serializer responseSerializer = requestSerializer;
+            if (response.getContentType() != null) {
+                responseSerializer = serializerProvider.getSerializer(response.getContentType());
+                if (responseSerializer == null) {
+                    throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
+                                                    PApplicationExceptionType.INVALID_PROTOCOL);
+                }
             }
+
+            PServiceCall<Response, ResponseField> reply = null;
+            if (call.getType() == PServiceCallType.CALL) {
+                // non 200 responses should have triggered a HttpResponseException,
+                // so this is safe.
+                reply = responseSerializer.deserialize(response.getContent(), service);
+
+                if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
+                    throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
+                                                    PApplicationExceptionType.INVALID_MESSAGE_TYPE);
+                }
+                if (reply.getSequence() != call.getSequence()) {
+                    throw new PApplicationException(
+                            "Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
+                            PApplicationExceptionType.BAD_SEQUENCE_ID);
+                }
+            }
+
+            return reply;
+        } catch (HttpHostConnectException e) {
+            throw e;
+        } catch (ConnectException e) {
+            // Normalize connection refused exceptions to HttpHostConnectException.
+            // The native exception is not helpful (for when using NetHttpTransport).
+            throw new HttpHostConnectException(new HttpHost(url.getHost(), url.getPort(), url.getScheme()), e);
         }
-
-        PServiceCall<Response, ResponseField> reply = null;
-        if (call.getType() == PServiceCallType.CALL) {
-            // non 200 responses should have triggered a HttpResponseException,
-            // so this is safe.
-            reply = responseSerializer.deserialize(response.getContent(), service);
-
-            if (reply.getType() == PServiceCallType.CALL || reply.getType() == PServiceCallType.ONEWAY) {
-                throw new PApplicationException("Reply with invalid call type: " + reply.getType(),
-                                                PApplicationExceptionType.INVALID_MESSAGE_TYPE);
-            }
-            if (reply.getSequence() != call.getSequence()) {
-                throw new PApplicationException("Reply sequence out of order: call = " + call.getSequence() + ", reply = " + reply.getSequence(),
-                                                PApplicationExceptionType.BAD_SEQUENCE_ID);
-            }
-        }
-
-        return reply;
     }
 }

@@ -23,7 +23,7 @@ package net.morimekta.providence.testing.util;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -53,6 +53,6 @@ public class TestNetUtil {
     }
 
     public static HttpTransport transport() {
-        return new ApacheHttpTransport();
+        return new NetHttpTransport();
     }
 }
