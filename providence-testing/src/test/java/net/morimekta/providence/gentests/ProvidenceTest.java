@@ -31,14 +31,13 @@ import net.morimekta.test.providence.Value;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for providence built sources - message main body.
@@ -48,123 +47,122 @@ public class ProvidenceTest {
     public void testUnion() {
         UnionFields uf = UnionFields.withCompactValue(new CompactFields("a", 4, null));
 
-        assertSame(UnionFields._Field.COMPACT_VALUE,
-                   uf.unionField());
-        assertTrue(uf.hasCompactValue());
-        assertNotNull(uf.getCompactValue());
-        assertNull(uf.getEnumValue());
-        assertNull(uf.getBinaryValue());
-        assertFalse(uf.hasBooleanValue());
-        assertFalse(uf.hasByteValue());
+        assertThat(uf.unionField(), is(UnionFields._Field.COMPACT_VALUE));
+        assertThat(uf.hasCompactValue(), is(true));
+        assertThat(uf.getCompactValue(), is(any(CompactFields.class)));
+        assertThat(uf.getEnumValue(), is(nullValue()));
+        assertThat(uf.getBinaryValue(), is(nullValue()));
+        assertThat(uf.hasBooleanValue(), is(false));
+        assertThat(uf.hasByteValue(), is(false));
     }
 
     @Test
     public void testRequiredFields() {
         RequiredFields rf = RequiredFields.builder().build();
 
-        assertTrue(rf.hasBooleanValue());
-        assertFalse(rf.isBooleanValue());
+        assertThat(rf.hasBooleanValue(), is(true));
+        assertThat(rf.isBooleanValue(), is(false));
 
-        assertTrue(rf.hasByteValue());
-        assertEquals((byte) 0, rf.getByteValue());
+        assertThat(rf.hasByteValue(), is(true));
+        assertThat(rf.getByteValue(), is((byte) 0));
 
-        assertTrue(rf.hasShortValue());
-        assertEquals((short) 0, rf.getShortValue());
+        assertThat(rf.hasShortValue(), is(true));
+        assertThat(rf.getShortValue(), is((short) 0));
 
-        assertTrue(rf.hasIntegerValue());
-        assertEquals(0, rf.getIntegerValue());
+        assertThat(rf.hasIntegerValue(), is(true));
+        assertThat(rf.getIntegerValue(), is(0));
 
-        assertTrue(rf.hasLongValue());
-        assertEquals(0L, rf.getLongValue());
+        assertThat(rf.hasLongValue(), is(true));
+        assertThat(rf.getLongValue(), is(0L));
 
-        assertTrue(rf.hasDoubleValue());
-        assertEquals(0.0, rf.getDoubleValue(), 0.0);
+        assertThat(rf.hasDoubleValue(), is(true));
+        assertThat(rf.getDoubleValue(), is(0.0));
 
-        assertFalse(rf.hasStringValue());
-        assertNull(rf.getStringValue());
+        // null pointers, presence = false.
+        assertThat(rf.hasStringValue(), is(false));
+        assertThat(rf.getStringValue(), is(nullValue()));
 
-        assertFalse(rf.hasBinaryValue());
-        assertNull(rf.getBinaryValue());
+        assertThat(rf.hasBinaryValue(), is(false));
+        assertThat(rf.getBinaryValue(), is(nullValue()));
 
-        assertFalse(rf.hasEnumValue());
-        assertNull(rf.getEnumValue());
+        assertThat(rf.hasEnumValue(), is(false));
+        assertThat(rf.getEnumValue(), is(nullValue()));
 
-        assertFalse(rf.hasCompactValue());
-        assertNull(rf.getCompactValue());
+        assertThat(rf.hasCompactValue(), is(false));
+        assertThat(rf.getCompactValue(), is(nullValue()));
     }
 
     @Test
     public void testOptionalFields() {
         OptionalFields of = OptionalFields.builder().build();
 
-        assertFalse(of.hasBooleanValue());
-        assertFalse(of.isBooleanValue());
+        assertThat(of.hasBooleanValue(), is(false));
+        assertThat(of.isBooleanValue(), is(false));
 
-        assertFalse(of.hasByteValue());
-        assertEquals((byte) 0, of.getByteValue());
+        assertThat(of.hasByteValue(), is(false));
+        assertThat(of.getByteValue(), is((byte) 0));
 
-        assertFalse(of.hasShortValue());
-        assertEquals((short) 0, of.getShortValue());
+        assertThat(of.hasShortValue(), is(false));
+        assertThat(of.getShortValue(), is((short) 0));
 
-        assertFalse(of.hasIntegerValue());
-        assertEquals(0, of.getIntegerValue());
+        assertThat(of.hasIntegerValue(), is(false));
+        assertThat(of.getIntegerValue(), is(0));
 
-        assertFalse(of.hasLongValue());
-        assertEquals(0L, of.getLongValue());
+        assertThat(of.hasLongValue(), is(false));
+        assertThat(of.getLongValue(), is(0L));
 
-        assertFalse(of.hasDoubleValue());
-        assertEquals(0.0, of.getDoubleValue(), 0.0);
+        assertThat(of.hasDoubleValue(), is(false));
+        assertThat(of.getDoubleValue(), is(0.0));
 
-        assertFalse(of.hasStringValue());
-        assertNull(of.getStringValue());
+        assertThat(of.hasStringValue(), is(false));
+        assertThat(of.getStringValue(), is(nullValue()));
 
-        assertFalse(of.hasBinaryValue());
-        assertNull(of.getBinaryValue());
+        assertThat(of.hasBinaryValue(), is(false));
+        assertThat(of.getBinaryValue(), is(nullValue()));
 
-        assertFalse(of.hasEnumValue());
-        assertNull(of.getEnumValue());
+        assertThat(of.hasEnumValue(), is(false));
+        assertThat(of.getEnumValue(), is(nullValue()));
 
-        assertFalse(of.hasCompactValue());
-        assertNull(of.getCompactValue());
+        assertThat(of.hasCompactValue(), is(false));
+        assertThat(of.getCompactValue(), is(nullValue()));
     }
 
     @Test
     public void testDefaultValues() {
         DefaultValues dv = DefaultValues.builder().build();
 
-        assertFalse(dv.hasBooleanValue());
-        assertTrue(dv.isBooleanValue());
+        assertThat(dv.hasBooleanValue(), is(false));
+        assertThat(dv.isBooleanValue(), is(true));
 
-        assertFalse(dv.hasByteValue());
-        assertEquals((byte) -125, dv.getByteValue());
+        assertThat(dv.hasByteValue(), is(false));
+        assertThat(dv.getByteValue(), is((byte) -125));
 
-        assertFalse(dv.hasShortValue());
-        assertEquals((short) 13579, dv.getShortValue());
+        assertThat(dv.hasShortValue(), is(false));
+        assertThat(dv.getShortValue(), is((short) 13579));
 
-        assertFalse(dv.hasIntegerValue());
-        assertEquals(1234567890, dv.getIntegerValue());
+        assertThat(dv.hasIntegerValue(), is(false));
+        assertThat(dv.getIntegerValue(), is(1234567890));
 
-        assertFalse(dv.hasLongValue());
-        assertEquals(1234567891L, dv.getLongValue());
+        assertThat(dv.hasLongValue(), is(false));
+        assertThat(dv.getLongValue(), is(1234567891L));
 
-        assertFalse(dv.hasDoubleValue());
-        assertEquals(2.99792458e+8, dv.getDoubleValue(), 0.0);
+        assertThat(dv.hasDoubleValue(), is(false));
+        assertThat(dv.getDoubleValue(), is(2.99792458e+8));
 
-        assertFalse(dv.hasStringValue());
-        assertEquals("test\\twith escapes\\nand\\u00a0ũñı©ôðé.", dv.getStringValue());
+        assertThat(dv.hasStringValue(), is(false));
+        assertThat(dv.getStringValue(), is(equalTo("test\\twith escapes\\nand\\u00a0ũñı©ôðé.")));
 
-        assertFalse(dv.hasBinaryValue());
-        // No default on binary.
-        assertNull(dv.getBinaryValue());
+        assertThat(dv.hasBinaryValue(), is(false));
+        assertThat(dv.getBinaryValue(), is(nullValue())); // No default on binary.
 
-        assertFalse(dv.hasEnumValue());
-        assertEquals(Value.SECOND, dv.getEnumValue());
+        assertThat(dv.hasEnumValue(), is(false));
+        assertThat(dv.getEnumValue(), is(Value.SECOND));
 
-        assertFalse(dv.hasCompactValue());
-        assertNull(dv.getCompactValue());
+        assertThat(dv.hasCompactValue(), is(false));
+        assertThat(dv.getCompactValue(), is(nullValue()));
 
         // And it serializes as no fields.
-        assertEquals("", PrettyPrinter.debugString(dv));
+        assertThat(PrettyPrinter.debugString(dv), is(equalTo("")));
     }
 
     @Test
@@ -174,10 +172,10 @@ public class ProvidenceTest {
         RequiredFields rf = RequiredFields.builder().build();
         UnionFields uf = UnionFields.withCompactValue(new CompactFields("a", 4, null));
 
-        assertNotSame(of, of2);
-        assertEquals(of.hashCode(), of2.hashCode());
-        assertNotEquals(uf.hashCode(), rf.hashCode());
-        assertNotEquals(of.hashCode(), rf.hashCode());
+        assertThat(of, not(sameInstance(of2)));
+        assertThat(of.hashCode(), is(equalTo(of2.hashCode())));
+        assertThat(of.hashCode(), not(equalTo(rf.hashCode())));
+        assertThat(uf.hashCode(), not(equalTo(rf.hashCode())));
     }
 
     @Test
@@ -191,7 +189,7 @@ public class ProvidenceTest {
 
         Containers._Builder b = a.mutate();
 
-        assertSame(of, b.build().getOptionalFields());
+        assertThat(b.build().getOptionalFields(), is(sameInstance(of)));
 
         b.mutableOptionalFields().setIntegerValue(55);
 
@@ -199,7 +197,7 @@ public class ProvidenceTest {
 
         // Even if the intermediate structure is mutated
         // inner contained structures are not rebuilt.
-        assertEquals(55, c.getOptionalFields().getIntegerValue());
-        assertSame(of.getCompactValue(), c.getOptionalFields().getCompactValue());
+        assertThat(c.getOptionalFields().getIntegerValue(), is(55));
+        assertThat(c.getOptionalFields().getCompactValue(), is(sameInstance(of.getCompactValue())));
     }
 }
