@@ -31,6 +31,7 @@ import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
+import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.util.io.IOUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -66,6 +67,8 @@ import java.util.TreeSet;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * mvn net.morimekta.providence:providence-maven-plugin:0.1.0-SNAPSHOT:help -Ddetail=true -Dgoal=compile
@@ -166,40 +169,17 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         }
 
         Set<Artifact> resolvedArtifacts = new HashSet<>();
+        for (Dependency dep : project.getDependencies()) {
+            if ("provided".equalsIgnoreCase(dep.getScope())) {
+                resolveDependency(dep, includes, workingDir, resolvedArtifacts);
+            }
+        }
         for (Dependency dep : dependencies) {
             dep.setType(ProvidenceAssemblyMojo.TYPE);
-            if (dep.getClassifier() == null || dep.getClassifier().isEmpty()) {
+            if (isNullOrEmpty(dep.getClassifier())) {
                 dep.setClassifier(ProvidenceAssemblyMojo.CLASSIFIER);
             }
-
-            Artifact artifact = repositorySystem.createDependencyArtifact(dep);
-            // Avoid resolving stuff we already have resolved.
-            if (resolvedArtifacts.contains(artifact)) {
-                continue;
-            }
-
-            ArtifactResolutionRequest request = new ArtifactResolutionRequest();
-            request.setLocalRepository(localRepository);
-            request.setRemoteRepositories(remoteRepositories);
-            request.setResolveTransitively(false);
-            request.setArtifact(artifact);
-
-            ArtifactResolutionResult result = artifactResolver.resolve(request);
-
-            boolean found = false;
-            for (Artifact resolved : result.getArtifacts()) {
-                if (artifact.equals(resolved)) {
-                    resolvedArtifacts.add(resolved);
-                    addDependencyInclude(workingDir, includes, resolved);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new MojoFailureException("Unable to resolve providence dependency: " +
-                                               artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" +
-                                               artifact.getVersion() + ":" + artifact.getClassifier());
-            }
+            resolveDependency(dep, includes, workingDir, resolvedArtifacts);
         }
 
         if (includeDirs != null) {
@@ -262,6 +242,41 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         return compileOutput;
     }
 
+    private void resolveDependency(Dependency dep,
+                                   TreeSet<File> includes,
+                                   File workingDir,
+                                   Set<Artifact> resolvedArtifacts) throws MojoFailureException, MojoExecutionException {
+        Artifact artifact = repositorySystem.createDependencyArtifact(dep);
+        // Avoid resolving stuff we already have resolved.
+        if (resolvedArtifacts.contains(artifact)) {
+            return;
+        }
+
+        ArtifactResolutionRequest request = new ArtifactResolutionRequest();
+        request.setLocalRepository(localRepository);
+        request.setRemoteRepositories(remoteRepositories);
+        request.setResolveTransitively(false);
+        request.setArtifact(artifact);
+
+        ArtifactResolutionResult result = artifactResolver.resolve(request);
+
+        boolean found = false;
+        for (Artifact resolved : result.getArtifacts()) {
+            if (artifact.equals(resolved)) {
+                resolvedArtifacts.add(resolved);
+                addDependencyInclude(workingDir, includes, resolved);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            throw new MojoFailureException("Unable to resolve providence dependency: " +
+                                           artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" +
+                                           artifact.getVersion() + ":" + artifact.getClassifier());
+        }
+    }
+
     private void addDependencyInclude(File workingDir, Set<File> includes, Artifact artifact)
             throws MojoExecutionException {
         // TODO: Figure out if this is the right way to name the output directories.
@@ -278,11 +293,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
-                if (entry.isDirectory()) {
+                if (entry.isDirectory() || !ReflectionUtils.isThriftFile(entry.getName())) {
                     zis.closeEntry();
                     continue;
                 }
-
                 File of = new File(outputDir, new File(entry.getName()).getName());
 
                 try (FileOutputStream fos = new FileOutputStream(of, false);
