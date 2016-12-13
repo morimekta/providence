@@ -53,11 +53,16 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
     private final JHelper              helper;
     private final JavaMessageFormatter messageFormat;
     private final IndentedPrintWriter  writer;
+    private final JavaOptions          options;
 
-    JavaServiceFormatter(IndentedPrintWriter writer, JHelper helper, JavaMessageFormatter messageFormat) {
+    JavaServiceFormatter(IndentedPrintWriter writer,
+                         JHelper helper,
+                         JavaMessageFormatter messageFormat,
+                         JavaOptions options) {
         this.writer = writer;
         this.helper = helper;
         this.messageFormat = messageFormat;
+        this.options = options;
     }
 
     @Override
@@ -284,8 +289,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             if (method.getResponseClass() != null) {
                 writer.formatln("%s._Builder rsp = %s.builder();", method.getResponseClass(), method.getResponseClass());
             }
+            String methodThrows = service.methodsThrows(method);
 
-            if (method.exceptions().length > 0) {
+            if (methodThrows != null || method.exceptions().length > 0) {
                 writer.appendln("try {")
                       .begin();
             }
@@ -327,13 +333,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 }
             }
 
-            if (method.exceptions().length > 0) {
+            if (methodThrows != null || method.exceptions().length > 0) {
                 writer.end();
                 for (JField ex : method.exceptions()) {
                     writer.formatln("} catch (%s e) {", ex.instanceType())
-                          .begin()
-                          .formatln("rsp.%s(e);", ex.setter())
-                          .end();
+                          .formatln("    rsp.%s(e);", ex.setter());
+                }
+                if (methodThrows != null) {
+                    writer.formatln("} catch (%s e) {", methodThrows)
+                          .formatln("    throw new %s(e.getMessage(), e);", IOException.class.getName());
                 }
                 writer.appendln('}');
             }
@@ -559,6 +567,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             } else {
                 writer.newline();
             }
+            String methodThrows = service.methodsThrows(method);
 
             BlockCommentBuilder comment = new BlockCommentBuilder(writer);
 
@@ -580,11 +589,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                 comment.return_("The " + method.name() + " result.");
             }
 
-            for (JField param : method.exceptions()) {
-                if (param.comment() != null) {
-                    comment.throws_(param.fieldType(), param.comment());
-                } else {
-                    comment.throws_(param.fieldType(), "The " + param.name() + " exception.");
+            if (methodThrows != null) {
+                comment.throws_(methodThrows, "On any declared exception.");
+            } else {
+                for (JField param : method.exceptions()) {
+                    if (param.comment() != null) {
+                        comment.throws_(param.fieldType(), param.comment());
+                    } else {
+                        comment.throws_(param.fieldType(), "The " + param.name() + " exception.");
+                    }
                 }
             }
             comment.throws_(IOException.class, "On providence or non-declared exceptions.")
@@ -611,15 +624,18 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             }
 
             writer.end()
-                  .format(")")
-                  .formatln("        throws %s", IOException.class.getName())
-                  .begin(   "               ");
-
-            for (JField ex : method.exceptions()) {
+                  .format(")");
+            writer.formatln("        throws %s", IOException.class.getName())
+                  .begin("               ");
+            if (methodThrows != null) {
                 writer.append(",");
-                writer.appendln(ex.instanceType());
+                writer.formatln("%s", methodThrows);
+            } else {
+                for (JField ex : method.exceptions()) {
+                    writer.append(",");
+                    writer.appendln(ex.instanceType());
+                }
             }
-
             writer.format(";")
                   .end();
         }

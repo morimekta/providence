@@ -52,6 +52,11 @@ public class CService extends PService implements CAnnotatedDescriptor {
     }
 
     @Override
+    public CService getExtendsService() {
+        return (CService) super.getExtendsService();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
         if (annotations != null) {

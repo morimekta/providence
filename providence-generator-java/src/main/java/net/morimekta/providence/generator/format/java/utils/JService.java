@@ -20,9 +20,13 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
+import net.morimekta.providence.descriptor.PServiceMethod;
+import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.contained.CServiceMethod;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,6 +83,41 @@ public class JService {
             ret[i] = new JServiceMethod(service, ma[i], helper);
         }
         return ret;
+    }
+
+    public PServiceMethod getDeclaredMethod(String name) {
+        for (PServiceMethod method : service.getMethods()) {
+            if (method.getName().equals(name)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    public String methodsThrows(JServiceMethod method) {
+        // Make sure we get the annotation of the service that declares the method.
+        if (getDeclaredMethod(method.name()) == null) {
+            if (service.getExtendsService() == null) {
+                throw new GeneratorException("Unable to find source service of method: " + method.name() +
+                                             " context: " + service.getQualifiedName());
+            }
+            return new JService(service.getExtendsService(), helper).methodsThrows(method);
+        }
+
+        if (service.hasAnnotation(ThriftAnnotation.JAVA_SERVICE_METHOD_THROWS)) {
+            String doThrow = service.getAnnotationValue(ThriftAnnotation.JAVA_SERVICE_METHOD_THROWS);
+            if (!IOException.class.getName().equals(doThrow)) {
+                // Explicitly disallow declaring 'Exception' here.
+                if (    Exception.class.getName().equals(doThrow) ||
+                        Exception.class.getSimpleName().equals(doThrow)) {
+                    throw new GeneratorException(
+                            "Not allowed to declare '" + doThrow + "' as the service thrown exception. " +
+                            "Annotation: " + ThriftAnnotation.JAVA_SERVICE_METHOD_THROWS.tag);
+                }
+                return doThrow;
+            }
+        }
+        return null;
     }
 
     public CService getService() {

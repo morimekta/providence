@@ -60,6 +60,6 @@ public class JavaGenerator extends BaseGenerator {
 
     @Override
     protected BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer) {
-        return new JavaServiceFormatter(writer, helper, new JavaMessageFormatter(true, true, writer, helper, options));
+        return new JavaServiceFormatter(writer, helper, new JavaMessageFormatter(true, true, writer, helper, options), options);
     }
 }
