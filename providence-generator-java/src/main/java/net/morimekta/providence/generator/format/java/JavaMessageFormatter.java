@@ -51,11 +51,11 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
     }
 
     public JavaMessageFormatter(boolean inner,
-                                boolean makePrivate,
+                                boolean makeProtected,
                                 IndentedPrintWriter writer,
                                 JHelper helper,
                                 JavaOptions options) {
-        super(inner, makePrivate, writer, helper, getFormatters(writer, helper, options));
+        super(inner, makeProtected, writer, helper, getFormatters(writer, helper, options));
     }
 
     public String getClassName(JMessage<?> message) {

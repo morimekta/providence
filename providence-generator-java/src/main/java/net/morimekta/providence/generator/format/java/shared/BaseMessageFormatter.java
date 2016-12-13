@@ -43,15 +43,15 @@ public abstract class BaseMessageFormatter {
     private final JHelper                        helper;
     private final   List<MessageMemberFormatter> formatters;
     private final   boolean                      inner;
-    private final boolean                        makePrivate;
+    private final boolean                        makeProtected;
 
     public BaseMessageFormatter(boolean inner,
-                                boolean makePrivate,
+                                boolean makeProtected,
                                 IndentedPrintWriter writer,
                                 JHelper helper,
                                 List<MessageMemberFormatter> formatters) {
         this.inner = inner;
-        this.makePrivate = makePrivate;
+        this.makeProtected = makeProtected;
         this.writer = writer;
         this.helper = helper;
         this.formatters = ImmutableList.copyOf(formatters);
@@ -80,7 +80,7 @@ public abstract class BaseMessageFormatter {
 
         formatters.forEach(f -> f.appendClassAnnotations(message));
         writer.formatln("%s %sclass %s",
-                        makePrivate ? "private" : "public",
+                        makeProtected ? "protected" : "public",
                         inner ? "static " : "",
                         getClassName(message))
               .begin().begin();

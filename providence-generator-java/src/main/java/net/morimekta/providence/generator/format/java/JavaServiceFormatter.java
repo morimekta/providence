@@ -172,7 +172,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                   .end()
                   .begin();
 
-            writer.formatln("%s._Builder rq = %s.builder();", method.getRequestClass(), method.getRequestClass());
+            writer.formatln("%s._Builder rq = %s.builder();",
+                            service.getRequestClassRef(method),
+                            service.getRequestClassRef(method));
 
             for (JField param : method.params()) {
                 writer.formatln("rq.%s(%s);", param.setter(), param.param());
@@ -204,7 +206,8 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                       .appendln('}')
                       .newline()
                       .formatln("%s msg = (%s) resp.getMessage();",
-                                method.getResponseClass(), method.getResponseClass());
+                                service.getResponseClassRef(method),
+                                service.getResponseClassRef(method));
 
                 writer.appendln("if (msg.unionField() != null) {")
                       .begin()
@@ -287,7 +290,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             writer.formatln("case \"%s\": {", method.name())
                   .begin();
             if (method.getResponseClass() != null) {
-                writer.formatln("%s._Builder rsp = %s.builder();", method.getResponseClass(), method.getResponseClass());
+                writer.formatln("%s._Builder rsp = %s.builder();",
+                                service.getResponseClassRef(method),
+                                service.getResponseClassRef(method));
             }
             String methodThrows = service.methodsThrows(method);
 
@@ -297,8 +302,8 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
             }
 
             writer.formatln("%s req = (%s) call.getMessage();",
-                            method.getRequestClass(),
-                            method.getRequestClass());
+                            service.getRequestClassRef(method),
+                            service.getRequestClassRef(method));
 
             String indent = "      " + Strings.times(" ", method.methodName().length());
             if (method.getResponse() != null && !method.getResponse().isVoid()) {
@@ -413,13 +418,13 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
         for (JServiceMethod method : service.methods()) {
             String responseDesc = method.getResponseClass() == null
                                   ? "null"
-                                  : method.getResponseClass() + ".kDescriptor";
+                                  : service.getResponseClassRef(method) + ".kDescriptor";
 
             writer.formatln("%s(\"%s\", %b, %s.kDescriptor, %s),",
                             method.constant(),
                             method.name(),
                             method.getMethod().isOneway(),
-                            method.getRequestClass(),
+                            service.getRequestClassRef(method),
                             responseDesc);
         }
 
@@ -482,7 +487,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
 
         String inherits = "null";
         if (service.getService().getExtendsService() != null) {
-            CService other = (CService) service.getService().getExtendsService();
+            CService other = service.getService().getExtendsService();
             inherits = helper.getJavaPackage(other) + "." +
                        new JService(other, helper).className() + ".provider()";
         }
@@ -528,7 +533,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
     }
 
     private void appendStructs(IndentedPrintWriter writer, JService service) throws GeneratorException, IOException {
-        for (JServiceMethod method : service.methods()) {
+        for (JServiceMethod method : service.declaredMethods()) {
             JMessage<?> request = new JMessage<>(method.getMethod().getRequestType(), helper);
             writer.formatln("// type --> %s", request.descriptor().getName());
 
@@ -546,7 +551,7 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
     private void appendIface(IndentedPrintWriter writer, JService service) throws GeneratorException {
         String inherits = "";
         if (service.getService().getExtendsService() != null) {
-            CService other = (CService) service.getService().getExtendsService();
+            CService other = service.getService().getExtendsService();
             inherits = "extends " + helper.getJavaPackage(other) + "." +
                        new JService(other, helper).className() + ".Iface ";
         }

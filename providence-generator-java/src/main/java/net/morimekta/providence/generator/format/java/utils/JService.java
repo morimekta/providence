@@ -85,18 +85,45 @@ public class JService {
         return ret;
     }
 
-    public PServiceMethod getDeclaredMethod(String name) {
+    public String getRequestClassRef(JServiceMethod method) {
+        if (!isDeclaredMethod(method)) {
+            if (service.getExtendsService() == null) {
+                throw new GeneratorException("Unable to find source service of method: " + method.name() +
+                                             " context: " + service.getQualifiedName());
+            }
+            return new JService(service.getExtendsService(), helper).getRequestClassRef(method);
+        }
+
+        return helper.getJavaPackage(service) + "." + className() + "." + method.getRequestClass();
+    }
+
+    public String getResponseClassRef(JServiceMethod method) {
+        if (method.getResponseClass() == null) {
+            return null;
+        }
+        if (!isDeclaredMethod(method)) {
+            if (service.getExtendsService() == null) {
+                throw new GeneratorException("Unable to find source service of method: " + method.name() +
+                                             " context: " + service.getQualifiedName());
+            }
+            return new JService(service.getExtendsService(), helper).getResponseClassRef(method);
+        }
+
+        return helper.getJavaPackage(service) + "." + className() + "." + method.getResponseClass();
+    }
+
+    public boolean isDeclaredMethod(JServiceMethod ref) {
         for (PServiceMethod method : service.getMethods()) {
-            if (method.getName().equals(name)) {
-                return method;
+            if (method.getName().equals(ref.name())) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     public String methodsThrows(JServiceMethod method) {
         // Make sure we get the annotation of the service that declares the method.
-        if (getDeclaredMethod(method.name()) == null) {
+        if (!isDeclaredMethod(method)) {
             if (service.getExtendsService() == null) {
                 throw new GeneratorException("Unable to find source service of method: " + method.name() +
                                              " context: " + service.getQualifiedName());
