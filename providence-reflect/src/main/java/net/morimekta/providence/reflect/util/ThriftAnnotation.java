@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.reflect.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * Enum containing known "general" thrift annotations.
  */
@@ -28,7 +30,7 @@ public enum ThriftAnnotation {
     /**
      * Whether a set-like container are normal (hash-), ordered (linked-hash-)
      * or sorted (tree-). Valid for set and map type fields.
-     *
+     * <p>
      * container = "ORDERED"
      */
     CONTAINER("container"),
@@ -37,23 +39,50 @@ public enum ThriftAnnotation {
      * If the field, message, service or method is not supposed to be used any
      * more. Whatever is in the value part may be used as the 'deprecated'
      * reason.
+     * <p>
+     * deprecated = "For some reason"
      */
     DEPRECATED("deprecated"),
 
     /**
      * If a struct can use a compact serialized format. Only valid for struct,
      * not for union and exception.
-     *
+     * <p>
      * compact = ""
      */
     COMPACT("compact"),
 
     /**
-     * Add extra interfaces to
+     * Add extra interfaces to a struct. Not allowed on unions or exceptions.
+     *
+     * The interface methods must either match the methods implemented by the
+     * struct, <b>or</b> have a default implementation.
+     * <p>
+     * java.implements = "my.package.MyInterface"
      */
     JAVA_IMPLEMENTS("java.implements"),
 
+    /**
+     * Specify exception class to extend for exception structs. The default is
+     * to extend {@link java.lang.Exception}, this will override that verbatim.
+     * The exception class <b>must</b> be available at compile time.
+     * <p>
+     * java.exception.class = "my.package.MyException"
+     */
     JAVA_EXCEPTION_CLASS("java.exception.class"),
+
+    /**
+     * Specify an exception class to throw <b>instead</b> of the default
+     * declared exceptions. This is only valid for the Service.Iface interface,
+     * and not for the Service.Client implementation.
+     * <p>
+     * Non-declared exceptions, even if extending the declared exception, will
+     * be handled as a system failure, and wrapped in an IOException or sent as
+     * an application exception.
+     * <p>
+     * java.service.methods.throws = "my.package.MyException"
+     */
+    JAVA_SERVICE_METHOD_THROWS("java.service.methods.throws"),
     ;
 
     public final String tag;
@@ -62,10 +91,12 @@ public enum ThriftAnnotation {
         this.tag = tag;
     }
 
-    public static ThriftAnnotation forTag(String tag) {
-        switch (tag) {
-            case "collection": return CONTAINER;
-            case "compact": return COMPACT;
+    @Nonnull
+    public static ThriftAnnotation forTag(@Nonnull String tag) {
+        for (ThriftAnnotation annotation : values()) {
+            if (tag.equals(annotation.tag)) {
+                return annotation;
+            }
         }
         return NONE;
     }
