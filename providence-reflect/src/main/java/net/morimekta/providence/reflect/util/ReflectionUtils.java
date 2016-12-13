@@ -20,22 +20,28 @@
  */
 package net.morimekta.providence.reflect.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * Simple utility for type checking and matching.
  */
 public class ReflectionUtils {
-    public static boolean isThriftFile(String filePath) {
+    public static boolean isThriftFile(@Nonnull String filePath) {
         // This is in case windows has default upper-cased the file name.
-        filePath = filePath.toLowerCase();
-
-        return filePath.endsWith(".providence") ||
-               filePath.endsWith(".thrift") ||
-               filePath.endsWith(".thr") ||
-               filePath.endsWith(".pvd");
+        return programNameFromPath(filePath).length() > 0;
     }
 
-    public static String programNameFromPath(String filePath) {
+    @Nonnull
+    public static String programNameFromPath(@Nonnull String filePath) {
         String lowerCased = filePath.toLowerCase();
+
+        if (!lowerCased.endsWith(".providence") &&
+            !lowerCased.endsWith(".thrift") &&
+            !lowerCased.endsWith(".thr") &&
+            !lowerCased.endsWith(".pvd")) {
+            return "";
+        }
+
         if (lowerCased.endsWith(".providence")) {
             filePath = filePath.substring(0, filePath.length() - 11);
         } else if (lowerCased.endsWith(".thrift")) {
@@ -43,8 +49,8 @@ public class ReflectionUtils {
         } else if (lowerCased.endsWith(".thr") || lowerCased.endsWith(".pvd")) {
             filePath = filePath.substring(0, filePath.length() - 4);
         }
-        if (filePath.contains("/")) {
-            filePath = filePath.replaceAll(".*[/]", "");
+        if (filePath.contains("/") || filePath.contains("\\")) {
+            filePath = filePath.replaceAll(".*[/\\\\]", "");
         }
 
         return filePath.replaceAll("[-.]", "_");
