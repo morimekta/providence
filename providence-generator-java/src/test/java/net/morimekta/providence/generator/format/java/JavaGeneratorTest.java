@@ -4,11 +4,10 @@ import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
-import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
-import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -17,10 +16,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,7 +31,6 @@ public class JavaGeneratorTest {
     private FileManager     fileManager;
     private File            out;
     private ProgramRegistry programRegistry;
-    private File            file;
     private File            inc;
     private TypeLoader      typeLoader;
     private ProgramParser   parser;
@@ -42,13 +39,6 @@ public class JavaGeneratorTest {
     public void setUp() throws IOException {
         tmp = new TemporaryFolder();
         tmp.create();
-
-        file = tmp.newFile("test.thrift");
-
-        try (FileOutputStream fos = new FileOutputStream(file, false);
-             InputStream in = getClass().getResourceAsStream("/net/morimekta/providence/generator/format/java/test.thrift")) {
-            IOUtils.copy(in, fos);
-        }
 
         out = tmp.newFolder("out");
         inc = tmp.newFolder("includes");
@@ -61,6 +51,9 @@ public class JavaGeneratorTest {
 
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
+        copyResourceTo("/net/morimekta/providence/generator/format/java/test.thrift", tmp.getRoot());
+        File file = tmp.newFile("test.thrift");
+
         JavaOptions options = new JavaOptions();
 
         Generator generator = new JavaGenerator(fileManager, programRegistry, options);
