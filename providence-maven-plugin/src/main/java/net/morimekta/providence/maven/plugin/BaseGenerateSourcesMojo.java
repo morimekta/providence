@@ -75,7 +75,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     /**
-     * Adds android.os.Parcelable support. Not compatible with 'tiny'.
+     * Adds android.os.Parcelable support. Requires android dependencies, or
+     * can use <code>net.morimekta.utils:android-util</code> for testing.
      */
     @Parameter(defaultValue = "false")
     protected boolean android;

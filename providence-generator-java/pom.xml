@@ -4,7 +4,7 @@
 
     <name>Providence Generator : Java</name>
     <description>
-        Source code generator for java and java-tiny.
+        Source code generator for java. Requires java 8, preferably openjdk8 to work.
     </description>
 
     <parent>

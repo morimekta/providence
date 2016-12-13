@@ -2,7 +2,7 @@ Providence Tools : Maven Plugin
 ===============================
 
 A maven plugin that compiled *java* sources from thrift files that uses
-the `providence-core` libraries (or tiny, which have almost no dependencies).
+the `providence-core` libraries.
 
 To use the plugin, add it to the `/project/build/plugins` list of the `pom.xml`
 file. E.g.:
@@ -11,16 +11,20 @@ file. E.g.:
 <plugin>
     <groupId>net.morimekta.providence</groupId>
     <artifactId>providence-maven-plugin</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
-    <configuration>
-        <dependencies>
-            <dependency>
-                <groupId>net.morimekta.providence</groupId>
-                <artifactId>it-common</artifactId>
-                <version>0.2.2-SNAPSHOT</version>
-            </dependency>
-        </dependencies>
-    </configuration>
+    <version>${providence.version}</version>
+    <extensions>true</extensions>
+</plugin>
+```
+
+The `compile` and `testCompile` goals are declared as default lifecycle goals for
+the providence plugin (and executed if run with `extensions`). In order to also
+run the assemble, the executions must be declared.
+
+```xml
+<plugin>
+    <groupId>net.morimekta.providence</groupId>
+    <artifactId>providence-maven-plugin</artifactId>
+    <version>${providence.version}</version>
     <executions>
         <execution>
             <goals>
