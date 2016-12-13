@@ -1,6 +1,5 @@
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.TypeLoader;
@@ -26,37 +25,31 @@ import static org.junit.Assert.assertTrue;
  */
 public class JavaGeneratorTest {
     @Rule
-    public  TemporaryFolder tmp;
+    public  TemporaryFolder tmp = new TemporaryFolder();
 
-    private FileManager     fileManager;
     private File            out;
-    private ProgramRegistry programRegistry;
-    private File            inc;
     private TypeLoader      typeLoader;
-    private ProgramParser   parser;
+    private JavaGenerator   generator;
 
     @Before
     public void setUp() throws IOException {
-        tmp = new TemporaryFolder();
-        tmp.create();
-
         out = tmp.newFolder("out");
-        inc = tmp.newFolder("includes");
 
-        fileManager = new FileManager(out);
-        parser = new ThriftProgramParser();
+        JavaOptions options = new JavaOptions();
+        File inc = tmp.newFolder("includes");
+        FileManager fileManager = new FileManager(out);
+        ProgramParser parser = new ThriftProgramParser();
+        ProgramRegistry programRegistry = new ProgramRegistry();
+
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        programRegistry = new ProgramRegistry();
+        generator = new JavaGenerator(fileManager, programRegistry, options);
     }
 
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
         copyResourceTo("/net/morimekta/providence/generator/format/java/test.thrift", tmp.getRoot());
-        File file = tmp.newFile("test.thrift");
+        File file = new File(tmp.getRoot(), "test.thrift");
 
-        JavaOptions options = new JavaOptions();
-
-        Generator generator = new JavaGenerator(fileManager, programRegistry, options);
         generator.generate(typeLoader.load(file));
 
         File test = new File(out, "net/morimekta/test/java/Test.java");

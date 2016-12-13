@@ -6,7 +6,7 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
-import net.morimekta.providence.reflect.util.ProgramRegistry;
+import net.morimekta.testing.ResourceUtils;
 import net.morimekta.util.io.IOUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -17,9 +17,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,39 +27,28 @@ import static org.junit.Assert.assertTrue;
  */
 public class JsonGeneratorTest {
     @Rule
-    public  TemporaryFolder tmp;
-    private FileManager     fileManager;
+    public  TemporaryFolder tmp = new TemporaryFolder();
+
     private File            out;
     private TypeLoader      typeLoader;
-    private File            inc;
-    private ProgramParser   parser;
-    private File            file;
-    private ProgramRegistry programRegistry;
+    private JsonGenerator   generator;
 
     @Before
     public void setUp() throws IOException {
-        tmp = new TemporaryFolder();
-        tmp.create();
-
-        file = tmp.newFile("test.thrift");
-
-        try (FileOutputStream fos = new FileOutputStream(file, false);
-             InputStream in = getClass().getResourceAsStream("/net/morimekta/providence/generator/format/json/test.thrift")) {
-            IOUtils.copy(in, fos);
-        }
-
         out = tmp.newFolder("out");
-        inc = tmp.newFolder("includes");
 
-        fileManager = new FileManager(out);
-        parser = new ThriftProgramParser();
+        File inc = tmp.newFolder("includes");
+        FileManager fileManager = new FileManager(out);
+        ProgramParser parser = new ThriftProgramParser();
+
         typeLoader = new TypeLoader(ImmutableList.of(inc), parser);
-        programRegistry = new ProgramRegistry();
+        generator = new JsonGenerator(fileManager, typeLoader);
     }
 
     @Test
     public void testGenerate() throws GeneratorException, IOException, ParseException {
-        JsonGenerator generator = new JsonGenerator(fileManager, typeLoader);
+        ResourceUtils.copyResourceTo("/net/morimekta/providence/generator/format/json/test.thrift", tmp.getRoot());
+        File file = new File(tmp.getRoot(), "test.thrift");
 
         generator.generate(typeLoader.load(file));
 
