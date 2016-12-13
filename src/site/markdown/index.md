@@ -74,7 +74,19 @@ generated code. Currently the recognized annotations are:
   implementation.
 * `java.exception.class` Which exception class to inherit from. This must be the
   full class path of an exception. Note that whether it is an exception is not
-  checked in the generator, it is plainly trusted as the exception class.  
+  checked in the generator, it is plainly trusted as the exception class.
+* `java.service.methods.throws` Which replaces the declared exceptions with the
+  given exception class on the **service interface only**. Also note that:
+
+    - The property is **not** inherited, and only applies to the methods declared on
+      the service with the annotation.
+    - All the declared exceptions **must** extend the given exception.
+    - The exception class **must** be available at compile time, and have a
+      constructor that takes the message string only.
+    - Any exception that not declared, including those that extend the base exception
+      class will be handled as an application level failure, throwing
+      `PApplicationException`.
+    - The client will still only throw the declared exceptions (and `IOException`).
 
 #### Circular containment
 
