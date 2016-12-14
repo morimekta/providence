@@ -29,6 +29,7 @@ import net.morimekta.providence.generator.format.java.messages.CommonMemberForma
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.AndroidMessageFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryReaderBuilderFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryWriterFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.JacksonMessageFormatter;
@@ -70,6 +71,10 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
         ImmutableList.Builder<MessageMemberFormatter> builderFormatters = ImmutableList.builder();
         builderFormatters.add(new BuilderCommonMemberFormatter(writer, helper))
                          .add(new BuilderCoreOverridesFormatter(writer, helper));
+
+        if (options.hazelcast_portable) {
+            builderFormatters.add(new HazelcastPortableMessageFormatter(writer, helper));
+        }
 
         ImmutableList.Builder<MessageMemberFormatter> formatters = ImmutableList.builder();
         formatters.add(new CommonMemberFormatter(writer, helper))

@@ -83,6 +83,26 @@ public enum ThriftAnnotation {
      * java.service.methods.throws = "my.package.MyException"
      */
     JAVA_SERVICE_METHOD_THROWS("java.service.methods.throws"),
+    /**
+     * Specify if a file should generate with support with hazelcast portable
+     * implementaiton.
+     * <p>
+     * The id needs to be a unique int id for each file that is generated with
+     * support for hazelcast.
+     * </p>
+     *
+     * hazelcast.factory.id = "1"
+     */
+    JAVA_HAZELCAST_FACTORY_ID("hazelcast.factory.id"),
+    /**
+     * Specify if a stuct should be generated using hazelcast.portable interface
+     * to be compatible with serialization and deserialization of hazelcast portable.
+     * <p>
+     * The id needs to be a unique int id for each struct in the class.
+     * </p>
+     * hazelcast.factory.id = "1"
+     */
+    JAVA_HAZELCAST_CLASS_ID("hazelcast.class.id"),
     ;
 
     public final String tag;

@@ -103,6 +103,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean rw_binary = true;
 
     /**
+     * If set to true will add hazelcast annotations to messages and enums.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean hazelcast_portable;
+
+    /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
      * type is implied here.
      */
@@ -232,6 +238,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             options.android = android;
             options.jackson = jackson;
             options.rw_binary = rw_binary;
+            options.hazelcast_portable = hazelcast_portable;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 

@@ -55,6 +55,8 @@ public abstract class BaseGenerator extends Generator {
 
     protected abstract BaseProgramFormatter constFomatter(IndentedPrintWriter writer);
 
+    protected abstract BaseProgramFormatter hazelcastFomatter(IndentedPrintWriter writer);
+
     protected abstract BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer);
 
     @Override
@@ -73,6 +75,27 @@ public abstract class BaseGenerator extends Generator {
 
                 appendFileHeader(writer, document);
                 constFomatter(writer).appendProgramClass(document);
+
+                writer.flush();
+            } finally {
+                try {
+                    getFileManager().finalize(out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (document.getConstants()
+                    .stream().filter(t -> t.getName().equals("FACTORY_ID")).findAny().isPresent() ) { //TODO check if hazelcast flag set?
+
+            String file = helper.getHazelcastFactoryClassName(document) + ".java";
+            OutputStream out = getFileManager().create(path, file);
+            try {
+                IndentedPrintWriter writer = new IndentedPrintWriter(out);
+
+                appendFileHeader(writer, document);
+                hazelcastFomatter(writer).appendProgramClass(document);
 
                 writer.flush();
             } finally {
