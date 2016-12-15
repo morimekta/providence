@@ -24,9 +24,9 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CProgram;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 08.01.16.
+ * Base formatter for program shared classes, like the constants class
+ * containing the program constants.
  */
-public interface BaseConstantsFormatter {
-    void appendConstantsClass(CProgram document) throws GeneratorException;
+public interface BaseProgramFormatter {
+    void appendProgramClass(CProgram document) throws GeneratorException;
 }

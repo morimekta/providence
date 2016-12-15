@@ -53,7 +53,7 @@ public abstract class BaseGenerator extends Generator {
 
     protected abstract BaseEnumFormatter enumFormatter(IndentedPrintWriter writer);
 
-    protected abstract BaseConstantsFormatter constFomatter(IndentedPrintWriter writer);
+    protected abstract BaseProgramFormatter constFomatter(IndentedPrintWriter writer);
 
     protected abstract BaseServiceFormatter serviceFormatter(IndentedPrintWriter writer);
 
@@ -72,7 +72,7 @@ public abstract class BaseGenerator extends Generator {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
                 appendFileHeader(writer, document);
-                constFomatter(writer).appendConstantsClass(document);
+                constFomatter(writer).appendProgramClass(document);
 
                 writer.flush();
             } finally {

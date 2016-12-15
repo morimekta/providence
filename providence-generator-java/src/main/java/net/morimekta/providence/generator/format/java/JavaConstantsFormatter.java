@@ -21,7 +21,7 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.shared.BaseConstantsFormatter;
+import net.morimekta.providence.generator.format.java.shared.BaseProgramFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
@@ -33,7 +33,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
  */
-public class JavaConstantsFormatter implements BaseConstantsFormatter {
+public class JavaConstantsFormatter implements BaseProgramFormatter {
     private static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
 
     private final JHelper  helper;
@@ -45,7 +45,7 @@ public class JavaConstantsFormatter implements BaseConstantsFormatter {
     }
 
     @Override
-    public void appendConstantsClass(CProgram document) throws GeneratorException {
+    public void appendProgramClass(CProgram document) throws GeneratorException {
         ValueBuilder value = new ValueBuilder(writer, helper);
 
         if (document.getComment() != null) {

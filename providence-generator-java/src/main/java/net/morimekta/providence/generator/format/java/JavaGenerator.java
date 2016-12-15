@@ -21,10 +21,10 @@
 package net.morimekta.providence.generator.format.java;
 
 import net.morimekta.providence.generator.GeneratorException;
-import net.morimekta.providence.generator.format.java.shared.BaseConstantsFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseEnumFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseGenerator;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
+import net.morimekta.providence.generator.format.java.shared.BaseProgramFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseServiceFormatter;
 import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
@@ -54,7 +54,7 @@ public class JavaGenerator extends BaseGenerator {
     }
 
     @Override
-    protected BaseConstantsFormatter constFomatter(IndentedPrintWriter writer) {
+    protected BaseProgramFormatter constFomatter(IndentedPrintWriter writer) {
         return new JavaConstantsFormatter(writer, helper);
     }
 
