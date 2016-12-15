@@ -32,6 +32,15 @@
         </dependency>
 
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>findbugs-annotations</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>net.morimekta.utils</groupId>
             <artifactId>console-util</artifactId>
         </dependency>
