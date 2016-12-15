@@ -43,7 +43,7 @@ public class Calculator {
                 net.morimekta.test.calculator.Operation pOp)
                 throws java.io.IOException,
                        net.morimekta.test.calculator.CalculateException {
-            Calculate_request._Builder rq = Calculate_request.builder();
+            net.morimekta.test.calculator.Calculator.Calculate_request._Builder rq = net.morimekta.test.calculator.Calculator.Calculate_request.builder();
             rq.setOp(pOp);
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
@@ -53,7 +53,7 @@ public class Calculator {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            Calculate_response msg = (Calculate_response) resp.getMessage();
+            net.morimekta.test.calculator.Calculator.Calculate_response msg = (net.morimekta.test.calculator.Calculator.Calculate_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case CE:
@@ -70,7 +70,7 @@ public class Calculator {
         @Override
         public void iamalive()
                 throws java.io.IOException {
-            Iamalive_request._Builder rq = Iamalive_request.builder();
+            net.morimekta.test.calculator.Calculator.Iamalive_request._Builder rq = net.morimekta.test.calculator.Calculator.Iamalive_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
             handler.handleCall(call, Calculator.kDescriptor);
@@ -100,9 +100,9 @@ public class Calculator {
                        net.morimekta.providence.serializer.SerializerException {
             switch(call.getMethod()) {
                 case "calculate": {
-                    Calculate_response._Builder rsp = Calculate_response.builder();
+                    net.morimekta.test.calculator.Calculator.Calculate_response._Builder rsp = net.morimekta.test.calculator.Calculator.Calculate_response.builder();
                     try {
-                        Calculate_request req = (Calculate_request) call.getMessage();
+                        net.morimekta.test.calculator.Calculator.Calculate_request req = (net.morimekta.test.calculator.Calculator.Calculate_request) call.getMessage();
                         net.morimekta.test.calculator.Operand result =
                                 impl.calculate(req.getOp());
                         rsp.setSuccess(result);
@@ -117,7 +117,7 @@ public class Calculator {
                     return reply;
                 }
                 case "iamalive": {
-                    Iamalive_request req = (Iamalive_request) call.getMessage();
+                    net.morimekta.test.calculator.Calculator.Iamalive_request req = (net.morimekta.test.calculator.Calculator.Iamalive_request) call.getMessage();
                     impl.iamalive();
                     return null;
                 }
@@ -138,8 +138,8 @@ public class Calculator {
     }
 
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
-        CALCULATE("calculate", false, Calculate_request.kDescriptor, Calculate_response.kDescriptor),
-        IAMALIVE("iamalive", true, Iamalive_request.kDescriptor, null),
+        CALCULATE("calculate", false, net.morimekta.test.calculator.Calculator.Calculate_request.kDescriptor, net.morimekta.test.calculator.Calculator.Calculate_response.kDescriptor),
+        IAMALIVE("iamalive", true, net.morimekta.test.calculator.Calculator.Iamalive_request.kDescriptor, null),
         ;
 
         private final String name;
@@ -205,7 +205,7 @@ public class Calculator {
 
     // type --> calculate___request
     @SuppressWarnings("unused")
-    private static class Calculate_request
+    protected static class Calculate_request
             implements net.morimekta.providence.PMessage<Calculate_request,Calculate_request._Field>,
                        Comparable<Calculate_request>,
                        java.io.Serializable {
@@ -600,7 +600,7 @@ public class Calculator {
 
     // type <-- calculate___response
     @SuppressWarnings("unused")
-    private static class Calculate_response
+    protected static class Calculate_response
             implements net.morimekta.providence.PUnion<Calculate_response,Calculate_response._Field>,
                        Comparable<Calculate_response>,
                        java.io.Serializable {
@@ -1134,7 +1134,7 @@ public class Calculator {
 
     // type --> iamalive___request
     @SuppressWarnings("unused")
-    private static class Iamalive_request
+    protected static class Iamalive_request
             implements net.morimekta.providence.PMessage<Iamalive_request,Iamalive_request._Field>,
                        Comparable<Iamalive_request>,
                        java.io.Serializable {

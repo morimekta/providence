@@ -32,6 +32,7 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Stein Eldar Johnsen
@@ -154,27 +155,34 @@ public class CommonBuilderFormatter
             }
         } else {
             if (message.isException()) {
-                writer.appendln("super(createMessage(")
-                      .begin(   "                    ");
-                boolean first = true;
-                for (JField field : message.declaredOrderFields()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',')
-                              .appendln();
+                // If an exception class contains a field named 'message' (no caps), it will use that
+                // as the exception message unmodified.
+                Optional<JField> msg = message.exceptionMessageField();
+                if (msg.isPresent()) {
+                    writer.formatln("super(builder.%s);", msg.get().member())
+                          .newline();
+                } else {
+                    writer.appendln("super(createMessage(")
+                          .begin("                    ");
+                    boolean first = true;
+                    for (JField field : message.declaredOrderFields()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            writer.append(',')
+                                  .appendln();
+                        }
+                        if (field.container()) {
+                            writer.format("builder.%s() ? builder.%s.build() : null", field.isSet(), field.member());
+                        } else if (!field.isVoid()) {
+                            // Void fields have no value.
+                            writer.format("builder.%s", field.member());
+                        }
                     }
-                    if (field.container()) {
-                        writer.format("builder.%s() ? builder.%s.build() : null",
-                                      field.isSet(), field.member());
-                    } else if (!field.isVoid()) {
-                        // Void fields have no value.
-                        writer.format("builder.%s", field.member());
-                    }
+                    writer.append("));")
+                          .end()
+                          .newline();
                 }
-                writer.append("));")
-                      .end()
-                      .newline();
             }
 
             for (JField field : message.declaredOrderFields()) {

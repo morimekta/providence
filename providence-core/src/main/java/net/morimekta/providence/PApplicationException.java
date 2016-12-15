@@ -21,16 +21,14 @@ public class PApplicationException
 
     public PApplicationException(String pMessage,
                                  net.morimekta.providence.PApplicationExceptionType pId) {
-        super(createMessage(pMessage,
-                            pId));
+        super(pMessage);
 
         mMessage = pMessage;
         mId = pId;
     }
 
     private PApplicationException(_Builder builder) {
-        super(createMessage(builder.mMessage,
-                            builder.mId));
+        super(builder.mMessage);
 
         mMessage = builder.mMessage;
         mId = builder.mId;
@@ -60,27 +58,6 @@ public class PApplicationException
      */
     public net.morimekta.providence.PApplicationExceptionType getId() {
         return hasId() ? mId : kDefaultId;
-    }
-
-    private static String createMessage(String pMessage,
-                                        net.morimekta.providence.PApplicationExceptionType pId) {
-        StringBuilder out = new StringBuilder();
-        out.append('{');
-        boolean first = true;
-        if (pMessage != null) {
-            first = false;
-            out.append("message:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(pMessage))
-               .append('\"');
-        }
-        if (pId != null) {
-            if (!first) out.append(',');
-            out.append("id:")
-               .append(pId.toString());
-        }
-        out.append('}');
-        return out.toString();
     }
 
     @Override

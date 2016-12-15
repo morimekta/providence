@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.PMessageVariant;
+import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
 import net.morimekta.providence.descriptor.PStructDescriptor;
@@ -36,6 +37,7 @@ import net.morimekta.providence.reflect.util.ThriftAnnotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -136,5 +138,14 @@ public class JMessage<T extends CMessage<T, CField>> {
             }
         }
         return Exception.class.getSimpleName();
+    }
+
+    /**
+     * If the message has a 'string' field named 'message', which can be used as the 'message' for exceptions.
+     *
+     * @return Optional message field.
+     */
+    public Optional<JField> exceptionMessageField() {
+        return numericalOrderFields().stream().filter(f -> f.name().equals("message") && f.type() == PType.STRING).findFirst();
     }
 }

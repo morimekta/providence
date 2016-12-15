@@ -34,6 +34,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 
@@ -179,6 +180,12 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
     }
 
     private void appendCreateMessage(JMessage<?> message) throws GeneratorException {
+        // If an exception class contains a field named 'message' (no caps), it will use that
+        // as the exception message unmodified.
+        if (message.exceptionMessageField().isPresent()) {
+            return;
+        }
+
         writer.appendln("private static String createMessage(")
               .begin(   "                                    ");
 
@@ -354,26 +361,34 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                   .begin();
 
             if (message.isException()) {
-                writer.appendln("super(createMessage(")
-                      .begin(   "                    ");
-                first = true;
-                for (JField field : message.declaredOrderFields()) {
-                    // Void fields have no value.
-                    if (field.isVoid()) {
-                        continue;
-                    }
+                // If an exception class contains a field named 'message' (no caps), it will use that
+                // as the exception message unmodified.
+                Optional<JField> msg = message.exceptionMessageField();
+                if (msg.isPresent()) {
+                    writer.formatln("super(%s);", msg.get().param())
+                          .newline();
+                } else {
+                    writer.appendln("super(createMessage(")
+                          .begin("                    ");
+                    first = true;
+                    for (JField field : message.declaredOrderFields()) {
+                        // Void fields have no value.
+                        if (field.isVoid()) {
+                            continue;
+                        }
 
-                    if (first) {
-                        first = false;
-                    } else {
-                        writer.append(',')
-                              .appendln();
+                        if (first) {
+                            first = false;
+                        } else {
+                            writer.append(',')
+                                  .appendln();
+                        }
+                        writer.format("%s", field.param());
                     }
-                    writer.format("%s", field.param());
+                    writer.append("));")
+                          .end()
+                          .newline();
                 }
-                writer.append("));")
-                      .end()
-                      .newline();
             }
 
             for (JField field : message.declaredOrderFields()) {

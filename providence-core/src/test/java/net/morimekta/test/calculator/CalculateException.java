@@ -15,16 +15,14 @@ public class CalculateException
 
     public CalculateException(String pMessage,
                               net.morimekta.test.calculator.Operation pOperation) {
-        super(createMessage(pMessage,
-                            pOperation));
+        super(pMessage);
 
         mMessage = pMessage;
         mOperation = pOperation;
     }
 
     private CalculateException(_Builder builder) {
-        super(createMessage(builder.mMessage,
-                            builder.mOperation));
+        super(builder.mMessage);
 
         mMessage = builder.mMessage;
         mOperation = builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
@@ -50,27 +48,6 @@ public class CalculateException
      */
     public net.morimekta.test.calculator.Operation getOperation() {
         return mOperation;
-    }
-
-    private static String createMessage(String pMessage,
-                                        net.morimekta.test.calculator.Operation pOperation) {
-        StringBuilder out = new StringBuilder();
-        out.append('{');
-        boolean first = true;
-        if (pMessage != null) {
-            first = false;
-            out.append("message:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(pMessage))
-               .append('\"');
-        }
-        if (pOperation != null) {
-            if (!first) out.append(',');
-            out.append("operation:")
-               .append(pOperation.asString());
-        }
-        out.append('}');
-        return out.toString();
     }
 
     @Override
