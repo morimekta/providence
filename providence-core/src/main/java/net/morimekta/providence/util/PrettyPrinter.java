@@ -41,6 +41,7 @@ public class PrettyPrinter {
      *
      * @param message The message to stringify.
      * @param <Message> The message type.
+     * @param <Field> The message field type.
      * @return The resulting string.
      */
     public static <Message extends PMessage<Message, Field>, Field extends PField>

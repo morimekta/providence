@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PExceptionDescriptorProvider;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptorProvider;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
@@ -43,12 +44,12 @@ import java.util.Optional;
  *
  */
 public class JMessage<T extends CMessage<T, CField>> {
-    private final PStructDescriptor<?, ?> struct;
+    private final PMessageDescriptor<?, ?> struct;
     private final JHelper                 helper;
     private final ArrayList<JField>       declaredFields;
     private final ArrayList<JField>       numericalFields;
 
-    public JMessage(PStructDescriptor<T, CField> struct, JHelper helper) {
+    public JMessage(PMessageDescriptor<T, CField> struct, JHelper helper) {
         this.struct = struct;
         this.helper = helper;
         this.declaredFields = new ArrayList<>(struct.getFields().length);
@@ -62,7 +63,7 @@ public class JMessage<T extends CMessage<T, CField>> {
         Collections.sort(this.numericalFields, (a, b) -> Integer.compare(a.id(), b.id()));
     }
 
-    public PStructDescriptor<?, ?> descriptor() {
+    public PMessageDescriptor<?, ?> descriptor() {
         return struct;
     }
 

@@ -23,10 +23,9 @@ package net.morimekta.providence.mio;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -51,7 +50,7 @@ public class FileMessageReader implements MessageReader {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message read(PStructDescriptor<Message, Field> descriptor)
+    Message read(PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         return serializer.deserialize(getInputStream(), descriptor);
     }

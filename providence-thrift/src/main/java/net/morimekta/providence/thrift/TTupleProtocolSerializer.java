@@ -35,11 +35,11 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Binary;
@@ -123,7 +123,7 @@ public class TTupleProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> Message
-    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException {
+    deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TTupleProtocol protocol = (TTupleProtocol) protocolFactory.getProtocol(transport);
@@ -162,7 +162,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 throw new SerializerException("No such method " + tm.name + " on " + service.getQualifiedName());
             }
 
-            PStructDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            PMessageDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(protocol, descriptor);
 
@@ -195,7 +195,7 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     private void writeMessage(PMessage<?,?> message, TTupleProtocol protocol) throws TException, SerializerException {
-        PStructDescriptor<?, ?> descriptor = message.descriptor();
+        PMessageDescriptor<?, ?> descriptor = message.descriptor();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             PField fld = ((PUnion<?,?>) message).unionField();
             protocol.writeI16((short) fld.getKey());
@@ -250,7 +250,7 @@ public class TTupleProtocolSerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(TTupleProtocol protocol, PStructDescriptor<Message, Field> descriptor)
+    Message readMessage(TTupleProtocol protocol, PMessageDescriptor<Message, Field> descriptor)
             throws SerializerException, TException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
 
@@ -323,7 +323,7 @@ public class TTupleProtocolSerializer extends Serializer {
                 return eb.build();
             }
             case MESSAGE:
-                return readMessage(protocol, (PStructDescriptor<?, ?>) type);
+                return readMessage(protocol, (PMessageDescriptor<?, ?>) type);
             case LIST: {
                 int lSize = protocol.readI32();
                 @SuppressWarnings("unchecked")

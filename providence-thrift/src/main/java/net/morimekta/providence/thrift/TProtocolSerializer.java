@@ -34,11 +34,11 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Binary;
@@ -134,7 +134,7 @@ class TProtocolSerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> Message
-    deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor) throws IOException {
+    deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException {
         try {
             TTransport transport = new TIOStreamTransport(input);
             TProtocol protocol = protocolFactory.getProtocol(transport);
@@ -174,7 +174,7 @@ class TProtocolSerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            PMessageDescriptor<Message,Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(protocol, descriptor);
 
@@ -197,7 +197,7 @@ class TProtocolSerializer extends Serializer {
     }
 
     private void writeMessage(PMessage<?,?> message, TProtocol protocol) throws TException, SerializerException {
-        PStructDescriptor<?, ?> type = message.descriptor();
+        PMessageDescriptor<?, ?> type = message.descriptor();
 
         protocol.writeStructBegin(new TStruct(message.descriptor()
                                                      .getQualifiedName()));
@@ -221,7 +221,7 @@ class TProtocolSerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(TProtocol protocol, PStructDescriptor<Message, Field> descriptor)
+    Message readMessage(TProtocol protocol, PMessageDescriptor<Message, Field> descriptor)
             throws SerializerException, TException {
         TField f;
 
@@ -301,7 +301,7 @@ class TProtocolSerializer extends Serializer {
                 }
                 return protocol.readString();
             case TType.STRUCT:
-                return readMessage(protocol, (PStructDescriptor<?, ?>) type);
+                return readMessage(protocol, (PMessageDescriptor<?, ?>) type);
             case TType.LIST:
                 TList listInfo = protocol.readListBegin();
                 PList<Object> lDesc = (PList<Object>) type;

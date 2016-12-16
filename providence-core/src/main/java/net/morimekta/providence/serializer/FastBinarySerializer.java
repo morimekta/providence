@@ -36,10 +36,10 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BinaryReader;
 import net.morimekta.util.io.BinaryWriter;
@@ -103,7 +103,7 @@ public class FastBinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream is, PStructDescriptor<Message, Field> descriptor)
+    Message deserialize(InputStream is, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         BinaryReader in = new BinaryReader(is);
         return readMessage(in, descriptor);
@@ -145,7 +145,7 @@ public class FastBinarySerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            PMessageDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(in, descriptor);
             return new PServiceCall<>(methodName, type, sequence, message);
@@ -196,7 +196,7 @@ public class FastBinarySerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(BinaryReader in, PStructDescriptor<Message, Field> descriptor)
+    Message readMessage(BinaryReader in, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
@@ -423,7 +423,7 @@ public class FastBinarySerializer extends Serializer {
                 }
             }
             case MESSAGE:
-                return readMessage(in, (PStructDescriptor<?, ?>) descriptor);
+                return readMessage(in, (PMessageDescriptor<?, ?>) descriptor);
             case COLLECTION:
                 if (descriptor == null) {
                     if (readStrict) {

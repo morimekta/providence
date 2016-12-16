@@ -28,7 +28,7 @@ import net.morimekta.providence.PMessageVariant;
  * The definition of a thrift exception.
  */
 public abstract class PExceptionDescriptor<Exception extends PMessage<Exception, Field>, Field extends PField>
-        extends PStructDescriptor<Exception, Field> {
+        extends PMessageDescriptor<Exception, Field> {
     public PExceptionDescriptor(String packageName,
                                 String name,
                                 PMessageBuilderFactory<Exception, Field> provider,

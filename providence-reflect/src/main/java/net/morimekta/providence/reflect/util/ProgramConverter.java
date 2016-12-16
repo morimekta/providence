@@ -23,10 +23,10 @@ package net.morimekta.providence.reflect.util;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PServiceProvider;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.model.EnumType;
@@ -110,7 +110,7 @@ public class ProgramConverter {
                                                 .map(field -> makeField(document.getProgramName(), field))
                                                 .collect(Collectors.toList()));
                     }
-                    PStructDescriptor<?, ?> type;
+                    PMessageDescriptor<?, ?> type;
                     switch (messageType.getVariant()) {
                         case STRUCT:
                             type = new CStructDescriptor(messageType.getDocumentation(),

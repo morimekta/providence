@@ -22,7 +22,6 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
-import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
 
@@ -37,7 +36,7 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CExceptionDescriptor extends PExceptionDescriptor<CException, CField> implements CAnnotatedDescriptor {
+public class CExceptionDescriptor extends PExceptionDescriptor<CException, CField> implements CMessageDescriptor {
     private final CField[]             fields;
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
@@ -124,11 +123,6 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
             }
         }
         return true;
-    }
-
-    @Override
-    public PMessageVariant getVariant() {
-        return PMessageVariant.EXCEPTION;
     }
 
     private static class _Factory extends PMessageBuilderFactory<CException, CField> {

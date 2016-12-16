@@ -22,7 +22,7 @@ package net.morimekta.providence.streams;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.io.IOUtils;
@@ -67,7 +67,7 @@ public class MessageStreams {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> file(File file,
                          Serializer serializer,
-                         PStructDescriptor<Message, Field> descriptor)
+                         PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         InputStream in = new BufferedInputStream(new FileInputStream(file));
         return stream(in, serializer, descriptor);
@@ -89,7 +89,7 @@ public class MessageStreams {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> resource(String resource,
                              Serializer serializer,
-                             PStructDescriptor<Message, Field> descriptor)
+                             PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         InputStream in = MessageStreams.class.getResourceAsStream(resource);
         if (in == null) {
@@ -123,7 +123,7 @@ public class MessageStreams {
      */
     public static <Message extends PMessage<Message, Field>, Field extends PField> Stream<Message> stream(InputStream in,
                                                                                                           Serializer serializer,
-                                                                                                          PStructDescriptor<Message, Field> descriptor)
+                                                                                                          PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, null), false);
     }
@@ -206,7 +206,7 @@ public class MessageStreams {
     private static class StreamMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
             extends BaseMessageSpliterator<Message, Field> {
         private final InputStream                       in;
-        private final PStructDescriptor<Message, Field> descriptor;
+        private final PMessageDescriptor<Message, Field> descriptor;
         private final Serializer                        serializer;
 
         private int                         num;
@@ -214,7 +214,7 @@ public class MessageStreams {
 
         private StreamMessageSpliterator(InputStream in,
                                          Serializer serializer,
-                                         PStructDescriptor<Message, Field> descriptor,
+                                         PMessageDescriptor<Message, Field> descriptor,
                                          Function<InputStream, Void> closer) throws IOException {
             this.in = in;
             this.closer = closer;

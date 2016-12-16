@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java;
 
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.messages.BuilderCommonMemberFormatter;
 import net.morimekta.providence.generator.format.java.messages.BuilderCoreOverridesFormatter;
@@ -86,7 +86,7 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
     }
 
     @Override
-    public void appendMessageClass(PStructDescriptor<?, ?> descriptor) throws GeneratorException {
+    public void appendMessageClass(PMessageDescriptor<?, ?> descriptor) throws GeneratorException {
         super.appendMessageClass(descriptor);
         writer.newline();
     }

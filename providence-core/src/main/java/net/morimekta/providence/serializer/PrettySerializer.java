@@ -36,11 +36,11 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.util.pretty.Token;
 import net.morimekta.providence.util.pretty.Tokenizer;
 import net.morimekta.providence.util.pretty.TokenizerException;
@@ -201,7 +201,7 @@ public class PrettySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input,
-                        PStructDescriptor<Message, Field> descriptor)
+                        PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
@@ -215,7 +215,7 @@ public class PrettySerializer extends Serializer {
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(Tokenizer tokenizer,
-                        PStructDescriptor<Message, Field> descriptor,
+                        PMessageDescriptor<Message, Field> descriptor,
                         boolean requireEnd)
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
@@ -388,7 +388,7 @@ public class PrettySerializer extends Serializer {
             }
             case MESSAGE: {
                 tokenizer.expectSymbol("message start", Token.kMessageStart);
-                return readMessage(tokenizer, (PStructDescriptor<?, ?>) descriptor, true);
+                return readMessage(tokenizer, (PMessageDescriptor<?, ?>) descriptor, true);
             }
             case MAP: {
                 @SuppressWarnings("unchecked")
@@ -493,7 +493,7 @@ public class PrettySerializer extends Serializer {
     }
 
     private void appendMessage(IndentedPrintWriter builder, PMessage<?,?> message, boolean enclose) {
-        PStructDescriptor<?, ?> type = message.descriptor();
+        PMessageDescriptor<?, ?> type = message.descriptor();
 
         if (enclose) {
             builder.append(Token.kMessageStart)

@@ -21,14 +21,14 @@
 package net.morimekta.providence.generator.format.java.shared;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.Generator;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.util.FileManager;
-import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.contained.CService;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.io.IndentedPrintWriter;
@@ -94,7 +94,7 @@ public abstract class BaseGenerator extends Generator {
 
                 switch (type.getType()) {
                     case MESSAGE:
-                        messageFormatter(writer).appendMessageClass((PStructDescriptor) type);
+                        messageFormatter(writer).appendMessageClass((PMessageDescriptor<?, ?>) type);
                         break;
                     case ENUM:
                         enumFormatter(writer).appendEnumClass((CEnumDescriptor) type);

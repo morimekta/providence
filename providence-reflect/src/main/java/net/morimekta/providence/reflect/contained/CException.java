@@ -23,9 +23,11 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PExceptionDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
@@ -130,7 +132,7 @@ public class CException extends Exception implements PMessage<CException, CField
         }
 
         CException other = (CException) o;
-        PStructDescriptor<?, ?> type = other.descriptor();
+        PMessageDescriptor<?, ?> type = other.descriptor();
         if (!descriptor().getQualifiedName()
                          .equals(type.getQualifiedName()) || !descriptor().getVariant()
                                                                           .equals(type.getVariant())) {
@@ -235,7 +237,7 @@ public class CException extends Exception implements PMessage<CException, CField
         }
 
         @Override
-        public PStructDescriptor<CException, CField> descriptor() {
+        public PExceptionDescriptor<CException, CField> descriptor() {
             return descriptor;
         }
 

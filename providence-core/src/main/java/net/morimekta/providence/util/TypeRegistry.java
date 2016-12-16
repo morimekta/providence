@@ -25,9 +25,9 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -149,8 +149,8 @@ public class TypeRegistry {
             return;
         }
         putDeclaredType(declaredType);
-        if (declaredType instanceof PStructDescriptor) {
-            PStructDescriptor descriptor = (PStructDescriptor) declaredType;
+        if (declaredType instanceof PMessageDescriptor) {
+            PMessageDescriptor descriptor = (PMessageDescriptor) declaredType;
             for (PField field : descriptor.getFields()) {
                 if (field.getType() == PType.ENUM || field.getType() == PType.MESSAGE) {
                     registerRecursively((PDeclaredDescriptor) field.getDescriptor());

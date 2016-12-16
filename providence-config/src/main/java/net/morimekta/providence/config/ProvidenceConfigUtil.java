@@ -29,6 +29,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
@@ -63,7 +64,7 @@ public class ProvidenceConfigUtil {
      * @return The value found or the default.
      */
     public static Object getInMessage(PMessage message, String key, Object defValue) {
-        PStructDescriptor descriptor = message.descriptor();
+        PMessageDescriptor descriptor = message.descriptor();
 
         if (key.contains(".")) {
             int idx = key.indexOf(".");

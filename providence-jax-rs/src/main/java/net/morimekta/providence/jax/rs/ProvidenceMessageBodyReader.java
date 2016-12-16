@@ -21,7 +21,7 @@
 package net.morimekta.providence.jax.rs;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
@@ -47,15 +47,15 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
         this.provider = provider;
     }
 
-    private PStructDescriptor getDescriptor(Class<?> type) {
+    private PMessageDescriptor getDescriptor(Class<?> type) {
         try {
             if (!PMessage.class.isAssignableFrom(type)) {
                 return null;
             }
             Field descField = type.getDeclaredField("kDescriptor");
             Object desc = descField.get(null);
-            if (desc instanceof PStructDescriptor) {
-                return (PStructDescriptor) desc;
+            if (desc instanceof PMessageDescriptor) {
+                return (PMessageDescriptor) desc;
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             // e.printStackTrace();
@@ -82,7 +82,7 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
         String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
 
         try {
-            PStructDescriptor descriptor = getDescriptor(type);
+            PMessageDescriptor descriptor = getDescriptor(type);
             return provider.getSerializer(contentType)
                            .deserialize(entityStream, descriptor);
         } catch (NullPointerException e) {

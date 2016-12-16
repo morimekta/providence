@@ -36,10 +36,10 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.BigEndianBinaryWriter;
@@ -140,7 +140,7 @@ public class BinarySerializer extends Serializer {
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Message deserialize(InputStream input, PStructDescriptor<Message, Field> descriptor)
+    Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         BinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
@@ -195,7 +195,7 @@ public class BinarySerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            PMessageDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
             Message message = readMessage(in, descriptor, false);
 
@@ -241,7 +241,7 @@ public class BinarySerializer extends Serializer {
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BinaryReader input,
-                        PStructDescriptor<Message, Field> descriptor,
+                        PMessageDescriptor<Message, Field> descriptor,
                         boolean nullable) throws IOException {
         FieldInfo fieldInfo = readFieldInfo(input);
         if (nullable && fieldInfo == null) {
@@ -369,7 +369,7 @@ public class BinarySerializer extends Serializer {
                     consumeMessage(in);
                     return null;
                 }
-                return readMessage(in, (PStructDescriptor<?,?>) type, false);
+                return readMessage(in, (PMessageDescriptor<?,?>) type, false);
             }
             case MAP: {
                 final byte keyT = in.expectByte();

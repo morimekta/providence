@@ -31,8 +31,8 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Base64;
@@ -92,7 +92,7 @@ public class ConstParser {
      */
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message parseMessage(Tokenizer tokenizer,
-                         PStructDescriptor<Message, Field> type) throws ParseException, IOException {
+                         PMessageDescriptor<Message, Field> type) throws ParseException, IOException {
         PMessageBuilder<Message, Field> builder = type.builder();
 
         if (tokenizer.peek("checking for empty").isSymbol(Token.kMessageEnd)) {
@@ -187,7 +187,7 @@ public class ConstParser {
             }
             case MESSAGE: {
                 if (token.isSymbol(Token.kMessageStart)) {
-                    return parseMessage(tokenizer, (PStructDescriptor<?, ?>) valueType);
+                    return parseMessage(tokenizer, (PMessageDescriptor<?, ?>) valueType);
                 }
                 throw new ParseException(tokenizer, token, "Not a valid message start.");
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Providence Authors
+ * Copyright 2015 Providence Authors
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -18,26 +18,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.mio;
+package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PServiceCall;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
-import net.morimekta.providence.descriptor.PService;
-
-import java.io.Closeable;
-import java.io.IOException;
 
 /**
- * An interface for reading messages and service calls.
+ * @author Stein Eldar Johnsen
+ * @since 25.08.15
  */
-public interface MessageReader extends Closeable {
-    <Message extends PMessage<Message, Field>, Field extends PField>
-    Message read(PMessageDescriptor<Message, Field> descriptor)
-            throws IOException;
-
-    <Message extends PMessage<Message, Field>, Field extends PField>
-    PServiceCall<Message, Field> read(PService service)
-            throws IOException;
+public abstract class PMessageDescriptorProvider<V extends PMessage<V, F>, F extends PField>
+        implements PDescriptorProvider {
+    @Override
+    public abstract PMessageDescriptor<V, F> descriptor();
 }

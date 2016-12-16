@@ -21,7 +21,7 @@
 package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.util.Stringable;
 
 import javax.annotation.Nonnull;
@@ -107,5 +107,5 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
     String asString();
 
     @Override
-    PStructDescriptor<Message, Field> descriptor();
+    PMessageDescriptor<Message, Field> descriptor();
 }

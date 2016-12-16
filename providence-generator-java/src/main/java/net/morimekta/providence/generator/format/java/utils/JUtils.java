@@ -22,8 +22,8 @@ package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.util.Strings;
@@ -35,7 +35,7 @@ import java.io.File;
  * @since 07.09.15
  */
 public class JUtils {
-    public static long generateSerialVersionUID(PStructDescriptor<?, ?> type) {
+    public static long generateSerialVersionUID(PMessageDescriptor<?, ?> type) {
         String string = type.getVariant()
                             .getName() + " " + type.getQualifiedName();
 

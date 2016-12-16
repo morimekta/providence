@@ -24,11 +24,23 @@ package net.morimekta.providence.descriptor;
  * Descriptor for a single service method.
  */
 public interface PServiceMethod {
+    /**
+     * @return Name of the method.
+     */
     String getName();
 
+    /**
+     * @return If the method cal is oneway.
+     */
     boolean isOneway();
 
+    /**
+     * @return The descriptor of the request type.
+     */
     PStructDescriptor getRequestType();
 
+    /**
+     * @return The descriptor of the response type, or null for oneway methods.
+     */
     PUnionDescriptor getResponseType();
 }

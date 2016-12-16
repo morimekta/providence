@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java.shared;
 
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
@@ -65,7 +65,7 @@ public abstract class BaseMessageFormatter {
 
     protected abstract String getClassName(JMessage<?> message);
 
-    public void appendMessageClass(PStructDescriptor<?,?> descriptor) throws GeneratorException {
+    public void appendMessageClass(PMessageDescriptor<?,?> descriptor) throws GeneratorException {
         @SuppressWarnings("unchecked")
         JMessage<?> message = new JMessage(descriptor, helper);
 

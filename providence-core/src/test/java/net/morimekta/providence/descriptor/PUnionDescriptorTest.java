@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotEquals;
  * @author Stein Eldar Johnsen
  * @since 10.09.15.
  */
-public class PStructDescriptorTest {
+public class PUnionDescriptorTest {
     PStructDescriptor<?, ?> valueType;
 
     @Before

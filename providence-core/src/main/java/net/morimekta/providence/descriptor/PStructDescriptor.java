@@ -21,116 +21,23 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
-import net.morimekta.providence.PType;
 
 /**
  * The definition of a thrift structure.
  */
-public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PField> extends PDeclaredDescriptor<T> {
-    private final PMessageBuilderFactory<T, F> factory;
-    private final boolean                      compactible;
-    private final boolean                      simple;
-
+public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PField> extends PMessageDescriptor<T, F> {
     public PStructDescriptor(String programName,
                              String name,
                              PMessageBuilderFactory<T, F> factory,
                              boolean simple,
                              boolean compactible) {
-        super(programName, name);
-
-        this.factory = factory;
-        this.simple = simple;
-        this.compactible = compactible;
+        super(programName, name, factory, simple, compactible);
     }
 
-    /**
-     * @return An unmodifiable list of fields that the struct holds.
-     */
-    public abstract F[] getFields();
-
-    /**
-     * @param name Name of field to get.
-     * @return The field if present.
-     */
-    public abstract F getField(String name);
-
-    /**
-     * @param key The ID of the field to get.
-     * @return The field if present.
-     */
-    public abstract F getField(int key);
-
-    /**
-     * @return True iff the struct can be (de)serialized with compact message
-     *         format.
-     */
-    public boolean isCompactible() {
-        return compactible;
-    }
-
-    /**
-     * @return True iff the message is simple. A simple message contains no
-     *         containers, and no sub-messages.
-     */
-    public boolean isSimple() {
-        return simple;
-    }
-
-    /**
-     * @return The struct variant.
-     */
+    @Override
     public PMessageVariant getVariant() {
         return PMessageVariant.STRUCT;
-    }
-
-    @Override
-    public PType getType() {
-        return PType.MESSAGE;
-    }
-
-    @Override
-    public PMessageBuilder<T, F> builder() {
-        return factory.builder();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || !(o instanceof PStructDescriptor)) {
-            return false;
-        }
-        PStructDescriptor<?, ?> other = (PStructDescriptor<?, ?>) o;
-        if (!getQualifiedName().equals(other.getQualifiedName()) ||
-            !getVariant().equals(other.getVariant()) ||
-            getFields().length != other.getFields().length) {
-            return false;
-        }
-        for (PField field : getFields()) {
-            if (!field.equals(other.getField(field.getKey()))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = PStructDescriptor.class.hashCode() +
-                   getQualifiedName().hashCode() +
-                   getVariant().hashCode();
-        for (PField field : getFields()) {
-            hash += field.hashCode();
-        }
-        return hash;
-    }
-
-    /**
-     * Get the actual builder factory instance. For contained structs only.
-     * @return The builder factory.
-     */
-    protected PMessageBuilderFactory<T, F> getFactoryInternal() {
-        return factory;
     }
 }

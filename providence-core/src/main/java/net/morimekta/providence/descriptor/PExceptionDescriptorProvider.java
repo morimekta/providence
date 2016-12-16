@@ -26,7 +26,7 @@ import net.morimekta.providence.PMessage;
  * Provider for exception descriptor.
  */
 public abstract class PExceptionDescriptorProvider<Exception extends PMessage<Exception, Field>, Field extends PField>
-        extends PStructDescriptorProvider<Exception, Field> {
+        extends PMessageDescriptorProvider<Exception, Field> {
     @Override
     public abstract PExceptionDescriptor<Exception, Field> descriptor();
 }

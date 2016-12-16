@@ -35,10 +35,10 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
@@ -182,7 +182,7 @@ public class JsonSerializer extends Serializer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(InputStream input, PStructDescriptor<T, TF> type) throws
+    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(InputStream input, PMessageDescriptor<T, TF> type) throws
                                                                                                                       SerializerException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
@@ -272,7 +272,7 @@ public class JsonSerializer extends Serializer {
             }
 
             @SuppressWarnings("unchecked")
-            PStructDescriptor<T, F> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
+            PMessageDescriptor<T, F> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
             T message = (T) parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor);
 
             tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
@@ -291,7 +291,7 @@ public class JsonSerializer extends Serializer {
         }
     }
 
-    private <T extends PMessage<T, F>, F extends PField> T parseMessage(JsonTokenizer tokenizer, PStructDescriptor<T, F> type)
+    private <T extends PMessage<T, F>, F extends PField> T parseMessage(JsonTokenizer tokenizer, PMessageDescriptor<T, F> type)
             throws JsonException, IOException {
         PMessageBuilder<T, F> builder = type.builder();
 
@@ -335,7 +335,7 @@ public class JsonSerializer extends Serializer {
         return builder.build();
     }
 
-    private <T extends PMessage<T, F>, F extends PField> T parseCompactMessage(JsonTokenizer tokenizer, PStructDescriptor<T, F> type)
+    private <T extends PMessage<T, F>, F extends PField> T parseCompactMessage(JsonTokenizer tokenizer, PMessageDescriptor<T, F> type)
             throws SerializerException, IOException, JsonException {
         PMessageBuilder<T, F> builder = type.builder();
         // compact message are not allowed to be empty.
@@ -471,7 +471,7 @@ public class JsonSerializer extends Serializer {
                     }
                     return eb.build();
                 case MESSAGE: {
-                    PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) t;
+                    PMessageDescriptor<?, ?> st = (PMessageDescriptor<?, ?>) t;
                     if (token.isSymbol(JsonToken.kMapStart)) {
                         return parseMessage(tokenizer, st);
                     } else if (token.isSymbol(JsonToken.kListStart)) {
@@ -597,7 +597,7 @@ public class JsonSerializer extends Serializer {
                     }
                     return eb.build();
                 case MESSAGE:
-                    PStructDescriptor<?, ?> st = (PStructDescriptor<?, ?>) keyType;
+                    PMessageDescriptor<?, ?> st = (PMessageDescriptor<?, ?>) keyType;
                     if (!st.isSimple()) {
                         throw new SerializerException("Only simple structs can be used as map key. %s is not.",
                                                       st.getQualifiedName());
@@ -621,7 +621,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private void appendMessage(JsonWriter writer, PMessage<?,?> message) throws SerializerException, JsonException {
-        PStructDescriptor<?, ?> type = message.descriptor();
+        PMessageDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
             PField field = ((PUnion) message).unionField();

@@ -23,8 +23,8 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.util.Binary;
 
@@ -126,7 +126,7 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
         }
 
         CMessage other = (CMessage) o;
-        PStructDescriptor<?, ?> type = other.descriptor();
+        PMessageDescriptor<?, ?> type = other.descriptor();
         if (!descriptor().getQualifiedName()
                          .equals(type.getQualifiedName()) || !descriptor().getVariant()
                                                                           .equals(type.getVariant())) {

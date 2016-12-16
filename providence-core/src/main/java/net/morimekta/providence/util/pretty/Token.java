@@ -142,6 +142,7 @@ public class Token extends Slice {
     /**
      * Get the whole slice as a string.
      *
+     * @param strict If it should validate string content strictly.
      * @return Slice decoded as UTF_8 string.
      */
     public String decodeLiteral(boolean strict) {

@@ -22,7 +22,7 @@ package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.serializer.SerializerException;
 
@@ -58,7 +58,7 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
      * @throws IOException If message read failed.
      * @throws SerializerException If message deserialization failed.
      */
-    public MessageConfigSupplier(String prefix, PStructDescriptor<Message, Field> descriptor, MessageReader reader)
+    public MessageConfigSupplier(String prefix, PMessageDescriptor<Message, Field> descriptor, MessageReader reader)
             throws IOException {
         this.prefix = prefix;
         this.descriptor = descriptor;
@@ -108,6 +108,6 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
 
     private final String                                         prefix;
     private final AtomicReference<MessageConfig<Message, Field>> instance;
-    private final PStructDescriptor<Message, Field>              descriptor;
+    private final PMessageDescriptor<Message, Field>             descriptor;
     private final MessageReader                                  reader;
 }

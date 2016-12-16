@@ -32,8 +32,8 @@ import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.util.pretty.Token;
@@ -381,7 +381,7 @@ public class ProvidenceConfig {
                 if (token.isQualifiedIdentifier()) {
                     // if a.b (type identifier) --> MESSAGE
                     stage = Stage.MESSAGE;
-                    PStructDescriptor<M, F> descriptor = (PStructDescriptor) registry.getDeclaredType(token.asString());
+                    PMessageDescriptor<M, F> descriptor = (PMessageDescriptor) registry.getDeclaredType(token.asString());
                     result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
                 } else if (token.isIdentifier()) {
                     if (PARAMS.equals(token.asString())) {
@@ -512,7 +512,7 @@ public class ProvidenceConfig {
                                                                               Map<String, Object> params,
                                                                               PMessageBuilder<M, F> builder)
             throws IOException {
-        PStructDescriptor<M, F> descriptor = builder.descriptor();
+        PMessageDescriptor<M, F> descriptor = builder.descriptor();
 
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
             Token token = tokenizer.expect("extension object");
@@ -540,7 +540,7 @@ public class ProvidenceConfig {
                                                                         Map<String, Object> params,
                                                                         PMessageBuilder<M, F> builder)
             throws IOException {
-        PStructDescriptor<M, F> descriptor = builder.descriptor();
+        PMessageDescriptor<M, F> descriptor = builder.descriptor();
 
         Token token = tokenizer.expect("object end or field");
         while (!token.isSymbol(Token.kMessageEnd)) {
@@ -570,7 +570,7 @@ public class ProvidenceConfig {
                         continue;
                     }
                     // overwrite with new.
-                    bld = ((PStructDescriptor) field.getDescriptor()).builder();
+                    bld = ((PMessageDescriptor) field.getDescriptor()).builder();
                     if (token.isReferenceIdentifier()) {
                         // Inherit from reference.
                         try {
@@ -782,7 +782,7 @@ public class ProvidenceConfig {
                     if (next.isReferenceIdentifier()) {
                         return resolve(includes, params, next.asString());
                     } else if (next.isSymbol(Token.kMessageStart)) {
-                        return parseMessage(tokenizer, includes, params, ((PStructDescriptor) descriptor).builder());
+                        return parseMessage(tokenizer, includes, params, ((PMessageDescriptor) descriptor).builder());
                     }
                     break;
                 case MAP: {

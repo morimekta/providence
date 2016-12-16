@@ -19,34 +19,50 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.test.calculator.Operand;
+import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageVariant;
+import net.morimekta.test.calculator.CalculateException;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.number.Imaginary;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 10.09.15.
  */
-public class PStructDescriptorTest {
-    PStructDescriptor<?, ?> valueType;
+public class PExceptionDescriptorTest {
+    PExceptionDescriptor<?, ?> type;
 
     @Before
     public void setUp() {
-        valueType = Imaginary.kDescriptor;
+        type = CalculateException.kDescriptor;
     }
 
     @Test
-    public void testToString() {
-        // Even though it's a union, it inherits from PStructDescriptor.
-        assertEquals("calculator.Operand", Operand.kDescriptor.toString());
-        assertEquals("number.Imaginary", Imaginary.kDescriptor.toString());
-        assertEquals("calculator.Operation", Operation.kDescriptor.toString());
+    public void testCoreOverrides() {
+        // Even though it's an exception, it inherits from PMessageDescriptor.
+        assertThat(type.toString(), is(equalTo("calculator.CalculateException")));
+        assertThat(type.hashCode(), is(not(0)));
+
+        assertThat(type.equals(new Object()), is(false));
+        assertThat(type.equals(CalculateException.kDescriptor), is(true));
+        assertThat(type.equals((PMessageDescriptor) Operation.kDescriptor), is(false));
+    }
+
+    @Test
+    public void testOverrides() {
+        assertThat(type.getVariant(), is(PMessageVariant.EXCEPTION));
+        assertThat(type.builder(), is(instanceOf(PMessageBuilder.class)));
     }
 
     @Test
