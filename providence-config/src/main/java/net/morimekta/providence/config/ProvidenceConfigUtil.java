@@ -31,7 +31,6 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Numeric;
 
@@ -93,7 +92,7 @@ public class ProvidenceConfigUtil {
                     name = sub.substring(0, idx);
                     sub = sub.substring(idx + 1);
 
-                    field = ((PStructDescriptor) fieldDesc).getField(name);
+                    field = ((PMessageDescriptor) fieldDesc).getField(name);
                     fieldDesc = field.getDescriptor();
                 }
                 return asFieldType(field, defValue);

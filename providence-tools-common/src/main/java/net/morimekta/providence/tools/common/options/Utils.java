@@ -3,7 +3,7 @@ package net.morimekta.providence.tools.common.options;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.serializer.Serializer;
@@ -80,7 +80,7 @@ public class Utils {
     }
 
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Stream<Message> getInput(PStructDescriptor<Message, Field> descriptor,
+    Stream<Message> getInput(PMessageDescriptor<Message, Field> descriptor,
                              ConvertStream in,
                              Format defaultFormat,
                              boolean strict) throws ParseException {

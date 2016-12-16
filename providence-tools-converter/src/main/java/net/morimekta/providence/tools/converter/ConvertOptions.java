@@ -29,7 +29,7 @@ import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
@@ -108,7 +108,7 @@ public class ConvertOptions extends CommonOptions {
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PStructDescriptor<Message, Field> getDefinition()
+    PMessageDescriptor<Message, Field> getDefinition()
             throws ParseException {
         if (type.isEmpty()) {
             throw new ArgumentException("Input type.");
@@ -139,7 +139,7 @@ public class ConvertOptions extends CommonOptions {
         }
 
         @SuppressWarnings("unchecked")
-        PStructDescriptor<Message, Field> descriptor = (PStructDescriptor) loader.getRegistry().getDeclaredType(type);
+        PMessageDescriptor<Message, Field> descriptor = (PMessageDescriptor) loader.getRegistry().getDeclaredType(type);
         if (descriptor == null) {
             throw new ArgumentException("No available type for name %s", type);
         }
@@ -155,7 +155,7 @@ public class ConvertOptions extends CommonOptions {
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> getInput() throws ParseException {
-        PStructDescriptor<Message, Field> descriptor = getDefinition();
+        PMessageDescriptor<Message, Field> descriptor = getDefinition();
         return Utils.getInput(descriptor, in, Format.pretty, strict);
     }
 }
