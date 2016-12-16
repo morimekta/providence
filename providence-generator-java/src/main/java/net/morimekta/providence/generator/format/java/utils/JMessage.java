@@ -123,20 +123,15 @@ public class JMessage<T extends CMessage<T, CField>> {
     }
 
     public String extraImplements() {
-        if (struct instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) struct).getAnnotationValue(ThriftAnnotation.JAVA_IMPLEMENTS);
-        }
-        return null;
+        return getAnnotationValue(ThriftAnnotation.JAVA_IMPLEMENTS);
     }
 
     public String exceptionBaseClass() {
         if (!isException()) {
             return null;
         }
-        if (struct instanceof CAnnotatedDescriptor) {
-            if (((CAnnotatedDescriptor) struct).hasAnnotation(ThriftAnnotation.JAVA_EXCEPTION_CLASS)) {
-                return ((CAnnotatedDescriptor) struct).getAnnotationValue(ThriftAnnotation.JAVA_EXCEPTION_CLASS);
-            }
+        if (hasAnnotation(ThriftAnnotation.JAVA_EXCEPTION_CLASS)) {
+            return getAnnotationValue(ThriftAnnotation.JAVA_EXCEPTION_CLASS);
         }
         return Exception.class.getSimpleName();
     }
@@ -148,5 +143,54 @@ public class JMessage<T extends CMessage<T, CField>> {
      */
     public Optional<JField> exceptionMessageField() {
         return numericalOrderFields().stream().filter(f -> f.name().equals("message") && f.type() == PType.STRING).findFirst();
+    }
+
+    /**
+     * Check if the annotation is present.
+     *
+     * @param annotation The annotation to check.
+     * @return True if the annotaiton is present.
+     */
+    public boolean hasAnnotation(ThriftAnnotation annotation) {
+        if (struct instanceof CAnnotatedDescriptor) {
+            return ((CAnnotatedDescriptor) struct).hasAnnotation(annotation);
+        }
+        return false;
+    }
+
+    /**
+     * Check if the annotation is present.
+     *
+     * @param annotation The annotation to check.
+     * @return True if the annotaiton is present.
+     */
+    public boolean hasAnnotation(String annotation) {
+        if (struct instanceof CAnnotatedDescriptor) {
+            return ((CAnnotatedDescriptor) struct).hasAnnotation(annotation);
+        }
+        return false;
+    }
+
+    /**
+     * Get the annotation value.
+     * @param annotation The annotation to get.
+     * @return The value of the annotation, or null if not present.
+     */
+    public String getAnnotationValue(ThriftAnnotation annotation) {
+        return getAnnotationValue(annotation.tag);
+    }
+
+    /**
+     * Get the annotation value.
+     * @param annotation The annotation to get.
+     * @return The value of the annotation, or null if not present.
+     */
+    public String getAnnotationValue(String annotation) {
+        if (struct instanceof CAnnotatedDescriptor) {
+            if (((CAnnotatedDescriptor) struct).hasAnnotation(annotation)) {
+                return ((CAnnotatedDescriptor) struct).getAnnotationValue(annotation);
+            }
+        }
+        return null;
     }
 }
