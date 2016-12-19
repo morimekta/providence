@@ -33,8 +33,7 @@ public class Help implements Command {
             commandSet.printUsage(System.out);
         } else {
             System.out.println(parent.getDescription() + " - " + parent.getVersion());
-            // TODO: Figure out the single-line part of this help message.
-            System.out.println("Usage: " + parent.getProgram() + " [...] " + command + " ...");
+            System.out.println("Usage: " + commandSet.getSingleLineUsage(command));
             System.out.println();
             commandSet.printUsage(System.out, command);
         }
@@ -46,7 +45,7 @@ public class Help implements Command {
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " help", parent.getVersion(), "");
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] help", parent.getVersion(), "");
         parser.add(new Argument("cmd", "Command to show help for", this::setCommand, null, null, false, false, false));
         return parser;
     }

@@ -25,7 +25,7 @@ public class Validate implements Command {
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " validate", parent.getVersion(), "");
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] validate", parent.getVersion(), "");
         parser.add(new Argument("file", "Config file to validate", Parser.file(this::setFile), null, null, false, true, false));
         return parser;
     }

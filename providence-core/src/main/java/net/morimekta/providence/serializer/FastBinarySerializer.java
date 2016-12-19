@@ -41,8 +41,8 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.util.Binary;
-import net.morimekta.util.io.BinaryReader;
-import net.morimekta.util.io.BinaryWriter;
+import net.morimekta.util.io.LittleEndianBinaryReader;
+import net.morimekta.util.io.LittleEndianBinaryWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +83,7 @@ public class FastBinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, Message message) throws IOException {
-        BinaryWriter out = new BinaryWriter(os);
+        LittleEndianBinaryWriter out = new LittleEndianBinaryWriter(os);
         return writeMessage(out, message);
     }
 
@@ -91,7 +91,7 @@ public class FastBinarySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, PServiceCall<Message, Field> call)
             throws IOException {
-        BinaryWriter out = new BinaryWriter(os);
+        LittleEndianBinaryWriter out = new LittleEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
         int len = out.writeVarint(method.length << 3 | call.getType().getValue());
         len += method.length;
@@ -105,7 +105,7 @@ public class FastBinarySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream is, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
-        BinaryReader in = new BinaryReader(is);
+        LittleEndianBinaryReader in = new LittleEndianBinaryReader(is);
         return readMessage(in, descriptor);
     }
 
@@ -118,7 +118,7 @@ public class FastBinarySerializer extends Serializer {
         int sequence = 0;
         PServiceCallType type = null;
         try {
-            BinaryReader in = new BinaryReader(is);
+            LittleEndianBinaryReader in = new LittleEndianBinaryReader(is);
             // Max method name length: 255 chars.
             int tag = in.readIntVarint();
             int len = tag >>> 3;
@@ -175,7 +175,7 @@ public class FastBinarySerializer extends Serializer {
     // --- MESSAGE ---
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    int writeMessage(BinaryWriter out, Message message)
+    int writeMessage(LittleEndianBinaryWriter out, Message message)
             throws IOException {
         int len = 0;
         if (message instanceof PUnion) {
@@ -196,7 +196,7 @@ public class FastBinarySerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(BinaryReader in, PMessageDescriptor<Message, Field> descriptor)
+    Message readMessage(LittleEndianBinaryReader in, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
@@ -230,7 +230,7 @@ public class FastBinarySerializer extends Serializer {
     // --- FIELD VALUE ---
 
     @SuppressWarnings("unchecked")
-    private int writeFieldValue(BinaryWriter out, int key, PDescriptor descriptor, Object value)
+    private int writeFieldValue(LittleEndianBinaryWriter out, int key, PDescriptor descriptor, Object value)
             throws IOException {
         switch (descriptor.getType()) {
             case VOID: {
@@ -294,7 +294,7 @@ public class FastBinarySerializer extends Serializer {
 
 
     @SuppressWarnings("unchecked")
-    private int writeContainerEntry(BinaryWriter out, int typeid, PDescriptor descriptor, Object value)
+    private int writeContainerEntry(LittleEndianBinaryWriter out, int typeid, PDescriptor descriptor, Object value)
             throws IOException {
         switch (typeid) {
             case VARINT: {
@@ -365,7 +365,7 @@ public class FastBinarySerializer extends Serializer {
     }
 
     @SuppressWarnings("unchecked")
-    private Object readFieldValue(BinaryReader in, int type, PDescriptor descriptor)
+    private Object readFieldValue(LittleEndianBinaryReader in, int type, PDescriptor descriptor)
             throws IOException {
         switch (type) {
             case NONE:

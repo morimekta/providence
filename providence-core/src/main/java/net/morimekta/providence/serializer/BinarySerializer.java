@@ -43,8 +43,6 @@ import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.BigEndianBinaryWriter;
-import net.morimekta.util.io.BinaryReader;
-import net.morimekta.util.io.BinaryWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,7 +110,7 @@ public class BinarySerializer extends Serializer {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, Message message) throws IOException {
-        BinaryWriter writer = new BigEndianBinaryWriter(os);
+        BigEndianBinaryWriter writer = new BigEndianBinaryWriter(os);
         return writeMessage(writer, message);
     }
 
@@ -120,7 +118,7 @@ public class BinarySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream os, PServiceCall<Message, Field> call)
             throws IOException {
-        BinaryWriter out = new BigEndianBinaryWriter(os);
+        BigEndianBinaryWriter out = new BigEndianBinaryWriter(os);
         byte[] method = call.getMethod().getBytes(UTF_8);
 
         int len = method.length;
@@ -142,7 +140,7 @@ public class BinarySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
-        BinaryReader reader = new BigEndianBinaryReader(input);
+        BigEndianBinaryReader reader = new BigEndianBinaryReader(input);
         return readMessage(reader, descriptor, true);
     }
 
@@ -151,7 +149,7 @@ public class BinarySerializer extends Serializer {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> deserialize(InputStream is, PService service)
             throws IOException {
-        BinaryReader in = new BigEndianBinaryReader(is);
+        BigEndianBinaryReader in = new BigEndianBinaryReader(is);
         String methodName = null;
         int sequence = 0;
         PServiceCallType type = null;
@@ -214,7 +212,7 @@ public class BinarySerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    int writeMessage(BinaryWriter writer, Message message)
+    int writeMessage(BigEndianBinaryWriter writer, Message message)
             throws IOException {
         int len = 0;
         if (message instanceof PUnion) {
@@ -240,7 +238,7 @@ public class BinarySerializer extends Serializer {
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message readMessage(BinaryReader input,
+    Message readMessage(BigEndianBinaryReader input,
                         PMessageDescriptor<Message, Field> descriptor,
                         boolean nullable) throws IOException {
         FieldInfo fieldInfo = readFieldInfo(input);
@@ -282,7 +280,7 @@ public class BinarySerializer extends Serializer {
      *
      * @param in Stream to read message from.
      */
-    private void consumeMessage(BinaryReader in) throws IOException {
+    private void consumeMessage(BigEndianBinaryReader in) throws IOException {
         FieldInfo fieldInfo;
         while ((fieldInfo = readFieldInfo(in)) != null) {
             readFieldValue(in, fieldInfo, null);
@@ -296,7 +294,7 @@ public class BinarySerializer extends Serializer {
      * @param in The stream to consume.
      * @return The field info or null.
      */
-    private FieldInfo readFieldInfo(BinaryReader in) throws IOException {
+    private FieldInfo readFieldInfo(BigEndianBinaryReader in) throws IOException {
         byte type = in.expectByte();
         if (type == PType.STOP.id) {
             return null;
@@ -314,7 +312,7 @@ public class BinarySerializer extends Serializer {
      *
      * @throws IOException If unable to read from stream or invalid field type.
      */
-    private Object readFieldValue(BinaryReader in, FieldInfo fieldInfo, PDescriptor type)
+    private Object readFieldValue(BigEndianBinaryReader in, FieldInfo fieldInfo, PDescriptor type)
             throws IOException {
         if (type == null) {
             if (readStrict) {
@@ -469,7 +467,7 @@ public class BinarySerializer extends Serializer {
 
     // --- WRITE METHODS ---
 
-    private int writeFieldSpec(BinaryWriter out, byte type, int key) throws IOException {
+    private int writeFieldSpec(BigEndianBinaryWriter out, byte type, int key) throws IOException {
         out.writeByte(type);
         out.writeUInt16(key);
         return 3;
@@ -482,7 +480,7 @@ public class BinarySerializer extends Serializer {
      * @param value The value to write.
      * @return The number of bytes written.
      */
-    private int writeFieldValue(BinaryWriter out, Object value, PDescriptor descriptor) throws IOException {
+    private int writeFieldValue(BigEndianBinaryWriter out, Object value, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
             case VOID:
                 return 0;

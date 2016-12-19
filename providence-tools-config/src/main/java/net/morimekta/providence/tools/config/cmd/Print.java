@@ -29,7 +29,7 @@ public class Print implements Command {
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " print", parent.getVersion(), "");
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] print", parent.getVersion(), "");
         parser.add(new Option("--format", "f", "fmt", "the output format", this::setSerializer, "pretty"));
         parser.add(new Argument("file", "Config file to parse and print", Parser.file(this::setFile), null, null, false, true, false));
         return parser;

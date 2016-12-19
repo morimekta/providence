@@ -32,7 +32,7 @@ public class Params implements Command {
 
     @Override
     public ArgumentParser parser(ArgumentParser parent) {
-        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " params", parent.getVersion(), "");
+        ArgumentParser parser = new ArgumentParser(parent.getProgram() + " [...] params", parent.getVersion(), "");
         parser.add(new Argument("file", "Config file to read params for, with includes", Parser.file(this::setFile), null, null, false, true, false));
         return parser;
     }

@@ -155,7 +155,7 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg [...] print ...\n" +
+                "Usage: pvdcfg [...] print [-f fmt] file\n" +
                 "\n" +
                 " --format (-f) fmt : the output format (default: pretty)\n" +
                 " file              : Config file to parse and print\n",
