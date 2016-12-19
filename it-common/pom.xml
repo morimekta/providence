@@ -75,20 +75,20 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.apache.thrift.tools</groupId>
-                <artifactId>maven-thrift-plugin</artifactId>
-                <configuration>
-                    <thriftExecutable>${thrift.binary}</thriftExecutable>
-                    <generator>java:private-members,fullcamel</generator>
-                    <outputDirectory>${project.build.directory}/generated-sources/thrift</outputDirectory>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-thrift-sources</id>
+                        <id>add-source</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>add-source</goal>
                         </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/main/java-gen</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

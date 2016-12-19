@@ -1,0 +1,69 @@
+import java.util.function.Consumer
+import java.util.function.Predicate
+
+class Generate {
+    static def getThriftDirs() {
+        def l = new LinkedList()
+        Collections.addAll(l, new File('.').listFiles())
+        def r = new LinkedList()
+        l.stream().filter(new Predicate() {
+            boolean test(Object o) {
+                File f = (File) o;
+                return f.isDirectory() && (
+                       f.getName().startsWith('providence-') ||
+                       f.getName().startsWith('it-'))
+            }
+        }).forEach(new Consumer() {
+            void accept(Object o) {
+                File f = (File) o;
+                def main = new File(f, 'src/main')
+                def test = new File(f, 'src/test')
+
+                if (new File(main, 'thrift').exists()) {
+                    r.add(main)
+                }
+                if (new File(test, 'thrift').exists()) {
+                    r.add(test)
+                }
+            }
+        })
+
+        Collections.sort(r)
+        return r
+    }
+
+    static def generateThrift(def project, File dir) {
+        def srcDir = new File(dir, 'thrift')
+        def outDir = new File(dir, 'java-gen')
+
+        for (File srcFile : project.fileTree(srcDir.toString()) {
+            include '**/*.thrift'
+        }.files) {
+            project.exec {
+                executable 'mkdir'
+                args '-p', outDir.toString()
+            }
+            project.exec {
+                executable 'rm'
+                args '-rf', outDir.toString() + '/*'
+            }
+            project.exec {
+                executable 'thrift'
+                args '--out', outDir.toString(), '--gen', 'java:private-members,full-camel', srcFile.toString()
+            }
+        }
+    }
+}
+
+task thrift() {
+    doLast {
+        for (File f : Generate.thriftDirs) {
+            Generate.generateThrift(project, f)
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    // gradleVersion = '2.12'
+    gradleVersion = '3.2' // version required
+}

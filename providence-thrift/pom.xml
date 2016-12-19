@@ -83,19 +83,19 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.thrift.tools</groupId>
-                <artifactId>maven-thrift-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>generate-thrift-sources</id>
+                        <id>add-test-source</id>
                         <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>testCompile</goal>
+                            <goal>add-test-source</goal>
                         </goals>
                         <configuration>
-                            <thriftExecutable>${thrift.binary}</thriftExecutable>
-                            <generator>java:private-members,fullcamel</generator>
-                            <outputDirectory>target/generated-test-sources/thrift</outputDirectory>
+                            <sources>
+                                <source>src/test/java-gen</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
