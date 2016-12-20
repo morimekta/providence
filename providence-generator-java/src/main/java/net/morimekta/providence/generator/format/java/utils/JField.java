@@ -387,4 +387,10 @@ public class JField {
     public boolean isVoid() {
         return field.getType() == PType.VOID;
     }
+
+    public PList toPList() {
+        return (PList) (getPField()
+                             .getDescriptor());
+    }
+
 }

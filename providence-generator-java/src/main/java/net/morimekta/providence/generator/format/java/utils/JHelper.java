@@ -132,7 +132,7 @@ public class JHelper {
     }
 
     public String getHazelcastFactoryClassName(CProgram document) {
-        return camelCase("", document.getProgramName())  + "Factory";
+        return camelCase("", document.getProgramName())  + "_Factory";
     }
 
     public String getHazelcastOptionalName(JMessage<?> message) {

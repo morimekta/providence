@@ -2,7 +2,7 @@ package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.testing.hazelcast.PortableReader;
 import net.morimekta.providence.testing.hazelcast.PortableWriter;
-import net.morimekta.test.hazelcast.HazelcastFactory;
+import net.morimekta.test.hazelcast.Hazelcast_Factory;
 import net.morimekta.test.hazelcast.OptionalFields;
 import net.morimekta.test.hazelcast.CompactFields;
 import net.morimekta.test.hazelcast.OptionalListFields;
@@ -14,8 +14,9 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jfairy.Fairy;
 import org.junit.runner.RunWith;
@@ -40,9 +41,9 @@ public class HazelcastTest {
     private Random rand = new Random();
     private Fairy fairy = Fairy.create();
 
-    private static final boolean REPEAT_TEST    = false;
+    private static final boolean REPEAT_TEST      = false;
     private static final boolean IGNORE_HAZELCAST = false;
-    private static final int     NO_OF_REPEATES = (REPEAT_TEST ? 50 : 1);
+    private static final int     NO_OF_REPEATS    = (REPEAT_TEST ? 1000 : 1);
 
     private static final int MAX_LIST_LENGTH = Byte.MAX_VALUE;
 
@@ -65,9 +66,9 @@ public class HazelcastTest {
     private static final int POS_16 = 0x00010000;
     private static final int POS_17 = 0x00020000;
 
-    HazelcastInstance instance1;
-    HazelcastInstance instance2;
-    Config config;
+    static HazelcastInstance instance1;
+    static HazelcastInstance instance2;
+    static Config config;
 
     @Before
     public void setup() {
@@ -92,24 +93,26 @@ public class HazelcastTest {
                                                     0 < (POS_15 & flags) ? genDoubleList(rand.nextInt(MAX_LIST_LENGTH)) : null,
                                                     0 < (POS_16 & flags) ? genStringList(rand.nextInt(MAX_LIST_LENGTH)) : null,
                                                     0 < (POS_17 & flags) ? genCompactList(rand.nextInt(MAX_LIST_LENGTH)) : null);
-        config = new Config();
-        config.getSerializationConfig().addPortableFactory(HazelcastFactory.FACTORY_ID, new HazelcastFactory());
-        HazelcastFactory.addClassDefinitions(config);
-        instance1 = null;
-        instance2 = null;
+
     }
 
-    @After
-    public void after() {
-        if( instance1 != null )
-            instance1.shutdown();
-        if( instance2 != null )
-            instance2.shutdown();
+    @BeforeClass
+    public static void setupClass() {
+        config = new Config();
+        Hazelcast_Factory.populateConfig(config);
+        instance1 = Hazelcast.newHazelcastInstance(config);
+        instance2 = Hazelcast.newHazelcastInstance(config);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        instance1.shutdown();
+        instance2.shutdown();
     }
 
     @Parameterized.Parameters
     public static List<Object[]> data() {
-        return Arrays.asList(new Object[NO_OF_REPEATES][0]);
+        return Arrays.asList(new Object[NO_OF_REPEATS][0]);
     }
 
     public CompactFields genCompactFields() {
@@ -187,8 +190,7 @@ public class HazelcastTest {
         PortableWriter writer = new PortableWriter();
         testObject.writePortable(writer);
         PortableReader reader = new PortableReader(writer);
-        OptionalFields._Builder actual = (OptionalFields._Builder)new HazelcastFactory()
-                .create(testObject.getClassId());
+        OptionalFields._Builder actual = new OptionalFields._Builder();
         actual.readPortable(reader);
         assertEquals(optionalFields, actual.build());
     }
@@ -199,8 +201,7 @@ public class HazelcastTest {
         PortableWriter writer = new PortableWriter();
         testObject.writePortable(writer);
         PortableReader reader = new PortableReader(writer);
-        OptionalListFields._Builder actual = (OptionalListFields._Builder)new HazelcastFactory()
-                .create(testObject.getClassId());
+        OptionalListFields._Builder actual = new OptionalListFields._Builder();
         actual.readPortable(reader);
         assertEquals(testObject.build(), actual.build());
     }
@@ -208,8 +209,6 @@ public class HazelcastTest {
     @Test
     public void testBaseEntitiesHazelcast() {
         if( IGNORE_HAZELCAST ) return;
-        instance1 = Hazelcast.newHazelcastInstance(config);
-        instance2 = Hazelcast.newHazelcastInstance(config);
         String key = fairy.textProducer().randomString(rand.nextInt(Byte.MAX_VALUE) + 1);
         String map = fairy.textProducer().randomString(rand.nextInt(Byte.MAX_VALUE) + 1);
         IMap<String, OptionalFields._Builder> writeMap = instance1.getMap(map);
@@ -226,8 +225,6 @@ public class HazelcastTest {
     @Test
     public void testListEntitiesHazelcast() {
         if( IGNORE_HAZELCAST ) return;
-        instance1 = Hazelcast.newHazelcastInstance(config);
-        instance2 = Hazelcast.newHazelcastInstance(config);
         String key = fairy.textProducer().randomString(rand.nextInt(Byte.MAX_VALUE) + 1);
         String map = fairy.textProducer().randomString(rand.nextInt(Byte.MAX_VALUE) + 1);
         IMap<String, OptionalListFields._Builder> writeMap = instance1.getMap(map);

@@ -75,7 +75,7 @@ public class JUtils {
      * @return class name for the hazelcast factory.
      */
     public static String getHazelcastFactory(PMessageDescriptor<?, ?> type) {
-        return camelCase("", type.getProgramName()).concat("Factory");
+        return camelCase("", type.getProgramName()).concat("_Factory");
     }
 
     /**
