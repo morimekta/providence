@@ -64,6 +64,5 @@ task thrift() {
 }
 
 task wrapper(type: Wrapper) {
-    // gradleVersion = '2.12'
-    gradleVersion = '3.2' // version required
+    gradleVersion = '2.10'
 }
