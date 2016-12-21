@@ -378,7 +378,16 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <!--
+                       pinned to old version because it breaks with 'mvn clean verify install'
+                       on 'providence-tools' packaging. It complains that the attached artifact
+                       is replaced, even though the entire 'maven-jar-plugin' is marked as
+                       skipped...
+
+                       The problem was introduces in 'maven-jar-plugin' version 3.0.0. Keeping
+                       at 2.6 let the packaging pass through.
+                     -->
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
