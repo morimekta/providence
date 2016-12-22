@@ -4,18 +4,17 @@ import java.util.function.Predicate
 class GenerateThrift {
     static def getThriftDirs() {
         def l = new LinkedList()
-        Collections.addAll(l, new File('.').listFiles())
         def r = new LinkedList()
-        l.stream().filter(new Predicate() {
-            boolean test(Object o) {
-                File f = (File) o;
+
+        Collections.addAll(l, new File('.').listFiles())
+        l.stream().filter(new Predicate<File>() {
+            boolean test(File f) {
                 return f.isDirectory() && (
                        f.getName().startsWith('providence-') ||
                        f.getName().startsWith('it-'))
             }
-        }).forEach(new Consumer() {
-            void accept(Object o) {
-                File f = (File) o;
+        }).forEach(new Consumer<File>() {
+            void accept(File f) {
                 def main = new File(f, 'src/main')
                 def test = new File(f, 'src/test')
 
@@ -36,17 +35,18 @@ class GenerateThrift {
         def srcDir = new File(dir, 'thrift')
         def outDir = new File(dir, 'java-gen')
 
+        project.exec {
+            executable 'mkdir'
+            args '-p', outDir.toString()
+        }
+        project.exec {
+            executable 'rm'
+            args '-rf', outDir.toString() + '/*'
+        }
+
         for (File srcFile : project.fileTree(srcDir.toString()) {
             include '**/*.thrift'
         }.files) {
-            project.exec {
-                executable 'mkdir'
-                args '-p', outDir.toString()
-            }
-            project.exec {
-                executable 'rm'
-                args '-rf', outDir.toString() + '/*'
-            }
             project.exec {
                 executable 'thrift'
                 args '--out', outDir.toString(), '--gen', 'java:generated_annotations=suppress,private-members,full-camel', srcFile.toString()
