@@ -1,0 +1,8 @@
+language: java
+jdk:
+  # - openjdk8 # add when openjdk8 is also supported
+  - oraclejdk8
+branches:
+  only:
+  - master
+  - /^release-.*$/
