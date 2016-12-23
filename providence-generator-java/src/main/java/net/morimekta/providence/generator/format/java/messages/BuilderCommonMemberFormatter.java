@@ -37,6 +37,8 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import java.util.BitSet;
 import java.util.Collection;
 
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
@@ -117,7 +119,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
 
     private void appendUnionFields(JMessage<?> message) {
-        writer.appendln("private _Field tUnionField;")
+        writer.formatln("private _Field %s;", UNION_FIELD)
               .newline();
     }
 
@@ -163,7 +165,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .appendln("this();")
               .newline();
         if (message.isUnion()) {
-            writer.appendln("tUnionField = base.tUnionField;")
+            writer.formatln("%s = base.%s;", UNION_FIELD, UNION_FIELD)
                   .newline();
         }
         for (JField field : message.declaredOrderFields()) {
@@ -235,7 +237,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         writer.begin();
 
         if (message.isUnion()) {
-            writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+            writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
         } else {
             writer.formatln("optionals.set(%d);", field.index());
         }
@@ -302,7 +304,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 writer.formatln("public _Builder %s(%s key, %s value) {", field.adder(), mkType, miType)
                       .begin();
                 if (message.isUnion()) {
-                    writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                    writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
@@ -323,7 +325,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 writer.formatln("public _Builder %s(%s... values) {", field.adder(), liType)
                       .begin();
                 if (message.isUnion()) {
-                    writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                    writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
@@ -357,7 +359,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .begin();
 
         if (message.isUnion()) {
-            writer.formatln("return tUnionField == _Field.%s;", field.fieldEnum());
+            writer.formatln("return %s == _Field.%s;", UNION_FIELD, field.fieldEnum());
         } else {
             writer.formatln("return optionals.get(%d);", field.index());
         }
@@ -380,7 +382,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .begin();
 
         if (message.isUnion()) {
-            writer.formatln("if (tUnionField == _Field.%s) tUnionField = null;", field.fieldEnum());
+            writer.formatln("if (%s == _Field.%s) %s = null;", UNION_FIELD, field.fieldEnum(), UNION_FIELD);
         } else {
             writer.formatln("optionals.clear(%d);", field.index());
         }
@@ -437,10 +439,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                       .begin();
 
                 if (message.isUnion()) {
-                    writer.formatln("if (tUnionField != _Field.%s) {", field.fieldEnum())
+                    writer.formatln("if (%s != _Field.%s) {", UNION_FIELD, field.fieldEnum())
                           .formatln("    %s();", field.resetter())
                           .appendln('}')
-                          .formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                          .formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
@@ -467,10 +469,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                       .begin();
 
                 if (message.isUnion()) {
-                    writer.formatln("if (tUnionField != _Field.%s) {", field.fieldEnum())
+                    writer.formatln("if (%s != _Field.%s) {", UNION_FIELD, field.fieldEnum())
                           .formatln("    %s();", field.resetter())
                           .appendln('}')
-                          .formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                          .formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }

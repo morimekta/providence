@@ -50,6 +50,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
@@ -326,7 +328,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
 
         if (message.isUnion()) {
             writer.appendln("generator.writeStartObject();")
-                  .appendln("switch (instance.tUnionField) {")
+                  .formatln("switch (instance.%s) {", UNION_FIELD)
                   .begin();
 
             for (JField field : message.declaredOrderFields()) {

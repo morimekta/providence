@@ -36,6 +36,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import java.util.Collections;
 import java.util.Optional;
 
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 
 /**
@@ -98,7 +99,8 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             if (message.isUnion()) {
                 if (field.container()) {
                     writer.formatln("public int %s() {", field.counter())
-                          .formatln("    return tUnionField == _Field.%s ? %s.size() : 0;",
+                          .formatln("    return %s == _Field.%s ? %s.size() : 0;",
+                                    UNION_FIELD,
                                     field.fieldEnum(),
                                     field.member())
                           .appendln('}')
@@ -106,12 +108,15 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 }
                 if (field.alwaysPresent() || field.isVoid()) {
                     writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return tUnionField == _Field.%s;", field.fieldEnum())
+                          .formatln("    return %s == _Field.%s;",
+                                    UNION_FIELD,
+                                    field.fieldEnum())
                           .appendln('}')
                           .newline();
                 } else {
                     writer.formatln("public boolean %s() {", field.presence())
-                          .formatln("    return tUnionField == _Field.%s && %s != null;",
+                          .formatln("    return %s == _Field.%s && %s != null;",
+                                    UNION_FIELD,
                                     field.fieldEnum(),
                                     field.member())
                           .appendln('}')

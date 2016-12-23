@@ -34,6 +34,8 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.LinkedList;
 
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
@@ -84,10 +86,11 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 switch (field.type()) {
                     case VOID:
                         // Void fields have no value.
-                        writer.formatln("tUnionField = _Field.%s;", field.fieldEnum());
+                        writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
                         break;
                     case MESSAGE:
-                        writer.formatln("if (tUnionField == _Field.%s && %s != null) {",
+                        writer.formatln("if (%s == _Field.%s && %s != null) {",
+                                        UNION_FIELD,
                                         field.fieldEnum(), field.member())
                               .formatln("    %s = %s.mutate().merge(from.%s()).build();",
                                         field.member(), field.member(), field.getter())
@@ -97,7 +100,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                               .appendln('}');
                         break;
                     case SET:
-                        writer.formatln("if (tUnionField == _Field.%s) {",
+                        writer.formatln("if (%s == _Field.%s) {",
+                                        UNION_FIELD,
                                         field.fieldEnum())
                               .formatln("    %s.addAll(from.%s()):",
                                         field.member(), field.getter())
@@ -107,7 +111,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                               .appendln('}');
                         break;
                     case MAP:
-                        writer.formatln("if (tUnionField == _Field.%s) {",
+                        writer.formatln("if (%s == _Field.%s) {",
+                                        UNION_FIELD,
                                         field.fieldEnum())
                               .formatln("    %s.putAll(from.%s()):",
                                         field.member(), field.getter())
@@ -244,7 +249,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .begin();
         if (message.isUnion()) {
             for (JField field : message.numericalOrderFields()) {
-                writer.formatln("case %d: return tUnionField == _Field.%s;", field.id(), field.fieldEnum());
+                writer.formatln("case %d: return %s == _Field.%s;", field.id(), UNION_FIELD, field.fieldEnum());
             }
         } else {
             for (JField field : message.numericalOrderFields()) {
@@ -310,11 +315,11 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("public boolean isValid() {")
               .begin();
         if (message.isUnion()) {
-            writer.appendln("if (tUnionField == null) {")
+            writer.formatln("if (%s == null) {", UNION_FIELD)
                   .appendln("    return false;")
                   .appendln('}')
                   .newline()
-                  .appendln("switch (tUnionField) {")
+                  .formatln("switch (%s) {", UNION_FIELD)
                   .begin();
             message.numericalOrderFields()
                    .stream()

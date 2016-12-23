@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 
 /**
  * @author Stein Eldar Johnsen
@@ -101,8 +102,10 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
             writer.formatln("%s other = (%s) o;", message.instanceType(), message.instanceType())
                   .appendln("return ");
             if (message.isUnion()) {
-                writer.format("%s.equals(tUnionField, other.tUnionField)",
-                              Objects.class.getName());
+                writer.format("%s.equals(%s, other.%s)",
+                              Objects.class.getName(),
+                              UNION_FIELD,
+                              UNION_FIELD);
                 first = false;
             }
             for (JField field : message.declaredOrderFields()) {
@@ -176,7 +179,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .newline();
 
         if (message.isUnion()) {
-            writer.appendln("switch (tUnionField) {")
+            writer.formatln("switch (%s) {", UNION_FIELD)
                   .begin();
 
             for (JField field : message.declaredOrderFields()) {
@@ -332,10 +335,11 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .begin();
 
         if (message.isUnion()) {
-            writer.formatln("int c = tUnionField.compareTo(other.tUnionField);")
+            writer.formatln("int c = %s.compareTo(other.%s);",
+                            UNION_FIELD, UNION_FIELD)
                   .appendln("if (c != 0) return c;")
                   .newline()
-                  .appendln("switch (tUnionField) {")
+                  .formatln("switch (%s) {", UNION_FIELD)
                   .begin();
 
             for (JField field : message.numericalOrderFields()) {

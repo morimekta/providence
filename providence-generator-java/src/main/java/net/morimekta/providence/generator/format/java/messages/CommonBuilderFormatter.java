@@ -34,6 +34,8 @@ import net.morimekta.util.io.IndentedPrintWriter;
 import java.util.List;
 import java.util.Optional;
 
+import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 08.01.16.
@@ -102,7 +104,8 @@ public class CommonBuilderFormatter
         writer.formatln("private %s(_Builder builder) {", message.instanceType())
               .begin();
         if (message.isUnion()) {
-            writer.appendln("tUnionField = builder.tUnionField;")
+            writer.formatln("%s = builder.%s;",
+                            UNION_FIELD, UNION_FIELD)
                   .newline();
 
             for (JField field : message.declaredOrderFields()) {
@@ -112,41 +115,45 @@ public class CommonBuilderFormatter
                         break;
                     case LIST:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
+                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
                                 field.fieldEnum(),
                                 field.member());
                         break;
                     case SET:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
+                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
+                                UNION_FIELD,
                                 field.fieldEnum(),
                                 field.member());
                         break;
                     case MAP:
                         writer.formatln(
-                                "%s = tUnionField == _Field.%s ? builder.%s.build() : null;",
+                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
+                                UNION_FIELD,
                                 field.fieldEnum(),
                                 field.member());
                         break;
                     case MESSAGE:
-                        writer.formatln("%s = tUnionField != _Field.%s", field.member(), field.fieldEnum())
+                        writer.formatln("%s = %s != _Field.%s", field.member(), UNION_FIELD, field.fieldEnum())
                               .appendln("        ? null")
                               .formatln("        : builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
                                         field.member(), field.member(), field.member());
                         break;
                     default:
                         if (field.alwaysPresent()) {
-                            writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : %s;",
+                            writer.formatln("%s = %s == _Field.%s ? builder.%s : %s;",
                                             field.member(),
+                                            UNION_FIELD,
                                             field.fieldEnum(),
                                             field.member(),
                                             field.kDefault());
                         } else {
-                            writer.formatln("%s = tUnionField == _Field.%s ? builder.%s : null;",
+                            writer.formatln("%s = %s == _Field.%s ? builder.%s : null;",
                                             field.member(),
+                                            UNION_FIELD,
                                             field.fieldEnum(),
                                             field.member());
                         }

@@ -45,6 +45,8 @@ import java.util.Collection;
  * @since 08.01.16.
  */
 public class CoreOverridesFormatter implements MessageMemberFormatter {
+    public static final String UNION_FIELD = "tUnionField";
+
     protected final IndentedPrintWriter writer;
 
     public CoreOverridesFormatter(IndentedPrintWriter writer) {
@@ -70,7 +72,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
     @Override
     public void appendFields(JMessage<?> message) throws GeneratorException {
         if (message.isUnion()) {
-            writer.appendln("private final _Field tUnionField;")
+            writer.formatln("private final _Field %s;", UNION_FIELD)
                   .newline();
         }
     }
@@ -90,7 +92,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         if (message.isUnion()) {
             writer.appendln("@Override")
                   .appendln("public _Field unionField() {")
-                  .appendln("    return tUnionField;")
+                  .formatln("    return %s;", UNION_FIELD)
                   .appendln('}')
                   .newline();
         }

@@ -1,7 +1,6 @@
 package net.morimekta.providence.thrift;
 
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.test.providence.Containers;
@@ -17,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -27,14 +26,14 @@ import static org.junit.Assert.assertThat;
  * TBinaryProtocolSerializer, and can also read back what TBinaryProtocolSerializer
  * generates.
  */
-public class PBinarySerializerTest {
+public class BinarySerializerCompatibilityTest {
     private static final BinarySerializer          providence = new BinarySerializer();
     private static final TBinaryProtocolSerializer thrift     = new TBinaryProtocolSerializer();
     private static ArrayList<Containers> containers;
 
     @Before
-    public void setUp() throws SerializerException, IOException {
-        synchronized (PBinarySerializerTest.class) {
+    public void setUp() throws IOException {
+        synchronized (BinarySerializerCompatibilityTest.class) {
             // Since these are immutable, we don't need to read for each test.
             if (containers == null) {
                 containers = arrayListFromJsonResource("/providence/test.json", Containers.kDescriptor);
@@ -44,7 +43,7 @@ public class PBinarySerializerTest {
     }
 
     @Test
-    public void testThriftToProvidence_simple() throws IOException, SerializerException {
+    public void testThriftToProvidence_simple() throws IOException {
         Request request = new Request("test");
 
         // Providence client talks to thrift service.
@@ -58,7 +57,7 @@ public class PBinarySerializerTest {
     }
 
     @Test
-    public void testProvidenceToThrift_simple() throws IOException, SerializerException {
+    public void testProvidenceToThrift_simple() throws IOException {
         Request request = new Request("test");
 
         // Providence client talks to thrift service.
