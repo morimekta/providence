@@ -68,6 +68,8 @@
     </prerequisites>
 
     <properties>
+        <gpg.executable>gpg2</gpg.executable>
+
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.javadoc.encoding>UTF-8</project.javadoc.encoding>
@@ -645,6 +647,10 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <executable>${gpg.executable}</executable>
+                            <useAgent>true</useAgent>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
