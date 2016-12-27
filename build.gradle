@@ -73,6 +73,33 @@ task generateThrift() {
     }
 }
 
+task clean() {
+    doLast {
+        project.exec {
+            executable 'mvn'
+            args 'clean'
+        }
+    }
+}
+
+task assemble() {
+    doLast {
+        project.exec {
+            executable 'mvn'
+            args 'compile'
+        }
+    }
+}
+
+task test(dependsOn: assemble) {
+    doLast {
+        project.exec {
+            executable 'mvn'
+            args 'verify'
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
