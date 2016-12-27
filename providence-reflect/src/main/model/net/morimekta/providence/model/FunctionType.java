@@ -622,6 +622,15 @@ public class FunctionType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of one_way.
          *
          * @param value The new value
@@ -651,6 +660,15 @@ public class FunctionType
             optionals.clear(1);
             mOneWay = kDefaultOneWay;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained one_way.
+         *
+         * @return The field value
+         */
+        public boolean isOneWay() {
+            return mOneWay;
         }
 
         /**
@@ -686,6 +704,15 @@ public class FunctionType
         }
 
         /**
+         * Gets the value of the contained return_type.
+         *
+         * @return The field value
+         */
+        public String getReturnType() {
+            return mReturnType;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -715,6 +742,15 @@ public class FunctionType
             optionals.clear(3);
             mName = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
         }
 
         /**

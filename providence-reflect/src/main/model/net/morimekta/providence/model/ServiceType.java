@@ -529,6 +529,15 @@ public class ServiceType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -561,6 +570,15 @@ public class ServiceType
         }
 
         /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
          * Sets the value of extend.
          *
          * @param value The new value
@@ -590,6 +608,15 @@ public class ServiceType
             optionals.clear(2);
             mExtend = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained extend.
+         *
+         * @return The field value
+         */
+        public String getExtend() {
+            return mExtend;
         }
 
         /**

@@ -551,6 +551,15 @@ public class ProgramType
         }
 
         /**
+         * Program documentation must come before the first statement of the header.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * The program name, deducted from the .thrift IDL file name.
          *
          * @param value The new value
@@ -580,6 +589,15 @@ public class ProgramType
             optionals.clear(1);
             mProgramName = null;
             return this;
+        }
+
+        /**
+         * The program name, deducted from the .thrift IDL file name.
+         *
+         * @return The field value
+         */
+        public String getProgramName() {
+            return mProgramName;
         }
 
         /**

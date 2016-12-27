@@ -458,6 +458,15 @@ public class EnumValue
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -490,6 +499,15 @@ public class EnumValue
         }
 
         /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
          * Sets the value of value.
          *
          * @param value The new value
@@ -519,6 +537,15 @@ public class EnumValue
             optionals.clear(2);
             mValue = kDefaultValue;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained value.
+         *
+         * @return The field value
+         */
+        public int getValue() {
+            return mValue;
         }
 
         /**

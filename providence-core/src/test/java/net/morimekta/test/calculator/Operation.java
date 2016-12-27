@@ -362,6 +362,15 @@ public class Operation
         }
 
         /**
+         * Gets the value of the contained operator.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.calculator.Operator getOperator() {
+            return mOperator;
+        }
+
+        /**
          * Sets the value of operands.
          *
          * @param value The new value

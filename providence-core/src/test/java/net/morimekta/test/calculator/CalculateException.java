@@ -373,6 +373,15 @@ public class CalculateException
         }
 
         /**
+         * Gets the value of the contained message.
+         *
+         * @return The field value
+         */
+        public String getMessage() {
+            return mMessage;
+        }
+
+        /**
          * Sets the value of operation.
          *
          * @param value The new value

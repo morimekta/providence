@@ -513,6 +513,15 @@ public class ConstType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of type.
          *
          * @param value The new value
@@ -542,6 +551,15 @@ public class ConstType
             optionals.clear(1);
             mType = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained type.
+         *
+         * @return The field value
+         */
+        public String getType() {
+            return mType;
         }
 
         /**
@@ -577,6 +595,15 @@ public class ConstType
         }
 
         /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
          * Sets the value of value.
          *
          * @param value The new value
@@ -606,6 +633,15 @@ public class ConstType
             optionals.clear(3);
             mValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained value.
+         *
+         * @return The field value
+         */
+        public String getValue() {
+            return mValue;
         }
 
         /**

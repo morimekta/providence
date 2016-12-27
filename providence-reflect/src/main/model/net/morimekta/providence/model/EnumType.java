@@ -481,6 +481,15 @@ public class EnumType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -510,6 +519,15 @@ public class EnumType
             optionals.clear(1);
             mName = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
         }
 
         /**

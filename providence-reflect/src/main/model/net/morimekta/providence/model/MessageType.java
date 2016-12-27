@@ -529,6 +529,15 @@ public class MessageType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of variant.
          *
          * @param value The new value
@@ -561,6 +570,15 @@ public class MessageType
         }
 
         /**
+         * Gets the value of the contained variant.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.MessageVariant getVariant() {
+            return isSetVariant() ? mVariant : kDefaultVariant;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -590,6 +608,15 @@ public class MessageType
             optionals.clear(2);
             mName = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
         }
 
         /**

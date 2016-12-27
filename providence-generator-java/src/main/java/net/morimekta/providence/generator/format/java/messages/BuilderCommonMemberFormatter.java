@@ -417,6 +417,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     private void appendMutableGetters(JMessage message, JField field) throws GeneratorException {
         if (field.getPField().getDescriptor() instanceof PPrimitive ||
             field.type() == PType.ENUM) {
+            // The other fields will have ordinary non-mutable getters.
+            appendGetter(field);
             return;
         }
 
@@ -488,4 +490,39 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
     }
 
+    private void appendGetter(JField field) {
+        if (field.isVoid()) {
+            return;
+        }
+
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        if (field.hasComment()) {
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Gets the value of the contained " + field.name() + ".");
+        }
+        comment.newline()
+               .return_("The field value")
+               .finish();
+        if (JAnnotation.isDeprecated(field)) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
+
+        writer.formatln("public %s %s() {",
+                        field.valueType(), field.getter())
+              .begin();
+
+        if (helper.getDefaultValue(field.getPField()) != null && !field.alwaysPresent()){
+            writer.formatln("return %s() ? %s : %s;",
+                            Strings.camelCase("isSet", field.name()),
+                            field.member(),
+                            field.kDefault());
+        } else {
+            writer.formatln("return %s;", field.member());
+        }
+
+        writer.end()
+              .appendln('}')
+              .newline();
+    }
 }

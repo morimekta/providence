@@ -737,6 +737,15 @@ public class DefaultValues
         }
 
         /**
+         * Gets the value of the contained booleanValue.
+         *
+         * @return The field value
+         */
+        public boolean isBooleanValue() {
+            return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
+        }
+
+        /**
          * Sets the value of byteValue.
          *
          * @param value The new value
@@ -766,6 +775,15 @@ public class DefaultValues
             optionals.clear(1);
             mByteValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained byteValue.
+         *
+         * @return The field value
+         */
+        public byte getByteValue() {
+            return isSetByteValue() ? mByteValue : kDefaultByteValue;
         }
 
         /**
@@ -801,6 +819,15 @@ public class DefaultValues
         }
 
         /**
+         * Gets the value of the contained shortValue.
+         *
+         * @return The field value
+         */
+        public short getShortValue() {
+            return isSetShortValue() ? mShortValue : kDefaultShortValue;
+        }
+
+        /**
          * Sets the value of integerValue.
          *
          * @param value The new value
@@ -830,6 +857,15 @@ public class DefaultValues
             optionals.clear(3);
             mIntegerValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained integerValue.
+         *
+         * @return The field value
+         */
+        public int getIntegerValue() {
+            return isSetIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
         }
 
         /**
@@ -865,6 +901,15 @@ public class DefaultValues
         }
 
         /**
+         * Gets the value of the contained longValue.
+         *
+         * @return The field value
+         */
+        public long getLongValue() {
+            return isSetLongValue() ? mLongValue : kDefaultLongValue;
+        }
+
+        /**
          * Sets the value of doubleValue.
          *
          * @param value The new value
@@ -894,6 +939,15 @@ public class DefaultValues
             optionals.clear(5);
             mDoubleValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained doubleValue.
+         *
+         * @return The field value
+         */
+        public double getDoubleValue() {
+            return isSetDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
         }
 
         /**
@@ -929,6 +983,15 @@ public class DefaultValues
         }
 
         /**
+         * Gets the value of the contained stringValue.
+         *
+         * @return The field value
+         */
+        public String getStringValue() {
+            return isSetStringValue() ? mStringValue : kDefaultStringValue;
+        }
+
+        /**
          * Sets the value of binaryValue.
          *
          * @param value The new value
@@ -961,6 +1024,15 @@ public class DefaultValues
         }
 
         /**
+         * Gets the value of the contained binaryValue.
+         *
+         * @return The field value
+         */
+        public net.morimekta.util.Binary getBinaryValue() {
+            return mBinaryValue;
+        }
+
+        /**
          * Sets the value of enumValue.
          *
          * @param value The new value
@@ -990,6 +1062,15 @@ public class DefaultValues
             optionals.clear(8);
             mEnumValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained enumValue.
+         *
+         * @return The field value
+         */
+        public net.morimekta.test.providence.Value getEnumValue() {
+            return isSetEnumValue() ? mEnumValue : kDefaultEnumValue;
         }
 
         /**

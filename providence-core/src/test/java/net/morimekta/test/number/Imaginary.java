@@ -335,6 +335,15 @@ public class Imaginary
         }
 
         /**
+         * Gets the value of the contained v.
+         *
+         * @return The field value
+         */
+        public double getV() {
+            return mV;
+        }
+
+        /**
          * Sets the value of i.
          *
          * @param value The new value
@@ -364,6 +373,15 @@ public class Imaginary
             optionals.clear(1);
             mI = kDefaultI;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained i.
+         *
+         * @return The field value
+         */
+        public double getI() {
+            return mI;
         }
 
         @Override

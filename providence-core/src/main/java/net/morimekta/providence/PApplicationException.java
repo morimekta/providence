@@ -379,6 +379,15 @@ public class PApplicationException
         }
 
         /**
+         * Exception message.
+         *
+         * @return The field value
+         */
+        public String getMessage() {
+            return mMessage;
+        }
+
+        /**
          * The application exception type.
          *
          * @param value The new value
@@ -408,6 +417,15 @@ public class PApplicationException
             optionals.clear(1);
             mId = null;
             return this;
+        }
+
+        /**
+         * The application exception type.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.PApplicationExceptionType getId() {
+            return isSetId() ? mId : kDefaultId;
         }
 
         @Override

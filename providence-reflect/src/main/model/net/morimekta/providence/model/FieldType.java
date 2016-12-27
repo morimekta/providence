@@ -611,6 +611,15 @@ public class FieldType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of key.
          *
          * @param value The new value
@@ -640,6 +649,15 @@ public class FieldType
             optionals.clear(1);
             mKey = kDefaultKey;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained key.
+         *
+         * @return The field value
+         */
+        public int getKey() {
+            return mKey;
         }
 
         /**
@@ -675,6 +693,15 @@ public class FieldType
         }
 
         /**
+         * Gets the value of the contained requirement.
+         *
+         * @return The field value
+         */
+        public net.morimekta.providence.model.FieldRequirement getRequirement() {
+            return isSetRequirement() ? mRequirement : kDefaultRequirement;
+        }
+
+        /**
          * Sets the value of type.
          *
          * @param value The new value
@@ -704,6 +731,15 @@ public class FieldType
             optionals.clear(3);
             mType = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained type.
+         *
+         * @return The field value
+         */
+        public String getType() {
+            return mType;
         }
 
         /**
@@ -739,6 +775,15 @@ public class FieldType
         }
 
         /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
          * Sets the value of default_value.
          *
          * @param value The new value
@@ -768,6 +813,15 @@ public class FieldType
             optionals.clear(5);
             mDefaultValue = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained default_value.
+         *
+         * @return The field value
+         */
+        public String getDefaultValue() {
+            return mDefaultValue;
         }
 
         /**

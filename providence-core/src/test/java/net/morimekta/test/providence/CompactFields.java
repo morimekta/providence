@@ -401,6 +401,15 @@ public class CompactFields
         }
 
         /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
+        }
+
+        /**
          * Sets the value of id.
          *
          * @param value The new value
@@ -433,6 +442,15 @@ public class CompactFields
         }
 
         /**
+         * Gets the value of the contained id.
+         *
+         * @return The field value
+         */
+        public int getId() {
+            return mId;
+        }
+
+        /**
          * Sets the value of label.
          *
          * @param value The new value
@@ -462,6 +480,15 @@ public class CompactFields
             optionals.clear(2);
             mLabel = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained label.
+         *
+         * @return The field value
+         */
+        public String getLabel() {
+            return mLabel;
         }
 
         @Override

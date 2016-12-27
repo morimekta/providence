@@ -406,6 +406,15 @@ public class TypedefType
         }
 
         /**
+         * Gets the value of the contained documentation.
+         *
+         * @return The field value
+         */
+        public String getDocumentation() {
+            return mDocumentation;
+        }
+
+        /**
          * Sets the value of type.
          *
          * @param value The new value
@@ -438,6 +447,15 @@ public class TypedefType
         }
 
         /**
+         * Gets the value of the contained type.
+         *
+         * @return The field value
+         */
+        public String getType() {
+            return mType;
+        }
+
+        /**
          * Sets the value of name.
          *
          * @param value The new value
@@ -467,6 +485,15 @@ public class TypedefType
             optionals.clear(2);
             mName = null;
             return this;
+        }
+
+        /**
+         * Gets the value of the contained name.
+         *
+         * @return The field value
+         */
+        public String getName() {
+            return mName;
         }
 
         @Override

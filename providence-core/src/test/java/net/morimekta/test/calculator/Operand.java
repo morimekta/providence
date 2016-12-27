@@ -475,6 +475,15 @@ public class Operand
         }
 
         /**
+         * Gets the value of the contained number.
+         *
+         * @return The field value
+         */
+        public double getNumber() {
+            return mNumber;
+        }
+
+        /**
          * Sets the value of imaginary.
          *
          * @param value The new value
