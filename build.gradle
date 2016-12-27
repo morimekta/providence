@@ -73,6 +73,16 @@ task generateThrift() {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
+
+/**
+ * NOTE: The tasks below are there to fool travis-ci. For some reason it will not
+ * use maven (at all) if there is a .gradle file present. It may be reasonable
+ * to migrate to gradle at some point, but that is too much of a task for now,
+ * therefore we just forward the requested commands back to maven.
+ */
 task clean() {
     doLast {
         project.exec {
@@ -98,8 +108,4 @@ task test(dependsOn: assemble) {
             args 'verify'
         }
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.12'
 }
