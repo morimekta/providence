@@ -534,13 +534,13 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
 
     private void appendStructs(IndentedPrintWriter writer, JService service) throws GeneratorException, IOException {
         for (JServiceMethod method : service.declaredMethods()) {
-            JMessage<?> request = new JMessage<>(method.getMethod().getRequestType(), helper);
+            JMessage request = new JMessage<>(method.getMethod().getRequestType(), helper);
             writer.formatln("// type --> %s", request.descriptor().getName());
 
             messageFormat.appendMessageClass(method.getMethod().getRequestType());
 
             if (method.getMethod().getResponseType() != null) {
-                JMessage<?> response = new JMessage<>(method.getMethod().getResponseType(), helper);
+                JMessage response = new JMessage<>(method.getMethod().getResponseType(), helper);
                 writer.formatln("// type <-- %s", response.descriptor().getName());
 
                 messageFormat.appendMessageClass(method.getMethod().getResponseType());
