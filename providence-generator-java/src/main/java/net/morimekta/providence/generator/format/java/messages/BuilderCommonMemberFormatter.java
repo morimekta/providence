@@ -31,13 +31,13 @@ import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
 import java.util.Collection;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+import static net.morimekta.util.Strings.camelCase;
 
 /**
  * @author Stein Eldar Johnsen
@@ -437,7 +437,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         switch (field.type()) {
             case MESSAGE: {
                 writer.formatln("public %s._Builder %s() {", field.instanceType(),
-                                Strings.camelCase("mutable", field.name()))
+                                camelCase("mutable", field.name()))
                       .begin();
 
                 if (message.isUnion()) {
@@ -467,7 +467,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             case LIST:
             case MAP:
                 writer.formatln("public %s %s() {", field.builderFieldType(),
-                                Strings.camelCase("mutable", field.name()))
+                                camelCase("mutable", field.name()))
                       .begin();
 
                 if (message.isUnion()) {
@@ -508,13 +508,17 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
 
+        // The getter here must always use 'get*' pattern to avoid conflict with
+        // - isSet*
+        // - isValid
+        // Even though the model getter uses 'is*' for booleans.
         writer.formatln("public %s %s() {",
-                        field.valueType(), field.getter())
+                        field.valueType(), camelCase("get", field.name()))
               .begin();
 
         if (helper.getDefaultValue(field.getPField()) != null && !field.alwaysPresent()){
             writer.formatln("return %s() ? %s : %s;",
-                            Strings.camelCase("isSet", field.name()),
+                            camelCase("isSet", field.name()),
                             field.member(),
                             field.kDefault());
         } else {
