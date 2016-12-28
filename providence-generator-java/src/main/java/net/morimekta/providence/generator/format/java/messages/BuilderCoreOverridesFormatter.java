@@ -377,12 +377,9 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                             message.descriptor().getQualifiedName())
                   .appendln("}");
         } else {
-            boolean hasRequired =
-                    message.declaredOrderFields()
-                           .stream()
-                           .filter(JField::isRequired)
-                           .findFirst()
-                           .isPresent();
+            boolean hasRequired = message.declaredOrderFields()
+                   .stream()
+                   .anyMatch(JField::isRequired);
             if (hasRequired) {
                 writer.appendln("if (!isValid()) {")
                       .begin()
