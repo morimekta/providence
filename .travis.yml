@@ -5,5 +5,5 @@ jdk:
 branches:
   only:
   - master
-script:
-- mvn verify
+before_install:
+- sudo apt-get -y install rpm
