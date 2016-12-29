@@ -33,4 +33,9 @@ public class JavaOptions {
      * Add jackson serializers and deserializers.
      */
     public boolean jackson = false;
+
+    /**
+     * Add precompiled serialization for the binary protocol.
+     */
+    public boolean rw_binary = true;
 }

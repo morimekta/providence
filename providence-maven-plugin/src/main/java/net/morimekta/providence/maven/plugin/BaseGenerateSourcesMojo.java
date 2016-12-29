@@ -94,6 +94,15 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean jackson;
 
     /**
+     * Generate model methods to read and write same as the binary protocol.
+     * Can be turned off to reduce the amount of generated code. Serialization
+     * will work regardless, but keeping this enabled speeds up the binary
+     * serialization significantly.
+     */
+    @Parameter(defaultValue = "true")
+    protected boolean rw_binary = true;
+
+    /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
      * type is implied here.
      */
@@ -222,6 +231,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             JavaOptions options = new JavaOptions();
             options.android = android;
             options.jackson = jackson;
+            options.rw_binary = rw_binary;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 

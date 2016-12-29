@@ -29,6 +29,8 @@ import net.morimekta.providence.generator.format.java.messages.CommonMemberForma
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.AndroidMessageFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.BinaryReaderBuilderFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.BinaryWriterFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.JacksonMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
@@ -72,8 +74,7 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
         ImmutableList.Builder<MessageMemberFormatter> formatters = ImmutableList.builder();
         formatters.add(new CommonMemberFormatter(writer, helper))
                   .add(new CoreOverridesFormatter(writer))
-                  .add(new CommonOverridesFormatter(writer))
-                  .add(new CommonBuilderFormatter(writer, helper, builderFormatters.build()));
+                  .add(new CommonOverridesFormatter(writer));
 
         if (options.android) {
             formatters.add(new AndroidMessageFormatter(writer));
@@ -81,7 +82,12 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
         if (options.jackson) {
             formatters.add(new JacksonMessageFormatter(writer, helper));
         }
+        if (options.rw_binary) {
+            formatters.add(new BinaryWriterFormatter(writer, helper));
+            builderFormatters.add(new BinaryReaderBuilderFormatter(writer, helper));
+        }
 
+        formatters.add(new CommonBuilderFormatter(writer, helper, builderFormatters.build()));
         return formatters.build();
     }
 
