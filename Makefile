@@ -27,4 +27,7 @@ test-models: test-compile
 	      providence-core/src/test/java/
 	rm -rf providence-core/target/generated-test-sources/providence/*
 
+thrift:
+	gradle -b thrift.gradle generateStaticThrift
+
 .PHONY: clean compile test-compile models test-models
