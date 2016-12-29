@@ -23,7 +23,7 @@ package net.morimekta.providence.generator.format.java.messages.extras;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.serializer.FastBinarySerializer;
+import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -69,7 +69,7 @@ public class AndroidMessageFormatter implements MessageMemberFormatter {
               .formatln("%s baos = new %s();",
                         ByteArrayOutputStream.class.getName(),
                         ByteArrayOutputStream.class.getName())
-              .formatln("%s serializer = new %s();", Serializer.class.getName(), FastBinarySerializer.class.getName())
+              .formatln("%s serializer = new %s();", Serializer.class.getName(), BinarySerializer.class.getName())
               .appendln("try {")
               .begin()
               .appendln("serializer.serialize(baos, this);")
@@ -95,7 +95,7 @@ public class AndroidMessageFormatter implements MessageMemberFormatter {
               .formatln("%s bais = new %s(source.createByteArray());", ByteArrayInputStream.class.getName(), ByteArrayInputStream.class.getName())
               .formatln("%s serializer = new %s();",
                         Serializer.class.getName(),
-                        FastBinarySerializer.class.getName())
+                        BinarySerializer.class.getName())
               .appendln("try {")
               .begin()
               .formatln("return serializer.deserialize(bais, %s.kDescriptor);",
