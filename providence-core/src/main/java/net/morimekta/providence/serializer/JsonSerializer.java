@@ -148,7 +148,7 @@ public class JsonSerializer extends Serializer {
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new SerializerException(e, "Unable to writeBinary to stream");
+            throw new SerializerException(e, "Unable to write to stream");
         }
     }
 
@@ -176,7 +176,7 @@ public class JsonSerializer extends Serializer {
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to serialize JSON");
         } catch (IOException e) {
-            throw new SerializerException(e, "Unable to writeBinary to stream");
+            throw new SerializerException(e, "Unable to write to stream");
         }
     }
 
