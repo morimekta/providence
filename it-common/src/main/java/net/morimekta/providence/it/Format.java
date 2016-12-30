@@ -8,7 +8,7 @@ import net.morimekta.util.Stringable;
 public enum Format implements Stringable, Comparable<Format> {
     // Common serialization formats.
     binary("bin", "Thrift Binary",
-            1.69, 1.00, 1.68, 1.00, 27441),
+            0.98, 1.00, 0.90, 1.00, 27441),
 
     // Unique providence formats.
     json_pretty("json", "Prettified JSON",
