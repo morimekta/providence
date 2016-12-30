@@ -508,12 +508,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
 
-        // The getter here must always use 'get*' pattern to avoid conflict with
-        // - isSet*
-        // - isValid
-        // Even though the model getter uses 'is*' for booleans.
         writer.formatln("public %s %s() {",
-                        field.valueType(), camelCase("get", field.name()))
+                        field.valueType(), field.getter())
               .begin();
 
         if (helper.getDefaultValue(field.getPField()) != null && !field.alwaysPresent()){

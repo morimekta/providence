@@ -1196,7 +1196,7 @@ public class OptionalFields
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

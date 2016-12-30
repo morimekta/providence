@@ -282,7 +282,7 @@ class TProtocolSerializer extends Serializer {
                     PEnumBuilder<?> eb = et.builder();
                     int value = protocol.readI32();
                     eb.setByValue(value);
-                    if (!eb.isValid() && readStrict) {
+                    if (!eb.valid() && readStrict) {
                         throw new SerializerException("Invalid enum value " + value + " for " +
                                                       et.getQualifiedName());
                     }

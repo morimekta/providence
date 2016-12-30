@@ -154,7 +154,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

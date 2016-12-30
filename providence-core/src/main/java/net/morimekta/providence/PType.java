@@ -21,7 +21,11 @@
 package net.morimekta.providence;
 
 /**
- * Value type constants.
+ * Value type constants. The ID matches the type ID used in the binary
+ * protocol, which is the thrift default.
+ *
+ * TODO: It might be preferable to decouple the type ID from the types
+ * themselves.
  */
 public enum PType {
     STOP(0, "stop"),
@@ -37,6 +41,7 @@ public enum PType {
     BINARY(11, "binary"),
     // encodes as i32
     ENUM(8, "enum"),
+    // Called 'struct' in apache thrift.
     MESSAGE(12, "message"),
     MAP(13, "map"),
     SET(14, "set"),

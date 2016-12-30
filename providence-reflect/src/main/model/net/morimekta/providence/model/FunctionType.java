@@ -989,13 +989,13 @@ public class FunctionType
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return optionals.get(3);
         }
 
         @Override
         public void validate() {
-            if (!isValid()) {
+            if (!valid()) {
                 java.util.LinkedList<String> missing = new java.util.LinkedList<>();
 
                 if (!optionals.get(3)) {

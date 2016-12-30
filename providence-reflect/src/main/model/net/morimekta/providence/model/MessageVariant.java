@@ -77,7 +77,7 @@ public enum MessageVariant
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

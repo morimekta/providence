@@ -138,7 +138,7 @@ public class CStruct extends CMessage<CStruct,CField> {
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             for (PField field : descriptor.getFields()) {
                 if (field.getRequirement() == PRequirement.REQUIRED) {
                     if (!values.containsKey(field.getKey())) {

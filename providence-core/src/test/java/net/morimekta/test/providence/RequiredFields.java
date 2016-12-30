@@ -1132,7 +1132,7 @@ public class RequiredFields
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return optionals.get(0) &&
                    optionals.get(1) &&
                    optionals.get(2) &&
@@ -1147,7 +1147,7 @@ public class RequiredFields
 
         @Override
         public void validate() {
-            if (!isValid()) {
+            if (!valid()) {
                 java.util.LinkedList<String> missing = new java.util.LinkedList<>();
 
                 if (!optionals.get(0)) {

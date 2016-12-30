@@ -210,7 +210,7 @@ public class CoreMemberFormatter implements EnumMemberFormatter {
               .newline();
 
         writer.appendln("@Override")
-              .appendln("public boolean isValid() {")
+              .appendln("public boolean valid() {")
               .begin()
               .appendln("return mValue != null;")
               .end()

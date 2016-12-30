@@ -312,7 +312,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
 
     private void appendOverrideIsValid(JMessage<?> message) {
         writer.appendln("@Override")
-              .appendln("public boolean isValid() {")
+              .appendln("public boolean valid() {")
               .begin();
         if (message.isUnion()) {
             writer.formatln("if (%s == null) {", UNION_FIELD)
@@ -371,7 +371,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("public void validate() {")
               .begin();
         if (message.isUnion()) {
-            writer.appendln("if (!isValid()) {")
+            writer.appendln("if (!valid()) {")
                   .formatln("    throw new %s(\"No union field set in %s\");",
                             IllegalStateException.class.getName(),
                             message.descriptor().getQualifiedName())
@@ -381,7 +381,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                    .stream()
                    .anyMatch(JField::isRequired);
             if (hasRequired) {
-                writer.appendln("if (!isValid()) {")
+                writer.appendln("if (!valid()) {")
                       .begin()
                       .formatln("%s<String> missing = new %s<>();",
                                 LinkedList.class.getName(),

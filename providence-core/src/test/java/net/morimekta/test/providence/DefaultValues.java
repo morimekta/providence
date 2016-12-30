@@ -1198,7 +1198,7 @@ public class DefaultValues
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

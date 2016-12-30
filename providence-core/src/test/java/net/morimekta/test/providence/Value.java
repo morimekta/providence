@@ -123,7 +123,7 @@ public enum Value
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

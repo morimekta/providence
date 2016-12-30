@@ -26,5 +26,10 @@ package net.morimekta.providence;
  */
 @FunctionalInterface
 public interface PBuilderFactory<T> {
+    /**
+     * Create the builder.
+     *
+     * @return The builder.
+     */
     PBuilder<T> builder();
 }

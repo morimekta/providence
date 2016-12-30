@@ -4520,7 +4520,7 @@ public class Containers
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

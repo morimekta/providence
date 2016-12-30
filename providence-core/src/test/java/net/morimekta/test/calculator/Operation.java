@@ -477,7 +477,7 @@ public class Operation
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

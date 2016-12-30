@@ -380,7 +380,7 @@ public class PrettySerializer extends Serializer {
                 Token t = tokenizer.expectIdentifier("enum value");
                 PEnumBuilder b = ((PEnumDescriptor) descriptor).builder();
                 b.setByName(t.asString());
-                if (!b.isValid()) {
+                if (!b.valid()) {
                     throw new TokenizerException(t, "No such " + descriptor.getQualifiedName() + " value " + t.asString())
                             .setLine(tokenizer.getLine(t.getLineNo()));
                 }

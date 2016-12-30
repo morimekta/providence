@@ -26,13 +26,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Interface for handling a call request from a synchronous client.
  */
 public abstract class PClient {
-    private AtomicInteger nextSequenceId;
-
+    /**
+     * Create a base client.
+     */
     protected PClient() {
         nextSequenceId = new AtomicInteger(0);
     }
 
+    /**
+     * Get the next available sequence ID.
+     *
+     * @return The sequence ID to use.
+     */
     protected int getNextSequenceId() {
         return nextSequenceId.getAndIncrement();
     }
+
+    private AtomicInteger nextSequenceId;
 }

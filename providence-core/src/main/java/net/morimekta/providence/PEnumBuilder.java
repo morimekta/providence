@@ -21,13 +21,30 @@
 package net.morimekta.providence;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * A builder-helper for getting a correct enum entity from value or name.
  */
 public abstract class PEnumBuilder<T> implements PBuilder<T> {
-    public abstract boolean isValid();
+    /**
+     * Check if the enum builder has been given a valid value.
+     *
+     * @return True if valid.
+     */
+    public abstract boolean valid();
 
+    /**
+     * Set the enum entity from integer value as it was defined in the thrift
+     * IDL.
+     *
+     * @param value The value to match.
+     * @return The builder.
+     */
     public abstract PEnumBuilder<T> setByValue(int value);
 
+    /**
+     * Set the enum entity from name as it was written in the thrift IDL.
+     *
+     * @param name The name to match.
+     * @return The builder.
+     */
     public abstract PEnumBuilder<T> setByName(String name);
 }

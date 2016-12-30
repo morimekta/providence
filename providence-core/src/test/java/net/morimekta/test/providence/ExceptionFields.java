@@ -1246,7 +1246,7 @@ public class ExceptionFields
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

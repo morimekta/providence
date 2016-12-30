@@ -21,10 +21,14 @@
 package net.morimekta.providence;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * Base class for all builders.
  */
 @FunctionalInterface
 public interface PBuilder<T> {
+    /**
+     * Build the instance value.
+     *
+     * @return The instance value.
+     */
     T build();
 }

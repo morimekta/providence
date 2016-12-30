@@ -578,7 +578,7 @@ public class Calculator {
             }
 
             @Override
-            public boolean isValid() {
+            public boolean valid() {
                 return true;
             }
 
@@ -1101,7 +1101,7 @@ public class Calculator {
             }
 
             @Override
-            public boolean isValid() {
+            public boolean valid() {
                 if (tUnionField == null) {
                     return false;
                 }
@@ -1115,7 +1115,7 @@ public class Calculator {
 
             @Override
             public void validate() {
-                if (!isValid()) {
+                if (!valid()) {
                     throw new java.lang.IllegalStateException("No union field set in calculator.calculate___response");
                 }
             }
@@ -1401,7 +1401,7 @@ public class Calculator {
             }
 
             @Override
-            public boolean isValid() {
+            public boolean valid() {
                 return true;
             }
 

@@ -477,7 +477,7 @@ public class PApplicationException
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

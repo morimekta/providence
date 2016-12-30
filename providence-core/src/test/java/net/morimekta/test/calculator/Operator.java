@@ -75,7 +75,7 @@ public enum Operator
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

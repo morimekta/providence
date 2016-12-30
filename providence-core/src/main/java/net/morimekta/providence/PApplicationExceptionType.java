@@ -23,7 +23,7 @@ public enum PApplicationExceptionType
      */
     WRONG_METHOD_NAME(3, "WRONG_METHOD_NAME"),
     /**
-     * The response cambe back with a non-matching sequence ID.
+     * The response came back with a non-matching sequence ID.
      */
     BAD_SEQUENCE_ID(4, "BAD_SEQUENCE_ID"),
     /**
@@ -137,7 +137,7 @@ public enum PApplicationExceptionType
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

@@ -165,13 +165,13 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return unionField != null;
         }
 
         @Override
         public void validate() {
-            if (!isValid()) {
+            if (!valid()) {
                 throw new IllegalStateException("No union field set in " +
                                                 descriptor().getQualifiedName());
             }

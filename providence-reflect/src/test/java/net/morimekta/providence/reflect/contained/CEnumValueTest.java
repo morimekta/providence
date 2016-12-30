@@ -94,18 +94,18 @@ public class CEnumValueTest {
 
     @Test
     public void testBuilder() {
-        assertFalse(new CEnumValue.Builder(type).isValid());
+        assertFalse(new CEnumValue.Builder(type).valid());
         assertTrue(new CEnumValue.Builder(type).setByValue(3)
-                                               .isValid());
+                                               .valid());
         assertFalse(new CEnumValue.Builder(type).setByValue(7)
-                                                .isValid());
+                                                .valid());
 
         CEnumValue.Builder threeBuilder = new CEnumValue.Builder(type).setByName("THREE");
-        assertTrue(threeBuilder.isValid());
+        assertTrue(threeBuilder.valid());
         assertEquals(value3, threeBuilder.build());
 
         CEnumValue.Builder fourBuilder = new CEnumValue.Builder(type).setByName("FOUR");
-        assertFalse(fourBuilder.isValid());
+        assertFalse(fourBuilder.valid());
         assertNull(fourBuilder.build());
     }
 }

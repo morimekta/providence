@@ -172,7 +172,7 @@ public static class _Builder {
 ```
 
 When the `Builder` has been updated, you can call `build()` which builds and
-returns the message regardless. Calling `isValid()` will return true if and
+returns the message regardless. Calling `valid()` will return true if and
 only if the requirement of every field has been met (required fields must have
 been set, others are not checked). Note that this makes it possible to build
 invalid messages.

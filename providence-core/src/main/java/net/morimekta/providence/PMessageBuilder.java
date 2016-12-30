@@ -38,7 +38,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @return True for a valid message.
      */
-    public abstract boolean isValid();
+    public abstract boolean valid();
 
     /**
      * Checks if the current set data is enough to make a valid struct. It

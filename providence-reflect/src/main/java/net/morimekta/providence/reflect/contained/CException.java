@@ -247,7 +247,7 @@ public class CException extends Exception implements PMessage<CException, CField
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return values.size() == 1;
         }
 

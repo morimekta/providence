@@ -548,7 +548,7 @@ public class TypedefType
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return true;
         }
 

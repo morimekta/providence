@@ -94,7 +94,7 @@ public enum PServiceCallType
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

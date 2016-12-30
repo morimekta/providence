@@ -24,8 +24,7 @@ import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * Base interface for enum values.
  */
 public interface PEnumValue<T> extends PValue<T>, Stringable, Numeric {
     /**

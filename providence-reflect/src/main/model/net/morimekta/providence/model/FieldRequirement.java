@@ -72,7 +72,7 @@ public enum FieldRequirement
         }
 
         @Override
-        public boolean isValid() {
+        public boolean valid() {
             return mValue != null;
         }
 

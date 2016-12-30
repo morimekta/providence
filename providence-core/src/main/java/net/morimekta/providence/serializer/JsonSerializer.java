@@ -466,7 +466,7 @@ public class JsonSerializer extends Serializer {
                     } else {
                         throw new SerializerException(token.toString() + " is not a enum value type");
                     }
-                    if (readStrict && !eb.isValid()) {
+                    if (readStrict && !eb.valid()) {
                         throw new SerializerException(token.toString() + " is not a enum value");
                     }
                     return eb.build();
@@ -591,7 +591,7 @@ public class JsonSerializer extends Serializer {
                     } else {
                         eb.setByName(key);
                     }
-                    if (readStrict && !eb.isValid()) {
+                    if (readStrict && !eb.valid()) {
                         throw new SerializerException("%s is not a valid enum value for %s",
                                                       key, keyType.getQualifiedName());
                     }
