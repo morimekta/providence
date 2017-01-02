@@ -168,5 +168,9 @@ struct Containers {
     54: optional UnionFields unionFields;
     55: optional ExceptionFields exceptionFields;
     56: optional DefaultValues defaultValues;
+
+    // testing code generation for special list contained types.
+    61: optional list<list<i32>> list_list_i32;
+    62: optional map<i8,list<i32>> map_i8_list_i32;
 }
 

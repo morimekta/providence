@@ -64,7 +64,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
         return ImmutableList.of(BinaryReader.class.getName());
     }
 
-    public void appendReadFieldValue(String member, PDescriptor descriptor) {
+    public void appendReadFieldValue(String member, JField field, PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case VOID:
                 break;
@@ -105,6 +105,20 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 break;
             case MAP: {
                 PMap<?, ?> pMap = (PMap<?, ?>) descriptor;
+                if (field != null &&
+                    (pMap.keyDescriptor() instanceof PContainer ||
+                     pMap.itemDescriptor() instanceof PContainer)) {
+                    // If the container contains a container this code will
+                    // break. Using the reader library in that case.
+                    writer.formatln("%s.putAll((%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict));",
+                                    member,
+                                    field.fieldType(),
+                                    BinaryFormatUtils.class.getName(),
+                                    BinaryFormatUtils.FieldInfo.class.getName().replaceAll("\\$", "."),
+                                    field.fieldEnum(),
+                                    helper.getFieldType(descriptor));
+                    break;
+                }
                 String len = "len_" + nextId.getAndIncrement();
                 String keyType = "t_" + nextId.getAndIncrement();
                 String valueType = "t_" + nextId.getAndIncrement();
@@ -132,8 +146,8 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                                                  helper.getFieldType(pMap.itemDescriptor()),
                                                  value);
 
-                appendReadFieldValue(keyMember, pMap.keyDescriptor());
-                appendReadFieldValue(valueMember, pMap.itemDescriptor());
+                appendReadFieldValue(keyMember, null, pMap.keyDescriptor());
+                appendReadFieldValue(valueMember, null, pMap.itemDescriptor());
 
                 writer.formatln("%s.put(%s, %s);", member, key, value);
 
@@ -151,6 +165,20 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             case LIST:
             case SET: {
                 PContainer<?> pMap = (PContainer<?>) descriptor;
+                if (field != null &&
+                    pMap.itemDescriptor() instanceof PContainer) {
+                    // If the container contains a container this code will
+                    // break. Using the reader library in that case.
+                    writer.formatln("%s.addAll((%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict));",
+                                    member,
+                                    field.fieldType(),
+                                    BinaryFormatUtils.class.getName(),
+                                    BinaryFormatUtils.FieldInfo.class.getName().replaceAll("\\$", "."),
+                                    field.fieldEnum(),
+                                    helper.getFieldType(descriptor));
+                    break;
+                }
+
                 String len = "len_" + nextId.getAndIncrement();
                 String itemType = "t_" + nextId.getAndIncrement();
                 writer.formatln("byte %s = reader.expectByte();", itemType)
@@ -171,7 +199,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                                                  helper.getFieldType(pMap.itemDescriptor()),
                                                  item);
 
-                appendReadFieldValue(itemMember, pMap.itemDescriptor());
+                appendReadFieldValue(itemMember, null, pMap.itemDescriptor());
 
                 writer.formatln("%s.add(%s);", member, item);
 
@@ -224,6 +252,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                   .begin();
 
             appendReadFieldValue(field.member(),
+                                 field,
                                  field.getPField()
                                       .getDescriptor());
 
