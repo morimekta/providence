@@ -4,7 +4,8 @@ package net.morimekta.test.calculator;
 public class Operand
         implements net.morimekta.providence.PUnion<Operand,Operand._Field>,
                    Comparable<Operand>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -7034870678901672325L;
 
     private final static double kDefaultNumber = 0.0d;
@@ -197,6 +198,37 @@ public class Operand
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (tUnionField != null) {
+            switch (tUnionField) {
+                case OPERATION: {
+                    length += writer.writeByte((byte) 12);
+                    length += writer.writeShort((short) 1);
+                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOperation);
+                    break;
+                }
+                case NUMBER: {
+                    length += writer.writeByte((byte) 4);
+                    length += writer.writeShort((short) 2);
+                    length += writer.writeDouble(mNumber);
+                    break;
+                }
+                case IMAGINARY: {
+                    length += writer.writeByte((byte) 12);
+                    length += writer.writeShort((short) 3);
+                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mImaginary);
+                    break;
+                }
+                default: break;
+            }
+        }
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -326,7 +358,8 @@ public class Operand
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Operand,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<Operand,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
         private net.morimekta.test.calculator.Operation mOperation;
@@ -613,6 +646,52 @@ public class Operand
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 12) {
+                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.Operation.kDescriptor, strict);
+                            tUnionField = _Field.OPERATION;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.operation, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 4) {
+                            mNumber = reader.expectDouble();
+                            tUnionField = _Field.NUMBER;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.number, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 12) {
+                            mImaginary = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.number.Imaginary.kDescriptor, strict);
+                            tUnionField = _Field.IMAGINARY;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.imaginary, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in calculator.Operand");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

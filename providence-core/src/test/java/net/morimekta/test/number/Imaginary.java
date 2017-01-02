@@ -4,7 +4,8 @@ package net.morimekta.test.number;
 public class Imaginary
         implements net.morimekta.providence.PMessage<Imaginary,Imaginary._Field>,
                    Comparable<Imaginary>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 7869796731524194936L;
 
     private final static double kDefaultV = 0.0d;
@@ -137,6 +138,22 @@ public class Imaginary
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        length += writer.writeByte((byte) 4);
+        length += writer.writeShort((short) 1);
+        length += writer.writeDouble(mV);
+
+        length += writer.writeByte((byte) 4);
+        length += writer.writeShort((short) 2);
+        length += writer.writeDouble(mI);
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -263,7 +280,8 @@ public class Imaginary
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Imaginary,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<Imaginary,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private double mV;
@@ -456,6 +474,43 @@ public class Imaginary
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 4) {
+                            mV = reader.expectDouble();
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for number.Imaginary.v, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 4) {
+                            mI = reader.expectDouble();
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for number.Imaginary.i, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in number.Imaginary");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

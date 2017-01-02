@@ -7,7 +7,8 @@ package net.morimekta.providence.model;
 public class EnumValue
         implements net.morimekta.providence.PMessage<EnumValue,EnumValue._Field>,
                    Comparable<EnumValue>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -4079600082644582517L;
 
     private final static int kDefaultValue = 0;
@@ -227,6 +228,50 @@ public class EnumValue
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (hasDocumentation()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 1);
+            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mDocumentation.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_1.length());
+            length += writer.writeBinary(tmp_1);
+        }
+
+        if (hasName()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 2);
+            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_2.length());
+            length += writer.writeBinary(tmp_2);
+        }
+
+        length += writer.writeByte((byte) 8);
+        length += writer.writeShort((short) 3);
+        length += writer.writeInt(mValue);
+
+        if (hasAnnotations()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 4);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mAnnotations.size());
+            for (java.util.Map.Entry<String,String> entry_3 : mAnnotations.entrySet()) {
+                net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(entry_3.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_4.length());
+                length += writer.writeBinary(tmp_4);
+                net.morimekta.util.Binary tmp_5 = net.morimekta.util.Binary.wrap(entry_3.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_5.length());
+                length += writer.writeBinary(tmp_5);
+            }
+        }
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -362,7 +407,8 @@ public class EnumValue
      * &lt;name&gt; (= &lt;value&gt;)
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<EnumValue,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<EnumValue,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private String mDocumentation;
@@ -682,6 +728,76 @@ public class EnumValue
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<EnumValue,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 11) {
+                            int len_1 = reader.expectUInt32();
+                            mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.EnumValue.documentation, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.EnumValue.name, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 8) {
+                            mValue = reader.expectInt();
+                            optionals.set(2);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.EnumValue.value, should be 12");
+                        }
+                        break;
+                    }
+                    case 4: {
+                        if (type == 13) {
+                            byte t_4 = reader.expectByte();
+                            byte t_5 = reader.expectByte();
+                            if (t_4 == 11 && t_5 == 11) {
+                                final int len_3 = reader.expectUInt32();
+                                for (int i_6 = 0; i_6 < len_3; ++i_6) {
+                                    int len_9 = reader.expectUInt32();
+                                    String key_7 = new String(reader.expectBytes(len_9), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_10 = reader.expectUInt32();
+                                    String val_8 = new String(reader.expectBytes(len_10), java.nio.charset.StandardCharsets.UTF_8);
+                                    mAnnotations.put(key_7, val_8);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_4 + " or value type " + t_5 + " for model.EnumValue.annotations, should be 11 and 11");
+                            }
+                            optionals.set(3);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.EnumValue.annotations, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in model.EnumValue");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

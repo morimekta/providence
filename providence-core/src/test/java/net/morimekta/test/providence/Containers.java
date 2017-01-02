@@ -4,7 +4,8 @@ package net.morimekta.test.providence;
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 3106880629763954881L;
 
     private final java.util.List<Boolean> mBooleanList;
@@ -1636,6 +1637,384 @@ public class Containers
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (hasBooleanList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 1);
+            length += writer.writeByte((byte) 2);
+            length += writer.writeUInt32(mBooleanList.size());
+            for (Boolean entry_1 : mBooleanList) {
+                length += writer.writeUInt8(entry_1 ? (byte) 1 : (byte) 0);
+            }
+        }
+
+        if (hasByteList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 2);
+            length += writer.writeByte((byte) 3);
+            length += writer.writeUInt32(mByteList.size());
+            for (Byte entry_2 : mByteList) {
+                length += writer.writeByte(entry_2);
+            }
+        }
+
+        if (hasShortList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 3);
+            length += writer.writeByte((byte) 6);
+            length += writer.writeUInt32(mShortList.size());
+            for (Short entry_3 : mShortList) {
+                length += writer.writeShort(entry_3);
+            }
+        }
+
+        if (hasIntegerList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 4);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mIntegerList.size());
+            for (Integer entry_4 : mIntegerList) {
+                length += writer.writeInt(entry_4);
+            }
+        }
+
+        if (hasLongList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 5);
+            length += writer.writeByte((byte) 10);
+            length += writer.writeUInt32(mLongList.size());
+            for (Long entry_5 : mLongList) {
+                length += writer.writeLong(entry_5);
+            }
+        }
+
+        if (hasDoubleList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 6);
+            length += writer.writeByte((byte) 4);
+            length += writer.writeUInt32(mDoubleList.size());
+            for (Double entry_6 : mDoubleList) {
+                length += writer.writeDouble(entry_6);
+            }
+        }
+
+        if (hasStringList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 7);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mStringList.size());
+            for (String entry_7 : mStringList) {
+                net.morimekta.util.Binary tmp_8 = net.morimekta.util.Binary.wrap(entry_7.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_8.length());
+                length += writer.writeBinary(tmp_8);
+            }
+        }
+
+        if (hasBinaryList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 8);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mBinaryList.size());
+            for (net.morimekta.util.Binary entry_9 : mBinaryList) {
+                length += writer.writeUInt32(entry_9.length());
+                length += writer.writeBinary(entry_9);
+            }
+        }
+
+        if (hasBooleanSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 11);
+            length += writer.writeByte((byte) 2);
+            length += writer.writeUInt32(mBooleanSet.size());
+            for (Boolean entry_10 : mBooleanSet) {
+                length += writer.writeUInt8(entry_10 ? (byte) 1 : (byte) 0);
+            }
+        }
+
+        if (hasByteSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 12);
+            length += writer.writeByte((byte) 3);
+            length += writer.writeUInt32(mByteSet.size());
+            for (Byte entry_11 : mByteSet) {
+                length += writer.writeByte(entry_11);
+            }
+        }
+
+        if (hasShortSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 13);
+            length += writer.writeByte((byte) 6);
+            length += writer.writeUInt32(mShortSet.size());
+            for (Short entry_12 : mShortSet) {
+                length += writer.writeShort(entry_12);
+            }
+        }
+
+        if (hasIntegerSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 14);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mIntegerSet.size());
+            for (Integer entry_13 : mIntegerSet) {
+                length += writer.writeInt(entry_13);
+            }
+        }
+
+        if (hasLongSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 15);
+            length += writer.writeByte((byte) 10);
+            length += writer.writeUInt32(mLongSet.size());
+            for (Long entry_14 : mLongSet) {
+                length += writer.writeLong(entry_14);
+            }
+        }
+
+        if (hasDoubleSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 16);
+            length += writer.writeByte((byte) 4);
+            length += writer.writeUInt32(mDoubleSet.size());
+            for (Double entry_15 : mDoubleSet) {
+                length += writer.writeDouble(entry_15);
+            }
+        }
+
+        if (hasStringSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 17);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mStringSet.size());
+            for (String entry_16 : mStringSet) {
+                net.morimekta.util.Binary tmp_17 = net.morimekta.util.Binary.wrap(entry_16.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_17.length());
+                length += writer.writeBinary(tmp_17);
+            }
+        }
+
+        if (hasBinarySet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 18);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mBinarySet.size());
+            for (net.morimekta.util.Binary entry_18 : mBinarySet) {
+                length += writer.writeUInt32(entry_18.length());
+                length += writer.writeBinary(entry_18);
+            }
+        }
+
+        if (hasBooleanMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 21);
+            length += writer.writeByte((byte) 2);
+            length += writer.writeByte((byte) 2);
+            length += writer.writeUInt32(mBooleanMap.size());
+            for (java.util.Map.Entry<Boolean,Boolean> entry_19 : mBooleanMap.entrySet()) {
+                length += writer.writeUInt8(entry_19.getKey() ? (byte) 1 : (byte) 0);
+                length += writer.writeUInt8(entry_19.getValue() ? (byte) 1 : (byte) 0);
+            }
+        }
+
+        if (hasByteMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 22);
+            length += writer.writeByte((byte) 3);
+            length += writer.writeByte((byte) 3);
+            length += writer.writeUInt32(mByteMap.size());
+            for (java.util.Map.Entry<Byte,Byte> entry_20 : mByteMap.entrySet()) {
+                length += writer.writeByte(entry_20.getKey());
+                length += writer.writeByte(entry_20.getValue());
+            }
+        }
+
+        if (hasShortMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 23);
+            length += writer.writeByte((byte) 6);
+            length += writer.writeByte((byte) 6);
+            length += writer.writeUInt32(mShortMap.size());
+            for (java.util.Map.Entry<Short,Short> entry_21 : mShortMap.entrySet()) {
+                length += writer.writeShort(entry_21.getKey());
+                length += writer.writeShort(entry_21.getValue());
+            }
+        }
+
+        if (hasIntegerMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 24);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mIntegerMap.size());
+            for (java.util.Map.Entry<Integer,Integer> entry_22 : mIntegerMap.entrySet()) {
+                length += writer.writeInt(entry_22.getKey());
+                length += writer.writeInt(entry_22.getValue());
+            }
+        }
+
+        if (hasLongMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 25);
+            length += writer.writeByte((byte) 10);
+            length += writer.writeByte((byte) 10);
+            length += writer.writeUInt32(mLongMap.size());
+            for (java.util.Map.Entry<Long,Long> entry_23 : mLongMap.entrySet()) {
+                length += writer.writeLong(entry_23.getKey());
+                length += writer.writeLong(entry_23.getValue());
+            }
+        }
+
+        if (hasDoubleMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 26);
+            length += writer.writeByte((byte) 4);
+            length += writer.writeByte((byte) 4);
+            length += writer.writeUInt32(mDoubleMap.size());
+            for (java.util.Map.Entry<Double,Double> entry_24 : mDoubleMap.entrySet()) {
+                length += writer.writeDouble(entry_24.getKey());
+                length += writer.writeDouble(entry_24.getValue());
+            }
+        }
+
+        if (hasStringMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 27);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mStringMap.size());
+            for (java.util.Map.Entry<String,String> entry_25 : mStringMap.entrySet()) {
+                net.morimekta.util.Binary tmp_26 = net.morimekta.util.Binary.wrap(entry_25.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_26.length());
+                length += writer.writeBinary(tmp_26);
+                net.morimekta.util.Binary tmp_27 = net.morimekta.util.Binary.wrap(entry_25.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_27.length());
+                length += writer.writeBinary(tmp_27);
+            }
+        }
+
+        if (hasBinaryMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 28);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mBinaryMap.size());
+            for (java.util.Map.Entry<net.morimekta.util.Binary,net.morimekta.util.Binary> entry_28 : mBinaryMap.entrySet()) {
+                length += writer.writeUInt32(entry_28.getKey().length());
+                length += writer.writeBinary(entry_28.getKey());
+                length += writer.writeUInt32(entry_28.getValue().length());
+                length += writer.writeBinary(entry_28.getValue());
+            }
+        }
+
+        if (hasEnumList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 31);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mEnumList.size());
+            for (net.morimekta.test.providence.Value entry_29 : mEnumList) {
+                length += writer.writeInt(entry_29.getValue());
+            }
+        }
+
+        if (hasEnumSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 32);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mEnumSet.size());
+            for (net.morimekta.test.providence.Value entry_30 : mEnumSet) {
+                length += writer.writeInt(entry_30.getValue());
+            }
+        }
+
+        if (hasEnumMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 33);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeByte((byte) 8);
+            length += writer.writeUInt32(mEnumMap.size());
+            for (java.util.Map.Entry<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> entry_31 : mEnumMap.entrySet()) {
+                length += writer.writeInt(entry_31.getKey().getValue());
+                length += writer.writeInt(entry_31.getValue().getValue());
+            }
+        }
+
+        if (hasMessageList()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 41);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mMessageList.size());
+            for (net.morimekta.test.providence.DefaultFields entry_32 : mMessageList) {
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_32);
+            }
+        }
+
+        if (hasMessageSet()) {
+            length += writer.writeByte((byte) 14);
+            length += writer.writeShort((short) 42);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mMessageSet.size());
+            for (net.morimekta.test.providence.DefaultFields entry_33 : mMessageSet) {
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_33);
+            }
+        }
+
+        if (hasMessageMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 43);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mMessageMap.size());
+            for (java.util.Map.Entry<String,net.morimekta.test.providence.DefaultFields> entry_34 : mMessageMap.entrySet()) {
+                net.morimekta.util.Binary tmp_35 = net.morimekta.util.Binary.wrap(entry_34.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_35.length());
+                length += writer.writeBinary(tmp_35);
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_34.getValue());
+            }
+        }
+
+        if (hasRequiredFields()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 51);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mRequiredFields);
+        }
+
+        if (hasDefaultFields()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 52);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDefaultFields);
+        }
+
+        if (hasOptionalFields()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 53);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOptionalFields);
+        }
+
+        if (hasUnionFields()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 54);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mUnionFields);
+        }
+
+        if (hasExceptionFields()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 55);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mExceptionFields);
+        }
+
+        if (hasDefaultValues()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 56);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mDefaultValues);
+        }
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -1864,7 +2243,8 @@ public class Containers
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<Containers,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<Containers,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private net.morimekta.providence.descriptor.PList.Builder<Boolean> mBooleanList;
@@ -4531,6 +4911,648 @@ public class Containers
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Containers,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 15) {
+                            byte t_2 = reader.expectByte();
+                            if (t_2 == 2) {
+                                final int len_1 = reader.expectUInt32();
+                                for (int i_3 = 0; i_3 < len_1; ++i_3) {
+                                    Boolean key_4 = reader.expectUInt8() == 1;
+                                    mBooleanList.add(key_4);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_2 + " for providence.Containers.booleanList, should be 2");
+                            }
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.booleanList, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 15) {
+                            byte t_6 = reader.expectByte();
+                            if (t_6 == 3) {
+                                final int len_5 = reader.expectUInt32();
+                                for (int i_7 = 0; i_7 < len_5; ++i_7) {
+                                    Byte key_8 = reader.expectByte();
+                                    mByteList.add(key_8);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_6 + " for providence.Containers.byteList, should be 3");
+                            }
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.byteList, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 15) {
+                            byte t_10 = reader.expectByte();
+                            if (t_10 == 6) {
+                                final int len_9 = reader.expectUInt32();
+                                for (int i_11 = 0; i_11 < len_9; ++i_11) {
+                                    Short key_12 = reader.expectShort();
+                                    mShortList.add(key_12);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_10 + " for providence.Containers.shortList, should be 6");
+                            }
+                            optionals.set(2);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.shortList, should be 12");
+                        }
+                        break;
+                    }
+                    case 4: {
+                        if (type == 15) {
+                            byte t_14 = reader.expectByte();
+                            if (t_14 == 8) {
+                                final int len_13 = reader.expectUInt32();
+                                for (int i_15 = 0; i_15 < len_13; ++i_15) {
+                                    Integer key_16 = reader.expectInt();
+                                    mIntegerList.add(key_16);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_14 + " for providence.Containers.integerList, should be 8");
+                            }
+                            optionals.set(3);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.integerList, should be 12");
+                        }
+                        break;
+                    }
+                    case 5: {
+                        if (type == 15) {
+                            byte t_18 = reader.expectByte();
+                            if (t_18 == 10) {
+                                final int len_17 = reader.expectUInt32();
+                                for (int i_19 = 0; i_19 < len_17; ++i_19) {
+                                    Long key_20 = reader.expectLong();
+                                    mLongList.add(key_20);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_18 + " for providence.Containers.longList, should be 10");
+                            }
+                            optionals.set(4);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.longList, should be 12");
+                        }
+                        break;
+                    }
+                    case 6: {
+                        if (type == 15) {
+                            byte t_22 = reader.expectByte();
+                            if (t_22 == 4) {
+                                final int len_21 = reader.expectUInt32();
+                                for (int i_23 = 0; i_23 < len_21; ++i_23) {
+                                    Double key_24 = reader.expectDouble();
+                                    mDoubleList.add(key_24);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_22 + " for providence.Containers.doubleList, should be 4");
+                            }
+                            optionals.set(5);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.doubleList, should be 12");
+                        }
+                        break;
+                    }
+                    case 7: {
+                        if (type == 15) {
+                            byte t_26 = reader.expectByte();
+                            if (t_26 == 11) {
+                                final int len_25 = reader.expectUInt32();
+                                for (int i_27 = 0; i_27 < len_25; ++i_27) {
+                                    int len_29 = reader.expectUInt32();
+                                    String key_28 = new String(reader.expectBytes(len_29), java.nio.charset.StandardCharsets.UTF_8);
+                                    mStringList.add(key_28);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_26 + " for providence.Containers.stringList, should be 11");
+                            }
+                            optionals.set(6);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.stringList, should be 12");
+                        }
+                        break;
+                    }
+                    case 8: {
+                        if (type == 15) {
+                            byte t_31 = reader.expectByte();
+                            if (t_31 == 11) {
+                                final int len_30 = reader.expectUInt32();
+                                for (int i_32 = 0; i_32 < len_30; ++i_32) {
+                                    int len_34 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_33 = reader.expectBinary(len_34);
+                                    mBinaryList.add(key_33);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_31 + " for providence.Containers.binaryList, should be 11");
+                            }
+                            optionals.set(7);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.binaryList, should be 12");
+                        }
+                        break;
+                    }
+                    case 11: {
+                        if (type == 14) {
+                            byte t_36 = reader.expectByte();
+                            if (t_36 == 2) {
+                                final int len_35 = reader.expectUInt32();
+                                for (int i_37 = 0; i_37 < len_35; ++i_37) {
+                                    Boolean key_38 = reader.expectUInt8() == 1;
+                                    mBooleanSet.add(key_38);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_36 + " for providence.Containers.booleanSet, should be 2");
+                            }
+                            optionals.set(8);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.booleanSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 12: {
+                        if (type == 14) {
+                            byte t_40 = reader.expectByte();
+                            if (t_40 == 3) {
+                                final int len_39 = reader.expectUInt32();
+                                for (int i_41 = 0; i_41 < len_39; ++i_41) {
+                                    Byte key_42 = reader.expectByte();
+                                    mByteSet.add(key_42);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_40 + " for providence.Containers.byteSet, should be 3");
+                            }
+                            optionals.set(9);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.byteSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 13: {
+                        if (type == 14) {
+                            byte t_44 = reader.expectByte();
+                            if (t_44 == 6) {
+                                final int len_43 = reader.expectUInt32();
+                                for (int i_45 = 0; i_45 < len_43; ++i_45) {
+                                    Short key_46 = reader.expectShort();
+                                    mShortSet.add(key_46);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_44 + " for providence.Containers.shortSet, should be 6");
+                            }
+                            optionals.set(10);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.shortSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 14: {
+                        if (type == 14) {
+                            byte t_48 = reader.expectByte();
+                            if (t_48 == 8) {
+                                final int len_47 = reader.expectUInt32();
+                                for (int i_49 = 0; i_49 < len_47; ++i_49) {
+                                    Integer key_50 = reader.expectInt();
+                                    mIntegerSet.add(key_50);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_48 + " for providence.Containers.integerSet, should be 8");
+                            }
+                            optionals.set(11);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.integerSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 15: {
+                        if (type == 14) {
+                            byte t_52 = reader.expectByte();
+                            if (t_52 == 10) {
+                                final int len_51 = reader.expectUInt32();
+                                for (int i_53 = 0; i_53 < len_51; ++i_53) {
+                                    Long key_54 = reader.expectLong();
+                                    mLongSet.add(key_54);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_52 + " for providence.Containers.longSet, should be 10");
+                            }
+                            optionals.set(12);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.longSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 16: {
+                        if (type == 14) {
+                            byte t_56 = reader.expectByte();
+                            if (t_56 == 4) {
+                                final int len_55 = reader.expectUInt32();
+                                for (int i_57 = 0; i_57 < len_55; ++i_57) {
+                                    Double key_58 = reader.expectDouble();
+                                    mDoubleSet.add(key_58);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_56 + " for providence.Containers.doubleSet, should be 4");
+                            }
+                            optionals.set(13);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.doubleSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 17: {
+                        if (type == 14) {
+                            byte t_60 = reader.expectByte();
+                            if (t_60 == 11) {
+                                final int len_59 = reader.expectUInt32();
+                                for (int i_61 = 0; i_61 < len_59; ++i_61) {
+                                    int len_63 = reader.expectUInt32();
+                                    String key_62 = new String(reader.expectBytes(len_63), java.nio.charset.StandardCharsets.UTF_8);
+                                    mStringSet.add(key_62);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_60 + " for providence.Containers.stringSet, should be 11");
+                            }
+                            optionals.set(14);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.stringSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 18: {
+                        if (type == 14) {
+                            byte t_65 = reader.expectByte();
+                            if (t_65 == 11) {
+                                final int len_64 = reader.expectUInt32();
+                                for (int i_66 = 0; i_66 < len_64; ++i_66) {
+                                    int len_68 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_67 = reader.expectBinary(len_68);
+                                    mBinarySet.add(key_67);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_65 + " for providence.Containers.binarySet, should be 11");
+                            }
+                            optionals.set(15);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.binarySet, should be 12");
+                        }
+                        break;
+                    }
+                    case 21: {
+                        if (type == 13) {
+                            byte t_70 = reader.expectByte();
+                            byte t_71 = reader.expectByte();
+                            if (t_70 == 2 && t_71 == 2) {
+                                final int len_69 = reader.expectUInt32();
+                                for (int i_72 = 0; i_72 < len_69; ++i_72) {
+                                    Boolean key_73 = reader.expectUInt8() == 1;
+                                    Boolean val_74 = reader.expectUInt8() == 1;
+                                    mBooleanMap.put(key_73, val_74);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_70 + " or value type " + t_71 + " for providence.Containers.booleanMap, should be 2 and 2");
+                            }
+                            optionals.set(16);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.booleanMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 22: {
+                        if (type == 13) {
+                            byte t_76 = reader.expectByte();
+                            byte t_77 = reader.expectByte();
+                            if (t_76 == 3 && t_77 == 3) {
+                                final int len_75 = reader.expectUInt32();
+                                for (int i_78 = 0; i_78 < len_75; ++i_78) {
+                                    Byte key_79 = reader.expectByte();
+                                    Byte val_80 = reader.expectByte();
+                                    mByteMap.put(key_79, val_80);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_76 + " or value type " + t_77 + " for providence.Containers.byteMap, should be 3 and 3");
+                            }
+                            optionals.set(17);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.byteMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 23: {
+                        if (type == 13) {
+                            byte t_82 = reader.expectByte();
+                            byte t_83 = reader.expectByte();
+                            if (t_82 == 6 && t_83 == 6) {
+                                final int len_81 = reader.expectUInt32();
+                                for (int i_84 = 0; i_84 < len_81; ++i_84) {
+                                    Short key_85 = reader.expectShort();
+                                    Short val_86 = reader.expectShort();
+                                    mShortMap.put(key_85, val_86);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_82 + " or value type " + t_83 + " for providence.Containers.shortMap, should be 6 and 6");
+                            }
+                            optionals.set(18);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.shortMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 24: {
+                        if (type == 13) {
+                            byte t_88 = reader.expectByte();
+                            byte t_89 = reader.expectByte();
+                            if (t_88 == 8 && t_89 == 8) {
+                                final int len_87 = reader.expectUInt32();
+                                for (int i_90 = 0; i_90 < len_87; ++i_90) {
+                                    Integer key_91 = reader.expectInt();
+                                    Integer val_92 = reader.expectInt();
+                                    mIntegerMap.put(key_91, val_92);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_88 + " or value type " + t_89 + " for providence.Containers.integerMap, should be 8 and 8");
+                            }
+                            optionals.set(19);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.integerMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 25: {
+                        if (type == 13) {
+                            byte t_94 = reader.expectByte();
+                            byte t_95 = reader.expectByte();
+                            if (t_94 == 10 && t_95 == 10) {
+                                final int len_93 = reader.expectUInt32();
+                                for (int i_96 = 0; i_96 < len_93; ++i_96) {
+                                    Long key_97 = reader.expectLong();
+                                    Long val_98 = reader.expectLong();
+                                    mLongMap.put(key_97, val_98);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_94 + " or value type " + t_95 + " for providence.Containers.longMap, should be 10 and 10");
+                            }
+                            optionals.set(20);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.longMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 26: {
+                        if (type == 13) {
+                            byte t_100 = reader.expectByte();
+                            byte t_101 = reader.expectByte();
+                            if (t_100 == 4 && t_101 == 4) {
+                                final int len_99 = reader.expectUInt32();
+                                for (int i_102 = 0; i_102 < len_99; ++i_102) {
+                                    Double key_103 = reader.expectDouble();
+                                    Double val_104 = reader.expectDouble();
+                                    mDoubleMap.put(key_103, val_104);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_100 + " or value type " + t_101 + " for providence.Containers.doubleMap, should be 4 and 4");
+                            }
+                            optionals.set(21);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.doubleMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 27: {
+                        if (type == 13) {
+                            byte t_106 = reader.expectByte();
+                            byte t_107 = reader.expectByte();
+                            if (t_106 == 11 && t_107 == 11) {
+                                final int len_105 = reader.expectUInt32();
+                                for (int i_108 = 0; i_108 < len_105; ++i_108) {
+                                    int len_111 = reader.expectUInt32();
+                                    String key_109 = new String(reader.expectBytes(len_111), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_112 = reader.expectUInt32();
+                                    String val_110 = new String(reader.expectBytes(len_112), java.nio.charset.StandardCharsets.UTF_8);
+                                    mStringMap.put(key_109, val_110);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_106 + " or value type " + t_107 + " for providence.Containers.stringMap, should be 11 and 11");
+                            }
+                            optionals.set(22);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.stringMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 28: {
+                        if (type == 13) {
+                            byte t_114 = reader.expectByte();
+                            byte t_115 = reader.expectByte();
+                            if (t_114 == 11 && t_115 == 11) {
+                                final int len_113 = reader.expectUInt32();
+                                for (int i_116 = 0; i_116 < len_113; ++i_116) {
+                                    int len_119 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_117 = reader.expectBinary(len_119);
+                                    int len_120 = reader.expectUInt32();
+                                    net.morimekta.util.Binary val_118 = reader.expectBinary(len_120);
+                                    mBinaryMap.put(key_117, val_118);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_114 + " or value type " + t_115 + " for providence.Containers.binaryMap, should be 11 and 11");
+                            }
+                            optionals.set(23);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.binaryMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 31: {
+                        if (type == 15) {
+                            byte t_122 = reader.expectByte();
+                            if (t_122 == 8) {
+                                final int len_121 = reader.expectUInt32();
+                                for (int i_123 = 0; i_123 < len_121; ++i_123) {
+                                    net.morimekta.test.providence.Value key_124 = net.morimekta.test.providence.Value.forValue(reader.expectInt());
+                                    mEnumList.add(key_124);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_122 + " for providence.Containers.enumList, should be 8");
+                            }
+                            optionals.set(24);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.enumList, should be 12");
+                        }
+                        break;
+                    }
+                    case 32: {
+                        if (type == 14) {
+                            byte t_126 = reader.expectByte();
+                            if (t_126 == 8) {
+                                final int len_125 = reader.expectUInt32();
+                                for (int i_127 = 0; i_127 < len_125; ++i_127) {
+                                    net.morimekta.test.providence.Value key_128 = net.morimekta.test.providence.Value.forValue(reader.expectInt());
+                                    mEnumSet.add(key_128);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_126 + " for providence.Containers.enumSet, should be 8");
+                            }
+                            optionals.set(25);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.enumSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 33: {
+                        if (type == 13) {
+                            byte t_130 = reader.expectByte();
+                            byte t_131 = reader.expectByte();
+                            if (t_130 == 8 && t_131 == 8) {
+                                final int len_129 = reader.expectUInt32();
+                                for (int i_132 = 0; i_132 < len_129; ++i_132) {
+                                    net.morimekta.test.providence.Value key_133 = net.morimekta.test.providence.Value.forValue(reader.expectInt());
+                                    net.morimekta.test.providence.Value val_134 = net.morimekta.test.providence.Value.forValue(reader.expectInt());
+                                    mEnumMap.put(key_133, val_134);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_130 + " or value type " + t_131 + " for providence.Containers.enumMap, should be 8 and 8");
+                            }
+                            optionals.set(26);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.enumMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 41: {
+                        if (type == 15) {
+                            byte t_136 = reader.expectByte();
+                            if (t_136 == 12) {
+                                final int len_135 = reader.expectUInt32();
+                                for (int i_137 = 0; i_137 < len_135; ++i_137) {
+                                    net.morimekta.test.providence.DefaultFields key_138 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.DefaultFields.kDescriptor, strict);
+                                    mMessageList.add(key_138);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_136 + " for providence.Containers.messageList, should be 12");
+                            }
+                            optionals.set(27);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.messageList, should be 12");
+                        }
+                        break;
+                    }
+                    case 42: {
+                        if (type == 14) {
+                            byte t_140 = reader.expectByte();
+                            if (t_140 == 12) {
+                                final int len_139 = reader.expectUInt32();
+                                for (int i_141 = 0; i_141 < len_139; ++i_141) {
+                                    net.morimekta.test.providence.DefaultFields key_142 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.DefaultFields.kDescriptor, strict);
+                                    mMessageSet.add(key_142);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_140 + " for providence.Containers.messageSet, should be 12");
+                            }
+                            optionals.set(28);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.messageSet, should be 12");
+                        }
+                        break;
+                    }
+                    case 43: {
+                        if (type == 13) {
+                            byte t_144 = reader.expectByte();
+                            byte t_145 = reader.expectByte();
+                            if (t_144 == 11 && t_145 == 12) {
+                                final int len_143 = reader.expectUInt32();
+                                for (int i_146 = 0; i_146 < len_143; ++i_146) {
+                                    int len_149 = reader.expectUInt32();
+                                    String key_147 = new String(reader.expectBytes(len_149), java.nio.charset.StandardCharsets.UTF_8);
+                                    net.morimekta.test.providence.DefaultFields val_148 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.DefaultFields.kDescriptor, strict);
+                                    mMessageMap.put(key_147, val_148);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_144 + " or value type " + t_145 + " for providence.Containers.messageMap, should be 11 and 12");
+                            }
+                            optionals.set(29);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.messageMap, should be 12");
+                        }
+                        break;
+                    }
+                    case 51: {
+                        if (type == 12) {
+                            mRequiredFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.RequiredFields.kDescriptor, strict);
+                            optionals.set(30);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.requiredFields, should be 12");
+                        }
+                        break;
+                    }
+                    case 52: {
+                        if (type == 12) {
+                            mDefaultFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.DefaultFields.kDescriptor, strict);
+                            optionals.set(31);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.defaultFields, should be 12");
+                        }
+                        break;
+                    }
+                    case 53: {
+                        if (type == 12) {
+                            mOptionalFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.OptionalFields.kDescriptor, strict);
+                            optionals.set(32);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.optionalFields, should be 12");
+                        }
+                        break;
+                    }
+                    case 54: {
+                        if (type == 12) {
+                            mUnionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.UnionFields.kDescriptor, strict);
+                            optionals.set(33);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.unionFields, should be 12");
+                        }
+                        break;
+                    }
+                    case 55: {
+                        if (type == 12) {
+                            mExceptionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.ExceptionFields.kDescriptor, strict);
+                            optionals.set(34);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.exceptionFields, should be 12");
+                        }
+                        break;
+                    }
+                    case 56: {
+                        if (type == 12) {
+                            mDefaultValues = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.DefaultValues.kDescriptor, strict);
+                            optionals.set(35);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.Containers.defaultValues, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.Containers");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

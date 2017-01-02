@@ -4,7 +4,8 @@ package net.morimekta.test.providence;
 public class UnionFields
         implements net.morimekta.providence.PUnion<UnionFields,UnionFields._Field>,
                    Comparable<UnionFields>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -4125227148631020921L;
 
     private final static boolean kDefaultBooleanValue = false;
@@ -431,6 +432,82 @@ public class UnionFields
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (tUnionField != null) {
+            switch (tUnionField) {
+                case BOOLEAN_VALUE: {
+                    length += writer.writeByte((byte) 2);
+                    length += writer.writeShort((short) 1);
+                    length += writer.writeUInt8(mBooleanValue ? (byte) 1 : (byte) 0);
+                    break;
+                }
+                case BYTE_VALUE: {
+                    length += writer.writeByte((byte) 3);
+                    length += writer.writeShort((short) 2);
+                    length += writer.writeByte(mByteValue);
+                    break;
+                }
+                case SHORT_VALUE: {
+                    length += writer.writeByte((byte) 6);
+                    length += writer.writeShort((short) 3);
+                    length += writer.writeShort(mShortValue);
+                    break;
+                }
+                case INTEGER_VALUE: {
+                    length += writer.writeByte((byte) 8);
+                    length += writer.writeShort((short) 4);
+                    length += writer.writeInt(mIntegerValue);
+                    break;
+                }
+                case LONG_VALUE: {
+                    length += writer.writeByte((byte) 10);
+                    length += writer.writeShort((short) 5);
+                    length += writer.writeLong(mLongValue);
+                    break;
+                }
+                case DOUBLE_VALUE: {
+                    length += writer.writeByte((byte) 4);
+                    length += writer.writeShort((short) 6);
+                    length += writer.writeDouble(mDoubleValue);
+                    break;
+                }
+                case STRING_VALUE: {
+                    length += writer.writeByte((byte) 11);
+                    length += writer.writeShort((short) 7);
+                    net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mStringValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    length += writer.writeUInt32(tmp_1.length());
+                    length += writer.writeBinary(tmp_1);
+                    break;
+                }
+                case BINARY_VALUE: {
+                    length += writer.writeByte((byte) 11);
+                    length += writer.writeShort((short) 8);
+                    length += writer.writeUInt32(mBinaryValue.length());
+                    length += writer.writeBinary(mBinaryValue);
+                    break;
+                }
+                case ENUM_VALUE: {
+                    length += writer.writeByte((byte) 8);
+                    length += writer.writeShort((short) 9);
+                    length += writer.writeInt(mEnumValue.getValue());
+                    break;
+                }
+                case COMPACT_VALUE: {
+                    length += writer.writeByte((byte) 12);
+                    length += writer.writeShort((short) 10);
+                    length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mCompactValue);
+                    break;
+                }
+                default: break;
+            }
+        }
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -581,7 +658,8 @@ public class UnionFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<UnionFields,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<UnionFields,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
         private boolean mBooleanValue;
@@ -1206,6 +1284,117 @@ public class UnionFields
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 2) {
+                            mBooleanValue = reader.expectUInt8() == 1;
+                            tUnionField = _Field.BOOLEAN_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.booleanValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 3) {
+                            mByteValue = reader.expectByte();
+                            tUnionField = _Field.BYTE_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.byteValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 6) {
+                            mShortValue = reader.expectShort();
+                            tUnionField = _Field.SHORT_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.shortValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 4: {
+                        if (type == 8) {
+                            mIntegerValue = reader.expectInt();
+                            tUnionField = _Field.INTEGER_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.integerValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 5: {
+                        if (type == 10) {
+                            mLongValue = reader.expectLong();
+                            tUnionField = _Field.LONG_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.longValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 6: {
+                        if (type == 4) {
+                            mDoubleValue = reader.expectDouble();
+                            tUnionField = _Field.DOUBLE_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.doubleValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 7: {
+                        if (type == 11) {
+                            int len_1 = reader.expectUInt32();
+                            mStringValue = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
+                            tUnionField = _Field.STRING_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.stringValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 8: {
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mBinaryValue = reader.expectBinary(len_2);
+                            tUnionField = _Field.BINARY_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.binaryValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 9: {
+                        if (type == 8) {
+                            mEnumValue = net.morimekta.test.providence.Value.forValue(reader.expectInt());
+                            tUnionField = _Field.ENUM_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.enumValue, should be 12");
+                        }
+                        break;
+                    }
+                    case 10: {
+                        if (type == 12) {
+                            mCompactValue = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.CompactFields.kDescriptor, strict);
+                            tUnionField = _Field.COMPACT_VALUE;
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.UnionFields.compactValue, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.UnionFields");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

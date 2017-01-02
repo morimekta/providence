@@ -4,7 +4,8 @@ package net.morimekta.test.providence;
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
                    Comparable<CompactFields>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -8473304196623780023L;
 
     private final static int kDefaultId = 0;
@@ -187,6 +188,34 @@ public class CompactFields
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (hasName()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 1);
+            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_1.length());
+            length += writer.writeBinary(tmp_1);
+        }
+
+        length += writer.writeByte((byte) 8);
+        length += writer.writeShort((short) 2);
+        length += writer.writeInt(mId);
+
+        if (hasLabel()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 3);
+            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mLabel.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_2.length());
+            length += writer.writeBinary(tmp_2);
+        }
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -316,7 +345,8 @@ public class CompactFields
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<CompactFields,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<CompactFields,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private String mName;
@@ -571,6 +601,54 @@ public class CompactFields
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 11) {
+                            int len_1 = reader.expectUInt32();
+                            mName = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.CompactFields.name, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 8) {
+                            mId = reader.expectInt();
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.CompactFields.id, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mLabel = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(2);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.CompactFields.label, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.CompactFields");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

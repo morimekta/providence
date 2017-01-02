@@ -5,7 +5,8 @@ public class CalculateException
         extends Exception
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,
                    net.morimekta.providence.PException,
-                   Comparable<CalculateException> {
+                   Comparable<CalculateException>,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -3144631929815376595L;
 
     private final String mMessage;
@@ -161,6 +162,28 @@ public class CalculateException
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (hasMessage()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 1);
+            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mMessage.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_1.length());
+            length += writer.writeBinary(tmp_1);
+        }
+
+        if (hasOperation()) {
+            length += writer.writeByte((byte) 12);
+            length += writer.writeShort((short) 2);
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, mOperation);
+        }
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -287,7 +310,8 @@ public class CalculateException
     }
 
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private String mMessage;
@@ -505,6 +529,44 @@ public class CalculateException
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 11) {
+                            int len_1 = reader.expectUInt32();
+                            mMessage = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.CalculateException.message, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 12) {
+                            mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.Operation.kDescriptor, strict);
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.CalculateException.operation, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in calculator.CalculateException");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override

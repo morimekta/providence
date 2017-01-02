@@ -7,7 +7,8 @@ package net.morimekta.providence.model;
 public class FunctionType
         implements net.morimekta.providence.PMessage<FunctionType,FunctionType._Field>,
                    Comparable<FunctionType>,
-                   java.io.Serializable {
+                   java.io.Serializable,
+                   net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 6135149631417317609L;
 
     private final static boolean kDefaultOneWay = false;
@@ -348,6 +349,78 @@ public class FunctionType
     }
 
     @Override
+    public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+        int length = 0;
+
+        if (hasDocumentation()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 1);
+            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mDocumentation.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_1.length());
+            length += writer.writeBinary(tmp_1);
+        }
+
+        length += writer.writeByte((byte) 2);
+        length += writer.writeShort((short) 2);
+        length += writer.writeUInt8(mOneWay ? (byte) 1 : (byte) 0);
+
+        if (hasReturnType()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 3);
+            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mReturnType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_2.length());
+            length += writer.writeBinary(tmp_2);
+        }
+
+        if (hasName()) {
+            length += writer.writeByte((byte) 11);
+            length += writer.writeShort((short) 4);
+            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            length += writer.writeUInt32(tmp_3.length());
+            length += writer.writeBinary(tmp_3);
+        }
+
+        if (hasParams()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 5);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mParams.size());
+            for (net.morimekta.providence.model.FieldType entry_4 : mParams) {
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_4);
+            }
+        }
+
+        if (hasExceptions()) {
+            length += writer.writeByte((byte) 15);
+            length += writer.writeShort((short) 6);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeUInt32(mExceptions.size());
+            for (net.morimekta.providence.model.FieldType entry_5 : mExceptions) {
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_5);
+            }
+        }
+
+        if (hasAnnotations()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 7);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mAnnotations.size());
+            for (java.util.Map.Entry<String,String> entry_6 : mAnnotations.entrySet()) {
+                net.morimekta.util.Binary tmp_7 = net.morimekta.util.Binary.wrap(entry_6.getKey().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_7.length());
+                length += writer.writeBinary(tmp_7);
+                net.morimekta.util.Binary tmp_8 = net.morimekta.util.Binary.wrap(entry_6.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_8.length());
+                length += writer.writeBinary(tmp_8);
+            }
+        }
+
+        length += writer.writeByte((byte) 0);
+        return length;
+    }
+
+    @Override
     public _Builder mutate() {
         return new _Builder(this);
     }
@@ -492,7 +565,8 @@ public class FunctionType
      * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
      */
     public static class _Builder
-            extends net.morimekta.providence.PMessageBuilder<FunctionType,_Field> {
+            extends net.morimekta.providence.PMessageBuilder<FunctionType,_Field>
+            implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
 
         private String mDocumentation;
@@ -1012,6 +1086,122 @@ public class FunctionType
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
             return kDescriptor;
+        }
+
+        @Override
+        public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+            byte type = reader.expectByte();
+            while (type != 0) {
+                int field = reader.expectShort();
+                switch (field) {
+                    case 1: {
+                        if (type == 11) {
+                            int len_1 = reader.expectUInt32();
+                            mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(0);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.documentation, should be 12");
+                        }
+                        break;
+                    }
+                    case 2: {
+                        if (type == 2) {
+                            mOneWay = reader.expectUInt8() == 1;
+                            optionals.set(1);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.one_way, should be 12");
+                        }
+                        break;
+                    }
+                    case 3: {
+                        if (type == 11) {
+                            int len_2 = reader.expectUInt32();
+                            mReturnType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(2);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.return_type, should be 12");
+                        }
+                        break;
+                    }
+                    case 4: {
+                        if (type == 11) {
+                            int len_3 = reader.expectUInt32();
+                            mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
+                            optionals.set(3);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.name, should be 12");
+                        }
+                        break;
+                    }
+                    case 5: {
+                        if (type == 15) {
+                            byte t_5 = reader.expectByte();
+                            if (t_5 == 12) {
+                                final int len_4 = reader.expectUInt32();
+                                for (int i_6 = 0; i_6 < len_4; ++i_6) {
+                                    net.morimekta.providence.model.FieldType key_7 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
+                                    mParams.add(key_7);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_5 + " for model.FunctionType.params, should be 12");
+                            }
+                            optionals.set(4);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.params, should be 12");
+                        }
+                        break;
+                    }
+                    case 6: {
+                        if (type == 15) {
+                            byte t_9 = reader.expectByte();
+                            if (t_9 == 12) {
+                                final int len_8 = reader.expectUInt32();
+                                for (int i_10 = 0; i_10 < len_8; ++i_10) {
+                                    net.morimekta.providence.model.FieldType key_11 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.providence.model.FieldType.kDescriptor, strict);
+                                    mExceptions.add(key_11);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_9 + " for model.FunctionType.exceptions, should be 12");
+                            }
+                            optionals.set(5);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.exceptions, should be 12");
+                        }
+                        break;
+                    }
+                    case 7: {
+                        if (type == 13) {
+                            byte t_13 = reader.expectByte();
+                            byte t_14 = reader.expectByte();
+                            if (t_13 == 11 && t_14 == 11) {
+                                final int len_12 = reader.expectUInt32();
+                                for (int i_15 = 0; i_15 < len_12; ++i_15) {
+                                    int len_18 = reader.expectUInt32();
+                                    String key_16 = new String(reader.expectBytes(len_18), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_19 = reader.expectUInt32();
+                                    String val_17 = new String(reader.expectBytes(len_19), java.nio.charset.StandardCharsets.UTF_8);
+                                    mAnnotations.put(key_16, val_17);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_13 + " or value type " + t_14 + " for model.FunctionType.annotations, should be 11 and 11");
+                            }
+                            optionals.set(6);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.FunctionType.annotations, should be 12");
+                        }
+                        break;
+                    }
+                    default: {
+                        if (strict) {
+                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in model.FunctionType");
+                        } else {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                        }
+                        break;
+                    }
+                }
+                type = reader.expectByte();
+            }
         }
 
         @Override
