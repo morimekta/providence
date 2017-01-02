@@ -178,7 +178,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
             for (JField field : message.numericalOrderFields()) {
                 writer.formatln("case %s: {", field.fieldEnum())
                       .begin()
-                      .formatln("length += writer.writeUInt8((byte) %d);", field.type().id)
+                      .formatln("length += writer.writeByte((byte) %d);", field.type().id)
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
@@ -201,7 +201,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                           .begin();
                 }
 
-                writer.formatln("length += writer.writeUInt8((byte) %d);", field.type().id)
+                writer.formatln("length += writer.writeByte((byte) %d);", field.type().id)
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
@@ -217,7 +217,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
             }
         }
 
-        writer.formatln("length += writer.writeUInt8((byte) %d);", PType.STOP.id);
+        writer.formatln("length += writer.writeByte((byte) %d);", PType.STOP.id);
 
         writer.appendln("return length;")
               .end()
