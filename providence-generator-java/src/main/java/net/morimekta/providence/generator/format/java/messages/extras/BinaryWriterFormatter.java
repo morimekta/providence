@@ -105,7 +105,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                 break;
             }
             case ENUM:
-                writer.formatln("writer.writeInt(%s.getValue());", member);
+                writer.formatln("length += writer.writeInt(%s.getValue());", member);
                 break;
             case MAP: {
                 PMap<?, ?> pMap = (PMap<?, ?>) descriptor;
