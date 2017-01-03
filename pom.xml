@@ -70,6 +70,7 @@
     <properties>
         <gpg.executable>gpg2</gpg.executable>
 
+        <disable.distribution.packaging>false</disable.distribution.packaging>
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.javadoc.encoding>UTF-8</project.javadoc.encoding>
