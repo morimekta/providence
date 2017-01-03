@@ -38,11 +38,11 @@ public class HazelcastTest {
 
     OptionalFields optionalFields;
     OptionalListFields optionalListFields;
-    private Random rand = new Random();
-    private Fairy fairy = Fairy.create();
+    private static Random rand = new Random();
+    private static Fairy fairy = Fairy.create();
 
     private static final boolean REPEAT_TEST      = false;
-    private static final boolean IGNORE_HAZELCAST = false;
+    private static final boolean IGNORE_HAZELCAST = true;
     private static final int     NO_OF_REPEATS    = (REPEAT_TEST ? 1000 : 1);
 
     private static final int MAX_LIST_LENGTH = Byte.MAX_VALUE;
@@ -68,7 +68,7 @@ public class HazelcastTest {
 
     static HazelcastInstance instance1;
     static HazelcastInstance instance2;
-    static Config config;
+    static Config config1;
 
     @Before
     public void setup() {
@@ -98,10 +98,11 @@ public class HazelcastTest {
 
     @BeforeClass
     public static void setupClass() {
-        config = new Config();
-        Hazelcast_Factory.populateConfig(config);
-        instance1 = Hazelcast.newHazelcastInstance(config);
-        instance2 = Hazelcast.newHazelcastInstance(config);
+        config1 = new Config();
+        Hazelcast_Factory.populateConfig(config1);
+        config1.getSerializationConfig().setPortableVersion(1);
+        instance1 = Hazelcast.newHazelcastInstance(config1);
+        instance2 = Hazelcast.newHazelcastInstance(config1);
     }
 
     @AfterClass
@@ -115,14 +116,14 @@ public class HazelcastTest {
         return Arrays.asList(new Object[NO_OF_REPEATS][0]);
     }
 
-    public CompactFields genCompactFields() {
+    public static CompactFields genCompactFields() {
         return new CompactFields(
                 fairy.textProducer().loremIpsum(),
                 rand.nextInt(),
                 rand.nextBoolean() ? fairy.textProducer().loremIpsum() : null);
     }
 
-    public List<Boolean> genBooleanList(int no) {
+    public static List<Boolean> genBooleanList(int no) {
         List<Boolean> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(rand.nextBoolean());
@@ -130,13 +131,13 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<Byte> genByteList(int no) {
+    public static List<Byte> genByteList(int no) {
         byte[] items = new byte[no];
         rand.nextBytes(items);
         return Bytes.asList(items);
     }
 
-    public List<Short> genShortList(int no) {
+    public static List<Short> genShortList(int no) {
         List<Short> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(((Integer)rand.nextInt(Short.MAX_VALUE)).shortValue());
@@ -144,7 +145,7 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<Integer> genIntList(int no) {
+    public static List<Integer> genIntList(int no) {
         List<Integer> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(rand.nextInt());
@@ -152,7 +153,7 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<Long> genLongList(int no) {
+    public static List<Long> genLongList(int no) {
         List<Long> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(rand.nextLong());
@@ -160,7 +161,7 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<Double> genDoubleList(int no) {
+    public static List<Double> genDoubleList(int no) {
         List<Double> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(rand.nextDouble());
@@ -168,7 +169,7 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<String> genStringList(int no) {
+    public static List<String> genStringList(int no) {
         List<String> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(fairy.textProducer().loremIpsum());
@@ -176,7 +177,7 @@ public class HazelcastTest {
         return result;
     }
 
-    public List<CompactFields> genCompactList(int no) {
+    public static List<CompactFields> genCompactList(int no) {
         List<CompactFields> result = new ArrayList<>();
         for( int i = 0; i < no; i++ ) {
             result.add(genCompactFields());
@@ -237,5 +238,7 @@ public class HazelcastTest {
 
         assertEquals(expected.build(), actual.build());
     }
+
+
 
 }

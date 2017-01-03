@@ -2,14 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>IT : Commons</name>
+    <name>IT : Hazelcast</name>
     <description>
-        Generated classes used internally mainly in testing.
-
-        net.morimekta.test.thrift.* Thrift generated files matching the same
-        files in net.morimekta.test.providence.*
-
-        The other files are providence generated files used in testing.
+        Providence Integration Testing : Hazelcast
     </description>
 
     <parent>
@@ -17,7 +12,7 @@
         <artifactId>providence</artifactId>
         <version>0.3.6-SNAPSHOT</version>
     </parent>
-    <artifactId>it-common</artifactId>
+    <artifactId>it-hazelcast</artifactId>
 
     <licenses>
         <license>
@@ -34,24 +29,44 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-testing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>providence-thrift</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>it-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.utils</groupId>
-            <artifactId>console-util</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
+            <artifactId>it-common</artifactId>
+            <version>0.3.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -59,42 +74,27 @@
             <version>3.6.4</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <groupId>org.jfairy</groupId>
+            <artifactId>jfairy</artifactId>
+            <version>0.3.0</version>
         </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/providence</directory>
-            </resource>
-            <resource>
-                <directory>src/main/thrift</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/java-gen</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>net.morimekta.providence</groupId>
@@ -109,36 +109,22 @@
                 -->
                 <executions>
                     <execution>
-                        <id>generate-providence</id>
-                        <phase>generate-sources</phase>
+                        <id>generate-test-providence</id>
+                        <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>testCompile</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>assemble-providence</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>assemble</goal>
-                        </goals>
+                        <configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>net.morimekta.providence</groupId>
+                                    <artifactId>it-common</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                            </dependencies>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <hazelcast_portable>true</hazelcast_portable>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>net.morimekta.test</excludePackageNames>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>

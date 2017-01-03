@@ -213,32 +213,12 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
               .newline();
     }
 
-    /**
-     * Method to generate getters for definitions.
-     *
-     * @param messages List of CStructDescriptor.
-     */
     private void appendGetDefinitions(List<CStructDescriptor> messages) {
         for( CStructDescriptor message : messages ) {
             appendGetDefinition(new JMessage(message, helper));
         }
     }
 
-    /**
-     * Method to append start and end of the getXXXDefinition method.
-     *
-     * @param message JMessage to create get definition for.
-     * <pre>
-     * {@code
-     *  public com.hazelcast.nio.serialization.ClassDefinition getCompactFieldsDefinition() {
-     *      return new com.hazelcast.nio.serialization.ClassDefinitionBuilder(FACTORY_ID, COMPACT_FIELDS_ID)
-     *      ...
-     *      .addByteArrayField("__hzOptionalsForClassCompactFields")
-     *      .build();
-     *  }
-     * }
-     * </pre>
-     */
     private void appendGetDefinition(JMessage<?> message) {
         writer.formatln("public %s %s() {",
                         ClassDefinition.class.getName(),
@@ -250,26 +230,16 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                         getHazelcastClassId(message.instanceType()))
               .begin().begin();
         for( JField field : message.declaredOrderFields() ) {
+            writer.formatln(".addBooleanField(\"%s\")",
+                            field.hasName());
             appendTypeField(field);
         }
-        writer.formatln(".addByteArrayField(\"%s\")",
-                        helper.getHazelcastOptionalName(message))
-              .appendln(".build();")
+        writer.appendln(".build();")
               .end().end().end()
               .appendln("}")
               .newline();
     }
 
-    /**
-     * Append a specific type field to the definition.
-     *
-     * @param field JField to append.
-     * <pre>
-     * {@code
-     *  .addByteField("byteValue")
-     * }
-     * </pre>
-     */
     private void appendTypeField(JField field) {
         switch (field.type()) {
             case BINARY:
