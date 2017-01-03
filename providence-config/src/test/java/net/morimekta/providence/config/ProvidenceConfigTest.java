@@ -224,11 +224,11 @@ public class ProvidenceConfigTest {
                                                        new HashMap<>(),
                                                        ImmutableList.of(temp.getRoot()));
 
-        assertEquals(f1_1.getAbsolutePath(), config.resolveFile(null, "test/test.cfg").getAbsolutePath());
-        assertEquals(f1_2.getAbsolutePath(), config.resolveFile(f1_1, "test/same.cfg").getAbsolutePath());
-        assertEquals(f1_2.getAbsolutePath(), config.resolveFile(f1_1, "same.cfg").getAbsolutePath());
-        assertEquals(f2_1.getAbsolutePath(), config.resolveFile(f1_1, "other/other.cfg").getAbsolutePath());
-        assertEquals(f2_2.getAbsolutePath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
+        assertEquals(f1_1.getCanonicalPath(), config.resolveFile(null, "test/test.cfg").getAbsolutePath());
+        assertEquals(f1_2.getCanonicalPath(), config.resolveFile(f1_1, "test/same.cfg").getAbsolutePath());
+        assertEquals(f1_2.getCanonicalPath(), config.resolveFile(f1_1, "same.cfg").getAbsolutePath());
+        assertEquals(f2_1.getCanonicalPath(), config.resolveFile(f1_1, "other/other.cfg").getAbsolutePath());
+        assertEquals(f2_2.getCanonicalPath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
 
         assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
         assertFileNotResolved(f1_1, "fourth.cfg", "Included file fourth.cfg not found");

@@ -48,6 +48,7 @@
                             <goal>jdeb</goal>
                         </goals>
                         <configuration>
+                            <skip>${disable.distribution.packaging}</skip>
                             <deb>[[buildDir]]/providence-[[version]]_all.[[extension]]</deb>
                             <verbose>true</verbose>
                             <snapshotExpand>true</snapshotExpand>
@@ -139,6 +140,7 @@
                         </goals>
                         <configuration>
                             <!-- identification -->
+                            <disabled>${disable.distribution.packaging}</disabled>
                             <name>providence</name>
                             <version>${project.version}</version>
                             <license>Apache 2.0</license>
