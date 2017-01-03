@@ -164,7 +164,7 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException, SerializerException {
+    public <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException {
         try {
             return loadConfigRecursively(resolveFile(null, file.toString()));
         } catch (FileNotFoundException e) {
