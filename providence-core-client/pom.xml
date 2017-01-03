@@ -11,7 +11,7 @@
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
-        <version>0.3.5-SNAPSHOT</version>
+        <version>0.3.5</version>
     </parent>
     <artifactId>providence-core-client</artifactId>
 
