@@ -10,7 +10,6 @@ import net.morimekta.test.providence.service.TestService;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponseException;
-import org.apache.http.conn.HttpHostConnectException;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -24,13 +23,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.ConnectException;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.testing.util.TestNetUtil.factory;
 import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -45,12 +46,13 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class HttpClientHandlerTest {
-    private static int                                                     port;
+    private static int                                                    port;
     private static net.morimekta.test.providence.thrift.TestService.Iface impl;
-    private static Server                                                  server;
-    private static SerializerProvider                                      provider;
+    private static Server                                                 server;
+    private static SerializerProvider                                     provider;
 
     private static final String ENDPOINT = "test";
+    private static final String NOT_FOUND = "not_found";
 
     private static GenericUrl endpoint() {
         return new GenericUrl("http://localhost:" + port + "/" + ENDPOINT);
@@ -68,6 +70,13 @@ public class HttpClientHandlerTest {
         ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TServlet(processor, new TBinaryProtocol.Factory())),
                            "/" + ENDPOINT);
+        handler.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+                    throws ServletException, IOException {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }), "/" + NOT_FOUND);
 
         server.setHandler(handler);
         server.start();
@@ -118,27 +127,9 @@ public class HttpClientHandlerTest {
     }
 
     @Test
-    public void testSimpleRequest_connectionRefused() throws IOException, Failure, TException {
-        GenericUrl url = new GenericUrl("http://localhost:" + (port - 10) + "/" + ENDPOINT);
-        TestService.Iface client = new TestService.Client(new HttpClientHandler(
-                () -> url, factory(), provider));
-
-        try {
-            client.test(new Request("request"));
-            fail("No exception");
-        } catch (HttpHostConnectException ex) {
-            assertThat(ex.getMessage(), is(equalTo("Connection to http://localhost:" + (port - 10) + " refused")));
-        } catch (ConnectException ex) {
-            assertThat(ex.getMessage(), is(equalTo("Connection refused ()")));
-        }
-
-        verifyZeroInteractions(impl);
-    }
-
-    @Test
-    public void testSimpleRequest_404() throws IOException, Failure, TException {
+    public void testSimpleRequest_404_notFound() throws IOException, Failure, TException {
         GenericUrl url = endpoint();
-        url.setRawPath("/" + ENDPOINT + "/does_not_exists");
+        url.setRawPath("/" + NOT_FOUND);
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 () -> url, factory(), provider));
 
@@ -146,7 +137,26 @@ public class HttpClientHandlerTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (HttpResponseException ex) {
-            assertEquals("HTTP method POST is not supported by this URL", ex.getStatusMessage());
+            assertThat(ex.getStatusCode(), is(404));
+            assertThat(ex.getStatusMessage(), is("Not Found"));
+        }
+
+        verifyZeroInteractions(impl);
+    }
+
+    @Test
+    public void testSimpleRequest_405_notSupported() throws IOException, Failure, TException {
+        GenericUrl url = endpoint();
+        url.setRawPath("/does_not_exists");
+        TestService.Iface client = new TestService.Client(new HttpClientHandler(
+                () -> url, factory(), provider));
+
+        try {
+            client.test(new Request("request"));
+            fail("No exception");
+        } catch (HttpResponseException ex) {
+            assertThat(ex.getStatusCode(), is(405));
+            assertThat(ex.getStatusMessage(), is("HTTP method POST is not supported by this URL"));
         }
 
         verifyZeroInteractions(impl);
