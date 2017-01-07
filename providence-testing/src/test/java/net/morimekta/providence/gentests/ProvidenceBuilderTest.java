@@ -21,18 +21,38 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.test.providence.CompactFields;
+import net.morimekta.test.providence.Containers;
 import net.morimekta.test.providence.OptionalFields;
 import net.morimekta.test.providence.calculator.Operand;
 import net.morimekta.test.providence.number.Imaginary;
 
 import org.junit.Test;
 
+import java.util.Collections;
+
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for providence-built sources - The message builder.
  */
 public class ProvidenceBuilderTest {
+    @Test
+    public void testEmptyCollections() {
+        Containers containers = Containers.builder()
+                                          .setBinarySet(Collections.EMPTY_SET)
+                                          .setIntegerList(Collections.EMPTY_LIST)
+                                          .setLongMap(Collections.EMPTY_MAP)
+                                          .build();
+
+        assertThat(containers.hasBinarySet(), is(true));
+        assertThat(containers.hasIntegerList(), is(true));
+        assertThat(containers.hasLongMap(), is(true));
+        assertThat(containers.mutate().build(), is(equalToMessage(containers)));
+    }
+
     @Test
     public void testMerge() {
         OptionalFields a = OptionalFields.builder()

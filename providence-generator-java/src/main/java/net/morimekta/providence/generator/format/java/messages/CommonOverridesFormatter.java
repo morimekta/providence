@@ -248,11 +248,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                     if (!alwaysAfter && firstFirstCheck && !last) {
                         writer.appendln("boolean first = true;");
                     }
-                    if (field.container()) {
-                        writer.formatln("if (%s != null && %s.size() > 0) {", field.member(), field.member());
-                    } else {
-                        writer.formatln("if (%s != null) {", field.member());
-                    }
+                    writer.formatln("if (%s()) {", field.presence());
                     writer.begin();
                 }
 
@@ -312,7 +308,8 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                 }
 
                 if (!field.alwaysPresent()) {
-                    writer.end().appendln('}');
+                    writer.end()
+                          .appendln('}');
                     if (!alwaysAfter && firstFirstCheck) {
                         firstFirstCheck = false;
                     }
