@@ -1159,216 +1159,216 @@ public class Containers
         out.append("{");
 
         boolean first = true;
-        if (mBooleanList != null && mBooleanList.size() > 0) {
+        if (hasBooleanList()) {
             first = false;
             out.append("booleanList:")
                .append(net.morimekta.util.Strings.asString(mBooleanList));
         }
-        if (mByteList != null && mByteList.size() > 0) {
+        if (hasByteList()) {
             if (first) first = false;
             else out.append(',');
             out.append("byteList:")
                .append(net.morimekta.util.Strings.asString(mByteList));
         }
-        if (mShortList != null && mShortList.size() > 0) {
+        if (hasShortList()) {
             if (first) first = false;
             else out.append(',');
             out.append("shortList:")
                .append(net.morimekta.util.Strings.asString(mShortList));
         }
-        if (mIntegerList != null && mIntegerList.size() > 0) {
+        if (hasIntegerList()) {
             if (first) first = false;
             else out.append(',');
             out.append("integerList:")
                .append(net.morimekta.util.Strings.asString(mIntegerList));
         }
-        if (mLongList != null && mLongList.size() > 0) {
+        if (hasLongList()) {
             if (first) first = false;
             else out.append(',');
             out.append("longList:")
                .append(net.morimekta.util.Strings.asString(mLongList));
         }
-        if (mDoubleList != null && mDoubleList.size() > 0) {
+        if (hasDoubleList()) {
             if (first) first = false;
             else out.append(',');
             out.append("doubleList:")
                .append(net.morimekta.util.Strings.asString(mDoubleList));
         }
-        if (mStringList != null && mStringList.size() > 0) {
+        if (hasStringList()) {
             if (first) first = false;
             else out.append(',');
             out.append("stringList:")
                .append(net.morimekta.util.Strings.asString(mStringList));
         }
-        if (mBinaryList != null && mBinaryList.size() > 0) {
+        if (hasBinaryList()) {
             if (first) first = false;
             else out.append(',');
             out.append("binaryList:")
                .append(net.morimekta.util.Strings.asString(mBinaryList));
         }
-        if (mBooleanSet != null && mBooleanSet.size() > 0) {
+        if (hasBooleanSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("booleanSet:")
                .append(net.morimekta.util.Strings.asString(mBooleanSet));
         }
-        if (mByteSet != null && mByteSet.size() > 0) {
+        if (hasByteSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("byteSet:")
                .append(net.morimekta.util.Strings.asString(mByteSet));
         }
-        if (mShortSet != null && mShortSet.size() > 0) {
+        if (hasShortSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("shortSet:")
                .append(net.morimekta.util.Strings.asString(mShortSet));
         }
-        if (mIntegerSet != null && mIntegerSet.size() > 0) {
+        if (hasIntegerSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("integerSet:")
                .append(net.morimekta.util.Strings.asString(mIntegerSet));
         }
-        if (mLongSet != null && mLongSet.size() > 0) {
+        if (hasLongSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("longSet:")
                .append(net.morimekta.util.Strings.asString(mLongSet));
         }
-        if (mDoubleSet != null && mDoubleSet.size() > 0) {
+        if (hasDoubleSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("doubleSet:")
                .append(net.morimekta.util.Strings.asString(mDoubleSet));
         }
-        if (mStringSet != null && mStringSet.size() > 0) {
+        if (hasStringSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("stringSet:")
                .append(net.morimekta.util.Strings.asString(mStringSet));
         }
-        if (mBinarySet != null && mBinarySet.size() > 0) {
+        if (hasBinarySet()) {
             if (first) first = false;
             else out.append(',');
             out.append("binarySet:")
                .append(net.morimekta.util.Strings.asString(mBinarySet));
         }
-        if (mBooleanMap != null && mBooleanMap.size() > 0) {
+        if (hasBooleanMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("booleanMap:")
                .append(net.morimekta.util.Strings.asString(mBooleanMap));
         }
-        if (mByteMap != null && mByteMap.size() > 0) {
+        if (hasByteMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("byteMap:")
                .append(net.morimekta.util.Strings.asString(mByteMap));
         }
-        if (mShortMap != null && mShortMap.size() > 0) {
+        if (hasShortMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("shortMap:")
                .append(net.morimekta.util.Strings.asString(mShortMap));
         }
-        if (mIntegerMap != null && mIntegerMap.size() > 0) {
+        if (hasIntegerMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("integerMap:")
                .append(net.morimekta.util.Strings.asString(mIntegerMap));
         }
-        if (mLongMap != null && mLongMap.size() > 0) {
+        if (hasLongMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("longMap:")
                .append(net.morimekta.util.Strings.asString(mLongMap));
         }
-        if (mDoubleMap != null && mDoubleMap.size() > 0) {
+        if (hasDoubleMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("doubleMap:")
                .append(net.morimekta.util.Strings.asString(mDoubleMap));
         }
-        if (mStringMap != null && mStringMap.size() > 0) {
+        if (hasStringMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("stringMap:")
                .append(net.morimekta.util.Strings.asString(mStringMap));
         }
-        if (mBinaryMap != null && mBinaryMap.size() > 0) {
+        if (hasBinaryMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("binaryMap:")
                .append(net.morimekta.util.Strings.asString(mBinaryMap));
         }
-        if (mEnumList != null && mEnumList.size() > 0) {
+        if (hasEnumList()) {
             if (first) first = false;
             else out.append(',');
             out.append("enumList:")
                .append(net.morimekta.util.Strings.asString(mEnumList));
         }
-        if (mEnumSet != null && mEnumSet.size() > 0) {
+        if (hasEnumSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("enumSet:")
                .append(net.morimekta.util.Strings.asString(mEnumSet));
         }
-        if (mEnumMap != null && mEnumMap.size() > 0) {
+        if (hasEnumMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("enumMap:")
                .append(net.morimekta.util.Strings.asString(mEnumMap));
         }
-        if (mMessageList != null && mMessageList.size() > 0) {
+        if (hasMessageList()) {
             if (first) first = false;
             else out.append(',');
             out.append("messageList:")
                .append(net.morimekta.util.Strings.asString(mMessageList));
         }
-        if (mMessageSet != null && mMessageSet.size() > 0) {
+        if (hasMessageSet()) {
             if (first) first = false;
             else out.append(',');
             out.append("messageSet:")
                .append(net.morimekta.util.Strings.asString(mMessageSet));
         }
-        if (mMessageMap != null && mMessageMap.size() > 0) {
+        if (hasMessageMap()) {
             if (first) first = false;
             else out.append(',');
             out.append("messageMap:")
                .append(net.morimekta.util.Strings.asString(mMessageMap));
         }
-        if (mRequiredFields != null) {
+        if (hasRequiredFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("requiredFields:")
                .append(mRequiredFields.asString());
         }
-        if (mDefaultFields != null) {
+        if (hasDefaultFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("defaultFields:")
                .append(mDefaultFields.asString());
         }
-        if (mOptionalFields != null) {
+        if (hasOptionalFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("optionalFields:")
                .append(mOptionalFields.asString());
         }
-        if (mUnionFields != null) {
+        if (hasUnionFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("unionFields:")
                .append(mUnionFields.asString());
         }
-        if (mExceptionFields != null) {
+        if (hasExceptionFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("exceptionFields:")
                .append(mExceptionFields.asString());
         }
-        if (mDefaultValues != null) {
+        if (hasDefaultValues()) {
             if (!first) out.append(',');
             out.append("defaultValues:")
                .append(mDefaultValues.asString());
@@ -2335,123 +2335,123 @@ public class Containers
         public _Builder(Containers base) {
             this();
 
-            if (base.numBooleanList() > 0) {
+            if (base.hasBooleanList()) {
                 optionals.set(0);
                 mBooleanList.addAll(base.mBooleanList);
             }
-            if (base.numByteList() > 0) {
+            if (base.hasByteList()) {
                 optionals.set(1);
                 mByteList.addAll(base.mByteList);
             }
-            if (base.numShortList() > 0) {
+            if (base.hasShortList()) {
                 optionals.set(2);
                 mShortList.addAll(base.mShortList);
             }
-            if (base.numIntegerList() > 0) {
+            if (base.hasIntegerList()) {
                 optionals.set(3);
                 mIntegerList.addAll(base.mIntegerList);
             }
-            if (base.numLongList() > 0) {
+            if (base.hasLongList()) {
                 optionals.set(4);
                 mLongList.addAll(base.mLongList);
             }
-            if (base.numDoubleList() > 0) {
+            if (base.hasDoubleList()) {
                 optionals.set(5);
                 mDoubleList.addAll(base.mDoubleList);
             }
-            if (base.numStringList() > 0) {
+            if (base.hasStringList()) {
                 optionals.set(6);
                 mStringList.addAll(base.mStringList);
             }
-            if (base.numBinaryList() > 0) {
+            if (base.hasBinaryList()) {
                 optionals.set(7);
                 mBinaryList.addAll(base.mBinaryList);
             }
-            if (base.numBooleanSet() > 0) {
+            if (base.hasBooleanSet()) {
                 optionals.set(8);
                 mBooleanSet.addAll(base.mBooleanSet);
             }
-            if (base.numByteSet() > 0) {
+            if (base.hasByteSet()) {
                 optionals.set(9);
                 mByteSet.addAll(base.mByteSet);
             }
-            if (base.numShortSet() > 0) {
+            if (base.hasShortSet()) {
                 optionals.set(10);
                 mShortSet.addAll(base.mShortSet);
             }
-            if (base.numIntegerSet() > 0) {
+            if (base.hasIntegerSet()) {
                 optionals.set(11);
                 mIntegerSet.addAll(base.mIntegerSet);
             }
-            if (base.numLongSet() > 0) {
+            if (base.hasLongSet()) {
                 optionals.set(12);
                 mLongSet.addAll(base.mLongSet);
             }
-            if (base.numDoubleSet() > 0) {
+            if (base.hasDoubleSet()) {
                 optionals.set(13);
                 mDoubleSet.addAll(base.mDoubleSet);
             }
-            if (base.numStringSet() > 0) {
+            if (base.hasStringSet()) {
                 optionals.set(14);
                 mStringSet.addAll(base.mStringSet);
             }
-            if (base.numBinarySet() > 0) {
+            if (base.hasBinarySet()) {
                 optionals.set(15);
                 mBinarySet.addAll(base.mBinarySet);
             }
-            if (base.numBooleanMap() > 0) {
+            if (base.hasBooleanMap()) {
                 optionals.set(16);
                 mBooleanMap.putAll(base.mBooleanMap);
             }
-            if (base.numByteMap() > 0) {
+            if (base.hasByteMap()) {
                 optionals.set(17);
                 mByteMap.putAll(base.mByteMap);
             }
-            if (base.numShortMap() > 0) {
+            if (base.hasShortMap()) {
                 optionals.set(18);
                 mShortMap.putAll(base.mShortMap);
             }
-            if (base.numIntegerMap() > 0) {
+            if (base.hasIntegerMap()) {
                 optionals.set(19);
                 mIntegerMap.putAll(base.mIntegerMap);
             }
-            if (base.numLongMap() > 0) {
+            if (base.hasLongMap()) {
                 optionals.set(20);
                 mLongMap.putAll(base.mLongMap);
             }
-            if (base.numDoubleMap() > 0) {
+            if (base.hasDoubleMap()) {
                 optionals.set(21);
                 mDoubleMap.putAll(base.mDoubleMap);
             }
-            if (base.numStringMap() > 0) {
+            if (base.hasStringMap()) {
                 optionals.set(22);
                 mStringMap.putAll(base.mStringMap);
             }
-            if (base.numBinaryMap() > 0) {
+            if (base.hasBinaryMap()) {
                 optionals.set(23);
                 mBinaryMap.putAll(base.mBinaryMap);
             }
-            if (base.numEnumList() > 0) {
+            if (base.hasEnumList()) {
                 optionals.set(24);
                 mEnumList.addAll(base.mEnumList);
             }
-            if (base.numEnumSet() > 0) {
+            if (base.hasEnumSet()) {
                 optionals.set(25);
                 mEnumSet.addAll(base.mEnumSet);
             }
-            if (base.numEnumMap() > 0) {
+            if (base.hasEnumMap()) {
                 optionals.set(26);
                 mEnumMap.putAll(base.mEnumMap);
             }
-            if (base.numMessageList() > 0) {
+            if (base.hasMessageList()) {
                 optionals.set(27);
                 mMessageList.addAll(base.mMessageList);
             }
-            if (base.numMessageSet() > 0) {
+            if (base.hasMessageSet()) {
                 optionals.set(28);
                 mMessageSet.addAll(base.mMessageSet);
             }
-            if (base.numMessageMap() > 0) {
+            if (base.hasMessageMap()) {
                 optionals.set(29);
                 mMessageMap.putAll(base.mMessageMap);
             }

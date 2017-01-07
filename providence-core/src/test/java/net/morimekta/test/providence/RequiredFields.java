@@ -292,26 +292,26 @@ public class RequiredFields
         out.append(',');
         out.append("doubleValue:")
            .append(net.morimekta.util.Strings.asString(mDoubleValue));
-        if (mStringValue != null) {
+        if (hasStringValue()) {
             out.append(',');
             out.append("stringValue:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mStringValue))
                .append('\"');
         }
-        if (mBinaryValue != null) {
+        if (hasBinaryValue()) {
             out.append(',');
             out.append("binaryValue:")
                .append("b64(")
                .append(mBinaryValue.toBase64())
                .append(')');
         }
-        if (mEnumValue != null) {
+        if (hasEnumValue()) {
             out.append(',');
             out.append("enumValue:")
                .append(mEnumValue.asString());
         }
-        if (mCompactValue != null) {
+        if (hasCompactValue()) {
             out.append(',');
             out.append("compactValue:")
                .append(mCompactValue.asString());

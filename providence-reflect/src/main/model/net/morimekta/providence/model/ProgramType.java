@@ -222,14 +222,14 @@ public class ProgramType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mProgramName != null) {
+        if (hasProgramName()) {
             if (first) first = false;
             else out.append(',');
             out.append("program_name:")
@@ -237,19 +237,19 @@ public class ProgramType
                .append(net.morimekta.util.Strings.escape(mProgramName))
                .append('\"');
         }
-        if (mIncludes != null && mIncludes.size() > 0) {
+        if (hasIncludes()) {
             if (first) first = false;
             else out.append(',');
             out.append("includes:")
                .append(net.morimekta.util.Strings.asString(mIncludes));
         }
-        if (mNamespaces != null && mNamespaces.size() > 0) {
+        if (hasNamespaces()) {
             if (first) first = false;
             else out.append(',');
             out.append("namespaces:")
                .append(net.morimekta.util.Strings.asString(mNamespaces));
         }
-        if (mDecl != null && mDecl.size() > 0) {
+        if (hasDecl()) {
             if (!first) out.append(',');
             out.append("decl:")
                .append(net.morimekta.util.Strings.asString(mDecl));
@@ -537,15 +537,15 @@ public class ProgramType
                 optionals.set(1);
                 mProgramName = base.mProgramName;
             }
-            if (base.numIncludes() > 0) {
+            if (base.hasIncludes()) {
                 optionals.set(2);
                 mIncludes.addAll(base.mIncludes);
             }
-            if (base.numNamespaces() > 0) {
+            if (base.hasNamespaces()) {
                 optionals.set(3);
                 mNamespaces.putAll(base.mNamespaces);
             }
-            if (base.numDecl() > 0) {
+            if (base.hasDecl()) {
                 optionals.set(4);
                 mDecl.addAll(base.mDecl);
             }

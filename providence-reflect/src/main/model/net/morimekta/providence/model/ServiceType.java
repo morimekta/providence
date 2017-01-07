@@ -198,14 +198,14 @@ public class ServiceType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
@@ -213,7 +213,7 @@ public class ServiceType
                .append(net.morimekta.util.Strings.escape(mName))
                .append('\"');
         }
-        if (mExtend != null) {
+        if (hasExtend()) {
             if (first) first = false;
             else out.append(',');
             out.append("extend:")
@@ -221,13 +221,13 @@ public class ServiceType
                .append(net.morimekta.util.Strings.escape(mExtend))
                .append('\"');
         }
-        if (mMethods != null && mMethods.size() > 0) {
+        if (hasMethods()) {
             if (first) first = false;
             else out.append(',');
             out.append("methods:")
                .append(net.morimekta.util.Strings.asString(mMethods));
         }
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             if (!first) out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -516,11 +516,11 @@ public class ServiceType
                 optionals.set(2);
                 mExtend = base.mExtend;
             }
-            if (base.numMethods() > 0) {
+            if (base.hasMethods()) {
                 optionals.set(3);
                 mMethods.addAll(base.mMethods);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }

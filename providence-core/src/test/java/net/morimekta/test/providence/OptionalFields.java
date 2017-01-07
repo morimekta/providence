@@ -276,42 +276,42 @@ public class OptionalFields
         out.append("{");
 
         boolean first = true;
-        if (mBooleanValue != null) {
+        if (hasBooleanValue()) {
             first = false;
             out.append("booleanValue:")
                .append(mBooleanValue);
         }
-        if (mByteValue != null) {
+        if (hasByteValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("byteValue:")
                .append((int) mByteValue);
         }
-        if (mShortValue != null) {
+        if (hasShortValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("shortValue:")
                .append((int) mShortValue);
         }
-        if (mIntegerValue != null) {
+        if (hasIntegerValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("integerValue:")
                .append(mIntegerValue);
         }
-        if (mLongValue != null) {
+        if (hasLongValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("longValue:")
                .append(mLongValue);
         }
-        if (mDoubleValue != null) {
+        if (hasDoubleValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("doubleValue:")
                .append(net.morimekta.util.Strings.asString(mDoubleValue));
         }
-        if (mStringValue != null) {
+        if (hasStringValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("stringValue:")
@@ -319,7 +319,7 @@ public class OptionalFields
                .append(net.morimekta.util.Strings.escape(mStringValue))
                .append('\"');
         }
-        if (mBinaryValue != null) {
+        if (hasBinaryValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("binaryValue:")
@@ -327,13 +327,13 @@ public class OptionalFields
                .append(mBinaryValue.toBase64())
                .append(')');
         }
-        if (mEnumValue != null) {
+        if (hasEnumValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("enumValue:")
                .append(mEnumValue.asString());
         }
-        if (mCompactValue != null) {
+        if (hasCompactValue()) {
             if (!first) out.append(',');
             out.append("compactValue:")
                .append(mCompactValue.asString());
