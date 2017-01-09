@@ -134,14 +134,14 @@ public class PApplicationException
         out.append("{");
 
         boolean first = true;
-        if (mMessage != null) {
+        if (hasMessage()) {
             first = false;
             out.append("message:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mMessage))
                .append('\"');
         }
-        if (mId != null) {
+        if (hasId()) {
             if (!first) out.append(',');
             out.append("id:")
                .append(mId.asString());

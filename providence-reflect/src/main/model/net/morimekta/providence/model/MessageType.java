@@ -200,20 +200,20 @@ public class MessageType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mVariant != null) {
+        if (hasVariant()) {
             if (first) first = false;
             else out.append(',');
             out.append("variant:")
                .append(mVariant.asString());
         }
-        if (mName != null) {
+        if (hasName()) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
@@ -221,13 +221,13 @@ public class MessageType
                .append(net.morimekta.util.Strings.escape(mName))
                .append('\"');
         }
-        if (mFields != null && mFields.size() > 0) {
+        if (hasFields()) {
             if (first) first = false;
             else out.append(',');
             out.append("fields:")
                .append(net.morimekta.util.Strings.asString(mFields));
         }
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             if (!first) out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -514,11 +514,11 @@ public class MessageType
                 optionals.set(2);
                 mName = base.mName;
             }
-            if (base.numFields() > 0) {
+            if (base.hasFields()) {
                 optionals.set(3);
                 mFields.addAll(base.mFields);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }

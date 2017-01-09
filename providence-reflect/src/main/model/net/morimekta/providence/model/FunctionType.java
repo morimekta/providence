@@ -254,7 +254,7 @@ public class FunctionType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
@@ -263,31 +263,31 @@ public class FunctionType
         }
         out.append("one_way:")
            .append(mOneWay);
-        if (mReturnType != null) {
+        if (hasReturnType()) {
             out.append(',');
             out.append("return_type:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mReturnType))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             out.append(',');
             out.append("name:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mName))
                .append('\"');
         }
-        if (mParams != null && mParams.size() > 0) {
+        if (hasParams()) {
             out.append(',');
             out.append("params:")
                .append(net.morimekta.util.Strings.asString(mParams));
         }
-        if (mExceptions != null && mExceptions.size() > 0) {
+        if (hasExceptions()) {
             out.append(',');
             out.append("exceptions:")
                .append(net.morimekta.util.Strings.asString(mExceptions));
         }
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -610,15 +610,15 @@ public class FunctionType
                 optionals.set(3);
                 mName = base.mName;
             }
-            if (base.numParams() > 0) {
+            if (base.hasParams()) {
                 optionals.set(4);
                 mParams.addAll(base.mParams);
             }
-            if (base.numExceptions() > 0) {
+            if (base.hasExceptions()) {
                 optionals.set(5);
                 mExceptions.addAll(base.mExceptions);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(6);
                 mAnnotations.putAll(base.mAnnotations);
             }

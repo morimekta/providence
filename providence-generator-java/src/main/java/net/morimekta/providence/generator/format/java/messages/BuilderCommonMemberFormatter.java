@@ -171,13 +171,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         for (JField field : message.declaredOrderFields()) {
             boolean checkPresence = message.isUnion() ? field.container() : !field.alwaysPresent();
             if (checkPresence) {
-                if (field.container()) {
-                    writer.formatln("if (base.%s() > 0) {", field.counter())
-                          .begin();
-                } else {
-                    writer.formatln("if (base.%s()) {", field.presence())
-                          .begin();
-                }
+                writer.formatln("if (base.%s()) {", field.presence())
+                      .begin();
             }
             if (!message.isUnion()) {
                 writer.formatln("optionals.set(%d);", field.index());

@@ -124,14 +124,14 @@ public class CalculateException
         out.append("{");
 
         boolean first = true;
-        if (mMessage != null) {
+        if (hasMessage()) {
             first = false;
             out.append("message:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mMessage))
                .append('\"');
         }
-        if (mOperation != null) {
+        if (hasOperation()) {
             if (!first) out.append(',');
             out.append("operation:")
                .append(mOperation.asString());

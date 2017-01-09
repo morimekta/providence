@@ -292,7 +292,7 @@ public class Calculator {
             StringBuilder out = new StringBuilder();
             out.append("{");
 
-            if (mOp != null) {
+            if (hasOp()) {
                 out.append("op:")
                    .append(mOp.asString());
             }

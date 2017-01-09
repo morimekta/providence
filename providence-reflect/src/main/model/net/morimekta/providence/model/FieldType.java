@@ -236,7 +236,7 @@ public class FieldType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
@@ -245,33 +245,33 @@ public class FieldType
         }
         out.append("key:")
            .append(mKey);
-        if (mRequirement != null) {
+        if (hasRequirement()) {
             out.append(',');
             out.append("requirement:")
                .append(mRequirement.asString());
         }
-        if (mType != null) {
+        if (hasType()) {
             out.append(',');
             out.append("type:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mType))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             out.append(',');
             out.append("name:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mName))
                .append('\"');
         }
-        if (mDefaultValue != null) {
+        if (hasDefaultValue()) {
             out.append(',');
             out.append("default_value:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDefaultValue))
                .append('\"');
         }
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -603,7 +603,7 @@ public class FieldType
                 optionals.set(5);
                 mDefaultValue = base.mDefaultValue;
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(6);
                 mAnnotations.putAll(base.mAnnotations);
             }

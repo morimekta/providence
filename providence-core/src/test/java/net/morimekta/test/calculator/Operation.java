@@ -121,12 +121,12 @@ public class Operation
         out.append("{");
 
         boolean first = true;
-        if (mOperator != null) {
+        if (hasOperator()) {
             first = false;
             out.append("operator:")
                .append(mOperator.asString());
         }
-        if (mOperands != null && mOperands.size() > 0) {
+        if (hasOperands()) {
             if (!first) out.append(',');
             out.append("operands:")
                .append(net.morimekta.util.Strings.asString(mOperands));
@@ -334,7 +334,7 @@ public class Operation
                 optionals.set(0);
                 mOperator = base.mOperator;
             }
-            if (base.numOperands() > 0) {
+            if (base.hasOperands()) {
                 optionals.set(1);
                 mOperands.addAll(base.mOperands);
             }

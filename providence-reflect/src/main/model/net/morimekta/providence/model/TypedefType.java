@@ -132,14 +132,14 @@ public class TypedefType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mType != null) {
+        if (hasType()) {
             if (first) first = false;
             else out.append(',');
             out.append("type:")
@@ -147,7 +147,7 @@ public class TypedefType
                .append(net.morimekta.util.Strings.escape(mType))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             if (!first) out.append(',');
             out.append("name:")
                .append('\"')

@@ -170,14 +170,14 @@ public class EnumValue
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
@@ -187,7 +187,7 @@ public class EnumValue
         }
         out.append("value:")
            .append(mValue);
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -443,7 +443,7 @@ public class EnumValue
             }
             optionals.set(2);
             mValue = base.mValue;
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(3);
                 mAnnotations.putAll(base.mAnnotations);
             }

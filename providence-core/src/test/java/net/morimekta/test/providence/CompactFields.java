@@ -143,7 +143,7 @@ public class CompactFields
         out.append("{");
 
         boolean first = true;
-        if (mName != null) {
+        if (hasName()) {
             first = false;
             out.append("name:")
                .append('\"')
@@ -152,7 +152,7 @@ public class CompactFields
         }
         out.append("id:")
            .append(mId);
-        if (mLabel != null) {
+        if (hasLabel()) {
             out.append(',');
             out.append("label:")
                .append('\"')

@@ -184,14 +184,14 @@ public class ConstType
         out.append("{");
 
         boolean first = true;
-        if (mDocumentation != null) {
+        if (hasDocumentation()) {
             first = false;
             out.append("documentation:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (mType != null) {
+        if (hasType()) {
             if (first) first = false;
             else out.append(',');
             out.append("type:")
@@ -199,7 +199,7 @@ public class ConstType
                .append(net.morimekta.util.Strings.escape(mType))
                .append('\"');
         }
-        if (mName != null) {
+        if (hasName()) {
             if (first) first = false;
             else out.append(',');
             out.append("name:")
@@ -207,7 +207,7 @@ public class ConstType
                .append(net.morimekta.util.Strings.escape(mName))
                .append('\"');
         }
-        if (mValue != null) {
+        if (hasValue()) {
             if (first) first = false;
             else out.append(',');
             out.append("value:")
@@ -215,7 +215,7 @@ public class ConstType
                .append(net.morimekta.util.Strings.escape(mValue))
                .append('\"');
         }
-        if (mAnnotations != null && mAnnotations.size() > 0) {
+        if (hasAnnotations()) {
             if (!first) out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
@@ -503,7 +503,7 @@ public class ConstType
                 optionals.set(3);
                 mValue = base.mValue;
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }
