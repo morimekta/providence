@@ -1,4 +1,4 @@
-package net.morimekta.providence.testing.hazelcast;
+package net.morimekta.providence.gentests.hazelcast;
 
 import java.util.HashMap;
 import java.util.HashSet;

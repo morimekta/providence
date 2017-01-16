@@ -1,4 +1,4 @@
-package net.morimekta.providence.testing.hazelcast;
+package net.morimekta.providence.gentests.hazelcast;
 
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.Portable;

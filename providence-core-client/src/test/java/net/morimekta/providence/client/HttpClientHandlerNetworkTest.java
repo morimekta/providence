@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -130,7 +131,9 @@ public class HttpClientHandlerNetworkTest {
             fail("No exception");
         } catch (SocketException ex) {
             // TODO: This should be a HttpResponseException
-            assertThat(ex.getMessage(), is("Broken pipe (Write failed)"));
+            assertThat(ex.getMessage(), anyOf(
+                    is("Broken pipe (Write failed)"),
+                    is("Connection reset")));
         }
     }
 

@@ -47,6 +47,7 @@
             <version>3.6.4</version>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

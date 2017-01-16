@@ -1,7 +1,7 @@
 package net.morimekta.providence.gentests;
 
-import net.morimekta.providence.testing.hazelcast.PortableReader;
-import net.morimekta.providence.testing.hazelcast.PortableWriter;
+import net.morimekta.providence.gentests.hazelcast.PortableReader;
+import net.morimekta.providence.gentests.hazelcast.PortableWriter;
 import net.morimekta.test.hazelcast.Hazelcast_Factory;
 import net.morimekta.test.hazelcast.OptionalFields;
 import net.morimekta.test.hazelcast.CompactFields;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
  * Hazelcast serialization and deserialization tests.
  */
 @RunWith(Parameterized.class)
-public class HazelcastTest {
+public class HazelcastIT {
 
     OptionalFields optionalFields;
     OptionalListFields optionalListFields;
