@@ -38,4 +38,9 @@ public class JavaOptions {
      * Add precompiled serialization for the binary protocol.
      */
     public boolean rw_binary = true;
+
+    /**
+     * Add hazelcast_portable serializer and deserializers for portable interface.
+     */
+    public boolean hazelcast_portable = false;
 }

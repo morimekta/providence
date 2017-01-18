@@ -44,6 +44,11 @@
             <artifactId>android-util</artifactId>
         </dependency>
         <dependency>
+            <version>3.6.4</version>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
         </dependency>
@@ -83,6 +88,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jfairy</groupId>
+            <artifactId>jfairy</artifactId>
+            <version>0.3.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -134,6 +146,22 @@
                                 </includes>
                             </inputFiles>
                             <outputDir>target/generated-test-sources/android</outputDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-hazelcast-sources-for-test</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <hazelcast_portable>true</hazelcast_portable>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/test/hazelcast/**/*.thrift</include>
+                                </includes>
+                            </inputFiles>
+                            <outputDir>target/generated-test-sources/hazelcast</outputDir>
                         </configuration>
                     </execution>
                     <execution>

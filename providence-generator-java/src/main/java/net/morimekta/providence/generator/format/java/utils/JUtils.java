@@ -69,6 +69,36 @@ public class JUtils {
     }
 
     /**
+     * Method to get the thrift file as a class name for a hazelcast factory.
+     *
+     * @param type PStructDescriptor with the information to fetch thrift info from.
+     * @return class name for the hazelcast factory.
+     */
+    public static String getHazelcastFactory(PMessageDescriptor<?, ?> type) {
+        return camelCase("", type.getProgramName()).concat("_Factory");
+    }
+
+    /**
+     * Method to get the message constant for the thrift struct.
+     *
+     * @param type PStructDescriptor with the information to fetch message info from.
+     * @return macro cased constant value of the message.
+     */
+    public static String getHazelcastClassId(PMessageDescriptor<?, ?> type) {
+        return getHazelcastClassId(type.getName());
+    }
+
+    /**
+     * Method to get the message constant for the thrift struct.
+     *
+     * @param name String with the class name to create format from.
+     * @return macro cased constant value of the message.
+     */
+    public static String getHazelcastClassId(String name) {
+        return macroCase(name).concat("_ID");
+    }
+
+    /**
      * Format a prefixed name as camelCase. The prefix is kept verbatim, while
      * tha name is split on '_' chars, and joined with each part capitalized.
      *
@@ -129,6 +159,20 @@ public class JUtils {
             skipped = 0;
         }
         return builder.toString();
+    }
+
+    /**
+     * Format a prefixed name as MACRO_CASE.
+     *
+     * @param name   The name to macro-case.
+     * @return THE_MACRO_CASED_NAME
+     */
+    public static String macroCase(String name) {
+        String result = name.replaceAll("([A-Z])", "_$1");
+        while( result.startsWith("_") ) {
+            result = result.substring(1, result.length());
+        }
+        return result.toUpperCase();
     }
 
     public static String enumConst(PEnumValue value) {

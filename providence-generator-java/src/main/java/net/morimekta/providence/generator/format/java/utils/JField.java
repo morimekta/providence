@@ -82,6 +82,8 @@ public class JField {
         return field.getName();
     }
 
+    public String hasName() { return camelCase("__has_", field.getName()); }
+
     public String param() {
         return camelCase("p", field.getName());
     }
@@ -135,6 +137,10 @@ public class JField {
 
     public boolean hasDefault() {
         return alwaysPresent() || field.hasDefaultValue();
+    }
+
+    public boolean hasDefaultConstant() {
+        return (null != helper.getDefaultValue(field));
     }
 
     public boolean isRequired() {
@@ -387,4 +393,10 @@ public class JField {
     public boolean isVoid() {
         return field.getType() == PType.VOID;
     }
+
+    public PList toPList() {
+        return (PList) (getPField()
+                             .getDescriptor());
+    }
+
 }

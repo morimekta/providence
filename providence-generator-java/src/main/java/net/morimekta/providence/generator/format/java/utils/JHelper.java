@@ -131,6 +131,14 @@ public class JHelper {
         return camelCase("", document.getProgramName()) + "_Constants";
     }
 
+    public String getHazelcastFactoryClassName(CProgram document) {
+        return camelCase("", document.getProgramName())  + "_Factory";
+    }
+
+    public String getHazelcastOptionalName(JMessage<?> message) {
+        return camelCase("__hzOptionalsForClass", message.descriptor().getName());
+    }
+
     public String getValueType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
             case VOID:
