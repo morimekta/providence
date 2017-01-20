@@ -161,7 +161,7 @@ public class TProtocolSerializerTest {
     }
 
     public void testRecoding(TProtocolFactory factory, Serializer serializer)
-            throws IOException, SerializerException, TException {
+            throws IOException, TException {
         assertEquals(10, containers.size());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -221,27 +221,27 @@ public class TProtocolSerializerTest {
     }
 
     @Test
-    public void testTBinaryProtocol() throws IOException, SerializerException, TException {
+    public void testTBinaryProtocol() throws IOException, TException {
         testRecoding(new TBinaryProtocol.Factory(), new TBinaryProtocolSerializer());
     }
 
     @Test
-    public void testTCompactProtocol() throws IOException, SerializerException, TException {
+    public void testTCompactProtocol() throws IOException, TException {
         testRecoding(new TCompactProtocol.Factory(), new TCompactProtocolSerializer());
     }
 
     @Test
-    public void testTTupleProtocol() throws IOException, SerializerException, TException {
+    public void testTTupleProtocol() throws IOException, TException {
         testRecoding(new TTupleProtocol.Factory(), new TTupleProtocolSerializer());
     }
 
     @Test
-    public void testTJsonProtocol() throws IOException, SerializerException, TException {
+    public void testTJsonProtocol() throws IOException, TException {
         testRecoding(new TJSONProtocol.Factory(), new TJsonProtocolSerializer());
     }
 
     @Test
-    public void testTSimpleJsonProtocol() throws IOException, SerializerException, TException {
+    public void testTSimpleJsonProtocol() throws IOException, TException {
         // testRecoding(new TSimpleJSONProtocol.Factory(), new TSimpleJsonProtocolSerializer());
         ObjectMapper mapper = new ObjectMapper();
 

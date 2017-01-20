@@ -494,7 +494,9 @@ public class JsonSerializer extends Serializer {
                     }
                     PMap.Builder<Object, Object> map = mapType.builder();
 
-                    if (!tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                    if (tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                        tokenizer.next();
+                    } else {
                         char sep = JsonToken.kMapStart;
                         while (sep != JsonToken.kMapEnd) {
                             Object key = parseMapKey(tokenizer.expectString("parsing map key")
@@ -515,7 +517,9 @@ public class JsonSerializer extends Serializer {
                     @SuppressWarnings("unchecked")
                     PSet.Builder<Object> set = ((PSet<Object>) t).builder();
 
-                    if (!tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
+                    if (tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
+                        tokenizer.next();
+                    } else {
                         char sep = JsonToken.kListStart;
                         while (sep != JsonToken.kListEnd) {
                             set.add(parseTypedValue(tokenizer.expect("parsing set value"), tokenizer, itemType));
@@ -531,7 +535,9 @@ public class JsonSerializer extends Serializer {
                     }
                     @SuppressWarnings("unchecked")
                     PList.Builder<Object> list = ((PList<Object>) t).builder();
-                    if (!tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                    if (tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                        tokenizer.next();
+                    } else {
                         char sep = JsonToken.kListStart;
                         while (sep != JsonToken.kListEnd) {
                             list.add(parseTypedValue(tokenizer.expect("parsing list value"), tokenizer, itemType));
