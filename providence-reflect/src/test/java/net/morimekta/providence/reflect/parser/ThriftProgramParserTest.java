@@ -28,7 +28,10 @@ import java.io.File;
 import java.io.IOException;
 
 import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
@@ -49,139 +52,157 @@ public class ThriftProgramParserTest {
                                               "calculator.thrift");
 
         assertEquals("program_name = \"calculator\"\n" +
-                     "includes = \"number.thrift\"\n" +
+                     "includes = [\n" +
+                     "  \"number.thrift\"\n" +
+                     "]\n" +
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.calculator\"\n" +
                      "}\n" +
-                     "decl = {\n" +
-                     "  decl_enum = {\n" +
-                     "    documentation = \"Block comment on type.\"\n" +
-                     "    name = \"Operator\"\n" +
-                     "    values = {\n" +
-                     "      documentation = \"line comment on enum\"\n" +
-                     "      name = \"IDENTITY\"\n" +
-                     "      value = 1\n" +
+                     "decl = [\n" +
+                     "  {\n" +
+                     "    decl_enum = {\n" +
+                     "      documentation = \"Block comment on type.\"\n" +
+                     "      name = \"Operator\"\n" +
+                     "      values = [\n" +
+                     "        {\n" +
+                     "          documentation = \"line comment on enum\"\n" +
+                     "          name = \"IDENTITY\"\n" +
+                     "          value = 1\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          documentation = \"Block comment on enum.\"\n" +
+                     "          name = \"ADD\"\n" +
+                     "          value = 2\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          name = \"SUBTRACT\"\n" +
+                     "          value = 3\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          name = \"MULTIPLY\"\n" +
+                     "          value = 4\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          name = \"DIVIDE\"\n" +
+                     "          value = 5\n" +
+                     "        }\n" +
+                     "      ]\n" +
                      "    }\n" +
-                     "    values = {\n" +
-                     "      documentation = \"Block comment on enum.\"\n" +
-                     "      name = \"ADD\"\n" +
-                     "      value = 2\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_struct = {\n" +
+                     "      documentation = \"Line comment on type.\"\n" +
+                     "      variant = UNION\n" +
+                     "      name = \"Operand\"\n" +
+                     "      fields = [\n" +
+                     "        {\n" +
+                     "          documentation = \"Double line\\ncomment on field.\"\n" +
+                     "          key = 1\n" +
+                     "          type = \"Operation\"\n" +
+                     "          name = \"operation\"\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
+                     "          key = 2\n" +
+                     "          type = \"double\"\n" +
+                     "          name = \"number\"\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          key = 3\n" +
+                     "          type = \"number.Imaginary\"\n" +
+                     "          name = \"imaginary\"\n" +
+                     "        }\n" +
+                     "      ]\n" +
                      "    }\n" +
-                     "    values = {\n" +
-                     "      name = \"SUBTRACT\"\n" +
-                     "      value = 3\n" +
-                     "    }\n" +
-                     "    values = {\n" +
-                     "      name = \"MULTIPLY\"\n" +
-                     "      value = 4\n" +
-                     "    }\n" +
-                     "    values = {\n" +
-                     "      name = \"DIVIDE\"\n" +
-                     "      value = 5\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_struct = {\n" +
-                     "    documentation = \"Line comment on type.\"\n" +
-                     "    variant = UNION\n" +
-                     "    name = \"Operand\"\n" +
-                     "    fields = {\n" +
-                     "      documentation = \"Double line\\ncomment on field.\"\n" +
-                     "      key = 1\n" +
-                     "      type = \"Operation\"\n" +
-                     "      name = \"operation\"\n" +
-                     "    }\n" +
-                     "    fields = {\n" +
-                     "      documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
-                     "      key = 2\n" +
-                     "      type = \"double\"\n" +
-                     "      name = \"number\"\n" +
-                     "    }\n" +
-                     "    fields = {\n" +
-                     "      key = 3\n" +
-                     "      type = \"number.Imaginary\"\n" +
-                     "      name = \"imaginary\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_struct = {\n" +
-                     "    name = \"Operation\"\n" +
-                     "    fields = {\n" +
-                     "      key = 1\n" +
-                     "      type = \"Operator\"\n" +
-                     "      name = \"operator\"\n" +
-                     "    }\n" +
-                     "    fields = {\n" +
-                     "      key = 2\n" +
-                     "      type = \"list<Operand>\"\n" +
-                     "      name = \"operands\"\n" +
-                     "    }\n" +
-                     "    annotations = {\n" +
-                     "      \"compact\": \"\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_struct = {\n" +
-                     "    variant = EXCEPTION\n" +
-                     "    name = \"CalculateException\"\n" +
-                     "    fields = {\n" +
-                     "      key = 1\n" +
-                     "      requirement = REQUIRED\n" +
-                     "      type = \"string\"\n" +
-                     "      name = \"message\"\n" +
-                     "    }\n" +
-                     "    fields = {\n" +
-                     "      key = 2\n" +
-                     "      type = \"Operation\"\n" +
-                     "      name = \"operation\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_service = {\n" +
-                     "    name = \"Calculator\"\n" +
-                     "    methods = {\n" +
-                     "      documentation = \"Block comment on method.\"\n" +
-                     "      one_way = false\n" +
-                     "      return_type = \"Operand\"\n" +
-                     "      name = \"calculate\"\n" +
-                     "      params = {\n" +
-                     "        key = 1\n" +
-                     "        type = \"Operation\"\n" +
-                     "        name = \"op\"\n" +
-                     "      }\n" +
-                     "      exceptions = {\n" +
-                     "        key = 1\n" +
-                     "        type = \"CalculateException\"\n" +
-                     "        name = \"ce\"\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_struct = {\n" +
+                     "      name = \"Operation\"\n" +
+                     "      fields = [\n" +
+                     "        {\n" +
+                     "          key = 1\n" +
+                     "          type = \"Operator\"\n" +
+                     "          name = \"operator\"\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          key = 2\n" +
+                     "          type = \"list<Operand>\"\n" +
+                     "          name = \"operands\"\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "      annotations = {\n" +
+                     "        \"compact\": \"\"\n" +
                      "      }\n" +
                      "    }\n" +
-                     "    methods = {\n" +
-                     "      documentation = \"line comment on method.\"\n" +
-                     "      one_way = true\n" +
-                     "      name = \"iamalive\"\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_struct = {\n" +
+                     "      variant = EXCEPTION\n" +
+                     "      name = \"CalculateException\"\n" +
+                     "      fields = [\n" +
+                     "        {\n" +
+                     "          key = 1\n" +
+                     "          requirement = REQUIRED\n" +
+                     "          type = \"string\"\n" +
+                     "          name = \"message\"\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          key = 2\n" +
+                     "          type = \"Operation\"\n" +
+                     "          name = \"operation\"\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_service = {\n" +
+                     "      name = \"Calculator\"\n" +
+                     "      methods = [\n" +
+                     "        {\n" +
+                     "          documentation = \"Block comment on method.\"\n" +
+                     "          one_way = false\n" +
+                     "          return_type = \"Operand\"\n" +
+                     "          name = \"calculate\"\n" +
+                     "          params = [\n" +
+                     "            {\n" +
+                     "              key = 1\n" +
+                     "              type = \"Operation\"\n" +
+                     "              name = \"op\"\n" +
+                     "            }\n" +
+                     "          ]\n" +
+                     "          exceptions = [\n" +
+                     "            {\n" +
+                     "              key = 1\n" +
+                     "              type = \"CalculateException\"\n" +
+                     "              name = \"ce\"\n" +
+                     "            }\n" +
+                     "          ]\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          documentation = \"line comment on method.\"\n" +
+                     "          one_way = true\n" +
+                     "          name = \"iamalive\"\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_const = {\n" +
+                     "      documentation = \"Block comment on constant.\"\n" +
+                     "      type = \"Operand\"\n" +
+                     "      name = \"PI\"\n" +
+                     "      value = \"{\\\"number\\\":3.141592}\"\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_const = {\n" +
+                     "      documentation = \"Line comment on constant.\"\n" +
+                     "      type = \"set<Operator>\"\n" +
+                     "      name = \"kComplexOperands\"\n" +
+                     "      value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
                      "    }\n" +
                      "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_const = {\n" +
-                     "    documentation = \"Block comment on constant.\"\n" +
-                     "    type = \"Operand\"\n" +
-                     "    name = \"PI\"\n" +
-                     "    value = \"{\\\"number\\\":3.141592}\"\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_const = {\n" +
-                     "    documentation = \"Line comment on constant.\"\n" +
-                     "    type = \"set<Operator>\"\n" +
-                     "    name = \"kComplexOperands\"\n" +
-                     "    value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
-                     "  }\n" +
-                     "}", debugString(calculator));
+                     "]", debugString(calculator));
     }
 
     @Test
@@ -193,39 +214,43 @@ public class ThriftProgramParserTest {
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.number\"\n" +
                      "}\n" +
-                     "decl = {\n" +
-                     "  decl_typedef = {\n" +
-                     "    type = \"double\"\n" +
-                     "    name = \"real\"\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_struct = {\n" +
-                     "    name = \"Imaginary\"\n" +
-                     "    fields = {\n" +
-                     "      key = 1\n" +
-                     "      requirement = REQUIRED\n" +
-                     "      type = \"real\"\n" +
-                     "      name = \"v\"\n" +
-                     "    }\n" +
-                     "    fields = {\n" +
-                     "      key = 2\n" +
+                     "decl = [\n" +
+                     "  {\n" +
+                     "    decl_typedef = {\n" +
                      "      type = \"double\"\n" +
-                     "      name = \"i\"\n" +
-                     "      default_value = \"0.\"\n" +
+                     "      name = \"real\"\n" +
                      "    }\n" +
-                     "    annotations = {\n" +
-                     "      \"compact\": \"true\"\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_struct = {\n" +
+                     "      name = \"Imaginary\"\n" +
+                     "      fields = [\n" +
+                     "        {\n" +
+                     "          key = 1\n" +
+                     "          requirement = REQUIRED\n" +
+                     "          type = \"real\"\n" +
+                     "          name = \"v\"\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          key = 2\n" +
+                     "          type = \"double\"\n" +
+                     "          name = \"i\"\n" +
+                     "          default_value = \"0.\"\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "      annotations = {\n" +
+                     "        \"compact\": \"true\"\n" +
+                     "      }\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_const = {\n" +
+                     "      type = \"Imaginary\"\n" +
+                     "      name = \"kSqrtMinusOne\"\n" +
+                     "      value = \"{\\\"v\\\":0.,\\\"i\\\":-1.0}\"\n" +
                      "    }\n" +
                      "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_const = {\n" +
-                     "    type = \"Imaginary\"\n" +
-                     "    name = \"kSqrtMinusOne\"\n" +
-                     "    value = \"{\\\"v\\\":0.,\\\"i\\\":-1.0}\"\n" +
-                     "  }\n" +
-                     "}", debugString(number));
+                     "]", debugString(number));
     }
 
     @Test
@@ -237,86 +262,100 @@ public class ThriftProgramParserTest {
                      "namespaces = {\n" +
                      "  \"java\": \"net.morimekta.test.annotations\"\n" +
                      "}\n" +
-                     "decl = {\n" +
-                     "  decl_enum = {\n" +
-                     "    name = \"E\"\n" +
-                     "    values = {\n" +
-                     "      name = \"VAL\"\n" +
-                     "      value = 0\n" +
+                     "decl = [\n" +
+                     "  {\n" +
+                     "    decl_enum = {\n" +
+                     "      name = \"E\"\n" +
+                     "      values = [\n" +
+                     "        {\n" +
+                     "          name = \"VAL\"\n" +
+                     "          value = 0\n" +
+                     "          annotations = {\n" +
+                     "            \"anno\": \"str\"\n" +
+                     "            \"anno.other\": \"other\"\n" +
+                     "          }\n" +
+                     "        }\n" +
+                     "      ]\n" +
                      "      annotations = {\n" +
-                     "        \"anno\": \"str\"\n" +
-                     "        \"anno.other\": \"other\"\n" +
+                     "        \"e.anno\": \"E\"\n" +
                      "      }\n" +
                      "    }\n" +
-                     "    annotations = {\n" +
-                     "      \"e.anno\": \"E\"\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_struct = {\n" +
+                     "      variant = EXCEPTION\n" +
+                     "      name = \"S\"\n" +
+                     "      fields = [\n" +
+                     "        {\n" +
+                     "          key = 1\n" +
+                     "          type = \"bool\"\n" +
+                     "          name = \"val\"\n" +
+                     "          annotations = {\n" +
+                     "            \"anno\": \"str\"\n" +
+                     "          }\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "      annotations = {\n" +
+                     "        \"other\": \"\"\n" +
+                     "      }\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    decl_service = {\n" +
+                     "      name = \"Srv\"\n" +
+                     "      methods = [\n" +
+                     "        {\n" +
+                     "          one_way = false\n" +
+                     "          name = \"method\"\n" +
+                     "          params = [\n" +
+                     "            {\n" +
+                     "              key = 1\n" +
+                     "              type = \"i32\"\n" +
+                     "              name = \"param\"\n" +
+                     "              annotations = {\n" +
+                     "                \"abba\": \"7\"\n" +
+                     "              }\n" +
+                     "            }\n" +
+                     "          ]\n" +
+                     "          annotations = {\n" +
+                     "            \"anno\": \"anno\"\n" +
+                     "          }\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          one_way = false\n" +
+                     "          name = \"method2\"\n" +
+                     "          params = [\n" +
+                     "            {\n" +
+                     "              key = 1\n" +
+                     "              type = \"i32\"\n" +
+                     "              name = \"param\"\n" +
+                     "              annotations = {\n" +
+                     "                \"abba\": \"7\"\n" +
+                     "              }\n" +
+                     "            }\n" +
+                     "          ]\n" +
+                     "          exceptions = [\n" +
+                     "            {\n" +
+                     "              key = 1\n" +
+                     "              type = \"S\"\n" +
+                     "              name = \"e\"\n" +
+                     "              annotations = {\n" +
+                     "                \"ex\": \"667\"\n" +
+                     "              }\n" +
+                     "            }\n" +
+                     "          ]\n" +
+                     "          annotations = {\n" +
+                     "            \"anno\": \"anno\"\n" +
+                     "          }\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "      annotations = {\n" +
+                     "        \"src\": \"src\"\n" +
+                     "        \"bin\": \"bin\"\n" +
+                     "      }\n" +
                      "    }\n" +
                      "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_struct = {\n" +
-                     "    variant = EXCEPTION\n" +
-                     "    name = \"S\"\n" +
-                     "    fields = {\n" +
-                     "      key = 1\n" +
-                     "      type = \"bool\"\n" +
-                     "      name = \"val\"\n" +
-                     "      annotations = {\n" +
-                     "        \"anno\": \"str\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "    annotations = {\n" +
-                     "      \"other\": \"\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}\n" +
-                     "decl = {\n" +
-                     "  decl_service = {\n" +
-                     "    name = \"Srv\"\n" +
-                     "    methods = {\n" +
-                     "      one_way = false\n" +
-                     "      name = \"method\"\n" +
-                     "      params = {\n" +
-                     "        key = 1\n" +
-                     "        type = \"i32\"\n" +
-                     "        name = \"param\"\n" +
-                     "        annotations = {\n" +
-                     "          \"abba\": \"7\"\n" +
-                     "        }\n" +
-                     "      }\n" +
-                     "      annotations = {\n" +
-                     "        \"anno\": \"anno\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "    methods = {\n" +
-                     "      one_way = false\n" +
-                     "      name = \"method2\"\n" +
-                     "      params = {\n" +
-                     "        key = 1\n" +
-                     "        type = \"i32\"\n" +
-                     "        name = \"param\"\n" +
-                     "        annotations = {\n" +
-                     "          \"abba\": \"7\"\n" +
-                     "        }\n" +
-                     "      }\n" +
-                     "      exceptions = {\n" +
-                     "        key = 1\n" +
-                     "        type = \"S\"\n" +
-                     "        name = \"e\"\n" +
-                     "        annotations = {\n" +
-                     "          \"ex\": \"667\"\n" +
-                     "        }\n" +
-                     "      }\n" +
-                     "      annotations = {\n" +
-                     "        \"anno\": \"anno\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "    annotations = {\n" +
-                     "      \"src\": \"src\"\n" +
-                     "      \"bin\": \"bin\"\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "}", debugString(annotations));
+                     "]", debugString(annotations));
     }
 
     @Test

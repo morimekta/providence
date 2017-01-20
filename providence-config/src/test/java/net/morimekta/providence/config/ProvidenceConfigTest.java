@@ -90,7 +90,9 @@ public class ProvidenceConfigTest {
                      "  signature_keys = {\n" +
                      "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
                      "  }\n" +
-                     "  signature_override_keys = \"not_really_app_1\"\n" +
+                     "  signature_override_keys = [\n" +
+                     "    \"not_really_app_1\"\n" +
+                     "  ]\n" +
                      "}\n" +
                      "admin = {\n" +
                      "  port = 14256\n" +
@@ -104,7 +106,9 @@ public class ProvidenceConfigTest {
                      "  signature_keys = {\n" +
                      "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
                      "  }\n" +
-                     "  signature_override_keys = \"not_really_app_1\"\n" +
+                     "  signature_override_keys = [\n" +
+                     "    \"not_really_app_1\"\n" +
+                     "  ]\n" +
                      "}",
                      debugString(stage_service));
     }

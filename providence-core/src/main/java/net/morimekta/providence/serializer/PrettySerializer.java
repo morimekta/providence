@@ -76,24 +76,21 @@ public class PrettySerializer extends Serializer {
     private final String  newline;
     private final String  entrySep;
     private final boolean encloseOuter;
-    private final boolean repeatedListEntries;
 
     public PrettySerializer() {
-        this(INDENT, SPACE, NEWLINE, LIST_SEP, true, false);
+        this(INDENT, SPACE, NEWLINE, LIST_SEP, true);
     }
 
     public PrettySerializer(String indent,
                             String space,
                             String newline,
                             String entrySep,
-                            boolean encloseOuter,
-                            boolean repeatedListEntries) {
+                            boolean encloseOuter) {
         this.indent = indent;
         this.space = space;
         this.newline = newline;
         this.entrySep = entrySep;
         this.encloseOuter = encloseOuter;
-        this.repeatedListEntries = repeatedListEntries;
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
@@ -529,33 +526,12 @@ public class PrettySerializer extends Serializer {
                                .appendln();
                     }
                     Object o = message.get(field.getKey());
-                    if (field.getType() == PType.LIST && repeatedListEntries) {
-                        @SuppressWarnings("unchecked")
-                        PList<Object> list = (PList<Object>) field.getDescriptor();
-                        @SuppressWarnings("unchecked")
-                        Collection<Object> coll = (Collection<Object>) o;
 
-                        boolean firstItem = true;
-                        for (Object v : coll) {
-                            if (firstItem) {
-                                firstItem = false;
-                            } else {
-                                builder.appendln();
-                            }
-
-                            builder.append(field.getName())
-                                   .append(space)
-                                   .append(Token.kFieldValueSep)
-                                   .append(space);
-                            appendTypedValue(builder, list.itemDescriptor(), v);
-                        }
-                    } else {
-                        builder.append(field.getName())
-                               .append(space)
-                               .append(Token.kFieldValueSep)
-                               .append(space);
-                        appendTypedValue(builder, field.getDescriptor(), o);
-                    }
+                    builder.append(field.getName())
+                           .append(space)
+                           .append(Token.kFieldValueSep)
+                           .append(space);
+                    appendTypedValue(builder, field.getDescriptor(), o);
                 }
             }
         }

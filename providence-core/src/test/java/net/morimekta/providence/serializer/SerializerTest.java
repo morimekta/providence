@@ -226,7 +226,7 @@ public class SerializerTest {
 
     @Test
     public void testPretty() throws IOException {
-        Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true, false);
+        Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true);
         testOutput(serializer, "/compat/pretty.cfg");
         testSerializer(serializer);
         testCompatibility(serializer, "/compat/pretty.cfg");

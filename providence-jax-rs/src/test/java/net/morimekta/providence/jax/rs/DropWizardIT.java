@@ -35,6 +35,7 @@ import static net.morimekta.test.calculator.Operand.withNumber;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Javax.WS.RS integration testing using io.dropwizard.
@@ -126,23 +127,25 @@ public class DropWizardIT {
         assertThat(response.getHeaders().getFirst("Content-Type"), is(equalTo(JsonSerializer.MIME_TYPE)));
         CalculateException ex = response.readEntity(CalculateException.class);
 
-        assertThat(debugString(ex), is(equalTo(
+        assertEquals(
                 "message = \"Unsupported operation: MULTIPLY\"\n" +
                 "operation = {\n" +
                 "  operator = MULTIPLY\n" +
-                "  operands = {\n" +
-                "    number = 52\n" +
-                "  }\n" +
-                "  operands = {\n" +
-                "    imaginary = {\n" +
-                "      v = 1\n" +
-                "      i = -1\n" +
+                "  operands = [\n" +
+                "    {\n" +
+                "      number = 52\n" +
+                "    },\n" +
+                "    {\n" +
+                "      imaginary = {\n" +
+                "        v = 1\n" +
+                "        i = -1\n" +
+                "      }\n" +
+                "    },\n" +
+                "    {\n" +
+                "      number = 15\n" +
                 "    }\n" +
-                "  }\n" +
-                "  operands = {\n" +
-                "    number = 15\n" +
-                "  }\n" +
-                "}")));
+                "  ]\n" +
+                "}", debugString(ex));
     }
 
     @Test

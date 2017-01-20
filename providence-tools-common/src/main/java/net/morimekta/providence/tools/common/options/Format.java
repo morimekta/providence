@@ -68,7 +68,7 @@ public enum Format {
             case tuple_protocol:
                 return new TTupleProtocolSerializer(strict);
             case pretty:
-                return new PrettySerializer("  ", " ", "\n", "", false, true);
+                return new PrettySerializer("  ", " ", "\n", "", false);
             default:
                 throw new IllegalStateException("Unhandled format: " + this);
         }

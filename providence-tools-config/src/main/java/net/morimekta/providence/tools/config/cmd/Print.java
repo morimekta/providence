@@ -19,7 +19,7 @@ import java.io.UncheckedIOException;
  * Print the resulting config.
  */
 public class Print implements Command {
-    private Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true, false);
+    private Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true);
     private File       file       = null;
 
     @Override

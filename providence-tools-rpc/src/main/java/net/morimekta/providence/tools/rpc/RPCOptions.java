@@ -177,7 +177,7 @@ public class RPCOptions extends CommonOptions {
             case fast_binary:
                 return new FastBinarySerializer(strict);
             case pretty:
-                return new PrettySerializer("  ", " ", "\n", "", false, true);
+                return new PrettySerializer("  ", " ", "\n", "", false);
             case binary_protocol:
                 return new TBinaryProtocolSerializer(strict);
             case json_protocol:

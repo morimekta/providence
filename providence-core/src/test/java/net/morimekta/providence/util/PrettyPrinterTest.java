@@ -63,22 +63,26 @@ public class PrettyPrinterTest {
     @Test
     public void testDebugString() {
         assertEquals("operator = MULTIPLY\n" +
-                     "operands = {\n" +
-                     "  operation = {\n" +
-                     "    operator = ADD\n" +
-                     "    operands = {\n" +
-                     "      number = 1234\n" +
+                     "operands = [\n" +
+                     "  {\n" +
+                     "    operation = {\n" +
+                     "      operator = ADD\n" +
+                     "      operands = [\n" +
+                     "        {\n" +
+                     "          number = 1234\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          number = 4.321\n" +
+                     "        }\n" +
+                     "      ]\n" +
                      "    }\n" +
-                     "    operands = {\n" +
-                     "      number = 4.321\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    imaginary = {\n" +
+                     "      v = 1.7\n" +
+                     "      i = -2\n" +
                      "    }\n" +
                      "  }\n" +
-                     "}\n" +
-                     "operands = {\n" +
-                     "  imaginary = {\n" +
-                     "    v = 1.7\n" +
-                     "    i = -2\n" +
-                     "  }\n" +
-                     "}", PrettyPrinter.debugString(mOperation));
+                     "]", PrettyPrinter.debugString(mOperation));
     }
 }
