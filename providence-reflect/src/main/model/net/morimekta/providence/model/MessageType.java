@@ -514,11 +514,11 @@ public class MessageType
                 optionals.set(2);
                 mName = base.mName;
             }
-            if (base.numFields() > 0) {
+            if (base.hasFields()) {
                 optionals.set(3);
                 mFields.addAll(base.mFields);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }

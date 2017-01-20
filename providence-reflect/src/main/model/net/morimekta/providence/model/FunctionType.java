@@ -610,15 +610,15 @@ public class FunctionType
                 optionals.set(3);
                 mName = base.mName;
             }
-            if (base.numParams() > 0) {
+            if (base.hasParams()) {
                 optionals.set(4);
                 mParams.addAll(base.mParams);
             }
-            if (base.numExceptions() > 0) {
+            if (base.hasExceptions()) {
                 optionals.set(5);
                 mExceptions.addAll(base.mExceptions);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(6);
                 mAnnotations.putAll(base.mAnnotations);
             }

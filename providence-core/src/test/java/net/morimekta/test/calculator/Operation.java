@@ -334,7 +334,7 @@ public class Operation
                 optionals.set(0);
                 mOperator = base.mOperator;
             }
-            if (base.numOperands() > 0) {
+            if (base.hasOperands()) {
                 optionals.set(1);
                 mOperands.addAll(base.mOperands);
             }

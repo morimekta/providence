@@ -516,11 +516,11 @@ public class ServiceType
                 optionals.set(2);
                 mExtend = base.mExtend;
             }
-            if (base.numMethods() > 0) {
+            if (base.hasMethods()) {
                 optionals.set(3);
                 mMethods.addAll(base.mMethods);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }

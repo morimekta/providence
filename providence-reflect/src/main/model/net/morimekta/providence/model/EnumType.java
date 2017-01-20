@@ -465,11 +465,11 @@ public class EnumType
                 optionals.set(1);
                 mName = base.mName;
             }
-            if (base.numValues() > 0) {
+            if (base.hasValues()) {
                 optionals.set(2);
                 mValues.addAll(base.mValues);
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(3);
                 mAnnotations.putAll(base.mAnnotations);
             }

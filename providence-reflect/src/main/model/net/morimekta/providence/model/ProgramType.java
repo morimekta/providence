@@ -537,15 +537,15 @@ public class ProgramType
                 optionals.set(1);
                 mProgramName = base.mProgramName;
             }
-            if (base.numIncludes() > 0) {
+            if (base.hasIncludes()) {
                 optionals.set(2);
                 mIncludes.addAll(base.mIncludes);
             }
-            if (base.numNamespaces() > 0) {
+            if (base.hasNamespaces()) {
                 optionals.set(3);
                 mNamespaces.putAll(base.mNamespaces);
             }
-            if (base.numDecl() > 0) {
+            if (base.hasDecl()) {
                 optionals.set(4);
                 mDecl.addAll(base.mDecl);
             }

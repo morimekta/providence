@@ -443,7 +443,7 @@ public class EnumValue
             }
             optionals.set(2);
             mValue = base.mValue;
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(3);
                 mAnnotations.putAll(base.mAnnotations);
             }

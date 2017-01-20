@@ -31,6 +31,11 @@ import net.morimekta.test.providence.Value;
 
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -199,5 +204,20 @@ public class ProvidenceTest {
         // inner contained structures are not rebuilt.
         assertThat(c.getOptionalFields().getIntegerValue(), is(55));
         assertThat(c.getOptionalFields().getCompactValue(), is(sameInstance(of.getCompactValue())));
+    }
+
+    @Test
+    public void testMutableContainer() {
+        Containers containers = Containers.builder()
+                                          .setByteList(new LinkedList<>())
+                                          .setShortSet(new HashSet<>())
+                                          .setIntegerMap(new HashMap<>())
+                                          .addToLongList(1, 2, 3, 4, 5)
+                                          .addToEnumSet(Value.EIGHTEENTH, Value.THIRD)
+                                          .putInDoubleMap(12, 44)
+                                          .putInDoubleMap(44, 12)
+                                          .build();
+
+        assertThat(containers, is(equalToMessage(containers.mutate().build())));
     }
 }

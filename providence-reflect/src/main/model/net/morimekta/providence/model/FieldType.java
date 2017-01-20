@@ -603,7 +603,7 @@ public class FieldType
                 optionals.set(5);
                 mDefaultValue = base.mDefaultValue;
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(6);
                 mAnnotations.putAll(base.mAnnotations);
             }

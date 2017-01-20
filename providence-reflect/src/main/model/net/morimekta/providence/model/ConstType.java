@@ -503,7 +503,7 @@ public class ConstType
                 optionals.set(3);
                 mValue = base.mValue;
             }
-            if (base.numAnnotations() > 0) {
+            if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }

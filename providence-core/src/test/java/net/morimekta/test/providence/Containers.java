@@ -2335,123 +2335,123 @@ public class Containers
         public _Builder(Containers base) {
             this();
 
-            if (base.numBooleanList() > 0) {
+            if (base.hasBooleanList()) {
                 optionals.set(0);
                 mBooleanList.addAll(base.mBooleanList);
             }
-            if (base.numByteList() > 0) {
+            if (base.hasByteList()) {
                 optionals.set(1);
                 mByteList.addAll(base.mByteList);
             }
-            if (base.numShortList() > 0) {
+            if (base.hasShortList()) {
                 optionals.set(2);
                 mShortList.addAll(base.mShortList);
             }
-            if (base.numIntegerList() > 0) {
+            if (base.hasIntegerList()) {
                 optionals.set(3);
                 mIntegerList.addAll(base.mIntegerList);
             }
-            if (base.numLongList() > 0) {
+            if (base.hasLongList()) {
                 optionals.set(4);
                 mLongList.addAll(base.mLongList);
             }
-            if (base.numDoubleList() > 0) {
+            if (base.hasDoubleList()) {
                 optionals.set(5);
                 mDoubleList.addAll(base.mDoubleList);
             }
-            if (base.numStringList() > 0) {
+            if (base.hasStringList()) {
                 optionals.set(6);
                 mStringList.addAll(base.mStringList);
             }
-            if (base.numBinaryList() > 0) {
+            if (base.hasBinaryList()) {
                 optionals.set(7);
                 mBinaryList.addAll(base.mBinaryList);
             }
-            if (base.numBooleanSet() > 0) {
+            if (base.hasBooleanSet()) {
                 optionals.set(8);
                 mBooleanSet.addAll(base.mBooleanSet);
             }
-            if (base.numByteSet() > 0) {
+            if (base.hasByteSet()) {
                 optionals.set(9);
                 mByteSet.addAll(base.mByteSet);
             }
-            if (base.numShortSet() > 0) {
+            if (base.hasShortSet()) {
                 optionals.set(10);
                 mShortSet.addAll(base.mShortSet);
             }
-            if (base.numIntegerSet() > 0) {
+            if (base.hasIntegerSet()) {
                 optionals.set(11);
                 mIntegerSet.addAll(base.mIntegerSet);
             }
-            if (base.numLongSet() > 0) {
+            if (base.hasLongSet()) {
                 optionals.set(12);
                 mLongSet.addAll(base.mLongSet);
             }
-            if (base.numDoubleSet() > 0) {
+            if (base.hasDoubleSet()) {
                 optionals.set(13);
                 mDoubleSet.addAll(base.mDoubleSet);
             }
-            if (base.numStringSet() > 0) {
+            if (base.hasStringSet()) {
                 optionals.set(14);
                 mStringSet.addAll(base.mStringSet);
             }
-            if (base.numBinarySet() > 0) {
+            if (base.hasBinarySet()) {
                 optionals.set(15);
                 mBinarySet.addAll(base.mBinarySet);
             }
-            if (base.numBooleanMap() > 0) {
+            if (base.hasBooleanMap()) {
                 optionals.set(16);
                 mBooleanMap.putAll(base.mBooleanMap);
             }
-            if (base.numByteMap() > 0) {
+            if (base.hasByteMap()) {
                 optionals.set(17);
                 mByteMap.putAll(base.mByteMap);
             }
-            if (base.numShortMap() > 0) {
+            if (base.hasShortMap()) {
                 optionals.set(18);
                 mShortMap.putAll(base.mShortMap);
             }
-            if (base.numIntegerMap() > 0) {
+            if (base.hasIntegerMap()) {
                 optionals.set(19);
                 mIntegerMap.putAll(base.mIntegerMap);
             }
-            if (base.numLongMap() > 0) {
+            if (base.hasLongMap()) {
                 optionals.set(20);
                 mLongMap.putAll(base.mLongMap);
             }
-            if (base.numDoubleMap() > 0) {
+            if (base.hasDoubleMap()) {
                 optionals.set(21);
                 mDoubleMap.putAll(base.mDoubleMap);
             }
-            if (base.numStringMap() > 0) {
+            if (base.hasStringMap()) {
                 optionals.set(22);
                 mStringMap.putAll(base.mStringMap);
             }
-            if (base.numBinaryMap() > 0) {
+            if (base.hasBinaryMap()) {
                 optionals.set(23);
                 mBinaryMap.putAll(base.mBinaryMap);
             }
-            if (base.numEnumList() > 0) {
+            if (base.hasEnumList()) {
                 optionals.set(24);
                 mEnumList.addAll(base.mEnumList);
             }
-            if (base.numEnumSet() > 0) {
+            if (base.hasEnumSet()) {
                 optionals.set(25);
                 mEnumSet.addAll(base.mEnumSet);
             }
-            if (base.numEnumMap() > 0) {
+            if (base.hasEnumMap()) {
                 optionals.set(26);
                 mEnumMap.putAll(base.mEnumMap);
             }
-            if (base.numMessageList() > 0) {
+            if (base.hasMessageList()) {
                 optionals.set(27);
                 mMessageList.addAll(base.mMessageList);
             }
-            if (base.numMessageSet() > 0) {
+            if (base.hasMessageSet()) {
                 optionals.set(28);
                 mMessageSet.addAll(base.mMessageSet);
             }
-            if (base.numMessageMap() > 0) {
+            if (base.hasMessageMap()) {
                 optionals.set(29);
                 mMessageMap.putAll(base.mMessageMap);
             }
