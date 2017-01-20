@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static net.morimekta.providence.util.PrettyPrinter.debugString;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -106,7 +107,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testArrayListFromJsonResource() throws SerializerException, IOException {
+    public void testArrayListFromJsonResource() throws IOException {
         List<Containers> pretty = net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource("/compat/pretty.json",
                                                                                                            Containers.kDescriptor);
         List<Containers> compact = net.morimekta.providence.util.ProvidenceHelper.arrayListFromJsonResource("/compat/compact.json",
@@ -115,7 +116,7 @@ public class ProvidenceHelperTest {
         assertEquals(10, pretty.size());
         assertEquals(pretty.size(), compact.size());
         for (int i = 0; i < 10; ++i) {
-            assertEquals(compact.get(i), pretty.get(i));
+            assertEquals(debugString(compact.get(i)), debugString(pretty.get(i)));
         }
     }
 }

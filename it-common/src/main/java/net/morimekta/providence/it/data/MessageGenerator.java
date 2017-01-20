@@ -17,8 +17,8 @@ public class MessageGenerator {
     private int keyLen = 5;
     private int dataLen = 12;
     private double fillRatio = 1.0;
-    private int minItems = 2;
-    private int maxItems = 5;
+    private int minItems = 0;
+    private int maxItems = 3;
 
     private final RandomGenerator randomGenerator;
 

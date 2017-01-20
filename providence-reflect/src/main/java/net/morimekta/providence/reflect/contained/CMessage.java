@@ -43,7 +43,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public abstract class CMessage<Message extends PMessage<Message, Field>, Field extends PField>
         implements PMessage<Message, Field> {
-    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true, false);
+    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true);
 
     private final Map<Integer, Object> values;
 
