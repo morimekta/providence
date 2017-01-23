@@ -90,6 +90,7 @@
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <thrift.version>0.10.0</thrift.version>
         <google-http.version>1.22.0</google-http.version>
+        <httpcomponents.version>4.4.1</httpcomponents.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <dropwizard.version>1.0.5</dropwizard.version>
 
@@ -240,38 +241,15 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
             </dependency>
-
-            <!-- MAVEN PLUGIN DEPS -->
             <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-plugin-api</artifactId>
-                <version>3.3.9</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-core</artifactId>
-                <version>3.3.9</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-compat</artifactId>
-                <version>3.3.9</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugin-tools</groupId>
-                <artifactId>maven-plugin-annotations</artifactId>
-                <version>3.5</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>3.0.24</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-io</artifactId>
-                <version>2.7.1</version>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents.version}</version>
             </dependency>
 
             <!-- USED IN TESTING -->

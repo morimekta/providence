@@ -30,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -149,7 +149,7 @@ public class HttpClientHandlerNetworkTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (HttpHostConnectException ex) {
-            assertThat(ex.getMessage(), is(equalTo("Connection to http://localhost:" + (port - 10) + " refused")));
+            assertThat(ex.getMessage(), is(startsWith("Connect to localhost:" + (port - 10) + " failed: Connection refused")));
         }
     }
 
@@ -165,7 +165,7 @@ public class HttpClientHandlerNetworkTest {
             client.test(new Request("request"));
             fail("No exception");
         } catch (HttpHostConnectException ex) {
-            assertThat(ex.getMessage(), is(equalTo("Connection to http://localhost:" + (port - 10) + " refused")));
+            assertThat(ex.getMessage(), is(startsWith("Connect to localhost:" + (port - 10) + " failed: Connection refused")));
         }
     }
 }
