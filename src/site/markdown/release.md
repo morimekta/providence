@@ -42,14 +42,14 @@ First build the release CLI packages, and update the GIT release info:
 
 * Run `# mvn -Pcli clean package` to make sure the release-artifacts are
   available locally.
-* Take out the two files: `providence-package/target/providence-{version}_all.deb`
-  and `providence-package/target/rpm/providence/RPMS/noarch/providence-{version}_1.noarch.rpm`
+* Take out the two files: `providence-tools/target/providence-{version}_all.deb`
+  and `providence-tools/target/rpm/providence/RPMS/noarch/providence-{version}-1.noarch.rpm`
   and save them to the release TAG info on `github.com`.
 
 Then update and release the gradle plugin
 
 * Go to `providence-gradle-plugin` repository.
-* Update version in `build.gradle` and in the `README.md` file.
+* Update version in `gradle.properties` and in the `README.md` file.
 * Run `./gradlew clean test publishPlugins` to test and publish the gradle plugin.
 
 Then prepare the site update.
