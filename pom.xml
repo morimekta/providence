@@ -88,7 +88,7 @@
         <!-- RPC tools, Client -->
         <jetty.version>9.4.0.v20161208</jetty.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <thrift.version>0.9.3</thrift.version>
+        <thrift.version>0.10.0</thrift.version>
         <google-http.version>1.22.0</google-http.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <dropwizard.version>1.0.5</dropwizard.version>

@@ -76,7 +76,7 @@ class GenerateStaticThrift {
         }.files) {
             project.exec {
                 executable 'thrift'
-                args '--out', outDir.toString(), '--gen', 'java:generated_annotations=suppress,private-members,full-camel', srcFile.toString()
+                args '--out', outDir.toString(), '--gen', 'java:generated_annotations=suppress,private-members,fullcamel', srcFile.toString()
             }
         }
     }
