@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Providence CLI : Packaging</name>
-    <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), and an RPC tool (pvdrpc).</description>
+    <description>Providence tools. Contains the providence compiler (pvdc), a providence data converter (pvd), a providence config helper (pvdcfg) and an RPC tool (pvdrpc).</description>
 
     <parent>
         <groupId>net.morimekta.providence</groupId>
@@ -38,6 +38,21 @@
     <build>
         <finalName>providence</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-providence-assembly</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/assembly/tools.xml</descriptor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.vafer</groupId>
                 <artifactId>jdeb</artifactId>
@@ -96,7 +111,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/lib</prefix>
+                                        <prefix>/usr/local/share/providence</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -104,7 +119,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/lib</prefix>
+                                        <prefix>/usr/local/share/providence</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -112,7 +127,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/lib</prefix>
+                                        <prefix>/usr/local/share/providence</prefix>
                                     </mapper>
                                 </data>
                                 <data>
@@ -120,7 +135,7 @@
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
-                                        <prefix>/usr/local/lib</prefix>
+                                        <prefix>/usr/local/share/providence</prefix>
                                     </mapper>
                                 </data>
                             </dataSet>
@@ -164,7 +179,7 @@
                                     </sources>
                                 </mapping>
                                 <mapping>
-                                    <directory>/usr/local/lib</directory>
+                                    <directory>/usr/local/share/providence</directory>
                                     <filemode>644</filemode>
                                     <sources>
                                         <source>

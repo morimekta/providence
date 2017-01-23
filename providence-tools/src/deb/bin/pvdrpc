@@ -1,3 +1,4 @@
 #!/bin/bash
 
-exec java -jar /usr/local/lib/providence-tools-rpc.jar "$@"
+PARENT_DIR="$(cd $(dirname $0)/.. && pwd)"
+exec java -jar ${PARENT_DIR}/share/providence/providence-tools-rpc.jar "$@"
