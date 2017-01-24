@@ -32,16 +32,10 @@ The available serializers are as follows:
   to read most generic JSON formats into providence structs that match with
   name to field type mapping. See
   [json serializer spec](../serializer-json.html) for details.
-
-It also contains a `PPrettyPrinter` class that similar to the serializers
-can serialize messages to an easy to read, and easy to compare (e.g. line by
-line) format. But it does not have any deserializer yet, so is not a full
-serializer format (yet).
-
-**TODO(morimekta):** Make the PPrettyPrinter a full-fledged serializer with
-both serialization and deserialization. Note that it's OK if this is a slightly
-lossy serialization / deserialization, and not fast at all, as it is meant
-purely for testing and debugging.
+* **PrettySerializer**: A serializer format for making and reading a pure human
+  readable format. The format is also used in the providence config, but with
+  some extra features. See [providence-config](../providence-config/index.html)
+  for details on the pretty config format.
 
 ## Streams
 

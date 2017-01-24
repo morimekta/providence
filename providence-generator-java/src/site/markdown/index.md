@@ -86,10 +86,10 @@ make a switch statement like:
 
 ```java
 switch(union.unionField()) {
-    case MyUnion._Field.FIRST:
+    case FIRST:
         // ... Do something.
         break;
-    case MyUnion._Field.SECOND:
+    case SECOND:
         // ... Do something else.
         break;
 }

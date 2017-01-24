@@ -11,7 +11,6 @@
 
             <item href="index.html" name="Providence" />
             <item href="providence-tools.html" name="Providence Tools" />
-            <item href="providence-hazelcast.html" name="Providence Hazelcast" />
             <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
         </menu>
@@ -40,6 +39,10 @@
 
             <item href="release.html" name="Release Process" />
             <item href="integration-testing.html" name="Integration Testing" />
+
+            <item href="providence-hazelcast.html" name="Hazelcast Portable" />
+            <item href="providence-android.html" name="Android Parcelable" />
+            <item href="providence-jackson.html" name="Jackson Annotations" />
 
             <item href="serializer-binary.html" name="Serializer : Binary" />
             <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
