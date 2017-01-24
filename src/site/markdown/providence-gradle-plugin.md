@@ -9,7 +9,7 @@ Note that the plugin requires the `java` plugin to be applied, and must
 be applied **after** the java plugin. See example below to ensure that.
 
 ```groovy
-var providence_version = '0.3.0'
+var providence_version = '0.3.7'
 
 plugins {
     id "net.morimekta.providence.gradle" version "${providence_version}" apply false
@@ -36,12 +36,12 @@ providence {
     main {
         // In order to only compile the locally defined IDL files
         input = fileTree('idl') {
-            includes 'github.com/morimekta/providence/**/*.thrift'
+            include 'github.com/morimekta/providence/**/*.thrift'
         }
         // Non compiled but included program files.
         include = fileTree('idl') {
-            includes '**/*.thrift'
-            excludes 'github.com/morimekta/providence/**/*.thrift'
+            include '**/*.thrift'
+            exclude 'github.com/morimekta/providence/**/*.thrift'
         }
 
         // Flags to enable specific providence generation features.
