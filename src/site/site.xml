@@ -35,14 +35,20 @@
 
         </menu>
 
-        <menu name="Docs" inherit="top">
+        <menu name="Generator Options" inherit="top">
+
+            <item href="options.html" name="Options Overview" />
+
+            <item href="options-hazelcast.html" name="Hazelcast Portable" />
+            <item href="options-android.html" name="Android Parcelable" />
+            <item href="options-jackson.html" name="Jackson Annotations" />
+
+        </menu>
+
+        <menu name="Documentation" inherit="top">
 
             <item href="release.html" name="Release Process" />
             <item href="integration-testing.html" name="Integration Testing" />
-
-            <item href="providence-hazelcast.html" name="Hazelcast Portable" />
-            <item href="providence-android.html" name="Android Parcelable" />
-            <item href="providence-jackson.html" name="Jackson Annotations" />
 
             <item href="serializer-binary.html" name="Serializer : Binary" />
             <item href="serializer-fast-binary.html" name="Serializer : Fast Binary" />
