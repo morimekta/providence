@@ -90,7 +90,8 @@
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <thrift.version>0.10.0</thrift.version>
         <google-http.version>1.22.0</google-http.version>
-        <httpcomponents.version>4.4.1</httpcomponents.version>
+        <httpcore.version>4.4.6</httpcore.version>
+        <httpclient.version>4.5.2</httpclient.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <dropwizard.version>1.0.5</dropwizard.version>
 
@@ -244,12 +245,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>${httpcomponents.version}</version>
+                <version>${httpcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>${httpcomponents.version}</version>
+                <version>${httpclient.version}</version>
             </dependency>
 
             <!-- USED IN TESTING -->
