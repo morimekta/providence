@@ -36,7 +36,7 @@ import net.morimekta.providence.reflect.contained.CMessage;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,39 +44,39 @@ import java.util.Optional;
  *
  */
 public class JMessage<T extends CMessage<T, CField>> {
-    private final PMessageDescriptor<?, ?> struct;
-    private final JHelper                 helper;
-    private final ArrayList<JField>       declaredFields;
-    private final ArrayList<JField>       numericalFields;
+    private final PMessageDescriptor<?, ?> descriptor;
+    private final JHelper                  helper;
+    private final ArrayList<JField>        declaredFields;
+    private final ArrayList<JField>        numericalFields;
 
-    public JMessage(PMessageDescriptor<T, CField> struct, JHelper helper) {
-        this.struct = struct;
+    public JMessage(PMessageDescriptor<T, CField> descriptor, JHelper helper) {
+        this.descriptor = descriptor;
         this.helper = helper;
-        this.declaredFields = new ArrayList<>(struct.getFields().length);
+        this.declaredFields = new ArrayList<>(descriptor.getFields().length);
 
-        CField[] fields = struct.getFields();
+        CField[] fields = descriptor.getFields();
         for (int i = 0; i < fields.length; ++i) {
             this.declaredFields.add(new JField(fields[i], helper, i));
         }
         // The same declaredFields, but in ID numerical order.
         this.numericalFields = new ArrayList<>(this.declaredFields);
-        Collections.sort(this.numericalFields, (a, b) -> Integer.compare(a.id(), b.id()));
+        this.numericalFields.sort(Comparator.comparingInt(JField::id));
     }
 
     public PMessageDescriptor<?, ?> descriptor() {
-        return struct;
+        return descriptor;
     }
 
     public PMessageVariant variant() {
-        return struct.getVariant();
+        return descriptor.getVariant();
     }
 
     public boolean isException() {
-        return struct.getVariant() == PMessageVariant.EXCEPTION;
+        return descriptor.getVariant() == PMessageVariant.EXCEPTION;
     }
 
     public boolean isUnion() {
-        return struct.getVariant() == PMessageVariant.UNION;
+        return descriptor.getVariant() == PMessageVariant.UNION;
     }
 
     /**
@@ -85,7 +85,7 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return The class short name.
      */
     public String instanceType() {
-        return JUtils.getClassName(struct);
+        return JUtils.getClassName(descriptor);
     }
 
     public List<JField> declaredOrderFields() {
@@ -152,8 +152,8 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return True if the annotaiton is present.
      */
     public boolean hasAnnotation(ThriftAnnotation annotation) {
-        if (struct instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) struct).hasAnnotation(annotation);
+        if (descriptor instanceof CAnnotatedDescriptor) {
+            return ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
         }
         return false;
     }
@@ -165,8 +165,8 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return True if the annotaiton is present.
      */
     public boolean hasAnnotation(String annotation) {
-        if (struct instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) struct).hasAnnotation(annotation);
+        if (descriptor instanceof CAnnotatedDescriptor) {
+            return ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
         }
         return false;
     }
@@ -186,9 +186,9 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return The value of the annotation, or null if not present.
      */
     public String getAnnotationValue(String annotation) {
-        if (struct instanceof CAnnotatedDescriptor) {
-            if (((CAnnotatedDescriptor) struct).hasAnnotation(annotation)) {
-                return ((CAnnotatedDescriptor) struct).getAnnotationValue(annotation);
+        if (descriptor instanceof CAnnotatedDescriptor) {
+            if (((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation)) {
+                return ((CAnnotatedDescriptor) descriptor).getAnnotationValue(annotation);
             }
         }
         return null;

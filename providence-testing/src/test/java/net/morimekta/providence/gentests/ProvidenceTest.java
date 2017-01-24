@@ -20,7 +20,8 @@
  */
 package net.morimekta.providence.gentests;
 
-import net.morimekta.providence.util.PrettyPrinter;
+import net.morimekta.providence.serializer.BinarySerializer;
+import net.morimekta.test.providence.AutoIdFields;
 import net.morimekta.test.providence.CompactFields;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.test.providence.DefaultValues;
@@ -28,14 +29,19 @@ import net.morimekta.test.providence.OptionalFields;
 import net.morimekta.test.providence.RequiredFields;
 import net.morimekta.test.providence.UnionFields;
 import net.morimekta.test.providence.Value;
+import net.morimekta.util.Binary;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static net.morimekta.providence.util.PrettyPrinter.debugString;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -43,6 +49,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for providence built sources - message main body.
@@ -167,7 +174,7 @@ public class ProvidenceTest {
         assertThat(dv.getCompactValue(), is(nullValue()));
 
         // And it serializes as no fields.
-        assertThat(PrettyPrinter.debugString(dv), is(equalTo("")));
+        assertThat(debugString(dv), is(equalTo("")));
     }
 
     @Test
@@ -181,6 +188,44 @@ public class ProvidenceTest {
         assertThat(of.hashCode(), is(equalTo(of2.hashCode())));
         assertThat(of.hashCode(), not(equalTo(rf.hashCode())));
         assertThat(uf.hashCode(), not(equalTo(rf.hashCode())));
+    }
+
+    @Test
+    public void testAutoIdFields() throws IOException {
+        AutoIdFields af = AutoIdFields.builder()
+                                      .setBooleanValue(false)
+                                      .setByteValue((byte) 4)
+                                      .setShortValue((short) 6)
+                                      .setIntegerValue(8)
+                                      .setLongValue(10L)
+                                      .setDoubleValue(12.12)
+                                      .setStringValue("a string")
+                                      .setBinaryValue(Binary.fromHexString("0123456789abcdef"))
+                                      .setCompactValue(new CompactFields("name", 14, "label"))
+                                      .setEnumValue(Value.SIXTEENTH)
+                                      .build();
+        BinarySerializer serializer = new BinarySerializer();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        serializer.serialize(baos, af);
+        AutoIdFields af2 = serializer.deserialize(new ByteArrayInputStream(baos.toByteArray()), AutoIdFields.kDescriptor);
+
+        assertThat(af2, is(equalToMessage(af)));
+        // An interesting side effect from auto ID fields, is that the numeric
+        // order is reverse that of declared order. Always.
+        assertEquals("compactValue = {\n" +
+                     "  name = \"name\"\n" +
+                     "  id = 14\n" +
+                     "  label = \"label\"\n" +
+                     "}\n" +
+                     "enumValue = SIXTEENTH\n" +
+                     "binaryValue = b64(ASNFZ4mrze8)\n" +
+                     "stringValue = \"a string\"\n" +
+                     "doubleValue = 12.12\n" +
+                     "longValue = 10\n" +
+                     "integerValue = 8\n" +
+                     "shortValue = 6\n" +
+                     "byteValue = 4\n" +
+                     "booleanValue = false", debugString(af2));
     }
 
     @Test

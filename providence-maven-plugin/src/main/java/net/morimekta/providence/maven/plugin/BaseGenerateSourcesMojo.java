@@ -128,6 +128,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     protected IncludeExcludeFileSelector includeDirs;
 
+    @Parameter
+    protected boolean requireFieldId = false;
+
+    @Parameter
+    protected boolean requireEnumValue = false;
+
     // --- After here are internals, components and maven-set params.
 
     /**
@@ -216,7 +222,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         inputs.stream().map(File::getParentFile).forEach(includes::add);
 
         FileManager fileManager = new FileManager(outputDir);
-        ProgramParser parser = new ThriftProgramParser();
+        ProgramParser parser = new ThriftProgramParser(requireFieldId, requireEnumValue);
         TypeLoader loader = new TypeLoader(includes, parser);
 
         LinkedList<CProgram> documents = new LinkedList<>();

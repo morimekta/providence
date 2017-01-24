@@ -67,6 +67,18 @@ public class ThriftProgramParser implements ProgramParser {
     public static final Pattern  VALID_SDI_IDENTIFIER = Pattern.compile(
             "([_a-zA-Z][-_a-zA-Z0-9]*[.])*[_a-zA-Z][-_a-zA-Z0-9]*");
 
+    private final boolean requireFieldId;
+    private final boolean requireEnumValue;
+
+    public ThriftProgramParser() {
+        this(false, false);
+    }
+
+    public ThriftProgramParser(boolean requireFieldId, boolean requireEnumValue) {
+        this.requireFieldId = requireFieldId;
+        this.requireEnumValue = requireEnumValue;
+    }
+
     @Override
     public ProgramType parse(InputStream in, String filePath) throws IOException, ParseException {
         ProgramType._Builder program = ProgramType.builder();
@@ -323,6 +335,8 @@ public class ThriftProgramParser implements ProgramParser {
             method.setName(name);
 
             tokenizer.expectSymbol("method params begin", Token.kParamsStart);
+
+            int nextAutoParamKey = -1;
             while (true) {
                 token = tokenizer.expect("method params");
                 if (token.isSymbol(Token.kParamsEnd)) {
@@ -345,6 +359,11 @@ public class ThriftProgramParser implements ProgramParser {
                     field.setKey((int) token.parseInteger());
                     tokenizer.expectSymbol("method params (:)", Token.kFieldIdSep);
                     token = tokenizer.expect("method param type");
+                } else {
+                    if (requireFieldId) {
+                        throw new ParseException(tokenizer, token, "Missing param ID in strict declaration");
+                    }
+                    field.setKey(nextAutoParamKey--);
                 }
 
                 field.setType(parseType(tokenizer, token));
@@ -382,6 +401,8 @@ public class ThriftProgramParser implements ProgramParser {
                 tokenizer.next();
                 tokenizer.expectSymbol("parsing method exceptions", Token.kParamsStart);
 
+                int nextAutoExceptionKey = -1;
+
                 while (true) {
                     token = tokenizer.expect("parsing method exception");
 
@@ -405,6 +426,11 @@ public class ThriftProgramParser implements ProgramParser {
                         field.setKey((int) token.parseInteger());
                         tokenizer.expectSymbol("reading method exception (:)", Token.kFieldIdSep);
                         token = tokenizer.expect("reading method exception type");
+                    } else {
+                        if (requireFieldId) {
+                            throw new ParseException(tokenizer, token, "Missing exception ID in strict declaration");
+                        }
+                        field.setKey(nextAutoExceptionKey--);
                     }
 
                     field.setType(parseType(tokenizer, token));
@@ -572,6 +598,12 @@ public class ThriftProgramParser implements ProgramParser {
                         Token v = tokenizer.expectInteger("");
                         value = (int) v.parseInteger();
                         nextValue = value + 1;
+                    } else if (requireEnumValue) {
+                        // So the token points at the token that *should* have been '='.
+                        if (tokenizer.hasNext()) {
+                            token = tokenizer.next();
+                        }
+                        throw new ParseException(tokenizer, token, "Missing enum value in strict declaration");
                     }
 
                     evb.setValue(value);
@@ -646,8 +678,7 @@ public class ThriftProgramParser implements ProgramParser {
         }
         struct.setName(id.asString());
 
-        // Unsigned short max value.
-        int nextDefaultKey = (1 << 16) - 1;
+        int nextAutoFieldKey = -1;
 
         tokenizer.expectSymbol("struct start", Token.kMessageStart);
 
@@ -687,8 +718,10 @@ public class ThriftProgramParser implements ProgramParser {
                 tokenizer.expectSymbol("field id sep", Token.kFieldIdSep);
                 token = tokenizer.expect("field requirement or type");
             } else {
-                // TODO(steineldar): Maybe disallow for consistency?
-                field.setKey(nextDefaultKey--);
+                if (requireFieldId) {
+                    throw new ParseException(tokenizer, token, "Missing field ID in strict declaration");
+                }
+                field.setKey(nextAutoFieldKey--);
             }
 
             if (token.strEquals(Token.kRequired)) {

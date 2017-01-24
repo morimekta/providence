@@ -51,8 +51,8 @@ struct TypedefType {
  */
 enum MessageVariant {
     STRUCT = 1,
-    UNION,
-    EXCEPTION,
+    UNION = 2,
+    EXCEPTION = 3,
 }
 
 /**

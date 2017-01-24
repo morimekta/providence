@@ -80,6 +80,19 @@ struct DefaultFields {
     10: CompactFields compactValue;
 }
 
+struct AutoIdFields {
+    bool booleanValue;
+    byte byteValue,
+    i16 shortValue
+    i32 integerValue;
+    i64 longValue,
+    double doubleValue
+    string stringValue;
+    binary binaryValue,
+    Value enumValue;
+    CompactFields compactValue;
+}
+
 union UnionFields {
     1: bool booleanValue;
     2: byte byteValue,
