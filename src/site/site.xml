@@ -11,6 +11,7 @@
 
             <item href="index.html" name="Providence" />
             <item href="providence-tools.html" name="Providence Tools" />
+            <item href="providence-hazelcast.html" name="Providence Hazelcast" />
             <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
         </menu>
