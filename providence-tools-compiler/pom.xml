@@ -81,20 +81,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/build</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -149,6 +135,17 @@
                                     <artifact>org.slf4j:slf4j-simple</artifact>
                                     <includes>
                                         <include>org/slf4j/**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <!--
+                                     The hazelcast library is *huge*, so only include the interfaces
+                                     we reference in the generator
+                                     -->
+                                    <artifact>com.hazelcast:hazelcast</artifact>
+                                    <includes>
+                                        <include>com/hazelcast/config/**</include>
+                                        <include>com/hazelcast/nio/serialization/**</include>
                                     </includes>
                                 </filter>
                             </filters>

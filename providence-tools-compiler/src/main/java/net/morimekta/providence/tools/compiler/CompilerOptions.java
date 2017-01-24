@@ -168,6 +168,12 @@ public class CompilerOptions {
                         case "jackson":
                             options.jackson = true;
                             break;
+                        case "no_rw_binary":
+                            options.rw_binary = false;
+                            break;
+                        case "hazelcast_portable":
+                            options.hazelcast_portable = true;
+                            break;
                         default:
                             throw new ArgumentException("No such option for java generator: " + opt);
                     }

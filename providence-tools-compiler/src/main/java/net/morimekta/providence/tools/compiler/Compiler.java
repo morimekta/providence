@@ -68,8 +68,10 @@ public class Compiler {
                     System.out.println();
                     switch (options.help.generator) {
                         case java:
-                            System.out.println(" - android : Add android parcelable interface to model classes.");
-                            System.out.println(" - jackson : Add jackson 2 annotations to model classes.");
+                            System.out.println(" - android            : Add android parcelable interface to model classes.");
+                            System.out.println(" - jackson            : Add jackson 2 annotations to model classes.");
+                            System.out.println(" - no_rw_binary       : Skip adding the binary RW methods to generated code.");
+                            System.out.println(" - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.");
                             break;
                         default:
                             System.out.println("No options available for " + options.help.generator + ".");

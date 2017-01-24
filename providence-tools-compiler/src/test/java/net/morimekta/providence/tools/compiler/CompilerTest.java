@@ -143,8 +143,10 @@ public class CompilerTest {
                      "java : Main java (1.8+) code generator.\n" +
                      "Available options\n" +
                      "\n" +
-                     " - android : Add android parcelable interface to model classes.\n" +
-                     " - jackson : Add jackson 2 annotations to model classes.\n",
+                     " - android            : Add android parcelable interface to model classes.\n" +
+                     " - jackson            : Add jackson 2 annotations to model classes.\n" +
+                     " - no_rw_binary       : Skip adding the binary RW methods to generated code.\n" +
+                     " - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.\n",
                      outContent.toString());
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);

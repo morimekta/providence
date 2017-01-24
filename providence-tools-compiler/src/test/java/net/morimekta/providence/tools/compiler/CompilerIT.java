@@ -106,6 +106,34 @@ public class CompilerIT {
     }
 
     @Test
+    public void testCompile_hazelcast() throws IOException {
+        File hz = temp.newFile("hz.thrift");
+        FileOutputStream fos = new FileOutputStream(hz);
+        IOUtils.copy(getClass().getResourceAsStream("/compiler/hz.thrift"), fos);
+        fos.flush();
+        fos.close();
+
+        int exitCode = compiler.run(
+                "--out", output.getAbsolutePath(),
+                "-g", "java:hazelcast_portable",
+                hz.getAbsolutePath());
+
+        assertEquals("", compiler.getOutput());
+        assertEquals("", compiler.getError());
+        assertEquals(0, exitCode);
+
+        // It generated the file in test.thrift.
+        File service = new File(output, "net/morimekta/test/compiler/hz/OptionalListFields.java");
+        assertTrue(service.exists());
+        assertTrue(service.isFile());
+
+        // It generated the file in test.thrift.
+        File factory = new File(output, "net/morimekta/test/compiler/hz/Hz_Factory.java");
+        assertTrue(factory.exists());
+        assertTrue(factory.isFile());
+    }
+
+    @Test
     public void testCompile_missingInclude() throws IOException {
         int exitCode = compiler.run(
                 "--out", output.getAbsolutePath(),
