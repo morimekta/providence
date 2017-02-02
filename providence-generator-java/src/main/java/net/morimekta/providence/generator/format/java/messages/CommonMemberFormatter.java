@@ -318,10 +318,9 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 if (field.hasComment()) {
                     block.comment(field.comment());
                 }
-                block.param_("value", "The union value")
-                     .return_("The created union.")
-                     .finish();
                 if (field.isVoid()) {
+                    block.return_("The created union.")
+                         .finish();
                     writer.formatln("public static %s %s() {",
                                     message.instanceType(),
                                     camelCase("with", field.name()))
@@ -331,6 +330,9 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                           .appendln('}')
                           .newline();
                 } else {
+                    block.param_("value", "The union value")
+                         .return_("The created union.")
+                         .finish();
                     writer.formatln("public static %s %s(%s value) {",
                                     message.instanceType(),
                                     camelCase("with", field.name()),

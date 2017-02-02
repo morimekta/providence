@@ -43,6 +43,11 @@ service Calculator {
      * @deprecated
      */
     oneway void iamalive();
+
+    /**
+     * Just a comment, I don't care what.
+     */
+    void justAVoidMethod(1: string with_param);
 }
 
 const Operand PI = {

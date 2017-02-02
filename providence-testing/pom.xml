@@ -187,9 +187,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>net.morimekta.providence.model,net.morimekta.test</excludePackageNames>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>linting-on-generated-source</id>
+                        <goals>
+                            <goal>test-javadoc</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <sourcepath>
+                                ${build.directory}/generated-test-sources/android:
+                                ${build.directory}/generated-test-sources/hazelcast:
+                                ${build.directory}/generated-test-sources/jackson:
+                                ${build.directory}/generated-test-sources/providence
+                            </sourcepath>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -210,9 +210,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             comment.comment("Sets the value of " + field.name() + ".");
         }
-        comment.newline()
-               .param_("value", "The new value")
-               .return_("The builder")
+        comment.newline();
+        if (!field.isVoid()) {
+            comment.param_("value", "The new value");
+        }
+        comment.return_("The builder")
                .finish();
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);

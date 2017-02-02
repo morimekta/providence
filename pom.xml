@@ -466,6 +466,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <additionalparam>-Xdoclint:all</additionalparam>
+                    <notimestamp>true</notimestamp>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -473,8 +477,6 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <additionalparam>-Xdoclint:all</additionalparam>
-                            <notimestamp>true</notimestamp>
                             <nodeprecatedlist>true</nodeprecatedlist>
                             <debug>false</debug>
                         </configuration>
