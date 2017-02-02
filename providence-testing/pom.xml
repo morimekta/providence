@@ -196,10 +196,10 @@
                         <phase>verify</phase>
                         <configuration>
                             <sourcepath>
-                                ${build.directory}/generated-test-sources/android:
-                                ${build.directory}/generated-test-sources/hazelcast:
-                                ${build.directory}/generated-test-sources/jackson:
-                                ${build.directory}/generated-test-sources/providence
+                                ${project.build.directory}/generated-test-sources/android:
+                                ${project.build.directory}/generated-test-sources/hazelcast:
+                                ${project.build.directory}/generated-test-sources/jackson:
+                                ${project.build.directory}/generated-test-sources/providence
                             </sourcepath>
                         </configuration>
                     </execution>
