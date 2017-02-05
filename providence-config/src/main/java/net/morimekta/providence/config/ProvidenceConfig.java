@@ -632,7 +632,7 @@ public class ProvidenceConfig {
         } else if (!(token.isReal() ||  // number (double)
                      token.isInteger() ||  // number (int)
                      token.isStringLiteral() ||  // string literal
-                     token.isIdentifier())) {  // enum reference.
+                     token.isIdentifier())) {  // enum value reference.
             throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
                     .setLine(tokenizer.getLine(token.getLineNo()));
         }

@@ -28,7 +28,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.PServiceCallType;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
@@ -76,9 +75,14 @@ public class PrettySerializer extends Serializer {
     private final String  newline;
     private final String  entrySep;
     private final boolean encloseOuter;
+    private final boolean strict;
 
     public PrettySerializer() {
-        this(INDENT, SPACE, NEWLINE, LIST_SEP, true);
+        this(true, false);
+    }
+
+    public PrettySerializer(boolean encloseOuter, boolean strict) {
+        this(INDENT, SPACE, NEWLINE, LIST_SEP, encloseOuter, strict);
     }
 
     public PrettySerializer(String indent,
@@ -86,11 +90,21 @@ public class PrettySerializer extends Serializer {
                             String newline,
                             String entrySep,
                             boolean encloseOuter) {
+        this(indent, space, newline, entrySep, encloseOuter, false);
+    }
+
+    public PrettySerializer(String indent,
+                            String space,
+                            String newline,
+                            String entrySep,
+                            boolean encloseOuter,
+                            boolean strict) {
         this.indent = indent;
         this.space = space;
         this.newline = newline;
         this.entrySep = entrySep;
         this.encloseOuter = encloseOuter;
+        this.strict = strict;
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
@@ -217,67 +231,62 @@ public class PrettySerializer extends Serializer {
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
 
+        Token token = tokenizer.next();
         for (;;) {
-            Token t = tokenizer.next();
-            if (requireEnd ? t != null && t.isSymbol(Token.kMessageEnd) : t == null) {
+            if (token == null) {
+                if (requireEnd) {
+                    throw new TokenizerException("Unexpected end of stream");
+                }
+                break;
+            } else if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             }
-            if (t == null) {
-                throw new TokenizerException("Unexpected end of stream");
+
+            if (!token.isIdentifier()) {
+                throw new TokenizerException(token, "Expected field name, got '%s'",
+                                             Strings.escape(token.asString()))
+                        .setLine(tokenizer.getLine(token.getLineNo()));
             }
-            if (!t.isIdentifier()) {
-                throw new TokenizerException(t, "Expected field name, got '%s'",
-                                             Strings.escape(t.asString()))
-                        .setLine(tokenizer.getLine(t.getLineNo()));
-            }
-            PField field = descriptor.getField(t.asString());
+
+            tokenizer.expectSymbol("field value separator", Token.kFieldValueSep);
+
+            PField field = descriptor.getField(token.asString());
             if (field == null) {
-                throw new TokenizerException(t, "No such field %s on %s", t.asString(), descriptor.getQualifiedName())
-                        .setLine(tokenizer.getLine(t.getLineNo()));
-            }
-
-            tokenizer.expectSymbol("field value separator", Token.kKeyValueSep, Token.kFieldValueSep);
-
-            if (field.getType() == PType.LIST) {
-                // special handling for lists, repeated fields.
-                t = tokenizer.peek("list field value");
-                if (t.isSymbol(Token.kListStart)) {
-                    // Handle as a list.
-                    builder.set(field.getKey(), readFieldValue(tokenizer, field.getDescriptor()));
-                } else {
-                    // Handle as a repeated field.
-                    builder.addTo(field.getKey(), readFieldValue(tokenizer, ((PList) field.getDescriptor()).itemDescriptor()));
+                if (strict) {
+                    throw new TokenizerException(token, "No such field %s on %s", token.asString(), descriptor.getQualifiedName()).setLine(tokenizer.getLine(token.getLineNo()));
                 }
+                consumeValue(tokenizer, tokenizer.expect("field value"));
             } else {
-                builder.set(field.getKey(), readFieldValue(tokenizer, field.getDescriptor()));
+                builder.set(field.getKey(), readFieldValue(
+                        tokenizer, tokenizer.expect("field value"), field.getDescriptor()));
             }
-            t = tokenizer.peek();
-            if (t != null && (t.isSymbol(Token.kLineSep1) || t.isSymbol(Token.kLineSep2))) {
+
+            token = tokenizer.peek();
+            if (token != null && (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2))) {
                 tokenizer.next();
             }
+            token = tokenizer.next();
         }
         return builder.build();
     }
 
-    private Object readFieldValue(Tokenizer tokenizer, PDescriptor descriptor) throws IOException {
+    private Object readFieldValue(Tokenizer tokenizer, Token token, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
             case VOID: {
                 // Even void fields needs a value token...
                 // Allow any boolean true value that is an _identifier_. No numbers here.
-                Token t = tokenizer.expect("void value");
-                switch (t.asString().toLowerCase()) {
+                switch (token.asString().toLowerCase()) {
                     case "t":
                     case "true":
                     case "y":
                     case "yes":
                         return Boolean.TRUE;
                 }
-                throw new TokenizerException(t, "Invalid void value " + t.asString())
-                        .setLine(tokenizer.getLine(t.getLineNo()));
+                throw new TokenizerException(token, "Invalid void value " + token.asString())
+                        .setLine(tokenizer.getLine(token.getLineNo()));
             }
             case BOOL: {
-                Token t = tokenizer.expect("boolean value");
-                switch (t.asString().toLowerCase()) {
+                switch (token.asString().toLowerCase()) {
                     case "1":
                     case "t":
                     case "true":
@@ -291,103 +300,106 @@ public class PrettySerializer extends Serializer {
                     case "no":
                         return Boolean.FALSE;
                 }
-                throw new TokenizerException(t, "Invalid boolean value " + t.asString())
-                        .setLine(tokenizer.getLine(t.getLineNo()));
+                throw new TokenizerException(token, "Invalid boolean value " + token.asString())
+                        .setLine(tokenizer.getLine(token.getLineNo()));
 
             }
             case BYTE: {
-                Token t = tokenizer.expect("byte value");
-                if (t.isInteger()) {
-                    long val = t.parseInteger();
+                if (token.isInteger()) {
+                    long val = token.parseInteger();
                     if (val > Byte.MAX_VALUE || val < Byte.MIN_VALUE) {
-                        throw new TokenizerException(t, "Byte value out of bounds: " + t.asString())
-                                .setLine(tokenizer.getLine(t.getLineNo()));
+                        throw new TokenizerException(token, "Byte value out of bounds: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
                     }
                     return (byte) val;
                 } else {
-                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case I16: {
-                Token t = tokenizer.expect("byte value");
-                if (t.isInteger()) {
-                    long val = t.parseInteger();
+                if (token.isInteger()) {
+                    long val = token.parseInteger();
                     if (val > Short.MAX_VALUE || val < Short.MIN_VALUE) {
-                        throw new TokenizerException(t, "Short value out of bounds: " + t.asString())
-                                .setLine(tokenizer.getLine(t.getLineNo()));
+                        throw new TokenizerException(token, "Short value out of bounds: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
                     }
                     return (short) val;
                 } else {
-                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case I32: {
-                Token t = tokenizer.expect("byte value");
-                if (t.isInteger()) {
-                    long val = t.parseInteger();
+                if (token.isInteger()) {
+                    long val = token.parseInteger();
                     if (val > Integer.MAX_VALUE || val < Integer.MIN_VALUE) {
-                        throw new TokenizerException(t, "Integer value out of bounds: " + t.asString())
-                                .setLine(tokenizer.getLine(t.getLineNo()));
+                        throw new TokenizerException(token, "Integer value out of bounds: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
                     }
                     return (int) val;
                 } else {
-                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case I64: {
-                Token t = tokenizer.expect("byte value");
-                if (t.isInteger()) {
-                    return t.parseInteger();
+                if (token.isInteger()) {
+                    return token.parseInteger();
                 } else {
-                    throw new TokenizerException(t, "Invalid byte value: " + t.asString())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case DOUBLE: {
-                Token t = tokenizer.expect("byte value");
                 try {
-                    return t.parseDouble();
+                    return token.parseDouble();
                 } catch (NumberFormatException nfe) {
-                    throw new TokenizerException(t, "Number format error: " + nfe.getMessage())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                    throw new TokenizerException(token, "Number format error: " + nfe.getMessage())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case STRING: {
-                Token t = tokenizer.expectStringLiteral("string value");
-                return t.decodeLiteral();
+                if (!token.isStringLiteral()) {
+                    throw new TokenizerException(token, "Expected string literal, got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
+                return token.decodeLiteral();
             }
             case BINARY: {
-                Token t = tokenizer.expectIdentifier("binary format");
                 tokenizer.expectSymbol("binary content start", Token.kMethodStart);
                 String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
-                switch (t.asString()) {
+                switch (token.asString()) {
                     case "b64":
                         return Binary.fromBase64(content);
                     case "hex":
                         return Binary.fromHexString(content);
                     default:
-                        throw new TokenizerException(t, "Unrecognized binary format " + t.asString())
-                                .setLine(tokenizer.getLine(t.getLineNo()));
+                        throw new TokenizerException(token, "Unrecognized binary format " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
             case ENUM: {
-                Token t = tokenizer.expectIdentifier("enum value");
                 PEnumBuilder b = ((PEnumDescriptor) descriptor).builder();
-                b.setByName(t.asString());
-                if (!b.valid()) {
-                    throw new TokenizerException(t, "No such " + descriptor.getQualifiedName() + " value " + t.asString())
-                            .setLine(tokenizer.getLine(t.getLineNo()));
+                b.setByName(token.asString());
+                if (strict && !b.valid()) {
+                    throw new TokenizerException(token, "No such " + descriptor.getQualifiedName() + " value " + token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
                 return b.build();
             }
             case MESSAGE: {
-                tokenizer.expectSymbol("message start", Token.kMessageStart);
+                if (!token.isSymbol(Token.kMessageStart)) {
+                    throw new TokenizerException(token, "Expected message start, got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
                 return readMessage(tokenizer, (PMessageDescriptor<?, ?>) descriptor, true);
             }
             case MAP: {
+                if (!token.isSymbol(Token.kMessageStart)) {
+                    throw new TokenizerException(token, "Expected map start, got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
                 @SuppressWarnings("unchecked")
                 PMap<Object, Object> pMap = (PMap) descriptor;
                 PDescriptor kDesc = pMap.keyDescriptor();
@@ -395,88 +407,67 @@ public class PrettySerializer extends Serializer {
 
                 PMap.Builder<Object, Object> builder = pMap.builder();
 
-                tokenizer.expectSymbol("map start", Token.kMessageStart);
-                if (tokenizer.peek("map end or value").isSymbol(Token.kMessageEnd)) {
-                    tokenizer.next();
-                } else {
-                    while (true) {
-                        Object key = readFieldValue(tokenizer, kDesc);
-                        tokenizer.expectSymbol("mep kv sep", Token.kKeyValueSep);
-                        Object value = readFieldValue(tokenizer, iDesc);
-
-                        builder.put(key, value);
-
-                        Token t = tokenizer.peek("map sep, end or value");
-                        if (t.isSymbol(Token.kLineSep1) || t.isSymbol(Token.kLineSep2)) {
-                            tokenizer.next();
-                        } else if (t.isSymbol(Token.kMessageEnd)) {
-                            tokenizer.next();
-                            break;
-                        }
+                token = tokenizer.expect("list end or value");
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    Object key = readFieldValue(tokenizer, token, kDesc);
+                    tokenizer.expectSymbol("map kv sep", Token.kKeyValueSep);
+                    Object value = readFieldValue(tokenizer, tokenizer.expect("map value"), iDesc);
+                    builder.put(key, value);
+                    token = tokenizer.expect("map sep, end or value");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("map end or value");
                     }
                 }
-
                 return builder.build();
             }
             case LIST: {
+                if (!token.isSymbol(Token.kListStart)) {
+                    throw new TokenizerException(token, "Expected list start, got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
                 @SuppressWarnings("unchecked")
                 PList<Object> pList = (PList) descriptor;
                 PDescriptor iDesc = pList.itemDescriptor();
 
                 PList.Builder<Object> builder = pList.builder();
 
-                tokenizer.expectSymbol("list start", Token.kListStart);
-                if (tokenizer.peek("empty list").isSymbol(Token.kListEnd)) {
-                    tokenizer.next();
-                } else {
-                    while (true) {
-                        Object value = readFieldValue(tokenizer, iDesc);
-
-                        builder.add(value);
-
-                        Token t = tokenizer.peek("list sep, end or value");
-                        if (t.isSymbol(Token.kLineSep1) || t.isSymbol(Token.kLineSep2)) {
-                            tokenizer.next();
-                        } else if (t.isSymbol(Token.kListEnd)) {
-                            tokenizer.next();
-                            break;
-                        }
+                token = tokenizer.expect("list end or value");
+                while (!token.isSymbol(Token.kListEnd)) {
+                    builder.add(readFieldValue(tokenizer, token, iDesc));
+                    token = tokenizer.expect("list sep, end or value");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("list end or value");
                     }
                 }
 
                 return builder.build();
             }
             case SET: {
+                if (!token.isSymbol(Token.kListStart)) {
+                    throw new TokenizerException(token, "Expected set start, got '%s'", token.asString())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                }
                 @SuppressWarnings("unchecked")
                 PSet<Object> pList = (PSet) descriptor;
                 PDescriptor iDesc = pList.itemDescriptor();
 
                 PSet.Builder<Object> builder = pList.builder();
 
-                tokenizer.expectSymbol("set start", Token.kListStart);
-                if (tokenizer.peek("empty set").isSymbol(Token.kListEnd)) {
-                    tokenizer.next();
-                } else {
-                    while (true) {
-                        Object value = readFieldValue(tokenizer, iDesc);
-
-                        builder.add(value);
-
-                        Token t = tokenizer.peek("set sep, end or value");
-                        if (t.isSymbol(Token.kLineSep1) || t.isSymbol(Token.kLineSep2)) {
-                            tokenizer.next();
-                        } else if (t.isSymbol(Token.kListEnd)) {
-                            tokenizer.next();
-                            break;
-                        }
+                token = tokenizer.expect("set end or value");
+                while (!token.isSymbol(Token.kListEnd)) {
+                    builder.add(readFieldValue(tokenizer, token, iDesc));
+                    token = tokenizer.expect("set sep, end or value");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("set end or value");
                     }
                 }
 
                 return builder.build();
-
+            }
+            default: {
+                throw new IllegalStateException("Unhandled field type: " + descriptor.getType());
             }
         }
-        return null;
     }
 
     @Override
@@ -522,8 +513,7 @@ public class PrettySerializer extends Serializer {
                             builder.appendln();
                         }
                     } else {
-                        builder.append(entrySep)
-                               .appendln();
+                        builder.appendln();
                     }
                     Object o = message.get(field.getKey());
 
@@ -664,5 +654,70 @@ public class PrettySerializer extends Serializer {
             throw new IllegalArgumentException("Unknown primitive type class " + o.getClass()
                                                                                   .getSimpleName());
         }
+    }
+
+    private void consumeValue(Tokenizer tokenizer, Token token) throws IOException {
+        if (token.isSymbol(Token.kMessageStart)) {
+            // message or map.
+            token = tokenizer.expect("map or message first entry");
+
+            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
+                // assume map.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
+                        throw new TokenizerException(token, "Invalid map key: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    consumeValue(tokenizer, token);
+                    tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
+                    consumeValue(tokenizer, tokenizer.expect("map value"));
+
+                    // maps do *not* require separator, but allows ',' separator, and separator after last.
+                    token = tokenizer.expect("map key, end or sep");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("map key or end");
+                    }
+                }
+            } else {
+                // assume message.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (!token.isIdentifier()) {
+                        throw new TokenizerException(token, "Invalid field name: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+
+                    tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
+                    consumeValue(tokenizer, tokenizer.next());
+                    token = nextNotLineSep(tokenizer, "message field or end");
+                }
+            }
+        } else if (token.isSymbol(Token.kListStart)) {
+            token = tokenizer.next();
+            while (!token.isSymbol(Token.kListEnd)) {
+                consumeValue(tokenizer, token);
+                // lists and sets require list separator (,), and allows trailing separator.
+                if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
+                    break;
+                }
+                token = tokenizer.expect("list value or end");
+            }
+        } else if (token.asString().equals(Token.HEX)) {
+            tokenizer.expectSymbol("hex body start", Token.kMethodStart);
+            tokenizer.readUntil(Token.kMethodEnd, false, false);
+        } else if (!(token.isReal() ||  // number (double)
+                     token.isInteger() ||  // number (int)
+                     token.isStringLiteral() ||  // string literal
+                     token.isIdentifier())) {  // enum value reference.
+            throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
+                    .setLine(tokenizer.getLine(token.getLineNo()));
+        }
+    }
+
+    private Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
+        if (tokenizer.peek().isSymbol(Token.kLineSep1) ||
+            tokenizer.peek().isSymbol(Token.kLineSep2)) {
+            tokenizer.expect(message);
+        }
+        return tokenizer.expect(message);
     }
 }

@@ -97,7 +97,7 @@ public class PrettySerializerTest {
     }
 
     @Test
-    public void testParse() throws IOException, SerializerException {
+    public void testParse() throws IOException {
         PrettySerializer serializer = new PrettySerializer("  ", " ", "\n", "", false);
 
         Operation actual = serializer.deserialize(getClass().getResourceAsStream("/json/calculator/pretty.cfg"), Operation.kDescriptor);

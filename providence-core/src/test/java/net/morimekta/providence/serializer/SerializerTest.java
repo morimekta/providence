@@ -21,6 +21,7 @@ package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.util.ProvidenceHelper;
+import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.test.calculator.Operation;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.util.Binary;
@@ -33,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -98,14 +100,25 @@ public class SerializerTest {
             assertEquals(baos.size(), size);
 
             bais = new ByteArrayInputStream(baos.toByteArray());
-            Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
+            Containers actual;
+            try {
+                actual = serializer.deserialize(bais, Containers.kDescriptor);
+            } catch (TokenizerException e) {
+                System.err.println(new String(baos.toByteArray(), StandardCharsets.UTF_8));
+                System.err.println(e.asString());
+                fail("oops");
+                return;
+            }
 
             if (serializer.binaryProtocol()) {
                 assertEquals(actual, expected);
             } else {
-                assertEquals(expected.toString().replaceAll("[,]", ",\n"),
-                             actual.toString().replaceAll("[,]", ",\n"));
+                assertEquals(expected.toString()
+                                     .replaceAll("[,]", ",\n"),
+                             actual.toString()
+                                   .replaceAll("[,]", ",\n"));
             }
+
         }
 
         // complex message in stream.

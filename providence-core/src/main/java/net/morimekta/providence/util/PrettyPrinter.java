@@ -22,9 +22,14 @@ package net.morimekta.providence.util;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.PrettySerializer;
 
+import javax.annotation.Nonnull;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -33,7 +38,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * debugging.
  */
 public class PrettyPrinter {
-    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer("  ", " ", "\n", "", false);
+    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer(false, false);
 
     /**
      * Prints a pretty formatted string that is optimized for diffing (mainly
@@ -44,10 +49,31 @@ public class PrettyPrinter {
      * @param <Field> The message field type.
      * @return The resulting string.
      */
+    @Nonnull
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     String debugString(Message message) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DEBUG_STRING_SERIALIZER.serialize(baos, message);
         return new String(baos.toByteArray(), UTF_8);
+    }
+
+    /**
+     * Parses a pretty formatted string, and makes exceptions unchecked.
+     *
+     * @param string The message string to parse.
+     * @param descriptor The message descriptor.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The parsed message.
+     */
+    @Nonnull
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Message parseDebugString(String string, PMessageDescriptor<Message, Field> descriptor) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(string.getBytes(UTF_8));
+            return DEBUG_STRING_SERIALIZER.deserialize(bais, descriptor);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

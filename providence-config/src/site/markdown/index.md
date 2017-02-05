@@ -32,7 +32,7 @@ In addition we want to avoid a couple of dogmas that makes it difficult to
 follow what goes on with the config: `arithmetics` and `scripting`. If you
 need logic to generate your config, you should do that in a proper programming
 or scripting language, and not bake it into the config itself. But if you
-really need scripting, you should use pure `java`, `groovy` or similar.
+really need scripting, you should use `java`, `groovy` or similar.
 
 - PS: This is one of the pitfalls of the `bcl` / `gcl` configuration language
   of Google (see
@@ -60,6 +60,13 @@ that it contains: it's libraries and local code.
 This is the `providence` project, so guess what, it is the base definition.
 And since providence support modular schema definitions, it's config system
 needs to support modularity of the config in the same way.
+
+### Config compatibility
+
+Providence is by it's very definition backward compatible, and if reading in
+non-strict modes, it is also *forward* compatible. Forward compatible means that
+you can add new fields and references, and update the config files with content
+from those fields without breaking older users fo the same config files.
 
 ### Config file Syntax
 
