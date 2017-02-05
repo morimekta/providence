@@ -133,7 +133,7 @@ package.Struct : alias {
     }
     # Replacing with a reference
     substruct = alias.sub2
-    # Reaplcing with a reference that is extended.
+    # Replacing with a reference that is extended.
     substruct = alias.sub2 {
        sub = "value"
     }

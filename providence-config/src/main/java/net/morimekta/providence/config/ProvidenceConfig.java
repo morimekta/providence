@@ -85,6 +85,7 @@ public class ProvidenceConfig {
     // Full file path to resolved instance.
     private final Map<String, PMessage> loaded;
     private final List<File> sourceRoots;
+    private final boolean strict;
 
     // simple stage separation. The content *must* come in this order.
     private enum Stage {
@@ -148,10 +149,15 @@ public class ProvidenceConfig {
         this(registry, inputParams, ImmutableList.of());
     }
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots) {
+        this(registry, inputParams, sourceRoots, false);
+    }
+
+    public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots, boolean strict) {
         this.registry = registry;
         this.inputParams = ImmutableMap.copyOf(inputParams);
         this.loaded = new HashMap<>();
         this.sourceRoots = ImmutableList.copyOf(sourceRoots);
+        this.strict = strict;
     }
 
     /**
@@ -381,7 +387,20 @@ public class ProvidenceConfig {
                 if (token.isQualifiedIdentifier()) {
                     // if a.b (type identifier) --> MESSAGE
                     stage = Stage.MESSAGE;
-                    PMessageDescriptor<M, F> descriptor = (PMessageDescriptor) registry.getDeclaredType(token.asString());
+                    PMessageDescriptor<M, F> descriptor;
+                    try {
+                        descriptor = (PMessageDescriptor) registry.getDeclaredType(token.asString());
+                    } catch (IllegalArgumentException e) {
+                        // Unknown declared type. Fail if:
+                        // - strict mode, all files must be of known types.
+                        // - top of the stack. This is the config requested by the user. It should fail
+                        //   even in non-strict mode.
+                        if (strict || stack.length == 0) {
+                            throw new TokenizerException(token, "Unknown declared type: %s", token.asString())
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                        }
+                        return null;
+                    }
                     result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
                 } else if (token.isIdentifier()) {
                     if (PARAMS.equals(token.asString())) {
@@ -417,7 +436,7 @@ public class ProvidenceConfig {
                             throw new TokenizerException(token, "Alias \"" + alias + "\" is already used").setLine(
                                     tokenizer.getLine(token.getLineNo()));
                         } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
-                            throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word.").setLine(
+                            throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word").setLine(
                                     tokenizer.getLine(token.getLineNo()));
                         }
                         includes.put(alias, included);
@@ -491,8 +510,21 @@ public class ProvidenceConfig {
                     // net.morimekta.providence.descriptor.PEnumDescriptor
                     // TODO: Figure out a way to fix the generic cast.
                     PEnumDescriptor ed = (PEnumDescriptor) (Object) registry.getDeclaredType(id.substring(0, l));
-                    out.put(name, ed.getValueByName(id.substring(l + 1)));
+                    PEnumValue val = ed.getValueByName(id.substring(l + 1));
+                    if (val == null && strict) {
+                        throw new TokenizerException(token, "Unknown %s value: %s", id.substring(0, l), id.substring(l + 1))
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    // Note that unknown enum value results in null. Therefore we don't catch null values here.
+                    out.put(name, val);
+                } catch (IllegalArgumentException e) {
+                    // No such declared type.
+                    if (strict) {
+                        throw new TokenizerException(token, "Unknown enum identifier: %s", id.substring(0, l))
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
                 } catch (ClassCastException e) {
+                    // Not an enum.
                     throw new TokenizerException(token, "Identifier " + id + " does not reference an enum, from " + token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
@@ -521,8 +553,7 @@ public class ProvidenceConfig {
                 try {
                     builder.merge(resolve(includes, params, token.asString()));
                 } catch (KeyNotFoundException e) {
-                    throw new TokenizerException(token, e.getMessage())
-                            .setLine(tokenizer.getLine(token.getLineNo()));
+                    throw new TokenizerException(token, e.getMessage()).setLine(tokenizer.getLine(token.getLineNo()));
                 }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
@@ -532,6 +563,79 @@ public class ProvidenceConfig {
         }
 
         return parseMessage(tokenizer, includes, params, builder);
+    }
+
+    private void consumeValue(Tokenizer tokenizer, Token token) throws IOException {
+        if (UNDEFINED.equals(token.asString())) {
+            // ignore undefined.
+            return;
+        } else if (token.isReferenceIdentifier()) {
+            if (!tokenizer.peek().isSymbol(Token.kMessageStart)) {
+                // just a reference.
+                return;
+            }
+            // reference + message.
+            token = tokenizer.next();
+        }
+        if (token.isSymbol(Token.kMessageStart)) {
+            // message or map.
+            token = tokenizer.expect("map or message first entry");
+
+            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
+                // assume map.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
+                        throw new TokenizerException(token, "Invalid map key: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    consumeValue(tokenizer, token);
+                    tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
+                    consumeValue(tokenizer, tokenizer.expect("map value"));
+
+                    // maps do *not* require separator, but allows ',' separator, and separator after last.
+                    token = tokenizer.expect("map key, end or sep");
+                    if (token.isSymbol(Token.kLineSep1)) {
+                        token = tokenizer.expect("map key or end");
+                    }
+                }
+            } else {
+                // assume message.
+                while (!token.isSymbol(Token.kMessageEnd)) {
+                    if (!token.isIdentifier()) {
+                        throw new TokenizerException(token, "Invalid field name: " + token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+
+                    if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
+                        // direct inheritance of message field.
+                        consumeValue(tokenizer, tokenizer.next());
+                    } else {
+                        tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
+                        consumeValue(tokenizer, tokenizer.next());
+                    }
+                    token = nextNotLineSep(tokenizer, "message field or end");
+                }
+            }
+        } else if (token.isSymbol(Token.kListStart)) {
+            token = tokenizer.next();
+            while (!token.isSymbol(Token.kListEnd)) {
+                consumeValue(tokenizer, token);
+                // lists and sets require list separator (,), and allows trailing separator.
+                if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
+                    break;
+                }
+                token = tokenizer.expect("list value or end");
+            }
+        } else if (token.asString().equals(Token.HEX)) {
+            tokenizer.expectSymbol("hex body start", Token.kMethodStart);
+            tokenizer.readUntil(Token.kMethodEnd, false, false);
+        } else if (!(token.isReal() ||  // number (double)
+                     token.isInteger() ||  // number (int)
+                     token.isStringLiteral() ||  // string literal
+                     token.isIdentifier())) {  // enum reference.
+            throw new TokenizerException(token, "Unknown value token '%s'", token.asString())
+                    .setLine(tokenizer.getLine(token.getLineNo()));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -551,8 +655,23 @@ public class ProvidenceConfig {
 
             F field = descriptor.getField(token.asString());
             if (field == null) {
-                throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
+                if (strict) {
+                    throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
+                } else {
+                    token = tokenizer.expect("field value sep or message start");
+                    if (token.isSymbol(Token.kFieldValueSep)) {
+                        token = tokenizer.expect("value declaration");
+                    } else if (!token.isSymbol(Token.kMessageStart)) {
+                        throw new TokenizerException(token, "Expected field-value separator or inherited message")
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    // Non-strict will just consume unknown fields, this way
+                    // we can be forward-compatible when reading config.
+                    consumeValue(tokenizer, token);
+                    token = nextNotLineSep(tokenizer, "field or message end");
+                    continue;
+                }
             }
 
             if (field.getType() == PType.MESSAGE) {
@@ -566,7 +685,7 @@ public class ProvidenceConfig {
                         builder.clear(field.getKey());
 
                         // special casing this, as we don't want to duplicate the parse line below.
-                        token = tokenizer.expect("message end or field");
+                        token = nextNotLineSep(tokenizer, "field or message end");
                         continue;
                     }
                     // overwrite with new.
@@ -574,9 +693,20 @@ public class ProvidenceConfig {
                     if (token.isReferenceIdentifier()) {
                         // Inherit from reference.
                         try {
-                            bld.merge(resolve(includes, params, token.asString()));
+                            PMessage ref = resolve(includes, params, token.asString());
+                            if (ref != null) {
+                                bld.merge(ref);
+                            } else {
+                                if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
+                                    throw new TokenizerException(token, "Inherit from unknown reference %s", token.asString())
+                                            .setLine(tokenizer.getLine(token.getLineNo()));
+                                } else if (strict) {
+                                    throw new TokenizerException(token, "Unknown reference %s", token.asString())
+                                            .setLine(tokenizer.getLine(token.getLineNo()));
+                                }
+                            }
                         } catch (KeyNotFoundException e) {
-                            throw new TokenizerException(token, e.getMessage())
+                            throw new TokenizerException(token, "Unknown inherited reference '%s'", token.asString())
                                     .setLine(tokenizer.getLine(token.getLineNo()));
                         }
 
@@ -589,7 +719,7 @@ public class ProvidenceConfig {
                     } else if (!token.isSymbol(Token.kMessageStart)) {
                         throw new TokenizerException(token,
                                                      "Unexpected token " + token.asString() +
-                                                     ", expected message start.").setLine(tokenizer.getLine(token.getLineNo()));
+                                                     ", expected message start").setLine(tokenizer.getLine(token.getLineNo()));
                     }
                 } else {
                     // extend in-line.
@@ -646,10 +776,7 @@ public class ProvidenceConfig {
                 }
             }
 
-            token = tokenizer.expect("message end, field sep or field name");
-            if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
-                token = tokenizer.expect("message end or field name");
-            }
+            token = nextNotLineSep(tokenizer, "field or message end");
         }
 
         return builder.build();
@@ -672,7 +799,7 @@ public class ProvidenceConfig {
                 Object value = parseFieldValue(next, tokenizer, includes, params, descriptor.itemDescriptor());
                 builder.put(key, value);
             }
-            // maps does *not* require separator, but allows ',' separator, and separator after last.
+            // maps do *not* require separator, but allows ',' separator, and separator after last.
             next = tokenizer.expect("map key, end or sep");
             if (next.isSymbol(Token.kLineSep1)) {
                 next = tokenizer.expect("map key or end");
@@ -763,20 +890,23 @@ public class ProvidenceConfig {
                     break;
                 case ENUM: {
                     PEnumDescriptor ed = (PEnumDescriptor) descriptor;
+                    PEnumValue value;
                     if (next.isInteger()) {
-                        return ed.getValueById((int) next.parseInteger());
+                        value = ed.getValueById((int) next.parseInteger());
                     } else if (next.isIdentifier()) {
-                        // Check for VALUE.
-                        PEnumValue value = ed.getValueByName(next.asString());
-                        if (value != null) {
-                            return value;
-                        } else {
-                            return resolve(includes, params, next.asString());
-                        }
+                        value = ed.getValueByName(next.asString());
                     } else if (next.isReferenceIdentifier()) {
-                        return resolve(includes, params, next.asString());
+                        value = resolve(includes, params, next.asString());
+                    } else {
+                        break;
                     }
-                    break;
+                    if (value == null && strict) {
+                        throw new TokenizerException(next, "No such enum value %s for %s.",
+                                                     next.asString(),
+                                                     ed.getQualifiedName())
+                                .setLine(tokenizer.getLine(next.getLineNo()));
+                    }
+                    return value;
                 }
                 case MESSAGE:
                     if (next.isReferenceIdentifier()) {
@@ -787,7 +917,15 @@ public class ProvidenceConfig {
                     break;
                 case MAP: {
                     if (next.isReferenceIdentifier()) {
-                        return asCollection(resolve(includes, params, next.asString()));
+                        Map resolved;
+                        try {
+                            // Make sure the reference is to a map.
+                            resolved = resolve(includes, params, next.asString());
+                        } catch (ClassCastException e) {
+                            throw new TokenizerException(next, "Reference %s is not a map field ", next.asString())
+                                    .setLine(tokenizer.getLine(next.getLineNo()));
+                        }
+                        return resolved;
                     } else if (next.isSymbol(Token.kMessageStart)) {
                         return parseMapValue(tokenizer, includes, params, (PMap) descriptor, new HashMap());
                     }
@@ -829,8 +967,7 @@ public class ProvidenceConfig {
                         while (!next.isSymbol(Token.kListEnd)) {
                             builder.add(parseFieldValue(next, tokenizer, includes, params, ct.itemDescriptor()));
                             // lists require separator, and allows separator after last.
-                            if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) ==
-                                Token.kListEnd) {
+                            if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
                                 break;
                             }
                             next = tokenizer.expect("list value or end");
@@ -855,6 +992,15 @@ public class ProvidenceConfig {
                                      descriptor.getType())
                 .setLine(tokenizer.getLine(next.getLineNo()));
     }
+
+    private Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
+        if (tokenizer.peek().isSymbol(Token.kLineSep1) ||
+            tokenizer.peek().isSymbol(Token.kLineSep2)) {
+            tokenizer.expect(message);
+        }
+        return tokenizer.expect(message);
+    }
+
 
     private Map<String, Object> mkParams(Map<String,Object> declared) {
         ImmutableMap.Builder<String,Object> builder = ImmutableMap.builder();
@@ -903,12 +1049,19 @@ public class ProvidenceConfig {
                 }
                 return (V) params.get(sub);
             } else if (includes.containsKey(name)) {
-                return (V) getInMessage(includes.get(name), sub);
+                PMessage include = includes.get(name);
+                if (include == null) {
+                    if (strict) {
+                        throw new KeyNotFoundException("Included file with alias %s not parsed", name);
+                    }
+                    return null;
+                }
+                return (V) getInMessage(include, sub, null, strict);
             }
-            throw new KeyNotFoundException("Reference name " + key + " not declared.");
+            throw new KeyNotFoundException("Reference name " + key + " not declared");
         } else if (includes.containsKey(key)) {
             return (V) includes.get(key);
         }
-        throw new KeyNotFoundException("Reference name " + key + " not declared.");
+        throw new KeyNotFoundException("Reference name " + key + " not declared");
     }
 }

@@ -29,6 +29,7 @@ import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.util.Binary;
@@ -63,6 +64,20 @@ public class ProvidenceConfigUtil {
      * @return The value found or the default.
      */
     public static Object getInMessage(PMessage message, String key, Object defValue) {
+        return getInMessage(message, key, defValue, true);
+    }
+
+    /**
+     * Look up a key in the message structure. If the key is not found, return
+     * the default value. Note that the default value will be converted to the
+     * type of the declared field, not returned verbatim.
+     *
+     * @param message The message to look up into.
+     * @param key The key to look up.
+     * @param defValue The default value.
+     * @return The value found or the default.
+     */
+    public static Object getInMessage(PMessage message, String key, Object defValue, boolean strict) {
         PMessageDescriptor descriptor = message.descriptor();
 
         if (key.contains(".")) {
@@ -93,6 +108,14 @@ public class ProvidenceConfigUtil {
                     sub = sub.substring(idx + 1);
 
                     field = ((PMessageDescriptor) fieldDesc).getField(name);
+                    if (field == null) {
+                        if (strict) {
+                            throw new KeyNotFoundException("No such field %s in %s",
+                                                           name,
+                                                           fieldDesc);
+                        }
+                        return null;
+                    }
                     fieldDesc = field.getDescriptor();
                 }
                 return asFieldType(field, defValue);
@@ -119,7 +142,7 @@ public class ProvidenceConfigUtil {
      * @param message The message to make key-set pairs for.
      * @param valueKeySet The value key-set (with simple values)
      */
-    protected static void buildKeySet(String prefix, PMessage message, Set<String> valueKeySet) {
+    static void buildKeySet(String prefix, PMessage message, Set<String> valueKeySet) {
         for (PField field : message.descriptor().getFields()) {
             if (message.has(field.getKey())) {
                 String key = makeKey(prefix, field);
@@ -140,6 +163,7 @@ public class ProvidenceConfigUtil {
         return prefix + "." + field.getName();
     }
 
+    @SuppressWarnings("unchecked")
     private static Object asFieldType(PField field, Object o) {
         if (o == null) {
             return field.getDefaultValue();
@@ -193,7 +217,7 @@ public class ProvidenceConfigUtil {
                 return ((PSet<Object>) field.getDescriptor()).builder().addAll(ConfigUtil.asCollection(o)).build();
             case MAP:
                 if (o instanceof Map) {
-                    return o;
+                    return ((PMap<Object,Object>) field.getDescriptor()).builder().putAll((Map<Object,Object>) o).build();
                 } else {
                     throw new IncompatibleValueException("Unable to cast " + o.getClass().getSimpleName() + " to map.");
                 }

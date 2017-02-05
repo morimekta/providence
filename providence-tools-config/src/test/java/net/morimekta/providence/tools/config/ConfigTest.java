@@ -101,11 +101,12 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg [-hVv] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n" +
+                " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " --config (-C) dir  : Config directory locations.\n" +
                 " -Pkey=value        : Config parameter override.\n" +
@@ -128,10 +129,11 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertEquals(
                 "Providence Config Tool - v" + version + "\n" +
-                "Usage: pvdcfg [-hVv] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg [-hVvS] [-I dir] [-C dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n" +
+                " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " --config (-C) dir  : Config directory locations.\n" +
                 " -Pkey=value        : Config parameter override.\n" +

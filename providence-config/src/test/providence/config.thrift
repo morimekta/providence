@@ -15,6 +15,7 @@ struct Database {
     1: optional string uri;
     2: optional string driver;
     3: optional Credentials credentials;
+    4: optional Value value;
 }
 
 struct ServicePort {

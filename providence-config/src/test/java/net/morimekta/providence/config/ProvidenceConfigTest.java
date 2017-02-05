@@ -23,6 +23,8 @@ package net.morimekta.providence.config;
 import net.morimekta.config.ConfigException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
+import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.test.config.Database;
 import net.morimekta.test.config.Service;
 import net.morimekta.test.config.Value;
 
@@ -36,6 +38,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,7 +71,7 @@ public class ProvidenceConfigTest {
     }
 
     @Test
-    public void testParseSimple() throws IOException, SerializerException {
+    public void testParseSimple() throws IOException {
         copyResourceTo("/net/morimekta/providence/config/base_service.cfg", temp.getRoot());
         copyResourceTo("/net/morimekta/providence/config/prod_db.cfg", temp.getRoot());
         copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
@@ -114,7 +117,67 @@ public class ProvidenceConfigTest {
     }
 
     @Test
-    public void testParams() throws IOException, SerializerException {
+    public void testParseWithUnknown() throws IOException {
+        copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
+        File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
+
+        Map<String,String> params = new HashMap<>();
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()));
+        Database cfg = config.load(file);
+
+        // all the unknowns are skipped.
+        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "driver = \"org.h2.Driver\"",
+                     debugString(cfg));
+
+        file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
+        cfg = config.load(file);
+        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "driver = \"org.h2.Driver\"",
+                     debugString(cfg));
+
+        file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
+        cfg = config.load(file);
+        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "driver = \"org.h2.Driver\"",
+                     debugString(cfg));
+    }
+
+    @Test
+    public void testParseWithUnknown_strict() throws IOException {
+        copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
+        File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
+
+        Map<String,String> params = new HashMap<>();
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
+        try {
+            config.load(file);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertEquals("Unknown declared type: unknown.OtherConfig", e.getMessage());
+        }
+
+        file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
+        try {
+            config.load(file);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertEquals("No such field unknown_field in config.Database", e.getMessage());
+        }
+
+        file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
+        try {
+            config.load(file);
+            fail("no exception");
+        } catch (TokenizerException e) {
+            assertEquals("No such enum value LAST for config.Value.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testParams() throws IOException {
         File a = temp.newFile("a.cfg");
         File b = temp.newFile("b.cfg");
 
@@ -291,37 +354,39 @@ public class ProvidenceConfigTest {
                            "params { s = \"a\n" +
                            "--------------^",
                            "params { s = \"a");
+
+        // Parsing that only fails in strict mode.
         assertParseFailure("unknown identifier",
                            "Error in test.cfg on line 1, pos 13:\n" +
-                           "    Invalid param value boo\n" +
-                           "params { s = boo }\n" +
+                           "    Unknown enum identifier: boo.En\n" +
+                           "params { s = boo.En.VAL }\n" +
                            "-------------^",
-                           "params { s = boo }");
+                           "params { s = boo.En.VAL }", true);
     }
 
-    @Test
-    public void testBinary() {
-
-    }
 
     private void assertParseFailure(String reason,
                                     String message,
                                     String pretty) throws IOException {
+        assertParseFailure(reason, message, pretty, false);
+    }
+
+    private void assertParseFailure(String reason,
+                                    String message,
+                                    String pretty,
+                                    boolean strict) throws IOException {
         File a = temp.newFile("test.cfg");
         writeContentTo(pretty, a);
 
-        ProvidenceConfig config = new ProvidenceConfig(
-                registry, new HashMap<>());
+        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>(), new LinkedList<>(), strict);
 
         try {
             config.load(a);
             fail("no exception on " + reason);
         } catch (ConfigException e) {
-            assertEquals("Wrong exception message on " + reason,
-                         message, e.getMessage());
+            assertEquals("Wrong exception message on " + reason, message, e.getMessage());
         } catch (SerializerException e) {
-            assertEquals("Wrong exception message on " + reason,
-                         message, e.asString());
+            assertEquals("Wrong exception message on " + reason, message, e.asString());
         }
         a.delete();
     }
