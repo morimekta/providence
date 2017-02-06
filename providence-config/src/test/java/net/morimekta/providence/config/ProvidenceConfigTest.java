@@ -43,8 +43,12 @@ import java.util.List;
 import java.util.Map;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
+import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsString;
 import static net.morimekta.providence.testing.util.ResourceUtils.writeContentTo;
 import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -82,7 +86,7 @@ public class ProvidenceConfigTest {
         Map<String,String> params = new HashMap<>();
         params.put("admin_port", "14256");
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()));
+        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
         Service stage_service = config.load(stage);
         Service prod_service = config.load(prod);
 
@@ -130,6 +134,70 @@ public class ProvidenceConfigTest {
                      "  }\n" +
                      "}",
                      debugString(stage_service));
+    }
+
+    @Test
+    public void testReload() throws IOException {
+        copyResourceTo("/net/morimekta/providence/config/base_service.cfg", temp.getRoot());
+        File stageDb = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
+        File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
+
+        Map<String,String> params = new HashMap<>();
+        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
+
+        Service stage_service = config.load(stage);
+
+        assertEquals("name = \"stage\"\n" +
+                     "http = {\n" +
+                     "  port = 8080\n" +
+                     "  context = \"/app\"\n" +
+                     "  signature_keys = {\n" +
+                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "  }\n" +
+                     "  signature_override_keys = [\n" +
+                     "    \"not_really_app_1\"\n" +
+                     "  ]\n" +
+                     "}\n" +
+                     "db = {\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "  credentials = {\n" +
+                     "    username = \"myuser\"\n" +
+                     "    password = \"MyP4s5w0rd\"\n" +
+                     "  }\n" +
+                     "}",
+                     debugString(stage_service));
+
+        stageDb.delete();
+        writeContentTo(getResourceAsString("/net/morimekta/providence/config/stage_db2.cfg"), stageDb);
+
+        assertThat((Service) (Object) config.load(stage), is(sameInstance(stage_service)));
+
+        config.reload(stageDb);
+
+        stage_service = config.load(stage);
+
+        assertEquals("name = \"stage\"\n" +
+                     "http = {\n" +
+                     "  port = 8080\n" +
+                     "  context = \"/app\"\n" +
+                     "  signature_keys = {\n" +
+                     "    \"app1\": b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "  }\n" +
+                     "  signature_override_keys = [\n" +
+                     "    \"not_really_app_1\"\n" +
+                     "  ]\n" +
+                     "}\n" +
+                     "db = {\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "  credentials = {\n" +
+                     "    username = \"myuser\"\n" +
+                     "    password = \"O7h3rP4ssw0rd\"\n" +
+                     "  }\n" +
+                     "}",
+                     debugString(stage_service));
+
     }
 
     @Test

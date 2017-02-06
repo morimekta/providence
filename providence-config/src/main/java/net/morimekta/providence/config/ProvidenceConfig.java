@@ -57,6 +57,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static net.morimekta.config.util.ConfigUtil.asBoolean;
@@ -79,12 +81,13 @@ public class ProvidenceConfig {
     private static final String INCLUDE   = "include";
     private static final String AS        = "as";
 
-    private final TypeRegistry registry;
+    private final TypeRegistry          registry;
     private final Map<String, String>   inputParams;
     // Full file path to resolved instance.
     private final Map<String, PMessage> loaded;
-    private final List<File> sourceRoots;
-    private final boolean strict;
+    private final Map<String, Set<String>> reverseDependencies;
+    private final List<File>            sourceRoots;
+    private final boolean               strict;
 
     // simple stage separation. The content *must* come in this order.
     private enum Stage {
@@ -156,7 +159,12 @@ public class ProvidenceConfig {
         this.inputParams = ImmutableMap.copyOf(inputParams);
         this.loaded = new HashMap<>();
         this.sourceRoots = ImmutableList.copyOf(sourceRoots);
+        this.reverseDependencies = new HashMap<>();
         this.strict = strict;
+    }
+
+    private Set<String> getReverseDeps(String to) {
+        return reverseDependencies.computeIfAbsent(to, k -> new HashSet<>());
     }
 
     /**
@@ -169,7 +177,7 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException {
+    public synchronized <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException {
         try {
             return loadConfigRecursively(resolveFile(null, file.toString()));
         } catch (FileNotFoundException e) {
@@ -186,8 +194,45 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public List<Param> params(File file) throws IOException {
+    public synchronized List<Param> params(File file) throws IOException {
         return loadParamsRecursively(resolveFile(null, file.toString()));
+    }
+
+    /**
+     * Trigger reloading of the given file, and run recursively <i>up</i> through dependencies.
+     *
+     * @param file The file that may need to be reloaded.
+     */
+    public synchronized void reload(File file) throws IOException {
+        File canonicalFile = file.getCanonicalFile()
+                                 .getAbsoluteFile();
+        String filePath = canonicalFile.toString();
+        if (loaded.containsKey(filePath)) {
+            PMessage old = loaded.get(filePath);
+            Set<String> deps = new TreeSet<>(getReverseDeps(filePath));
+
+            // Force reloading.
+            loaded.remove(filePath);
+            try {
+                @SuppressWarnings("unchecked")
+                PMessage reloaded = loadConfigRecursively(file);
+                if (old.equals(reloaded)) {
+                    return;
+                }
+
+                for (String dep : deps) {
+                    reload(new File(dep));
+                }
+            } catch (IOException e) {
+                // Reinstate the old value if we failed to reload it. Also
+                // reinstate the old value if any of the dependent files failed
+                // to load. The reason they failed could easily be that this
+                // file was no longer compatible.
+                loaded.put(filePath, old);
+
+                throw new IOException(e.getMessage(), e);
+            }
+        }
     }
 
     /**
@@ -199,7 +244,7 @@ public class ProvidenceConfig {
      * @throws FileNotFoundException When the file is not found.
      * @throws IOException When unable to make canonical path.
      */
-    public File resolveFile(File ref, String path) throws IOException {
+    File resolveFile(File ref, String path) throws IOException {
         if (ref == null) {
             // relative to PWD from initial load file path.
             File tmp = new File(path);
@@ -357,7 +402,12 @@ public class ProvidenceConfig {
                                                                                                     .map(p -> new File(p).getName())
                                                                                                     .collect(Collectors.toList())));
             }
+
             if (loaded.containsKey(filePath)) {
+                if (stack.length > 0) {
+                    getReverseDeps(filePath).add(stack[stack.length - 1]);
+                }
+
                 return (M) loaded.get(filePath);
             }
 
@@ -454,15 +504,22 @@ public class ProvidenceConfig {
 
                 token = tokenizer.peek();
             }
+
+            if (result == null) {
+                throw new ConfigException("No message in config: " + file.getName());
+            }
+
+            stackList.add(filePath);
+            if (stack.length > 0) {
+                getReverseDeps(filePath).add(stack[stack.length - 1]);
+            }
+
+            loaded.put(filePath, result);
+
+            return result;
         } catch (TokenizerException e) {
             throw new TokenizerException(e, file);
         }
-
-        if (result == null) {
-            throw new ConfigException("No message in config: " + file.getName());
-        }
-
-        return result;
     }
 
     @SuppressWarnings("unchecked")
