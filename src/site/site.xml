@@ -10,7 +10,6 @@
         <menu name="Introduction" inherit="top">
 
             <item href="index.html" name="Providence" />
-            <item href="providence-tools.html" name="Providence Tools" />
             <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
         </menu>
@@ -32,6 +31,15 @@
             <item href="providence-generator-json/index.html"     name="Tools : Generator - JSON" />
             <item href="providence-maven-plugin/index.html"       name="Tools : Maven Plugin" />
             <item href="providence-gradle-plugin.html"            name="Tools : Gradle Plugin" />
+
+        </menu>
+
+        <menu name="CLI Tools" inherit="top">
+
+            <item href="providence-tools-compiler.html" name="CLI : Converter" />
+            <item href="providence-tools-compiler.html" name="CLI : RPC Tool" />
+            <item href="providence-tools-compiler.html" name="CLI : Config Helper" />
+            <item href="providence-tools-compiler.html" name="CLI : Compiler" />
 
         </menu>
 
