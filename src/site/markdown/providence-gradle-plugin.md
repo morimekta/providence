@@ -5,18 +5,12 @@ A gradle plugin for generating providence serialization models. To enable
 the providence plugin, use the plugin with the **same version** as the
 providence release you are using.
 
-Note that the plugin requires the `java` plugin to be applied, and must
-be applied **after** the java plugin. See example below to ensure that.
-
 ```groovy
-var providence_version = '0.3.7'
+var providence_version = '0.3.9'
 
 plugins {
-    id "net.morimekta.providence.gradle" version "${providence_version}" apply false
+    id "net.morimekta.providence.gradle" version "${providence_version}"
 }
-
-apply plugin: 'java'
-apply plugin: 'net.morimekta.providence.gradle'
 
 // etc...
 dependencies {
