@@ -99,17 +99,17 @@ public class ConvertTest {
 
         assertEquals(
                 "Providence Converter - v" + version + "\n" +
-                "Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type\n" +
+                "Usage: pvd [-hVvS] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
                 "Example code to run:\n" +
-                "$ cat call.json | pvd -I thrift/ -s cal.Calculator\n" +
-                "$ pvd -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator\n" +
+                "$ cat call.json | pvd -I thrift/ -S cal.Calculator\n" +
+                "$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Calculator\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n --include (-I) dir : Include from directories. (default: ${PWD})\n" +
-                " --in (-i) spec     : Input specification\n" +
-                " --out (-o) spec    : Output specification\n" +
+                " --in (-i) spec     : Input specification (default: binary)\n" +
+                " --out (-o) spec    : Output specification (default: pretty)\n" +
                 " --strict (-S)      : Read incoming messages strictly.\n" +
                 " type               : Qualified identifier name from definitions to use for parsing source file.\n" +
                 "\n" +

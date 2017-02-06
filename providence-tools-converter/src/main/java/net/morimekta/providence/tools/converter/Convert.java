@@ -26,20 +26,12 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.tools.common.options.Format;
-import net.morimekta.util.Strings;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
 import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
-/**
- * Converter main class.
- *
- * tail -f data.bin | pvd -i binary -o pretty
- * tail -f data.bin | pvd -i binary -o json,file:out.json
- * pvd -i binary_protocol,file:data.bin -o pretty_json
- */
 public class Convert {
     private final ConvertOptions options;
 
@@ -55,77 +47,69 @@ public class Convert {
     void run(String... args) {
         try {
             ArgumentParser cli = options.getArgumentParser("pvd", "Providence Converter");
+            try {
 
-            cli.parse(args);
-            if (options.help) {
-                System.out.println("Providence Converter - " + getVersionString());
-                System.out.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
-                System.out.println();
-                System.out.println("Example code to run:");
-                System.out.println("$ cat call.json | pvd -I thrift/ -s cal.Calculator");
-                System.out.println("$ pvd -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator");
-                System.out.println();
-                cli.printUsage(System.out);
-                System.out.println();
-                System.out.println("Available formats are:");
-                for (Format format : Format.values()) {
-                    System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
+                cli.parse(args);
+                if (options.help) {
+                    System.out.println(cli.getProgramDescription());
+                    System.out.println("Usage: " + cli.getSingleLineUsage());
+                    System.out.println();
+                    System.out.println("Example code to run:");
+                    System.out.println("$ cat call.json | pvd -I thrift/ -S cal.Calculator");
+                    System.out.println("$ pvd -i binary,file:my.data -o json_protocol -I thrift/ cal.Calculator");
+                    System.out.println();
+                    cli.printUsage(System.out);
+                    System.out.println();
+                    System.out.println("Available formats are:");
+                    for (Format format : Format.values()) {
+                        System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
+                    }
+                    return;
+                } else if (options.version) {
+                    System.out.println("Providence Converter - " + getVersionString());
+                    return;
                 }
-                return;
-            } else if (options.version) {
-                System.out.println("Providence Converter - " + getVersionString());
-                return;
-            }
 
-            cli.validate();
+                cli.validate();
 
-            options.getInput().collect(options.getOutput());
-            return;
-        } catch (ArgumentException e) {
-            System.err.println("Usage: pvd [-i spec] [-o spec] [-I dir] [-S] type");
-            if (e.getLocalizedMessage()
-                 .length() > 0) {
-                System.err.println(e.getLocalizedMessage());
-            } else {
-                e.printStackTrace();
+                options.getInput()
+                       .collect(options.getOutput());
+                return;
+            } catch (ArgumentException e) {
+                System.err.println(e.getMessage());
+                System.out.println("Usage: " + cli.getSingleLineUsage());
+                System.err.println();
+                System.err.println("Run $ pvd --help # for available options.");
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (ParseException e) {
+                System.out.flush();
+                System.err.println();
+                System.err.println(e.asString());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (UncheckedIOException | IOException e) {
+                System.out.flush();
+                System.err.println();
+                System.err.println("I/O error: " + e.getMessage());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
             }
-            System.err.println();
-            System.err.println("Run $ pvd --help # for available options.");
-            if (options.verbose) {
-                e.printStackTrace();
-            }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             System.out.flush();
             System.err.println();
-            if (e.getLine() != null) {
-                int lineNo = e.getToken().getLineNo();
-                int linePos = e.getToken().getLinePos();
-                int len = e.getToken().length();
+            System.err.println("Unchecked exception: " + e.getMessage());
+            if (options.verbose) {
+                System.err.println();
+                e.printStackTrace();
+            }
 
-                System.err.format(
-                        "Error at line %d, pos %d-%d: %s\n" +
-                        "    %s\n"                          +
-                        "    %s%c\n",
-                        lineNo,
-                        linePos,
-                        linePos + len,
-                        e.getLocalizedMessage(),
-                        e.getLine(),
-                        Strings.times("~", linePos),
-                        '^');
-            } else {
-                System.err.println("Parser error: " + e.getLocalizedMessage());
-            }
-            if (options.verbose) {
-                e.printStackTrace();
-            }
-        } catch (UncheckedIOException | IOException e) {
-            System.out.flush();
-            System.err.println();
-            System.err.println("I/O error: " + e.getMessage());
-            if (options.verbose) {
-                e.printStackTrace();
-            }
         }
         exit(1);
     }

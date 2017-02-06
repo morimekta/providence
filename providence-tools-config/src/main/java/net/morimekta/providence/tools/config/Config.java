@@ -3,6 +3,7 @@ package net.morimekta.providence.tools.config;
 import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
+import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.pretty.TokenizerException;
 
@@ -29,8 +30,8 @@ public class Config {
     }
 
     public void run(String... args) {
+        ConfigOptions op = new ConfigOptions(tty);
         try {
-            ConfigOptions op = new ConfigOptions(tty);
             ArgumentParser cli = op.getArgumentParser("pvdcfg",
                                                       "Providence Config Tool");
             try {
@@ -59,24 +60,42 @@ public class Config {
                 if (op.verbose) {
                     e.printStackTrace();
                 }
-            } catch (TokenizerException e) {
+            } catch (ParseException e) {
+                System.out.flush();
                 System.err.println(e.asString());
                 if (op.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (TokenizerException e) {
+                System.out.flush();
+                System.err.println(e.asString());
+                if (op.verbose) {
+                    System.err.println();
                     e.printStackTrace();
                 }
             } catch (SerializerException e) {
+                System.out.flush();
                 System.err.println("Serialization error: " + e.toString());
                 if (op.verbose) {
+                    System.err.println();
                     e.printStackTrace();
                 }
             } catch (IOException | RuntimeException e) {
+                System.out.flush();
                 System.err.println("IO Error: " + e.toString());
                 if (op.verbose) {
+                    System.err.println();
                     e.printStackTrace();
                 }
             }
-        } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.flush();
+            System.err.println("Unhandled exception: " + e.toString());
+            if (op.verbose) {
+                System.err.println();
+                e.printStackTrace();
+            }
         }
         exit(1);
     }

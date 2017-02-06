@@ -107,18 +107,14 @@ public class ConfigOptions extends CommonOptions {
         }
     }
 
-    public void execute() throws IOException {
+    public void execute() throws ParseException, IOException {
         Set<File> rootSet = includes.values()
                                     .stream()
                                     .map(File::getParentFile)
                                     .collect(Collectors.toSet());
         TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
         for (File file : includes.values()) {
-            try {
-                loader.load(file);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+            loader.load(file);
         }
 
         command.execute(new ProvidenceConfig(loader.getRegistry(), params, roots));

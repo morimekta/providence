@@ -104,7 +104,7 @@ public class RPCFlagsTest {
         assertEquals(0, exitCode);
         assertEquals(
                 "Providence RPC Tool - v" + version + "\n" +
-                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
+                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
@@ -147,9 +147,8 @@ public class RPCFlagsTest {
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals(
-                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
-                "Option --service is required\n" +
+        assertEquals("Option --service is required\n" +
+                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n",
                 errContent.toString());
@@ -162,9 +161,8 @@ public class RPCFlagsTest {
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals(
-                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
-                "Argument \"URL\" is required\n" +
+        assertEquals("Argument \"URL\" is required\n" +
+                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n",
                 errContent.toString());
@@ -179,9 +177,8 @@ public class RPCFlagsTest {
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals(
-                "Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL\n" +
-                "No such directory " + dir.getAbsolutePath() + "\n" +
+        assertEquals("No such directory " + dir.getAbsolutePath() + "\n" +
+                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n", errContent.toString());
     }

@@ -75,8 +75,8 @@ public class ConvertOptions extends CommonOptions {
         ArgumentParser parser = super.getArgumentParser(prog, description);
 
         parser.add(new Option("--include", "I", "dir", "Include from directories.", dir(this::addInclude), "${PWD}", true, false, false));
-        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn)));
-        parser.add(new Option("--out", "o", "spec", "Output specification", new ConvertStreamParser().andApply(this::setOut)));
+        parser.add(new Option("--in", "i", "spec", "Input specification", new ConvertStreamParser().andApply(this::setIn), "binary"));
+        parser.add(new Option("--out", "o", "spec", "Output specification", new ConvertStreamParser().andApply(this::setOut), "pretty"));
         parser.add(new Flag("--strict", "S", "Read incoming messages strictly.", this::setStrict));
         parser.add(new Argument("type", "Qualified identifier name from definitions to use for parsing source file.", this::setType));
 
@@ -156,6 +156,6 @@ public class ConvertOptions extends CommonOptions {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> getInput() throws ParseException {
         PMessageDescriptor<Message, Field> descriptor = getDefinition();
-        return Utils.getInput(descriptor, in, Format.pretty, strict);
+        return Utils.getInput(descriptor, in, Format.binary, strict);
     }
 }

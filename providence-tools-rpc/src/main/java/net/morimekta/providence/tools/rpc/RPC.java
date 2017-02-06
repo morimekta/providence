@@ -32,7 +32,6 @@ import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
-import net.morimekta.util.Strings;
 
 import com.google.api.client.http.HttpResponseException;
 
@@ -56,103 +55,102 @@ public class RPC {
     @SuppressWarnings("unchecked")
     void run(String... args) {
         try {
-            ArgumentParser cli = options.getArgumentParser("pvdrpc",
-                                                           "Providence RPC Tool");
+            ArgumentParser cli = options.getArgumentParser("pvdrpc", "Providence RPC Tool");
+            try {
 
-            cli.parse(args);
-            if (options.help) {
-                System.out.println("Providence RPC Tool - " + getVersionString());
-                System.out.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
-                System.out.println();
-                System.out.println("Example code to run:");
-                System.out.println("$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service");
-                System.out.println(
-                        "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service");
-                System.out.println();
-                cli.printUsage(System.out);
-                System.out.println();
-                System.out.println("Available formats are:");
-                for (Format format : Format.values()) {
-                    System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
+                cli.parse(args);
+                if (options.help) {
+                    System.out.println("Providence RPC Tool - " + getVersionString());
+                    System.out.println("Usage: " + cli.getSingleLineUsage());
+                    System.out.println();
+                    System.out.println("Example code to run:");
+                    System.out.println(
+                            "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service");
+                    System.out.println(
+                            "$ pvdrpc -i binary,file:my.data -f json_protocol -I thrift/ -s cal.Calculator http://localhost:8080/service");
+                    System.out.println();
+                    cli.printUsage(System.out);
+                    System.out.println();
+                    System.out.println("Available formats are:");
+                    for (Format format : Format.values()) {
+                        System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
+                    }
+                    return;
+                } else if (options.version) {
+                    System.out.println("Providence RPC Tool - " + getVersionString());
+                    return;
                 }
+
+                cli.validate();
+
+                MessageReader in = options.getInput();
+                MessageWriter out = options.getOutput();
+                PService service = options.getDefinition();
+                PServiceCallHandler handler = options.getHandler();
+
+                PServiceCall call = in.read(service);
+                PServiceCall resp = handler.handleCall(call, service);
+
+                out.write(resp);
                 return;
-            } else if (options.version) {
-                System.out.println("Providence RPC Tool - " + getVersionString());
-                return;
+            } catch (ConnectException e) {
+                System.out.flush();
+                System.err.format("Unable to connect to %s: %s\n", options.endpoint, e.getMessage());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (HttpResponseException e) {
+                System.out.flush();
+                System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
+                System.err.println(" - from: " + options.endpoint);
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (ArgumentException e) {
+                System.out.flush();
+                System.err.println(e.getMessage());
+                System.err.println("Usage: " + cli.getSingleLineUsage());
+                System.err.println();
+                System.err.println("Run $ pvdrpc --help # for available options.");
+            } catch (SerializerException e) {
+                System.out.flush();
+                System.err.println("Serialization error: " + e.getMessage());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (ParseException e) {
+                System.out.flush();
+                System.err.format(e.asString());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.flush();
+                System.err.println(e.getMessage());
+                if (options.verbose) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (UncheckedIOException | IOException e) {
+                System.out.flush();
+                System.err.println("I/O error: " + e.getMessage());
+                if (options.verbose) {
+                    System.out.flush();
+                    e.printStackTrace();
+                }
             }
-
-            cli.validate();
-
-            MessageReader in = options.getInput();
-            MessageWriter out = options.getOutput();
-            PService service = options.getDefinition();
-            PServiceCallHandler handler = options.getHandler();
-
-            PServiceCall call = in.read(service);
-            PServiceCall resp = handler.handleCall(call, service);
-
-            out.write(resp);
-            return;
-        } catch (ConnectException e) {
-            System.err.format("Unable to connect to %s: %s\n",
-                              options.endpoint,
-                              e.getMessage());
-        } catch (HttpResponseException e) {
-            System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
-            System.err.println(" - from: " + options.endpoint);
-            if (options.verbose) {
-                e.printStackTrace();
-            }
-        } catch (ArgumentException e) {
-            System.err.println("Usage: pvdrpc [-i spec] [-o spec] [-I dir] [-S] [-f fmt] [-H hdr] -s srv URL");
-            System.err.println(e.getMessage());
-            System.err.println();
-            System.err.println("Run $ pvdrpc --help # for available options.");
-        } catch (SerializerException e) {
+        } catch (Exception e) {
             System.out.flush();
-            System.err.println("Serialization error: " + e.getMessage());
+            System.err.println("Unchecked exception: " + e.getMessage());
             if (options.verbose) {
+                System.out.flush();
                 e.printStackTrace();
             }
-        } catch (ParseException e) {
-            System.out.flush();
-            System.err.println();
-            if (e.getLine() != null) {
-                int lineNo = e.getToken()
-                              .getLineNo();
-                int linePos = e.getToken()
-                               .getLinePos();
-                int len = e.getToken()
-                           .length();
 
-                System.err.format("Error at line %d, pos %d-%d: %s\n" +
-                                  "    %s\n" +
-                                  "    %s%c\n",
-                                  lineNo,
-                                  linePos,
-                                  linePos + len,
-                                  e.getLocalizedMessage(),
-                                  e.getLine(),
-                                  Strings.times("~", linePos),
-                                  '^');
-            } else {
-                System.err.println("Parser error: " + e.getLocalizedMessage());
-            }
-            if (options.verbose) {
-                e.printStackTrace();
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.flush();
-            System.err.println(e.getMessage());
-            if (options.verbose) {
-                e.printStackTrace();
-            }
-        } catch (UncheckedIOException | IOException e) {
-            System.out.flush();
-            System.err.println("I/O error: " + e.getMessage());
-            if (options.verbose) {
-                e.printStackTrace();
-            }
         }
         exit(1);
     }
