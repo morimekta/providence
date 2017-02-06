@@ -423,7 +423,7 @@ public class ThriftProgramParserTest {
                      "          name = \"VAL\"\n" +
                      "          value = 0\n" +
                      "          annotations = {\n" +
-                     "            \"anno\": \"str\"\n" +
+                     "            \"anno\": \"str\",\n" +
                      "            \"anno.other\": \"other\"\n" +
                      "          }\n" +
                      "        }\n" +
@@ -502,7 +502,7 @@ public class ThriftProgramParserTest {
                      "        }\n" +
                      "      ]\n" +
                      "      annotations = {\n" +
-                     "        \"src\": \"src\"\n" +
+                     "        \"src\": \"src\",\n" +
                      "        \"bin\": \"bin\"\n" +
                      "      }\n" +
                      "    }\n" +
