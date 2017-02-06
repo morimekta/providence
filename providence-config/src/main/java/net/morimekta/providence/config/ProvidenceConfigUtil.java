@@ -63,73 +63,39 @@ public class ProvidenceConfigUtil {
      * @param defValue The default value.
      * @return The value found or the default.
      */
-    public static Object getInMessage(PMessage message, String key, Object defValue) {
-        return getInMessage(message, key, defValue, true);
-    }
+    public static Object getInMessage(PMessage message, final String key, Object defValue) {
+        String sub = key;
+        String name;
 
-    /**
-     * Look up a key in the message structure. If the key is not found, return
-     * the default value. Note that the default value will be converted to the
-     * type of the declared field, not returned verbatim.
-     *
-     * @param message The message to look up into.
-     * @param key The key to look up.
-     * @param defValue The default value.
-     * @return The value found or the default.
-     */
-    public static Object getInMessage(PMessage message, String key, Object defValue, boolean strict) {
         PMessageDescriptor descriptor = message.descriptor();
+        while (sub.contains(".")) {
+            int idx = sub.indexOf(".");
 
-        if (key.contains(".")) {
-            int idx = key.indexOf(".");
-            String name = key.substring(0, idx);
-            String sub = key.substring(idx + 1);
+            name = sub.substring(0, idx);
+            sub = sub.substring(idx + 1);
 
             PField field = descriptor.getField(name);
             if (field == null) {
-                throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName() + " has no field named " +
-                                               name);
+                throw new KeyNotFoundException("Message " + descriptor.getQualifiedName() + " has no field named " + name);
             }
+
             PDescriptor fieldDesc = field.getDescriptor();
             if (fieldDesc.getType() != PType.MESSAGE) {
-                throw new IncompatibleValueException("Field " + name + " is not of message type in " +
-                                                     descriptor.getQualifiedName());
+                throw new IncompatibleValueException("Field '" + name + "' is not of message type in " + descriptor.getQualifiedName());
             }
+            descriptor = (PMessageDescriptor) fieldDesc;
 
-            if (!message.has(field.getKey())) {
-                while (sub.contains(".")) {
-                    if (fieldDesc.getType() != PType.MESSAGE) {
-                        throw new IncompatibleValueException("Field " + name + " is not of message type in " +
-                                                             descriptor.getQualifiedName());
-                    }
-
-                    idx = sub.indexOf(".");
-                    name = sub.substring(0, idx);
-                    sub = sub.substring(idx + 1);
-
-                    field = ((PMessageDescriptor) fieldDesc).getField(name);
-                    if (field == null) {
-                        if (strict) {
-                            throw new KeyNotFoundException("No such field %s in %s",
-                                                           name,
-                                                           fieldDesc);
-                        }
-                        return null;
-                    }
-                    fieldDesc = field.getDescriptor();
-                }
-                return asFieldType(field, defValue);
+            if (message != null) {
+                message = (PMessage) message.get(field.getKey());
             }
-            return getInMessage((PMessage) message.get(field.getKey()), sub, defValue);
         }
 
-        PField field = message.descriptor().getField(key);
+        PField field = descriptor.getField(sub);
         if (field == null) {
-            throw new KeyNotFoundException("Message " + message.descriptor().getQualifiedName() + " has no field named " +
-                                           key);
+            throw new KeyNotFoundException("Message " + descriptor.getQualifiedName() + " has no field named " + sub);
         }
 
-        if (!message.has(field.getKey())) {
+        if (message == null || !message.has(field.getKey())) {
             return asFieldType(field, defValue);
         }
 
@@ -170,8 +136,6 @@ public class ProvidenceConfigUtil {
         }
 
         switch (field.getType()) {
-            case VOID:
-                return null;  // value is irrelevant.
             case BOOL:
                 return ConfigUtil.asBoolean(o);
             case BYTE:

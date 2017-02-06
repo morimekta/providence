@@ -65,7 +65,6 @@ import static net.morimekta.config.util.ConfigUtil.asDouble;
 import static net.morimekta.config.util.ConfigUtil.asInteger;
 import static net.morimekta.config.util.ConfigUtil.asLong;
 import static net.morimekta.config.util.ConfigUtil.asString;
-import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 
 /**
  * Providence config loader. This loads providence configs.
@@ -1056,7 +1055,7 @@ public class ProvidenceConfig {
                     }
                     return null;
                 }
-                return (V) getInMessage(include, sub, null, strict);
+                return (V) ProvidenceConfigUtil.getInMessage(include, sub, null);
             }
             throw new KeyNotFoundException("Reference name " + key + " not declared");
         } else if (includes.containsKey(key)) {
