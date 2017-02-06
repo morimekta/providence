@@ -543,12 +543,9 @@ public class ProvidenceConfig {
                                                                               Map<String, Object> params,
                                                                               PMessageBuilder<M, F> builder)
             throws IOException {
-        PMessageDescriptor<M, F> descriptor = builder.descriptor();
-
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
             Token token = tokenizer.expect("extension object");
             if (token.isReferenceIdentifier()) {
-                builder = descriptor.builder();
                 try {
                     builder.merge(resolve(includes, params, token.asString()));
                 } catch (KeyNotFoundException e) {
@@ -713,6 +710,7 @@ public class ProvidenceConfig {
                         // if the following symbol is *not* message start,
                         // we assume a new field or end of current message.
                         if (!token.isSymbol(Token.kMessageStart)) {
+                            builder.set(field.getKey(), bld.build());
                             continue;
                         }
                     } else if (!token.isSymbol(Token.kMessageStart)) {

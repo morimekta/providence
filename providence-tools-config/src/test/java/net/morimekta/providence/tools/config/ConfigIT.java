@@ -71,6 +71,14 @@ public class ConfigIT {
                      "  admin = {\n" +
                      "    port = 8088\n" +
                      "  }\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
+                     "    driver = \"org.mysql.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"dbuser\"\n" +
+                     "      password = \"DbP4s5w0rD\"\n" +
+                     "    }\n" +
+                     "  }\n" +
                      "}", config.getOutput());
         assertEquals(0, exitCode);
     }
@@ -94,6 +102,14 @@ public class ConfigIT {
                      "  }\n" +
                      "  admin = {\n" +
                      "    port = 8088\n" +
+                     "  }\n" +
+                     "  db = {\n" +
+                     "    uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
+                     "    driver = \"org.mysql.Driver\"\n" +
+                     "    credentials = {\n" +
+                     "      username = \"dbuser\"\n" +
+                     "      password = \"DbP4s5w0rD\"\n" +
+                     "    }\n" +
                      "  }\n" +
                      "}", config.getOutput());
         assertEquals(0, exitCode);

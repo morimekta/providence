@@ -8,6 +8,7 @@ import net.morimekta.providence.testing.util.ResourceUtils;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.test.config.Database;
 import net.morimekta.test.config.Service;
+import net.morimekta.test.config.ServicePort;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,9 +67,9 @@ public class ProvidenceConfigUtilTest {
         assertEquals(null, getInMessage(declaration, "decl_const.documentation"));
 
         assertThat(getInMessage(service, "name"), is("stage"));
-        assertThat(getInMessage(service, "db"), is(nullValue()));
-        Database def = Database.builder().build();
-        assertThat(getInMessage(service, "db", def), is(sameInstance(def)));
+        assertThat(getInMessage(service, "admin"), is(nullValue()));
+        ServicePort def = ServicePort.builder().build();
+        assertThat(getInMessage(service, "admin", def), is(sameInstance(def)));
     }
 
     @Test

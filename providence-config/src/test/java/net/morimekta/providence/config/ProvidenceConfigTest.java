@@ -100,6 +100,14 @@ public class ProvidenceConfigTest {
                      "admin = {\n" +
                      "  port = 14256\n" +
                      "  oauth_token_key = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
+                     "}\n" +
+                     "db = {\n" +
+                     "  uri = \"jdbc:mysql:db01:1364/my_db\"\n" +
+                     "  driver = \"org.mysql.Driver\"\n" +
+                     "  credentials = {\n" +
+                     "    username = \"dbuser\"\n" +
+                     "    password = \"DbP4s5w0rD\"\n" +
+                     "  }\n" +
                      "}",
                      debugString(prod_service));
         assertEquals("name = \"stage\"\n" +
@@ -112,6 +120,14 @@ public class ProvidenceConfigTest {
                      "  signature_override_keys = [\n" +
                      "    \"not_really_app_1\"\n" +
                      "  ]\n" +
+                     "}\n" +
+                     "db = {\n" +
+                     "  uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "  driver = \"org.h2.Driver\"\n" +
+                     "  credentials = {\n" +
+                     "    username = \"myuser\"\n" +
+                     "    password = \"MyP4s5w0rd\"\n" +
+                     "  }\n" +
                      "}",
                      debugString(stage_service));
     }
