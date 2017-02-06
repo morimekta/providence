@@ -11,15 +11,36 @@ The providence RPC tool connects to a remote service, and sends a service call
 (which can be parsed from files the same way as the data files above), and sent
 as an actual remote procedure call:
 
+Given a simple thrift service file `test.thrift`:
+
+```thrift
+struct MyTest {
+    1: optional string       test;
+    2: optional i32          seq;
+    3: optional list<string> tags;
+}
+
+exception MyFailure {
+    1: string message;
+}
+
+service MyService {
+    MyTest test(1: MyTest request) throws (1: MyFailure failure);
+}
+```
+
+And code that just returns the same object as requested as the implementation. Then
+given the request `req.json` file:
+
 ```json
 [
   "test",
   "call",
-  0,
+  7,
   {
     "request": {
       "test": "my test",
-      "sequence": 44,
+      "seq": 44,
       "tags": [
         "first",
         "second"
@@ -49,11 +70,11 @@ Which would then:
 [
   "test",
   "reply",
-  0,
+  7,
   {
     "success": {
       "test": "my test",
-      "sequence": 44,
+      "seq": 44,
       "tags": [
         "first",
         "second"
@@ -66,6 +87,20 @@ Which would then:
 Or if a non-200 HTTP response is received will print out the error message
 received.
 
+#### Supported Protocols
+
+Short overview over the RPC protocols supported by the RPC tool.
+
+- `http://` and `https://`: Connects to a thrift `TServlet` or similar over `HTTP/1.1`
+  and with TLS / SSL handshake and encryption with `https`.
+- `thrift://`: Connects to a `TSimpleServer` type thrift server.
+- `thrift+nonblocking://`: Connects to a `TNonblockingServer` type thrift server,
+  or a similar thrift server that wraps messages in `TFramedTransport`.
+
+**PS:** A note of warning: The `TSimpleServer` and `TNonblockingServer` **will** crash if
+try to connect to it with `https://` because of trying to allocate multiple gigabytes of
+RAM for the request (TNonblockingServer) or for the method name (TSimpleServer).
+
 #### The Service Call Syntax
 
 Note that in the two json structures shown there is the serialized service call
@@ -74,7 +109,7 @@ and response objects. The format here is:
 
 `["${method}", ${type}, ${sequence}, ${wrapper}]`
 
-Where the type can be 1: request, 2: response, 3: exception, and 4: oneway.
+Where the type can be 1 / "call", 2 / "reply", 3 / "exception", and 4 / "oneway".
 The sequence number is something the transport layer (http, client etc) can
 use to match response messages to the correct caller, and the wrapper is
 either the `request params wrapper` the `response wrapper`, or the
@@ -115,12 +150,3 @@ either the `request params wrapper` the `response wrapper`, or the
         2: i32 type
     }
     ```
-
-#### Supported Protocols
-
-Short overview over the RPC protocols supported by the RPC tool.
-
-- `http://` and `https://`: Connects to a thrift `TServlet` or similar.
-- `thrift://`: Connects to a `TSimpleServer` type thrift server.
-- `thrift+nonblocking://`: Connects to a `TNonblockingServer` type thrift server,
-  or a similar thrift server that wraps messages in `TFramedTransport`.
