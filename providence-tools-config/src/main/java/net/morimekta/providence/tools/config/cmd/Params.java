@@ -4,23 +4,22 @@ import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.Parser;
 import net.morimekta.providence.config.ProvidenceConfig;
-import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Print an overview over the available params for the config.
  */
 public class Params implements Command {
-    protected File file = null;
+    private File file = null;
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
         List<ProvidenceConfig.Param> paramList = config.params(file);
-        paramList.sort((a, b) -> a.name.compareTo(b.name));
+        paramList.sort(Comparator.comparing(a -> a.name));
         for (ProvidenceConfig.Param param : paramList) {
             System.out.println(param.toString());
         }

@@ -22,7 +22,7 @@ public class Print implements Command {
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        serializer.serialize(System.out, (PMessage) config.getSupplier(file));
+        serializer.serialize(System.out, (PMessage) config.getConfig(file));
     }
 
     @Override
