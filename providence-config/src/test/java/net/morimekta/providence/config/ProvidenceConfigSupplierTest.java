@@ -30,12 +30,16 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -64,7 +68,9 @@ public class ProvidenceConfigSupplierTest {
 
         File file = tmp.newFile();
 
-        when(config.load(file)).thenReturn(first);
+        AtomicReference<Database> reference = new AtomicReference<>(first);
+
+        when((Supplier) config.getSupplier(file)).thenReturn(reference::get);
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, config);
@@ -73,11 +79,14 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(config).load(file);
+        verify(config).getSupplier(file);
         verifyNoMoreInteractions(config);
 
         reset(config);
-        when(config.load(file)).thenReturn(second);
+        doAnswer((mock) -> {
+            reference.set(second);
+            return null;
+        }).when(config).reload(file);
 
         supplier.reload();
 
@@ -85,7 +94,7 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(second)));
         assertThat(supplier.get(), is(sameInstance(second)));
 
-        verify(config).load(file);
+        verify(config).reload(file);
         verifyNoMoreInteractions(config);
     }
 
@@ -95,7 +104,9 @@ public class ProvidenceConfigSupplierTest {
 
         File file = tmp.newFile();
 
-        when(config.load(file)).thenReturn(first);
+        AtomicReference<Database> reference = new AtomicReference<>(first);
+
+        when((Supplier) config.getSupplier(file)).thenReturn(reference::get);
 
         ProvidenceConfigSupplier<Database, Database._Field> supplier =
                 new ProvidenceConfigSupplier<>(file, config);
@@ -104,11 +115,11 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(config).load(file);
+        verify(config).getSupplier(file);
         verifyNoMoreInteractions(config);
 
         reset(config);
-        when(config.load(file)).thenThrow(new IOException("Message"));
+        doThrow(new IOException("Message")).when(config).reload(file);
 
         try {
             supplier.reload();
@@ -122,7 +133,7 @@ public class ProvidenceConfigSupplierTest {
         assertThat(supplier.get(), is(sameInstance(first)));
         assertThat(supplier.get(), is(sameInstance(first)));
 
-        verify(config).load(file);
+        verify(config).reload(file);
         verifyNoMoreInteractions(config);
     }
 }

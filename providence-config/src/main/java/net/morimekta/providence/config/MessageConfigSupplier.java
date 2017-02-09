@@ -26,8 +26,6 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.serializer.SerializerException;
 
-import com.google.common.base.Supplier;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,7 +45,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * </code>
  */
 public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Field extends PField>
-        implements Supplier<MessageConfig<Message, Field>> {
+        implements ReloadableSupplier<MessageConfig<Message, Field>> {
     /**
      * Create a config that wraps a providence message instance. This message
      * will be exposed without any key prefix.
@@ -90,6 +88,7 @@ public class MessageConfigSupplier<Message extends PMessage<Message, Field>, Fie
     /**
      * Reload the message into the config.
      */
+    @Override
     public void reload() {
         try {
             instance.set(loadInternal());

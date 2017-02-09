@@ -8,12 +8,10 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /**
  * Print the resulting config.
@@ -24,7 +22,7 @@ public class Print implements Command {
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        serializer.serialize(System.out, (PMessage) config.load(file));
+        serializer.serialize(System.out, (PMessage) config.getSupplier(file));
     }
 
     @Override

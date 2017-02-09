@@ -27,10 +27,10 @@ import net.morimekta.providence.serializer.SerializerException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 /**
- * A supplier of a providence config based on a config file.
+ * A reloadable supplier of a providence config based on a config file.
  *
  * <code>{@code
  *     ProvidenceConfigSupplier supplier = new ProvidenceConfigSupplier(configFile, configLoader);
@@ -51,7 +51,7 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
             throws IOException {
         this.configFile = configFile;
         this.configLoader = configLoader;
-        this.instance = new AtomicReference<>(configLoader.load(configFile));
+        this.instance = configLoader.getSupplier(configFile);
     }
 
     /**
@@ -70,13 +70,13 @@ public class ProvidenceConfigSupplier<Message extends PMessage<Message, Field>, 
     @Override
     public void reload() {
         try {
-            instance.set(configLoader.load(configFile));
+            configLoader.reload(configFile);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    private final AtomicReference<Message> instance;
-    private final File                     configFile;
-    private final ProvidenceConfig         configLoader;
+    private final Supplier<Message> instance;
+    private final File              configFile;
+    private final ProvidenceConfig  configLoader;
 }

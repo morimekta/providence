@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsString;
@@ -87,8 +88,8 @@ public class ProvidenceConfigTest {
         params.put("admin_port", "14256");
 
         ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
-        Service stage_service = config.load(stage);
-        Service prod_service = config.load(prod);
+        Service stage_service = config.getConfig(stage, Service.kDescriptor);
+        Service prod_service = config.getConfig(prod);
 
         assertEquals("name = \"prod\"\n" +
                      "http = {\n" +
@@ -145,7 +146,7 @@ public class ProvidenceConfigTest {
         Map<String,String> params = new HashMap<>();
         ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
 
-        Service stage_service = config.load(stage);
+        Supplier<Service> stage_service = config.getSupplier(stage);
 
         assertEquals("name = \"stage\"\n" +
                      "http = {\n" +
@@ -166,16 +167,16 @@ public class ProvidenceConfigTest {
                      "    password = \"MyP4s5w0rd\"\n" +
                      "  }\n" +
                      "}",
-                     debugString(stage_service));
+                     debugString(stage_service.get()));
 
         stageDb.delete();
         writeContentTo(getResourceAsString("/net/morimekta/providence/config/stage_db2.cfg"), stageDb);
 
-        assertThat((Service) (Object) config.load(stage), is(sameInstance(stage_service)));
+        assertThat((Service) (Object) config.getSupplier(stage).get(), is(sameInstance(stage_service.get())));
 
         config.reload(stageDb);
 
-        stage_service = config.load(stage);
+        stage_service = config.getSupplier(stage);
 
         assertEquals("name = \"stage\"\n" +
                      "http = {\n" +
@@ -196,7 +197,7 @@ public class ProvidenceConfigTest {
                      "    password = \"O7h3rP4ssw0rd\"\n" +
                      "  }\n" +
                      "}",
-                     debugString(stage_service));
+                     debugString(stage_service.get()));
 
     }
 
@@ -208,24 +209,24 @@ public class ProvidenceConfigTest {
         Map<String,String> params = new HashMap<>();
 
         ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()));
-        Database cfg = config.load(file);
+        Supplier<Database> cfg = config.getSupplier(file);
 
         // all the unknowns are skipped.
         assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
                      "driver = \"org.h2.Driver\"",
-                     debugString(cfg));
+                     debugString(cfg.get()));
 
         file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
-        cfg = config.load(file);
+        cfg = config.getSupplier(file);
         assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
                      "driver = \"org.h2.Driver\"",
-                     debugString(cfg));
+                     debugString(cfg.get()));
 
         file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
-        cfg = config.load(file);
+        cfg = config.getSupplier(file);
         assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
                      "driver = \"org.h2.Driver\"",
-                     debugString(cfg));
+                     debugString(cfg.get()));
     }
 
     @Test
@@ -237,7 +238,7 @@ public class ProvidenceConfigTest {
 
         ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
         try {
-            config.load(file);
+            config.getSupplier(file);
             fail("no exception");
         } catch (TokenizerException e) {
             assertEquals("Unknown declared type: unknown.OtherConfig", e.getMessage());
@@ -245,7 +246,7 @@ public class ProvidenceConfigTest {
 
         file = copyResourceTo("/net/morimekta/providence/config/unknown_field.cfg", temp.getRoot());
         try {
-            config.load(file);
+            config.getSupplier(file);
             fail("no exception");
         } catch (TokenizerException e) {
             assertEquals("No such field unknown_field in config.Database", e.getMessage());
@@ -253,7 +254,7 @@ public class ProvidenceConfigTest {
 
         file = copyResourceTo("/net/morimekta/providence/config/unknown_enum_value.cfg", temp.getRoot());
         try {
-            config.load(file);
+            config.getSupplier(file);
             fail("no exception");
         } catch (TokenizerException e) {
             assertEquals("No such enum value LAST for config.Value.", e.getMessage());
@@ -327,7 +328,7 @@ public class ProvidenceConfigTest {
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
         try {
-            config.load(a);
+            config.getSupplier(a);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
@@ -350,7 +351,7 @@ public class ProvidenceConfigTest {
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
         try {
-            config.load(a);
+            config.getSupplier(a);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Included file \"b.cfg\" not found", e.getMessage());
@@ -465,7 +466,7 @@ public class ProvidenceConfigTest {
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>(), new LinkedList<>(), strict);
 
         try {
-            config.load(a);
+            config.getSupplier(a);
             fail("no exception on " + reason);
         } catch (ConfigException e) {
             assertEquals("Wrong exception message on " + reason, message, e.getMessage());

@@ -16,7 +16,7 @@ public class Validate implements Command {
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        config.load(file);
+        config.getSupplier(file);
     }
 
     private void setFile(File file) {

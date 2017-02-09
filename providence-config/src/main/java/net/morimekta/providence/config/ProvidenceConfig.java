@@ -45,6 +45,7 @@ import net.morimekta.util.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,10 +56,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.morimekta.config.util.ConfigUtil.asBoolean;
@@ -72,36 +77,12 @@ import static net.morimekta.config.util.ConfigUtil.asString;
  * Providence config loader. This loads providence configs.
  */
 public class ProvidenceConfig {
-    private static final String IDENTIFIER_SEP = ".";
-
-    private static final String FALSE     = "false";
-    private static final String TRUE      = "true";
-    private static final String PARAMS    = "params";
-    private static final String UNDEFINED = "undefined";
-    private static final String INCLUDE   = "include";
-    private static final String AS        = "as";
-
-    private final TypeRegistry          registry;
-    private final Map<String, String>   inputParams;
-    // Full file path to resolved instance.
-    private final Map<String, PMessage> loaded;
-    private final Map<String, Set<String>> reverseDependencies;
-    private final List<File>            sourceRoots;
-    private final boolean               strict;
-
-    // simple stage separation. The content *must* come in this order.
-    private enum Stage {
-        PARAMS,
-        INCLUDES,
-        MESSAGE
-    }
-
     public static class Param {
         public final String name;
         public final Object value;
-        public final File file;
+        public final File   file;
 
-        public Param(String name, Object value, File file) {
+        Param(String name, Object value, File file) {
             this.name = name;
             this.value = value;
             this.file = file;
@@ -109,20 +90,21 @@ public class ProvidenceConfig {
 
         @Override
         public int hashCode() {
-            return Objects.hash(name, value, file);
+            return Objects.hash(Param.class, name, value, file);
         }
 
         @Override
         public boolean equals(Object o) {
-            if (o == this) return true;
+            if (o == this)
+                return true;
             if (o == null || !getClass().equals(o.getClass())) {
                 return false;
             }
             Param p = (Param) o;
 
             return Objects.equals(name, p.name) &&
-                    Objects.equals(value, p.value) &&
-                    Objects.equals(file, p.file);
+                   Objects.equals(value, p.value) &&
+                   Objects.equals(file, p.file);
         }
 
         @Override
@@ -138,9 +120,7 @@ public class ProvidenceConfig {
                                      asString(value),
                                      file.getName());
             } else if (value instanceof CharSequence) {
-                return String.format("%s = \"%s\" (%s)", name,
-                                     Strings.escape((CharSequence) value),
-                                     file.getName());
+                return String.format("%s = \"%s\" (%s)", name, Strings.escape((CharSequence) value), file.getName());
             } else {
                 return String.format("%s = %s (%s)", name, asString(value), file.getName());
             }
@@ -150,6 +130,7 @@ public class ProvidenceConfig {
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams) {
         this(registry, inputParams, ImmutableList.of());
     }
+
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots) {
         this(registry, inputParams, sourceRoots, false);
     }
@@ -157,7 +138,7 @@ public class ProvidenceConfig {
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots, boolean strict) {
         this.registry = registry;
         this.inputParams = ImmutableMap.copyOf(inputParams);
-        this.loaded = new HashMap<>();
+        this.loaded = new ConcurrentHashMap<>();
         this.sourceRoots = ImmutableList.copyOf(sourceRoots);
         this.reverseDependencies = new HashMap<>();
         this.strict = strict;
@@ -177,12 +158,72 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public synchronized <M extends PMessage<M, F>, F extends PField> M load(File file) throws IOException {
+    public <M extends PMessage<M, F>, F extends PField> M getConfig(File file) throws IOException {
+        Supplier<M> supplier = getSupplier(file);
+        return supplier.get();
+    }
+
+    /**
+     * Load providence config from the given file.
+     *
+     * @param file The file to load.
+     * @param descriptor The config type descriptor.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return The parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws SerializerException If the file could not be parsed.
+     */
+    public <M extends PMessage<M, F>, F extends PField> M getConfig(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
+        return getSupplier(file, descriptor).get();
+    }
+
+    /**
+     * Load providence config from the given file.
+     *
+     * @param file The file to load.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return Supplier for the parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws SerializerException If the file could not be parsed.
+     */
+    public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file) throws IOException {
         try {
-            return loadConfigRecursively(resolveFile(null, file.toString()));
+            AtomicReference<M> reference = loadConfigRecursively(resolveFile(null, file.getPath()));
+            return reference::get;
         } catch (FileNotFoundException e) {
-            throw new TokenizerException(e.getMessage())
-                    .setFile(file.toString());
+            throw new TokenizerException(e.getMessage(), e).setFile(file.getName());
+        }
+    }
+
+    /**
+     * Load providence config from the given file.
+     *
+     * @param file The file to load.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return Supplier for the parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws SerializerException If the file could not be parsed.
+     */
+    public <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
+        try {
+            Supplier<M> supplier = getSupplier(file);
+            M message = supplier.get();
+            if (message == null || message.descriptor().equals(descriptor)) {
+                return supplier;
+            }
+
+            throw new TokenizerException(
+                    String.format(
+                            Locale.ENGLISH,
+                            "Incompatible message type: Expected %s, got %s",
+                            descriptor.getQualifiedName(),
+                            message.descriptor().getQualifiedName()))
+                    .setFile(file.getPath());
+        } catch (FileNotFoundException e) {
+            throw new TokenizerException(e.getMessage()).setFile(file.getName());
         }
     }
 
@@ -194,7 +235,7 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws SerializerException If the file could not be parsed.
      */
-    public synchronized List<Param> params(File file) throws IOException {
+    public List<Param> params(File file) throws IOException {
         return loadParamsRecursively(resolveFile(null, file.toString()));
     }
 
@@ -203,35 +244,35 @@ public class ProvidenceConfig {
      *
      * @param file The file that may need to be reloaded.
      */
-    public synchronized void reload(File file) throws IOException {
-        File canonicalFile = file.getCanonicalFile()
-                                 .getAbsoluteFile();
-        String filePath = canonicalFile.toString();
-        if (loaded.containsKey(filePath)) {
-            PMessage old = loaded.get(filePath);
-            Set<String> deps = new TreeSet<>(getReverseDeps(filePath));
+    public void reload(File file) throws IOException {
+        String canonicalPath = file.getCanonicalFile()
+                                   .getAbsolutePath();
 
-            // Force reloading.
-            loaded.remove(filePath);
-            try {
-                @SuppressWarnings("unchecked")
-                PMessage reloaded = loadConfigRecursively(file);
-                if (old.equals(reloaded)) {
-                    return;
-                }
+        AtomicReference<PMessage> reference = loaded.get(canonicalPath);
+        if (reference == null) {
+            return;
+        }
+        Set<String> dependencies = new TreeSet<>(getReverseDeps(canonicalPath));
 
-                for (String dep : deps) {
-                    reload(new File(dep));
-                }
-            } catch (IOException e) {
-                // Reinstate the old value if we failed to reload it. Also
-                // reinstate the old value if any of the dependent files failed
-                // to load. The reason they failed could easily be that this
-                // file was no longer compatible.
-                loaded.put(filePath, old);
-
-                throw new IOException(e.getMessage(), e);
+        try {
+            @SuppressWarnings("unchecked")
+            PMessage reloaded = parseConfigRecursively(file, new String[]{canonicalPath});
+            if (reference.get()
+                         .equals(reloaded)) {
+                return;
             }
+
+            reference.set(reloaded);
+
+            for (String dep : dependencies) {
+                reload(new File(dep));
+            }
+        } catch (IOException e) {
+            // Reinstate the old value if we failed to reload it. Also
+            // reinstate the old value if any of the dependent files failed
+            // to load. The reason they failed could easily be that this
+            // file was no longer compatible.
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -383,10 +424,10 @@ public class ProvidenceConfig {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <M extends PMessage<M, F>, F extends PField> M loadConfigRecursively(File file, String... stack)
+    @SuppressWarnings("unchecked") @Nonnull
+    private <M extends PMessage<M, F>, F extends PField> AtomicReference<M> loadConfigRecursively(File file, String... stack)
             throws IOException {
-        M result = null;
+        M result;
 
         try {
             file = file.getCanonicalFile()
@@ -408,105 +449,14 @@ public class ProvidenceConfig {
                     getReverseDeps(filePath).add(stack[stack.length - 1]);
                 }
 
-                return (M) loaded.get(filePath);
+                return (AtomicReference) loaded.get(filePath);
             }
 
             stackList.add(filePath);
 
-            Tokenizer tokenizer;
-            try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-                // Non-enclosed content, meaning we should read the whole file immediately.
-                tokenizer = new Tokenizer(in, false);
-            }
-
-            Map<String, Object> params = new HashMap<>();
-            Map<String, PMessage> includes = new HashMap<>();
-
-            Stage stage = Stage.PARAMS;
-
-            Token token = tokenizer.peek();
-            while (token != null) {
-                tokenizer.next();
-
-                if (stage == Stage.MESSAGE) {
-                    throw new TokenizerException(token,
-                                                 "Unexpected token " + token.asString() + ", expected end of file.").setLine(tokenizer.getLine(token.getLineNo()));
-                }
-
-                if (token.isQualifiedIdentifier()) {
-                    // if a.b (type identifier) --> MESSAGE
-                    stage = Stage.MESSAGE;
-                    PMessageDescriptor<M, F> descriptor;
-                    try {
-                        descriptor = (PMessageDescriptor) registry.getDeclaredType(token.asString());
-                    } catch (IllegalArgumentException e) {
-                        // Unknown declared type. Fail if:
-                        // - strict mode, all files must be of known types.
-                        // - top of the stack. This is the config requested by the user. It should fail
-                        //   even in non-strict mode.
-                        if (strict || stack.length == 0) {
-                            throw new TokenizerException(token, "Unknown declared type: %s", token.asString())
-                                    .setLine(tokenizer.getLine(token.getLineNo()));
-                        }
-                        return null;
-                    }
-                    result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
-                } else if (token.isIdentifier()) {
-                    if (PARAMS.equals(token.asString())) {
-                        // if params && stage == PARAMS --> PARAMS
-                        if (stage != Stage.PARAMS) {
-                            throw new TokenizerException(token,
-                                                         "Params already defined, or passed; must be at head of file").setLine(
-                                    tokenizer.getLine(token.getLineNo()));
-                        }
-                        stage = Stage.INCLUDES;
-                        params = parseParams(tokenizer);
-                    } else if (INCLUDE.equals(token.asString())) {
-                        // if include --> INCLUDES
-                        stage = Stage.INCLUDES;
-                        token = tokenizer.expectStringLiteral("file to be included");
-                        File includedFile;
-                        PMessage included;
-                        try {
-                            includedFile = resolveFile(file, token.decodeLiteral());
-                            included = loadConfigRecursively(includedFile, (String[]) stackList.toArray(new String[stackList.size()]));
-                        } catch (FileNotFoundException e) {
-                            throw new TokenizerException(token, "Included file " + token.asString() + " not found")
-                                    .setLine(tokenizer.getLine(token.getLineNo()));
-                        }
-                        if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
-                                                .asString())) {
-                            throw new TokenizerException(token, "Missing alias for included file " + includedFile).setLine(
-                                    tokenizer.getLine(token.getLineNo()));
-                        }
-                        String alias = tokenizer.expectIdentifier("Include alias")
-                                                .asString();
-                        if (includes.containsKey(alias)) {
-                            throw new TokenizerException(token, "Alias \"" + alias + "\" is already used").setLine(
-                                    tokenizer.getLine(token.getLineNo()));
-                        } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
-                            throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word").setLine(
-                                    tokenizer.getLine(token.getLineNo()));
-                        }
-                        includes.put(alias, included);
-                    } else {
-                        throw new TokenizerException(token,
-                                                     "Unexpected token " + token.asString() +
-                                                     "expected include, params or message type").setLine(tokenizer.getLine(
-                                token.getLineNo()));
-                    }
-                } else {
-                    throw new TokenizerException(token,
-                                                 "Unexpected token " + token.asString() +
-                                                 "expected include, params or message type").setLine(tokenizer.getLine(
-                            token.getLineNo()));
-                }
-
-                token = tokenizer.peek();
-            }
-
+            result = parseConfigRecursively(file, stackList.toArray(new String[stackList.size()]));
             if (result == null) {
-                throw new ConfigException("No message in config: " + file.getName());
+                return new AtomicReference<>();
             }
 
             stackList.add(filePath);
@@ -514,12 +464,120 @@ public class ProvidenceConfig {
                 getReverseDeps(filePath).add(stack[stack.length - 1]);
             }
 
-            loaded.put(filePath, result);
+            AtomicReference ref = loaded.get(filePath);
+            if (ref == null) {
+                ref = new AtomicReference(result);
+                loaded.put(filePath, ref);
+            } else {
+                ref.set(result);
+            }
 
-            return result;
+            return ref;
         } catch (TokenizerException e) {
             throw new TokenizerException(e, file);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M extends PMessage<M, F>, F extends PField> M parseConfigRecursively(File file,
+                                                                                  String[] stack) throws IOException {
+        Tokenizer tokenizer;
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            // Non-enclosed content, meaning we should read the whole file immediately.
+            tokenizer = new Tokenizer(in, false);
+        }
+
+        Map<String, Object> params = new HashMap<>(); Map<String, PMessage> includes = new HashMap<>();
+
+        Stage stage = Stage.PARAMS;
+        M result = null;
+
+        Token token = tokenizer.peek();
+        while (token != null) {
+            tokenizer.next();
+
+            if (stage == Stage.MESSAGE) {
+                throw new TokenizerException(token,
+                                             "Unexpected token " + token.asString() + ", expected end of file.").setLine(tokenizer.getLine(token.getLineNo()));
+            }
+
+            if (token.isQualifiedIdentifier()) {
+                // if a.b (type identifier) --> MESSAGE
+                stage = Stage.MESSAGE;
+                PMessageDescriptor<M, F> descriptor;
+                try {
+                    descriptor = (PMessageDescriptor) registry.getDeclaredType(token.asString());
+                } catch (IllegalArgumentException e) {
+                    // Unknown declared type. Fail if:
+                    // - strict mode, all files must be of known types.
+                    // - top of the stack. This is the config requested by the user. It should fail
+                    //   even in non-strict mode.
+                    if (strict || stack.length == 1) {
+                        throw new TokenizerException(token, "Unknown declared type: %s", token.asString())
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    return null;
+                }
+                result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
+            } else if (token.isIdentifier()) {
+                if (PARAMS.equals(token.asString())) {
+                    // if params && stage == PARAMS --> PARAMS
+                    if (stage != Stage.PARAMS) {
+                        throw new TokenizerException(token,
+                                                     "Params already defined, or passed; must be at head of file").setLine(
+                                tokenizer.getLine(token.getLineNo()));
+                    }
+                    stage = Stage.INCLUDES;
+                    params = parseParams(tokenizer);
+                } else if (INCLUDE.equals(token.asString())) {
+                    // if include --> INCLUDES
+                    stage = Stage.INCLUDES;
+                    token = tokenizer.expectStringLiteral("file to be included");
+                    File includedFile;
+                    PMessage included;
+                    try {
+                        includedFile = resolveFile(file, token.decodeLiteral());
+                        included = loadConfigRecursively(includedFile, stack).get();
+                    } catch (FileNotFoundException e) {
+                        throw new TokenizerException(token, "Included file " + token.asString() + " not found")
+                                .setLine(tokenizer.getLine(token.getLineNo()));
+                    }
+                    if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
+                                            .asString())) {
+                        throw new TokenizerException(token, "Missing alias for included file " + includedFile).setLine(
+                                tokenizer.getLine(token.getLineNo()));
+                    }
+                    String alias = tokenizer.expectIdentifier("Include alias")
+                                            .asString();
+                    if (includes.containsKey(alias)) {
+                        throw new TokenizerException(token, "Alias \"" + alias + "\" is already used").setLine(
+                                tokenizer.getLine(token.getLineNo()));
+                    } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
+                        throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word").setLine(
+                                tokenizer.getLine(token.getLineNo()));
+                    }
+                    includes.put(alias, included);
+                } else {
+                    throw new TokenizerException(token,
+                                                 "Unexpected token " + token.asString() +
+                                                 "expected include, params or message type").setLine(tokenizer.getLine(
+                            token.getLineNo()));
+                }
+            } else {
+                throw new TokenizerException(token,
+                                             "Unexpected token " + token.asString() +
+                                             "expected include, params or message type").setLine(tokenizer.getLine(
+                        token.getLineNo()));
+            }
+
+            token = tokenizer.peek();
+        }
+
+        if (result == null) {
+            throw new ConfigException("No message in config: " + file.getName());
+        }
+
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -1117,5 +1175,43 @@ public class ProvidenceConfig {
             return (V) includes.get(key);
         }
         throw new KeyNotFoundException("Reference name " + key + " not declared");
+    }
+
+    private static final String IDENTIFIER_SEP = ".";
+
+    private static final String FALSE     = "false";
+    private static final String TRUE      = "true";
+    private static final String PARAMS    = "params";
+    private static final String UNDEFINED = "undefined";
+    private static final String INCLUDE   = "include";
+    private static final String AS        = "as";
+
+    /**
+     * Full path to resolved instance.
+     */
+    private final Map<String, AtomicReference<PMessage>> loaded;
+
+    /**
+     * List of source roots where files can be looked up in.
+     */
+    private final List<File>               sourceRoots;
+
+    /**
+     * Type registry for looking up the base config types.
+     */
+    private final TypeRegistry             registry;
+
+    /**
+     * Map of input params used to override the
+     */
+    private final Map<String, String>      inputParams;
+    private final Map<String, Set<String>> reverseDependencies;
+    private final boolean                  strict;
+
+    // simple stage separation. The content *must* come in this order.
+    private enum Stage {
+        PARAMS,
+        INCLUDES,
+        MESSAGE
     }
 }

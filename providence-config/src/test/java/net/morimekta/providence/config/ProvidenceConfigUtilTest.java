@@ -6,7 +6,6 @@ import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.testing.util.ResourceUtils;
 import net.morimekta.providence.util.TypeRegistry;
-import net.morimekta.test.config.Database;
 import net.morimekta.test.config.Service;
 import net.morimekta.test.config.ServicePort;
 
@@ -18,6 +17,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
@@ -36,7 +36,7 @@ public class ProvidenceConfigUtilTest {
     public TemporaryFolder tmp = new TemporaryFolder();
 
     private Declaration declaration;
-    private Service service;
+    private Supplier<Service> service;
 
     @Before
     public void setUp() throws IOException {
@@ -53,7 +53,7 @@ public class ProvidenceConfigUtilTest {
 
         File cfg = ResourceUtils.copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
 
-        service = new ProvidenceConfig(registry, new HashMap<>()).load(cfg);
+        service = new ProvidenceConfig(registry, new HashMap<>()).getSupplier(cfg);
     }
 
     @Test
@@ -66,37 +66,37 @@ public class ProvidenceConfigUtilTest {
         // Return null when there are no default in thrift, and none specified.
         assertEquals(null, getInMessage(declaration, "decl_const.documentation"));
 
-        assertThat(getInMessage(service, "name"), is("stage"));
-        assertThat(getInMessage(service, "admin"), is(nullValue()));
+        assertThat(getInMessage(service.get(), "name"), is("stage"));
+        assertThat(getInMessage(service.get(), "admin"), is(nullValue()));
         ServicePort def = ServicePort.builder().build();
-        assertThat(getInMessage(service, "admin", def), is(sameInstance(def)));
+        assertThat(getInMessage(service.get(), "admin", def), is(sameInstance(def)));
     }
 
     @Test
     public void testGetInMessage_fail() {
         try {
-            getInMessage(service, "does_not_exist");
+            getInMessage(service.get(), "does_not_exist");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service, "does_not_exist.name");
+            getInMessage(service.get(), "does_not_exist.name");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service, "db.does_not_exist");
+            getInMessage(service.get(), "db.does_not_exist");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Database has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service, "name.db");
+            getInMessage(service.get(), "name.db");
             fail("No exception");
         } catch (IncompatibleValueException e) {
             assertThat(e.getMessage(), is("Field 'name' is not of message type in config.Service"));
