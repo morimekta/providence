@@ -156,7 +156,7 @@ public class ProvidenceConfig {
      * @param <F> The message field type.
      * @return The parsed and merged config.
      * @throws IOException If the file could not be read.
-     * @throws SerializerException If the file could not be parsed.
+     * @throws TokenizerException If the file could not be parsed.
      */
     public <M extends PMessage<M, F>, F extends PField> M getConfig(File file) throws IOException {
         Supplier<M> supplier = getSupplier(file);
@@ -172,7 +172,7 @@ public class ProvidenceConfig {
      * @param <F> The message field type.
      * @return The parsed and merged config.
      * @throws IOException If the file could not be read.
-     * @throws SerializerException If the file could not be parsed.
+     * @throws TokenizerException If the file could not be parsed.
      */
     public <M extends PMessage<M, F>, F extends PField> M getConfig(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
         return getSupplier(file, descriptor).get();
@@ -186,7 +186,7 @@ public class ProvidenceConfig {
      * @param <F> The message field type.
      * @return Supplier for the parsed and merged config.
      * @throws IOException If the file could not be read.
-     * @throws SerializerException If the file could not be parsed.
+     * @throws TokenizerException If the file could not be parsed.
      */
     public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file) throws IOException {
         try {
@@ -205,7 +205,7 @@ public class ProvidenceConfig {
      * @param <F> The message field type.
      * @return Supplier for the parsed and merged config.
      * @throws IOException If the file could not be read.
-     * @throws SerializerException If the file could not be parsed.
+     * @throws TokenizerException If the file could not be parsed.
      */
     public <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
         try {
@@ -233,7 +233,7 @@ public class ProvidenceConfig {
      * @param file The file to load.
      * @return The list of params from the loaded configs.
      * @throws IOException If the file could not be read.
-     * @throws SerializerException If the file could not be parsed.
+     * @throws TokenizerException If the file could not be parsed.
      */
     public List<Param> params(File file) throws IOException {
         return loadParamsRecursively(resolveFile(null, file.toString()));
@@ -348,10 +348,10 @@ public class ProvidenceConfig {
             Collections.addAll(stackList, stack);
             if (stackList.contains(filePath)) {
                 stackList.add(filePath);
-                throw new SerializerException("Circular includes detected: " +
-                                              String.join(" -> ", stackList.stream()
-                                                                           .map(p -> new File(p).getName())
-                                                                           .collect(Collectors.toList())));
+                throw new TokenizerException("Circular includes detected: " +
+                                             String.join(" -> ", stackList.stream()
+                                                                          .map(p -> new File(p).getName())
+                                                                          .collect(Collectors.toList())));
             }
 
             stackList.add(filePath);
@@ -438,10 +438,10 @@ public class ProvidenceConfig {
             Collections.addAll(stackList, stack);
             if (stackList.contains(filePath)) {
                 stackList.add(filePath);
-                throw new SerializerException("Circular includes detected: " + String.join(" -> ",
-                                                                                           stackList.stream()
-                                                                                                    .map(p -> new File(p).getName())
-                                                                                                    .collect(Collectors.toList())));
+                throw new TokenizerException("Circular includes detected: " + String.join(" -> ",
+                                                                                          stackList.stream()
+                                                                                                   .map(p -> new File(p).getName())
+                                                                                                   .collect(Collectors.toList())));
             }
 
             if (loaded.containsKey(filePath)) {
