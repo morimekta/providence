@@ -93,7 +93,7 @@ public class Operation
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof Operation)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         Operation other = (Operation) o;
         return java.util.Objects.equals(mOperator, other.mOperator) &&
                java.util.Objects.equals(mOperands, other.mOperands);
@@ -451,6 +451,24 @@ public class Operation
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mutableOperands() {
             optionals.set(1);
             return mOperands;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Operation._Builder other = (Operation._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mOperator, other.mOperator) &&
+                   java.util.Objects.equals(mOperands, other.mOperands);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    Operation.class, optionals,
+                    _Field.OPERATOR, mOperator,
+                    _Field.OPERANDS, mOperands);
         }
 
         @Override

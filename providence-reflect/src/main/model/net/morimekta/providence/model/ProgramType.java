@@ -188,7 +188,7 @@ public class ProgramType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ProgramType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         ProgramType other = (ProgramType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mProgramName, other.mProgramName) &&
@@ -852,6 +852,30 @@ public class ProgramType
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mutableDecl() {
             optionals.set(4);
             return mDecl;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            ProgramType._Builder other = (ProgramType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mProgramName, other.mProgramName) &&
+                   java.util.Objects.equals(mIncludes, other.mIncludes) &&
+                   java.util.Objects.equals(mNamespaces, other.mNamespaces) &&
+                   java.util.Objects.equals(mDecl, other.mDecl);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    ProgramType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.PROGRAM_NAME, mProgramName,
+                    _Field.INCLUDES, mIncludes,
+                    _Field.NAMESPACES, mNamespaces,
+                    _Field.DECL, mDecl);
         }
 
         @Override

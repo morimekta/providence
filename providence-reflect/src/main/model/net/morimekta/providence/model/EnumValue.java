@@ -138,7 +138,7 @@ public class EnumValue
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof EnumValue)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         EnumValue other = (EnumValue) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
@@ -648,6 +648,28 @@ public class EnumValue
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(3);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            EnumValue._Builder other = (EnumValue._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mValue, other.mValue) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    EnumValue.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.NAME, mName,
+                    _Field.VALUE, mValue,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

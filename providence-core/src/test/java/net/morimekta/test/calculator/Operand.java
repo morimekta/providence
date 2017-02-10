@@ -130,7 +130,7 @@ public class Operand
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof Operand)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         Operand other = (Operand) o;
         return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                java.util.Objects.equals(mOperation, other.mOperation) &&
@@ -568,6 +568,26 @@ public class Operand
                 mImaginary_builder = net.morimekta.test.number.Imaginary.builder();
             }
             return mImaginary_builder;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Operand._Builder other = (Operand._Builder) o;
+            return java.util.Objects.equals(tUnionField, other.tUnionField) &&
+                   java.util.Objects.equals(mOperation, other.mOperation) &&
+                   java.util.Objects.equals(mNumber, other.mNumber) &&
+                   java.util.Objects.equals(mImaginary, other.mImaginary);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    Operand.class,
+                    _Field.OPERATION, mOperation,
+                    _Field.NUMBER, mNumber,
+                    _Field.IMAGINARY, mImaginary);
         }
 
         @Override

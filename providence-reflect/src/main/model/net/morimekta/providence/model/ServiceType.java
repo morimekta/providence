@@ -164,7 +164,7 @@ public class ServiceType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ServiceType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         ServiceType other = (ServiceType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
@@ -790,6 +790,30 @@ public class ServiceType
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            ServiceType._Builder other = (ServiceType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mExtend, other.mExtend) &&
+                   java.util.Objects.equals(mMethods, other.mMethods) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    ServiceType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.NAME, mName,
+                    _Field.EXTEND, mExtend,
+                    _Field.METHODS, mMethods,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

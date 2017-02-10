@@ -216,7 +216,7 @@ public class FunctionType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof FunctionType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         FunctionType other = (FunctionType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mOneWay, other.mOneWay) &&
@@ -995,6 +995,34 @@ public class FunctionType
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(6);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            FunctionType._Builder other = (FunctionType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mOneWay, other.mOneWay) &&
+                   java.util.Objects.equals(mReturnType, other.mReturnType) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mParams, other.mParams) &&
+                   java.util.Objects.equals(mExceptions, other.mExceptions) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    FunctionType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.ONE_WAY, mOneWay,
+                    _Field.RETURN_TYPE, mReturnType,
+                    _Field.NAME, mName,
+                    _Field.PARAMS, mParams,
+                    _Field.EXCEPTIONS, mExceptions,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

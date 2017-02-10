@@ -267,7 +267,7 @@ public class Calculator {
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
-            if (o == null || !(o instanceof Calculate_request)) return false;
+            if (o == null || !o.getClass().equals(getClass())) return false;
             Calculate_request other = (Calculate_request) o;
             return java.util.Objects.equals(mOp, other.mOp);
         }
@@ -548,6 +548,22 @@ public class Calculator {
             }
 
             @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (o == null || !o.getClass().equals(getClass())) return false;
+                Calculate_request._Builder other = (Calculate_request._Builder) o;
+                return java.util.Objects.equals(optionals, other.optionals) &&
+                       java.util.Objects.equals(mOp, other.mOp);
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(
+                        Calculate_request.class, optionals,
+                        _Field.OP, mOp);
+            }
+
+            @Override
             @SuppressWarnings("unchecked")
             public net.morimekta.providence.PMessageBuilder mutator(int key) {
                 switch (key) {
@@ -747,7 +763,7 @@ public class Calculator {
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
-            if (o == null || !(o instanceof Calculate_response)) return false;
+            if (o == null || !o.getClass().equals(getClass())) return false;
             Calculate_response other = (Calculate_response) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                    java.util.Objects.equals(mSuccess, other.mSuccess) &&
@@ -1122,6 +1138,24 @@ public class Calculator {
             }
 
             @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (o == null || !o.getClass().equals(getClass())) return false;
+                Calculate_response._Builder other = (Calculate_response._Builder) o;
+                return java.util.Objects.equals(tUnionField, other.tUnionField) &&
+                       java.util.Objects.equals(mSuccess, other.mSuccess) &&
+                       java.util.Objects.equals(mCe, other.mCe);
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(
+                        Calculate_response.class,
+                        _Field.SUCCESS, mSuccess,
+                        _Field.CE, mCe);
+            }
+
+            @Override
             @SuppressWarnings("unchecked")
             public net.morimekta.providence.PMessageBuilder mutator(int key) {
                 switch (key) {
@@ -1287,7 +1321,7 @@ public class Calculator {
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
-            if (o == null || !(o instanceof Iamalive_request)) return false;
+            if (o == null || !o.getClass().equals(getClass())) return false;
             return true;
         }
 
@@ -1474,6 +1508,19 @@ public class Calculator {
             @Override
             public _Builder merge(Iamalive_request from) {
                 return this;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (o == null || !o.getClass().equals(getClass())) return false;
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(
+                        Iamalive_request.class, optionals);
             }
 
             @Override

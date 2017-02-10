@@ -150,7 +150,7 @@ public class ConstType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof ConstType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         ConstType other = (ConstType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mType, other.mType) &&
@@ -756,6 +756,30 @@ public class ConstType
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            ConstType._Builder other = (ConstType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mType, other.mType) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mValue, other.mValue) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    ConstType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.TYPE, mType,
+                    _Field.NAME, mName,
+                    _Field.VALUE, mValue,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

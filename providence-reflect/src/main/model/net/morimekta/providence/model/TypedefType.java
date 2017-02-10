@@ -102,7 +102,7 @@ public class TypedefType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof TypedefType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         TypedefType other = (TypedefType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mType, other.mType) &&
@@ -528,6 +528,26 @@ public class TypedefType
          */
         public String getName() {
             return mName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            TypedefType._Builder other = (TypedefType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mType, other.mType) &&
+                   java.util.Objects.equals(mName, other.mName);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    TypedefType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.TYPE, mType,
+                    _Field.NAME, mName);
         }
 
         @Override

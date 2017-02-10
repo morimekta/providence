@@ -198,7 +198,7 @@ public class FieldType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof FieldType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         FieldType other = (FieldType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mKey, other.mKey) &&
@@ -946,6 +946,34 @@ public class FieldType
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(6);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            FieldType._Builder other = (FieldType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mKey, other.mKey) &&
+                   java.util.Objects.equals(mRequirement, other.mRequirement) &&
+                   java.util.Objects.equals(mType, other.mType) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mDefaultValue, other.mDefaultValue) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    FieldType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.KEY, mKey,
+                    _Field.REQUIREMENT, mRequirement,
+                    _Field.TYPE, mType,
+                    _Field.NAME, mName,
+                    _Field.DEFAULT_VALUE, mDefaultValue,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

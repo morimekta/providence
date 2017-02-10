@@ -88,7 +88,7 @@ public class Imaginary
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof Imaginary)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         Imaginary other = (Imaginary) o;
         return java.util.Objects.equals(mV, other.mV) &&
                java.util.Objects.equals(mI, other.mI);
@@ -400,6 +400,24 @@ public class Imaginary
          */
         public double getI() {
             return mI;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Imaginary._Builder other = (Imaginary._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mV, other.mV) &&
+                   java.util.Objects.equals(mI, other.mI);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    Imaginary.class, optionals,
+                    _Field.V, mV,
+                    _Field.I, mI);
         }
 
         @Override

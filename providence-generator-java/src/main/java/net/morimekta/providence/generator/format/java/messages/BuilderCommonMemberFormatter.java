@@ -35,6 +35,7 @@ import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Objects;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.util.Strings.camelCase;
@@ -101,6 +102,9 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             appendResetter(message, field);
             appendMutableGetters(message, field);
         }
+
+        appendEquals(message);
+        appendHashCode(message);
     }
 
     @Override
@@ -117,6 +121,69 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .appendln('}');
     }
 
+    private void appendEquals(JMessage<?> message) {
+        writer.appendln("@Override")
+              .appendln("public boolean equals(Object o) {")
+              .begin()
+              .appendln("if (o == this) return true;")
+              .appendln("if (o == null || !o.getClass().equals(getClass())) return false;");
+        if (message.numericalOrderFields()
+                   .size() > 0) {
+            writer.formatln("%s._Builder other = (%s._Builder) o;", message.instanceType(), message.instanceType())
+                  .appendln("return ");
+            if (message.isUnion()) {
+                writer.format("%s.equals(%s, other.%s)",
+                              Objects.class.getName(),
+                              UNION_FIELD,
+                              UNION_FIELD);
+            } else {
+                writer.format("%s.equals(optionals, other.optionals)",
+                              Objects.class.getName());
+            }
+
+            for (JField field : message.declaredOrderFields()) {
+                if (field.isVoid()) continue;
+
+                writer.append(" &&")
+                      .appendln("       ");
+                writer.format("%s.equals(%s, other.%s)",
+                              Objects.class.getName(),
+                              field.member(), field.member());
+            }
+            writer.append(';');
+        } else {
+            writer.appendln("return true;");
+        }
+        writer.end()
+              .appendln("}")
+              .newline();
+    }
+
+    private void appendHashCode(JMessage<?> message) {
+        writer.appendln("@Override")
+              .appendln("public int hashCode() {")
+              .begin()
+              .formatln("return %s.hash(",
+                        Objects.class.getName())
+              .begin("        ")
+              .formatln("%s.class", message.instanceType());
+        if (!message.isUnion()) {
+            writer.append(", optionals");
+        }
+        message.numericalOrderFields()
+               .stream()
+               .filter(field -> !field.isVoid())
+               .forEach(field -> {
+                   writer.append(",");
+                   writer.formatln("_Field.%s, %s", field.fieldEnum(), field.member());
+               });
+
+        writer.end()
+              .append(");")
+              .end()
+              .appendln("}")
+              .newline();
+    }
 
     private void appendUnionFields(JMessage<?> message) {
         writer.formatln("private _Field %s;", UNION_FIELD)

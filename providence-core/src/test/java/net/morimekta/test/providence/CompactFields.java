@@ -113,7 +113,7 @@ public class CompactFields
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof CompactFields)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         CompactFields other = (CompactFields) o;
         return java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mId, other.mId) &&
@@ -519,6 +519,26 @@ public class CompactFields
          */
         public String getLabel() {
             return mLabel;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            CompactFields._Builder other = (CompactFields._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mId, other.mId) &&
+                   java.util.Objects.equals(mLabel, other.mLabel);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    CompactFields.class, optionals,
+                    _Field.NAME, mName,
+                    _Field.ID, mId,
+                    _Field.LABEL, mLabel);
         }
 
         @Override

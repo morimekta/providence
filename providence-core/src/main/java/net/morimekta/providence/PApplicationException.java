@@ -106,7 +106,7 @@ public class PApplicationException
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof PApplicationException)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         PApplicationException other = (PApplicationException) o;
         return java.util.Objects.equals(mMessage, other.mMessage) &&
                java.util.Objects.equals(mId, other.mId);
@@ -450,6 +450,24 @@ public class PApplicationException
          */
         public net.morimekta.providence.PApplicationExceptionType getId() {
             return isSetId() ? mId : kDefaultId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            PApplicationException._Builder other = (PApplicationException._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mMessage, other.mMessage) &&
+                   java.util.Objects.equals(mId, other.mId);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    PApplicationException.class, optionals,
+                    _Field.MESSAGE, mMessage,
+                    _Field.ID, mId);
         }
 
         @Override

@@ -95,7 +95,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
               .appendln("public boolean equals(Object o) {")
               .begin()
               .appendln("if (o == this) return true;")
-              .formatln("if (o == null || !(o instanceof %s)) return false;", message.instanceType());
+              .appendln("if (o == null || !o.getClass().equals(getClass())) return false;");
         if (message.numericalOrderFields()
                    .size() > 0) {
             boolean first = true;

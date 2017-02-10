@@ -185,7 +185,7 @@ public class Declaration
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof Declaration)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         Declaration other = (Declaration) o;
         return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                java.util.Objects.equals(mDeclEnum, other.mDeclEnum) &&
@@ -809,6 +809,30 @@ public class Declaration
                 mDeclConst_builder = net.morimekta.providence.model.ConstType.builder();
             }
             return mDeclConst_builder;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Declaration._Builder other = (Declaration._Builder) o;
+            return java.util.Objects.equals(tUnionField, other.tUnionField) &&
+                   java.util.Objects.equals(mDeclEnum, other.mDeclEnum) &&
+                   java.util.Objects.equals(mDeclTypedef, other.mDeclTypedef) &&
+                   java.util.Objects.equals(mDeclStruct, other.mDeclStruct) &&
+                   java.util.Objects.equals(mDeclService, other.mDeclService) &&
+                   java.util.Objects.equals(mDeclConst, other.mDeclConst);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    Declaration.class,
+                    _Field.DECL_ENUM, mDeclEnum,
+                    _Field.DECL_TYPEDEF, mDeclTypedef,
+                    _Field.DECL_STRUCT, mDeclStruct,
+                    _Field.DECL_SERVICE, mDeclService,
+                    _Field.DECL_CONST, mDeclConst);
         }
 
         @Override

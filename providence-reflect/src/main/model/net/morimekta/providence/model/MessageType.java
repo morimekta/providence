@@ -166,7 +166,7 @@ public class MessageType
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof MessageType)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         MessageType other = (MessageType) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mVariant, other.mVariant) &&
@@ -788,6 +788,30 @@ public class MessageType
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
             return mAnnotations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            MessageType._Builder other = (MessageType._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
+                   java.util.Objects.equals(mVariant, other.mVariant) &&
+                   java.util.Objects.equals(mName, other.mName) &&
+                   java.util.Objects.equals(mFields, other.mFields) &&
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    MessageType.class, optionals,
+                    _Field.DOCUMENTATION, mDocumentation,
+                    _Field.VARIANT, mVariant,
+                    _Field.NAME, mName,
+                    _Field.FIELDS, mFields,
+                    _Field.ANNOTATIONS, mAnnotations);
         }
 
         @Override

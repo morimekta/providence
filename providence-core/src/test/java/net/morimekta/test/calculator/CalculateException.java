@@ -96,7 +96,7 @@ public class CalculateException
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof CalculateException)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         CalculateException other = (CalculateException) o;
         return java.util.Objects.equals(mMessage, other.mMessage) &&
                java.util.Objects.equals(mOperation, other.mOperation);
@@ -454,6 +454,24 @@ public class CalculateException
                 mOperation_builder = net.morimekta.test.calculator.Operation.builder();
             }
             return mOperation_builder;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            CalculateException._Builder other = (CalculateException._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mMessage, other.mMessage) &&
+                   java.util.Objects.equals(mOperation, other.mOperation);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    CalculateException.class, optionals,
+                    _Field.MESSAGE, mMessage,
+                    _Field.OPERATION, mOperation);
         }
 
         @Override

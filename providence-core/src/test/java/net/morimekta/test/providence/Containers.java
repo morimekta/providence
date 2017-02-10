@@ -1063,7 +1063,7 @@ public class Containers
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof Containers)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         Containers other = (Containers) o;
         return java.util.Objects.equals(mBooleanList, other.mBooleanList) &&
                java.util.Objects.equals(mByteList, other.mByteList) &&
@@ -4721,6 +4721,92 @@ public class Containers
                 mDefaultValues_builder = net.morimekta.test.providence.DefaultValues.builder();
             }
             return mDefaultValues_builder;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Containers._Builder other = (Containers._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mBooleanList, other.mBooleanList) &&
+                   java.util.Objects.equals(mByteList, other.mByteList) &&
+                   java.util.Objects.equals(mShortList, other.mShortList) &&
+                   java.util.Objects.equals(mIntegerList, other.mIntegerList) &&
+                   java.util.Objects.equals(mLongList, other.mLongList) &&
+                   java.util.Objects.equals(mDoubleList, other.mDoubleList) &&
+                   java.util.Objects.equals(mStringList, other.mStringList) &&
+                   java.util.Objects.equals(mBinaryList, other.mBinaryList) &&
+                   java.util.Objects.equals(mBooleanSet, other.mBooleanSet) &&
+                   java.util.Objects.equals(mByteSet, other.mByteSet) &&
+                   java.util.Objects.equals(mShortSet, other.mShortSet) &&
+                   java.util.Objects.equals(mIntegerSet, other.mIntegerSet) &&
+                   java.util.Objects.equals(mLongSet, other.mLongSet) &&
+                   java.util.Objects.equals(mDoubleSet, other.mDoubleSet) &&
+                   java.util.Objects.equals(mStringSet, other.mStringSet) &&
+                   java.util.Objects.equals(mBinarySet, other.mBinarySet) &&
+                   java.util.Objects.equals(mBooleanMap, other.mBooleanMap) &&
+                   java.util.Objects.equals(mByteMap, other.mByteMap) &&
+                   java.util.Objects.equals(mShortMap, other.mShortMap) &&
+                   java.util.Objects.equals(mIntegerMap, other.mIntegerMap) &&
+                   java.util.Objects.equals(mLongMap, other.mLongMap) &&
+                   java.util.Objects.equals(mDoubleMap, other.mDoubleMap) &&
+                   java.util.Objects.equals(mStringMap, other.mStringMap) &&
+                   java.util.Objects.equals(mBinaryMap, other.mBinaryMap) &&
+                   java.util.Objects.equals(mEnumList, other.mEnumList) &&
+                   java.util.Objects.equals(mEnumSet, other.mEnumSet) &&
+                   java.util.Objects.equals(mEnumMap, other.mEnumMap) &&
+                   java.util.Objects.equals(mMessageList, other.mMessageList) &&
+                   java.util.Objects.equals(mMessageSet, other.mMessageSet) &&
+                   java.util.Objects.equals(mMessageMap, other.mMessageMap) &&
+                   java.util.Objects.equals(mRequiredFields, other.mRequiredFields) &&
+                   java.util.Objects.equals(mDefaultFields, other.mDefaultFields) &&
+                   java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
+                   java.util.Objects.equals(mUnionFields, other.mUnionFields) &&
+                   java.util.Objects.equals(mExceptionFields, other.mExceptionFields) &&
+                   java.util.Objects.equals(mDefaultValues, other.mDefaultValues);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    Containers.class, optionals,
+                    _Field.BOOLEAN_LIST, mBooleanList,
+                    _Field.BYTE_LIST, mByteList,
+                    _Field.SHORT_LIST, mShortList,
+                    _Field.INTEGER_LIST, mIntegerList,
+                    _Field.LONG_LIST, mLongList,
+                    _Field.DOUBLE_LIST, mDoubleList,
+                    _Field.STRING_LIST, mStringList,
+                    _Field.BINARY_LIST, mBinaryList,
+                    _Field.BOOLEAN_SET, mBooleanSet,
+                    _Field.BYTE_SET, mByteSet,
+                    _Field.SHORT_SET, mShortSet,
+                    _Field.INTEGER_SET, mIntegerSet,
+                    _Field.LONG_SET, mLongSet,
+                    _Field.DOUBLE_SET, mDoubleSet,
+                    _Field.STRING_SET, mStringSet,
+                    _Field.BINARY_SET, mBinarySet,
+                    _Field.BOOLEAN_MAP, mBooleanMap,
+                    _Field.BYTE_MAP, mByteMap,
+                    _Field.SHORT_MAP, mShortMap,
+                    _Field.INTEGER_MAP, mIntegerMap,
+                    _Field.LONG_MAP, mLongMap,
+                    _Field.DOUBLE_MAP, mDoubleMap,
+                    _Field.STRING_MAP, mStringMap,
+                    _Field.BINARY_MAP, mBinaryMap,
+                    _Field.ENUM_LIST, mEnumList,
+                    _Field.ENUM_SET, mEnumSet,
+                    _Field.ENUM_MAP, mEnumMap,
+                    _Field.MESSAGE_LIST, mMessageList,
+                    _Field.MESSAGE_SET, mMessageSet,
+                    _Field.MESSAGE_MAP, mMessageMap,
+                    _Field.REQUIRED_FIELDS, mRequiredFields,
+                    _Field.DEFAULT_FIELDS, mDefaultFields,
+                    _Field.OPTIONAL_FIELDS, mOptionalFields,
+                    _Field.UNION_FIELDS, mUnionFields,
+                    _Field.EXCEPTION_FIELDS, mExceptionFields,
+                    _Field.DEFAULT_VALUES, mDefaultValues);
         }
 
         @Override

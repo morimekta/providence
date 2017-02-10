@@ -256,7 +256,7 @@ public class DefaultFields
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (o == null || !(o instanceof DefaultFields)) return false;
+        if (o == null || !o.getClass().equals(getClass())) return false;
         DefaultFields other = (DefaultFields) o;
         return java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
                java.util.Objects.equals(mByteValue, other.mByteValue) &&
@@ -1141,6 +1141,40 @@ public class DefaultFields
                 mCompactValue_builder = net.morimekta.test.providence.CompactFields.builder();
             }
             return mCompactValue_builder;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            DefaultFields._Builder other = (DefaultFields._Builder) o;
+            return java.util.Objects.equals(optionals, other.optionals) &&
+                   java.util.Objects.equals(mBooleanValue, other.mBooleanValue) &&
+                   java.util.Objects.equals(mByteValue, other.mByteValue) &&
+                   java.util.Objects.equals(mShortValue, other.mShortValue) &&
+                   java.util.Objects.equals(mIntegerValue, other.mIntegerValue) &&
+                   java.util.Objects.equals(mLongValue, other.mLongValue) &&
+                   java.util.Objects.equals(mDoubleValue, other.mDoubleValue) &&
+                   java.util.Objects.equals(mStringValue, other.mStringValue) &&
+                   java.util.Objects.equals(mBinaryValue, other.mBinaryValue) &&
+                   java.util.Objects.equals(mEnumValue, other.mEnumValue) &&
+                   java.util.Objects.equals(mCompactValue, other.mCompactValue);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(
+                    DefaultFields.class, optionals,
+                    _Field.BOOLEAN_VALUE, mBooleanValue,
+                    _Field.BYTE_VALUE, mByteValue,
+                    _Field.SHORT_VALUE, mShortValue,
+                    _Field.INTEGER_VALUE, mIntegerValue,
+                    _Field.LONG_VALUE, mLongValue,
+                    _Field.DOUBLE_VALUE, mDoubleValue,
+                    _Field.STRING_VALUE, mStringValue,
+                    _Field.BINARY_VALUE, mBinaryValue,
+                    _Field.ENUM_VALUE, mEnumValue,
+                    _Field.COMPACT_VALUE, mCompactValue);
         }
 
         @Override
