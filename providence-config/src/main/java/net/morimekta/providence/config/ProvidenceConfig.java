@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.config.ConfigException;
 import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.config.util.ConfigUtil;
 import net.morimekta.providence.PEnumValue;
@@ -74,6 +73,10 @@ import static net.morimekta.config.util.ConfigUtil.asString;
  */
 public class ProvidenceConfig {
 
+    public ProvidenceConfig(TypeRegistry registry) {
+        this(registry, ImmutableMap.of());
+    }
+
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams) {
         this(registry, inputParams, false);
     }
@@ -82,6 +85,7 @@ public class ProvidenceConfig {
         this.registry = registry;
         this.inputParams = ImmutableMap.copyOf(inputParams);
         this.loaded = new ConcurrentHashMap<>();
+        this.parents = new ConcurrentHashMap<>();
         this.reverseDependencies = new HashMap<>();
         this.strict = strict;
     }
@@ -133,6 +137,39 @@ public class ProvidenceConfig {
     public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file) throws IOException {
         try {
             AtomicReference<M> reference = loadConfigRecursively(resolveFile(null, file.getPath()));
+            return reference::get;
+        } catch (FileNotFoundException e) {
+            throw new TokenizerException(e.getMessage(), e).setFile(file.getName());
+        }
+    }
+
+    /**
+     * Load providence config from the given file, and with a defined parent
+     * config. The parent config comes from a supplier, so does not need to
+     * be a providence config per se.
+     *
+     * The loaded config will <b>not</b> be updated when the parent config is
+     * updated, as there is no known "upward" dependency. Therefore this should
+     * only be used for non-changing config, and for top-level config that does
+     * not depend on listening to upstream config changes.
+     *
+     * @param file The file to load.
+     * @param parent The parent message for the config to inherit.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return Supplier for the parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws TokenizerException If the file could not be parsed.
+     */
+    @SuppressWarnings("unchecked")
+    public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplierWithParent(File file, Supplier<M> parent) throws IOException {
+        try {
+            File config = resolveFile(null, file.getPath());
+            String path = config.getCanonicalFile().getAbsolutePath();
+
+            // It is assumed that if the parent is already set, it is the same.
+            parents.computeIfAbsent(path, (name) -> (Supplier) parent);
+            AtomicReference<M> reference = loadConfigRecursively(config);
             return reference::get;
         } catch (FileNotFoundException e) {
             throw new TokenizerException(e.getMessage(), e).setFile(file.getName());
@@ -343,7 +380,7 @@ public class ProvidenceConfig {
                 token = tokenizer.peek();
             }
 
-            throw new ConfigException("No message in config: " + filePath);
+            throw new TokenizerException("No message in config: " + filePath);
         } catch (TokenizerException e) {
             throw new TokenizerException(e, file);
         }
@@ -443,7 +480,7 @@ public class ProvidenceConfig {
                     }
                     return null;
                 }
-                result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder());
+                result = parseConfigMessage(tokenizer, includes, mkParams(params), descriptor.builder(), file);
             } else if (token.isIdentifier()) {
                 if (PARAMS.equals(token.asString())) {
                     // if params && stage == PARAMS --> PARAMS
@@ -499,7 +536,7 @@ public class ProvidenceConfig {
         }
 
         if (result == null) {
-            throw new ConfigException("No message in config: " + file.getName());
+            throw new TokenizerException("No message in config: " + file.getName());
         }
 
         return result;
@@ -578,13 +615,23 @@ public class ProvidenceConfig {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField> M parseConfigMessage(Tokenizer tokenizer,
                                                                               Map<String, PMessage> includes,
                                                                               Map<String, Object> params,
-                                                                              PMessageBuilder<M, F> builder)
+                                                                              PMessageBuilder<M, F> builder,
+                                                                              File file)
             throws IOException {
+        String path = file.getCanonicalFile().getAbsolutePath();
         if (tokenizer.expectSymbol("extension marker", Token.kKeyValueSep, Token.kMessageStart) == Token.kKeyValueSep) {
             Token token = tokenizer.expect("extension object");
+
+            if (parents.containsKey(path)) {
+                throw new TokenizerException(token, "Config in '" + file.getName() + "' has both defined parent and inherits from")
+                        .setLine(tokenizer.getLine(token.getLineNo()))
+                        .setFile(file.getName());
+            }
+
             if (token.isReferenceIdentifier()) {
                 try {
                     builder.merge(resolve(includes, params, token.asString()));
@@ -596,6 +643,8 @@ public class ProvidenceConfig {
                 throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected message begin")
                         .setLine(tokenizer.getLine(token.getLineNo()));
             }
+        } else if (parents.containsKey(path)) {
+            builder.merge((M) parents.get(path).get());
         }
 
         return parseMessage(tokenizer, includes, params, builder);
@@ -1107,7 +1156,7 @@ public class ProvidenceConfig {
     private static final String FALSE     = "false";
     private static final String TRUE      = "true";
     private static final String PARAMS    = "params";
-    private static final String UNDEFINED = "undefined";
+    static final String UNDEFINED = "undefined";
     private static final String INCLUDE   = "include";
     private static final String AS        = "as";
 
@@ -1115,6 +1164,17 @@ public class ProvidenceConfig {
      * Full path to resolved instance.
      */
     private final Map<String, AtomicReference<PMessage>> loaded;
+
+    /**
+     * Some configs have defined 'parents'. The parent must be of the
+     * same type as the config, and will be the base of the config
+     * as it is parsed. It can reference any type of providence message
+     * source.
+     * <p>
+     * The configs that has defined parents can not have explicit parents
+     * (with the <code>type : parent { ... }</code> syntax.
+     */
+    private final Map<String, Supplier<PMessage>> parents;
 
     /**
      * Type registry for looking up the base config types.
