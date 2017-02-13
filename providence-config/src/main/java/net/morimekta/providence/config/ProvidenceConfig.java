@@ -34,15 +34,12 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.util.pretty.Token;
 import net.morimekta.providence.util.pretty.Tokenizer;
 import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.util.Binary;
-import net.morimekta.util.Strings;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
@@ -58,7 +55,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,69 +73,15 @@ import static net.morimekta.config.util.ConfigUtil.asString;
  * Providence config loader. This loads providence configs.
  */
 public class ProvidenceConfig {
-    public static class Param {
-        public final String name;
-        public final Object value;
-        public final File   file;
-
-        Param(String name, Object value, File file) {
-            this.name = name;
-            this.value = value;
-            this.file = file;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(Param.class, name, value, file);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == this)
-                return true;
-            if (o == null || !getClass().equals(o.getClass())) {
-                return false;
-            }
-            Param p = (Param) o;
-
-            return Objects.equals(name, p.name) &&
-                   Objects.equals(value, p.value) &&
-                   Objects.equals(file, p.file);
-        }
-
-        @Override
-        public String toString() {
-            if (value == null) {
-                return String.format("%s = null (%s)", name, file.getName());
-            } else if (value instanceof Binary) {
-                return String.format("%s = b64(%s) (%s)", name, ((Binary) value).toBase64(), file.getName());
-            } else if (value instanceof PEnumValue) {
-                return String.format("%s = %s.%s (%s)",
-                                     name,
-                                     ((PEnumValue) value).descriptor().getQualifiedName(),
-                                     asString(value),
-                                     file.getName());
-            } else if (value instanceof CharSequence) {
-                return String.format("%s = \"%s\" (%s)", name, Strings.escape((CharSequence) value), file.getName());
-            } else {
-                return String.format("%s = %s (%s)", name, asString(value), file.getName());
-            }
-        }
-    }
 
     public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams) {
-        this(registry, inputParams, ImmutableList.of());
+        this(registry, inputParams, false);
     }
 
-    public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots) {
-        this(registry, inputParams, sourceRoots, false);
-    }
-
-    public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, List<File> sourceRoots, boolean strict) {
+    public ProvidenceConfig(TypeRegistry registry, Map<String, String> inputParams, boolean strict) {
         this.registry = registry;
         this.inputParams = ImmutableMap.copyOf(inputParams);
         this.loaded = new ConcurrentHashMap<>();
-        this.sourceRoots = ImmutableList.copyOf(sourceRoots);
         this.reverseDependencies = new HashMap<>();
         this.strict = strict;
     }
@@ -235,7 +177,7 @@ public class ProvidenceConfig {
      * @throws IOException If the file could not be read.
      * @throws TokenizerException If the file could not be parsed.
      */
-    public List<Param> params(File file) throws IOException {
+    public List<ProvidenceConfigParam> params(File file) throws IOException {
         return loadParamsRecursively(resolveFile(null, file.toString()));
     }
 
@@ -288,7 +230,7 @@ public class ProvidenceConfig {
     File resolveFile(File ref, String path) throws IOException {
         if (ref == null) {
             // relative to PWD from initial load file path.
-            File tmp = new File(path);
+            File tmp = new File(path).getCanonicalFile().getAbsoluteFile();
             if (tmp.exists()) {
                 if (tmp.isFile()) {
                     return tmp;
@@ -303,30 +245,13 @@ public class ProvidenceConfig {
             if (!ref.isDirectory()) {
                 ref = ref.getParentFile();
             }
-            File tmp = new File(ref, path).getAbsoluteFile()
-                                          .getCanonicalFile();
+            File tmp = new File(ref, path).getCanonicalFile()
+                                          .getAbsoluteFile();
             if (tmp.exists()) {
                 if (tmp.isFile()) {
                     return tmp;
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
-            }
-        }
-
-        // relative to source roots. Parent directory lookup (..) NOT allowed.
-        if (!path.startsWith(".")) {
-            if (path.contains("/../")) {
-                throw new ConfigException("Parent directory part not allowed: " + path);
-            }
-            for (File root : sourceRoots) {
-                File tmp = new File(root, path).getAbsoluteFile()
-                                          .getCanonicalFile();
-                if (tmp.exists()) {
-                    if (tmp.isFile()) {
-                        return tmp;
-                    }
-                    throw new FileNotFoundException(path + " is a directory, expected file");
-                }
             }
         }
 
@@ -337,7 +262,7 @@ public class ProvidenceConfig {
         }
     }
 
-    private List<Param> loadParamsRecursively(File file, String... stack)
+    private List<ProvidenceConfigParam> loadParamsRecursively(File file, String... stack)
             throws IOException {
         try {
             File canonicalFile = file.getCanonicalFile()
@@ -362,7 +287,7 @@ public class ProvidenceConfig {
                 tokenizer = new Tokenizer(in, false);
             }
 
-            List<Param> result = new LinkedList<>();
+            List<ProvidenceConfigParam> result = new LinkedList<>();
 
             Stage stage = Stage.PARAMS;
 
@@ -382,7 +307,7 @@ public class ProvidenceConfig {
                         }
                         stage = Stage.INCLUDES;
                         parseParams(tokenizer).entrySet()
-                                              .forEach(e -> result.add(new Param(e.getKey(), e.getValue(), canonicalFile)));
+                                              .forEach(e -> result.add(new ProvidenceConfigParam(e.getKey(), e.getValue(), canonicalFile)));
                     } else if (INCLUDE.equals(token.asString())) {
                         // if include && stage == INCLUDES --> INCLUDES
                         token = tokenizer.expect("file to be included");
@@ -1190,11 +1115,6 @@ public class ProvidenceConfig {
      * Full path to resolved instance.
      */
     private final Map<String, AtomicReference<PMessage>> loaded;
-
-    /**
-     * List of source roots where files can be looked up in.
-     */
-    private final List<File>               sourceRoots;
 
     /**
      * Type registry for looking up the base config types.

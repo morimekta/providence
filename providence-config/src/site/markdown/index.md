@@ -91,6 +91,8 @@ providence config file syntax:
 - The `include` section is a set of similarly included config files.
   Each file is given an `alias`. E.g. `include "other.cfg" as o` will
   make the 'o' reference point to the content of the "other.cfg" config.
+  Files referenced in the include statements **MUST** be relative to the PWD
+  directory of the including file.
 - The `message` is a providence message, and is declared with the
   qualified typename (package.Name), and the content, following this
   syntax: `TYPENAME (':' EXTEND)? '{' FIELD_VALUE* '}'`, where the
@@ -185,20 +187,6 @@ class Loader {
 }
 ```
 
-### Sources Root
+### Includes
 
-Files referenced in the include statements can follow one of two patterns."
-
-- Relative to the PWD directory of the including file.
-- Relative to (not including parent directories) of one of the "config roots".
-
-Each config root is simply a directory that contains configs, including subdirectories.
-
-With this path inclusion with ways of overriding, it should be possible to change
-what files are included based on a set of config source root directories, and swapping
-out directories based on the current "mode" of operation.
-
-Note that it is currently **not** possible to swap out individual config files without
-using symlinks or similar, and it is not possible to load config directly from resources.
-In those cases, you should use the "compiled" config output instead of the raw config
-files.
+Files referenced in the include statements must be relative to the PWD directory of the including file.

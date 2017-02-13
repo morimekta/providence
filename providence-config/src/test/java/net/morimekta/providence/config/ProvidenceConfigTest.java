@@ -28,7 +28,7 @@ import net.morimekta.test.config.Database;
 import net.morimekta.test.config.Service;
 import net.morimekta.test.config.Value;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +38,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
@@ -84,10 +82,9 @@ public class ProvidenceConfigTest {
         File prod = copyResourceTo("/net/morimekta/providence/config/prod.cfg", temp.getRoot());
         File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
 
-        Map<String,String> params = new HashMap<>();
-        params.put("admin_port", "14256");
-
-        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(
+                "admin_port", "14256"
+        ), true);
         Service stage_service = config.getConfig(stage, Service.kDescriptor);
         Service prod_service = config.getConfig(prod);
 
@@ -143,8 +140,7 @@ public class ProvidenceConfigTest {
         File stageDb = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
         File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
 
-        Map<String,String> params = new HashMap<>();
-        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
 
         Supplier<Service> stage_service = config.getSupplier(stage);
 
@@ -206,9 +202,7 @@ public class ProvidenceConfigTest {
         copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
         File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
 
-        Map<String,String> params = new HashMap<>();
-
-        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()));
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of());
         Supplier<Database> cfg = config.getSupplier(file);
 
         // all the unknowns are skipped.
@@ -234,9 +228,7 @@ public class ProvidenceConfigTest {
         copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
         File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
 
-        Map<String,String> params = new HashMap<>();
-
-        ProvidenceConfig config = new ProvidenceConfig(registry, params, ImmutableList.of(temp.getRoot()), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
         try {
             config.getSupplier(file);
             fail("no exception");
@@ -286,11 +278,11 @@ public class ProvidenceConfigTest {
 
         ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
 
-        List<ProvidenceConfig.Param> params = config.params(b);
+        List<ProvidenceConfigParam> params = config.params(b);
 
         StringBuilder builder = new StringBuilder();
         params.stream()
-              .map(ProvidenceConfig.Param::toString)
+              .map(ProvidenceConfigParam::toString)
               .sorted()
               .forEachOrdered(s -> {
                   builder.append(s);
@@ -373,13 +365,11 @@ public class ProvidenceConfigTest {
         writeContentTo("a", f2_1);
 
         ProvidenceConfig config = new ProvidenceConfig(registry,
-                                                       new HashMap<>(),
-                                                       ImmutableList.of(temp.getRoot()));
+                                                       ImmutableMap.of());
 
-        assertEquals(f1_1.getCanonicalPath(), config.resolveFile(null, "test/test.cfg").getAbsolutePath());
-        assertEquals(f1_2.getCanonicalPath(), config.resolveFile(f1_1, "test/same.cfg").getAbsolutePath());
+        assertEquals(f1_1.getCanonicalPath(), config.resolveFile(null, temp.getRoot() + "/test/test.cfg").getAbsolutePath());
         assertEquals(f1_2.getCanonicalPath(), config.resolveFile(f1_1, "same.cfg").getAbsolutePath());
-        assertEquals(f2_1.getCanonicalPath(), config.resolveFile(f1_1, "other/other.cfg").getAbsolutePath());
+        assertEquals(f2_1.getCanonicalPath(), config.resolveFile(f1_1, "../other/other.cfg").getAbsolutePath());
         assertEquals(f2_2.getCanonicalPath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
 
         assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
@@ -387,20 +377,18 @@ public class ProvidenceConfigTest {
         assertFileNotResolved(f1_1, "/fourth.cfg", "Absolute path includes not allowed: /fourth.cfg");
         assertFileNotResolved(f1_1, "other/fourth.cfg", "Included file other/fourth.cfg not found");
         assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
-        assertFileNotResolved(f1_1, "other", "other is a directory, expected file");
+        assertFileNotResolved(f1_1, "other", "Included file other not found");
 
         assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found");
         assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found");
         assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found");
         assertFileNotResolved(null, "other/fourth.cfg", "File other/fourth.cfg not found");
         assertFileNotResolved(null, "../other", "File ../other not found");
-        assertFileNotResolved(null, "other", "other is a directory, expected file");
+        assertFileNotResolved(null, "other", "File other not found");
     }
 
     private void assertFileNotResolved(File ref, String file, String message) throws IOException {
-        ProvidenceConfig config = new ProvidenceConfig(registry,
-                                                       new HashMap<>(),
-                                                       ImmutableList.of(temp.getRoot()));
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of());
 
         try {
             config.resolveFile(ref, file);
@@ -463,7 +451,7 @@ public class ProvidenceConfigTest {
         File a = temp.newFile("test.cfg");
         writeContentTo(pretty, a);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>(), new LinkedList<>(), strict);
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), strict);
 
         try {
             config.getSupplier(a);

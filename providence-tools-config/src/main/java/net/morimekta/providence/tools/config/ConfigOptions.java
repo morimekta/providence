@@ -42,8 +42,6 @@ import net.morimekta.providence.tools.config.cmd.Validate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -58,7 +56,6 @@ import static net.morimekta.console.util.Parser.dir;
 public class ConfigOptions extends CommonOptions {
     private Map<String, File>   includes = new TreeMap<>();
     private Map<String, String> params   = new TreeMap<>();
-    private List<File>          roots    = new LinkedList<>();
     private Command             command  = null;
     private boolean             strict   = false;
 
@@ -74,7 +71,6 @@ public class ConfigOptions extends CommonOptions {
 
         parser.add(new Flag("--strict", "S", "Parse config strictly", this::setStrict, false));
         parser.add(new Option("--include", "I", "dir", "Read config definitions from these directories.", dir().andApply(dir -> this.collectIncludes(dir, includes)), null, true, false, false));
-        parser.add(new Option("--config", "C", "dir", "Config directory locations.", dir(roots::add), null, true, false, false));
         parser.add(new Property("--param", 'P', "key", "value", "Config parameter override.", params::put, false));
 
         commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, getArgumentOptions());
@@ -124,6 +120,6 @@ public class ConfigOptions extends CommonOptions {
             loader.load(file);
         }
 
-        command.execute(new ProvidenceConfig(loader.getRegistry(), params, roots, strict));
+        command.execute(new ProvidenceConfig(loader.getRegistry(), params, strict));
     }
 }

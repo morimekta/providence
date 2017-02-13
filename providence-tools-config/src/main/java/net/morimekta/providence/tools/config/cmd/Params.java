@@ -4,6 +4,7 @@ import net.morimekta.console.args.Argument;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.Parser;
 import net.morimekta.providence.config.ProvidenceConfig;
+import net.morimekta.providence.config.ProvidenceConfigParam;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +19,9 @@ public class Params implements Command {
 
     @Override
     public void execute(ProvidenceConfig config) throws IOException {
-        List<ProvidenceConfig.Param> paramList = config.params(file);
+        List<ProvidenceConfigParam> paramList = config.params(file);
         paramList.sort(Comparator.comparing(a -> a.name));
-        for (ProvidenceConfig.Param param : paramList) {
+        for (ProvidenceConfigParam param : paramList) {
             System.out.println(param.toString());
         }
     }
