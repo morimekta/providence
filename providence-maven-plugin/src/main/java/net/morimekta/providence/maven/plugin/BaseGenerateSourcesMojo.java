@@ -57,6 +57,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -311,29 +314,64 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             }
         }
 
-        try (FileInputStream fis = new FileInputStream(artifact.getFile());
-             BufferedInputStream bis = new BufferedInputStream(fis);
-             ZipInputStream zis = new ZipInputStream(bis)) {
+        if (artifact.getFile().isDirectory()) {
+            // Otherwise the dependency is a local module, and not packaged.
+            // In this case the we need to try to find thrift files in the
+            // file tree under that directly.
+            DirectoryScanner includeScanner = new DirectoryScanner();
+            includeScanner.setBasedir(artifact.getFile());
 
-            ZipEntry entry;
-            while ((entry = zis.getNextEntry()) != null) {
-                if (entry.isDirectory() || !ReflectionUtils.isThriftFile(entry.getName())) {
-                    zis.closeEntry();
-                    continue;
+            // Include basically everything.
+            includeScanner.setIncludes(new String[]{
+                    "**/*.*",
+            });
+            // Skip java class files. These cannot be used as includes anyway, and
+            // is hte most common content of the default artifacts.
+            includeScanner.setExcludes(new String[]{
+                    "**/*.class",
+            });
+            includeScanner.scan();
+
+            try {
+                for (String filePath : includeScanner.getIncludedFiles()) {
+                    if (ReflectionUtils.isThriftFile(filePath)) {
+                        Path file = Paths.get(project.getBasedir().getAbsolutePath(), filePath);
+                        File of = new File(outputDir, new File(filePath).getName());
+                        try (FileOutputStream fos = new FileOutputStream(of, false);
+                             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                            Files.copy(file, bos);
+                        }
+                    }
                 }
-                File of = new File(outputDir, new File(entry.getName()).getName());
-
-                try (FileOutputStream fos = new FileOutputStream(of, false);
-                     BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-                    IOUtils.copy(zis, bos);
-                }
-
-                zis.closeEntry();
+                includes.add(outputDir);
+            } catch (IOException e) {
+                throw new MojoExecutionException("" + e.getMessage(), e);
             }
+        } else {
+            try (FileInputStream fis = new FileInputStream(artifact.getFile());
+                 BufferedInputStream bis = new BufferedInputStream(fis);
+                 ZipInputStream zis = new ZipInputStream(bis)) {
 
-            includes.add(outputDir);
-        } catch (IOException e) {
-            throw new MojoExecutionException("" + e.getMessage(), e);
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    if (entry.isDirectory() || !ReflectionUtils.isThriftFile(entry.getName())) {
+                        zis.closeEntry();
+                        continue;
+                    }
+                    File of = new File(outputDir, new File(entry.getName()).getName());
+
+                    try (FileOutputStream fos = new FileOutputStream(of, false);
+                         BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+                        IOUtils.copy(zis, bos);
+                    }
+
+                    zis.closeEntry();
+                }
+
+                includes.add(outputDir);
+            } catch (IOException e) {
+                throw new MojoExecutionException("" + e.getMessage(), e);
+            }
         }
     }
 
