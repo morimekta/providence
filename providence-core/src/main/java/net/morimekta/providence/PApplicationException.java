@@ -104,6 +104,16 @@ public class PApplicationException
     }
 
     @Override
+    public PApplicationException initCause(Throwable cause) {
+        return (PApplicationException) super.initCause(cause);
+    }
+
+    @Override
+    public PApplicationException fillInStackTrace() {
+        return (PApplicationException) super.fillInStackTrace();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;

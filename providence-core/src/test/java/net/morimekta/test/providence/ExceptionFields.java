@@ -344,6 +344,16 @@ public class ExceptionFields
     }
 
     @Override
+    public ExceptionFields initCause(Throwable cause) {
+        return (ExceptionFields) super.initCause(cause);
+    }
+
+    @Override
+    public ExceptionFields fillInStackTrace() {
+        return (ExceptionFields) super.fillInStackTrace();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;

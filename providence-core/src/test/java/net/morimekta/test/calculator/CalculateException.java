@@ -94,6 +94,16 @@ public class CalculateException
     }
 
     @Override
+    public CalculateException initCause(Throwable cause) {
+        return (CalculateException) super.initCause(cause);
+    }
+
+    @Override
+    public CalculateException fillInStackTrace() {
+        return (CalculateException) super.fillInStackTrace();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;

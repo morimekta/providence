@@ -86,7 +86,8 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
 
         // Exception
         if (message.isException()) {
-            appendOriginalGetMessage();
+            appendPExceptionOverrides();
+            appendExceptionOverrides(message);
         }
 
         if (message.isUnion()) {
@@ -104,7 +105,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         appendDescriptor(message);
     }
 
-    private void appendOriginalGetMessage() {
+    private void appendPExceptionOverrides() {
         writer.appendln("@Override")
               .appendln("public String origGetMessage() {")
               .appendln("    return super.getMessage();")
@@ -114,6 +115,20 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         writer.appendln("@Override")
               .appendln("public String origGetLocalizedMessage() {")
               .appendln("    return super.getLocalizedMessage();")
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendExceptionOverrides(JMessage<?> message) {
+        writer.appendln("@Override")
+              .formatln("public %s initCause(Throwable cause) {", message.instanceType())
+              .formatln("    return (%s) super.initCause(cause);", message.instanceType())
+              .appendln('}')
+              .newline();
+
+        writer.appendln("@Override")
+              .formatln("public %s fillInStackTrace() {", message.instanceType())
+              .formatln("    return (%s) super.fillInStackTrace();", message.instanceType())
               .appendln('}')
               .newline();
     }
