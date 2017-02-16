@@ -22,20 +22,45 @@ package net.morimekta.providence.thrift;
 
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
-import net.morimekta.providence.thrift.TCompactProtocolSerializer;
-import net.morimekta.providence.thrift.TJsonProtocolSerializer;
-import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
 /**
- *
+ * Default serializer provider with added serializers for the thrift protocols
+ * not covered by pure serializer.
  */
 public class ThriftSerializerProvider extends DefaultSerializerProvider {
+    /**
+     * Get the thrift serializer provider.
+     */
     public ThriftSerializerProvider() {
-        this(BinarySerializer.MIME_TYPE);
+        this(false);
     }
 
-    public ThriftSerializerProvider(String mimeType) {
-        super(mimeType);
+    /**
+     * Get the thrift serializer provider.
+     *
+     * @param strict If the serializer should read strictly.
+     */
+    public ThriftSerializerProvider(boolean strict) {
+        this(BinarySerializer.MIME_TYPE, strict);
+    }
+
+    /**
+     * Get the thrift serializer provider.
+     *
+     * @param defaultContentType The default mime-type.
+     */
+    public ThriftSerializerProvider(String defaultContentType) {
+        this(defaultContentType, false);
+    }
+
+    /**
+     * Get the thrift serializer provider.
+     *
+     * @param defaultContentType The default mime-type.
+     * @param strict If the serializer should read strictly.
+     */
+    public ThriftSerializerProvider(String defaultContentType, boolean strict) {
+        super(defaultContentType, strict);
 
         // Just add the thrift-only serializers.
         register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);

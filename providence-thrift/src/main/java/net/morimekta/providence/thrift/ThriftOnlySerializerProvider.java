@@ -22,37 +22,52 @@ package net.morimekta.providence.thrift;
 
 import net.morimekta.providence.serializer.BaseSerializerProvider;
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
-import net.morimekta.providence.thrift.TCompactProtocolSerializer;
-import net.morimekta.providence.thrift.TJsonProtocolSerializer;
-import net.morimekta.providence.thrift.TSimpleJsonProtocolSerializer;
-import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 
 /**
- * Created by morimekta on 5/4/16.
+ * Serializer provider that only holds serializers that is also supported by
+ * apache thrift.
  */
 public class ThriftOnlySerializerProvider extends BaseSerializerProvider {
     /**
-     * Get the default serializer provider.
+     * Get the thrift-only serializer provider.
      */
     public ThriftOnlySerializerProvider() {
-        this(BinarySerializer.MIME_TYPE);
+        this(false);
     }
 
     /**
-     * Get provider with the given default content type.
+     * Get the thrift-only serializer provider.
+     *
+     * @param strict If the serializer should read strictly.
+     */
+    public ThriftOnlySerializerProvider(boolean strict) {
+        this(BinarySerializer.MIME_TYPE, strict);
+    }
+
+    /**
+     * Get the thrift-only serializer provider.
      *
      * @param defaultContentType The default mime-type.
      */
     public ThriftOnlySerializerProvider(String defaultContentType) {
+        this(defaultContentType, false);
+    }
+
+    /**
+     * Get the thrift-only serializer provider.
+     *
+     * @param defaultContentType The default mime-type.
+     * @param strict If the serializer should read strictly.
+     */
+    public ThriftOnlySerializerProvider(String defaultContentType, boolean strict) {
         super(defaultContentType);
 
         // The BinarySerializer is identical to the TBinaryProtocolSerializer,
         // except that it is "native providence".
-        register(new BinarySerializer(), BinarySerializer.MIME_TYPE, TBinaryProtocolSerializer.ALT_MIME_TYPE);
-        register(new TCompactProtocolSerializer(), TCompactProtocolSerializer.MIME_TYPE);
-        register(new TJsonProtocolSerializer(), TJsonProtocolSerializer.MIME_TYPE);
-        register(new TTupleProtocolSerializer(), TTupleProtocolSerializer.MIME_TYPE);
+        register(new BinarySerializer(strict), BinarySerializer.MIME_TYPE, TBinaryProtocolSerializer.ALT_MIME_TYPE);
+        register(new TCompactProtocolSerializer(strict), TCompactProtocolSerializer.MIME_TYPE);
+        register(new TJsonProtocolSerializer(strict), TJsonProtocolSerializer.MIME_TYPE);
+        register(new TTupleProtocolSerializer(strict), TTupleProtocolSerializer.MIME_TYPE);
         // Even though it's a write-only protocol.
         register(new TSimpleJsonProtocolSerializer(), TSimpleJsonProtocolSerializer.MIME_TYPE);
     }

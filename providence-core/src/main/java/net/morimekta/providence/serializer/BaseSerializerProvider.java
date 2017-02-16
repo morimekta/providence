@@ -42,7 +42,11 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
 
     @Override
     public Serializer getSerializer(String mediaType) {
-        return serializerMap.get(mediaType);
+        Serializer serializer = serializerMap.get(mediaType);
+        if (serializer == null) {
+            throw new IllegalArgumentException("No such serializer for media type " + mediaType);
+        }
+        return serializer;
     }
 
     @Override
