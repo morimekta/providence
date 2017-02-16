@@ -43,12 +43,12 @@ import java.util.Map;
  * @since 07.09.15
  */
 public class TypeLoader {
-    private final ProgramRegistry mRegistry;
+    private final ProgramRegistry registry;
 
-    private final ProgramConverter         mConverter;
-    private final ProgramParser            mParser;
-    private final Map<String, ProgramType> mLoadedDocuments;
-    private final Collection<File>         mIncludes;
+    private final ProgramConverter         converter;
+    private final ProgramParser            parser;
+    private final Map<String, ProgramType> loadedDocuments;
+    private final Collection<File>         includes;
 
     /**
      * Construct a type loader for file types matches with the given parser.
@@ -83,19 +83,19 @@ public class TypeLoader {
      * @param converter The document converter
      */
     protected TypeLoader(Collection<File> includes, ProgramParser parser, ProgramRegistry registry, ProgramConverter converter) {
-        mIncludes = includes;
-        mParser = parser;
-        mRegistry = registry;
-        mConverter = converter;
+        this.includes = includes;
+        this.parser = parser;
+        this.registry = registry;
+        this.converter = converter;
 
-        mLoadedDocuments = new LinkedHashMap<>();
+        loadedDocuments = new LinkedHashMap<>();
     }
 
     /**
      * @return Set of loaded documents.
      */
     public Collection<ProgramType> loadedPrograms() {
-        return mLoadedDocuments.values();
+        return loadedDocuments.values();
     }
 
     /**
@@ -116,20 +116,20 @@ public class TypeLoader {
                     "Unable to load thrift definition from directory: " + file.getCanonicalPath());
         }
 
-        CProgram cdoc = mRegistry.getDocument(file.getCanonicalPath());
+        CProgram cdoc = registry.getDocument(file.getCanonicalPath());
         if (cdoc != null) {
             return cdoc;
         }
 
         InputStream in = new BufferedInputStream(new FileInputStream(file));
-        ProgramType doc = mParser.parse(in, file.getName());
+        ProgramType doc = parser.parse(in, file, includes);
 
         LinkedList<File> queue = new LinkedList<>();
         if (doc.hasIncludes()) {
             for (String include : doc.getIncludes()) {
                 File location = new File(file.getParent(), include).getCanonicalFile();
                 if (!location.exists()) {
-                    for (File inc : mIncludes) {
+                    for (File inc : includes) {
                         File i = new File(inc, include);
                         if (i.exists()) {
                             location = i.getCanonicalFile();
@@ -147,17 +147,17 @@ public class TypeLoader {
         // Load includes in reverse order, in case of serial dependencies.
         Collections.reverse(queue);
 
-        mLoadedDocuments.put(file.getCanonicalPath(), doc);
+        loadedDocuments.put(file.getCanonicalPath(), doc);
         for (File include : queue) {
-            if (!mLoadedDocuments.containsKey(include.getCanonicalPath())) {
+            if (!loadedDocuments.containsKey(include.getCanonicalPath())) {
                 load(include);
             }
         }
 
         // Now everything it depends on is loaded.
 
-        cdoc = mConverter.convert(doc);
-        mRegistry.putDocument(file.getCanonicalPath(), cdoc);
+        cdoc = converter.convert(doc);
+        registry.putDocument(file.getCanonicalPath(), cdoc);
         return cdoc;
     }
 
@@ -165,6 +165,6 @@ public class TypeLoader {
      * @return The local registry.
      */
     public ProgramRegistry getRegistry() {
-        return mRegistry;
+        return registry;
     }
 }

@@ -24,8 +24,10 @@ import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * @author Stein Eldar Johnsen
@@ -39,7 +41,7 @@ public class MessageProgramParser implements ProgramParser {
     }
 
     @Override
-    public ProgramType parse(InputStream in, String name) throws IOException, ParseException {
+    public ProgramType parse(InputStream in, File file, Collection<File> includeDirs) throws IOException, ParseException {
         try {
             return mSerializer.deserialize(in, ProgramType.kDescriptor);
         } catch (SerializerException tse) {

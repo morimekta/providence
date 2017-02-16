@@ -22,8 +22,10 @@ package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ProgramType;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * Document parser interface.
@@ -34,10 +36,10 @@ public interface ProgramParser {
      * Parse input stream to document declaration model.
      *
      * @param in The stream to parse.
-     * @param name The file name that is being parsed.
+     * @param file The file that is being parsed.
      * @return The declared document model.
      * @throws IOException When the stream was unreadable.
      * @throws ParseException When the document could not be parsed.
      */
-    ProgramType parse(InputStream in, String name) throws IOException, ParseException;
+    ProgramType parse(InputStream in, File file, Collection<File> includeDirs) throws IOException, ParseException;
 }

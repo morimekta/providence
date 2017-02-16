@@ -40,8 +40,10 @@ import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -80,14 +82,14 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     @Override
-    public ProgramType parse(InputStream in, String filePath) throws IOException, ParseException {
+    public ProgramType parse(InputStream in, File file, Collection<File> includeDirs) throws IOException, ParseException {
         ProgramType._Builder program = ProgramType.builder();
 
-        String programName = ReflectionUtils.programNameFromPath(filePath);
+        String programName = ReflectionUtils.programNameFromPath(file.getName());
         if (!VALID_PROGRAM_NAME.matcher(programName).matches()) {
             throw new ParseException("Program name \"%s\" derived from filename \"%s\" is not valid.",
                                      Strings.escape(programName),
-                                     Strings.escape(filePath));
+                                     Strings.escape(file.getName()));
         }
         program.setProgramName(programName);
 
@@ -140,7 +142,7 @@ public class ThriftProgramParser implements ProgramParser {
                     }
                     documentation = null;
                     hasHeader = true;
-                    parseIncludes(tokenizer, includeFiles, includedPrograms);
+                    parseIncludes(tokenizer, includeFiles, file, includedPrograms, includeDirs);
                     break;
                 case "typedef":
                     hasHeader = true;
@@ -514,7 +516,7 @@ public class ThriftProgramParser implements ProgramParser {
         return service.build();
     }
 
-    public void parseNamespace(Tokenizer tokenizer, Map<String, String> namespaces) throws IOException, ParseException {
+    private void parseNamespace(Tokenizer tokenizer, Map<String, String> namespaces) throws IOException, ParseException {
         Token language = tokenizer.expectQualifiedIdentifier("parsing namespace language");
         if (!language.isQualifiedIdentifier()) {
             throw new ParseException(tokenizer, language,
@@ -538,15 +540,32 @@ public class ThriftProgramParser implements ProgramParser {
         namespaces.put(language.asString(), namespace.asString());
     }
 
-    public void parseIncludes(Tokenizer tokenizer, List<String> includeFiles, Set<String> includePrograms) throws IOException, ParseException {
+    private void parseIncludes(Tokenizer tokenizer, List<String> includeFiles, File currentFile, Set<String> includePrograms, Collection<File> includeDirs) throws IOException, ParseException {
         Token include = tokenizer.expectStringLiteral("include file");
         String filePath = include.decodeStringLiteral();
         if (!ReflectionUtils.isThriftFile(filePath)) {
             throw new ParseException(tokenizer, include,
                                      "Include not valid for thrift files " + filePath);
         }
+        if (!includeExists(currentFile, filePath, includeDirs)) {
+            throw new ParseException(tokenizer, include, "Included file not found " + filePath);
+        }
         includeFiles.add(filePath);
         includePrograms.add(ReflectionUtils.programNameFromPath(filePath));
+    }
+
+    private boolean includeExists(File currentFile, String filePath, Collection<File> includeDirs) {
+        File currentDir = currentFile.getParentFile();
+        if (new File(currentDir, filePath).isFile()) {
+            return true;
+        }
+        for (File I : includeDirs) {
+            if (new File(I, filePath).isFile()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void parseTypedef(Tokenizer tokenizer, String comment, List<Declaration> declarations, Set<String> includedPrograms)
@@ -562,7 +581,7 @@ public class ThriftProgramParser implements ProgramParser {
         declarations.add(Declaration.withDeclTypedef(typedef));
     }
 
-    public EnumType parseEnum(Tokenizer tokenizer, String comment) throws IOException, ParseException {
+    private EnumType parseEnum(Tokenizer tokenizer, String comment) throws IOException, ParseException {
         String id = tokenizer.expectIdentifier("parsing enum identifier").asString();
 
         EnumType._Builder etb = EnumType.builder();

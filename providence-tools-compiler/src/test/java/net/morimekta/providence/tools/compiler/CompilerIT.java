@@ -1,10 +1,11 @@
 package net.morimekta.providence.tools.compiler;
 
 import net.morimekta.testing.IntegrationExecutor;
+import net.morimekta.testing.ResourceUtils;
 import net.morimekta.util.io.IOUtils;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -20,41 +21,27 @@ import static org.junit.Assert.assertTrue;
  * Created by morimekta on 4/26/16.
  */
 public class CompilerIT {
-    private TemporaryFolder temp;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
     private IntegrationExecutor compiler;
-    private File     thriftFile;
-    private File     refFile;
-    private File     include;
-    private File     output;
+    private File                testFile;
+    private File                refFile;
+    private File                include;
+    private File                output;
 
     @Before
     public void setUp() throws IOException {
-        temp = new TemporaryFolder();
-        temp.create();
-
         include = temp.newFolder("include");
         output = temp.newFolder("output");
 
+        ResourceUtils.copyResourceTo("/compiler/ref.thrift", include);
+        ResourceUtils.copyResourceTo("/compiler/test.thrift", temp.getRoot());
+
         refFile = new File(include, "ref.thrift");
-        thriftFile = temp.newFile("test.thrift");
-
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/compiler/test.thrift"), file);
-        file.flush();
-        file.close();
-
-        file = new FileOutputStream(refFile);
-        IOUtils.copy(getClass().getResourceAsStream("/compiler/ref.thrift"), file);
-        file.flush();
-        file.close();
+        testFile = new File(temp.getRoot(), "test.thrift");
 
         compiler = new IntegrationExecutor("providence-tools-compiler", "providence-tools-compiler.jar");
-    }
-
-    @After
-    public void tearDown() {
-        temp.delete();
     }
 
     @Test
@@ -63,7 +50,7 @@ public class CompilerIT {
                 "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
-                thriftFile.getAbsolutePath());
+                testFile.getAbsolutePath());
 
         assertEquals("", compiler.getOutput());
         assertEquals("", compiler.getError());
@@ -84,10 +71,11 @@ public class CompilerIT {
     @Test
     public void testCompile_2() throws IOException {
         int exitCode = compiler.run(
+                "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
                 refFile.getAbsolutePath(),
-                thriftFile.getAbsolutePath());
+                testFile.getAbsolutePath());
 
         assertEquals("", compiler.getOutput());
         assertEquals("", compiler.getError());
@@ -138,16 +126,18 @@ public class CompilerIT {
         int exitCode = compiler.run(
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
-                thriftFile.getAbsolutePath());
+                testFile.getAbsolutePath());
 
         assertEquals("", compiler.getOutput());
-        assertEquals("No such package \"ref\" exists for type \"Response\"\n", compiler.getError());
+        assertEquals("Parse error on line 3, pos 8: Included file not found ref.thrift\n" +
+                     "include \"ref.thrift\"\n" +
+                     "--------^\n", compiler.getError());
         assertEquals(1, exitCode);
     }
 
     @Test
     public void testCompile_badReference() throws IOException {
-        FileOutputStream file = new FileOutputStream(thriftFile);
+        FileOutputStream file = new FileOutputStream(testFile);
         IOUtils.copy(getClass().getResourceAsStream("/compiler/test_2.thrift"), file);
         file.flush();
         file.close();
@@ -156,7 +146,7 @@ public class CompilerIT {
                 "-I", include.getAbsolutePath(),
                 "--out", output.getAbsolutePath(),
                 "-g", "java",
-                thriftFile.getAbsolutePath());
+                testFile.getAbsolutePath());
 
         assertEquals("", compiler.getOutput());
         assertEquals("No such type \"Request2\" in package \"ref\"\n", compiler.getError());
