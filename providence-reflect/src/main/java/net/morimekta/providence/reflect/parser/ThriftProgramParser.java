@@ -91,7 +91,8 @@ public class ThriftProgramParser implements ProgramParser {
         }
         program.setProgramName(programName);
 
-        List<String> includes = new LinkedList<>();
+        List<String> includeFiles = new LinkedList<>();
+        Set<String> includedPrograms = new HashSet<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
 
         List<Declaration> declarations = new LinkedList<>();
@@ -139,12 +140,12 @@ public class ThriftProgramParser implements ProgramParser {
                     }
                     documentation = null;
                     hasHeader = true;
-                    parseIncludes(tokenizer, includes);
+                    parseIncludes(tokenizer, includeFiles, includedPrograms);
                     break;
                 case "typedef":
                     hasHeader = true;
                     hasDeclaration = true;
-                    parseTypedef(tokenizer, documentation, declarations);
+                    parseTypedef(tokenizer, documentation, declarations, includedPrograms);
                     documentation = null;
                     break;
                 case "enum":
@@ -159,21 +160,21 @@ public class ThriftProgramParser implements ProgramParser {
                 case "exception":
                     hasHeader = true;
                     hasDeclaration = true;
-                    MessageType st = parseMessage(tokenizer, token.asString(), documentation);
+                    MessageType st = parseMessage(tokenizer, token.asString(), documentation, includedPrograms);
                     declarations.add(Declaration.withDeclStruct(st));
                     documentation = null;
                     break;
                 case "service":
                     hasHeader = true;
                     hasDeclaration = true;
-                    ServiceType srv = parseService(tokenizer, documentation);
+                    ServiceType srv = parseService(tokenizer, documentation, includedPrograms);
                     declarations.add(Declaration.withDeclService(srv));
                     documentation = null;
                     break;
                 case "const":
                     hasHeader = true;
                     hasDeclaration = true;
-                    ConstType cnst = parseConst(tokenizer, documentation);
+                    ConstType cnst = parseConst(tokenizer, documentation, includedPrograms);
                     declarations.add(Declaration.withDeclConst(cnst));
                     documentation = null;
                     break;
@@ -187,8 +188,8 @@ public class ThriftProgramParser implements ProgramParser {
         if (namespaces.size() > 0) {
             program.setNamespaces(namespaces);
         }
-        if (includes.size() > 0) {
-            program.setIncludes(includes);
+        if (includeFiles.size() > 0) {
+            program.setIncludes(includeFiles);
         }
         if (declarations.size() > 0) {
             program.setDecl(declarations);
@@ -197,9 +198,9 @@ public class ThriftProgramParser implements ProgramParser {
         return program.build();
     }
 
-    private ConstType parseConst(Tokenizer tokenizer, String comment) throws IOException, ParseException {
+    private ConstType parseConst(Tokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException, ParseException {
         Token token = tokenizer.expectQualifiedIdentifier("const typename");
-        String type = parseType(tokenizer, token);
+        String type = parseType(tokenizer, token, includedPrograms);
         Token id = tokenizer.expectIdentifier("const identifier");
 
         tokenizer.expectSymbol("const value separator", Token.kFieldValueSep);
@@ -270,7 +271,7 @@ public class ThriftProgramParser implements ProgramParser {
                       .trim();
     }
 
-    private ServiceType parseService(Tokenizer tokenizer, String comment) throws IOException, ParseException {
+    private ServiceType parseService(Tokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException, ParseException {
         ServiceType._Builder service = ServiceType.builder();
 
         if (comment != null) {
@@ -319,7 +320,7 @@ public class ThriftProgramParser implements ProgramParser {
                                              "Oneway methods must have void return type, found '%s'",
                                              Strings.escape(token.asString()));
                 }
-                method.setReturnType(parseType(tokenizer, token));
+                method.setReturnType(parseType(tokenizer, token, includedPrograms));
             }
 
             String name = tokenizer.expectIdentifier("method name").asString();
@@ -366,7 +367,7 @@ public class ThriftProgramParser implements ProgramParser {
                     field.setKey(nextAutoParamKey--);
                 }
 
-                field.setType(parseType(tokenizer, token));
+                field.setType(parseType(tokenizer, token, includedPrograms));
                 field.setName(tokenizer.expectIdentifier("method param name")
                                        .asString());
 
@@ -433,7 +434,7 @@ public class ThriftProgramParser implements ProgramParser {
                         field.setKey(nextAutoExceptionKey--);
                     }
 
-                    field.setType(parseType(tokenizer, token));
+                    field.setType(parseType(tokenizer, token, includedPrograms));
                     field.setName(tokenizer.expectIdentifier("reading method exception name")
                                            .asString());
 
@@ -537,19 +538,20 @@ public class ThriftProgramParser implements ProgramParser {
         namespaces.put(language.asString(), namespace.asString());
     }
 
-    public void parseIncludes(Tokenizer tokenizer, List<String> includes) throws IOException, ParseException {
+    public void parseIncludes(Tokenizer tokenizer, List<String> includeFiles, Set<String> includePrograms) throws IOException, ParseException {
         Token include = tokenizer.expectStringLiteral("include file");
-        String name = include.substring(1, -1).asString();
-        if (!ReflectionUtils.isThriftFile(name)) {
+        String filePath = include.decodeStringLiteral();
+        if (!ReflectionUtils.isThriftFile(filePath)) {
             throw new ParseException(tokenizer, include,
-                                     "Include not valid for thrift files " + name);
+                                     "Include not valid for thrift files " + filePath);
         }
-        includes.add(include.substring(1, -1).asString());
+        includeFiles.add(filePath);
+        includePrograms.add(ReflectionUtils.programNameFromPath(filePath));
     }
 
-    private void parseTypedef(Tokenizer tokenizer, String comment, List<Declaration> declarations)
+    private void parseTypedef(Tokenizer tokenizer, String comment, List<Declaration> declarations, Set<String> includedPrograms)
             throws IOException, ParseException {
-        String type = parseType(tokenizer, tokenizer.expect("parsing typedef type."));
+        String type = parseType(tokenizer, tokenizer.expect("parsing typedef type."), includedPrograms);
         Token id = tokenizer.expectIdentifier("parsing typedef identifier.");
 
         TypedefType typedef = TypedefType.builder()
@@ -659,7 +661,7 @@ public class ThriftProgramParser implements ProgramParser {
         return etb.build();
     }
 
-    private MessageType parseMessage(Tokenizer tokenizer, String type, String comment)
+    private MessageType parseMessage(Tokenizer tokenizer, String type, String comment, Set<String> includedPrograms)
             throws IOException, ParseException {
         MessageType._Builder struct = MessageType.builder();
         if (comment != null) {
@@ -740,7 +742,7 @@ public class ThriftProgramParser implements ProgramParser {
             }
 
             // Get type.... This is mandatory.
-            field.setType(parseType(tokenizer, token));
+            field.setType(parseType(tokenizer, token, includedPrograms));
 
             Token name = tokenizer.expectIdentifier("parsing struct " + id.asString());
             String fName = name.asString();
@@ -813,7 +815,7 @@ public class ThriftProgramParser implements ProgramParser {
         return struct.build();
     }
 
-    private String parseType(Tokenizer tokenizer, Token token) throws IOException, ParseException {
+    private String parseType(Tokenizer tokenizer, Token token, Set<String> includedPrograms) throws IOException, ParseException {
         if (!token.isQualifiedIdentifier()) {
             throw new ParseException(tokenizer, token, "Expected type identifier but found " + token);
         }
@@ -823,21 +825,28 @@ public class ThriftProgramParser implements ProgramParser {
             case "list":
             case "set": {
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
-                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"));
+                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"), includedPrograms);
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
 
                 return String.format("%s<%s>", type, item);
             }
             case "map": {
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
-                String key = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " key type"));
+                String key = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " key type"), includedPrograms);
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kLineSep1);
-                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"));
+                String item = parseType(tokenizer, tokenizer.expectQualifiedIdentifier("parsing " + type + " item type"), includedPrograms);
                 tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
 
                 return String.format("%s<%s,%s>", type, key, item);
             }
             default:
+                if (type.contains(".")) {
+                    // Enforce scope by program name.
+                    String program = type.replaceAll("[.].*", "");
+                    if (!includedPrograms.contains(program)) {
+                        throw new ParseException(tokenizer, token, "Unknown program %s for type %s", program, type);
+                    }
+                }
                 return type;
         }
     }

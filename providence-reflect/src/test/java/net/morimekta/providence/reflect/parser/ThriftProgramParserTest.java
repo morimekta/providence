@@ -648,6 +648,10 @@ public class ThriftProgramParserTest {
                         "include \"valid_reference.thrift\"\n" +
                         "^",
                         "/failure/invalid_include.thrift");
+        assertBadThrfit("Parse error on line 4, pos 5: Unknown program valid_reference for type valid_reference.Message\n" +
+                        "  1: valid_reference.Message message;\n" +
+                        "-----^",
+                        "/failure/unknown_program.thrift");
 
         assertBadStrictThrfit("Parse error on line 14, pos 7: Missing enum value in strict declaration\n" +
                               "    ADD,\n" +
