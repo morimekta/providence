@@ -30,7 +30,7 @@ public class TJsonProtocolSerializer extends TProtocolSerializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.json";
 
     public TJsonProtocolSerializer() {
-        this(true);
+        this(DEFAULT_STRICT);
     }
 
     public TJsonProtocolSerializer(boolean readStrict) {

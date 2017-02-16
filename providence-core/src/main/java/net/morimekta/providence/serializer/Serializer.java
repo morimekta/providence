@@ -68,4 +68,6 @@ public abstract class Serializer {
         }
         return false;
     }
+
+    public static final boolean DEFAULT_STRICT = false;
 }

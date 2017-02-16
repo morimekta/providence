@@ -33,7 +33,7 @@ public class TBinaryProtocolSerializer extends TProtocolSerializer {
     public static final String ALT_MIME_TYPE = BinarySerializer.ALT_MIME_TYPE;
 
     public TBinaryProtocolSerializer() {
-        this(true);
+        this(DEFAULT_STRICT);
     }
 
     public TBinaryProtocolSerializer(boolean readStrict) {

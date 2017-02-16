@@ -75,7 +75,7 @@ public class TTupleProtocolSerializer extends Serializer {
     private final TProtocolFactory protocolFactory;
 
     public TTupleProtocolSerializer() {
-        this(true);
+        this(DEFAULT_STRICT);
     }
 
     public TTupleProtocolSerializer(boolean readStrict) {

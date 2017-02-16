@@ -23,6 +23,8 @@ package net.morimekta.providence.thrift;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 
+import static net.morimekta.providence.serializer.Serializer.DEFAULT_STRICT;
+
 /**
  * Default serializer provider with added serializers for the thrift protocols
  * not covered by pure serializer.
@@ -32,7 +34,7 @@ public class ThriftSerializerProvider extends DefaultSerializerProvider {
      * Get the thrift serializer provider.
      */
     public ThriftSerializerProvider() {
-        this(false);
+        this(DEFAULT_STRICT);
     }
 
     /**

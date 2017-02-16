@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.serializer;
 
+import static net.morimekta.providence.serializer.Serializer.DEFAULT_STRICT;
+
 /**
  * Default serializer provider for core serializers.
  */
@@ -29,7 +31,7 @@ public class DefaultSerializerProvider extends BaseSerializerProvider {
      * Get the default serializer provider.
      */
     public DefaultSerializerProvider() {
-        this(false);
+        this(DEFAULT_STRICT);
     }
 
     /**
@@ -47,7 +49,7 @@ public class DefaultSerializerProvider extends BaseSerializerProvider {
      * @param defaultContentType The default mime-type.
      */
     public DefaultSerializerProvider(String defaultContentType) {
-        this(defaultContentType, false);
+        this(defaultContentType, DEFAULT_STRICT);
     }
 
     /**

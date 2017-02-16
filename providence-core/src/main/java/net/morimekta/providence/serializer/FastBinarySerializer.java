@@ -68,7 +68,7 @@ public class FastBinarySerializer extends Serializer {
      * Construct a serializer instance.
      */
     public FastBinarySerializer() {
-        this(false);
+        this(DEFAULT_STRICT);
     }
 
     /**

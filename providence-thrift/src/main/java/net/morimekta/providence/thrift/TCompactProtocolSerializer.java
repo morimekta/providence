@@ -30,7 +30,7 @@ public class TCompactProtocolSerializer extends TProtocolSerializer {
     public static final String MIME_TYPE = "application/vnd.apache.thrift.compact";
 
     public TCompactProtocolSerializer() {
-        this(true);
+        this(DEFAULT_STRICT);
     }
 
     public TCompactProtocolSerializer(boolean readStrict) {

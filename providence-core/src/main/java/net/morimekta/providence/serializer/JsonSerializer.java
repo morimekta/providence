@@ -110,7 +110,7 @@ public class JsonSerializer extends Serializer {
     private final boolean pretty;
 
     public JsonSerializer() {
-        this(true, IdType.ID, IdType.ID, false);
+        this(DEFAULT_STRICT, IdType.ID, IdType.ID, false);
     }
 
     public JsonSerializer(boolean strict) {
@@ -118,7 +118,7 @@ public class JsonSerializer extends Serializer {
     }
 
     public JsonSerializer(IdType idType) {
-        this(true, idType, idType, false);
+        this(DEFAULT_STRICT, idType, idType, false);
     }
 
     public JsonSerializer(boolean readStrict, IdType idType) {
@@ -126,7 +126,7 @@ public class JsonSerializer extends Serializer {
     }
 
     public JsonSerializer(IdType idType, IdType enumType) {
-        this(true, idType, enumType, false);
+        this(DEFAULT_STRICT, idType, enumType, false);
     }
 
     public JsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {

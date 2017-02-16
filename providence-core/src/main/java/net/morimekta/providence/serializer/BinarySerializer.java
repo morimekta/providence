@@ -61,7 +61,7 @@ public class BinarySerializer extends Serializer {
      * Construct a serializer instance.
      */
     public BinarySerializer() {
-        this(true);
+        this(DEFAULT_STRICT);
     }
 
     /**

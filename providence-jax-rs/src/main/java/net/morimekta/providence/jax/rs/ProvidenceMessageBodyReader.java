@@ -69,7 +69,11 @@ public abstract class ProvidenceMessageBodyReader implements MessageBodyReader<P
             return false;
         }
         String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
-        return provider.getSerializer(contentType) != null;
+        try {
+            return provider.getSerializer(contentType) != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

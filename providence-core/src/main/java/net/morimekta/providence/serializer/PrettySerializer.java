@@ -78,7 +78,7 @@ public class PrettySerializer extends Serializer {
     private final boolean strict;
 
     public PrettySerializer() {
-        this(true, false);
+        this(true, DEFAULT_STRICT);
     }
 
     public PrettySerializer(boolean encloseOuter, boolean strict) {

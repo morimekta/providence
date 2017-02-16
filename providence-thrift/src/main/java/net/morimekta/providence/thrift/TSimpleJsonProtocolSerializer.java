@@ -30,7 +30,7 @@ public class TSimpleJsonProtocolSerializer extends TProtocolSerializer {
     public static final String MIME_TYPE = "application/json";
 
     public TSimpleJsonProtocolSerializer() {
-        super(false, new TSimpleJSONProtocol.Factory(),
+        super(DEFAULT_STRICT, new TSimpleJSONProtocol.Factory(),
               false, MIME_TYPE);
     }
 }
