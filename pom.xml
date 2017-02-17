@@ -86,7 +86,7 @@
         <powermock.version>1.6.6</powermock.version>
 
         <!-- subsystems -->
-        <hazelcast.version>3.7.5</hazelcast.version>
+        <hazelcast.version>3.6.4</hazelcast.version>
 
         <!-- RPC tools, Client -->
         <jetty.version>9.4.1.v20170120</jetty.version>
