@@ -74,7 +74,8 @@ public class BinarySerializer extends Serializer {
     }
 
     /**
-     * Construct a serializer instance.
+     * Construct a serializer instance. The 'versioned' param is equivalent to
+     * to the TBinaryProtocol strict flag.
      *
      * @param readStrict If the serializer should fail on reading mismatched data.
      * @param versioned If the serializer should use the versioned service call format.
