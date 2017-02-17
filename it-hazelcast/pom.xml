@@ -25,6 +25,12 @@
     <dependencies>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
+            <artifactId>it-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -38,16 +44,11 @@
             <artifactId>providence-thrift</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>it-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -64,19 +65,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.morimekta.providence</groupId>
-            <artifactId>it-common</artifactId>
-            <version>0.3.10-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>3.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.jfairy</groupId>
             <artifactId>jfairy</artifactId>
-            <version>0.3.0</version>
         </dependency>
     </dependencies>
 

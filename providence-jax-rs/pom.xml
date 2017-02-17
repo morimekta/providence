@@ -15,7 +15,7 @@
     <artifactId>providence-jax-rs</artifactId>
 
     <properties>
-        <dropwizard.version>1.0.5</dropwizard.version>
+        <dropwizard.version>1.0.6</dropwizard.version>
     </properties>
 
     <dependencies>
