@@ -177,6 +177,76 @@ public class ProvidenceConfig {
     }
 
     /**
+     * Load providence config from the given file, and with a defined parent
+     * config. The parent config must come from an already loaded config file.
+     *
+     * @param configFile The file to load.
+     * @param parentFile The parent config file.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return Supplier for the parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws TokenizerException If the file could not be parsed.
+     */
+    @SuppressWarnings("unchecked")
+    public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplierWithParent(File configFile, File parentFile) throws IOException {
+        return getSupplierWithParent(configFile, parentFile, null);
+    }
+
+    /**
+     * Load providence config from the given file, and with a defined parent
+     * config. The parent config must come from an already loaded config file.
+     *
+     * @param configFile The file to load.
+     * @param parentFile The parent config file.
+     * @param descriptor The config type descriptor.
+     * @param <M> The message type.
+     * @param <F> The message field type.
+     * @return Supplier for the parsed and merged config.
+     * @throws IOException If the file could not be read.
+     * @throws TokenizerException If the file could not be parsed.
+     */
+    @SuppressWarnings("unchecked")
+    public synchronized <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplierWithParent(File configFile, File parentFile, PMessageDescriptor<M, F> descriptor) throws IOException {
+        try {
+            String configPath = resolveFile(null, configFile.getPath()).getCanonicalFile().getAbsolutePath();
+            String parentPath = resolveFile(null, parentFile.getPath()).getCanonicalFile().getAbsolutePath();
+
+            AtomicReference<M> parent = (AtomicReference) loaded.get(parentPath);
+            if (parent == null) {
+                throw new TokenizerException("Parent file " + parentFile.getName() + " is not loaded.")
+                        .setFile(configFile.getName());
+            }
+            if (descriptor != null && !parent.get().descriptor().equals(descriptor)) {
+                throw new TokenizerException(
+                        String.format(
+                                Locale.ENGLISH,
+                                "Incompatible message type: Expected %s, got %s",
+                                descriptor.getQualifiedName(),
+                                parent.get().descriptor().getQualifiedName()))
+                        .setFile(configFile.getPath());
+            }
+
+            Supplier<M> supplier = getSupplierWithParent(configFile, parent::get);
+
+            if (descriptor != null && !supplier.get().descriptor().equals(descriptor)) {
+                throw new TokenizerException(
+                        String.format(
+                                Locale.ENGLISH,
+                                "Incompatible message type: Expected %s, got %s",
+                                descriptor.getQualifiedName(),
+                                supplier.get().descriptor().getQualifiedName()))
+                        .setFile(configFile.getPath());
+            }
+
+            getReverseDeps(parentPath).add(configPath);
+
+            return supplier;
+        } catch (FileNotFoundException e) {
+            throw new TokenizerException(e.getMessage(), e).setFile(configFile.getName());
+        }
+    }
+    /**
      * Load providence config from the given file.
      *
      * @param file The file to load.
@@ -189,18 +259,17 @@ public class ProvidenceConfig {
     public <M extends PMessage<M, F>, F extends PField> Supplier<M> getSupplier(File file, PMessageDescriptor<M,F> descriptor) throws IOException {
         try {
             Supplier<M> supplier = getSupplier(file);
-            M message = supplier.get();
-            if (message == null || message.descriptor().equals(descriptor)) {
-                return supplier;
+            if (descriptor != null && !supplier.get().descriptor().equals(descriptor)) {
+                throw new TokenizerException(
+                        String.format(
+                                Locale.ENGLISH,
+                                "Incompatible message type: Expected %s, got %s",
+                                descriptor.getQualifiedName(),
+                                supplier.get().descriptor().getQualifiedName()))
+                        .setFile(file.getPath());
             }
 
-            throw new TokenizerException(
-                    String.format(
-                            Locale.ENGLISH,
-                            "Incompatible message type: Expected %s, got %s",
-                            descriptor.getQualifiedName(),
-                            message.descriptor().getQualifiedName()))
-                    .setFile(file.getPath());
+            return supplier;
         } catch (FileNotFoundException e) {
             throw new TokenizerException(e.getMessage()).setFile(file.getName());
         }
@@ -274,6 +343,7 @@ public class ProvidenceConfig {
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
             }
+            throw new FileNotFoundException("File " + path + " not found");
         } else if (path.startsWith("/")) {
             throw new FileNotFoundException("Absolute path includes not allowed: " + path);
         } else {
@@ -290,11 +360,6 @@ public class ProvidenceConfig {
                 }
                 throw new FileNotFoundException(path + " is a directory, expected file");
             }
-        }
-
-        if (ref == null) {
-            throw new FileNotFoundException("File " + path + " not found");
-        } else {
             throw new FileNotFoundException("Included file " + path + " not found");
         }
     }

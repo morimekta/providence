@@ -21,6 +21,7 @@ public class Print implements Command {
     private File       file       = null;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void execute(ProvidenceConfig config) throws IOException {
         serializer.serialize(System.out, (PMessage) config.getConfig(file));
     }

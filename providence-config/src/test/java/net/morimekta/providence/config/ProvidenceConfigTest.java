@@ -140,6 +140,34 @@ public class ProvidenceConfigTest {
         File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
 
         ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        config.getConfig(f_stage_db);
+        Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, f_stage_db);
+
+        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "driver = \"org.h2.Driver\"",
+                     debugString(stage_nocred.get()));
+    }
+
+    @Test
+    public void testParse_withParent_descriptor() throws IOException {
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
+        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        config.getConfig(f_stage_db);
+        Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, f_stage_db, Database.kDescriptor);
+
+        assertEquals("uri = \"jdbc:h2:localhost:mem\"\n" +
+                     "driver = \"org.h2.Driver\"",
+                     debugString(stage_nocred.get()));
+    }
+
+    @Test
+    public void testParse_withParent_supplier() throws IOException {
+        File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
+        File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
+
+        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
         Supplier<Database> stage_db = config.getSupplier(f_stage_db, Database.kDescriptor);
         Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, stage_db);
 
