@@ -300,9 +300,8 @@ public class JsonSerializer extends Serializer {
         } else {
             char sep = JsonToken.kMapStart;
             while (sep != JsonToken.kMapEnd) {
-                JsonToken token = tokenizer.expect("parsing message key");
-                String key = token.substring(1, -1)
-                                  .asString();
+                JsonToken token = tokenizer.expectString("parsing message key");
+                String key = token.decodeJsonLiteral();
                 PField field;
                 if (Strings.isInteger(key)) {
                     field = type.getField(Integer.parseInt(key));
@@ -336,7 +335,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private <T extends PMessage<T, F>, F extends PField> T parseCompactMessage(JsonTokenizer tokenizer, PMessageDescriptor<T, F> type)
-            throws SerializerException, IOException, JsonException {
+            throws IOException, JsonException {
         PMessageBuilder<T, F> builder = type.builder();
         // compact message are not allowed to be empty.
 
