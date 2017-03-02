@@ -114,21 +114,8 @@ public class CommonBuilderFormatter
                         // Void fields have no value.
                         break;
                     case LIST:
-                        writer.formatln(
-                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
-                                field.member(),
-                                field.fieldEnum(),
-                                field.member());
-                        break;
-                    case SET:
-                        writer.formatln(
-                                "%s = %s == _Field.%s ? builder.%s.build() : null;",
-                                field.member(),
-                                UNION_FIELD,
-                                field.fieldEnum(),
-                                field.member());
-                        break;
                     case MAP:
+                    case SET:
                         writer.formatln(
                                 "%s = %s == _Field.%s ? builder.%s.build() : null;",
                                 field.member(),
