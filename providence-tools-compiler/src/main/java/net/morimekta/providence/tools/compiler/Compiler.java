@@ -132,12 +132,12 @@ public class Compiler {
                 e.printStackTrace();
             }
         } catch (GeneratorException e) {
-            System.err.print("Generator error: " + e.getMessage());
+            System.err.println("Generator error: " + e.getMessage());
             if (options.verbose) {
                 e.printStackTrace();
             }
         } catch (IOException e) {
-            System.err.print("I/O error: " + e.getMessage());
+            System.err.println("I/O error: " + e.getMessage());
             if (options.verbose) {
                 e.printStackTrace();
             }
