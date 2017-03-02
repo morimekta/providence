@@ -160,65 +160,63 @@ public class ProgramConverter {
                 case DECL_SERVICE: {
                     ServiceType serviceType = decl.getDeclService();
                     ImmutableList.Builder<CServiceMethod> methodBuilder = ImmutableList.builder();
-                    for (FunctionType sm : serviceType.getMethods()) {
-                        List<CField> rqFields = new LinkedList<>();
-                        if (sm.numParams() > 0) {
-                            for (FieldType field : sm.getParams()) {
-                                rqFields.add(makeField(document.getProgramName(), field));
-                            }
-                        }
-                        CStructDescriptor request = new CStructDescriptor(null,
-                                                                          document.getProgramName(),
-                                                                          sm.getName() + "___request",
-                                                                          rqFields,
-                                                                          null);
-
-                        CUnionDescriptor response = null;
-                        if (!sm.isOneWay()) {
-                            List<CField> rsFields = new LinkedList<>();
-                            CField success;
-                            if (sm.getReturnType() != null) {
-                                PDescriptorProvider type = registry.getProvider(sm.getReturnType(), document.getProgramName(), sm.getAnnotations());
-                                success = new CField(null,
-                                                     0,
-                                                     PRequirement.OPTIONAL,
-                                                     "success",
-                                                     type,
-                                                     null,
-                                                     null);
-                            } else {
-                                success = new CField(null,
-                                                     0,
-                                                     PRequirement.OPTIONAL,
-                                                     "success",
-                                                     PPrimitive.VOID.provider(),
-                                                     null,
-                                                     null);
-                            }
-                            rsFields.add(success);
-
-                            if (sm.numExceptions() > 0) {
-                                for (FieldType field : sm.getExceptions()) {
-                                    rsFields.add(makeField(document.getProgramName(), field));
+                    if (serviceType.hasMethods()) {
+                        for (FunctionType sm : serviceType.getMethods()) {
+                            List<CField> rqFields = new LinkedList<>();
+                            if (sm.numParams() > 0) {
+                                for (FieldType field : sm.getParams()) {
+                                    rqFields.add(makeField(document.getProgramName(), field));
                                 }
                             }
+                            CStructDescriptor request = new CStructDescriptor(null,
+                                                                              document.getProgramName(),
+                                                                              sm.getName() + "___request",
+                                                                              rqFields,
+                                                                              null);
 
-                            response = new CUnionDescriptor(null,
-                                                            document.getProgramName(),
-                                                            sm.getName() + "___response",
-                                                            rsFields,
-                                                            null);
-                        }
+                            CUnionDescriptor response = null;
+                            if (!sm.isOneWay()) {
+                                List<CField> rsFields = new LinkedList<>();
+                                CField success;
+                                if (sm.getReturnType() != null) {
+                                    PDescriptorProvider type = registry.getProvider(sm.getReturnType(),
+                                                                                    document.getProgramName(),
+                                                                                    sm.getAnnotations());
+                                    success = new CField(null, 0, PRequirement.OPTIONAL, "success", type, null, null);
+                                } else {
+                                    success = new CField(null,
+                                                         0,
+                                                         PRequirement.OPTIONAL,
+                                                         "success",
+                                                         PPrimitive.VOID.provider(),
+                                                         null,
+                                                         null);
+                                }
+                                rsFields.add(success);
 
-                        CServiceMethod method = new CServiceMethod(sm.getDocumentation(),
-                                                                   sm.getName(),
-                                                                   sm.isOneWay(),
-                                                                   request,
-                                                                   response,
-                                                                   sm.getAnnotations());
+                                if (sm.numExceptions() > 0) {
+                                    for (FieldType field : sm.getExceptions()) {
+                                        rsFields.add(makeField(document.getProgramName(), field));
+                                    }
+                                }
 
-                        methodBuilder.add(method);
-                    }
+                                response = new CUnionDescriptor(null,
+                                                                document.getProgramName(),
+                                                                sm.getName() + "___response",
+                                                                rsFields,
+                                                                null);
+                            }
+
+                            CServiceMethod method = new CServiceMethod(sm.getDocumentation(),
+                                                                       sm.getName(),
+                                                                       sm.isOneWay(),
+                                                                       request,
+                                                                       response,
+                                                                       sm.getAnnotations());
+
+                            methodBuilder.add(method);
+                        }  // for each method
+                    }  // if has methods
 
                     PServiceProvider extendsProvider = null;
                     if (serviceType.hasExtend()) {
