@@ -32,6 +32,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -307,7 +308,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     private void addDependencyInclude(File workingDir, Set<File> includes, Artifact artifact)
             throws MojoExecutionException {
         // TODO: Figure out if this is the right way to name the output directories.
-        File outputDir = new File(workingDir, artifact.getGroupId().replaceAll("[.]", File.separator) + File.separator + artifact.getArtifactId());
+        File outputDir = new File(workingDir, artifact.getGroupId().replaceAll("[.]", Strings.escape(File.separator)) + File.separator + artifact.getArtifactId());
         if (!outputDir.exists()) {
             if (!outputDir.mkdirs()) {
                 throw new MojoExecutionException("Unable to create output dir " + outputDir);
