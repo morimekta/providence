@@ -30,6 +30,17 @@ enum Value {
    TWENTIETH = 10946
 }
 
+enum EnumNames {
+    UM4V = 1
+    UMP3 = 2
+    lm4v = 3
+    lmp3 = 4
+    Umpeg4 = 5
+    lMPEG4 = 6
+    l4U = 7
+    U4l = 8
+}
+
 struct CompactFields {
     1: required string name
     2: required i32 id,

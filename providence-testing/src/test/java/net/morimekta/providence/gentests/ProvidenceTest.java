@@ -25,6 +25,7 @@ import net.morimekta.test.providence.AutoIdFields;
 import net.morimekta.test.providence.CompactFields;
 import net.morimekta.test.providence.Containers;
 import net.morimekta.test.providence.DefaultValues;
+import net.morimekta.test.providence.EnumNames;
 import net.morimekta.test.providence.OptionalFields;
 import net.morimekta.test.providence.RequiredFields;
 import net.morimekta.test.providence.UnionFields;
@@ -66,6 +67,18 @@ public class ProvidenceTest {
         assertThat(uf.getBinaryValue(), is(nullValue()));
         assertThat(uf.hasBooleanValue(), is(false));
         assertThat(uf.hasByteValue(), is(false));
+    }
+
+    @Test
+    public void testEnumNaming() {
+        assertThat(EnumNames.UM4V.getName(), is("UM4V"));
+        assertThat(EnumNames.UMP3.getName(), is("UMP3"));
+        assertThat(EnumNames.LM4V.getName(), is("lm4v"));
+        assertThat(EnumNames.LMP3.getName(), is("lmp3"));
+        assertThat(EnumNames.UMPEG4.getName(), is("Umpeg4"));
+        assertThat(EnumNames.L_MPEG4.getName(), is("lMPEG4"));
+        assertThat(EnumNames.U4L.getName(), is("U4l"));
+        assertThat(EnumNames.L4_U.getName(), is("l4U"));
     }
 
     @Test
