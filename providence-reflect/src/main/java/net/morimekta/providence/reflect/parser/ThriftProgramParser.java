@@ -260,7 +260,7 @@ public class ThriftProgramParser implements ProgramParser {
 
     private String parseBlockComment(Tokenizer tokenizer) throws IOException {
         String block = IOUtils.readString(tokenizer, new String(Token.kBlockCommentEnd, US_ASCII)).trim();
-        String[] lines = block.split("\n");
+        String[] lines = block.split("\\r?\\n");
         StringBuilder builder = new StringBuilder();
 
         Pattern re = RE_BLOCK_LINE;
