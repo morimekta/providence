@@ -1,6 +1,7 @@
 package net.morimekta.providence.tools.common.options;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -11,6 +12,8 @@ public class ConvertStream {
     public final Format format;
     // If file is set: read / write file, otherwise use std in / out.
     public final File file;
+
+    private static final String PARENT_PARENT = ".." + File.separator + ".." + File.separator;
 
     public ConvertStream(Format format, File file) {
         this.format = format;
@@ -28,12 +31,17 @@ public class ConvertStream {
             if (hasFormat) {
                 builder.append(',');
             }
-            Path pwd = new File(System.getenv("PWD")).getAbsoluteFile().toPath();
+            Path pwd = new File(System.getenv("PWD")).toPath();
+            try {
+                pwd = pwd.toFile().getCanonicalFile().toPath();
+            } catch (IOException e) {
+                // ignore.
+            }
             String abs = file.getAbsolutePath();
             String rel = pwd.relativize(file.getAbsoluteFile()
                                             .toPath())
                             .toString();
-            if (abs.length() < rel.length() || rel.startsWith("../../")) {
+            if (abs.length() < rel.length() || rel.startsWith(PARENT_PARENT)) {
                 builder.append(abs);
             } else {
                 builder.append(rel);

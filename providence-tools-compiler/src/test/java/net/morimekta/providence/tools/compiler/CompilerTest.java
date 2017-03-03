@@ -20,7 +20,10 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,11 +69,11 @@ public class CompilerTest {
         temp = new TemporaryFolder();
         temp.create();
 
-        include = temp.newFolder("include");
-        output = temp.newFolder("output");
+        include = temp.newFolder("include").getCanonicalFile();
+        output = temp.newFolder("output").getCanonicalFile();
 
-        refFile = new File(include, "ref.thrift");
-        thriftFile = temp.newFile("test.thrift");
+        refFile = new File(include, "ref.thrift").getCanonicalFile();
+        thriftFile = temp.newFile("test.thrift").getCanonicalFile();
 
         FileOutputStream file = new FileOutputStream(thriftFile);
         IOUtils.copy(getClass().getResourceAsStream("/compiler/test.thrift"), file);
@@ -111,7 +114,8 @@ public class CompilerTest {
     public void testHelp() {
         compiler.run("--help");
 
-        assertEquals("Providence compiler - v" + version + "\n" +
+        assertThat(outContent.toString(),
+                   is(equalToLines("Providence compiler - v" + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
                      "Example code to run:\n" +
@@ -127,8 +131,7 @@ public class CompilerTest {
                      "\n" +
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
-                     " - json       : Generates JSON specification files.\n",
-                     outContent.toString());
+                     " - json       : Generates JSON specification files.\n")));
         assertEquals("", errContent.toString());
         assertEquals(0, exitCode);
     }
@@ -137,7 +140,9 @@ public class CompilerTest {
     public void testHelp_java() {
         compiler.run("--help", "java");
 
-        assertEquals("Providence compiler - v" + version + "\n" +
+        assertEquals("", errContent.toString());
+        assertThat(outContent.toString(),
+                     is(equalToLines("Providence compiler - v" + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
                      "java : Main java (1.8+) code generator.\n" +
@@ -146,9 +151,7 @@ public class CompilerTest {
                      " - android            : Add android parcelable interface to model classes.\n" +
                      " - jackson            : Add jackson 2 annotations to model classes.\n" +
                      " - no_rw_binary       : Skip adding the binary RW methods to generated code.\n" +
-                     " - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.\n",
-                     outContent.toString());
-        assertEquals("", errContent.toString());
+                     " - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.\n")));
         assertEquals(0, exitCode);
     }
 
@@ -160,25 +163,27 @@ public class CompilerTest {
                      thriftFile.getAbsolutePath());
 
         assertEquals("", outContent.toString());
-        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+        assertThat(errContent.toString(),
+                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+                     "Run $ pvdc --help # for available options.\n")));
         assertEquals(1, exitCode);
     }
 
     @Test
-    public void testIncludeNotADirectory() {
+    public void testIncludeNotADirectory() throws IOException {
         compiler.run("-I",
                      thriftFile.getAbsolutePath(),
                      "-g", "java",
                      thriftFile.getAbsolutePath());
 
         assertEquals("", outContent.toString());
-        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
-                     "" + temp.getRoot().getAbsolutePath() + "/test.thrift is not a directory\n" +
+        assertThat(errContent.toString(),
+                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+                     "" + temp.getRoot().getCanonicalPath() + File.separator + "test.thrift is not a directory\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+                     "Run $ pvdc --help # for available options.\n")));
         assertEquals(1, exitCode);
     }
 
@@ -190,10 +195,11 @@ public class CompilerTest {
                      thriftFile.getAbsolutePath());
 
         assertEquals("", outContent.toString());
-        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+        assertThat(errContent.toString(),
+                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+                     "Run $ pvdc --help # for available options.\n")));
         assertEquals(1, exitCode);
     }
 
@@ -205,10 +211,11 @@ public class CompilerTest {
                      thriftFile.getAbsolutePath());
 
         assertEquals("", outContent.toString());
-        assertEquals("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
+        assertThat(errContent.toString(),
+                   is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      thriftFile.getAbsolutePath() + " is not a directory\n" +
                      "\n" +
-                     "Run $ pvdc --help # for available options.\n", errContent.toString());
+                     "Run $ pvdc --help # for available options.\n")));
         assertEquals(1, exitCode);
     }
 }

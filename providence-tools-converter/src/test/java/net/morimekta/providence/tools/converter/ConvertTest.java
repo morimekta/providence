@@ -19,7 +19,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -97,7 +100,8 @@ public class ConvertTest {
     public void testHelp() {
         convert.run("--help");
 
-        assertEquals(
+        assertEquals("", errContent.toString());
+        assertThat(outContent.toString(), is(equalToLines(
                 "Providence Converter - v" + version + "\n" +
                 "Usage: pvd [-hVvS] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
@@ -124,9 +128,7 @@ public class ConvertTest {
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +
-                " - tuple_protocol       : TTupleProtocol\n",
-                outContent.toString());
-        assertEquals("", errContent.toString());
+                " - tuple_protocol       : TTupleProtocol\n")));
         assertEquals(0, exitCode);
     }
 }

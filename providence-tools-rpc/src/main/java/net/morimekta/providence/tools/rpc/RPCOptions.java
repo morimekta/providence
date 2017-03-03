@@ -191,7 +191,7 @@ public class RPCOptions extends CommonOptions {
         throw new ArgumentException("Unknown format %s", format.name());
     }
 
-    public PService getDefinition() throws  ParseException {
+    public PService getDefinition() throws ParseException, IOException {
 
         if (service.isEmpty()) {
             throw new ArgumentException( "Input type.");

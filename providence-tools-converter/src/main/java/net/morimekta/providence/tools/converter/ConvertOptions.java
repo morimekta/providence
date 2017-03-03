@@ -108,8 +108,7 @@ public class ConvertOptions extends CommonOptions {
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    PMessageDescriptor<Message, Field> getDefinition()
-            throws ParseException {
+    PMessageDescriptor<Message, Field> getDefinition() throws ParseException, IOException {
         if (type.isEmpty()) {
             throw new ArgumentException("Input type.");
         }
@@ -154,7 +153,7 @@ public class ConvertOptions extends CommonOptions {
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Stream<Message> getInput() throws ParseException {
+    Stream<Message> getInput() throws ParseException, IOException {
         PMessageDescriptor<Message, Field> descriptor = getDefinition();
         return Utils.getInput(descriptor, in, Format.binary, strict);
     }

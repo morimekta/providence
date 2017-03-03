@@ -20,7 +20,10 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -99,7 +102,7 @@ public class ConfigTest {
         config.run("--help");
 
         assertEquals("", errContent.toString());
-        assertEquals(
+        assertThat(outContent.toString(), is(equalToLines(
                 "Providence Config Tool - v" + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
@@ -116,8 +119,7 @@ public class ConfigTest {
                 " help     : Show help for sub-commands.\n" +
                 " print    : Print the resulting config.\n" +
                 " validate : Validate the file, print an error if not valid.\n" +
-                " params   : Show params that can be applied on the config.\n",
-                outContent.toString());
+                " params   : Show params that can be applied on the config.\n")));
         assertEquals(0, exitCode);
     }
 
@@ -126,7 +128,7 @@ public class ConfigTest {
         config.run("help");
 
         assertEquals("", errContent.toString());
-        assertEquals(
+        assertThat(outContent.toString(), is(equalToLines(
                 "Providence Config Tool - v" + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
@@ -142,8 +144,7 @@ public class ConfigTest {
                 " help     : Show help for sub-commands.\n" +
                 " print    : Print the resulting config.\n" +
                 " validate : Validate the file, print an error if not valid.\n" +
-                " params   : Show params that can be applied on the config.\n",
-                outContent.toString());
+                " params   : Show params that can be applied on the config.\n")));
         assertEquals(0, exitCode);
     }
 
@@ -153,13 +154,12 @@ public class ConfigTest {
         config.run("help", "print");
 
         assertEquals("", errContent.toString());
-        assertEquals(
+        assertThat(outContent.toString(), is(equalToLines(
                 "Providence Config Tool - v" + version + "\n" +
                 "Usage: pvdcfg [...] print [-f fmt] file\n" +
                 "\n" +
                 " --format (-f) fmt : the output format (default: pretty)\n" +
-                " file              : Config file to parse and print\n",
-                outContent.toString());
+                " file              : Config file to parse and print\n")));
         assertEquals(0, exitCode);
     }
 }

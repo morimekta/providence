@@ -19,7 +19,10 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
 
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -102,7 +105,8 @@ public class RPCFlagsTest {
         rpc.run("--help");
 
         assertEquals(0, exitCode);
-        assertEquals(
+        assertEquals("", errContent.toString());
+        assertThat(outContent.toString(), is(equalToLines(
                 "Providence RPC Tool - v" + version + "\n" +
                 "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
@@ -136,9 +140,7 @@ public class RPCFlagsTest {
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +
-                " - tuple_protocol       : TTupleProtocol\n",
-                outContent.toString());
-        assertEquals("", errContent.toString());
+                " - tuple_protocol       : TTupleProtocol\n")));
     }
 
     @Test
@@ -147,11 +149,11 @@ public class RPCFlagsTest {
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals("Option --service is required\n" +
+        assertThat(errContent.toString(), is(equalToLines(
+                "Option --service is required\n" +
                 "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
-                "Run $ pvdrpc --help # for available options.\n",
-                errContent.toString());
+                "Run $ pvdrpc --help # for available options.\n")));
     }
 
 
@@ -161,11 +163,11 @@ public class RPCFlagsTest {
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals("Argument \"URL\" is required\n" +
+        assertThat(errContent.toString(), is(equalToLines(
+                "Argument \"URL\" is required\n" +
                 "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
-                "Run $ pvdrpc --help # for available options.\n",
-                errContent.toString());
+                "Run $ pvdrpc --help # for available options.\n")));
     }
 
     @Test
@@ -173,13 +175,14 @@ public class RPCFlagsTest {
         File dir = temp.newFolder();
         dir.delete();
 
-        rpc.run("-I", dir.getAbsolutePath(), "-s", "test.MyService", endpoint());
+        rpc.run("-I", dir.getCanonicalFile().getAbsolutePath(), "-s", "test.MyService", endpoint());
 
         assertEquals(1, exitCode);
         assertEquals("", outContent.toString());
-        assertEquals("No such directory " + dir.getAbsolutePath() + "\n" +
+        assertThat(errContent.toString(), is(equalToLines(
+                "No such directory " + dir.getCanonicalFile().getAbsolutePath() + "\n" +
                 "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
-                "Run $ pvdrpc --help # for available options.\n", errContent.toString());
+                "Run $ pvdrpc --help # for available options.\n")));
     }
 }

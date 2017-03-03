@@ -26,20 +26,20 @@ import java.util.stream.Stream;
  * General utility methods.
  */
 public class Utils {
-    public static void collectIncludes(File dir, Map<String, File> includes) {
+    public static void collectIncludes(File dir, Map<String, File> includes) throws IOException {
         if (!dir.exists()) {
-            throw new ArgumentException("No such include directory: " + dir.getPath());
+            throw new ArgumentException("No such include directory: " + dir.getCanonicalFile().getPath());
         }
         File[] files = dir.listFiles();
         if (!dir.isDirectory() || files == null) {
-            throw new ArgumentException("Not a directory: " + dir.getPath());
+            throw new ArgumentException("Not a directory: " + dir.getCanonicalFile().getPath());
         }
         for (File file : files) {
             if (file.isHidden()) {
                 continue;
             }
             if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
-                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file);
+                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file.getCanonicalFile());
             }
         }
     }
@@ -83,7 +83,7 @@ public class Utils {
     Stream<Message> getInput(PMessageDescriptor<Message, Field> descriptor,
                              ConvertStream in,
                              Format defaultFormat,
-                             boolean strict) throws ParseException {
+                             boolean strict) throws ParseException, IOException {
         Format fmt = defaultFormat;
         File file = null;
         if (in != null) {
