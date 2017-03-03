@@ -133,7 +133,7 @@ public class ResourceUtils {
      * @return The resource content as string.
      */
     public static String getResourceAsString(String resource) {
-        return new String(getResourceAsBytes(resource), StandardCharsets.UTF_8);
+        return new String(getResourceAsBytes(resource), StandardCharsets.UTF_8).replaceAll("\\r", "");
     }
 
     // PRIVATE constructor defeats instantiation.

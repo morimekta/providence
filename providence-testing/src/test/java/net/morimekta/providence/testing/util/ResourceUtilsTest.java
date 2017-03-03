@@ -1,5 +1,6 @@
 package net.morimekta.providence.testing.util;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -11,13 +12,16 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsByteBuffer;
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsString;
 import static net.morimekta.util.io.IOUtils.readString;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -36,7 +40,7 @@ public class ResourceUtilsTest {
 
         assertTrue(test.exists());
         assertTrue(test.isFile());
-        assertEquals("Test!\n", readString(new FileInputStream(test)));
+        assertEquals("Test!\n", readString(new FileInputStream(test)).replaceAll("\\r", ""));
     }
 
     @Test
@@ -88,8 +92,7 @@ public class ResourceUtilsTest {
             ResourceUtils.writeContentTo("/test.txt", file);
             fail("No exception on unable to write to file.");
         } catch (UncheckedIOException e) {
-            assertEquals("java.io.FileNotFoundException: " + file.getAbsolutePath() + " (No such file or directory)",
-                         e.getMessage());
+            assertThat(e.getMessage(), startsWith("java.io.FileNotFoundException: " + file.getAbsolutePath() + " ("));
         }
     }
 
@@ -108,7 +111,7 @@ public class ResourceUtilsTest {
     @Test
     public void testGetResourceAsByteBuffer() {
         ByteBuffer bb = getResourceAsByteBuffer("/test.txt");
-        assertEquals("Test!\n", new String(bb.array(), UTF_8));
+        assertEquals("Test!\n", new String(bb.array(), UTF_8).replaceAll("\\r", ""));
 
         try {
             getResourceAsByteBuffer("/test-2.txt"); // Does not exist.

@@ -502,7 +502,7 @@ public class ProvidenceConfigTest {
         } catch (ConfigException e) {
             assertEquals("Wrong exception message on " + reason, message, e.getMessage());
         } catch (SerializerException e) {
-            assertEquals("Wrong exception message on " + reason, message, e.asString());
+            assertEquals("Wrong exception message on " + reason, message, e.asString().replaceAll("\\r", ""));
         }
         a.delete();
     }

@@ -206,7 +206,7 @@ public class SerializerTest {
         if (serializer.binaryProtocol()) {
             assertEquals("Hex data comparison.", expected.toHexString(), actual.toHexString());
         } else {
-            assertEquals(new String(expected.get()), new String(actual.get()));
+            assertEquals(new String(expected.get()).replaceAll("\\r", ""), new String(actual.get()).replaceAll("\\r", ""));
         }
     }
 
