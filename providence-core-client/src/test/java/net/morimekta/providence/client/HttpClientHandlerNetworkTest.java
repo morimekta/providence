@@ -133,7 +133,8 @@ public class HttpClientHandlerNetworkTest {
             // TODO: This should be a HttpResponseException
             assertThat(ex.getMessage(), anyOf(
                     is("Broken pipe (Write failed)"),
-                    is("Connection reset")));
+                    is("Connection reset"),
+                    is("Software caused connection abort: socket write error")));
         }
     }
 
