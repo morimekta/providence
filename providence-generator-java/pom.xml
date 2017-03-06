@@ -10,7 +10,7 @@
     <parent>
         <artifactId>providence</artifactId>
         <groupId>net.morimekta.providence</groupId>
-        <version>0.3.13</version>
+        <version>0.3.14-SNAPSHOT</version>
     </parent>
     <artifactId>providence-generator-java</artifactId>
 
