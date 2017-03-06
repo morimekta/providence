@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.serializer;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provider of serializers based on a string mime-type.
  */
@@ -30,12 +32,15 @@ public interface SerializerProvider {
      *
      * @param mediaType The media-type to get serializer for.
      * @return The serializer, or null if not found.
+     * @throws IllegalArgumentException If no such serializer exists.
      */
+    @Nonnull
     Serializer getSerializer(String mediaType);
 
     /**
      * @return The default serializer.
      */
+    @Nonnull
     default Serializer getDefault() {
         return getSerializer(BinarySerializer.MIME_TYPE);
     }

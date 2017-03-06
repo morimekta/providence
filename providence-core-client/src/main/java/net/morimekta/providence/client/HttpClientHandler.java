@@ -87,17 +87,17 @@ public class HttpClientHandler implements PServiceCallHandler {
         try {
             HttpRequest request = factory.buildPostRequest(url, content);
             request.getHeaders()
-                   .setContentType(requestSerializer.mimeType());
-            request.getHeaders()
                    .setAccept(requestSerializer.mimeType());
             HttpResponse response = request.execute();
 
             Serializer responseSerializer = requestSerializer;
             if (response.getContentType() != null) {
-                responseSerializer = serializerProvider.getSerializer(response.getContentType());
-                if (responseSerializer == null) {
+                try {
+                    responseSerializer = serializerProvider.getSerializer(response.getContentType());
+                } catch (IllegalArgumentException e) {
                     throw new PApplicationException("Unknown content-type in response: " + response.getContentType(),
-                                                    PApplicationExceptionType.INVALID_PROTOCOL);
+                                                    PApplicationExceptionType.INVALID_PROTOCOL)
+                            .initCause(e);
                 }
             }
 
@@ -124,7 +124,7 @@ public class HttpClientHandler implements PServiceCallHandler {
         } catch (ConnectException e) {
             // Normalize connection refused exceptions to HttpHostConnectException.
             // The native exception is not helpful (for when using NetHttpTransport).
-            throw new HttpHostConnectException(new HttpHost(url.getHost(), url.getPort(), url.getScheme()), e);
+            throw new HttpHostConnectException(e, new HttpHost(url.getHost(), url.getPort(), url.getScheme()));
         }
     }
 }

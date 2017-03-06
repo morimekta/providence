@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.serializer;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
     }
 
     @Override
+    @Nonnull
     public Serializer getSerializer(String mediaType) {
         Serializer serializer = serializerMap.get(mediaType);
         if (serializer == null) {
@@ -50,6 +52,7 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
     }
 
     @Override
+    @Nonnull
     public Serializer getDefault() {
         return getSerializer(defaultContentType);
     }

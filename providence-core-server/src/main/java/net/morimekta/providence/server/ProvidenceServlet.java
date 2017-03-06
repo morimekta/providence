@@ -77,12 +77,15 @@ public class ProvidenceServlet extends HttpServlet {
         try {
             Serializer requestSerializer = serializerProvider.getDefault();
             if (req.getContentType() != null) {
-                requestSerializer = serializerProvider.getSerializer(req.getContentType());
-
-                if (requestSerializer == null) {
+                try {
+                    requestSerializer = serializerProvider.getSerializer(req.getContentType());
+                } catch (IllegalArgumentException e) {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unknown content-type: " + req.getContentType());
+                    LOGGER.warn("Unknown content type in request", e);
                     return;
                 }
+            } else {
+                LOGGER.debug("Request is missing content type.");
             }
 
             Serializer responseSerializer = requestSerializer;
@@ -90,24 +93,18 @@ public class ProvidenceServlet extends HttpServlet {
             if (acceptHeader != null) {
                 String[] entries = acceptHeader.split("[,]");
                 for (String entry : entries) {
-                    if (entry.trim().isEmpty()) {
+                    entry = entry.trim();
+                    if (entry.isEmpty()) {
                         continue;
                     }
 
                     try {
-                        MediaType mediaType = MediaType.parse(entry.trim());
-                        Serializer tmp = serializerProvider.getSerializer(mediaType.type() + "/" + mediaType.subtype());
-                        if (tmp != null) {
-                            responseSerializer = tmp;
-                            break;
-                        }
+                        MediaType mediaType = MediaType.parse(entry);
+                        responseSerializer = serializerProvider.getSerializer(mediaType.type() + "/" + mediaType.subtype());
+                        break;
                     } catch (IllegalArgumentException ignore) {
                         // Ignore. Bad header input is pretty common.
                     }
-                }
-                if (responseSerializer == null) {
-                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No supported accept media-type: " + acceptHeader);
-                    return;
                 }
             }
 
