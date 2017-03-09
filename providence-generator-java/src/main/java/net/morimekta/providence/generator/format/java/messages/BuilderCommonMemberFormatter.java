@@ -100,11 +100,15 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 appendAdder(message, field);
             }
             appendIsSet(message, field);
-            appendIsModified(message, field);
+            if( !message.isUnion() ) {
+                appendIsModified(message, field);
+            }
             appendResetter(message, field);
             appendMutableGetters(message, field);
         }
-
+        if( message.isUnion() ) {
+            appendIsModified(message);
+        }
         appendEquals(message);
         appendHashCode(message);
     }
@@ -198,9 +202,13 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     }
 
     private void appendModifiedFields(JMessage<?> message) {
-        writer.formatln("private %s modified;",
-                        BitSet.class.getName())
-              .newline();
+        if (!message.isUnion()) {
+            writer.formatln("private %s modified;", BitSet.class.getName())
+                  .newline();
+        } else {
+            writer.formatln("private %s modified;", Boolean.class.getName())
+                  .newline();
+        }
     }
 
     private void appendDefaultConstructor(JMessage<?> message) throws GeneratorException {
@@ -214,11 +222,14 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                             BitSet.class.getName(),
                             message.declaredOrderFields()
                                    .size());
+            writer.formatln("modified = new %s(%d);",
+                            BitSet.class.getName(),
+                            message.declaredOrderFields()
+                                   .size());
+        } else {
+            writer.appendln("modified = false;");
         }
-        writer.formatln("modified = new %s(%d);",
-                        BitSet.class.getName(),
-                        message.declaredOrderFields()
-                               .size());
+
         for (JField field : message.declaredOrderFields()) {
             if (field.container()) {
                 writer.formatln("%s = new %s<>();", field.member(), field.builderInstanceType());
@@ -313,10 +324,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         if (message.isUnion()) {
             writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
+            writer.appendln("modified = true;");
         } else {
             writer.formatln("optionals.set(%d);", field.index());
+            writer.formatln("modified.set(%d);", field.index());
         }
-        writer.formatln("modified.set(%d);", field.index());
 
         switch (field.type()) {
             case VOID:
@@ -381,10 +393,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                       .begin();
                 if (message.isUnion()) {
                     writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
+                    writer.appendln("modified = true;");
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
+                    writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("modified.set(%d);", field.index());
                 writer.formatln("%s.put(key, value);", field.member())
                       .appendln("return this;")
                       .end()
@@ -403,10 +416,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                       .begin();
                 if (message.isUnion()) {
                     writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
+                    writer.appendln("modified = true;");
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
+                    writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("modified.set(%d);", field.index());
                 writer.formatln("for (%s item : values) {", liType)
                       .begin()
                       .formatln("%s.add(item);", field.member())
@@ -465,6 +479,22 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .newline();
     }
 
+    private void appendIsModified(JMessage message) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Checks if " + message.descriptor().getName() + " has been modified since the _Builder " +
+                        "was created.");
+
+        comment.newline()
+               .return_(String.format("True if %s has been modified.", message.descriptor().getName()))
+               .finish();
+        writer.formatln("public boolean %s() {", "isUnionModified")
+              .begin();
+        writer.appendln("return modified;");
+        writer.end()
+              .appendln('}')
+              .newline();
+    }
+
     private void appendResetter(JMessage message, JField field) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         if (field.hasComment()) {
@@ -480,10 +510,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         if (message.isUnion()) {
             writer.formatln("if (%s == _Field.%s) %s = null;", UNION_FIELD, field.fieldEnum(), UNION_FIELD);
+            writer.appendln("modified = true;");
         } else {
             writer.formatln("optionals.clear(%d);", field.index());
+            writer.formatln("modified.set(%d);", field.index());
         }
-        writer.formatln("modified.set(%d);", field.index());
 
         if (field.container()) {
             writer.formatln("%s.clear();", field.member());
@@ -543,10 +574,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                           .formatln("    %s();", field.resetter())
                           .appendln('}')
                           .formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
+                    writer.appendln("modified = true;");
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
+                    writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("modified.set(%d);", field.index());
 
                 writer.newline()
                       .formatln("if (%s != null) {", field.member())
@@ -574,10 +606,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                           .formatln("    %s();", field.resetter())
                           .appendln('}')
                           .formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
+                    writer.appendln("modified = true;");
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
+                    writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("modified.set(%d);", field.index());
 
                 writer.formatln("return %s;", field.member());
 

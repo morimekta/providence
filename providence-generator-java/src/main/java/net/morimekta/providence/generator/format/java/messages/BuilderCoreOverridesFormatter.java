@@ -92,34 +92,28 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                     case MESSAGE:
                         writer.formatln("if (%s == _Field.%s && %s != null) {",
                                         UNION_FIELD,
-                                        field.fieldEnum(), field.member())
+                                        field.fieldEnum(),
+                                        field.member())
                               .formatln("    %s = %s.mutate().merge(from.%s()).build();",
-                                        field.member(), field.member(), field.getter())
+                                        field.member(),
+                                        field.member(),
+                                        field.getter())
                               .appendln("} else {")
-                              .formatln("    %s(from.%s());",
-                                        field.setter(), field.getter())
+                              .formatln("    %s(from.%s());", field.setter(), field.getter())
                               .appendln('}');
                         break;
                     case SET:
-                        writer.formatln("if (%s == _Field.%s) {",
-                                        UNION_FIELD,
-                                        field.fieldEnum())
-                              .formatln("    %s.addAll(from.%s()):",
-                                        field.member(), field.getter())
+                        writer.formatln("if (%s == _Field.%s) {", UNION_FIELD, field.fieldEnum())
+                              .formatln("    %s.addAll(from.%s()):", field.member(), field.getter())
                               .appendln("} else {")
-                              .formatln("    %s(from.%s());",
-                                        field.setter(), field.getter())
+                              .formatln("    %s(from.%s());", field.setter(), field.getter())
                               .appendln('}');
                         break;
                     case MAP:
-                        writer.formatln("if (%s == _Field.%s) {",
-                                        UNION_FIELD,
-                                        field.fieldEnum())
-                              .formatln("    %s.putAll(from.%s()):",
-                                        field.member(), field.getter())
+                        writer.formatln("if (%s == _Field.%s) {", UNION_FIELD, field.fieldEnum())
+                              .formatln("    %s.putAll(from.%s()):", field.member(), field.getter())
                               .appendln("} else {")
-                              .formatln("    %s(from.%s());",
-                                        field.setter(), field.getter())
+                              .formatln("    %s(from.%s());", field.setter(), field.getter())
                               .appendln('}');
                         break;
                     default:
@@ -155,9 +149,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                     case MESSAGE:
                         // Message fields are merged.
                         writer.formatln("if (%s_builder != null) {", field.member())
-                              .formatln("    %s_builder.merge(from.%s());",
-                                        field.member(),
-                                        field.getter())
+                              .formatln("    %s_builder.merge(from.%s());", field.member(), field.getter())
                               .formatln("} else if (%s != null) {", field.member())
                               .formatln("    %s_builder = %s.mutate().merge(from.%s());",
                                         field.member(),
@@ -199,8 +191,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     private void appendOverrideMutator(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("@SuppressWarnings(\"unchecked\")")
-              .formatln("public %s mutator(int key) {",
-                        PMessageBuilder.class.getName())
+              .formatln("public %s mutator(int key) {", PMessageBuilder.class.getName())
               .begin()
               .appendln("switch (key) {")
               .begin();
@@ -270,19 +261,22 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     private void appendOverrideIsModified(JMessage<?> message) throws GeneratorException {
         writer.appendln("@Override")
               .appendln("public boolean isModified(int key) {")
-              .begin()
-              .appendln("switch (key) {")
               .begin();
-        for (JField field : message.numericalOrderFields()) {
-            writer.formatln("case %d: return modified.get(%d);", field.id(), field.index());
-        }
-        writer.appendln("default: break;")
-              .end()
-              .appendln('}')
-              .appendln("return false;")
-              .end()
-              .appendln('}')
-              .newline();
+        if (!message.isUnion()) {
+            writer.appendln("switch (key) {")
+                  .begin();
+            for (JField field : message.numericalOrderFields()) {
+                writer.formatln("case %d: return modified.get(%d);", field.id(), field.index());
+            }
+            writer.appendln("default: break;")
+                  .end()
+                  .appendln('}')
+                  .appendln("return false;");
+        } else {
+            writer.appendln("return modified;");
+        } writer.end()
+                .appendln('}')
+                .newline();
     }
 
     private void appendOverrideAdder(JMessage<?> message) throws GeneratorException {
@@ -394,12 +388,13 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
             writer.appendln("if (!valid()) {")
                   .formatln("    throw new %s(\"No union field set in %s\");",
                             IllegalStateException.class.getName(),
-                            message.descriptor().getQualifiedName())
+                            message.descriptor()
+                                   .getQualifiedName())
                   .appendln("}");
         } else {
             boolean hasRequired = message.declaredOrderFields()
-                   .stream()
-                   .anyMatch(JField::isRequired);
+                                         .stream()
+                                         .anyMatch(JField::isRequired);
             if (hasRequired) {
                 writer.appendln("if (!valid()) {")
                       .begin()
@@ -411,16 +406,17 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 message.declaredOrderFields()
                        .stream()
                        .filter(JField::isRequired)
-                       .forEachOrdered(field -> writer
-                               .formatln("if (!optionals.get(%d)) {", field.index())
-                               .formatln("    missing.add(\"%s\");", field.name())
-                               .appendln("}")
-                               .newline());
+                       .forEachOrdered(field -> writer.formatln("if (!optionals.get(%d)) {", field.index())
+                                                      .formatln("    missing.add(\"%s\");", field.name())
+                                                      .appendln("}")
+                                                      .newline());
 
                 writer.formatln("throw new %s(", IllegalStateException.class.getName())
                       .appendln("        \"Missing required fields \" +")
                       .appendln("        String.join(\",\", missing) +")
-                      .formatln("        \" in message %s\");", message.descriptor().getQualifiedName())
+                      .formatln("        \" in message %s\");",
+                                message.descriptor()
+                                       .getQualifiedName())
                       .end()
                       .appendln("}");
             }
