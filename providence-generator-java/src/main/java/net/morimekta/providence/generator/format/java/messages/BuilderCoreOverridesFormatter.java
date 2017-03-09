@@ -59,6 +59,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
         appendOverrideMutator(message);
         appendOverrideSetter(message);
         appendOverrideIsSet(message);
+        appendOverrideIsModified(message);
         appendOverrideAdder(message);
         appendOverrideResetter(message);
         appendOverrideIsValid(message);
@@ -148,6 +149,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                 }
 
                 writer.formatln("optionals.set(%d);", field.index());
+                writer.formatln("modified.set(%d);", field.index());
 
                 switch (field.type()) {
                     case MESSAGE:
@@ -255,6 +257,24 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
             for (JField field : message.numericalOrderFields()) {
                 writer.formatln("case %d: return optionals.get(%d);", field.id(), field.index());
             }
+        }
+        writer.appendln("default: break;")
+              .end()
+              .appendln('}')
+              .appendln("return false;")
+              .end()
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendOverrideIsModified(JMessage<?> message) throws GeneratorException {
+        writer.appendln("@Override")
+              .appendln("public boolean isModified(int key) {")
+              .begin()
+              .appendln("switch (key) {")
+              .begin();
+        for (JField field : message.numericalOrderFields()) {
+            writer.formatln("case %d: return modified.get(%d);", field.id(), field.index());
         }
         writer.appendln("default: break;")
               .end()

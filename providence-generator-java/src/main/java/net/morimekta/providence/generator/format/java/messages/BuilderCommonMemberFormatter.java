@@ -74,6 +74,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             appendStructFields(message);
         }
+        appendModifiedFields(message);
 
         for (JField field : message.declaredOrderFields()) {
             // Void fields have no value.
@@ -99,6 +100,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 appendAdder(message, field);
             }
             appendIsSet(message, field);
+            appendIsModified(message, field);
             appendResetter(message, field);
             appendMutableGetters(message, field);
         }
@@ -192,6 +194,11 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
     private void appendStructFields(JMessage<?> message) {
         writer.formatln("private %s optionals;",
+                        BitSet.class.getName());
+    }
+
+    private void appendModifiedFields(JMessage<?> message) {
+        writer.formatln("private %s modified;",
                         BitSet.class.getName())
               .newline();
     }
@@ -208,6 +215,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                             message.declaredOrderFields()
                                    .size());
         }
+        writer.formatln("modified = new %s(%d);",
+                        BitSet.class.getName(),
+                        message.declaredOrderFields()
+                               .size());
         for (JField field : message.declaredOrderFields()) {
             if (field.container()) {
                 writer.formatln("%s = new %s<>();", field.member(), field.builderInstanceType());
@@ -305,6 +316,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             writer.formatln("optionals.set(%d);", field.index());
         }
+        writer.formatln("modified.set(%d);", field.index());
 
         switch (field.type()) {
             case VOID:
@@ -372,6 +384,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
+                writer.formatln("modified.set(%d);", field.index());
                 writer.formatln("%s.put(key, value);", field.member())
                       .appendln("return this;")
                       .end()
@@ -393,6 +406,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
+                writer.formatln("modified.set(%d);", field.index());
                 writer.formatln("for (%s item : values) {", liType)
                       .begin()
                       .formatln("%s.add(item);", field.member())
@@ -417,7 +431,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         comment.newline()
-               .return_(String.format("True iff %s has been set.", field.name()))
+               .return_(String.format("True if %s has been set.", field.name()))
                .finish();
         writer.formatln("public boolean %s() {", field.isSet())
               .begin();
@@ -427,6 +441,25 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             writer.formatln("return optionals.get(%d);", field.index());
         }
+        writer.end()
+              .appendln('}')
+              .newline();
+    }
+
+    private void appendIsModified(JMessage message, JField field) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        if (field.hasComment()) {
+            comment.comment(field.comment());
+        } else {
+            comment.comment("Checks if " + field.name() + " has been modified since the _Builder was created.");
+        }
+
+        comment.newline()
+               .return_(String.format("True if %s has been modified.", field.name()))
+               .finish();
+        writer.formatln("public boolean %s() {", field.isModified())
+              .begin();
+        writer.formatln("return modified.get(%d);", field.index());
         writer.end()
               .appendln('}')
               .newline();
@@ -450,6 +483,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         } else {
             writer.formatln("optionals.clear(%d);", field.index());
         }
+        writer.formatln("modified.set(%d);", field.index());
 
         if (field.container()) {
             writer.formatln("%s.clear();", field.member());
@@ -512,6 +546,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
+                writer.formatln("modified.set(%d);", field.index());
 
                 writer.newline()
                       .formatln("if (%s != null) {", field.member())
@@ -542,6 +577,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 } else {
                     writer.formatln("optionals.set(%d);", field.index());
                 }
+                writer.formatln("modified.set(%d);", field.index());
 
                 writer.formatln("return %s;", field.member());
 
