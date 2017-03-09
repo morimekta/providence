@@ -92,6 +92,24 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     }
 
     /**
+     * Checks if a specific field is modified on the builder.
+     *
+     * @param key The key of the field to check.
+     * @return True if the field is modified.
+     */
+    public abstract boolean isModified(int key);
+
+    /**
+     * Checks if a specific field is modified on the builder.
+     *
+     * @param field The field to check.
+     * @return True if the field is modified.
+     */
+    public boolean isModified(@Nonnull F field) {
+        return isModified(field.getKey());
+    }
+
+    /**
      * Adds a value to a set or list container.
      *
      * @param key The key of the container field to add too.

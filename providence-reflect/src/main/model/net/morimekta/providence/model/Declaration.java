@@ -456,6 +456,8 @@ public class Declaration
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
+        private java.lang.Boolean modified;
+
         private net.morimekta.providence.model.EnumType mDeclEnum;
         private net.morimekta.providence.model.EnumType._Builder mDeclEnum_builder;
         private net.morimekta.providence.model.TypedefType mDeclTypedef;
@@ -471,6 +473,7 @@ public class Declaration
          * Make a model.Declaration builder.
          */
         public _Builder() {
+            modified = false;
         }
 
         /**
@@ -549,6 +552,7 @@ public class Declaration
          */
         public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
             tUnionField = _Field.DECL_ENUM;
+            modified = true;
             mDeclEnum_builder = null;
             mDeclEnum = value;
             return this;
@@ -557,7 +561,7 @@ public class Declaration
         /**
          * Checks for presence of the decl_enum field.
          *
-         * @return True iff decl_enum has been set.
+         * @return True if decl_enum has been set.
          */
         public boolean isSetDeclEnum() {
             return tUnionField == _Field.DECL_ENUM;
@@ -570,6 +574,7 @@ public class Declaration
          */
         public _Builder clearDeclEnum() {
             if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
+            modified = true;
             mDeclEnum = null;
             mDeclEnum_builder = null;
             return this;
@@ -585,6 +590,7 @@ public class Declaration
                 clearDeclEnum();
             }
             tUnionField = _Field.DECL_ENUM;
+            modified = true;
 
             if (mDeclEnum != null) {
                 mDeclEnum_builder = mDeclEnum.mutate();
@@ -603,6 +609,7 @@ public class Declaration
          */
         public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
+            modified = true;
             mDeclTypedef_builder = null;
             mDeclTypedef = value;
             return this;
@@ -611,7 +618,7 @@ public class Declaration
         /**
          * Checks for presence of the decl_typedef field.
          *
-         * @return True iff decl_typedef has been set.
+         * @return True if decl_typedef has been set.
          */
         public boolean isSetDeclTypedef() {
             return tUnionField == _Field.DECL_TYPEDEF;
@@ -624,6 +631,7 @@ public class Declaration
          */
         public _Builder clearDeclTypedef() {
             if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
+            modified = true;
             mDeclTypedef = null;
             mDeclTypedef_builder = null;
             return this;
@@ -639,6 +647,7 @@ public class Declaration
                 clearDeclTypedef();
             }
             tUnionField = _Field.DECL_TYPEDEF;
+            modified = true;
 
             if (mDeclTypedef != null) {
                 mDeclTypedef_builder = mDeclTypedef.mutate();
@@ -657,6 +666,7 @@ public class Declaration
          */
         public _Builder setDeclStruct(net.morimekta.providence.model.MessageType value) {
             tUnionField = _Field.DECL_STRUCT;
+            modified = true;
             mDeclStruct_builder = null;
             mDeclStruct = value;
             return this;
@@ -665,7 +675,7 @@ public class Declaration
         /**
          * Checks for presence of the decl_struct field.
          *
-         * @return True iff decl_struct has been set.
+         * @return True if decl_struct has been set.
          */
         public boolean isSetDeclStruct() {
             return tUnionField == _Field.DECL_STRUCT;
@@ -678,6 +688,7 @@ public class Declaration
          */
         public _Builder clearDeclStruct() {
             if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
+            modified = true;
             mDeclStruct = null;
             mDeclStruct_builder = null;
             return this;
@@ -693,6 +704,7 @@ public class Declaration
                 clearDeclStruct();
             }
             tUnionField = _Field.DECL_STRUCT;
+            modified = true;
 
             if (mDeclStruct != null) {
                 mDeclStruct_builder = mDeclStruct.mutate();
@@ -711,6 +723,7 @@ public class Declaration
          */
         public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
+            modified = true;
             mDeclService_builder = null;
             mDeclService = value;
             return this;
@@ -719,7 +732,7 @@ public class Declaration
         /**
          * Checks for presence of the decl_service field.
          *
-         * @return True iff decl_service has been set.
+         * @return True if decl_service has been set.
          */
         public boolean isSetDeclService() {
             return tUnionField == _Field.DECL_SERVICE;
@@ -732,6 +745,7 @@ public class Declaration
          */
         public _Builder clearDeclService() {
             if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
+            modified = true;
             mDeclService = null;
             mDeclService_builder = null;
             return this;
@@ -747,6 +761,7 @@ public class Declaration
                 clearDeclService();
             }
             tUnionField = _Field.DECL_SERVICE;
+            modified = true;
 
             if (mDeclService != null) {
                 mDeclService_builder = mDeclService.mutate();
@@ -765,6 +780,7 @@ public class Declaration
          */
         public _Builder setDeclConst(net.morimekta.providence.model.ConstType value) {
             tUnionField = _Field.DECL_CONST;
+            modified = true;
             mDeclConst_builder = null;
             mDeclConst = value;
             return this;
@@ -773,7 +789,7 @@ public class Declaration
         /**
          * Checks for presence of the decl_const field.
          *
-         * @return True iff decl_const has been set.
+         * @return True if decl_const has been set.
          */
         public boolean isSetDeclConst() {
             return tUnionField == _Field.DECL_CONST;
@@ -786,6 +802,7 @@ public class Declaration
          */
         public _Builder clearDeclConst() {
             if (tUnionField == _Field.DECL_CONST) tUnionField = null;
+            modified = true;
             mDeclConst = null;
             mDeclConst_builder = null;
             return this;
@@ -801,6 +818,7 @@ public class Declaration
                 clearDeclConst();
             }
             tUnionField = _Field.DECL_CONST;
+            modified = true;
 
             if (mDeclConst != null) {
                 mDeclConst_builder = mDeclConst.mutate();
@@ -809,6 +827,15 @@ public class Declaration
                 mDeclConst_builder = net.morimekta.providence.model.ConstType.builder();
             }
             return mDeclConst_builder;
+        }
+
+        /**
+         * Checks if Declaration has been modified since the _Builder was created.
+         *
+         * @return True if Declaration has been modified.
+         */
+        public boolean isUnionModified() {
+            return modified;
         }
 
         @Override
@@ -874,6 +901,11 @@ public class Declaration
                 default: break;
             }
             return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            return modified;
         }
 
         @Override

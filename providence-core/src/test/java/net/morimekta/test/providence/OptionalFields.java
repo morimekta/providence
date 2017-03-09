@@ -644,6 +644,7 @@ public class OptionalFields
             extends net.morimekta.providence.PMessageBuilder<OptionalFields,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private Boolean mBooleanValue;
         private Byte mByteValue;
@@ -662,6 +663,7 @@ public class OptionalFields
          */
         public _Builder() {
             optionals = new java.util.BitSet(10);
+            modified = new java.util.BitSet(10);
         }
 
         /**
@@ -718,51 +720,61 @@ public class OptionalFields
         public _Builder merge(OptionalFields from) {
             if (from.hasBooleanValue()) {
                 optionals.set(0);
+                modified.set(0);
                 mBooleanValue = from.isBooleanValue();
             }
 
             if (from.hasByteValue()) {
                 optionals.set(1);
+                modified.set(1);
                 mByteValue = from.getByteValue();
             }
 
             if (from.hasShortValue()) {
                 optionals.set(2);
+                modified.set(2);
                 mShortValue = from.getShortValue();
             }
 
             if (from.hasIntegerValue()) {
                 optionals.set(3);
+                modified.set(3);
                 mIntegerValue = from.getIntegerValue();
             }
 
             if (from.hasLongValue()) {
                 optionals.set(4);
+                modified.set(4);
                 mLongValue = from.getLongValue();
             }
 
             if (from.hasDoubleValue()) {
                 optionals.set(5);
+                modified.set(5);
                 mDoubleValue = from.getDoubleValue();
             }
 
             if (from.hasStringValue()) {
                 optionals.set(6);
+                modified.set(6);
                 mStringValue = from.getStringValue();
             }
 
             if (from.hasBinaryValue()) {
                 optionals.set(7);
+                modified.set(7);
                 mBinaryValue = from.getBinaryValue();
             }
 
             if (from.hasEnumValue()) {
                 optionals.set(8);
+                modified.set(8);
                 mEnumValue = from.getEnumValue();
             }
 
             if (from.hasCompactValue()) {
                 optionals.set(9);
+                modified.set(9);
                 if (mCompactValue_builder != null) {
                     mCompactValue_builder.merge(from.getCompactValue());
                 } else if (mCompactValue != null) {
@@ -783,6 +795,7 @@ public class OptionalFields
          */
         public _Builder setBooleanValue(boolean value) {
             optionals.set(0);
+            modified.set(0);
             mBooleanValue = value;
             return this;
         }
@@ -790,10 +803,19 @@ public class OptionalFields
         /**
          * Checks for presence of the booleanValue field.
          *
-         * @return True iff booleanValue has been set.
+         * @return True if booleanValue has been set.
          */
         public boolean isSetBooleanValue() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if booleanValue has been modified since the _Builder was created.
+         *
+         * @return True if booleanValue has been modified.
+         */
+        public boolean isModifiedBooleanValue() {
+            return modified.get(0);
         }
 
         /**
@@ -803,6 +825,7 @@ public class OptionalFields
          */
         public _Builder clearBooleanValue() {
             optionals.clear(0);
+            modified.set(0);
             mBooleanValue = null;
             return this;
         }
@@ -824,6 +847,7 @@ public class OptionalFields
          */
         public _Builder setByteValue(byte value) {
             optionals.set(1);
+            modified.set(1);
             mByteValue = value;
             return this;
         }
@@ -831,10 +855,19 @@ public class OptionalFields
         /**
          * Checks for presence of the byteValue field.
          *
-         * @return True iff byteValue has been set.
+         * @return True if byteValue has been set.
          */
         public boolean isSetByteValue() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if byteValue has been modified since the _Builder was created.
+         *
+         * @return True if byteValue has been modified.
+         */
+        public boolean isModifiedByteValue() {
+            return modified.get(1);
         }
 
         /**
@@ -844,6 +877,7 @@ public class OptionalFields
          */
         public _Builder clearByteValue() {
             optionals.clear(1);
+            modified.set(1);
             mByteValue = null;
             return this;
         }
@@ -865,6 +899,7 @@ public class OptionalFields
          */
         public _Builder setShortValue(short value) {
             optionals.set(2);
+            modified.set(2);
             mShortValue = value;
             return this;
         }
@@ -872,10 +907,19 @@ public class OptionalFields
         /**
          * Checks for presence of the shortValue field.
          *
-         * @return True iff shortValue has been set.
+         * @return True if shortValue has been set.
          */
         public boolean isSetShortValue() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if shortValue has been modified since the _Builder was created.
+         *
+         * @return True if shortValue has been modified.
+         */
+        public boolean isModifiedShortValue() {
+            return modified.get(2);
         }
 
         /**
@@ -885,6 +929,7 @@ public class OptionalFields
          */
         public _Builder clearShortValue() {
             optionals.clear(2);
+            modified.set(2);
             mShortValue = null;
             return this;
         }
@@ -906,6 +951,7 @@ public class OptionalFields
          */
         public _Builder setIntegerValue(int value) {
             optionals.set(3);
+            modified.set(3);
             mIntegerValue = value;
             return this;
         }
@@ -913,10 +959,19 @@ public class OptionalFields
         /**
          * Checks for presence of the integerValue field.
          *
-         * @return True iff integerValue has been set.
+         * @return True if integerValue has been set.
          */
         public boolean isSetIntegerValue() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if integerValue has been modified since the _Builder was created.
+         *
+         * @return True if integerValue has been modified.
+         */
+        public boolean isModifiedIntegerValue() {
+            return modified.get(3);
         }
 
         /**
@@ -926,6 +981,7 @@ public class OptionalFields
          */
         public _Builder clearIntegerValue() {
             optionals.clear(3);
+            modified.set(3);
             mIntegerValue = null;
             return this;
         }
@@ -947,6 +1003,7 @@ public class OptionalFields
          */
         public _Builder setLongValue(long value) {
             optionals.set(4);
+            modified.set(4);
             mLongValue = value;
             return this;
         }
@@ -954,10 +1011,19 @@ public class OptionalFields
         /**
          * Checks for presence of the longValue field.
          *
-         * @return True iff longValue has been set.
+         * @return True if longValue has been set.
          */
         public boolean isSetLongValue() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if longValue has been modified since the _Builder was created.
+         *
+         * @return True if longValue has been modified.
+         */
+        public boolean isModifiedLongValue() {
+            return modified.get(4);
         }
 
         /**
@@ -967,6 +1033,7 @@ public class OptionalFields
          */
         public _Builder clearLongValue() {
             optionals.clear(4);
+            modified.set(4);
             mLongValue = null;
             return this;
         }
@@ -988,6 +1055,7 @@ public class OptionalFields
          */
         public _Builder setDoubleValue(double value) {
             optionals.set(5);
+            modified.set(5);
             mDoubleValue = value;
             return this;
         }
@@ -995,10 +1063,19 @@ public class OptionalFields
         /**
          * Checks for presence of the doubleValue field.
          *
-         * @return True iff doubleValue has been set.
+         * @return True if doubleValue has been set.
          */
         public boolean isSetDoubleValue() {
             return optionals.get(5);
+        }
+
+        /**
+         * Checks if doubleValue has been modified since the _Builder was created.
+         *
+         * @return True if doubleValue has been modified.
+         */
+        public boolean isModifiedDoubleValue() {
+            return modified.get(5);
         }
 
         /**
@@ -1008,6 +1085,7 @@ public class OptionalFields
          */
         public _Builder clearDoubleValue() {
             optionals.clear(5);
+            modified.set(5);
             mDoubleValue = null;
             return this;
         }
@@ -1029,6 +1107,7 @@ public class OptionalFields
          */
         public _Builder setStringValue(String value) {
             optionals.set(6);
+            modified.set(6);
             mStringValue = value;
             return this;
         }
@@ -1036,10 +1115,19 @@ public class OptionalFields
         /**
          * Checks for presence of the stringValue field.
          *
-         * @return True iff stringValue has been set.
+         * @return True if stringValue has been set.
          */
         public boolean isSetStringValue() {
             return optionals.get(6);
+        }
+
+        /**
+         * Checks if stringValue has been modified since the _Builder was created.
+         *
+         * @return True if stringValue has been modified.
+         */
+        public boolean isModifiedStringValue() {
+            return modified.get(6);
         }
 
         /**
@@ -1049,6 +1137,7 @@ public class OptionalFields
          */
         public _Builder clearStringValue() {
             optionals.clear(6);
+            modified.set(6);
             mStringValue = null;
             return this;
         }
@@ -1070,6 +1159,7 @@ public class OptionalFields
          */
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
             optionals.set(7);
+            modified.set(7);
             mBinaryValue = value;
             return this;
         }
@@ -1077,10 +1167,19 @@ public class OptionalFields
         /**
          * Checks for presence of the binaryValue field.
          *
-         * @return True iff binaryValue has been set.
+         * @return True if binaryValue has been set.
          */
         public boolean isSetBinaryValue() {
             return optionals.get(7);
+        }
+
+        /**
+         * Checks if binaryValue has been modified since the _Builder was created.
+         *
+         * @return True if binaryValue has been modified.
+         */
+        public boolean isModifiedBinaryValue() {
+            return modified.get(7);
         }
 
         /**
@@ -1090,6 +1189,7 @@ public class OptionalFields
          */
         public _Builder clearBinaryValue() {
             optionals.clear(7);
+            modified.set(7);
             mBinaryValue = null;
             return this;
         }
@@ -1111,6 +1211,7 @@ public class OptionalFields
          */
         public _Builder setEnumValue(net.morimekta.test.providence.Value value) {
             optionals.set(8);
+            modified.set(8);
             mEnumValue = value;
             return this;
         }
@@ -1118,10 +1219,19 @@ public class OptionalFields
         /**
          * Checks for presence of the enumValue field.
          *
-         * @return True iff enumValue has been set.
+         * @return True if enumValue has been set.
          */
         public boolean isSetEnumValue() {
             return optionals.get(8);
+        }
+
+        /**
+         * Checks if enumValue has been modified since the _Builder was created.
+         *
+         * @return True if enumValue has been modified.
+         */
+        public boolean isModifiedEnumValue() {
+            return modified.get(8);
         }
 
         /**
@@ -1131,6 +1241,7 @@ public class OptionalFields
          */
         public _Builder clearEnumValue() {
             optionals.clear(8);
+            modified.set(8);
             mEnumValue = null;
             return this;
         }
@@ -1152,6 +1263,7 @@ public class OptionalFields
          */
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             optionals.set(9);
+            modified.set(9);
             mCompactValue_builder = null;
             mCompactValue = value;
             return this;
@@ -1160,10 +1272,19 @@ public class OptionalFields
         /**
          * Checks for presence of the compactValue field.
          *
-         * @return True iff compactValue has been set.
+         * @return True if compactValue has been set.
          */
         public boolean isSetCompactValue() {
             return optionals.get(9);
+        }
+
+        /**
+         * Checks if compactValue has been modified since the _Builder was created.
+         *
+         * @return True if compactValue has been modified.
+         */
+        public boolean isModifiedCompactValue() {
+            return modified.get(9);
         }
 
         /**
@@ -1173,6 +1294,7 @@ public class OptionalFields
          */
         public _Builder clearCompactValue() {
             optionals.clear(9);
+            modified.set(9);
             mCompactValue = null;
             mCompactValue_builder = null;
             return this;
@@ -1185,6 +1307,7 @@ public class OptionalFields
          */
         public net.morimekta.test.providence.CompactFields._Builder mutableCompactValue() {
             optionals.set(9);
+            modified.set(9);
 
             if (mCompactValue != null) {
                 mCompactValue_builder = mCompactValue.mutate();
@@ -1271,6 +1394,24 @@ public class OptionalFields
                 case 8: return optionals.get(7);
                 case 9: return optionals.get(8);
                 case 10: return optionals.get(9);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
+                case 6: return modified.get(5);
+                case 7: return modified.get(6);
+                case 8: return modified.get(7);
+                case 9: return modified.get(8);
+                case 10: return modified.get(9);
                 default: break;
             }
             return false;

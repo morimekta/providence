@@ -348,6 +348,7 @@ public class CompactFields
             extends net.morimekta.providence.PMessageBuilder<CompactFields,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mName;
         private int mId;
@@ -358,6 +359,7 @@ public class CompactFields
          */
         public _Builder() {
             optionals = new java.util.BitSet(3);
+            modified = new java.util.BitSet(3);
             mId = kDefaultId;
         }
 
@@ -385,14 +387,17 @@ public class CompactFields
         public _Builder merge(CompactFields from) {
             if (from.hasName()) {
                 optionals.set(0);
+                modified.set(0);
                 mName = from.getName();
             }
 
             optionals.set(1);
+            modified.set(1);
             mId = from.getId();
 
             if (from.hasLabel()) {
                 optionals.set(2);
+                modified.set(2);
                 mLabel = from.getLabel();
             }
             return this;
@@ -406,6 +411,7 @@ public class CompactFields
          */
         public _Builder setName(String value) {
             optionals.set(0);
+            modified.set(0);
             mName = value;
             return this;
         }
@@ -413,10 +419,19 @@ public class CompactFields
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(0);
         }
 
         /**
@@ -426,6 +441,7 @@ public class CompactFields
          */
         public _Builder clearName() {
             optionals.clear(0);
+            modified.set(0);
             mName = null;
             return this;
         }
@@ -447,6 +463,7 @@ public class CompactFields
          */
         public _Builder setId(int value) {
             optionals.set(1);
+            modified.set(1);
             mId = value;
             return this;
         }
@@ -454,10 +471,19 @@ public class CompactFields
         /**
          * Checks for presence of the id field.
          *
-         * @return True iff id has been set.
+         * @return True if id has been set.
          */
         public boolean isSetId() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if id has been modified since the _Builder was created.
+         *
+         * @return True if id has been modified.
+         */
+        public boolean isModifiedId() {
+            return modified.get(1);
         }
 
         /**
@@ -467,6 +493,7 @@ public class CompactFields
          */
         public _Builder clearId() {
             optionals.clear(1);
+            modified.set(1);
             mId = kDefaultId;
             return this;
         }
@@ -488,6 +515,7 @@ public class CompactFields
          */
         public _Builder setLabel(String value) {
             optionals.set(2);
+            modified.set(2);
             mLabel = value;
             return this;
         }
@@ -495,10 +523,19 @@ public class CompactFields
         /**
          * Checks for presence of the label field.
          *
-         * @return True iff label has been set.
+         * @return True if label has been set.
          */
         public boolean isSetLabel() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if label has been modified since the _Builder was created.
+         *
+         * @return True if label has been modified.
+         */
+        public boolean isModifiedLabel() {
+            return modified.get(2);
         }
 
         /**
@@ -508,6 +545,7 @@ public class CompactFields
          */
         public _Builder clearLabel() {
             optionals.clear(2);
+            modified.set(2);
             mLabel = null;
             return this;
         }
@@ -568,6 +606,17 @@ public class CompactFields
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
                 case 3: return optionals.get(2);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
                 default: break;
             }
             return false;

@@ -354,6 +354,7 @@ public class TypedefType
             extends net.morimekta.providence.PMessageBuilder<TypedefType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private String mType;
@@ -364,6 +365,7 @@ public class TypedefType
          */
         public _Builder() {
             optionals = new java.util.BitSet(3);
+            modified = new java.util.BitSet(3);
         }
 
         /**
@@ -392,16 +394,19 @@ public class TypedefType
         public _Builder merge(TypedefType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             if (from.hasType()) {
                 optionals.set(1);
+                modified.set(1);
                 mType = from.getType();
             }
 
             if (from.hasName()) {
                 optionals.set(2);
+                modified.set(2);
                 mName = from.getName();
             }
             return this;
@@ -415,6 +420,7 @@ public class TypedefType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -422,10 +428,19 @@ public class TypedefType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -435,6 +450,7 @@ public class TypedefType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -456,6 +472,7 @@ public class TypedefType
          */
         public _Builder setType(String value) {
             optionals.set(1);
+            modified.set(1);
             mType = value;
             return this;
         }
@@ -463,10 +480,19 @@ public class TypedefType
         /**
          * Checks for presence of the type field.
          *
-         * @return True iff type has been set.
+         * @return True if type has been set.
          */
         public boolean isSetType() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if type has been modified since the _Builder was created.
+         *
+         * @return True if type has been modified.
+         */
+        public boolean isModifiedType() {
+            return modified.get(1);
         }
 
         /**
@@ -476,6 +502,7 @@ public class TypedefType
          */
         public _Builder clearType() {
             optionals.clear(1);
+            modified.set(1);
             mType = null;
             return this;
         }
@@ -497,6 +524,7 @@ public class TypedefType
          */
         public _Builder setName(String value) {
             optionals.set(2);
+            modified.set(2);
             mName = value;
             return this;
         }
@@ -504,10 +532,19 @@ public class TypedefType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(2);
         }
 
         /**
@@ -517,6 +554,7 @@ public class TypedefType
          */
         public _Builder clearName() {
             optionals.clear(2);
+            modified.set(2);
             mName = null;
             return this;
         }
@@ -577,6 +615,17 @@ public class TypedefType
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
                 case 3: return optionals.get(2);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
                 default: break;
             }
             return false;

@@ -480,6 +480,7 @@ public class ServiceType
             extends net.morimekta.providence.PMessageBuilder<ServiceType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private String mName;
@@ -492,6 +493,7 @@ public class ServiceType
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
+            modified = new java.util.BitSet(5);
             mMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -530,27 +532,32 @@ public class ServiceType
         public _Builder merge(ServiceType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             if (from.hasName()) {
                 optionals.set(1);
+                modified.set(1);
                 mName = from.getName();
             }
 
             if (from.hasExtend()) {
                 optionals.set(2);
+                modified.set(2);
                 mExtend = from.getExtend();
             }
 
             if (from.hasMethods()) {
                 optionals.set(3);
+                modified.set(3);
                 mMethods.clear();
                 mMethods.addAll(from.getMethods());
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
+                modified.set(4);
                 mAnnotations.putAll(from.getAnnotations());
             }
             return this;
@@ -564,6 +571,7 @@ public class ServiceType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -571,10 +579,19 @@ public class ServiceType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -584,6 +601,7 @@ public class ServiceType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -605,6 +623,7 @@ public class ServiceType
          */
         public _Builder setName(String value) {
             optionals.set(1);
+            modified.set(1);
             mName = value;
             return this;
         }
@@ -612,10 +631,19 @@ public class ServiceType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(1);
         }
 
         /**
@@ -625,6 +653,7 @@ public class ServiceType
          */
         public _Builder clearName() {
             optionals.clear(1);
+            modified.set(1);
             mName = null;
             return this;
         }
@@ -646,6 +675,7 @@ public class ServiceType
          */
         public _Builder setExtend(String value) {
             optionals.set(2);
+            modified.set(2);
             mExtend = value;
             return this;
         }
@@ -653,10 +683,19 @@ public class ServiceType
         /**
          * Checks for presence of the extend field.
          *
-         * @return True iff extend has been set.
+         * @return True if extend has been set.
          */
         public boolean isSetExtend() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if extend has been modified since the _Builder was created.
+         *
+         * @return True if extend has been modified.
+         */
+        public boolean isModifiedExtend() {
+            return modified.get(2);
         }
 
         /**
@@ -666,6 +705,7 @@ public class ServiceType
          */
         public _Builder clearExtend() {
             optionals.clear(2);
+            modified.set(2);
             mExtend = null;
             return this;
         }
@@ -687,6 +727,7 @@ public class ServiceType
          */
         public _Builder setMethods(java.util.Collection<net.morimekta.providence.model.FunctionType> value) {
             optionals.set(3);
+            modified.set(3);
             mMethods.clear();
             mMethods.addAll(value);
             return this;
@@ -700,6 +741,7 @@ public class ServiceType
          */
         public _Builder addToMethods(net.morimekta.providence.model.FunctionType... values) {
             optionals.set(3);
+            modified.set(3);
             for (net.morimekta.providence.model.FunctionType item : values) {
                 mMethods.add(item);
             }
@@ -709,10 +751,19 @@ public class ServiceType
         /**
          * Checks for presence of the methods field.
          *
-         * @return True iff methods has been set.
+         * @return True if methods has been set.
          */
         public boolean isSetMethods() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if methods has been modified since the _Builder was created.
+         *
+         * @return True if methods has been modified.
+         */
+        public boolean isModifiedMethods() {
+            return modified.get(3);
         }
 
         /**
@@ -722,6 +773,7 @@ public class ServiceType
          */
         public _Builder clearMethods() {
             optionals.clear(3);
+            modified.set(3);
             mMethods.clear();
             return this;
         }
@@ -733,6 +785,7 @@ public class ServiceType
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FunctionType> mutableMethods() {
             optionals.set(3);
+            modified.set(3);
             return mMethods;
         }
 
@@ -744,6 +797,7 @@ public class ServiceType
          */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
@@ -758,6 +812,7 @@ public class ServiceType
          */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.put(key, value);
             return this;
         }
@@ -765,10 +820,19 @@ public class ServiceType
         /**
          * Checks for presence of the annotations field.
          *
-         * @return True iff annotations has been set.
+         * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if annotations has been modified since the _Builder was created.
+         *
+         * @return True if annotations has been modified.
+         */
+        public boolean isModifiedAnnotations() {
+            return modified.get(4);
         }
 
         /**
@@ -778,6 +842,7 @@ public class ServiceType
          */
         public _Builder clearAnnotations() {
             optionals.clear(4);
+            modified.set(4);
             mAnnotations.clear();
             return this;
         }
@@ -789,6 +854,7 @@ public class ServiceType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
+            modified.set(4);
             return mAnnotations;
         }
 
@@ -847,6 +913,19 @@ public class ServiceType
                 case 3: return optionals.get(2);
                 case 4: return optionals.get(3);
                 case 5: return optionals.get(4);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
                 default: break;
             }
             return false;

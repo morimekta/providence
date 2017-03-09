@@ -455,6 +455,7 @@ public class Calculator {
                 extends net.morimekta.providence.PMessageBuilder<Calculate_request,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private java.util.BitSet optionals;
+            private java.util.BitSet modified;
 
             private net.morimekta.test.calculator.Operation mOp;
             private net.morimekta.test.calculator.Operation._Builder mOp_builder;
@@ -464,6 +465,7 @@ public class Calculator {
              */
             public _Builder() {
                 optionals = new java.util.BitSet(1);
+                modified = new java.util.BitSet(1);
             }
 
             /**
@@ -484,6 +486,7 @@ public class Calculator {
             public _Builder merge(Calculate_request from) {
                 if (from.hasOp()) {
                     optionals.set(0);
+                    modified.set(0);
                     if (mOp_builder != null) {
                         mOp_builder.merge(from.getOp());
                     } else if (mOp != null) {
@@ -504,6 +507,7 @@ public class Calculator {
              */
             public _Builder setOp(net.morimekta.test.calculator.Operation value) {
                 optionals.set(0);
+                modified.set(0);
                 mOp_builder = null;
                 mOp = value;
                 return this;
@@ -512,10 +516,19 @@ public class Calculator {
             /**
              * Checks for presence of the op field.
              *
-             * @return True iff op has been set.
+             * @return True if op has been set.
              */
             public boolean isSetOp() {
                 return optionals.get(0);
+            }
+
+            /**
+             * Checks if op has been modified since the _Builder was created.
+             *
+             * @return True if op has been modified.
+             */
+            public boolean isModifiedOp() {
+                return modified.get(0);
             }
 
             /**
@@ -525,6 +538,7 @@ public class Calculator {
              */
             public _Builder clearOp() {
                 optionals.clear(0);
+                modified.set(0);
                 mOp = null;
                 mOp_builder = null;
                 return this;
@@ -537,6 +551,7 @@ public class Calculator {
              */
             public net.morimekta.test.calculator.Operation._Builder mutableOp() {
                 optionals.set(0);
+                modified.set(0);
 
                 if (mOp != null) {
                     mOp_builder = mOp.mutate();
@@ -587,6 +602,15 @@ public class Calculator {
             public boolean isSet(int key) {
                 switch (key) {
                     case 1: return optionals.get(0);
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isModified(int key) {
+                switch (key) {
+                    case 1: return modified.get(0);
                     default: break;
                 }
                 return false;
@@ -977,6 +1001,8 @@ public class Calculator {
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private _Field tUnionField;
 
+            private java.lang.Boolean modified;
+
             private net.morimekta.test.calculator.Operand mSuccess;
             private net.morimekta.test.calculator.Operand._Builder mSuccess_builder;
             private net.morimekta.test.calculator.CalculateException mCe;
@@ -986,6 +1012,7 @@ public class Calculator {
              * Make a calculator.calculate___response builder.
              */
             public _Builder() {
+                modified = false;
             }
 
             /**
@@ -1037,6 +1064,7 @@ public class Calculator {
              */
             public _Builder setSuccess(net.morimekta.test.calculator.Operand value) {
                 tUnionField = _Field.SUCCESS;
+                modified = true;
                 mSuccess_builder = null;
                 mSuccess = value;
                 return this;
@@ -1045,7 +1073,7 @@ public class Calculator {
             /**
              * Checks for presence of the success field.
              *
-             * @return True iff success has been set.
+             * @return True if success has been set.
              */
             public boolean isSetSuccess() {
                 return tUnionField == _Field.SUCCESS;
@@ -1058,6 +1086,7 @@ public class Calculator {
              */
             public _Builder clearSuccess() {
                 if (tUnionField == _Field.SUCCESS) tUnionField = null;
+                modified = true;
                 mSuccess = null;
                 mSuccess_builder = null;
                 return this;
@@ -1073,6 +1102,7 @@ public class Calculator {
                     clearSuccess();
                 }
                 tUnionField = _Field.SUCCESS;
+                modified = true;
 
                 if (mSuccess != null) {
                     mSuccess_builder = mSuccess.mutate();
@@ -1091,6 +1121,7 @@ public class Calculator {
              */
             public _Builder setCe(net.morimekta.test.calculator.CalculateException value) {
                 tUnionField = _Field.CE;
+                modified = true;
                 mCe_builder = null;
                 mCe = value;
                 return this;
@@ -1099,7 +1130,7 @@ public class Calculator {
             /**
              * Checks for presence of the ce field.
              *
-             * @return True iff ce has been set.
+             * @return True if ce has been set.
              */
             public boolean isSetCe() {
                 return tUnionField == _Field.CE;
@@ -1112,6 +1143,7 @@ public class Calculator {
              */
             public _Builder clearCe() {
                 if (tUnionField == _Field.CE) tUnionField = null;
+                modified = true;
                 mCe = null;
                 mCe_builder = null;
                 return this;
@@ -1127,6 +1159,7 @@ public class Calculator {
                     clearCe();
                 }
                 tUnionField = _Field.CE;
+                modified = true;
 
                 if (mCe != null) {
                     mCe_builder = mCe.mutate();
@@ -1135,6 +1168,15 @@ public class Calculator {
                     mCe_builder = net.morimekta.test.calculator.CalculateException.builder();
                 }
                 return mCe_builder;
+            }
+
+            /**
+             * Checks if calculate___response has been modified since the _Builder was created.
+             *
+             * @return True if calculate___response has been modified.
+             */
+            public boolean isUnionModified() {
+                return modified;
             }
 
             @Override
@@ -1185,6 +1227,11 @@ public class Calculator {
                     default: break;
                 }
                 return false;
+            }
+
+            @Override
+            public boolean isModified(int key) {
+                return modified;
             }
 
             @Override
@@ -1487,12 +1534,14 @@ public class Calculator {
                 extends net.morimekta.providence.PMessageBuilder<Iamalive_request,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private java.util.BitSet optionals;
+            private java.util.BitSet modified;
 
             /**
              * Make a calculator.iamalive___request builder.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
+                modified = new java.util.BitSet(0);
             }
 
             /**
@@ -1543,6 +1592,14 @@ public class Calculator {
 
             @Override
             public boolean isSet(int key) {
+                switch (key) {
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isModified(int key) {
                 switch (key) {
                     default: break;
                 }

@@ -662,6 +662,8 @@ public class UnionFields
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
+        private java.lang.Boolean modified;
+
         private boolean mBooleanValue;
         private byte mByteValue;
         private short mShortValue;
@@ -678,6 +680,7 @@ public class UnionFields
          * Make a providence.UnionFields builder.
          */
         public _Builder() {
+            modified = false;
             mBooleanValue = kDefaultBooleanValue;
             mByteValue = kDefaultByteValue;
             mShortValue = kDefaultShortValue;
@@ -771,6 +774,7 @@ public class UnionFields
          */
         public _Builder setBooleanValue(boolean value) {
             tUnionField = _Field.BOOLEAN_VALUE;
+            modified = true;
             mBooleanValue = value;
             return this;
         }
@@ -778,7 +782,7 @@ public class UnionFields
         /**
          * Checks for presence of the booleanValue field.
          *
-         * @return True iff booleanValue has been set.
+         * @return True if booleanValue has been set.
          */
         public boolean isSetBooleanValue() {
             return tUnionField == _Field.BOOLEAN_VALUE;
@@ -791,6 +795,7 @@ public class UnionFields
          */
         public _Builder clearBooleanValue() {
             if (tUnionField == _Field.BOOLEAN_VALUE) tUnionField = null;
+            modified = true;
             mBooleanValue = kDefaultBooleanValue;
             return this;
         }
@@ -812,6 +817,7 @@ public class UnionFields
          */
         public _Builder setByteValue(byte value) {
             tUnionField = _Field.BYTE_VALUE;
+            modified = true;
             mByteValue = value;
             return this;
         }
@@ -819,7 +825,7 @@ public class UnionFields
         /**
          * Checks for presence of the byteValue field.
          *
-         * @return True iff byteValue has been set.
+         * @return True if byteValue has been set.
          */
         public boolean isSetByteValue() {
             return tUnionField == _Field.BYTE_VALUE;
@@ -832,6 +838,7 @@ public class UnionFields
          */
         public _Builder clearByteValue() {
             if (tUnionField == _Field.BYTE_VALUE) tUnionField = null;
+            modified = true;
             mByteValue = kDefaultByteValue;
             return this;
         }
@@ -853,6 +860,7 @@ public class UnionFields
          */
         public _Builder setShortValue(short value) {
             tUnionField = _Field.SHORT_VALUE;
+            modified = true;
             mShortValue = value;
             return this;
         }
@@ -860,7 +868,7 @@ public class UnionFields
         /**
          * Checks for presence of the shortValue field.
          *
-         * @return True iff shortValue has been set.
+         * @return True if shortValue has been set.
          */
         public boolean isSetShortValue() {
             return tUnionField == _Field.SHORT_VALUE;
@@ -873,6 +881,7 @@ public class UnionFields
          */
         public _Builder clearShortValue() {
             if (tUnionField == _Field.SHORT_VALUE) tUnionField = null;
+            modified = true;
             mShortValue = kDefaultShortValue;
             return this;
         }
@@ -894,6 +903,7 @@ public class UnionFields
          */
         public _Builder setIntegerValue(int value) {
             tUnionField = _Field.INTEGER_VALUE;
+            modified = true;
             mIntegerValue = value;
             return this;
         }
@@ -901,7 +911,7 @@ public class UnionFields
         /**
          * Checks for presence of the integerValue field.
          *
-         * @return True iff integerValue has been set.
+         * @return True if integerValue has been set.
          */
         public boolean isSetIntegerValue() {
             return tUnionField == _Field.INTEGER_VALUE;
@@ -914,6 +924,7 @@ public class UnionFields
          */
         public _Builder clearIntegerValue() {
             if (tUnionField == _Field.INTEGER_VALUE) tUnionField = null;
+            modified = true;
             mIntegerValue = kDefaultIntegerValue;
             return this;
         }
@@ -935,6 +946,7 @@ public class UnionFields
          */
         public _Builder setLongValue(long value) {
             tUnionField = _Field.LONG_VALUE;
+            modified = true;
             mLongValue = value;
             return this;
         }
@@ -942,7 +954,7 @@ public class UnionFields
         /**
          * Checks for presence of the longValue field.
          *
-         * @return True iff longValue has been set.
+         * @return True if longValue has been set.
          */
         public boolean isSetLongValue() {
             return tUnionField == _Field.LONG_VALUE;
@@ -955,6 +967,7 @@ public class UnionFields
          */
         public _Builder clearLongValue() {
             if (tUnionField == _Field.LONG_VALUE) tUnionField = null;
+            modified = true;
             mLongValue = kDefaultLongValue;
             return this;
         }
@@ -976,6 +989,7 @@ public class UnionFields
          */
         public _Builder setDoubleValue(double value) {
             tUnionField = _Field.DOUBLE_VALUE;
+            modified = true;
             mDoubleValue = value;
             return this;
         }
@@ -983,7 +997,7 @@ public class UnionFields
         /**
          * Checks for presence of the doubleValue field.
          *
-         * @return True iff doubleValue has been set.
+         * @return True if doubleValue has been set.
          */
         public boolean isSetDoubleValue() {
             return tUnionField == _Field.DOUBLE_VALUE;
@@ -996,6 +1010,7 @@ public class UnionFields
          */
         public _Builder clearDoubleValue() {
             if (tUnionField == _Field.DOUBLE_VALUE) tUnionField = null;
+            modified = true;
             mDoubleValue = kDefaultDoubleValue;
             return this;
         }
@@ -1017,6 +1032,7 @@ public class UnionFields
          */
         public _Builder setStringValue(String value) {
             tUnionField = _Field.STRING_VALUE;
+            modified = true;
             mStringValue = value;
             return this;
         }
@@ -1024,7 +1040,7 @@ public class UnionFields
         /**
          * Checks for presence of the stringValue field.
          *
-         * @return True iff stringValue has been set.
+         * @return True if stringValue has been set.
          */
         public boolean isSetStringValue() {
             return tUnionField == _Field.STRING_VALUE;
@@ -1037,6 +1053,7 @@ public class UnionFields
          */
         public _Builder clearStringValue() {
             if (tUnionField == _Field.STRING_VALUE) tUnionField = null;
+            modified = true;
             mStringValue = null;
             return this;
         }
@@ -1058,6 +1075,7 @@ public class UnionFields
          */
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
             tUnionField = _Field.BINARY_VALUE;
+            modified = true;
             mBinaryValue = value;
             return this;
         }
@@ -1065,7 +1083,7 @@ public class UnionFields
         /**
          * Checks for presence of the binaryValue field.
          *
-         * @return True iff binaryValue has been set.
+         * @return True if binaryValue has been set.
          */
         public boolean isSetBinaryValue() {
             return tUnionField == _Field.BINARY_VALUE;
@@ -1078,6 +1096,7 @@ public class UnionFields
          */
         public _Builder clearBinaryValue() {
             if (tUnionField == _Field.BINARY_VALUE) tUnionField = null;
+            modified = true;
             mBinaryValue = null;
             return this;
         }
@@ -1099,6 +1118,7 @@ public class UnionFields
          */
         public _Builder setEnumValue(net.morimekta.test.providence.Value value) {
             tUnionField = _Field.ENUM_VALUE;
+            modified = true;
             mEnumValue = value;
             return this;
         }
@@ -1106,7 +1126,7 @@ public class UnionFields
         /**
          * Checks for presence of the enumValue field.
          *
-         * @return True iff enumValue has been set.
+         * @return True if enumValue has been set.
          */
         public boolean isSetEnumValue() {
             return tUnionField == _Field.ENUM_VALUE;
@@ -1119,6 +1139,7 @@ public class UnionFields
          */
         public _Builder clearEnumValue() {
             if (tUnionField == _Field.ENUM_VALUE) tUnionField = null;
+            modified = true;
             mEnumValue = null;
             return this;
         }
@@ -1140,6 +1161,7 @@ public class UnionFields
          */
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             tUnionField = _Field.COMPACT_VALUE;
+            modified = true;
             mCompactValue_builder = null;
             mCompactValue = value;
             return this;
@@ -1148,7 +1170,7 @@ public class UnionFields
         /**
          * Checks for presence of the compactValue field.
          *
-         * @return True iff compactValue has been set.
+         * @return True if compactValue has been set.
          */
         public boolean isSetCompactValue() {
             return tUnionField == _Field.COMPACT_VALUE;
@@ -1161,6 +1183,7 @@ public class UnionFields
          */
         public _Builder clearCompactValue() {
             if (tUnionField == _Field.COMPACT_VALUE) tUnionField = null;
+            modified = true;
             mCompactValue = null;
             mCompactValue_builder = null;
             return this;
@@ -1176,6 +1199,7 @@ public class UnionFields
                 clearCompactValue();
             }
             tUnionField = _Field.COMPACT_VALUE;
+            modified = true;
 
             if (mCompactValue != null) {
                 mCompactValue_builder = mCompactValue.mutate();
@@ -1184,6 +1208,15 @@ public class UnionFields
                 mCompactValue_builder = net.morimekta.test.providence.CompactFields.builder();
             }
             return mCompactValue_builder;
+        }
+
+        /**
+         * Checks if UnionFields has been modified since the _Builder was created.
+         *
+         * @return True if UnionFields has been modified.
+         */
+        public boolean isUnionModified() {
+            return modified;
         }
 
         @Override
@@ -1265,6 +1298,11 @@ public class UnionFields
                 default: break;
             }
             return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            return modified;
         }
 
         @Override

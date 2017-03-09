@@ -283,6 +283,7 @@ public class Imaginary
             extends net.morimekta.providence.PMessageBuilder<Imaginary,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private double mV;
         private double mI;
@@ -292,6 +293,7 @@ public class Imaginary
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
+            modified = new java.util.BitSet(2);
             mV = kDefaultV;
             mI = kDefaultI;
         }
@@ -313,9 +315,11 @@ public class Imaginary
         @Override
         public _Builder merge(Imaginary from) {
             optionals.set(0);
+            modified.set(0);
             mV = from.getV();
 
             optionals.set(1);
+            modified.set(1);
             mI = from.getI();
             return this;
         }
@@ -328,6 +332,7 @@ public class Imaginary
          */
         public _Builder setV(double value) {
             optionals.set(0);
+            modified.set(0);
             mV = value;
             return this;
         }
@@ -335,10 +340,19 @@ public class Imaginary
         /**
          * Checks for presence of the v field.
          *
-         * @return True iff v has been set.
+         * @return True if v has been set.
          */
         public boolean isSetV() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if v has been modified since the _Builder was created.
+         *
+         * @return True if v has been modified.
+         */
+        public boolean isModifiedV() {
+            return modified.get(0);
         }
 
         /**
@@ -348,6 +362,7 @@ public class Imaginary
          */
         public _Builder clearV() {
             optionals.clear(0);
+            modified.set(0);
             mV = kDefaultV;
             return this;
         }
@@ -369,6 +384,7 @@ public class Imaginary
          */
         public _Builder setI(double value) {
             optionals.set(1);
+            modified.set(1);
             mI = value;
             return this;
         }
@@ -376,10 +392,19 @@ public class Imaginary
         /**
          * Checks for presence of the i field.
          *
-         * @return True iff i has been set.
+         * @return True if i has been set.
          */
         public boolean isSetI() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if i has been modified since the _Builder was created.
+         *
+         * @return True if i has been modified.
+         */
+        public boolean isModifiedI() {
+            return modified.get(1);
         }
 
         /**
@@ -389,6 +414,7 @@ public class Imaginary
          */
         public _Builder clearI() {
             optionals.clear(1);
+            modified.set(1);
             mI = kDefaultI;
             return this;
         }
@@ -445,6 +471,16 @@ public class Imaginary
             switch (key) {
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
                 default: break;
             }
             return false;

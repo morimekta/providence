@@ -478,6 +478,7 @@ public class MessageType
             extends net.morimekta.providence.PMessageBuilder<MessageType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private net.morimekta.providence.model.MessageVariant mVariant;
@@ -490,6 +491,7 @@ public class MessageType
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
+            modified = new java.util.BitSet(5);
             mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -528,27 +530,32 @@ public class MessageType
         public _Builder merge(MessageType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             if (from.hasVariant()) {
                 optionals.set(1);
+                modified.set(1);
                 mVariant = from.getVariant();
             }
 
             if (from.hasName()) {
                 optionals.set(2);
+                modified.set(2);
                 mName = from.getName();
             }
 
             if (from.hasFields()) {
                 optionals.set(3);
+                modified.set(3);
                 mFields.clear();
                 mFields.addAll(from.getFields());
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
+                modified.set(4);
                 mAnnotations.putAll(from.getAnnotations());
             }
             return this;
@@ -562,6 +569,7 @@ public class MessageType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -569,10 +577,19 @@ public class MessageType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -582,6 +599,7 @@ public class MessageType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -603,6 +621,7 @@ public class MessageType
          */
         public _Builder setVariant(net.morimekta.providence.model.MessageVariant value) {
             optionals.set(1);
+            modified.set(1);
             mVariant = value;
             return this;
         }
@@ -610,10 +629,19 @@ public class MessageType
         /**
          * Checks for presence of the variant field.
          *
-         * @return True iff variant has been set.
+         * @return True if variant has been set.
          */
         public boolean isSetVariant() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if variant has been modified since the _Builder was created.
+         *
+         * @return True if variant has been modified.
+         */
+        public boolean isModifiedVariant() {
+            return modified.get(1);
         }
 
         /**
@@ -623,6 +651,7 @@ public class MessageType
          */
         public _Builder clearVariant() {
             optionals.clear(1);
+            modified.set(1);
             mVariant = null;
             return this;
         }
@@ -644,6 +673,7 @@ public class MessageType
          */
         public _Builder setName(String value) {
             optionals.set(2);
+            modified.set(2);
             mName = value;
             return this;
         }
@@ -651,10 +681,19 @@ public class MessageType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(2);
         }
 
         /**
@@ -664,6 +703,7 @@ public class MessageType
          */
         public _Builder clearName() {
             optionals.clear(2);
+            modified.set(2);
             mName = null;
             return this;
         }
@@ -685,6 +725,7 @@ public class MessageType
          */
         public _Builder setFields(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(3);
+            modified.set(3);
             mFields.clear();
             mFields.addAll(value);
             return this;
@@ -698,6 +739,7 @@ public class MessageType
          */
         public _Builder addToFields(net.morimekta.providence.model.FieldType... values) {
             optionals.set(3);
+            modified.set(3);
             for (net.morimekta.providence.model.FieldType item : values) {
                 mFields.add(item);
             }
@@ -707,10 +749,19 @@ public class MessageType
         /**
          * Checks for presence of the fields field.
          *
-         * @return True iff fields has been set.
+         * @return True if fields has been set.
          */
         public boolean isSetFields() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if fields has been modified since the _Builder was created.
+         *
+         * @return True if fields has been modified.
+         */
+        public boolean isModifiedFields() {
+            return modified.get(3);
         }
 
         /**
@@ -720,6 +771,7 @@ public class MessageType
          */
         public _Builder clearFields() {
             optionals.clear(3);
+            modified.set(3);
             mFields.clear();
             return this;
         }
@@ -731,6 +783,7 @@ public class MessageType
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableFields() {
             optionals.set(3);
+            modified.set(3);
             return mFields;
         }
 
@@ -742,6 +795,7 @@ public class MessageType
          */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
@@ -756,6 +810,7 @@ public class MessageType
          */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.put(key, value);
             return this;
         }
@@ -763,10 +818,19 @@ public class MessageType
         /**
          * Checks for presence of the annotations field.
          *
-         * @return True iff annotations has been set.
+         * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if annotations has been modified since the _Builder was created.
+         *
+         * @return True if annotations has been modified.
+         */
+        public boolean isModifiedAnnotations() {
+            return modified.get(4);
         }
 
         /**
@@ -776,6 +840,7 @@ public class MessageType
          */
         public _Builder clearAnnotations() {
             optionals.clear(4);
+            modified.set(4);
             mAnnotations.clear();
             return this;
         }
@@ -787,6 +852,7 @@ public class MessageType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
+            modified.set(4);
             return mAnnotations;
         }
 
@@ -845,6 +911,19 @@ public class MessageType
                 case 3: return optionals.get(2);
                 case 4: return optionals.get(3);
                 case 5: return optionals.get(4);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
                 default: break;
             }
             return false;

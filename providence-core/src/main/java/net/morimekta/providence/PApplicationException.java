@@ -337,6 +337,7 @@ public class PApplicationException
             extends net.morimekta.providence.PMessageBuilder<PApplicationException,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mMessage;
         private net.morimekta.providence.PApplicationExceptionType mId;
@@ -346,6 +347,7 @@ public class PApplicationException
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
+            modified = new java.util.BitSet(2);
         }
 
         /**
@@ -370,11 +372,13 @@ public class PApplicationException
         public _Builder merge(PApplicationException from) {
             if (from.hasMessage()) {
                 optionals.set(0);
+                modified.set(0);
                 mMessage = from.getMessage();
             }
 
             if (from.hasId()) {
                 optionals.set(1);
+                modified.set(1);
                 mId = from.getId();
             }
             return this;
@@ -388,6 +392,7 @@ public class PApplicationException
          */
         public _Builder setMessage(String value) {
             optionals.set(0);
+            modified.set(0);
             mMessage = value;
             return this;
         }
@@ -395,10 +400,19 @@ public class PApplicationException
         /**
          * Exception message.
          *
-         * @return True iff message has been set.
+         * @return True if message has been set.
          */
         public boolean isSetMessage() {
             return optionals.get(0);
+        }
+
+        /**
+         * Exception message.
+         *
+         * @return True if message has been modified.
+         */
+        public boolean isModifiedMessage() {
+            return modified.get(0);
         }
 
         /**
@@ -408,6 +422,7 @@ public class PApplicationException
          */
         public _Builder clearMessage() {
             optionals.clear(0);
+            modified.set(0);
             mMessage = null;
             return this;
         }
@@ -429,6 +444,7 @@ public class PApplicationException
          */
         public _Builder setId(net.morimekta.providence.PApplicationExceptionType value) {
             optionals.set(1);
+            modified.set(1);
             mId = value;
             return this;
         }
@@ -436,10 +452,19 @@ public class PApplicationException
         /**
          * The application exception type.
          *
-         * @return True iff id has been set.
+         * @return True if id has been set.
          */
         public boolean isSetId() {
             return optionals.get(1);
+        }
+
+        /**
+         * The application exception type.
+         *
+         * @return True if id has been modified.
+         */
+        public boolean isModifiedId() {
+            return modified.get(1);
         }
 
         /**
@@ -449,6 +474,7 @@ public class PApplicationException
          */
         public _Builder clearId() {
             optionals.clear(1);
+            modified.set(1);
             mId = null;
             return this;
         }
@@ -505,6 +531,16 @@ public class PApplicationException
             switch (key) {
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
                 default: break;
             }
             return false;

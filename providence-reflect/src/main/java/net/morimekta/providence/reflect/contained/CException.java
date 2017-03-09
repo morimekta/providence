@@ -314,6 +314,11 @@ public class CException extends Exception implements PMessage<CException, CField
         }
 
         @Override
+        public boolean isModified(int key) {
+            return false;
+        }
+
+        @Override
         public Builder addTo(int key, Object value) {
             PField field = descriptor.getField(key);
             if (field == null) {

@@ -362,6 +362,8 @@ public class Operand
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
+        private java.lang.Boolean modified;
+
         private net.morimekta.test.calculator.Operation mOperation;
         private net.morimekta.test.calculator.Operation._Builder mOperation_builder;
         private double mNumber;
@@ -372,6 +374,7 @@ public class Operand
          * Make a calculator.Operand builder.
          */
         public _Builder() {
+            modified = false;
             mNumber = kDefaultNumber;
         }
 
@@ -429,6 +432,7 @@ public class Operand
          */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             tUnionField = _Field.OPERATION;
+            modified = true;
             mOperation_builder = null;
             mOperation = value;
             return this;
@@ -437,7 +441,7 @@ public class Operand
         /**
          * Checks for presence of the operation field.
          *
-         * @return True iff operation has been set.
+         * @return True if operation has been set.
          */
         public boolean isSetOperation() {
             return tUnionField == _Field.OPERATION;
@@ -450,6 +454,7 @@ public class Operand
          */
         public _Builder clearOperation() {
             if (tUnionField == _Field.OPERATION) tUnionField = null;
+            modified = true;
             mOperation = null;
             mOperation_builder = null;
             return this;
@@ -465,6 +470,7 @@ public class Operand
                 clearOperation();
             }
             tUnionField = _Field.OPERATION;
+            modified = true;
 
             if (mOperation != null) {
                 mOperation_builder = mOperation.mutate();
@@ -483,6 +489,7 @@ public class Operand
          */
         public _Builder setNumber(double value) {
             tUnionField = _Field.NUMBER;
+            modified = true;
             mNumber = value;
             return this;
         }
@@ -490,7 +497,7 @@ public class Operand
         /**
          * Checks for presence of the number field.
          *
-         * @return True iff number has been set.
+         * @return True if number has been set.
          */
         public boolean isSetNumber() {
             return tUnionField == _Field.NUMBER;
@@ -503,6 +510,7 @@ public class Operand
          */
         public _Builder clearNumber() {
             if (tUnionField == _Field.NUMBER) tUnionField = null;
+            modified = true;
             mNumber = kDefaultNumber;
             return this;
         }
@@ -524,6 +532,7 @@ public class Operand
          */
         public _Builder setImaginary(net.morimekta.test.number.Imaginary value) {
             tUnionField = _Field.IMAGINARY;
+            modified = true;
             mImaginary_builder = null;
             mImaginary = value;
             return this;
@@ -532,7 +541,7 @@ public class Operand
         /**
          * Checks for presence of the imaginary field.
          *
-         * @return True iff imaginary has been set.
+         * @return True if imaginary has been set.
          */
         public boolean isSetImaginary() {
             return tUnionField == _Field.IMAGINARY;
@@ -545,6 +554,7 @@ public class Operand
          */
         public _Builder clearImaginary() {
             if (tUnionField == _Field.IMAGINARY) tUnionField = null;
+            modified = true;
             mImaginary = null;
             mImaginary_builder = null;
             return this;
@@ -560,6 +570,7 @@ public class Operand
                 clearImaginary();
             }
             tUnionField = _Field.IMAGINARY;
+            modified = true;
 
             if (mImaginary != null) {
                 mImaginary_builder = mImaginary.mutate();
@@ -568,6 +579,15 @@ public class Operand
                 mImaginary_builder = net.morimekta.test.number.Imaginary.builder();
             }
             return mImaginary_builder;
+        }
+
+        /**
+         * Checks if Operand has been modified since the _Builder was created.
+         *
+         * @return True if Operand has been modified.
+         */
+        public boolean isUnionModified() {
+            return modified;
         }
 
         @Override
@@ -622,6 +642,11 @@ public class Operand
                 default: break;
             }
             return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            return modified;
         }
 
         @Override
