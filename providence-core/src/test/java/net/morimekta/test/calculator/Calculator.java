@@ -578,6 +578,15 @@ public class Calculator {
                         _Field.OP, mOp);
             }
 
+            /**
+             * Get a java.util.Collection with _Field.
+             */
+            public java.util.Collection<_Field> modifiedFields() {
+                return java.util.Arrays.asList(kDescriptor.getFields())
+                        .stream().filter(f -> isModified(f))
+                        .collect(java.util.stream.Collectors.toList());
+            }
+
             @Override
             @SuppressWarnings("unchecked")
             public net.morimekta.providence.PMessageBuilder mutator(int key) {
@@ -1570,6 +1579,15 @@ public class Calculator {
             public int hashCode() {
                 return java.util.Objects.hash(
                         Iamalive_request.class, optionals);
+            }
+
+            /**
+             * Get a java.util.Collection with _Field.
+             */
+            public java.util.Collection<_Field> modifiedFields() {
+                return java.util.Arrays.asList(kDescriptor.getFields())
+                        .stream().filter(f -> isModified(f))
+                        .collect(java.util.stream.Collectors.toList());
             }
 
             @Override
