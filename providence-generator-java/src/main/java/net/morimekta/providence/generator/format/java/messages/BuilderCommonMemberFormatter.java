@@ -33,9 +33,11 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.util.Strings.camelCase;
@@ -111,6 +113,9 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
         appendEquals(message);
         appendHashCode(message);
+        if( !message.isUnion() ) {
+            appendModifiedFieldCollection(message);
+        }
     }
 
     @Override
@@ -186,6 +191,32 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         writer.end()
               .append(");")
+              .end()
+              .appendln("}")
+              .newline();
+    }
+
+    /**
+     * {@code
+     *  public Collection<_Field> modifiedFields() {
+     *      return Arrays.asList(kDescriptor.getFields())
+     *              .stream().filter(t -> isModified(t))
+     *              .collect(Collectors.toList());
+     *  }
+     * }
+     * @param message JMessage to append to.
+     */
+    private void appendModifiedFieldCollection(JMessage<?> message) {
+        BlockCommentBuilder comment = new BlockCommentBuilder(writer);
+        comment.comment("Get a " + Collection.class.getName() + " with _Field.")
+               .finish();
+        writer.formatln("public %s<%s> modifiedFields() {", Collection.class.getName(), "_Field")
+              .begin()
+              .formatln("return %s.asList(%s.getFields())", Arrays.class.getName(), "kDescriptor")
+              .begin().begin()
+              .appendln(".stream().filter(f -> isModified(f))")
+              .formatln(".collect(%s.toList());", Collectors.class.getName())
+              .end().end()
               .end()
               .appendln("}")
               .newline();
