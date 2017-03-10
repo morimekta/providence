@@ -26,6 +26,9 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.meta.When;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Base class for message builders.
@@ -108,6 +111,17 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     public boolean isModified(@Nonnull F field) {
         return isModified(field.getKey());
     }
+
+    /**
+     * Get a Collection of F with fields Modified since creation of the builder.
+     *
+     * @return Collection of F
+     */
+    public Collection<F> modifiedFields() {
+           return Arrays.stream(descriptor().getFields())
+                        .filter(this::isModified)
+                        .collect(Collectors.toList());
+     }
 
     /**
      * Adds a value to a set or list container.

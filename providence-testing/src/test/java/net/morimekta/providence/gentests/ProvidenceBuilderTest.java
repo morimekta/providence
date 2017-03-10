@@ -96,6 +96,7 @@ public class ProvidenceBuilderTest {
                                          .setCompactValue(new CompactFields("b", 2, null))
                                          .build();
 
+        // C will have modified from both a and b.
         OptionalFields._Builder c = a.merge(b);
 
         assertThat(c.isModified(OptionalFields._Field.INTEGER_VALUE), is(true));
@@ -107,6 +108,7 @@ public class ProvidenceBuilderTest {
                                                 OptionalFields._Field.COMPACT_VALUE,
                                                 OptionalFields._Field.DOUBLE_VALUE));
 
+        // enum value will also be modified, although nothing has changed internally.
         c.clearEnumValue();
 
         assertThat(c.isModified(OptionalFields._Field.INTEGER_VALUE), is(true));
@@ -119,7 +121,33 @@ public class ProvidenceBuilderTest {
                                                 OptionalFields._Field.DOUBLE_VALUE,
                                                 OptionalFields._Field.ENUM_VALUE));
 
-        assertThat(c.build().mutate().modifiedFields().size(), is(0));
+        // See that all fields expected are set.
+        b = c.build();
+
+        for( OptionalFields._Field field : OptionalFields.kDescriptor.getFields() ) {
+            switch( field ) {
+                case INTEGER_VALUE:
+                case COMPACT_VALUE:
+                case DOUBLE_VALUE:
+                    assertThat(field.getName(), b.has(field), is(true));
+                    break;
+                case ENUM_VALUE:
+                    // this is a cleared value so it was modified, but won't have a valid value.
+                    assertThat(field.getName(), b.has(field), is(false));
+                    break;
+                default:
+                    assertThat(field.getName(), b.has(field), is(false));
+                    break;
+            }
+        }
+
+        // See that all fields modified after reset is false.
+        c = b.mutate();
+
+        for( OptionalFields._Field field : OptionalFields.kDescriptor.getFields() ) {
+            assertThat(c.isModified(field), is(false));
+        }
+        assertThat(c.modifiedFields().size(), is(0));
     }
 
     @Test
