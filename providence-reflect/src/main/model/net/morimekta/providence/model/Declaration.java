@@ -456,7 +456,7 @@ public class Declaration
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
-        private java.lang.Boolean modified;
+        private boolean modified;
 
         private net.morimekta.providence.model.EnumType mDeclEnum;
         private net.morimekta.providence.model.EnumType._Builder mDeclEnum_builder;

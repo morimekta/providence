@@ -1001,7 +1001,7 @@ public class Calculator {
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private _Field tUnionField;
 
-            private java.lang.Boolean modified;
+            private boolean modified;
 
             private net.morimekta.test.calculator.Operand mSuccess;
             private net.morimekta.test.calculator.Operand._Builder mSuccess_builder;

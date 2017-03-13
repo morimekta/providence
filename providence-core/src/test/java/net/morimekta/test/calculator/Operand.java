@@ -362,7 +362,7 @@ public class Operand
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
-        private java.lang.Boolean modified;
+        private boolean modified;
 
         private net.morimekta.test.calculator.Operation mOperation;
         private net.morimekta.test.calculator.Operation._Builder mOperation_builder;

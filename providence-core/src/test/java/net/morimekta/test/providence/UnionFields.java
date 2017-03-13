@@ -662,7 +662,7 @@ public class UnionFields
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private _Field tUnionField;
 
-        private java.lang.Boolean modified;
+        private boolean modified;
 
         private boolean mBooleanValue;
         private byte mByteValue;

@@ -208,7 +208,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.formatln("private %s modified;", BitSet.class.getName())
                   .newline();
         } else {
-            writer.formatln("private %s modified;", Boolean.class.getName())
+            writer.formatln("private %s modified;", boolean.class.getName())
                   .newline();
         }
     }
