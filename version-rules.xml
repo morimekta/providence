@@ -7,8 +7,11 @@
     <rules>
         <rule groupId="*" comparisonMethod="maven">
             <ignoreVersions>
-                <ignoreVersion type="regex">.*-(m|b|rc|RC)\d+</ignoreVersion>
-                <ignoreVersion type="regex">.*-(EA)\d*</ignoreVersion>
+                <ignoreVersion type="regex">.*-(m|b|rc|atlassian-)\d+</ignoreVersion>
+                <ignoreVersion type="regex">.*-(EA|alpha|beta)-?\d*</ignoreVersion>
+                <ignoreVersion type="regex">.*(RC)\d+</ignoreVersion>
+                <ignoreVersion type="regex">.*\.(pr|M)\d+</ignoreVersion>
+                <ignoreVersion type="regex">.*does-not-exist</ignoreVersion>
             </ignoreVersions>
         </rule>
     </rules>
