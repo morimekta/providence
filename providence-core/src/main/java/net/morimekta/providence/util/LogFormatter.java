@@ -46,13 +46,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Pretty printer that can print message content for easily reading and
- * debugging. This is a write only format used in stringifying messages.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * LogFormatter is a formatter (one-way serialization) similar to the PrettySerializer,
+ * except it supports adding FieldHandlers to modify in.
  */
 public class LogFormatter {
+    /**
+     * Handler for a single field in a message. If it returns true, will consume the field.
+     * The visible (printed) value must be written to the IndentedPrintWriter.
+     */
+    @FunctionalInterface
     public interface FieldHandler {
         boolean appendFieldValue(IndentedPrintWriter writer, PField field, Object value);
     }
@@ -68,10 +70,31 @@ public class LogFormatter {
     private final String             entrySep;
     private final List<FieldHandler> fieldHandlers;
 
+    /**
+     * Create a log formatter with compact format.
+     *
+     * @param fieldHandlers Field handlers to specify formatted values of specific fields.
+     */
+    public LogFormatter(FieldHandler... fieldHandlers) {
+        this(false, ImmutableList.copyOf(fieldHandlers));
+    }
+
+    /**
+     * Create a log formatter.
+     *
+     * @param pretty If true will add lines, line indentation and extra spaces.
+     * @param fieldHandlers Field handlers to specify formatted values of specific fields.
+     */
     public LogFormatter(boolean pretty, FieldHandler... fieldHandlers) {
         this(pretty, ImmutableList.copyOf(fieldHandlers));
     }
 
+    /**
+     * Create a log formatter.
+     *
+     * @param pretty If true will add lines, line indentation and extra spaces.
+     * @param fieldHandlers Field handlers to specify formatted values of specific fields.
+     */
     public LogFormatter(boolean pretty, Collection<FieldHandler> fieldHandlers) {
         this.indent = pretty ? INDENT : "";
         this.space = pretty ? SPACE : "";
@@ -80,6 +103,14 @@ public class LogFormatter {
         this.fieldHandlers = ImmutableList.copyOf(fieldHandlers);
     }
 
+    /**
+     * Format message and write to the output stream.
+     *
+     * @param out The output stream to write to.
+     * @param message The message to be written.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     */
     public <Message extends PMessage<Message, Field>, Field extends PField>
     void formatTo(OutputStream out, Message message) {
         IndentedPrintWriter builder = new IndentedPrintWriter(out, indent, newline);
@@ -87,6 +118,14 @@ public class LogFormatter {
         builder.flush();
     }
 
+    /**
+     * Format message to a string.
+     *
+     * @param message The message to be written.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The formatted message.
+     */
     public <Message extends PMessage<Message, Field>, Field extends PField>
     String format(Message message) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -138,7 +177,7 @@ public class LogFormatter {
               .appendln(Token.kMessageEnd);
     }
 
-    void appendFieldValue(IndentedPrintWriter writer, PField field, Object value) {
+    private void appendFieldValue(IndentedPrintWriter writer, PField field, Object value) {
         if (field.getType() != PType.MESSAGE) {
             for (FieldHandler handler : fieldHandlers) {
                 if (handler.appendFieldValue(writer, field, value)) {
