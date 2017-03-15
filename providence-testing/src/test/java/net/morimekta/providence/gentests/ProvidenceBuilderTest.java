@@ -31,6 +31,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -41,11 +42,20 @@ import static org.junit.Assert.assertThat;
 public class ProvidenceBuilderTest {
     @Test
     public void testEmptyCollections() {
-        Containers containers = Containers.builder()
-                                          .setBinarySet(Collections.EMPTY_SET)
-                                          .setIntegerList(Collections.EMPTY_LIST)
-                                          .setLongMap(Collections.EMPTY_MAP)
-                                          .build();
+        Containers._Builder builder = Containers.builder()
+                                                .setBinarySet(Collections.EMPTY_SET)
+                                                .setIntegerList(Collections.EMPTY_LIST)
+                                                .setLongMap(Collections.EMPTY_MAP);
+
+        assertThat(builder.isModifiedBinarySet(), is(true));
+        assertThat(builder.isModifiedIntegerList(), is(true));
+        assertThat(builder.isModifiedLongMap(), is(true));
+        assertThat(builder.modifiedFields().size(), is(3));
+        assertThat(builder.modifiedFields(), hasItems(Containers._Field.BINARY_SET,
+                                                      Containers._Field.INTEGER_LIST,
+                                                      Containers._Field.LONG_MAP));
+
+        Containers containers = builder.build();
 
         assertThat(containers.hasBinarySet(), is(true));
         assertThat(containers.hasIntegerList(), is(true));
@@ -74,6 +84,70 @@ public class ProvidenceBuilderTest {
         OptionalFields c = a.mergeWith(b);
 
         assertEquals(exp, c);
+    }
+
+    @Test
+    public void testMergeBuilder() {
+        OptionalFields._Builder a = OptionalFields.builder()
+                                         .setIntegerValue(1)
+                                         .setCompactValue(new CompactFields("a", 1, "al"));
+        OptionalFields b = OptionalFields.builder()
+                                         .setDoubleValue(1.1)
+                                         .setCompactValue(new CompactFields("b", 2, null))
+                                         .build();
+
+        // C will have modified from both a and b.
+        OptionalFields._Builder c = a.merge(b);
+
+        assertThat(c.isModified(OptionalFields._Field.INTEGER_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.COMPACT_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.DOUBLE_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.ENUM_VALUE), is(false));
+        assertThat(c.modifiedFields().size(), is(3));
+        assertThat(c.modifiedFields(), hasItems(OptionalFields._Field.INTEGER_VALUE,
+                                                OptionalFields._Field.COMPACT_VALUE,
+                                                OptionalFields._Field.DOUBLE_VALUE));
+
+        // enum value will also be modified, although nothing has changed internally.
+        c.clearEnumValue();
+
+        assertThat(c.isModified(OptionalFields._Field.INTEGER_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.COMPACT_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.DOUBLE_VALUE), is(true));
+        assertThat(c.isModified(OptionalFields._Field.ENUM_VALUE), is(true));
+        assertThat(c.modifiedFields().size(), is(4));
+        assertThat(c.modifiedFields(), hasItems(OptionalFields._Field.INTEGER_VALUE,
+                                                OptionalFields._Field.COMPACT_VALUE,
+                                                OptionalFields._Field.DOUBLE_VALUE,
+                                                OptionalFields._Field.ENUM_VALUE));
+
+        // See that all fields expected are set.
+        b = c.build();
+
+        for( OptionalFields._Field field : OptionalFields.kDescriptor.getFields() ) {
+            switch( field ) {
+                case INTEGER_VALUE:
+                case COMPACT_VALUE:
+                case DOUBLE_VALUE:
+                    assertThat(field.getName(), b.has(field), is(true));
+                    break;
+                case ENUM_VALUE:
+                    // this is a cleared value so it was modified, but won't have a valid value.
+                    assertThat(field.getName(), b.has(field), is(false));
+                    break;
+                default:
+                    assertThat(field.getName(), b.has(field), is(false));
+                    break;
+            }
+        }
+
+        // See that all fields modified after reset is false.
+        c = b.mutate();
+
+        for( OptionalFields._Field field : OptionalFields.kDescriptor.getFields() ) {
+            assertThat(c.isModified(field), is(false));
+        }
+        assertThat(c.modifiedFields().size(), is(0));
     }
 
     @Test

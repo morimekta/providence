@@ -323,6 +323,7 @@ public class CalculateException
             extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mMessage;
         private net.morimekta.test.calculator.Operation mOperation;
@@ -333,6 +334,7 @@ public class CalculateException
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
+            modified = new java.util.BitSet(2);
         }
 
         /**
@@ -357,11 +359,13 @@ public class CalculateException
         public _Builder merge(CalculateException from) {
             if (from.hasMessage()) {
                 optionals.set(0);
+                modified.set(0);
                 mMessage = from.getMessage();
             }
 
             if (from.hasOperation()) {
                 optionals.set(1);
+                modified.set(1);
                 if (mOperation_builder != null) {
                     mOperation_builder.merge(from.getOperation());
                 } else if (mOperation != null) {
@@ -382,6 +386,7 @@ public class CalculateException
          */
         public _Builder setMessage(String value) {
             optionals.set(0);
+            modified.set(0);
             mMessage = value;
             return this;
         }
@@ -389,10 +394,19 @@ public class CalculateException
         /**
          * Checks for presence of the message field.
          *
-         * @return True iff message has been set.
+         * @return True if message has been set.
          */
         public boolean isSetMessage() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if message has been modified since the _Builder was created.
+         *
+         * @return True if message has been modified.
+         */
+        public boolean isModifiedMessage() {
+            return modified.get(0);
         }
 
         /**
@@ -402,6 +416,7 @@ public class CalculateException
          */
         public _Builder clearMessage() {
             optionals.clear(0);
+            modified.set(0);
             mMessage = null;
             return this;
         }
@@ -423,6 +438,7 @@ public class CalculateException
          */
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             optionals.set(1);
+            modified.set(1);
             mOperation_builder = null;
             mOperation = value;
             return this;
@@ -431,10 +447,19 @@ public class CalculateException
         /**
          * Checks for presence of the operation field.
          *
-         * @return True iff operation has been set.
+         * @return True if operation has been set.
          */
         public boolean isSetOperation() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if operation has been modified since the _Builder was created.
+         *
+         * @return True if operation has been modified.
+         */
+        public boolean isModifiedOperation() {
+            return modified.get(1);
         }
 
         /**
@@ -444,6 +469,7 @@ public class CalculateException
          */
         public _Builder clearOperation() {
             optionals.clear(1);
+            modified.set(1);
             mOperation = null;
             mOperation_builder = null;
             return this;
@@ -456,6 +482,7 @@ public class CalculateException
          */
         public net.morimekta.test.calculator.Operation._Builder mutableOperation() {
             optionals.set(1);
+            modified.set(1);
 
             if (mOperation != null) {
                 mOperation_builder = mOperation.mutate();
@@ -510,6 +537,16 @@ public class CalculateException
             switch (key) {
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
                 default: break;
             }
             return false;

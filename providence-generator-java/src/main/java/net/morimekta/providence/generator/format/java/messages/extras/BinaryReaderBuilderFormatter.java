@@ -274,7 +274,6 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             } else {
                 writer.formatln("optionals.set(%d);", field.index());
             }
-
             writer.end()  // if type
                   .appendln("} else {")
                   .formatln("    throw new %s(\"Wrong type \" + type + \" for %s.%s, should be %d\");",

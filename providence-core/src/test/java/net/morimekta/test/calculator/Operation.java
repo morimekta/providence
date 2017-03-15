@@ -310,6 +310,7 @@ public class Operation
             extends net.morimekta.providence.PMessageBuilder<Operation,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private net.morimekta.test.calculator.Operator mOperator;
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mOperands;
@@ -319,6 +320,7 @@ public class Operation
          */
         public _Builder() {
             optionals = new java.util.BitSet(2);
+            modified = new java.util.BitSet(2);
             mOperands = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
         }
 
@@ -344,11 +346,13 @@ public class Operation
         public _Builder merge(Operation from) {
             if (from.hasOperator()) {
                 optionals.set(0);
+                modified.set(0);
                 mOperator = from.getOperator();
             }
 
             if (from.hasOperands()) {
                 optionals.set(1);
+                modified.set(1);
                 mOperands.clear();
                 mOperands.addAll(from.getOperands());
             }
@@ -363,6 +367,7 @@ public class Operation
          */
         public _Builder setOperator(net.morimekta.test.calculator.Operator value) {
             optionals.set(0);
+            modified.set(0);
             mOperator = value;
             return this;
         }
@@ -370,10 +375,19 @@ public class Operation
         /**
          * Checks for presence of the operator field.
          *
-         * @return True iff operator has been set.
+         * @return True if operator has been set.
          */
         public boolean isSetOperator() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if operator has been modified since the _Builder was created.
+         *
+         * @return True if operator has been modified.
+         */
+        public boolean isModifiedOperator() {
+            return modified.get(0);
         }
 
         /**
@@ -383,6 +397,7 @@ public class Operation
          */
         public _Builder clearOperator() {
             optionals.clear(0);
+            modified.set(0);
             mOperator = null;
             return this;
         }
@@ -404,6 +419,7 @@ public class Operation
          */
         public _Builder setOperands(java.util.Collection<net.morimekta.test.calculator.Operand> value) {
             optionals.set(1);
+            modified.set(1);
             mOperands.clear();
             mOperands.addAll(value);
             return this;
@@ -417,6 +433,7 @@ public class Operation
          */
         public _Builder addToOperands(net.morimekta.test.calculator.Operand... values) {
             optionals.set(1);
+            modified.set(1);
             for (net.morimekta.test.calculator.Operand item : values) {
                 mOperands.add(item);
             }
@@ -426,10 +443,19 @@ public class Operation
         /**
          * Checks for presence of the operands field.
          *
-         * @return True iff operands has been set.
+         * @return True if operands has been set.
          */
         public boolean isSetOperands() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if operands has been modified since the _Builder was created.
+         *
+         * @return True if operands has been modified.
+         */
+        public boolean isModifiedOperands() {
+            return modified.get(1);
         }
 
         /**
@@ -439,6 +465,7 @@ public class Operation
          */
         public _Builder clearOperands() {
             optionals.clear(1);
+            modified.set(1);
             mOperands.clear();
             return this;
         }
@@ -450,6 +477,7 @@ public class Operation
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.calculator.Operand> mutableOperands() {
             optionals.set(1);
+            modified.set(1);
             return mOperands;
         }
 
@@ -496,6 +524,16 @@ public class Operation
             switch (key) {
                 case 1: return optionals.get(0);
                 case 2: return optionals.get(1);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
                 default: break;
             }
             return false;

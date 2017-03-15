@@ -212,6 +212,11 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         }
 
         @Override
+        public boolean isModified(int key) {
+            return false;
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
             CField field = descriptor.getField(key);

@@ -2246,6 +2246,7 @@ public class Containers
             extends net.morimekta.providence.PMessageBuilder<Containers,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private net.morimekta.providence.descriptor.PList.Builder<Boolean> mBooleanList;
         private net.morimekta.providence.descriptor.PList.Builder<Byte> mByteList;
@@ -2295,6 +2296,7 @@ public class Containers
          */
         public _Builder() {
             optionals = new java.util.BitSet(36);
+            modified = new java.util.BitSet(36);
             mBooleanList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mByteList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mShortList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -2485,166 +2487,197 @@ public class Containers
         public _Builder merge(Containers from) {
             if (from.hasBooleanList()) {
                 optionals.set(0);
+                modified.set(0);
                 mBooleanList.clear();
                 mBooleanList.addAll(from.getBooleanList());
             }
 
             if (from.hasByteList()) {
                 optionals.set(1);
+                modified.set(1);
                 mByteList.clear();
                 mByteList.addAll(from.getByteList());
             }
 
             if (from.hasShortList()) {
                 optionals.set(2);
+                modified.set(2);
                 mShortList.clear();
                 mShortList.addAll(from.getShortList());
             }
 
             if (from.hasIntegerList()) {
                 optionals.set(3);
+                modified.set(3);
                 mIntegerList.clear();
                 mIntegerList.addAll(from.getIntegerList());
             }
 
             if (from.hasLongList()) {
                 optionals.set(4);
+                modified.set(4);
                 mLongList.clear();
                 mLongList.addAll(from.getLongList());
             }
 
             if (from.hasDoubleList()) {
                 optionals.set(5);
+                modified.set(5);
                 mDoubleList.clear();
                 mDoubleList.addAll(from.getDoubleList());
             }
 
             if (from.hasStringList()) {
                 optionals.set(6);
+                modified.set(6);
                 mStringList.clear();
                 mStringList.addAll(from.getStringList());
             }
 
             if (from.hasBinaryList()) {
                 optionals.set(7);
+                modified.set(7);
                 mBinaryList.clear();
                 mBinaryList.addAll(from.getBinaryList());
             }
 
             if (from.hasBooleanSet()) {
                 optionals.set(8);
+                modified.set(8);
                 mBooleanSet.addAll(from.getBooleanSet());
             }
 
             if (from.hasByteSet()) {
                 optionals.set(9);
+                modified.set(9);
                 mByteSet.addAll(from.getByteSet());
             }
 
             if (from.hasShortSet()) {
                 optionals.set(10);
+                modified.set(10);
                 mShortSet.addAll(from.getShortSet());
             }
 
             if (from.hasIntegerSet()) {
                 optionals.set(11);
+                modified.set(11);
                 mIntegerSet.addAll(from.getIntegerSet());
             }
 
             if (from.hasLongSet()) {
                 optionals.set(12);
+                modified.set(12);
                 mLongSet.addAll(from.getLongSet());
             }
 
             if (from.hasDoubleSet()) {
                 optionals.set(13);
+                modified.set(13);
                 mDoubleSet.addAll(from.getDoubleSet());
             }
 
             if (from.hasStringSet()) {
                 optionals.set(14);
+                modified.set(14);
                 mStringSet.addAll(from.getStringSet());
             }
 
             if (from.hasBinarySet()) {
                 optionals.set(15);
+                modified.set(15);
                 mBinarySet.addAll(from.getBinarySet());
             }
 
             if (from.hasBooleanMap()) {
                 optionals.set(16);
+                modified.set(16);
                 mBooleanMap.putAll(from.getBooleanMap());
             }
 
             if (from.hasByteMap()) {
                 optionals.set(17);
+                modified.set(17);
                 mByteMap.putAll(from.getByteMap());
             }
 
             if (from.hasShortMap()) {
                 optionals.set(18);
+                modified.set(18);
                 mShortMap.putAll(from.getShortMap());
             }
 
             if (from.hasIntegerMap()) {
                 optionals.set(19);
+                modified.set(19);
                 mIntegerMap.putAll(from.getIntegerMap());
             }
 
             if (from.hasLongMap()) {
                 optionals.set(20);
+                modified.set(20);
                 mLongMap.putAll(from.getLongMap());
             }
 
             if (from.hasDoubleMap()) {
                 optionals.set(21);
+                modified.set(21);
                 mDoubleMap.putAll(from.getDoubleMap());
             }
 
             if (from.hasStringMap()) {
                 optionals.set(22);
+                modified.set(22);
                 mStringMap.putAll(from.getStringMap());
             }
 
             if (from.hasBinaryMap()) {
                 optionals.set(23);
+                modified.set(23);
                 mBinaryMap.putAll(from.getBinaryMap());
             }
 
             if (from.hasEnumList()) {
                 optionals.set(24);
+                modified.set(24);
                 mEnumList.clear();
                 mEnumList.addAll(from.getEnumList());
             }
 
             if (from.hasEnumSet()) {
                 optionals.set(25);
+                modified.set(25);
                 mEnumSet.addAll(from.getEnumSet());
             }
 
             if (from.hasEnumMap()) {
                 optionals.set(26);
+                modified.set(26);
                 mEnumMap.putAll(from.getEnumMap());
             }
 
             if (from.hasMessageList()) {
                 optionals.set(27);
+                modified.set(27);
                 mMessageList.clear();
                 mMessageList.addAll(from.getMessageList());
             }
 
             if (from.hasMessageSet()) {
                 optionals.set(28);
+                modified.set(28);
                 mMessageSet.addAll(from.getMessageSet());
             }
 
             if (from.hasMessageMap()) {
                 optionals.set(29);
+                modified.set(29);
                 mMessageMap.putAll(from.getMessageMap());
             }
 
             if (from.hasRequiredFields()) {
                 optionals.set(30);
+                modified.set(30);
                 if (mRequiredFields_builder != null) {
                     mRequiredFields_builder.merge(from.getRequiredFields());
                 } else if (mRequiredFields != null) {
@@ -2657,6 +2690,7 @@ public class Containers
 
             if (from.hasDefaultFields()) {
                 optionals.set(31);
+                modified.set(31);
                 if (mDefaultFields_builder != null) {
                     mDefaultFields_builder.merge(from.getDefaultFields());
                 } else if (mDefaultFields != null) {
@@ -2669,6 +2703,7 @@ public class Containers
 
             if (from.hasOptionalFields()) {
                 optionals.set(32);
+                modified.set(32);
                 if (mOptionalFields_builder != null) {
                     mOptionalFields_builder.merge(from.getOptionalFields());
                 } else if (mOptionalFields != null) {
@@ -2681,6 +2716,7 @@ public class Containers
 
             if (from.hasUnionFields()) {
                 optionals.set(33);
+                modified.set(33);
                 if (mUnionFields_builder != null) {
                     mUnionFields_builder.merge(from.getUnionFields());
                 } else if (mUnionFields != null) {
@@ -2693,6 +2729,7 @@ public class Containers
 
             if (from.hasExceptionFields()) {
                 optionals.set(34);
+                modified.set(34);
                 if (mExceptionFields_builder != null) {
                     mExceptionFields_builder.merge(from.getExceptionFields());
                 } else if (mExceptionFields != null) {
@@ -2705,6 +2742,7 @@ public class Containers
 
             if (from.hasDefaultValues()) {
                 optionals.set(35);
+                modified.set(35);
                 if (mDefaultValues_builder != null) {
                     mDefaultValues_builder.merge(from.getDefaultValues());
                 } else if (mDefaultValues != null) {
@@ -2725,6 +2763,7 @@ public class Containers
          */
         public _Builder setBooleanList(java.util.Collection<Boolean> value) {
             optionals.set(0);
+            modified.set(0);
             mBooleanList.clear();
             mBooleanList.addAll(value);
             return this;
@@ -2738,6 +2777,7 @@ public class Containers
          */
         public _Builder addToBooleanList(boolean... values) {
             optionals.set(0);
+            modified.set(0);
             for (boolean item : values) {
                 mBooleanList.add(item);
             }
@@ -2747,10 +2787,19 @@ public class Containers
         /**
          * all types as list&lt;x&gt;.
          *
-         * @return True iff booleanList has been set.
+         * @return True if booleanList has been set.
          */
         public boolean isSetBooleanList() {
             return optionals.get(0);
+        }
+
+        /**
+         * all types as list&lt;x&gt;.
+         *
+         * @return True if booleanList has been modified.
+         */
+        public boolean isModifiedBooleanList() {
+            return modified.get(0);
         }
 
         /**
@@ -2760,6 +2809,7 @@ public class Containers
          */
         public _Builder clearBooleanList() {
             optionals.clear(0);
+            modified.set(0);
             mBooleanList.clear();
             return this;
         }
@@ -2771,6 +2821,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Boolean> mutableBooleanList() {
             optionals.set(0);
+            modified.set(0);
             return mBooleanList;
         }
 
@@ -2782,6 +2833,7 @@ public class Containers
          */
         public _Builder setByteList(java.util.Collection<Byte> value) {
             optionals.set(1);
+            modified.set(1);
             mByteList.clear();
             mByteList.addAll(value);
             return this;
@@ -2795,6 +2847,7 @@ public class Containers
          */
         public _Builder addToByteList(byte... values) {
             optionals.set(1);
+            modified.set(1);
             for (byte item : values) {
                 mByteList.add(item);
             }
@@ -2804,10 +2857,19 @@ public class Containers
         /**
          * Checks for presence of the byteList field.
          *
-         * @return True iff byteList has been set.
+         * @return True if byteList has been set.
          */
         public boolean isSetByteList() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if byteList has been modified since the _Builder was created.
+         *
+         * @return True if byteList has been modified.
+         */
+        public boolean isModifiedByteList() {
+            return modified.get(1);
         }
 
         /**
@@ -2817,6 +2879,7 @@ public class Containers
          */
         public _Builder clearByteList() {
             optionals.clear(1);
+            modified.set(1);
             mByteList.clear();
             return this;
         }
@@ -2828,6 +2891,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Byte> mutableByteList() {
             optionals.set(1);
+            modified.set(1);
             return mByteList;
         }
 
@@ -2839,6 +2903,7 @@ public class Containers
          */
         public _Builder setShortList(java.util.Collection<Short> value) {
             optionals.set(2);
+            modified.set(2);
             mShortList.clear();
             mShortList.addAll(value);
             return this;
@@ -2852,6 +2917,7 @@ public class Containers
          */
         public _Builder addToShortList(short... values) {
             optionals.set(2);
+            modified.set(2);
             for (short item : values) {
                 mShortList.add(item);
             }
@@ -2861,10 +2927,19 @@ public class Containers
         /**
          * Checks for presence of the shortList field.
          *
-         * @return True iff shortList has been set.
+         * @return True if shortList has been set.
          */
         public boolean isSetShortList() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if shortList has been modified since the _Builder was created.
+         *
+         * @return True if shortList has been modified.
+         */
+        public boolean isModifiedShortList() {
+            return modified.get(2);
         }
 
         /**
@@ -2874,6 +2949,7 @@ public class Containers
          */
         public _Builder clearShortList() {
             optionals.clear(2);
+            modified.set(2);
             mShortList.clear();
             return this;
         }
@@ -2885,6 +2961,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Short> mutableShortList() {
             optionals.set(2);
+            modified.set(2);
             return mShortList;
         }
 
@@ -2896,6 +2973,7 @@ public class Containers
          */
         public _Builder setIntegerList(java.util.Collection<Integer> value) {
             optionals.set(3);
+            modified.set(3);
             mIntegerList.clear();
             mIntegerList.addAll(value);
             return this;
@@ -2909,6 +2987,7 @@ public class Containers
          */
         public _Builder addToIntegerList(int... values) {
             optionals.set(3);
+            modified.set(3);
             for (int item : values) {
                 mIntegerList.add(item);
             }
@@ -2918,10 +2997,19 @@ public class Containers
         /**
          * Checks for presence of the integerList field.
          *
-         * @return True iff integerList has been set.
+         * @return True if integerList has been set.
          */
         public boolean isSetIntegerList() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if integerList has been modified since the _Builder was created.
+         *
+         * @return True if integerList has been modified.
+         */
+        public boolean isModifiedIntegerList() {
+            return modified.get(3);
         }
 
         /**
@@ -2931,6 +3019,7 @@ public class Containers
          */
         public _Builder clearIntegerList() {
             optionals.clear(3);
+            modified.set(3);
             mIntegerList.clear();
             return this;
         }
@@ -2942,6 +3031,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Integer> mutableIntegerList() {
             optionals.set(3);
+            modified.set(3);
             return mIntegerList;
         }
 
@@ -2953,6 +3043,7 @@ public class Containers
          */
         public _Builder setLongList(java.util.Collection<Long> value) {
             optionals.set(4);
+            modified.set(4);
             mLongList.clear();
             mLongList.addAll(value);
             return this;
@@ -2966,6 +3057,7 @@ public class Containers
          */
         public _Builder addToLongList(long... values) {
             optionals.set(4);
+            modified.set(4);
             for (long item : values) {
                 mLongList.add(item);
             }
@@ -2975,10 +3067,19 @@ public class Containers
         /**
          * Checks for presence of the longList field.
          *
-         * @return True iff longList has been set.
+         * @return True if longList has been set.
          */
         public boolean isSetLongList() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if longList has been modified since the _Builder was created.
+         *
+         * @return True if longList has been modified.
+         */
+        public boolean isModifiedLongList() {
+            return modified.get(4);
         }
 
         /**
@@ -2988,6 +3089,7 @@ public class Containers
          */
         public _Builder clearLongList() {
             optionals.clear(4);
+            modified.set(4);
             mLongList.clear();
             return this;
         }
@@ -2999,6 +3101,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Long> mutableLongList() {
             optionals.set(4);
+            modified.set(4);
             return mLongList;
         }
 
@@ -3010,6 +3113,7 @@ public class Containers
          */
         public _Builder setDoubleList(java.util.Collection<Double> value) {
             optionals.set(5);
+            modified.set(5);
             mDoubleList.clear();
             mDoubleList.addAll(value);
             return this;
@@ -3023,6 +3127,7 @@ public class Containers
          */
         public _Builder addToDoubleList(double... values) {
             optionals.set(5);
+            modified.set(5);
             for (double item : values) {
                 mDoubleList.add(item);
             }
@@ -3032,10 +3137,19 @@ public class Containers
         /**
          * Checks for presence of the doubleList field.
          *
-         * @return True iff doubleList has been set.
+         * @return True if doubleList has been set.
          */
         public boolean isSetDoubleList() {
             return optionals.get(5);
+        }
+
+        /**
+         * Checks if doubleList has been modified since the _Builder was created.
+         *
+         * @return True if doubleList has been modified.
+         */
+        public boolean isModifiedDoubleList() {
+            return modified.get(5);
         }
 
         /**
@@ -3045,6 +3159,7 @@ public class Containers
          */
         public _Builder clearDoubleList() {
             optionals.clear(5);
+            modified.set(5);
             mDoubleList.clear();
             return this;
         }
@@ -3056,6 +3171,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<Double> mutableDoubleList() {
             optionals.set(5);
+            modified.set(5);
             return mDoubleList;
         }
 
@@ -3067,6 +3183,7 @@ public class Containers
          */
         public _Builder setStringList(java.util.Collection<String> value) {
             optionals.set(6);
+            modified.set(6);
             mStringList.clear();
             mStringList.addAll(value);
             return this;
@@ -3080,6 +3197,7 @@ public class Containers
          */
         public _Builder addToStringList(String... values) {
             optionals.set(6);
+            modified.set(6);
             for (String item : values) {
                 mStringList.add(item);
             }
@@ -3089,10 +3207,19 @@ public class Containers
         /**
          * Checks for presence of the stringList field.
          *
-         * @return True iff stringList has been set.
+         * @return True if stringList has been set.
          */
         public boolean isSetStringList() {
             return optionals.get(6);
+        }
+
+        /**
+         * Checks if stringList has been modified since the _Builder was created.
+         *
+         * @return True if stringList has been modified.
+         */
+        public boolean isModifiedStringList() {
+            return modified.get(6);
         }
 
         /**
@@ -3102,6 +3229,7 @@ public class Containers
          */
         public _Builder clearStringList() {
             optionals.clear(6);
+            modified.set(6);
             mStringList.clear();
             return this;
         }
@@ -3113,6 +3241,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<String> mutableStringList() {
             optionals.set(6);
+            modified.set(6);
             return mStringList;
         }
 
@@ -3124,6 +3253,7 @@ public class Containers
          */
         public _Builder setBinaryList(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(7);
+            modified.set(7);
             mBinaryList.clear();
             mBinaryList.addAll(value);
             return this;
@@ -3137,6 +3267,7 @@ public class Containers
          */
         public _Builder addToBinaryList(net.morimekta.util.Binary... values) {
             optionals.set(7);
+            modified.set(7);
             for (net.morimekta.util.Binary item : values) {
                 mBinaryList.add(item);
             }
@@ -3146,10 +3277,19 @@ public class Containers
         /**
          * Checks for presence of the binaryList field.
          *
-         * @return True iff binaryList has been set.
+         * @return True if binaryList has been set.
          */
         public boolean isSetBinaryList() {
             return optionals.get(7);
+        }
+
+        /**
+         * Checks if binaryList has been modified since the _Builder was created.
+         *
+         * @return True if binaryList has been modified.
+         */
+        public boolean isModifiedBinaryList() {
+            return modified.get(7);
         }
 
         /**
@@ -3159,6 +3299,7 @@ public class Containers
          */
         public _Builder clearBinaryList() {
             optionals.clear(7);
+            modified.set(7);
             mBinaryList.clear();
             return this;
         }
@@ -3170,6 +3311,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mutableBinaryList() {
             optionals.set(7);
+            modified.set(7);
             return mBinaryList;
         }
 
@@ -3181,6 +3323,7 @@ public class Containers
          */
         public _Builder setBooleanSet(java.util.Collection<Boolean> value) {
             optionals.set(8);
+            modified.set(8);
             mBooleanSet.clear();
             mBooleanSet.addAll(value);
             return this;
@@ -3194,6 +3337,7 @@ public class Containers
          */
         public _Builder addToBooleanSet(boolean... values) {
             optionals.set(8);
+            modified.set(8);
             for (boolean item : values) {
                 mBooleanSet.add(item);
             }
@@ -3203,10 +3347,19 @@ public class Containers
         /**
          * all types as set&lt;x&gt;.
          *
-         * @return True iff booleanSet has been set.
+         * @return True if booleanSet has been set.
          */
         public boolean isSetBooleanSet() {
             return optionals.get(8);
+        }
+
+        /**
+         * all types as set&lt;x&gt;.
+         *
+         * @return True if booleanSet has been modified.
+         */
+        public boolean isModifiedBooleanSet() {
+            return modified.get(8);
         }
 
         /**
@@ -3216,6 +3369,7 @@ public class Containers
          */
         public _Builder clearBooleanSet() {
             optionals.clear(8);
+            modified.set(8);
             mBooleanSet.clear();
             return this;
         }
@@ -3227,6 +3381,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Boolean> mutableBooleanSet() {
             optionals.set(8);
+            modified.set(8);
             return mBooleanSet;
         }
 
@@ -3238,6 +3393,7 @@ public class Containers
          */
         public _Builder setByteSet(java.util.Collection<Byte> value) {
             optionals.set(9);
+            modified.set(9);
             mByteSet.clear();
             mByteSet.addAll(value);
             return this;
@@ -3251,6 +3407,7 @@ public class Containers
          */
         public _Builder addToByteSet(byte... values) {
             optionals.set(9);
+            modified.set(9);
             for (byte item : values) {
                 mByteSet.add(item);
             }
@@ -3260,10 +3417,19 @@ public class Containers
         /**
          * Checks for presence of the byteSet field.
          *
-         * @return True iff byteSet has been set.
+         * @return True if byteSet has been set.
          */
         public boolean isSetByteSet() {
             return optionals.get(9);
+        }
+
+        /**
+         * Checks if byteSet has been modified since the _Builder was created.
+         *
+         * @return True if byteSet has been modified.
+         */
+        public boolean isModifiedByteSet() {
+            return modified.get(9);
         }
 
         /**
@@ -3273,6 +3439,7 @@ public class Containers
          */
         public _Builder clearByteSet() {
             optionals.clear(9);
+            modified.set(9);
             mByteSet.clear();
             return this;
         }
@@ -3284,6 +3451,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Byte> mutableByteSet() {
             optionals.set(9);
+            modified.set(9);
             return mByteSet;
         }
 
@@ -3295,6 +3463,7 @@ public class Containers
          */
         public _Builder setShortSet(java.util.Collection<Short> value) {
             optionals.set(10);
+            modified.set(10);
             mShortSet.clear();
             mShortSet.addAll(value);
             return this;
@@ -3308,6 +3477,7 @@ public class Containers
          */
         public _Builder addToShortSet(short... values) {
             optionals.set(10);
+            modified.set(10);
             for (short item : values) {
                 mShortSet.add(item);
             }
@@ -3317,10 +3487,19 @@ public class Containers
         /**
          * Checks for presence of the shortSet field.
          *
-         * @return True iff shortSet has been set.
+         * @return True if shortSet has been set.
          */
         public boolean isSetShortSet() {
             return optionals.get(10);
+        }
+
+        /**
+         * Checks if shortSet has been modified since the _Builder was created.
+         *
+         * @return True if shortSet has been modified.
+         */
+        public boolean isModifiedShortSet() {
+            return modified.get(10);
         }
 
         /**
@@ -3330,6 +3509,7 @@ public class Containers
          */
         public _Builder clearShortSet() {
             optionals.clear(10);
+            modified.set(10);
             mShortSet.clear();
             return this;
         }
@@ -3341,6 +3521,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Short> mutableShortSet() {
             optionals.set(10);
+            modified.set(10);
             return mShortSet;
         }
 
@@ -3352,6 +3533,7 @@ public class Containers
          */
         public _Builder setIntegerSet(java.util.Collection<Integer> value) {
             optionals.set(11);
+            modified.set(11);
             mIntegerSet.clear();
             mIntegerSet.addAll(value);
             return this;
@@ -3365,6 +3547,7 @@ public class Containers
          */
         public _Builder addToIntegerSet(int... values) {
             optionals.set(11);
+            modified.set(11);
             for (int item : values) {
                 mIntegerSet.add(item);
             }
@@ -3374,10 +3557,19 @@ public class Containers
         /**
          * Checks for presence of the integerSet field.
          *
-         * @return True iff integerSet has been set.
+         * @return True if integerSet has been set.
          */
         public boolean isSetIntegerSet() {
             return optionals.get(11);
+        }
+
+        /**
+         * Checks if integerSet has been modified since the _Builder was created.
+         *
+         * @return True if integerSet has been modified.
+         */
+        public boolean isModifiedIntegerSet() {
+            return modified.get(11);
         }
 
         /**
@@ -3387,6 +3579,7 @@ public class Containers
          */
         public _Builder clearIntegerSet() {
             optionals.clear(11);
+            modified.set(11);
             mIntegerSet.clear();
             return this;
         }
@@ -3398,6 +3591,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Integer> mutableIntegerSet() {
             optionals.set(11);
+            modified.set(11);
             return mIntegerSet;
         }
 
@@ -3409,6 +3603,7 @@ public class Containers
          */
         public _Builder setLongSet(java.util.Collection<Long> value) {
             optionals.set(12);
+            modified.set(12);
             mLongSet.clear();
             mLongSet.addAll(value);
             return this;
@@ -3422,6 +3617,7 @@ public class Containers
          */
         public _Builder addToLongSet(long... values) {
             optionals.set(12);
+            modified.set(12);
             for (long item : values) {
                 mLongSet.add(item);
             }
@@ -3431,10 +3627,19 @@ public class Containers
         /**
          * Checks for presence of the longSet field.
          *
-         * @return True iff longSet has been set.
+         * @return True if longSet has been set.
          */
         public boolean isSetLongSet() {
             return optionals.get(12);
+        }
+
+        /**
+         * Checks if longSet has been modified since the _Builder was created.
+         *
+         * @return True if longSet has been modified.
+         */
+        public boolean isModifiedLongSet() {
+            return modified.get(12);
         }
 
         /**
@@ -3444,6 +3649,7 @@ public class Containers
          */
         public _Builder clearLongSet() {
             optionals.clear(12);
+            modified.set(12);
             mLongSet.clear();
             return this;
         }
@@ -3455,6 +3661,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Long> mutableLongSet() {
             optionals.set(12);
+            modified.set(12);
             return mLongSet;
         }
 
@@ -3466,6 +3673,7 @@ public class Containers
          */
         public _Builder setDoubleSet(java.util.Collection<Double> value) {
             optionals.set(13);
+            modified.set(13);
             mDoubleSet.clear();
             mDoubleSet.addAll(value);
             return this;
@@ -3479,6 +3687,7 @@ public class Containers
          */
         public _Builder addToDoubleSet(double... values) {
             optionals.set(13);
+            modified.set(13);
             for (double item : values) {
                 mDoubleSet.add(item);
             }
@@ -3488,10 +3697,19 @@ public class Containers
         /**
          * Checks for presence of the doubleSet field.
          *
-         * @return True iff doubleSet has been set.
+         * @return True if doubleSet has been set.
          */
         public boolean isSetDoubleSet() {
             return optionals.get(13);
+        }
+
+        /**
+         * Checks if doubleSet has been modified since the _Builder was created.
+         *
+         * @return True if doubleSet has been modified.
+         */
+        public boolean isModifiedDoubleSet() {
+            return modified.get(13);
         }
 
         /**
@@ -3501,6 +3719,7 @@ public class Containers
          */
         public _Builder clearDoubleSet() {
             optionals.clear(13);
+            modified.set(13);
             mDoubleSet.clear();
             return this;
         }
@@ -3512,6 +3731,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<Double> mutableDoubleSet() {
             optionals.set(13);
+            modified.set(13);
             return mDoubleSet;
         }
 
@@ -3523,6 +3743,7 @@ public class Containers
          */
         public _Builder setStringSet(java.util.Collection<String> value) {
             optionals.set(14);
+            modified.set(14);
             mStringSet.clear();
             mStringSet.addAll(value);
             return this;
@@ -3536,6 +3757,7 @@ public class Containers
          */
         public _Builder addToStringSet(String... values) {
             optionals.set(14);
+            modified.set(14);
             for (String item : values) {
                 mStringSet.add(item);
             }
@@ -3545,10 +3767,19 @@ public class Containers
         /**
          * Checks for presence of the stringSet field.
          *
-         * @return True iff stringSet has been set.
+         * @return True if stringSet has been set.
          */
         public boolean isSetStringSet() {
             return optionals.get(14);
+        }
+
+        /**
+         * Checks if stringSet has been modified since the _Builder was created.
+         *
+         * @return True if stringSet has been modified.
+         */
+        public boolean isModifiedStringSet() {
+            return modified.get(14);
         }
 
         /**
@@ -3558,6 +3789,7 @@ public class Containers
          */
         public _Builder clearStringSet() {
             optionals.clear(14);
+            modified.set(14);
             mStringSet.clear();
             return this;
         }
@@ -3569,6 +3801,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<String> mutableStringSet() {
             optionals.set(14);
+            modified.set(14);
             return mStringSet;
         }
 
@@ -3580,6 +3813,7 @@ public class Containers
          */
         public _Builder setBinarySet(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(15);
+            modified.set(15);
             mBinarySet.clear();
             mBinarySet.addAll(value);
             return this;
@@ -3593,6 +3827,7 @@ public class Containers
          */
         public _Builder addToBinarySet(net.morimekta.util.Binary... values) {
             optionals.set(15);
+            modified.set(15);
             for (net.morimekta.util.Binary item : values) {
                 mBinarySet.add(item);
             }
@@ -3602,10 +3837,19 @@ public class Containers
         /**
          * Checks for presence of the binarySet field.
          *
-         * @return True iff binarySet has been set.
+         * @return True if binarySet has been set.
          */
         public boolean isSetBinarySet() {
             return optionals.get(15);
+        }
+
+        /**
+         * Checks if binarySet has been modified since the _Builder was created.
+         *
+         * @return True if binarySet has been modified.
+         */
+        public boolean isModifiedBinarySet() {
+            return modified.get(15);
         }
 
         /**
@@ -3615,6 +3859,7 @@ public class Containers
          */
         public _Builder clearBinarySet() {
             optionals.clear(15);
+            modified.set(15);
             mBinarySet.clear();
             return this;
         }
@@ -3626,6 +3871,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mutableBinarySet() {
             optionals.set(15);
+            modified.set(15);
             return mBinarySet;
         }
 
@@ -3637,6 +3883,7 @@ public class Containers
          */
         public _Builder setBooleanMap(java.util.Map<Boolean,Boolean> value) {
             optionals.set(16);
+            modified.set(16);
             mBooleanMap.clear();
             mBooleanMap.putAll(value);
             return this;
@@ -3651,6 +3898,7 @@ public class Containers
          */
         public _Builder putInBooleanMap(boolean key, boolean value) {
             optionals.set(16);
+            modified.set(16);
             mBooleanMap.put(key, value);
             return this;
         }
@@ -3658,10 +3906,19 @@ public class Containers
         /**
          * all types as map&lt;x,x&gt;.
          *
-         * @return True iff booleanMap has been set.
+         * @return True if booleanMap has been set.
          */
         public boolean isSetBooleanMap() {
             return optionals.get(16);
+        }
+
+        /**
+         * all types as map&lt;x,x&gt;.
+         *
+         * @return True if booleanMap has been modified.
+         */
+        public boolean isModifiedBooleanMap() {
+            return modified.get(16);
         }
 
         /**
@@ -3671,6 +3928,7 @@ public class Containers
          */
         public _Builder clearBooleanMap() {
             optionals.clear(16);
+            modified.set(16);
             mBooleanMap.clear();
             return this;
         }
@@ -3682,6 +3940,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mutableBooleanMap() {
             optionals.set(16);
+            modified.set(16);
             return mBooleanMap;
         }
 
@@ -3693,6 +3952,7 @@ public class Containers
          */
         public _Builder setByteMap(java.util.Map<Byte,Byte> value) {
             optionals.set(17);
+            modified.set(17);
             mByteMap.clear();
             mByteMap.putAll(value);
             return this;
@@ -3707,6 +3967,7 @@ public class Containers
          */
         public _Builder putInByteMap(byte key, byte value) {
             optionals.set(17);
+            modified.set(17);
             mByteMap.put(key, value);
             return this;
         }
@@ -3714,10 +3975,19 @@ public class Containers
         /**
          * Checks for presence of the byteMap field.
          *
-         * @return True iff byteMap has been set.
+         * @return True if byteMap has been set.
          */
         public boolean isSetByteMap() {
             return optionals.get(17);
+        }
+
+        /**
+         * Checks if byteMap has been modified since the _Builder was created.
+         *
+         * @return True if byteMap has been modified.
+         */
+        public boolean isModifiedByteMap() {
+            return modified.get(17);
         }
 
         /**
@@ -3727,6 +3997,7 @@ public class Containers
          */
         public _Builder clearByteMap() {
             optionals.clear(17);
+            modified.set(17);
             mByteMap.clear();
             return this;
         }
@@ -3738,6 +4009,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mutableByteMap() {
             optionals.set(17);
+            modified.set(17);
             return mByteMap;
         }
 
@@ -3749,6 +4021,7 @@ public class Containers
          */
         public _Builder setShortMap(java.util.Map<Short,Short> value) {
             optionals.set(18);
+            modified.set(18);
             mShortMap.clear();
             mShortMap.putAll(value);
             return this;
@@ -3763,6 +4036,7 @@ public class Containers
          */
         public _Builder putInShortMap(short key, short value) {
             optionals.set(18);
+            modified.set(18);
             mShortMap.put(key, value);
             return this;
         }
@@ -3770,10 +4044,19 @@ public class Containers
         /**
          * Checks for presence of the shortMap field.
          *
-         * @return True iff shortMap has been set.
+         * @return True if shortMap has been set.
          */
         public boolean isSetShortMap() {
             return optionals.get(18);
+        }
+
+        /**
+         * Checks if shortMap has been modified since the _Builder was created.
+         *
+         * @return True if shortMap has been modified.
+         */
+        public boolean isModifiedShortMap() {
+            return modified.get(18);
         }
 
         /**
@@ -3783,6 +4066,7 @@ public class Containers
          */
         public _Builder clearShortMap() {
             optionals.clear(18);
+            modified.set(18);
             mShortMap.clear();
             return this;
         }
@@ -3794,6 +4078,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mutableShortMap() {
             optionals.set(18);
+            modified.set(18);
             return mShortMap;
         }
 
@@ -3805,6 +4090,7 @@ public class Containers
          */
         public _Builder setIntegerMap(java.util.Map<Integer,Integer> value) {
             optionals.set(19);
+            modified.set(19);
             mIntegerMap.clear();
             mIntegerMap.putAll(value);
             return this;
@@ -3819,6 +4105,7 @@ public class Containers
          */
         public _Builder putInIntegerMap(int key, int value) {
             optionals.set(19);
+            modified.set(19);
             mIntegerMap.put(key, value);
             return this;
         }
@@ -3826,10 +4113,19 @@ public class Containers
         /**
          * Checks for presence of the integerMap field.
          *
-         * @return True iff integerMap has been set.
+         * @return True if integerMap has been set.
          */
         public boolean isSetIntegerMap() {
             return optionals.get(19);
+        }
+
+        /**
+         * Checks if integerMap has been modified since the _Builder was created.
+         *
+         * @return True if integerMap has been modified.
+         */
+        public boolean isModifiedIntegerMap() {
+            return modified.get(19);
         }
 
         /**
@@ -3839,6 +4135,7 @@ public class Containers
          */
         public _Builder clearIntegerMap() {
             optionals.clear(19);
+            modified.set(19);
             mIntegerMap.clear();
             return this;
         }
@@ -3850,6 +4147,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mutableIntegerMap() {
             optionals.set(19);
+            modified.set(19);
             return mIntegerMap;
         }
 
@@ -3861,6 +4159,7 @@ public class Containers
          */
         public _Builder setLongMap(java.util.Map<Long,Long> value) {
             optionals.set(20);
+            modified.set(20);
             mLongMap.clear();
             mLongMap.putAll(value);
             return this;
@@ -3875,6 +4174,7 @@ public class Containers
          */
         public _Builder putInLongMap(long key, long value) {
             optionals.set(20);
+            modified.set(20);
             mLongMap.put(key, value);
             return this;
         }
@@ -3882,10 +4182,19 @@ public class Containers
         /**
          * Checks for presence of the longMap field.
          *
-         * @return True iff longMap has been set.
+         * @return True if longMap has been set.
          */
         public boolean isSetLongMap() {
             return optionals.get(20);
+        }
+
+        /**
+         * Checks if longMap has been modified since the _Builder was created.
+         *
+         * @return True if longMap has been modified.
+         */
+        public boolean isModifiedLongMap() {
+            return modified.get(20);
         }
 
         /**
@@ -3895,6 +4204,7 @@ public class Containers
          */
         public _Builder clearLongMap() {
             optionals.clear(20);
+            modified.set(20);
             mLongMap.clear();
             return this;
         }
@@ -3906,6 +4216,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mutableLongMap() {
             optionals.set(20);
+            modified.set(20);
             return mLongMap;
         }
 
@@ -3917,6 +4228,7 @@ public class Containers
          */
         public _Builder setDoubleMap(java.util.Map<Double,Double> value) {
             optionals.set(21);
+            modified.set(21);
             mDoubleMap.clear();
             mDoubleMap.putAll(value);
             return this;
@@ -3931,6 +4243,7 @@ public class Containers
          */
         public _Builder putInDoubleMap(double key, double value) {
             optionals.set(21);
+            modified.set(21);
             mDoubleMap.put(key, value);
             return this;
         }
@@ -3938,10 +4251,19 @@ public class Containers
         /**
          * Checks for presence of the doubleMap field.
          *
-         * @return True iff doubleMap has been set.
+         * @return True if doubleMap has been set.
          */
         public boolean isSetDoubleMap() {
             return optionals.get(21);
+        }
+
+        /**
+         * Checks if doubleMap has been modified since the _Builder was created.
+         *
+         * @return True if doubleMap has been modified.
+         */
+        public boolean isModifiedDoubleMap() {
+            return modified.get(21);
         }
 
         /**
@@ -3951,6 +4273,7 @@ public class Containers
          */
         public _Builder clearDoubleMap() {
             optionals.clear(21);
+            modified.set(21);
             mDoubleMap.clear();
             return this;
         }
@@ -3962,6 +4285,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mutableDoubleMap() {
             optionals.set(21);
+            modified.set(21);
             return mDoubleMap;
         }
 
@@ -3973,6 +4297,7 @@ public class Containers
          */
         public _Builder setStringMap(java.util.Map<String,String> value) {
             optionals.set(22);
+            modified.set(22);
             mStringMap.clear();
             mStringMap.putAll(value);
             return this;
@@ -3987,6 +4312,7 @@ public class Containers
          */
         public _Builder putInStringMap(String key, String value) {
             optionals.set(22);
+            modified.set(22);
             mStringMap.put(key, value);
             return this;
         }
@@ -3994,10 +4320,19 @@ public class Containers
         /**
          * Checks for presence of the stringMap field.
          *
-         * @return True iff stringMap has been set.
+         * @return True if stringMap has been set.
          */
         public boolean isSetStringMap() {
             return optionals.get(22);
+        }
+
+        /**
+         * Checks if stringMap has been modified since the _Builder was created.
+         *
+         * @return True if stringMap has been modified.
+         */
+        public boolean isModifiedStringMap() {
+            return modified.get(22);
         }
 
         /**
@@ -4007,6 +4342,7 @@ public class Containers
          */
         public _Builder clearStringMap() {
             optionals.clear(22);
+            modified.set(22);
             mStringMap.clear();
             return this;
         }
@@ -4018,6 +4354,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableStringMap() {
             optionals.set(22);
+            modified.set(22);
             return mStringMap;
         }
 
@@ -4029,6 +4366,7 @@ public class Containers
          */
         public _Builder setBinaryMap(java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> value) {
             optionals.set(23);
+            modified.set(23);
             mBinaryMap.clear();
             mBinaryMap.putAll(value);
             return this;
@@ -4043,6 +4381,7 @@ public class Containers
          */
         public _Builder putInBinaryMap(net.morimekta.util.Binary key, net.morimekta.util.Binary value) {
             optionals.set(23);
+            modified.set(23);
             mBinaryMap.put(key, value);
             return this;
         }
@@ -4050,10 +4389,19 @@ public class Containers
         /**
          * Checks for presence of the binaryMap field.
          *
-         * @return True iff binaryMap has been set.
+         * @return True if binaryMap has been set.
          */
         public boolean isSetBinaryMap() {
             return optionals.get(23);
+        }
+
+        /**
+         * Checks if binaryMap has been modified since the _Builder was created.
+         *
+         * @return True if binaryMap has been modified.
+         */
+        public boolean isModifiedBinaryMap() {
+            return modified.get(23);
         }
 
         /**
@@ -4063,6 +4411,7 @@ public class Containers
          */
         public _Builder clearBinaryMap() {
             optionals.clear(23);
+            modified.set(23);
             mBinaryMap.clear();
             return this;
         }
@@ -4074,6 +4423,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
             optionals.set(23);
+            modified.set(23);
             return mBinaryMap;
         }
 
@@ -4085,6 +4435,7 @@ public class Containers
          */
         public _Builder setEnumList(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(24);
+            modified.set(24);
             mEnumList.clear();
             mEnumList.addAll(value);
             return this;
@@ -4098,6 +4449,7 @@ public class Containers
          */
         public _Builder addToEnumList(net.morimekta.test.providence.Value... values) {
             optionals.set(24);
+            modified.set(24);
             for (net.morimekta.test.providence.Value item : values) {
                 mEnumList.add(item);
             }
@@ -4107,10 +4459,19 @@ public class Containers
         /**
          * Using enum as key and value in containers.
          *
-         * @return True iff enumList has been set.
+         * @return True if enumList has been set.
          */
         public boolean isSetEnumList() {
             return optionals.get(24);
+        }
+
+        /**
+         * Using enum as key and value in containers.
+         *
+         * @return True if enumList has been modified.
+         */
+        public boolean isModifiedEnumList() {
+            return modified.get(24);
         }
 
         /**
@@ -4120,6 +4481,7 @@ public class Containers
          */
         public _Builder clearEnumList() {
             optionals.clear(24);
+            modified.set(24);
             mEnumList.clear();
             return this;
         }
@@ -4131,6 +4493,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.Value> mutableEnumList() {
             optionals.set(24);
+            modified.set(24);
             return mEnumList;
         }
 
@@ -4142,6 +4505,7 @@ public class Containers
          */
         public _Builder setEnumSet(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(25);
+            modified.set(25);
             mEnumSet.clear();
             mEnumSet.addAll(value);
             return this;
@@ -4155,6 +4519,7 @@ public class Containers
          */
         public _Builder addToEnumSet(net.morimekta.test.providence.Value... values) {
             optionals.set(25);
+            modified.set(25);
             for (net.morimekta.test.providence.Value item : values) {
                 mEnumSet.add(item);
             }
@@ -4164,10 +4529,19 @@ public class Containers
         /**
          * Checks for presence of the enumSet field.
          *
-         * @return True iff enumSet has been set.
+         * @return True if enumSet has been set.
          */
         public boolean isSetEnumSet() {
             return optionals.get(25);
+        }
+
+        /**
+         * Checks if enumSet has been modified since the _Builder was created.
+         *
+         * @return True if enumSet has been modified.
+         */
+        public boolean isModifiedEnumSet() {
+            return modified.get(25);
         }
 
         /**
@@ -4177,6 +4551,7 @@ public class Containers
          */
         public _Builder clearEnumSet() {
             optionals.clear(25);
+            modified.set(25);
             mEnumSet.clear();
             return this;
         }
@@ -4188,6 +4563,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.Value> mutableEnumSet() {
             optionals.set(25);
+            modified.set(25);
             return mEnumSet;
         }
 
@@ -4199,6 +4575,7 @@ public class Containers
          */
         public _Builder setEnumMap(java.util.Map<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> value) {
             optionals.set(26);
+            modified.set(26);
             mEnumMap.clear();
             mEnumMap.putAll(value);
             return this;
@@ -4213,6 +4590,7 @@ public class Containers
          */
         public _Builder putInEnumMap(net.morimekta.test.providence.Value key, net.morimekta.test.providence.Value value) {
             optionals.set(26);
+            modified.set(26);
             mEnumMap.put(key, value);
             return this;
         }
@@ -4220,10 +4598,19 @@ public class Containers
         /**
          * Checks for presence of the enumMap field.
          *
-         * @return True iff enumMap has been set.
+         * @return True if enumMap has been set.
          */
         public boolean isSetEnumMap() {
             return optionals.get(26);
+        }
+
+        /**
+         * Checks if enumMap has been modified since the _Builder was created.
+         *
+         * @return True if enumMap has been modified.
+         */
+        public boolean isModifiedEnumMap() {
+            return modified.get(26);
         }
 
         /**
@@ -4233,6 +4620,7 @@ public class Containers
          */
         public _Builder clearEnumMap() {
             optionals.clear(26);
+            modified.set(26);
             mEnumMap.clear();
             return this;
         }
@@ -4244,6 +4632,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> mutableEnumMap() {
             optionals.set(26);
+            modified.set(26);
             return mEnumMap;
         }
 
@@ -4255,6 +4644,7 @@ public class Containers
          */
         public _Builder setMessageList(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(27);
+            modified.set(27);
             mMessageList.clear();
             mMessageList.addAll(value);
             return this;
@@ -4268,6 +4658,7 @@ public class Containers
          */
         public _Builder addToMessageList(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(27);
+            modified.set(27);
             for (net.morimekta.test.providence.DefaultFields item : values) {
                 mMessageList.add(item);
             }
@@ -4277,10 +4668,19 @@ public class Containers
         /**
          * Using struct as key and value in containers.
          *
-         * @return True iff messageList has been set.
+         * @return True if messageList has been set.
          */
         public boolean isSetMessageList() {
             return optionals.get(27);
+        }
+
+        /**
+         * Using struct as key and value in containers.
+         *
+         * @return True if messageList has been modified.
+         */
+        public boolean isModifiedMessageList() {
+            return modified.get(27);
         }
 
         /**
@@ -4290,6 +4690,7 @@ public class Containers
          */
         public _Builder clearMessageList() {
             optionals.clear(27);
+            modified.set(27);
             mMessageList.clear();
             return this;
         }
@@ -4301,6 +4702,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageList() {
             optionals.set(27);
+            modified.set(27);
             return mMessageList;
         }
 
@@ -4312,6 +4714,7 @@ public class Containers
          */
         public _Builder setMessageSet(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(28);
+            modified.set(28);
             mMessageSet.clear();
             mMessageSet.addAll(value);
             return this;
@@ -4325,6 +4728,7 @@ public class Containers
          */
         public _Builder addToMessageSet(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(28);
+            modified.set(28);
             for (net.morimekta.test.providence.DefaultFields item : values) {
                 mMessageSet.add(item);
             }
@@ -4334,10 +4738,19 @@ public class Containers
         /**
          * Checks for presence of the messageSet field.
          *
-         * @return True iff messageSet has been set.
+         * @return True if messageSet has been set.
          */
         public boolean isSetMessageSet() {
             return optionals.get(28);
+        }
+
+        /**
+         * Checks if messageSet has been modified since the _Builder was created.
+         *
+         * @return True if messageSet has been modified.
+         */
+        public boolean isModifiedMessageSet() {
+            return modified.get(28);
         }
 
         /**
@@ -4347,6 +4760,7 @@ public class Containers
          */
         public _Builder clearMessageSet() {
             optionals.clear(28);
+            modified.set(28);
             mMessageSet.clear();
             return this;
         }
@@ -4358,6 +4772,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.DefaultFields> mutableMessageSet() {
             optionals.set(28);
+            modified.set(28);
             return mMessageSet;
         }
 
@@ -4369,6 +4784,7 @@ public class Containers
          */
         public _Builder setMessageMap(java.util.Map<String,net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(29);
+            modified.set(29);
             mMessageMap.clear();
             mMessageMap.putAll(value);
             return this;
@@ -4383,6 +4799,7 @@ public class Containers
          */
         public _Builder putInMessageMap(String key, net.morimekta.test.providence.DefaultFields value) {
             optionals.set(29);
+            modified.set(29);
             mMessageMap.put(key, value);
             return this;
         }
@@ -4390,10 +4807,19 @@ public class Containers
         /**
          * Checks for presence of the messageMap field.
          *
-         * @return True iff messageMap has been set.
+         * @return True if messageMap has been set.
          */
         public boolean isSetMessageMap() {
             return optionals.get(29);
+        }
+
+        /**
+         * Checks if messageMap has been modified since the _Builder was created.
+         *
+         * @return True if messageMap has been modified.
+         */
+        public boolean isModifiedMessageMap() {
+            return modified.get(29);
         }
 
         /**
@@ -4403,6 +4829,7 @@ public class Containers
          */
         public _Builder clearMessageMap() {
             optionals.clear(29);
+            modified.set(29);
             mMessageMap.clear();
             return this;
         }
@@ -4414,6 +4841,7 @@ public class Containers
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.DefaultFields> mutableMessageMap() {
             optionals.set(29);
+            modified.set(29);
             return mMessageMap;
         }
 
@@ -4425,6 +4853,7 @@ public class Containers
          */
         public _Builder setRequiredFields(net.morimekta.test.providence.RequiredFields value) {
             optionals.set(30);
+            modified.set(30);
             mRequiredFields_builder = null;
             mRequiredFields = value;
             return this;
@@ -4433,10 +4862,19 @@ public class Containers
         /**
          * Checks for presence of the requiredFields field.
          *
-         * @return True iff requiredFields has been set.
+         * @return True if requiredFields has been set.
          */
         public boolean isSetRequiredFields() {
             return optionals.get(30);
+        }
+
+        /**
+         * Checks if requiredFields has been modified since the _Builder was created.
+         *
+         * @return True if requiredFields has been modified.
+         */
+        public boolean isModifiedRequiredFields() {
+            return modified.get(30);
         }
 
         /**
@@ -4446,6 +4884,7 @@ public class Containers
          */
         public _Builder clearRequiredFields() {
             optionals.clear(30);
+            modified.set(30);
             mRequiredFields = null;
             mRequiredFields_builder = null;
             return this;
@@ -4458,6 +4897,7 @@ public class Containers
          */
         public net.morimekta.test.providence.RequiredFields._Builder mutableRequiredFields() {
             optionals.set(30);
+            modified.set(30);
 
             if (mRequiredFields != null) {
                 mRequiredFields_builder = mRequiredFields.mutate();
@@ -4476,6 +4916,7 @@ public class Containers
          */
         public _Builder setDefaultFields(net.morimekta.test.providence.DefaultFields value) {
             optionals.set(31);
+            modified.set(31);
             mDefaultFields_builder = null;
             mDefaultFields = value;
             return this;
@@ -4484,10 +4925,19 @@ public class Containers
         /**
          * Checks for presence of the defaultFields field.
          *
-         * @return True iff defaultFields has been set.
+         * @return True if defaultFields has been set.
          */
         public boolean isSetDefaultFields() {
             return optionals.get(31);
+        }
+
+        /**
+         * Checks if defaultFields has been modified since the _Builder was created.
+         *
+         * @return True if defaultFields has been modified.
+         */
+        public boolean isModifiedDefaultFields() {
+            return modified.get(31);
         }
 
         /**
@@ -4497,6 +4947,7 @@ public class Containers
          */
         public _Builder clearDefaultFields() {
             optionals.clear(31);
+            modified.set(31);
             mDefaultFields = null;
             mDefaultFields_builder = null;
             return this;
@@ -4509,6 +4960,7 @@ public class Containers
          */
         public net.morimekta.test.providence.DefaultFields._Builder mutableDefaultFields() {
             optionals.set(31);
+            modified.set(31);
 
             if (mDefaultFields != null) {
                 mDefaultFields_builder = mDefaultFields.mutate();
@@ -4527,6 +4979,7 @@ public class Containers
          */
         public _Builder setOptionalFields(net.morimekta.test.providence.OptionalFields value) {
             optionals.set(32);
+            modified.set(32);
             mOptionalFields_builder = null;
             mOptionalFields = value;
             return this;
@@ -4535,10 +4988,19 @@ public class Containers
         /**
          * Checks for presence of the optionalFields field.
          *
-         * @return True iff optionalFields has been set.
+         * @return True if optionalFields has been set.
          */
         public boolean isSetOptionalFields() {
             return optionals.get(32);
+        }
+
+        /**
+         * Checks if optionalFields has been modified since the _Builder was created.
+         *
+         * @return True if optionalFields has been modified.
+         */
+        public boolean isModifiedOptionalFields() {
+            return modified.get(32);
         }
 
         /**
@@ -4548,6 +5010,7 @@ public class Containers
          */
         public _Builder clearOptionalFields() {
             optionals.clear(32);
+            modified.set(32);
             mOptionalFields = null;
             mOptionalFields_builder = null;
             return this;
@@ -4560,6 +5023,7 @@ public class Containers
          */
         public net.morimekta.test.providence.OptionalFields._Builder mutableOptionalFields() {
             optionals.set(32);
+            modified.set(32);
 
             if (mOptionalFields != null) {
                 mOptionalFields_builder = mOptionalFields.mutate();
@@ -4578,6 +5042,7 @@ public class Containers
          */
         public _Builder setUnionFields(net.morimekta.test.providence.UnionFields value) {
             optionals.set(33);
+            modified.set(33);
             mUnionFields_builder = null;
             mUnionFields = value;
             return this;
@@ -4586,10 +5051,19 @@ public class Containers
         /**
          * Checks for presence of the unionFields field.
          *
-         * @return True iff unionFields has been set.
+         * @return True if unionFields has been set.
          */
         public boolean isSetUnionFields() {
             return optionals.get(33);
+        }
+
+        /**
+         * Checks if unionFields has been modified since the _Builder was created.
+         *
+         * @return True if unionFields has been modified.
+         */
+        public boolean isModifiedUnionFields() {
+            return modified.get(33);
         }
 
         /**
@@ -4599,6 +5073,7 @@ public class Containers
          */
         public _Builder clearUnionFields() {
             optionals.clear(33);
+            modified.set(33);
             mUnionFields = null;
             mUnionFields_builder = null;
             return this;
@@ -4611,6 +5086,7 @@ public class Containers
          */
         public net.morimekta.test.providence.UnionFields._Builder mutableUnionFields() {
             optionals.set(33);
+            modified.set(33);
 
             if (mUnionFields != null) {
                 mUnionFields_builder = mUnionFields.mutate();
@@ -4629,6 +5105,7 @@ public class Containers
          */
         public _Builder setExceptionFields(net.morimekta.test.providence.ExceptionFields value) {
             optionals.set(34);
+            modified.set(34);
             mExceptionFields_builder = null;
             mExceptionFields = value;
             return this;
@@ -4637,10 +5114,19 @@ public class Containers
         /**
          * Checks for presence of the exceptionFields field.
          *
-         * @return True iff exceptionFields has been set.
+         * @return True if exceptionFields has been set.
          */
         public boolean isSetExceptionFields() {
             return optionals.get(34);
+        }
+
+        /**
+         * Checks if exceptionFields has been modified since the _Builder was created.
+         *
+         * @return True if exceptionFields has been modified.
+         */
+        public boolean isModifiedExceptionFields() {
+            return modified.get(34);
         }
 
         /**
@@ -4650,6 +5136,7 @@ public class Containers
          */
         public _Builder clearExceptionFields() {
             optionals.clear(34);
+            modified.set(34);
             mExceptionFields = null;
             mExceptionFields_builder = null;
             return this;
@@ -4662,6 +5149,7 @@ public class Containers
          */
         public net.morimekta.test.providence.ExceptionFields._Builder mutableExceptionFields() {
             optionals.set(34);
+            modified.set(34);
 
             if (mExceptionFields != null) {
                 mExceptionFields_builder = mExceptionFields.mutate();
@@ -4680,6 +5168,7 @@ public class Containers
          */
         public _Builder setDefaultValues(net.morimekta.test.providence.DefaultValues value) {
             optionals.set(35);
+            modified.set(35);
             mDefaultValues_builder = null;
             mDefaultValues = value;
             return this;
@@ -4688,10 +5177,19 @@ public class Containers
         /**
          * Checks for presence of the defaultValues field.
          *
-         * @return True iff defaultValues has been set.
+         * @return True if defaultValues has been set.
          */
         public boolean isSetDefaultValues() {
             return optionals.get(35);
+        }
+
+        /**
+         * Checks if defaultValues has been modified since the _Builder was created.
+         *
+         * @return True if defaultValues has been modified.
+         */
+        public boolean isModifiedDefaultValues() {
+            return modified.get(35);
         }
 
         /**
@@ -4701,6 +5199,7 @@ public class Containers
          */
         public _Builder clearDefaultValues() {
             optionals.clear(35);
+            modified.set(35);
             mDefaultValues = null;
             mDefaultValues_builder = null;
             return this;
@@ -4713,6 +5212,7 @@ public class Containers
          */
         public net.morimekta.test.providence.DefaultValues._Builder mutableDefaultValues() {
             optionals.set(35);
+            modified.set(35);
 
             if (mDefaultValues != null) {
                 mDefaultValues_builder = mDefaultValues.mutate();
@@ -4908,6 +5408,50 @@ public class Containers
                 case 54: return optionals.get(33);
                 case 55: return optionals.get(34);
                 case 56: return optionals.get(35);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
+                case 6: return modified.get(5);
+                case 7: return modified.get(6);
+                case 8: return modified.get(7);
+                case 11: return modified.get(8);
+                case 12: return modified.get(9);
+                case 13: return modified.get(10);
+                case 14: return modified.get(11);
+                case 15: return modified.get(12);
+                case 16: return modified.get(13);
+                case 17: return modified.get(14);
+                case 18: return modified.get(15);
+                case 21: return modified.get(16);
+                case 22: return modified.get(17);
+                case 23: return modified.get(18);
+                case 24: return modified.get(19);
+                case 25: return modified.get(20);
+                case 26: return modified.get(21);
+                case 27: return modified.get(22);
+                case 28: return modified.get(23);
+                case 31: return modified.get(24);
+                case 32: return modified.get(25);
+                case 33: return modified.get(26);
+                case 41: return modified.get(27);
+                case 42: return modified.get(28);
+                case 43: return modified.get(29);
+                case 51: return modified.get(30);
+                case 52: return modified.get(31);
+                case 53: return modified.get(32);
+                case 54: return modified.get(33);
+                case 55: return modified.get(34);
+                case 56: return modified.get(35);
                 default: break;
             }
             return false;

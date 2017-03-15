@@ -504,6 +504,7 @@ public class ProgramType
             extends net.morimekta.providence.PMessageBuilder<ProgramType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private String mProgramName;
@@ -516,6 +517,7 @@ public class ProgramType
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
+            modified = new java.util.BitSet(5);
             mIncludes = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
             mDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -555,27 +557,32 @@ public class ProgramType
         public _Builder merge(ProgramType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             if (from.hasProgramName()) {
                 optionals.set(1);
+                modified.set(1);
                 mProgramName = from.getProgramName();
             }
 
             if (from.hasIncludes()) {
                 optionals.set(2);
+                modified.set(2);
                 mIncludes.clear();
                 mIncludes.addAll(from.getIncludes());
             }
 
             if (from.hasNamespaces()) {
                 optionals.set(3);
+                modified.set(3);
                 mNamespaces.putAll(from.getNamespaces());
             }
 
             if (from.hasDecl()) {
                 optionals.set(4);
+                modified.set(4);
                 mDecl.clear();
                 mDecl.addAll(from.getDecl());
             }
@@ -590,6 +597,7 @@ public class ProgramType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -597,10 +605,19 @@ public class ProgramType
         /**
          * Program documentation must come before the first statement of the header.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Program documentation must come before the first statement of the header.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -610,6 +627,7 @@ public class ProgramType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -631,6 +649,7 @@ public class ProgramType
          */
         public _Builder setProgramName(String value) {
             optionals.set(1);
+            modified.set(1);
             mProgramName = value;
             return this;
         }
@@ -638,10 +657,19 @@ public class ProgramType
         /**
          * The program name, deducted from the .thrift IDL file name.
          *
-         * @return True iff program_name has been set.
+         * @return True if program_name has been set.
          */
         public boolean isSetProgramName() {
             return optionals.get(1);
+        }
+
+        /**
+         * The program name, deducted from the .thrift IDL file name.
+         *
+         * @return True if program_name has been modified.
+         */
+        public boolean isModifiedProgramName() {
+            return modified.get(1);
         }
 
         /**
@@ -651,6 +679,7 @@ public class ProgramType
          */
         public _Builder clearProgramName() {
             optionals.clear(1);
+            modified.set(1);
             mProgramName = null;
             return this;
         }
@@ -674,6 +703,7 @@ public class ProgramType
          */
         public _Builder setIncludes(java.util.Collection<String> value) {
             optionals.set(2);
+            modified.set(2);
             mIncludes.clear();
             mIncludes.addAll(value);
             return this;
@@ -689,6 +719,7 @@ public class ProgramType
          */
         public _Builder addToIncludes(String... values) {
             optionals.set(2);
+            modified.set(2);
             for (String item : values) {
                 mIncludes.add(item);
             }
@@ -700,10 +731,21 @@ public class ProgramType
          * <p>
          * include &quot;&lt;program&gt;.thrift&quot;
          *
-         * @return True iff includes has been set.
+         * @return True if includes has been set.
          */
         public boolean isSetIncludes() {
             return optionals.get(2);
+        }
+
+        /**
+         * List of included thrift files. Same as from the actual thrift file.
+         * <p>
+         * include &quot;&lt;program&gt;.thrift&quot;
+         *
+         * @return True if includes has been modified.
+         */
+        public boolean isModifiedIncludes() {
+            return modified.get(2);
         }
 
         /**
@@ -715,6 +757,7 @@ public class ProgramType
          */
         public _Builder clearIncludes() {
             optionals.clear(2);
+            modified.set(2);
             mIncludes.clear();
             return this;
         }
@@ -728,6 +771,7 @@ public class ProgramType
          */
         public net.morimekta.providence.descriptor.PList.Builder<String> mutableIncludes() {
             optionals.set(2);
+            modified.set(2);
             return mIncludes;
         }
 
@@ -741,6 +785,7 @@ public class ProgramType
          */
         public _Builder setNamespaces(java.util.Map<String,String> value) {
             optionals.set(3);
+            modified.set(3);
             mNamespaces.clear();
             mNamespaces.putAll(value);
             return this;
@@ -757,6 +802,7 @@ public class ProgramType
          */
         public _Builder putInNamespaces(String key, String value) {
             optionals.set(3);
+            modified.set(3);
             mNamespaces.put(key, value);
             return this;
         }
@@ -766,10 +812,21 @@ public class ProgramType
          * <p>
          * namespace &lt;key&gt; &lt;value&gt;
          *
-         * @return True iff namespaces has been set.
+         * @return True if namespaces has been set.
          */
         public boolean isSetNamespaces() {
             return optionals.get(3);
+        }
+
+        /**
+         * Map of language to laguage dependent namespace identifier.
+         * <p>
+         * namespace &lt;key&gt; &lt;value&gt;
+         *
+         * @return True if namespaces has been modified.
+         */
+        public boolean isModifiedNamespaces() {
+            return modified.get(3);
         }
 
         /**
@@ -781,6 +838,7 @@ public class ProgramType
          */
         public _Builder clearNamespaces() {
             optionals.clear(3);
+            modified.set(3);
             mNamespaces.clear();
             return this;
         }
@@ -794,6 +852,7 @@ public class ProgramType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableNamespaces() {
             optionals.set(3);
+            modified.set(3);
             return mNamespaces;
         }
 
@@ -805,6 +864,7 @@ public class ProgramType
          */
         public _Builder setDecl(java.util.Collection<net.morimekta.providence.model.Declaration> value) {
             optionals.set(4);
+            modified.set(4);
             mDecl.clear();
             mDecl.addAll(value);
             return this;
@@ -818,6 +878,7 @@ public class ProgramType
          */
         public _Builder addToDecl(net.morimekta.providence.model.Declaration... values) {
             optionals.set(4);
+            modified.set(4);
             for (net.morimekta.providence.model.Declaration item : values) {
                 mDecl.add(item);
             }
@@ -827,10 +888,19 @@ public class ProgramType
         /**
          * List of declarations in the program file. Same order as in the thrift file.
          *
-         * @return True iff decl has been set.
+         * @return True if decl has been set.
          */
         public boolean isSetDecl() {
             return optionals.get(4);
+        }
+
+        /**
+         * List of declarations in the program file. Same order as in the thrift file.
+         *
+         * @return True if decl has been modified.
+         */
+        public boolean isModifiedDecl() {
+            return modified.get(4);
         }
 
         /**
@@ -840,6 +910,7 @@ public class ProgramType
          */
         public _Builder clearDecl() {
             optionals.clear(4);
+            modified.set(4);
             mDecl.clear();
             return this;
         }
@@ -851,6 +922,7 @@ public class ProgramType
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.Declaration> mutableDecl() {
             optionals.set(4);
+            modified.set(4);
             return mDecl;
         }
 
@@ -909,6 +981,19 @@ public class ProgramType
                 case 3: return optionals.get(2);
                 case 4: return optionals.get(3);
                 case 5: return optionals.get(4);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
                 default: break;
             }
             return false;

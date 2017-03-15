@@ -464,6 +464,7 @@ public class ConstType
             extends net.morimekta.providence.PMessageBuilder<ConstType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private String mType;
@@ -476,6 +477,7 @@ public class ConstType
          */
         public _Builder() {
             optionals = new java.util.BitSet(5);
+            modified = new java.util.BitSet(5);
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
@@ -513,26 +515,31 @@ public class ConstType
         public _Builder merge(ConstType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             if (from.hasType()) {
                 optionals.set(1);
+                modified.set(1);
                 mType = from.getType();
             }
 
             if (from.hasName()) {
                 optionals.set(2);
+                modified.set(2);
                 mName = from.getName();
             }
 
             if (from.hasValue()) {
                 optionals.set(3);
+                modified.set(3);
                 mValue = from.getValue();
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
+                modified.set(4);
                 mAnnotations.putAll(from.getAnnotations());
             }
             return this;
@@ -546,6 +553,7 @@ public class ConstType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -553,10 +561,19 @@ public class ConstType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -566,6 +583,7 @@ public class ConstType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -587,6 +605,7 @@ public class ConstType
          */
         public _Builder setType(String value) {
             optionals.set(1);
+            modified.set(1);
             mType = value;
             return this;
         }
@@ -594,10 +613,19 @@ public class ConstType
         /**
          * Checks for presence of the type field.
          *
-         * @return True iff type has been set.
+         * @return True if type has been set.
          */
         public boolean isSetType() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if type has been modified since the _Builder was created.
+         *
+         * @return True if type has been modified.
+         */
+        public boolean isModifiedType() {
+            return modified.get(1);
         }
 
         /**
@@ -607,6 +635,7 @@ public class ConstType
          */
         public _Builder clearType() {
             optionals.clear(1);
+            modified.set(1);
             mType = null;
             return this;
         }
@@ -628,6 +657,7 @@ public class ConstType
          */
         public _Builder setName(String value) {
             optionals.set(2);
+            modified.set(2);
             mName = value;
             return this;
         }
@@ -635,10 +665,19 @@ public class ConstType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(2);
         }
 
         /**
@@ -648,6 +687,7 @@ public class ConstType
          */
         public _Builder clearName() {
             optionals.clear(2);
+            modified.set(2);
             mName = null;
             return this;
         }
@@ -669,6 +709,7 @@ public class ConstType
          */
         public _Builder setValue(String value) {
             optionals.set(3);
+            modified.set(3);
             mValue = value;
             return this;
         }
@@ -676,10 +717,19 @@ public class ConstType
         /**
          * Checks for presence of the value field.
          *
-         * @return True iff value has been set.
+         * @return True if value has been set.
          */
         public boolean isSetValue() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if value has been modified since the _Builder was created.
+         *
+         * @return True if value has been modified.
+         */
+        public boolean isModifiedValue() {
+            return modified.get(3);
         }
 
         /**
@@ -689,6 +739,7 @@ public class ConstType
          */
         public _Builder clearValue() {
             optionals.clear(3);
+            modified.set(3);
             mValue = null;
             return this;
         }
@@ -710,6 +761,7 @@ public class ConstType
          */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
@@ -724,6 +776,7 @@ public class ConstType
          */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
+            modified.set(4);
             mAnnotations.put(key, value);
             return this;
         }
@@ -731,10 +784,19 @@ public class ConstType
         /**
          * Checks for presence of the annotations field.
          *
-         * @return True iff annotations has been set.
+         * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if annotations has been modified since the _Builder was created.
+         *
+         * @return True if annotations has been modified.
+         */
+        public boolean isModifiedAnnotations() {
+            return modified.get(4);
         }
 
         /**
@@ -744,6 +806,7 @@ public class ConstType
          */
         public _Builder clearAnnotations() {
             optionals.clear(4);
+            modified.set(4);
             mAnnotations.clear();
             return this;
         }
@@ -755,6 +818,7 @@ public class ConstType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(4);
+            modified.set(4);
             return mAnnotations;
         }
 
@@ -813,6 +877,19 @@ public class ConstType
                 case 5: return optionals.get(2);
                 case 6: return optionals.get(3);
                 case 7: return optionals.get(4);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 4: return modified.get(1);
+                case 5: return modified.get(2);
+                case 6: return modified.get(3);
+                case 7: return modified.get(4);
                 default: break;
             }
             return false;

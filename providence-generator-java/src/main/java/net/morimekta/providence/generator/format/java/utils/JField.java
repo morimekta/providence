@@ -96,6 +96,10 @@ public class JField {
         return camelCase("isSet", field.getName());
     }
 
+    public String isModified() {
+        return camelCase("isModified", field.getName());
+    }
+
     public String getter() {
         if (field.getType() == PType.BOOL) {
             return camelCase("is", field.getName());

@@ -555,6 +555,7 @@ public class FieldType
             extends net.morimekta.providence.PMessageBuilder<FieldType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private int mKey;
@@ -569,6 +570,7 @@ public class FieldType
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
+            modified = new java.util.BitSet(7);
             mKey = kDefaultKey;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -613,34 +615,41 @@ public class FieldType
         public _Builder merge(FieldType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             optionals.set(1);
+            modified.set(1);
             mKey = from.getKey();
 
             if (from.hasRequirement()) {
                 optionals.set(2);
+                modified.set(2);
                 mRequirement = from.getRequirement();
             }
 
             if (from.hasType()) {
                 optionals.set(3);
+                modified.set(3);
                 mType = from.getType();
             }
 
             if (from.hasName()) {
                 optionals.set(4);
+                modified.set(4);
                 mName = from.getName();
             }
 
             if (from.hasDefaultValue()) {
                 optionals.set(5);
+                modified.set(5);
                 mDefaultValue = from.getDefaultValue();
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(6);
+                modified.set(6);
                 mAnnotations.putAll(from.getAnnotations());
             }
             return this;
@@ -654,6 +663,7 @@ public class FieldType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -661,10 +671,19 @@ public class FieldType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -674,6 +693,7 @@ public class FieldType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -695,6 +715,7 @@ public class FieldType
          */
         public _Builder setKey(int value) {
             optionals.set(1);
+            modified.set(1);
             mKey = value;
             return this;
         }
@@ -702,10 +723,19 @@ public class FieldType
         /**
          * Checks for presence of the key field.
          *
-         * @return True iff key has been set.
+         * @return True if key has been set.
          */
         public boolean isSetKey() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if key has been modified since the _Builder was created.
+         *
+         * @return True if key has been modified.
+         */
+        public boolean isModifiedKey() {
+            return modified.get(1);
         }
 
         /**
@@ -715,6 +745,7 @@ public class FieldType
          */
         public _Builder clearKey() {
             optionals.clear(1);
+            modified.set(1);
             mKey = kDefaultKey;
             return this;
         }
@@ -736,6 +767,7 @@ public class FieldType
          */
         public _Builder setRequirement(net.morimekta.providence.model.FieldRequirement value) {
             optionals.set(2);
+            modified.set(2);
             mRequirement = value;
             return this;
         }
@@ -743,10 +775,19 @@ public class FieldType
         /**
          * Checks for presence of the requirement field.
          *
-         * @return True iff requirement has been set.
+         * @return True if requirement has been set.
          */
         public boolean isSetRequirement() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if requirement has been modified since the _Builder was created.
+         *
+         * @return True if requirement has been modified.
+         */
+        public boolean isModifiedRequirement() {
+            return modified.get(2);
         }
 
         /**
@@ -756,6 +797,7 @@ public class FieldType
          */
         public _Builder clearRequirement() {
             optionals.clear(2);
+            modified.set(2);
             mRequirement = null;
             return this;
         }
@@ -777,6 +819,7 @@ public class FieldType
          */
         public _Builder setType(String value) {
             optionals.set(3);
+            modified.set(3);
             mType = value;
             return this;
         }
@@ -784,10 +827,19 @@ public class FieldType
         /**
          * Checks for presence of the type field.
          *
-         * @return True iff type has been set.
+         * @return True if type has been set.
          */
         public boolean isSetType() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if type has been modified since the _Builder was created.
+         *
+         * @return True if type has been modified.
+         */
+        public boolean isModifiedType() {
+            return modified.get(3);
         }
 
         /**
@@ -797,6 +849,7 @@ public class FieldType
          */
         public _Builder clearType() {
             optionals.clear(3);
+            modified.set(3);
             mType = null;
             return this;
         }
@@ -818,6 +871,7 @@ public class FieldType
          */
         public _Builder setName(String value) {
             optionals.set(4);
+            modified.set(4);
             mName = value;
             return this;
         }
@@ -825,10 +879,19 @@ public class FieldType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(4);
         }
 
         /**
@@ -838,6 +901,7 @@ public class FieldType
          */
         public _Builder clearName() {
             optionals.clear(4);
+            modified.set(4);
             mName = null;
             return this;
         }
@@ -859,6 +923,7 @@ public class FieldType
          */
         public _Builder setDefaultValue(String value) {
             optionals.set(5);
+            modified.set(5);
             mDefaultValue = value;
             return this;
         }
@@ -866,10 +931,19 @@ public class FieldType
         /**
          * Checks for presence of the default_value field.
          *
-         * @return True iff default_value has been set.
+         * @return True if default_value has been set.
          */
         public boolean isSetDefaultValue() {
             return optionals.get(5);
+        }
+
+        /**
+         * Checks if default_value has been modified since the _Builder was created.
+         *
+         * @return True if default_value has been modified.
+         */
+        public boolean isModifiedDefaultValue() {
+            return modified.get(5);
         }
 
         /**
@@ -879,6 +953,7 @@ public class FieldType
          */
         public _Builder clearDefaultValue() {
             optionals.clear(5);
+            modified.set(5);
             mDefaultValue = null;
             return this;
         }
@@ -900,6 +975,7 @@ public class FieldType
          */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
+            modified.set(6);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
@@ -914,6 +990,7 @@ public class FieldType
          */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
+            modified.set(6);
             mAnnotations.put(key, value);
             return this;
         }
@@ -921,10 +998,19 @@ public class FieldType
         /**
          * Checks for presence of the annotations field.
          *
-         * @return True iff annotations has been set.
+         * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
             return optionals.get(6);
+        }
+
+        /**
+         * Checks if annotations has been modified since the _Builder was created.
+         *
+         * @return True if annotations has been modified.
+         */
+        public boolean isModifiedAnnotations() {
+            return modified.get(6);
         }
 
         /**
@@ -934,6 +1020,7 @@ public class FieldType
          */
         public _Builder clearAnnotations() {
             optionals.clear(6);
+            modified.set(6);
             mAnnotations.clear();
             return this;
         }
@@ -945,6 +1032,7 @@ public class FieldType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(6);
+            modified.set(6);
             return mAnnotations;
         }
 
@@ -1011,6 +1099,21 @@ public class FieldType
                 case 5: return optionals.get(4);
                 case 6: return optionals.get(5);
                 case 7: return optionals.get(6);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
+                case 6: return modified.get(5);
+                case 7: return modified.get(6);
                 default: break;
             }
             return false;

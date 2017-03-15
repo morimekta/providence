@@ -568,6 +568,7 @@ public class FunctionType
             extends net.morimekta.providence.PMessageBuilder<FunctionType,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
         private java.util.BitSet optionals;
+        private java.util.BitSet modified;
 
         private String mDocumentation;
         private boolean mOneWay;
@@ -582,6 +583,7 @@ public class FunctionType
          */
         public _Builder() {
             optionals = new java.util.BitSet(7);
+            modified = new java.util.BitSet(7);
             mOneWay = kDefaultOneWay;
             mParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mExceptions = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -628,36 +630,43 @@ public class FunctionType
         public _Builder merge(FunctionType from) {
             if (from.hasDocumentation()) {
                 optionals.set(0);
+                modified.set(0);
                 mDocumentation = from.getDocumentation();
             }
 
             optionals.set(1);
+            modified.set(1);
             mOneWay = from.isOneWay();
 
             if (from.hasReturnType()) {
                 optionals.set(2);
+                modified.set(2);
                 mReturnType = from.getReturnType();
             }
 
             if (from.hasName()) {
                 optionals.set(3);
+                modified.set(3);
                 mName = from.getName();
             }
 
             if (from.hasParams()) {
                 optionals.set(4);
+                modified.set(4);
                 mParams.clear();
                 mParams.addAll(from.getParams());
             }
 
             if (from.hasExceptions()) {
                 optionals.set(5);
+                modified.set(5);
                 mExceptions.clear();
                 mExceptions.addAll(from.getExceptions());
             }
 
             if (from.hasAnnotations()) {
                 optionals.set(6);
+                modified.set(6);
                 mAnnotations.putAll(from.getAnnotations());
             }
             return this;
@@ -671,6 +680,7 @@ public class FunctionType
          */
         public _Builder setDocumentation(String value) {
             optionals.set(0);
+            modified.set(0);
             mDocumentation = value;
             return this;
         }
@@ -678,10 +688,19 @@ public class FunctionType
         /**
          * Checks for presence of the documentation field.
          *
-         * @return True iff documentation has been set.
+         * @return True if documentation has been set.
          */
         public boolean isSetDocumentation() {
             return optionals.get(0);
+        }
+
+        /**
+         * Checks if documentation has been modified since the _Builder was created.
+         *
+         * @return True if documentation has been modified.
+         */
+        public boolean isModifiedDocumentation() {
+            return modified.get(0);
         }
 
         /**
@@ -691,6 +710,7 @@ public class FunctionType
          */
         public _Builder clearDocumentation() {
             optionals.clear(0);
+            modified.set(0);
             mDocumentation = null;
             return this;
         }
@@ -712,6 +732,7 @@ public class FunctionType
          */
         public _Builder setOneWay(boolean value) {
             optionals.set(1);
+            modified.set(1);
             mOneWay = value;
             return this;
         }
@@ -719,10 +740,19 @@ public class FunctionType
         /**
          * Checks for presence of the one_way field.
          *
-         * @return True iff one_way has been set.
+         * @return True if one_way has been set.
          */
         public boolean isSetOneWay() {
             return optionals.get(1);
+        }
+
+        /**
+         * Checks if one_way has been modified since the _Builder was created.
+         *
+         * @return True if one_way has been modified.
+         */
+        public boolean isModifiedOneWay() {
+            return modified.get(1);
         }
 
         /**
@@ -732,6 +762,7 @@ public class FunctionType
          */
         public _Builder clearOneWay() {
             optionals.clear(1);
+            modified.set(1);
             mOneWay = kDefaultOneWay;
             return this;
         }
@@ -753,6 +784,7 @@ public class FunctionType
          */
         public _Builder setReturnType(String value) {
             optionals.set(2);
+            modified.set(2);
             mReturnType = value;
             return this;
         }
@@ -760,10 +792,19 @@ public class FunctionType
         /**
          * Checks for presence of the return_type field.
          *
-         * @return True iff return_type has been set.
+         * @return True if return_type has been set.
          */
         public boolean isSetReturnType() {
             return optionals.get(2);
+        }
+
+        /**
+         * Checks if return_type has been modified since the _Builder was created.
+         *
+         * @return True if return_type has been modified.
+         */
+        public boolean isModifiedReturnType() {
+            return modified.get(2);
         }
 
         /**
@@ -773,6 +814,7 @@ public class FunctionType
          */
         public _Builder clearReturnType() {
             optionals.clear(2);
+            modified.set(2);
             mReturnType = null;
             return this;
         }
@@ -794,6 +836,7 @@ public class FunctionType
          */
         public _Builder setName(String value) {
             optionals.set(3);
+            modified.set(3);
             mName = value;
             return this;
         }
@@ -801,10 +844,19 @@ public class FunctionType
         /**
          * Checks for presence of the name field.
          *
-         * @return True iff name has been set.
+         * @return True if name has been set.
          */
         public boolean isSetName() {
             return optionals.get(3);
+        }
+
+        /**
+         * Checks if name has been modified since the _Builder was created.
+         *
+         * @return True if name has been modified.
+         */
+        public boolean isModifiedName() {
+            return modified.get(3);
         }
 
         /**
@@ -814,6 +866,7 @@ public class FunctionType
          */
         public _Builder clearName() {
             optionals.clear(3);
+            modified.set(3);
             mName = null;
             return this;
         }
@@ -835,6 +888,7 @@ public class FunctionType
          */
         public _Builder setParams(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(4);
+            modified.set(4);
             mParams.clear();
             mParams.addAll(value);
             return this;
@@ -848,6 +902,7 @@ public class FunctionType
          */
         public _Builder addToParams(net.morimekta.providence.model.FieldType... values) {
             optionals.set(4);
+            modified.set(4);
             for (net.morimekta.providence.model.FieldType item : values) {
                 mParams.add(item);
             }
@@ -857,10 +912,19 @@ public class FunctionType
         /**
          * Checks for presence of the params field.
          *
-         * @return True iff params has been set.
+         * @return True if params has been set.
          */
         public boolean isSetParams() {
             return optionals.get(4);
+        }
+
+        /**
+         * Checks if params has been modified since the _Builder was created.
+         *
+         * @return True if params has been modified.
+         */
+        public boolean isModifiedParams() {
+            return modified.get(4);
         }
 
         /**
@@ -870,6 +934,7 @@ public class FunctionType
          */
         public _Builder clearParams() {
             optionals.clear(4);
+            modified.set(4);
             mParams.clear();
             return this;
         }
@@ -881,6 +946,7 @@ public class FunctionType
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableParams() {
             optionals.set(4);
+            modified.set(4);
             return mParams;
         }
 
@@ -892,6 +958,7 @@ public class FunctionType
          */
         public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(5);
+            modified.set(5);
             mExceptions.clear();
             mExceptions.addAll(value);
             return this;
@@ -905,6 +972,7 @@ public class FunctionType
          */
         public _Builder addToExceptions(net.morimekta.providence.model.FieldType... values) {
             optionals.set(5);
+            modified.set(5);
             for (net.morimekta.providence.model.FieldType item : values) {
                 mExceptions.add(item);
             }
@@ -914,10 +982,19 @@ public class FunctionType
         /**
          * Checks for presence of the exceptions field.
          *
-         * @return True iff exceptions has been set.
+         * @return True if exceptions has been set.
          */
         public boolean isSetExceptions() {
             return optionals.get(5);
+        }
+
+        /**
+         * Checks if exceptions has been modified since the _Builder was created.
+         *
+         * @return True if exceptions has been modified.
+         */
+        public boolean isModifiedExceptions() {
+            return modified.get(5);
         }
 
         /**
@@ -927,6 +1004,7 @@ public class FunctionType
          */
         public _Builder clearExceptions() {
             optionals.clear(5);
+            modified.set(5);
             mExceptions.clear();
             return this;
         }
@@ -938,6 +1016,7 @@ public class FunctionType
          */
         public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mutableExceptions() {
             optionals.set(5);
+            modified.set(5);
             return mExceptions;
         }
 
@@ -949,6 +1028,7 @@ public class FunctionType
          */
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
+            modified.set(6);
             mAnnotations.clear();
             mAnnotations.putAll(value);
             return this;
@@ -963,6 +1043,7 @@ public class FunctionType
          */
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
+            modified.set(6);
             mAnnotations.put(key, value);
             return this;
         }
@@ -970,10 +1051,19 @@ public class FunctionType
         /**
          * Checks for presence of the annotations field.
          *
-         * @return True iff annotations has been set.
+         * @return True if annotations has been set.
          */
         public boolean isSetAnnotations() {
             return optionals.get(6);
+        }
+
+        /**
+         * Checks if annotations has been modified since the _Builder was created.
+         *
+         * @return True if annotations has been modified.
+         */
+        public boolean isModifiedAnnotations() {
+            return modified.get(6);
         }
 
         /**
@@ -983,6 +1073,7 @@ public class FunctionType
          */
         public _Builder clearAnnotations() {
             optionals.clear(6);
+            modified.set(6);
             mAnnotations.clear();
             return this;
         }
@@ -994,6 +1085,7 @@ public class FunctionType
          */
         public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableAnnotations() {
             optionals.set(6);
+            modified.set(6);
             return mAnnotations;
         }
 
@@ -1060,6 +1152,21 @@ public class FunctionType
                 case 5: return optionals.get(4);
                 case 6: return optionals.get(5);
                 case 7: return optionals.get(6);
+                default: break;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isModified(int key) {
+            switch (key) {
+                case 1: return modified.get(0);
+                case 2: return modified.get(1);
+                case 3: return modified.get(2);
+                case 4: return modified.get(3);
+                case 5: return modified.get(4);
+                case 6: return modified.get(5);
+                case 7: return modified.get(6);
                 default: break;
             }
             return false;

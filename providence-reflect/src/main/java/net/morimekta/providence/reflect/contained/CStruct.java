@@ -213,6 +213,11 @@ public class CStruct extends CMessage<CStruct,CField> {
         }
 
         @Override
+        public boolean isModified(int key) {
+            return false;
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
             PField field = descriptor.getField(key);
