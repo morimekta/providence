@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.config;
+package net.morimekta.providence.util;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;

@@ -1,6 +1,7 @@
-package net.morimekta.providence.config;
+package net.morimekta.providence.util;
 
-import net.morimekta.test.config.Credentials;
+import net.morimekta.test.providence.OptionalFields;
+import net.morimekta.util.Binary;
 
 import org.junit.Test;
 
@@ -10,10 +11,14 @@ import static org.junit.Assert.assertThat;
 public class LogformatterTest {
     @Test
     public void testFormat() {
-        Credentials credentials = new Credentials("username", "password");
+        OptionalFields credentials = OptionalFields
+                .builder()
+                .setStringValue("username")
+                .setBinaryValue(Binary.fromBase64("password"))
+                .build();
         LogFormatter formatter = new LogFormatter(false, (writer, field, value) -> {
             if (field.getName()
-                     .contains("password")) {
+                     .contains("binary")) {
                 writer.append("\"********\"");
                 return true;
             }
@@ -21,15 +26,20 @@ public class LogformatterTest {
         });
 
         assertThat(formatter.format(credentials),
-                   is("{username=\"username\",password=\"********\"}"));
+                   is("{stringValue=\"username\",binaryValue=\"********\"}"));
     }
 
     @Test
     public void testFormat_pretty() {
-        Credentials credentials = new Credentials("username", "password");
+        OptionalFields credentials = OptionalFields
+                .builder()
+                .setStringValue("username")
+                .setBinaryValue(Binary.fromBase64("password"))
+                .build();
+
         LogFormatter formatter = new LogFormatter(true, (writer, field, value) -> {
             if (field.getName()
-                     .contains("password")) {
+                     .contains("binary")) {
                 writer.append("\"********\"");
                 return true;
             }
@@ -38,8 +48,8 @@ public class LogformatterTest {
 
         assertThat(formatter.format(credentials),
                    is("{\n" +
-                      "  username = \"username\"\n" +
-                      "  password = \"********\"\n" +
+                      "  stringValue = \"username\"\n" +
+                      "  binaryValue = \"********\"\n" +
                       "}"));
     }
 }
