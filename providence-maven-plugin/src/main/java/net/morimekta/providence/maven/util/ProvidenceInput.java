@@ -48,7 +48,7 @@ public class ProvidenceInput {
             }
             // Include all thrift files in included directories.
             for (String dir : inputScanner.getIncludedDirectories()) {
-                File[] ls = new File(dir).listFiles();
+                File[] ls = new File(project.getBasedir(), dir).listFiles();
                 if (ls != null) {
                     for (File file : ls) {
                         if (isThriftFile(file.toString())) {
@@ -63,8 +63,8 @@ public class ProvidenceInput {
             }
             // Exclude all files in excluded directories (and subdirectories).
             for (String dir : inputScanner.getExcludedDirectories()) {
-                String path = new File(dir).getCanonicalPath();
-                inputs.removeIf(f -> f.toString().startsWith(path));
+                String path = new File(project.getBasedir(), dir).getCanonicalPath();
+                inputs.removeIf(f -> f.toString().startsWith(path + File.separator));
             }
 
             return inputs;
