@@ -154,7 +154,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         }
         if (!annotations.containsKey(ThriftAnnotation.JSON_COMPACT.tag) &&
             // legacy annotation version special handling.
-            !annotations.containsKey(ThriftAnnotation.JSON_COMPACT.tag.replaceFirst("json[.]", ""))) {
+            !annotations.containsKey("compact")) {
             return false;
         }
         if (fields.size() > MAX_COMPACT_FIELDS) {

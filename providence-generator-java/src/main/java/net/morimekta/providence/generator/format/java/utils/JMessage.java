@@ -40,6 +40,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static net.morimekta.providence.reflect.contained.CStructDescriptor.MAX_COMPACT_FIELDS;
+
 /**
  *
  */
@@ -81,10 +83,34 @@ public class JMessage<T extends CMessage<T, CField>> {
 
     public boolean jsonCompactible() {
         // note: legacy annotation name.
-        return descriptor().getVariant() == PMessageVariant.STRUCT &&
-               (hasAnnotation(ThriftAnnotation.JSON_COMPACT) ||
-                // note: legacy annotation name.
-                hasAnnotation("compact"));
+        if (descriptor().getVariant() != PMessageVariant.STRUCT) {
+            return false;
+        }
+        if (!(hasAnnotation(ThriftAnnotation.JSON_COMPACT) ||
+              // legacy annotation version special handling.
+              hasAnnotation("compact"))) {
+            return false;
+        }
+
+        if (declaredFields.size() > MAX_COMPACT_FIELDS) {
+            return false;
+        }
+        int next = 1;
+        boolean hasOptional = false;
+        for (JField field : declaredFields) {
+            if (field.id() != next) {
+                return false;
+            }
+            if (hasOptional && field.isRequired()) {
+                return false;
+            }
+            if (!field.isRequired()) {
+                hasOptional = true;
+            }
+            next++;
+        }
+        return true;
+
     }
 
     /**

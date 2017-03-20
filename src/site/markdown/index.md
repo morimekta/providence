@@ -62,7 +62,7 @@ struct MyStruct {
 Annotations are there for the compiler only, and should not be saved in the
 generated code. Currently the recognized annotations are:
  
-* `compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
+* `json.compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
 * `container = "ORDERED"`: On fields with set or map type only, will replace the
   default hash-based container with an order-preserving container.
 * `container = "SORTED"`: On fields with set or map type only, will replace the
@@ -121,10 +121,10 @@ This makes model structures like the calculator possible. Since the model
 objects are immutable and created with builders, it is not possible to create
 a circular instance containment.
 
-#### Compact Messages
+#### Compact JSON Messages
 
-A struct may be defined as `compact`. A compact struct must adhere to the
-compact criteria:
+A struct may be defined as **compact** for json using the `json.compact`
+annotation. A compact struct must adhere to the compact criteria:
 
 - Only structs may be compact (not union or exception).
 - May have a maximum of 10 fields.
@@ -140,13 +140,15 @@ different serialization format that serializes the first M fields of the struct
 in order. E.g. in JSON a compact struct may be serialized as an array if (and
 only if).
 
-Messages will have a `compact()` method that determines if the message is
-compact compatible for serialization. Descriptors will have a similar
-`isCompactible()` method which determines if the message can be deserialized with
-the compact format.
+Compactible messages will have a `jsonCompact()` method that determines if the
+message is compact for serialization. The descriptor will have a similar
+`isJsonCompactible()` method which determines if the message can be
+deserialized with the compact format.
 
-To make a struct compact, add the `compact = ""` annotation to the struct. This
-will still allow thrift compiler to parse the .thrift files.
+To make a struct compact, add the `json.compact = ""` annotation to the struct.
+This will still allow thrift compiler to parse the .thrift files. This applies
+both to using the `JsonSerializer` and using the `jackson` java generator
+option with a jackson JSON serializer and deserializer.
 
 #### Simple Messages.
 
