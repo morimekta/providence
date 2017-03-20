@@ -65,7 +65,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
         return ImmutableList.of(BinaryWriter.class.getName());
     }
 
-    public void appendWriteFieldValue(String member, PDescriptor descriptor) {
+    private void appendWriteFieldValue(String member, PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case VOID:
                 break;
@@ -182,7 +182,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
-                                      field.getPField()
+                                      field.field()
                                            .getDescriptor());
 
                 writer.appendln("break;")
@@ -205,7 +205,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
-                                      field.getPField()
+                                      field.field()
                                            .getDescriptor());
 
                 if (!field.alwaysPresent()) {

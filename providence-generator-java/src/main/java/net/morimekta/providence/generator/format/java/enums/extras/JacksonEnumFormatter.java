@@ -24,6 +24,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.EnumMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -67,6 +68,7 @@ public class JacksonEnumFormatter implements EnumMemberFormatter {
     @Override
     public void appendExtraProperties(CEnumDescriptor type) throws GeneratorException {
         String simpleClass = JUtils.getClassName(type);
+        String spacesClass = Strings.times(" ", simpleClass.length());
 
         writer.formatln("public static class _Deserializer extends %s<%s> {",
                         JsonDeserializer.class.getName(), simpleClass)
@@ -74,7 +76,7 @@ public class JacksonEnumFormatter implements EnumMemberFormatter {
               .formatln("    public %s deserialize(%s jp,",
                         simpleClass, JsonParser.class.getName())
               .formatln("           %s             %s ctxt)",
-                        simpleClass.replaceAll(".", " "), DeserializationContext.class.getName())
+                        spacesClass, DeserializationContext.class.getName())
               .formatln("            throws %s,", IOException.class.getName())
               .formatln("                   %s {", JsonProcessingException.class.getName())
               .formatln("        if (jp.getCurrentToken() == %s.%s) {",

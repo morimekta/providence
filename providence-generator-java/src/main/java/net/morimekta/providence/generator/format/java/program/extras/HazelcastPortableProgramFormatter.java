@@ -215,7 +215,7 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
 
     private void appendGetDefinitions(List<CStructDescriptor> messages) {
         for( CStructDescriptor message : messages ) {
-            appendGetDefinition(new JMessage(message, helper));
+            appendGetDefinition(new JMessage<>(message, helper));
         }
     }
 
@@ -281,7 +281,7 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
             case MESSAGE:
                 writer.formatln(".addPortableField(\"%s\", %s())",
                                 field.name(),
-                                camelCase("get", field.getPField().getDescriptor().getName() + "Definition"));
+                                camelCase("get", field.field().getDescriptor().getName() + "Definition"));
                 break;
             default:
                 throw new GeneratorException("Not implemented appendTypeField for type: " + field.type() + " in " +

@@ -33,11 +33,9 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.io.IndentedPrintWriter;
 
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.util.Strings.camelCase;
@@ -313,7 +311,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             // Void fields have no value.
             writer.formatln("public _Builder %s() {", field.setter());
         } else if (field.type() == PType.SET || field.type() == PType.LIST) {
-            PContainer<?> cType = (PContainer<?>) field.getPField()
+            PContainer<?> cType = (PContainer<?>) field.field()
                                                        .getDescriptor();
             String iType = helper.getFieldType(cType.itemDescriptor());
             writer.formatln("public _Builder %s(%s<%s> value) {",
@@ -385,7 +383,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         switch (field.type()) {
             case MAP: {
-                PMap<?, ?> mType = (PMap<?, ?>) field.getPField()
+                PMap<?, ?> mType = (PMap<?, ?>) field.field()
                                                      .getDescriptor();
                 String mkType = helper.getValueType(mType.keyDescriptor());
                 String miType = helper.getValueType(mType.itemDescriptor());
@@ -409,7 +407,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             }
             case SET:
             case LIST: {
-                PContainer<?> lType = (PContainer<?>) field.getPField()
+                PContainer<?> lType = (PContainer<?>) field.field()
                                                                  .getDescriptor();
                 String liType = helper.getValueType(lType.itemDescriptor());
 
@@ -545,7 +543,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
      * @param field The field to generate getter for.
      */
     private void appendMutableGetters(JMessage message, JField field) throws GeneratorException {
-        if (field.getPField().getDescriptor() instanceof PPrimitive ||
+        if (field.field().getDescriptor() instanceof PPrimitive ||
             field.type() == PType.ENUM) {
             // The other fields will have ordinary non-mutable getters.
             appendGetter(field);
@@ -646,7 +644,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                         field.valueType(), field.getter())
               .begin();
 
-        if (helper.getDefaultValue(field.getPField()) != null && !field.alwaysPresent()){
+        if (helper.getDefaultValue(field.field()) != null && !field.alwaysPresent()){
             writer.formatln("return %s() ? %s : %s;",
                             camelCase("isSet", field.name()),
                             field.member(),

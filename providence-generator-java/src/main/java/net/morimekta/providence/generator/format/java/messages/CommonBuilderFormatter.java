@@ -77,7 +77,7 @@ public class CommonBuilderFormatter
                         message.instanceType());
     }
 
-    protected void appendMutate(JMessage message) {
+    private void appendMutate(JMessage message) {
         writer.appendln("@Override")
               .appendln("public _Builder mutate() {")
               .begin()
@@ -87,7 +87,7 @@ public class CommonBuilderFormatter
               .newline();
     }
 
-    protected void appendStaticMakeBuilder(JMessage message) {
+    private void appendStaticMakeBuilder(JMessage message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         comment.comment("Make a " + message.descriptor().getQualifiedName() + " builder.")
                .return_("The builder instance.")

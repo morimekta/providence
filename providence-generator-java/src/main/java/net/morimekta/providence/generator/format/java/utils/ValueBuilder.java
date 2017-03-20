@@ -54,13 +54,13 @@ public class ValueBuilder {
         boolean hasDefault = false;
         for (JField field : fields) {
             if (field.hasDefault() || field.isPrimitiveJavaValue()) {
-                Object defaultValue = helper.getDefaultValue(field.getPField());
+                Object defaultValue = helper.getDefaultValue(field.field());
                 if (defaultValue != null) {
                     hasDefault = true;
                     writer.formatln("private final static %s %s = ", field.valueType(), field.kDefault())
                           .begin(IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT);
                     appendTypedValue(defaultValue,
-                                     field.getPField()
+                                     field.field()
                                           .getDescriptor());
                     writer.append(';')
                           .end();

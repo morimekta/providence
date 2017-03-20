@@ -78,10 +78,10 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
         appendJacksonSerializer(message);
     }
 
-    private void appendReadValue(String builder, JField field) throws GeneratorException {
+    private void appendReadValue(JField field) throws GeneratorException {
         switch (field.type()) {
             case MAP: {
-                PMap mType = (PMap) field.getPField()
+                PMap mType = (PMap) field.field()
                                          .getDescriptor();
                 PDescriptor kType = mType.keyDescriptor();
                 writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
@@ -122,11 +122,11 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                 writer.formatln("%s type = ctxt.getTypeFactory().constructMapType(%s.class, kType, iType);",
                                 MapType.class.getName(),
                                 HashMap.class.getName());
-                writer.formatln("%s.%s(ctxt.readValue(jp, type));", builder, field.setter());
+                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
                 break;
             }
             case LIST: {
-                PContainer cType = (PContainer) field.getPField()
+                PContainer cType = (PContainer) field.field()
                                                      .getDescriptor();
                 PDescriptor iType = cType.itemDescriptor();
                 if (iType instanceof PMap) {
@@ -158,37 +158,34 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                                     ArrayType.class.getName(),
                                     helper.getFieldType(iType));
                 }
-                writer.formatln("%s.%s(ctxt.readValue(jp, type));", builder, field.setter());
+                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
                 break;
             }
             case SET: {
-                PContainer cType = (PContainer) field.getPField()
+                PContainer cType = (PContainer) field.field()
                                                      .getDescriptor();
                 PDescriptor iType = cType.itemDescriptor();
                 writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(%s.class);",
                                 ArrayType.class.getName(),
                                 helper.getFieldType(iType));
 
-                writer.formatln("%s.%s(ctxt.readValue(jp, type));", builder, field.setter());
+                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
                 break;
             }
             case BINARY:
-                writer.formatln("%s.%s(%s.fromBase64(ctxt.readValue(jp, String.class)));",
-                                builder,
+                writer.formatln("builder.%s(%s.fromBase64(ctxt.readValue(jp, String.class)));",
                                 field.setter(),
                                 Binary.class.getName());
                 break;
             case STRING:
             case MESSAGE:
             case ENUM:
-                writer.formatln("%s.%s(ctxt.readValue(jp, %s.class));",
-                                builder,
+                writer.formatln("builder.%s(ctxt.readValue(jp, %s.class));",
                                 field.setter(),
                                 field.instanceType());
                 break;
             default:
-                writer.formatln("%s.%s(ctxt.readValue(jp, %s.TYPE));",
-                                builder,
+                writer.formatln("builder.%s(ctxt.readValue(jp, %s.TYPE));",
                                 field.setter(),
                                 field.instanceType());
                 break;
@@ -254,7 +251,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                   .formatln("case \"%s\": {", field.name())
                   .begin();
 
-            appendReadValue("builder", field);
+            appendReadValue(field);
 
             writer.appendln("break;")
                   .end()
@@ -281,7 +278,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                 writer.formatln("case %d: {", field.index())
                       .begin();
 
-                appendReadValue("builder", field);
+                appendReadValue(field);
 
                 writer.appendln("break;")
                       .end()

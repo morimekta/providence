@@ -64,7 +64,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
         return ImmutableList.of(BinaryReader.class.getName());
     }
 
-    public void appendReadFieldValue(String member, JMessage message, JField field, PDescriptor descriptor) {
+    private void appendReadFieldValue(String member, JMessage message, JField field, PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case VOID:
                 break;
@@ -266,7 +266,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             appendReadFieldValue(field.member(),
                                  message,
                                  field,
-                                 field.getPField()
+                                 field.field()
                                       .getDescriptor());
 
             if (message.isUnion()) {

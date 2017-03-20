@@ -289,7 +289,7 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
                .stream()
                .filter(field -> field.type() == PType.LIST || field.type() == PType.SET)
                .forEachOrdered(field -> {
-                   PContainer<?> ct = (PContainer<?>) field.getPField()
+                   PContainer<?> ct = (PContainer<?>) field.field()
                                                            .getDescriptor();
                    PDescriptor itype = ct.itemDescriptor();
                    writer.formatln("case %d: %s((%s) value); break;",

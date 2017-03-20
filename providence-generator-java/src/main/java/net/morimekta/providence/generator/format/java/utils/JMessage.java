@@ -152,23 +152,8 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return True if the annotaiton is present.
      */
     public boolean hasAnnotation(ThriftAnnotation annotation) {
-        if (descriptor instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
-        }
-        return false;
-    }
-
-    /**
-     * Check if the annotation is present.
-     *
-     * @param annotation The annotation to check.
-     * @return True if the annotaiton is present.
-     */
-    public boolean hasAnnotation(String annotation) {
-        if (descriptor instanceof CAnnotatedDescriptor) {
-            return ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
-        }
-        return false;
+        return descriptor instanceof CAnnotatedDescriptor &&
+               ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
     }
 
     /**
@@ -176,7 +161,7 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @param annotation The annotation to get.
      * @return The value of the annotation, or null if not present.
      */
-    public String getAnnotationValue(ThriftAnnotation annotation) {
+    private String getAnnotationValue(ThriftAnnotation annotation) {
         return getAnnotationValue(annotation.tag);
     }
 
@@ -185,7 +170,7 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @param annotation The annotation to get.
      * @return The value of the annotation, or null if not present.
      */
-    public String getAnnotationValue(String annotation) {
+    private String getAnnotationValue(String annotation) {
         if (descriptor instanceof CAnnotatedDescriptor) {
             if (((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation)) {
                 return ((CAnnotatedDescriptor) descriptor).getAnnotationValue(annotation);

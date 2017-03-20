@@ -68,7 +68,7 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
         return impl;
     }
 
-    protected String caseFieldConstant(JField field) {
+    private String caseFieldConstant(JField field) {
         return field.fieldEnum();
     }
 

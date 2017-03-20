@@ -251,7 +251,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         for (JField field : message.numericalOrderFields()) {
             String provider = field.getProvider();
             String defValue = "null";
-            if (field.getPField()
+            if (field.field()
                      .hasDefaultValue()) {
                 defValue = String.format("new %s<>(%s)",
                                          PDefaultValueProvider.class.getName(),
@@ -262,7 +262,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
                             field.fieldEnum(),
                             field.id(),
                             PRequirement.class.getName(),
-                            field.getPField()
+                            field.field()
                                  .getRequirement()
                                  .name(),
                             field.name(),

@@ -163,7 +163,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
             if ((field.isPrimitiveJavaValue() && !field.alwaysPresent()) || (
-                    !field.container() && !field.alwaysPresent() && field.getPField().hasDefaultValue())) {
+                    !field.container() && !field.alwaysPresent() && field.field().hasDefaultValue())) {
                 writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
             } else {
                 writer.formatln("    return %s;", field.member());

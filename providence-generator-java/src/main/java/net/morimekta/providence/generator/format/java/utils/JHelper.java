@@ -29,6 +29,7 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.util.ProgramRegistry;
 import net.morimekta.util.Binary;
@@ -75,7 +76,7 @@ public class JHelper {
         return JUtils.getJavaPackage(document);
     }
 
-    public String getInstanceClassName(PField field) throws GeneratorException {
+    public String getInstanceClassName(CField field) throws GeneratorException {
         switch (field.getType()) {
             case VOID:
                 return Void.class.getSimpleName();
@@ -261,55 +262,6 @@ public class JHelper {
                 return String.format("%s.%s.provider()",
                                      PPrimitive.class.getName(),
                                      type.getName().toUpperCase());
-        }
-    }
-
-    public String getProviderName(PField field) throws GeneratorException {
-        switch (field.getType()) {
-            case ENUM:
-            case MESSAGE:
-                return String.format("%s.provider()", getFieldType(field.getDescriptor()));
-            case LIST:
-                PList<?> lType = (PList<?>) field.getDescriptor();
-                return String.format("%s.provider(%s)",
-                                     PList.class.getName(),
-                                     getProviderName(lType.itemDescriptor()));
-            case SET:
-                PSet<?> sType = (PSet<?>) field.getDescriptor();
-                switch (JAnnotation.containerType(field)) {
-                    case DEFAULT:
-                        return String.format("%s.provider(%s)", PSet.class.getName(), getProviderName(sType.itemDescriptor()));
-                    case SORTED:
-                        return String.format("%s.sortedProvider(%s)", PSet.class.getName(), getProviderName(sType.itemDescriptor()));
-                    case ORDERED:
-                        return String.format("%s.orderedProvider(%s)", PSet.class.getName(), getProviderName(sType.itemDescriptor()));
-                }
-            case MAP:
-                PMap<?, ?> mType = (PMap<?, ?>) field.getDescriptor();
-                switch (JAnnotation.containerType(field)) {
-                    case DEFAULT:
-                        return String.format("%s.provider(%s,%s)",
-                                             PMap.class.getName(),
-                                             getProviderName(mType.keyDescriptor()),
-                                             getProviderName(mType.itemDescriptor()));
-                    case SORTED:
-                        return String.format("%s.sortedProvider(%s,%s)",
-                                             PMap.class.getName(),
-                                             getProviderName(mType.keyDescriptor()),
-                                             getProviderName(mType.itemDescriptor()));
-                    case ORDERED:
-                        return String.format("%s.orderedProvider(%s,%s)",
-                                             PMap.class.getName(),
-                                             getProviderName(mType.keyDescriptor()),
-                                             getProviderName(mType.itemDescriptor()));
-                }
-            default:
-                if (!(field instanceof PPrimitive)) {
-                    throw new IllegalArgumentException("Unhandled type group " + field.getType());
-                }
-                return String.format("%s.%s.provider()",
-                                     PPrimitive.class.getName(),
-                                     field.getName().toUpperCase());
         }
     }
 }

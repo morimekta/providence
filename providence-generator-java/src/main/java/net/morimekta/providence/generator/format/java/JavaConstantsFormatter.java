@@ -34,8 +34,6 @@ import net.morimekta.util.io.IndentedPrintWriter;
  * @since 08.01.16.
  */
 public class JavaConstantsFormatter implements BaseProgramFormatter {
-    private static final String DBL_INDENT = IndentedPrintWriter.INDENT + IndentedPrintWriter.INDENT;
-
     private final JHelper  helper;
     private final IndentedPrintWriter writer;
 

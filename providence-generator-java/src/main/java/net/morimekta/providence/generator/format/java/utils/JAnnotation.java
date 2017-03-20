@@ -21,8 +21,8 @@
 package net.morimekta.providence.generator.format.java.utils;
 
 import net.morimekta.providence.descriptor.PDescriptor;
-import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
+import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 
 /**
@@ -31,15 +31,8 @@ import net.morimekta.providence.reflect.util.ThriftAnnotation;
 public class JAnnotation {
     public static final String DEPRECATED = "@Deprecated";
 
-    public static boolean isDeprecated(PField field) {
-        if (field instanceof CAnnotatedDescriptor) {
-            return isDeprecated((CAnnotatedDescriptor) field);
-        }
-        return false;
-    }
-
     public static boolean isDeprecated(JField field) {
-        return isDeprecated(field.getPField());
+        return isDeprecated(field.field());
     }
 
     public static boolean isDeprecated(CAnnotatedDescriptor value) {
@@ -47,24 +40,18 @@ public class JAnnotation {
     }
 
     public static boolean isDeprecated(PDescriptor descriptor) {
-        if (descriptor instanceof CAnnotatedDescriptor) {
-            return isDeprecated((CAnnotatedDescriptor) descriptor);
-        }
-        return false;
+        return descriptor instanceof CAnnotatedDescriptor && isDeprecated((CAnnotatedDescriptor) descriptor);
     }
 
-    public static ContainerType containerType(PField field) {
-        if (field instanceof CAnnotatedDescriptor) {
-            return containerType((CAnnotatedDescriptor) field);
-        }
-        return ContainerType.DEFAULT;
+    static ContainerType containerType(CField field) {
+        return containerType((CAnnotatedDescriptor) field);
     }
 
-    public static ContainerType containerType(JField field) {
-        return containerType(field.getPField());
+    static ContainerType containerType(JField field) {
+        return containerType((CAnnotatedDescriptor) field.field());
     }
 
-    public static ContainerType containerType(CAnnotatedDescriptor descriptor) {
+    private static ContainerType containerType(CAnnotatedDescriptor descriptor) {
         if (descriptor.hasAnnotation(ThriftAnnotation.CONTAINER)) {
             return ContainerType.valueOf(descriptor.getAnnotationValue(ThriftAnnotation.CONTAINER));
         }

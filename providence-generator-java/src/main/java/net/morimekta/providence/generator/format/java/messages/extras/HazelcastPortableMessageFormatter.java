@@ -88,7 +88,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    public void appendFactoryId(JMessage<?> message) {
+    private void appendFactoryId(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public int getFactoryId() {")
               .begin()
@@ -115,7 +115,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    public void appendClassId(JMessage<?> message) {
+    private void appendClassId(JMessage<?> message) {
         writer.appendln("@Override")
               .appendln("public int getClassId() {")
               .begin()
@@ -141,7 +141,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    public void appendPortableWriter(JMessage<?> message) {
+    private void appendPortableWriter(JMessage<?> message) {
         writer.appendln("@Override")
               .formatln("public void writePortable(%s %s) throws %s {",
                         PortableWriter.class.getName(),
@@ -182,7 +182,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    public void appendPortableReader(JMessage<?> message) {
+    private void appendPortableReader(JMessage<?> message) {
         writer.appendln("@Override")
               .formatln("public void readPortable(%s %s) throws %s {",
                         PortableReader.class.getName(),
@@ -213,7 +213,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void writePortableField(JField field) throws GeneratorException {
+    private void writePortableField(JField field) throws GeneratorException {
         switch (field.type()) {
             case BINARY:
                 writer.formatln("%s.writeByteArray(\"%s\", %s.get());",
@@ -333,7 +333,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void writeDefaultPortableField(JField field) throws GeneratorException {
+    private void writeDefaultPortableField(JField field) throws GeneratorException {
         switch (field.type()) {
             case BINARY:
                 writer.formatln("%s.writeByteArray(\"%s\", %s);",
@@ -447,7 +447,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void writePortableFieldList(JField field) throws GeneratorException {
+    private void writePortableFieldList(JField field) throws GeneratorException {
         PList listType =  field.toPList();
         switch (listType.itemDescriptor()
                         .getType()) {
@@ -561,7 +561,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void writeDefaultPortableFieldList(JField field) throws GeneratorException {
+    private void writeDefaultPortableFieldList(JField field) throws GeneratorException {
         PList listType =  field.toPList();
         switch (listType.itemDescriptor()
                         .getType()) {
@@ -661,7 +661,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void readPortableField(JField field) {
+    private void readPortableField(JField field) {
         if( !field.isRequired() ) {
             writer.formatln("if( %s.hasField(\"%s\") && %s.readBoolean(\"%s\") && %s.hasField(\"%s\") ) {",
                             PORTABLE_READER,
@@ -764,7 +764,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    protected void readPortableFieldList(JField field) throws GeneratorException {
+    private void readPortableFieldList(JField field) throws GeneratorException {
         PList listType = field.toPList();
         switch (listType.itemDescriptor()
                         .getType()) {
