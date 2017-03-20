@@ -81,11 +81,6 @@ public class Imaginary
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -233,7 +228,7 @@ public class Imaginary
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> {
         public _Descriptor() {
-            super("number", "Imaginary", new _Factory(), true, false);
+            super("number", "Imaginary", new _Factory(), true);
         }
 
         @Override

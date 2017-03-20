@@ -33,7 +33,7 @@ public abstract class PExceptionDescriptor<Exception extends PMessage<Exception,
                                 String name,
                                 PMessageBuilderFactory<Exception, Field> provider,
                                 boolean simple) {
-        super(packageName, name, provider, simple, false);
+        super(packageName, name, provider, simple);
     }
 
     @Override

@@ -95,11 +95,6 @@ public class TypedefType
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -301,7 +296,7 @@ public class TypedefType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> {
         public _Descriptor() {
-            super("model", "TypedefType", new _Factory(), true, false);
+            super("model", "TypedefType", new _Factory(), true);
         }
 
         @Override

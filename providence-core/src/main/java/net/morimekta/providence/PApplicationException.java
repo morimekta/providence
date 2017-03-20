@@ -89,11 +89,6 @@ public class PApplicationException
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public String origGetMessage() {
         return super.getMessage();
     }

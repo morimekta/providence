@@ -32,7 +32,7 @@ public abstract class PUnionDescriptor<T extends PMessage<T, F>, F extends PFiel
                             String name,
                             PMessageBuilderFactory<T, F> provider,
                             boolean simple) {
-        super(packageName, name, provider, simple, false);
+        super(packageName, name, provider, simple);
     }
 
     @Override

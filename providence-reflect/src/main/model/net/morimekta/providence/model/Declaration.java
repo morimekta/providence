@@ -173,11 +173,6 @@ public class Declaration
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public _Field unionField() {
         return tUnionField;
     }

@@ -13,19 +13,16 @@ import java.util.Objects;
  */
 public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PField> extends PDeclaredDescriptor<T> {
     private final PMessageBuilderFactory<T, F> factory;
-    private final boolean                      compactible;
     private final boolean                      simple;
 
     public PMessageDescriptor(String programName,
                               String name,
                               PMessageBuilderFactory<T, F> factory,
-                              boolean simple,
-                              boolean compactible) {
+                              boolean simple) {
         super(programName, name);
 
         this.factory = factory;
         this.simple = simple;
-        this.compactible = compactible;
     }
 
     /**
@@ -49,14 +46,6 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
      * @return The struct variant.
      */
     public abstract PMessageVariant getVariant();
-
-    /**
-     * @return True iff the struct can be (de)serialized with compact message
-     *         format.
-     */
-    public boolean isCompactible() {
-        return compactible;
-    }
 
     /**
      * @return True iff the message is simple. A simple message contains no

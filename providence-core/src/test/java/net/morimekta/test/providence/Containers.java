@@ -1056,11 +1056,6 @@ public class Containers
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -2196,7 +2191,7 @@ public class Containers
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<Containers,_Field> {
         public _Descriptor() {
-            super("providence", "Containers", new _Factory(), false, false);
+            super("providence", "Containers", new _Factory(), false);
         }
 
         @Override

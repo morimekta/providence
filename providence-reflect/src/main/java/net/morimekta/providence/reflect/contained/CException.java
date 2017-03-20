@@ -108,24 +108,6 @@ public class CException extends Exception implements PMessage<CException, CField
     }
 
     @Override
-    public boolean compact() {
-        if (!descriptor().isCompactible()) {
-            return false;
-        }
-        boolean missing = false;
-        for (PField field : descriptor().getFields()) {
-            if (has(field.getKey())) {
-                if (missing) {
-                    return false;
-                }
-            } else {
-                missing = true;
-            }
-        }
-        return true;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof CException)) {
             return false;

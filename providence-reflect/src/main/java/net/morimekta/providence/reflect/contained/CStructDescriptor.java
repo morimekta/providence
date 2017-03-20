@@ -24,6 +24,8 @@ import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PStructDescriptor;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +38,8 @@ import java.util.Set;
  * @author Stein Eldar Johnsen
  * @since 07.09.15
  */
-public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CMessageDescriptor {
+public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implements CMessageDescriptor,
+                                                                                     JsonCompactibleDescriptor {
     public static final int     MAX_COMPACT_FIELDS = 10;
 
     private final String               comment;
@@ -44,16 +47,16 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     private final Map<Integer, CField> fieldIdMap;
     private final Map<String, CField>  fieldNameMap;
     private final Map<String, String>  annotations;
+    private final boolean              compactible;
 
     public CStructDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
-        super(packageName, name, new _Factory(), false,
-              // overrides getter to avoid having to check fields types before it's converted.
-              isCompactCompatible(fields, annotations));
+        super(packageName, name, new _Factory(), false);
         ((_Factory) getFactoryInternal()).setType(this);
 
         this.comment = comment;
         this.fields = fields.toArray(new CField[fields.size()]);
         this.annotations = annotations;
+        this.compactible = isCompactCompatible(fields, annotations);
 
         Map<Integer, CField> fieldIdMap = new LinkedHashMap<>();
         Map<String, CField> fieldNameMap = new LinkedHashMap<>();
@@ -126,6 +129,11 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         return true;
     }
 
+    @Override
+    public boolean isJsonCompactible() {
+        return compactible;
+    }
+
     private static class _Factory extends PMessageBuilderFactory<CStruct,CField> {
         private CStructDescriptor mType;
 
@@ -144,8 +152,9 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         if (annotations == null) {
             return false;
         }
-        if (!annotations.containsKey("json.compact") &&
-            !annotations.containsKey("compact")) {
+        if (!annotations.containsKey(ThriftAnnotation.JSON_COMPACT.tag) &&
+            // legacy annotation version special handling.
+            !annotations.containsKey(ThriftAnnotation.JSON_COMPACT.tag.replaceFirst("json[.]", ""))) {
             return false;
         }
         if (fields.size() > MAX_COMPACT_FIELDS) {

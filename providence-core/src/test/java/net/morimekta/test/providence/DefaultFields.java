@@ -249,11 +249,6 @@ public class DefaultFields
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -560,7 +555,7 @@ public class DefaultFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<DefaultFields,_Field> {
         public _Descriptor() {
-            super("providence", "DefaultFields", new _Factory(), false, false);
+            super("providence", "DefaultFields", new _Factory(), false);
         }
 
         @Override

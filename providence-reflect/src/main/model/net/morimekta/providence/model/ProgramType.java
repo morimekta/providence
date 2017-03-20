@@ -181,11 +181,6 @@ public class ProgramType
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -451,7 +446,7 @@ public class ProgramType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> {
         public _Descriptor() {
-            super("model", "ProgramType", new _Factory(), false, false);
+            super("model", "ProgramType", new _Factory(), false);
         }
 
         @Override

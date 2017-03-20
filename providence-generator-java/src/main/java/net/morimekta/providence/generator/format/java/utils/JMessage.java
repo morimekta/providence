@@ -79,6 +79,14 @@ public class JMessage<T extends CMessage<T, CField>> {
         return descriptor.getVariant() == PMessageVariant.UNION;
     }
 
+    public boolean jsonCompactible() {
+        // note: legacy annotation name.
+        return descriptor().getVariant() == PMessageVariant.STRUCT &&
+               (hasAnnotation(ThriftAnnotation.JSON_COMPACT) ||
+                // note: legacy annotation name.
+                hasAnnotation("compact"));
+    }
+
     /**
      * The short class name of the message.
      *
@@ -152,6 +160,17 @@ public class JMessage<T extends CMessage<T, CField>> {
      * @return True if the annotaiton is present.
      */
     public boolean hasAnnotation(ThriftAnnotation annotation) {
+        return descriptor instanceof CAnnotatedDescriptor &&
+               ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
+    }
+
+    /**
+     * Check if the annotation is present.
+     *
+     * @param annotation The annotation to check.
+     * @return True if the annotaiton is present.
+     */
+    public boolean hasAnnotation(String annotation) {
         return descriptor instanceof CAnnotatedDescriptor &&
                ((CAnnotatedDescriptor) descriptor).hasAnnotation(annotation);
     }

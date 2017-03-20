@@ -260,11 +260,6 @@ public class Calculator {
         }
 
         @Override
-        public boolean compact() {
-            return false;
-        }
-
-        @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
@@ -405,7 +400,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<Calculate_request,_Field> {
             public _Descriptor() {
-                super("calculator", "calculate___request", new _Factory(), false, false);
+                super("calculator", "calculate___request", new _Factory(), false);
             }
 
             @Override
@@ -772,11 +767,6 @@ public class Calculator {
                 case 1: return getCe();
                 default: return null;
             }
-        }
-
-        @Override
-        public boolean compact() {
-            return false;
         }
 
         @Override
@@ -1361,11 +1351,6 @@ public class Calculator {
         }
 
         @Override
-        public boolean compact() {
-            return false;
-        }
-
-        @Override
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
@@ -1484,7 +1469,7 @@ public class Calculator {
         private static class _Descriptor
                 extends net.morimekta.providence.descriptor.PStructDescriptor<Iamalive_request,_Field> {
             public _Descriptor() {
-                super("calculator", "iamalive___request", new _Factory(), true, false);
+                super("calculator", "iamalive___request", new _Factory(), true);
             }
 
             @Override

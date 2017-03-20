@@ -94,11 +94,6 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
     }
 
     /**
-     * @return If the message is compact.
-     */
-    boolean compact();
-
-    /**
      * Pure string representation of content. Does not contain type info.
      *
      * @return String representation.

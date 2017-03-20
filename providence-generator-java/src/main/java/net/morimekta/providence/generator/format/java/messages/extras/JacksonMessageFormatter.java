@@ -263,7 +263,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
               .end()
               .appendln("}");
 
-        if (message.descriptor().isCompactible()) {
+        if (message.jsonCompactible()) {
             writer.end()
                   .appendln("} else if (jp.isExpectedStartArrayToken()) {")
                   .begin();
@@ -343,8 +343,8 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                   .appendln('}')
                   .appendln("generator.writeEndObject();");
         } else {
-            if (message.descriptor().isCompactible()) {
-                writer.formatln("if (instance.compact()) {")
+            if (message.jsonCompactible()) {
+                writer.formatln("if (instance.jsonCompact()) {")
                       .begin()
                       .formatln("generator.writeStartArray();");
 
@@ -399,7 +399,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
 
             writer.appendln("generator.writeEndObject();");
 
-            if (message.descriptor().isCompactible()) {
+            if (message.jsonCompactible()) {
                 writer.end()
                       .appendln('}');
             }

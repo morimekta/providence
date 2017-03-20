@@ -3,6 +3,7 @@ package net.morimekta.test.providence;
 @SuppressWarnings("unused")
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
+                   net.morimekta.providence.serializer.json.JsonCompactible,
                    Comparable<CompactFields>,
                    java.io.Serializable,
                    net.morimekta.providence.serializer.rw.BinaryWriter {
@@ -94,7 +95,7 @@ public class CompactFields
     }
 
     @Override
-    public boolean compact() {
+    public boolean jsonCompact() {
         boolean missing = false;
         if (hasName()) {
             if (missing) return false;
@@ -296,9 +297,9 @@ public class CompactFields
     public static final net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> kDescriptor;
 
     private static class _Descriptor
-            extends net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> {
+            extends net.morimekta.providence.descriptor.PStructDescriptor<CompactFields,_Field> implements net.morimekta.providence.serializer.json.JsonCompactibleDescriptor {
         public _Descriptor() {
-            super("providence", "CompactFields", new _Factory(), true, true);
+            super("providence", "CompactFields", new _Factory(), true);
         }
 
         @Override

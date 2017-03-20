@@ -26,6 +26,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.serializer.json.JsonCompactible;
+import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 import net.morimekta.util.Binary;
 
 import java.io.ByteArrayOutputStream;
@@ -42,7 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 26.08.15
  */
 public abstract class CMessage<Message extends PMessage<Message, Field>, Field extends PField>
-        implements PMessage<Message, Field> {
+        implements PMessage<Message, Field>, JsonCompactible {
     private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true);
 
     private final Map<Integer, Object> values;
@@ -102,12 +104,16 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
     }
 
     @Override
-    public boolean compact() {
-        if (!descriptor().isCompactible()) {
+    public boolean jsonCompact() {
+        PMessageDescriptor descriptor = descriptor();
+        if (!(descriptor instanceof JsonCompactibleDescriptor)) {
+            return false;
+        }
+        if (!((JsonCompactibleDescriptor) descriptor).isJsonCompactible()) {
             return false;
         }
         boolean missing = false;
-        for (PField field : descriptor().getFields()) {
+        for (PField field : descriptor.getFields()) {
             if (has(field.getKey())) {
                 if (missing) {
                     return false;
@@ -171,7 +177,7 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
     }
 
     /**
-     * Prints a compact string representation of the message.
+     * Prints a jsonCompact string representation of the message.
      *
      * @param message The message to stringify.
      * @param <T> The message type.

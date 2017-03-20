@@ -143,11 +143,6 @@ public class ConstType
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -411,7 +406,7 @@ public class ConstType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<ConstType,_Field> {
         public _Descriptor() {
-            super("model", "ConstType", new _Factory(), false, false);
+            super("model", "ConstType", new _Factory(), false);
         }
 
         @Override

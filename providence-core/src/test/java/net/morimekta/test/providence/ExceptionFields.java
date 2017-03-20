@@ -329,11 +329,6 @@ public class ExceptionFields
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public String origGetMessage() {
         return super.getMessage();
     }

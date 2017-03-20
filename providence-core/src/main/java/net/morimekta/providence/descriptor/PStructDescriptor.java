@@ -31,9 +31,8 @@ public abstract class PStructDescriptor<T extends PMessage<T, F>, F extends PFie
     public PStructDescriptor(String programName,
                              String name,
                              PMessageBuilderFactory<T, F> factory,
-                             boolean simple,
-                             boolean compactible) {
-        super(programName, name, factory, simple, compactible);
+                             boolean simple) {
+        super(programName, name, factory, simple);
     }
 
     @Override

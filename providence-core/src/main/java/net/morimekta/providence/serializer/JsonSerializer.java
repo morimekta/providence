@@ -39,6 +39,8 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.serializer.json.JsonCompactible;
+import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
@@ -474,7 +476,7 @@ public class JsonSerializer extends Serializer {
                     if (token.isSymbol(JsonToken.kMapStart)) {
                         return parseMessage(tokenizer, st);
                     } else if (token.isSymbol(JsonToken.kListStart)) {
-                        if (st.isCompactible()) {
+                        if (isCompactible(st)) {
                             return parseCompactMessage(tokenizer, st);
                         } else {
                             throw new SerializerException(
@@ -553,6 +555,15 @@ public class JsonSerializer extends Serializer {
         }
 
         throw new SerializerException("Unhandled item type " + t.getQualifiedName());
+    }
+
+    private boolean isCompactible(PMessageDescriptor descriptor) {
+        return descriptor instanceof JsonCompactibleDescriptor &&
+               ((JsonCompactibleDescriptor) descriptor).isJsonCompactible();
+    }
+
+    private boolean isCompact(PMessage message) {
+        return message instanceof JsonCompactible && ((JsonCompactible) message).jsonCompact();
     }
 
     private Object parseMapKey(String key, PDescriptor keyType) throws SerializerException {
@@ -641,7 +652,7 @@ public class JsonSerializer extends Serializer {
             }
             writer.endObject();
         } else {
-            if (message.compact()) {
+            if (isCompact(message)) {
                 writer.array();
                 for (PField field : type.getFields()) {
                     if (message.has(field.getKey())) {

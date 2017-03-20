@@ -48,9 +48,9 @@ public enum ThriftAnnotation {
      * If a struct can use a compact serialized format. Only valid for struct,
      * not for union and exception.
      * <p>
-     * compact = ""
+     * json.compact = ""
      */
-    COMPACT("compact"),
+    JSON_COMPACT("json.compact"),
 
     /**
      * Add extra interfaces to a struct. Not allowed on unions or exceptions.

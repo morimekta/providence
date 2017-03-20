@@ -209,11 +209,6 @@ public class FunctionType
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -515,7 +510,7 @@ public class FunctionType
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> {
         public _Descriptor() {
-            super("model", "FunctionType", new _Factory(), false, false);
+            super("model", "FunctionType", new _Factory(), false);
         }
 
         @Override

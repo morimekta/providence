@@ -225,11 +225,6 @@ public class RequiredFields
     }
 
     @Override
-    public boolean compact() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || !o.getClass().equals(getClass())) return false;
@@ -536,7 +531,7 @@ public class RequiredFields
     private static class _Descriptor
             extends net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> {
         public _Descriptor() {
-            super("providence", "RequiredFields", new _Factory(), false, false);
+            super("providence", "RequiredFields", new _Factory(), false);
         }
 
         @Override

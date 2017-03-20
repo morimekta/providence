@@ -34,6 +34,8 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
+import net.morimekta.providence.serializer.json.JsonCompactible;
+import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -65,6 +67,9 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         if (message.isException()) {
             builder.add(PException.class.getName());
         }
+        if (message.jsonCompactible()) {
+            builder.add(JsonCompactible.class.getName());
+        }
 
         return builder.build();
     }
@@ -82,7 +87,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         appendPresence(message);
         appendCounter(message);
         appendGetter(message);
-        appendCompact(message);
+        appendJsonCompact(message);
 
         // Exception
         if (message.isException()) {
@@ -155,30 +160,21 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
         writer.formatln("public static final %s<%s,_Field> kDescriptor;", typeClass, message.instanceType())
               .newline();
 
+        String jsonCompactibleDescriptor = "";
+        if (message.jsonCompactible()) {
+            jsonCompactibleDescriptor = " implements " + JsonCompactibleDescriptor.class.getName();
+        }
+
         writer.formatln("private static class _Descriptor")
-              .formatln("        extends %s<%s,_Field> {", typeClass, message.instanceType())
+              .formatln("        extends %s<%s,_Field>%s {", typeClass, message.instanceType(), jsonCompactibleDescriptor)
               .begin()
               .appendln("public _Descriptor() {")
               .begin();
-        if (message.isException() || message.isUnion()) {
-            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %s);",
-                            message.descriptor()
-                                   .getProgramName(),
-                            message.descriptor()
-                                   .getName(),
-                            message.descriptor()
-                                   .isSimple());
-        } else {
-            writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b, %b);",
-                            message.descriptor()
-                                   .getProgramName(),
-                            message.descriptor()
-                                   .getName(),
-                            message.descriptor()
-                                   .isSimple(),
-                            message.descriptor()
-                                   .isCompactible());
-        }
+        writer.formatln("super(\"%s\", \"%s\", new _Factory(), %b);",
+                        message.descriptor().getProgramName(),
+                        message.descriptor().getName(),
+                        message.descriptor().isSimple());
+
         writer.end()
               .appendln('}')
               .newline()
@@ -352,35 +348,37 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .newline();
     }
 
-    private void appendCompact(JMessage<?> message) {
+    private void appendJsonCompact(JMessage<?> message) {
+        if (!message.jsonCompactible()) {
+            return;
+        }
+
         writer.appendln("@Override")
-              .appendln("public boolean compact() {")
+              .appendln("public boolean jsonCompact() {")
               .begin();
 
-        if (message.descriptor()
-                   .isCompactible()) {
-            writer.appendln("boolean missing = false;");
-
-            boolean hasCheck = false;
-            for (JField field : message.declaredOrderFields()) {
-                if (!field.alwaysPresent()) {
-                    hasCheck = true;
-                    writer.formatln("if (%s()) {", field.presence())
-                          .appendln("    if (missing) return false;")
-                          .appendln("} else {")
-                          .appendln("    missing = true;")
-                          .appendln('}');
-                } else if (hasCheck) {
-                    writer.appendln("if (missing) return false;");
-                    hasCheck = false;
+        boolean hasCheck = false;
+        boolean hasMissingVar = false;
+        for (JField field : message.numericalOrderFields()) {
+            if (!field.alwaysPresent()) {
+                if (!hasMissingVar) {
+                    writer.appendln("boolean missing = false;");
                 }
+                hasMissingVar = true;
+                hasCheck = true;
+                writer.formatln("if (%s()) {", field.presence())
+                      .appendln("    if (missing) return false;")
+                      .appendln("} else {")
+                      .appendln("    missing = true;")
+                      .appendln('}');
+            } else if (hasCheck) {
+                writer.appendln("if (missing) return false;");
+                hasCheck = false;
             }
-
-            writer.appendln("return true;");
-        } else {
-            writer.appendln("return false;");
         }
-        writer.end()
+
+        writer.appendln("return true;")
+              .end()
               .appendln('}')
               .newline();
     }
