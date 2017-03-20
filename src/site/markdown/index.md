@@ -62,11 +62,11 @@ struct MyStruct {
 Annotations are there for the compiler only, and should not be saved in the
 generated code. Currently the recognized annotations are:
  
-* `json.compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
 * `container = "ORDERED"`: On fields with set or map type only, will replace the
   default hash-based container with an order-preserving container.
 * `container = "SORTED"`: On fields with set or map type only, will replace the
   default hash-based container with a sorted container.
+* `json.compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
 * `java.implements` Each java message (union, struct, exception) can implement
   additional interfaces specified by this annotation. Full package and class name.
   Note that the message is still a full implementation, so the interface methods

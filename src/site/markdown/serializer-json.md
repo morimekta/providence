@@ -63,7 +63,7 @@ Compact messages is a concept made to be able to use way less space for small
 * Maximum number of fields are `10`.
 
 Then runtime you can check if a message can be encoded as compact by calling
-`msg.isCompact()`. The extra requirements on runtime is:
+`msg.jsonCompact()`. The extra requirements on runtime is:
 
 * The set fields must be in a continuous range of 1 .. N. So there cannot be a
   set field after an unset field.
@@ -110,7 +110,7 @@ struct Call {
   2: required CallType type
   3: required i32 sequence
   4: required struct message
-} (compact = "")
+} (json.compact = "")
 ```
 
 Where *what* the message struct is is determined by the call type. See definition
