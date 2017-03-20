@@ -169,6 +169,16 @@
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
+                        <configuration>
+                            <inputFiles>
+                                <includes>
+                                    <include>src/test/providence/**/*.thrift</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>src/test/providence/excluded.thrift</exclude>
+                                </excludes>
+                            </inputFiles>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>generate-model-sources</id>

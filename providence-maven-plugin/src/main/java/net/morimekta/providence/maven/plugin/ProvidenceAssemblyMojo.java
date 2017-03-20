@@ -27,6 +27,7 @@ import net.morimekta.util.io.IOUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.InstantiationStrategy;
@@ -96,7 +97,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     @Component
     protected MavenProjectHelper projectHelper = null;
 
-    public void execute() throws MojoFailureException {
+    public void execute() throws MojoFailureException, MojoExecutionException {
         if (!skipAssembly) {
             Set<File> inputFiles = ProvidenceInput.getInputFiles(project, files, "src/main/providence/**/*.thrift");
             if (inputFiles.isEmpty()) {
