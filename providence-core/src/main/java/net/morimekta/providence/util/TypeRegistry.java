@@ -29,6 +29,7 @@ import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -132,6 +133,7 @@ public class TypeRegistry {
      * @param context The context to get the service for.
      * @return The service or null if not found.
      */
+    @Nullable
     public PService getService(String name, final String context) {
         return services.get(qualifiedName(name, context));
     }
@@ -153,7 +155,7 @@ public class TypeRegistry {
             PMessageDescriptor descriptor = (PMessageDescriptor) declaredType;
             for (PField field : descriptor.getFields()) {
                 if (field.getType() == PType.ENUM || field.getType() == PType.MESSAGE) {
-                    registerRecursively((PDeclaredDescriptor) field.getDescriptor());
+                    registerRecursively((PDeclaredDescriptor<?>) field.getDescriptor());
                 } else if (field.getType() == PType.MAP ||
                            field.getType() == PType.LIST ||
                            field.getType() == PType.SET) {
@@ -187,7 +189,7 @@ public class TypeRegistry {
      * @param context The package context.
      * @return The final typename.
      */
-    public String finalTypename(String name, String context) {
+    protected String finalTypename(String name, String context) {
         String typename = qualifiedTypename(name, context);
         if (typedefs.containsKey(typename)) {
             typename = typedefs.get(typename);
@@ -204,7 +206,7 @@ public class TypeRegistry {
      * @param context The package context.
      * @return The qualified typename.
      */
-    protected String qualifiedTypename(String name, String context) {
+    private String qualifiedTypename(String name, String context) {
         if (name == null || context == null) {
             throw new IllegalArgumentException("Null argument for qualified typename");
         }
@@ -235,12 +237,12 @@ public class TypeRegistry {
             registerListType((PContainer) itemType);
         } else if (itemType.getType() == PType.ENUM ||
                    itemType.getType() == PType.MESSAGE){
-            registerRecursively((PDeclaredDescriptor) itemType);
+            registerRecursively((PDeclaredDescriptor<?>) itemType);
         }
         // Else ignore.
     }
 
-    public static String qualifiedName(String name, String context) {
+    private static String qualifiedName(String name, String context) {
         if (!name.contains(".")) {
             return context + "." + name;
         }

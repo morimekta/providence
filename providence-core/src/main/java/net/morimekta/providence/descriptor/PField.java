@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
+
 /**
  * Field descriptor. All struct variants contains a set of fields. This
  * interface describes the properties each field has. It is an interface so the
@@ -36,11 +38,13 @@ public interface PField {
     /**
      * @return How the field is required for validity.
      */
+    @Nonnull
     PRequirement getRequirement();
 
     /**
      * @return The data type of the field.
      */
+    @Nonnull
     default PType getType() {
         return getDescriptor().getType();
     }
@@ -48,11 +52,13 @@ public interface PField {
     /**
      * @return The type descriptor for the field data type.
      */
+    @Nonnull
     PDescriptor getDescriptor();
 
     /**
      * @return The field name (original).
      */
+    @Nonnull
     String getName();
 
     /**

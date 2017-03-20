@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
@@ -31,5 +33,6 @@ public interface PBuilderFactory<T> {
      *
      * @return The builder.
      */
+    @Nonnull
     PBuilder<T> builder();
 }

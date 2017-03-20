@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
@@ -33,34 +35,37 @@ public class PService {
     private final PServiceProvider                     extendsService;
     private final Collection<? extends PServiceMethod> methods;
 
-    public PService(String programName,
-                    String name,
-                    PServiceProvider extendsService,
-                    Collection<? extends PServiceMethod> methods) {
+    public PService(@Nonnull String programName,
+                    @Nonnull String name,
+                    @Nullable PServiceProvider extendsService,
+                    @Nonnull Collection<? extends PServiceMethod> methods) {
         this.name = name;
         this.programName = programName;
         this.extendsService = extendsService;
         this.methods = methods;
     }
 
-    public PService(String programName,
-             String name,
-             PServiceProvider extendsService,
-             PServiceMethod[] methods) {
+    public PService(@Nonnull String programName,
+                    @Nonnull String name,
+                    @Nullable PServiceProvider extendsService,
+                    @Nonnull PServiceMethod[] methods) {
         this.name = name;
         this.programName = programName;
         this.extendsService = extendsService;
         this.methods = ImmutableList.copyOf(methods);
     }
 
+    @Nonnull
     public String getProgramName() {
         return programName;
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }
 
+    @Nonnull
     public String getQualifiedName(String packageContext) {
         if (programName.equals(packageContext)) {
             return name;
@@ -68,10 +73,12 @@ public class PService {
         return programName + "." + name;
     }
 
+    @Nonnull
     public String getQualifiedName() {
         return getQualifiedName(null);
     }
 
+    @Nullable
     public PService getExtendsService() {
         if (extendsService != null) {
             return extendsService.getService();
@@ -79,10 +86,12 @@ public class PService {
         return null;
     }
 
+    @Nonnull
     public Collection<? extends PServiceMethod> getMethods() {
         return methods;
     }
 
+    @Nullable
     public PServiceMethod getMethod(String name) {
         for (PServiceMethod method : methods) {
             if (method.getName().equals(name)) {

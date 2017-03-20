@@ -81,6 +81,7 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      *
      * @return The builder instance.
      */
+    @Nonnull
     PMessageBuilder<Message, Field> mutate();
 
     /**
@@ -89,6 +90,7 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      * @param other The message to merge over this messages' values.
      * @return The merged message.
      */
+    @Nonnull
     default Message mergeWith(Message other) {
         return mutate().merge(other).build();
     }
@@ -98,9 +100,11 @@ public interface PMessage<Message extends PMessage<Message, Field>, Field extend
      *
      * @return String representation.
      */
+    @Nonnull
     @Override
     String asString();
 
+    @Nonnull
     @Override
     PMessageDescriptor<Message, Field> descriptor();
 }

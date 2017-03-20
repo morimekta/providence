@@ -20,10 +20,13 @@
  */
 package net.morimekta.providence.descriptor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Descriptor for a single service method.
  */
 @FunctionalInterface
 public interface PServiceProvider {
+    @Nonnull
     PService getService();
 }

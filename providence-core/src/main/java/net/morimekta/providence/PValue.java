@@ -22,10 +22,13 @@ package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PDescriptor;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public interface PValue<T> extends Comparable<T> {
+    @Nonnull
     PDescriptor descriptor();
 }

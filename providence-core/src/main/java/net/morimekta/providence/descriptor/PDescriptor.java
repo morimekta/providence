@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
+
 /**
  * Descriptor interface for value type V.
  * <p>
@@ -44,6 +46,7 @@ public interface PDescriptor {
      *
      * @return The name of the type. Not including package.
      */
+    @Nonnull
     String getName();
 
     /**
@@ -53,6 +56,7 @@ public interface PDescriptor {
      * @return The qualified name of the type. Including program if not matching with
      *         programContext.
      */
+    @Nonnull
     String getQualifiedName(String programContext);
 
     /**
@@ -60,6 +64,7 @@ public interface PDescriptor {
      *
      * @return The qualified name of the type, including program name.
      */
+    @Nonnull
     default String getQualifiedName() {
         return getQualifiedName(null);
     }
@@ -67,5 +72,6 @@ public interface PDescriptor {
     /**
      * @return Get the field type.
      */
+    @Nonnull
     PType getType();
 }

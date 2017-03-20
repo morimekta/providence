@@ -32,6 +32,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class CStruct extends CMessage<CStruct,CField> {
         return new Builder(descriptor);
     }
 
+    @Nonnull
     @Override
     public CStructDescriptor descriptor() {
         return descriptor;
@@ -68,6 +70,7 @@ public class CStruct extends CMessage<CStruct,CField> {
             this.values = new TreeMap<>();
         }
         
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder merge(CStruct from) {
@@ -102,6 +105,7 @@ public class CStruct extends CMessage<CStruct,CField> {
             return this;
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public PMessageBuilder mutator(int key) {
@@ -127,11 +131,13 @@ public class CStruct extends CMessage<CStruct,CField> {
             return (PMessageBuilder) current;
         }
 
+        @Nonnull
         @Override
         public PStructDescriptor<CStruct, CField> descriptor() {
             return descriptor;
         }
 
+        @Nonnull
         @Override
         public CStruct build() {
             return new CStruct(this);
@@ -169,6 +175,7 @@ public class CStruct extends CMessage<CStruct,CField> {
             }
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
@@ -217,6 +224,7 @@ public class CStruct extends CMessage<CStruct,CField> {
             return false;
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
@@ -248,6 +256,7 @@ public class CStruct extends CMessage<CStruct,CField> {
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder clear(int key) {
             values.remove(key);

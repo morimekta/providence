@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence;
 
+import javax.annotation.Nullable;
+
 /**
  * Base class for exception type struct classes to access exception methods
  * that may be hidden by actual fields.
@@ -30,6 +32,7 @@ public interface PException {
      *
      * @return The original message.
      */
+    @Nullable
     String origGetMessage();
 
     /**
@@ -37,5 +40,6 @@ public interface PException {
      *
      * @return The original message.
      */
+    @Nullable
     String origGetLocalizedMessage();
 }

@@ -24,6 +24,8 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,6 +87,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
+    @Nonnull
     public Token expect(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
@@ -94,12 +97,15 @@ public class Tokenizer extends InputStream {
         return next;
     }
 
+    @Nonnull
     public Token peek(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
         }
         return nextToken;
     }
+
+    @Nullable
     public Token peek() throws IOException, ParseException {
         hasNext();
         return nextToken;
@@ -123,6 +129,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
+    @Nonnull
     public Token expectIdentifier(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
@@ -138,6 +145,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
+    @Nonnull
     public Token expectQualifiedIdentifier(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
@@ -153,6 +161,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
+    @Nonnull
     public Token expectStringLiteral(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
@@ -168,6 +177,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
+    @Nonnull
     public Token expectInteger(String message) throws IOException, ParseException {
         if (!hasNext()) {
             throw new ParseException("Expected %s, but got end of file", message);
@@ -190,6 +200,7 @@ public class Tokenizer extends InputStream {
         return nextToken != null;
     }
 
+    @Nullable
     public Token next() throws IOException, ParseException {
         if (nextToken != null) {
             Token tmp = nextToken;

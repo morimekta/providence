@@ -25,6 +25,7 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PUnionDescriptor;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -73,6 +74,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         return comment;
     }
 
+    @Nonnull
     @Override
     public CField[] getFields() {
         return Arrays.copyOf(fields, fields.length);
@@ -104,6 +106,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         return true;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -114,7 +117,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -122,7 +125,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }
@@ -136,6 +139,7 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
             mType = type;
         }
 
+        @Nonnull
         @Override
         public PMessageBuilder<CUnion,CField> builder() {
             // TODO Auto-generated method stub

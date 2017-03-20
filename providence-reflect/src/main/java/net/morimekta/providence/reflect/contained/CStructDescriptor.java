@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -73,6 +74,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         return comment;
     }
 
+    @Nonnull
     @Override
     public CField[] getFields() {
         return Arrays.copyOf(fields, fields.length);
@@ -88,6 +90,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         return fieldIdMap.get(key);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -98,7 +101,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -106,7 +109,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }
@@ -141,6 +144,7 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
             mType = type;
         }
 
+        @Nonnull
         @Override
         public PMessageBuilder<CStruct,CField> builder() {
             // TODO Auto-generated method stub

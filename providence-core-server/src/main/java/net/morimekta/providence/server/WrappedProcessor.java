@@ -26,6 +26,7 @@ import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -45,6 +46,7 @@ public class WrappedProcessor implements PProcessor {
         this.processorWrapper = processorWrapper;
     }
 
+    @Nonnull
     @Override
     public PService getDescriptor() {
         return processor.getDescriptor();

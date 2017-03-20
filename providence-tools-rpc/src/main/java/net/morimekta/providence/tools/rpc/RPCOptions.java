@@ -226,7 +226,7 @@ public class RPCOptions extends CommonOptions {
             throw new ArgumentException(e.getLocalizedMessage());
         }
 
-        PService srv = loader.getRegistry().getServiceProvider(service, null).getService();
+        PService srv = loader.getRegistry().getService(service, null);
         if (srv == null) {
             CProgram document = loader.getRegistry().getDocumentForPackage(namespace);
             Set<String> services = new TreeSet<>(

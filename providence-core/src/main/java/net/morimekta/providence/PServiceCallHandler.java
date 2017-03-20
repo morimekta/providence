@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.SerializerException;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -44,6 +45,7 @@ public interface PServiceCallHandler {
      * @throws IOException On read or write failure.
      * @throws SerializerException On serialization problems.
      */
+    @Nullable
     <       Request extends PMessage<Request, RequestField>,
             Response extends PMessage<Response, ResponseField>,
             RequestField extends PField,

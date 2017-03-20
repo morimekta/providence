@@ -26,6 +26,7 @@ import net.morimekta.providence.PType;
 
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,16 +42,19 @@ public class PList<Item> extends PContainer<List<Item>> {
         this.builderFactory = builderFactory;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "list<" + itemDescriptor().getName() + ">";
     }
 
+    @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
         return "list<" + itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return PType.LIST;
@@ -72,15 +76,20 @@ public class PList<Item> extends PContainer<List<Item>> {
     }
 
     public interface Builder<I> extends PBuilder<List<I>> {
+        @Nonnull
         Builder<I> add(I value);
+        @Nonnull
         Builder<I> addAll(Collection<I> items);
+        @Nonnull
         Builder<I> clear();
 
+        @Nonnull
         @Override
         List<I> build();
     }
 
     private interface BuilderFactory<I> extends PBuilderFactory<List<I>> {
+        @Nonnull
         @Override
         Builder<I> builder();
     }
@@ -92,24 +101,28 @@ public class PList<Item> extends PContainer<List<Item>> {
             builder = ImmutableList.builder();
         }
 
+        @Nonnull
         @Override
         public ImmutableListBuilder<I> add(I value) {
             builder.add(value);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableListBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableListBuilder<I> clear() {
             builder = ImmutableList.builder();
             return this;
         }
 
+        @Nonnull
         @Override
         public List<I> build() {
             return builder.build();

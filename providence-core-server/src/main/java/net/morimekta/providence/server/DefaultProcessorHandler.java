@@ -33,6 +33,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -52,11 +53,12 @@ public class DefaultProcessorHandler implements ProcessorHandler {
      *
      * @param processor The service call handler.
      */
-    public DefaultProcessorHandler(PProcessor processor) {
+    public DefaultProcessorHandler(@Nonnull PProcessor processor) {
         this.processor = processor;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean process(MessageReader reader, MessageWriter writer) throws IOException {
         PServiceCall call, reply;
         try {

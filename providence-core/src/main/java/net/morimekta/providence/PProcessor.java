@@ -24,6 +24,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.SerializerException;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -37,6 +38,7 @@ public interface PProcessor extends PServiceCallHandler {
      *
      * @return The service descriptor.
      */
+    @Nonnull
     PService getDescriptor();
 
     /**

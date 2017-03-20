@@ -59,7 +59,7 @@ public class RPC {
             try {
 
                 cli.parse(args);
-                if (options.help) {
+                if (options.showHelp()) {
                     System.out.println("Providence RPC Tool - " + getVersionString());
                     System.out.println("Usage: " + cli.getSingleLineUsage());
                     System.out.println();
@@ -76,7 +76,7 @@ public class RPC {
                         System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
                     }
                     return;
-                } else if (options.version) {
+                } else if (options.showVersion()) {
                     System.out.println("Providence RPC Tool - " + getVersionString());
                     return;
                 }
@@ -95,8 +95,8 @@ public class RPC {
                 return;
             } catch (ConnectException e) {
                 System.out.flush();
-                System.err.format("Unable to connect to %s: %s\n", options.endpoint, e.getMessage());
-                if (options.verbose) {
+                System.err.format("Unable to connect to %s: %s%n", options.endpoint, e.getMessage());
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -104,7 +104,7 @@ public class RPC {
                 System.out.flush();
                 System.err.println("Received " + e.getStatusCode() + " " + e.getStatusMessage());
                 System.err.println(" - from: " + options.endpoint);
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -117,28 +117,28 @@ public class RPC {
             } catch (SerializerException e) {
                 System.out.flush();
                 System.err.println("Serialization error: " + e.getMessage());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (ParseException e) {
                 System.out.flush();
                 System.err.format(e.asString());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (IllegalArgumentException e) {
                 System.out.flush();
                 System.err.println(e.getMessage());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (UncheckedIOException | IOException e) {
                 System.out.flush();
                 System.err.println("I/O error: " + e.getMessage());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.out.flush();
                     e.printStackTrace();
                 }
@@ -146,7 +146,7 @@ public class RPC {
         } catch (Exception e) {
             System.out.flush();
             System.err.println("Unchecked exception: " + e.getMessage());
-            if (options.verbose) {
+            if (options.verbose()) {
                 System.out.flush();
                 e.printStackTrace();
             }

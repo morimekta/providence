@@ -23,6 +23,8 @@ package net.morimekta.providence;
 import net.morimekta.util.Numeric;
 import net.morimekta.util.Stringable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Base interface for enum values.
  */
@@ -35,5 +37,6 @@ public interface PEnumValue<T> extends PValue<T>, Stringable, Numeric {
     /**
      * @return The name of the enum value.
      */
+    @Nonnull
     String getName();
 }

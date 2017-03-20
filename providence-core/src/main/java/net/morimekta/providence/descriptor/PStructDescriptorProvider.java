@@ -22,12 +22,15 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 25.08.15
  */
 public abstract class PStructDescriptorProvider<V extends PMessage<V, F>, F extends PField>
         extends PMessageDescriptorProvider<V, F> {
+    @Nonnull
     @Override
     public abstract PStructDescriptor<V, F> descriptor();
 }

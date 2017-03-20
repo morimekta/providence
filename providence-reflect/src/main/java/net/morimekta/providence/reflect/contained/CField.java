@@ -27,6 +27,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -45,13 +47,13 @@ public class CField implements PField, CAnnotatedDescriptor {
     private final PValueProvider      defaultValue;
     private final Map<String, String> annotations;
 
-    public CField(String comment,
+    public CField(@Nullable String comment,
                   int key,
-                  PRequirement requirement,
-                  String name,
-                  PDescriptorProvider typeProvider,
-                  PValueProvider defaultValue,
-                  Map<String, String> annotations) {
+                  @Nonnull PRequirement requirement,
+                  @Nonnull String name,
+                  @Nonnull PDescriptorProvider typeProvider,
+                  @Nullable PValueProvider defaultValue,
+                  @Nullable Map<String, String> annotations) {
         this.comment = comment;
         this.key = key;
         this.requirement = requirement;
@@ -71,22 +73,26 @@ public class CField implements PField, CAnnotatedDescriptor {
         return key;
     }
 
+    @Nonnull
     @Override
     public PRequirement getRequirement() {
         return requirement;
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return typeProvider.descriptor()
                            .getType();
     }
 
+    @Nonnull
     @Override
     public PDescriptor getDescriptor() {
         return typeProvider.descriptor();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;
@@ -100,12 +106,13 @@ public class CField implements PField, CAnnotatedDescriptor {
     @Override
     public Object getDefaultValue() {
         try {
-            return hasDefaultValue() ? defaultValue.get() : null;
+            return defaultValue != null ? defaultValue.get() : null;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parse default value " + getName(), e);
         }
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -116,7 +123,7 @@ public class CField implements PField, CAnnotatedDescriptor {
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -124,7 +131,7 @@ public class CField implements PField, CAnnotatedDescriptor {
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }

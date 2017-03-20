@@ -27,6 +27,7 @@ import net.morimekta.providence.PType;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -44,16 +45,19 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         this.builderFactory = builderFactory;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "set<" + itemDescriptor().getName() + ">";
     }
 
+    @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
         return "set<" + itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return PType.SET;
@@ -75,15 +79,20 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     }
 
     public interface Builder<I> extends PBuilder<Set<I>> {
+        @Nonnull
         Builder<I> add(I value);
+        @Nonnull
         Builder<I> addAll(Collection<I> items);
+        @Nonnull
         Builder<I> clear();
 
+        @Nonnull
         @Override
         Set<I> build();
     }
 
     private interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
+        @Nonnull
         @Override
         Builder<I> builder();
     }
@@ -95,24 +104,28 @@ public class PSet<Item> extends PContainer<Set<Item>> {
             this.builder = ImmutableSet.builder();
         }
 
+        @Nonnull
         @Override
         public ImmutableSetBuilder<I> add(I value) {
             builder.add(value);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSetBuilder<I> clear() {
             builder = ImmutableSet.builder();
             return this;
         }
 
+        @Nonnull
         @Override
         public Set<I> build() {
             return builder.build();
@@ -126,24 +139,28 @@ public class PSet<Item> extends PContainer<Set<Item>> {
             this.builder = ImmutableSortedSet.naturalOrder();
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedSetBuilder<I> add(I value) {
             builder.add(value);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedSetBuilder<I> clear() {
             builder = ImmutableSortedSet.naturalOrder();
             return this;
         }
 
+        @Nonnull
         @Override
         public Set<I> build() {
             return builder.build();
@@ -157,24 +174,28 @@ public class PSet<Item> extends PContainer<Set<Item>> {
             this.builder = new LinkedHashSet<>();
         }
 
+        @Nonnull
         @Override
         public LinkedHashSetBuilder<I> add(I value) {
             builder.add(value);
             return this;
         }
 
+        @Nonnull
         @Override
         public LinkedHashSetBuilder<I> addAll(Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
+        @Nonnull
         @Override
         public LinkedHashSetBuilder<I> clear() {
             builder.clear();
             return this;
         }
 
+        @Nonnull
         @Override
         public Set<I> build() {
             return Collections.unmodifiableSet(builder);

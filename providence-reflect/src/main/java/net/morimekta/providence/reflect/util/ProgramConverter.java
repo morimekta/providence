@@ -266,10 +266,11 @@ public class ProgramConverter {
 
     private CConst makeConst(String pkg, ConstType field) {
         PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
-        ConstProvider defaultValue = null;
-        if (field.hasValue()) {
-            defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getValue());
+        if (!field.hasValue()) {
+            throw new IllegalArgumentException("Const " + pkg + "." + field.getName() + " does not have a value.");
         }
+        ConstProvider defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getValue());
+
         @SuppressWarnings("unchecked")
         CConst made = new CConst(field.getDocumentation(),
                                  field.getName(),

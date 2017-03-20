@@ -22,6 +22,8 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -35,12 +37,14 @@ public interface CAnnotatedDescriptor {
      * @return The comment string containing all formatting (not including the
      *         comment delimiter and the leading space.
      */
+    @Nullable
     String getDocumentation();
 
     /**
      * Get set of available annotations.
      * @return The annotation set.
      */
+    @Nonnull
     Set<String> getAnnotations();
 
     /**
@@ -48,21 +52,21 @@ public interface CAnnotatedDescriptor {
      * @param name Name of annotation.
      * @return If the annotation is present.
      */
-    boolean hasAnnotation(String name);
+    boolean hasAnnotation(@Nonnull String name);
 
     /**
      * Get the given annotation value.
      * @param name Name of annotation.
      * @return The annotation value or null.
      */
-    String getAnnotationValue(String name);
+    String getAnnotationValue(@Nonnull String name);
 
     /**
      * Get the given annotation value.
      * @param annotation The annotation.
      * @return If the annotation is present.
      */
-    default boolean hasAnnotation(ThriftAnnotation annotation) {
+    default boolean hasAnnotation(@Nonnull ThriftAnnotation annotation) {
         return hasAnnotation(annotation.tag);
     }
 
@@ -71,7 +75,7 @@ public interface CAnnotatedDescriptor {
      * @param annotation The annotation.
      * @return The annotation value or null.
      */
-    default String getAnnotationValue(ThriftAnnotation annotation) {
+    default String getAnnotationValue(@Nonnull ThriftAnnotation annotation) {
         return getAnnotationValue(annotation.tag);
     }
 }

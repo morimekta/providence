@@ -10,10 +10,9 @@ import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
 import net.morimekta.providence.reflect.contained.CConst;
-import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.contained.CProgram;
+import net.morimekta.providence.reflect.contained.CStructDescriptor;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -49,8 +48,6 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
 
     @Override
     public void appendProgramClass(CProgram document) throws GeneratorException {
-        ValueBuilder value = new ValueBuilder(writer, helper);
-
         if (document.getComment() != null) {
             new BlockCommentBuilder(writer).comment(document.getComment())
                                            .finish();

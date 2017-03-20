@@ -35,6 +35,7 @@ import net.morimekta.providence.descriptor.PStructDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -163,6 +164,7 @@ public class CException extends Exception implements PMessage<CException, CField
         return new Builder(descriptor);
     }
 
+    @Nonnull
     @Override
     public CExceptionDescriptor descriptor() {
         return descriptor;
@@ -177,6 +179,7 @@ public class CException extends Exception implements PMessage<CException, CField
             values = new TreeMap<>();
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder merge(CException from) {
@@ -218,11 +221,13 @@ public class CException extends Exception implements PMessage<CException, CField
             return this;
         }
 
+        @Nonnull
         @Override
         public PExceptionDescriptor<CException, CField> descriptor() {
             return descriptor;
         }
 
+        @Nonnull
         @Override
         public CException build() {
             return new CException(this);
@@ -252,6 +257,7 @@ public class CException extends Exception implements PMessage<CException, CField
             }
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
@@ -300,6 +306,7 @@ public class CException extends Exception implements PMessage<CException, CField
             return false;
         }
 
+        @Nonnull
         @Override
         public Builder addTo(int key, Object value) {
             PField field = descriptor.getField(key);
@@ -330,12 +337,14 @@ public class CException extends Exception implements PMessage<CException, CField
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder clear(int key) {
             values.remove(key);
             return this;
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public PMessageBuilder mutator(int key) {

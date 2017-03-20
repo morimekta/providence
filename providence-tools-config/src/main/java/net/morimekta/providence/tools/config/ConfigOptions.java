@@ -21,6 +21,7 @@
 
 package net.morimekta.providence.tools.config;
 
+import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
@@ -32,8 +33,8 @@ import net.morimekta.providence.config.ProvidenceConfig;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
-import net.morimekta.providence.reflect.util.ReflectionUtils;
 import net.morimekta.providence.tools.common.options.CommonOptions;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
 import net.morimekta.providence.tools.config.cmd.Params;
@@ -87,7 +88,7 @@ public class ConfigOptions extends CommonOptions {
         this.strict = strict;
     }
 
-    public SubCommandSet<Command> getCommandSet() {
+    SubCommandSet<Command> getCommandSet() {
         return commandSet;
     }
 
@@ -95,18 +96,15 @@ public class ConfigOptions extends CommonOptions {
         this.command = command;
     }
 
-    public boolean isHelp() {
-        return help || command == null;
+    public boolean showHelp() {
+        return super.showHelp() || command == null;
     }
 
     private void collectIncludes(File dir, Map<String, File> includes) {
-        for (File file : dir.listFiles()) {
-            if (file.isHidden()) {
-                continue;
-            }
-            if (file.isFile() && file.canRead() && ReflectionUtils.isThriftFile(file.getName())) {
-                includes.put(ReflectionUtils.programNameFromPath(file.getName()), file);
-            }
+        try {
+            Utils.collectIncludes(dir, includes);
+        } catch (IOException e) {
+            throw new ArgumentException(e.getMessage(), e);
         }
     }
 

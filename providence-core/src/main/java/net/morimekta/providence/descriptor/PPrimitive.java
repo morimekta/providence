@@ -22,6 +22,7 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -55,6 +56,7 @@ public class PPrimitive implements PDescriptor {
      *
      * @return The descriptor provider.
      */
+    @Nonnull
     public PPrimitiveProvider provider() {
         return mProvider;
     }
@@ -64,11 +66,13 @@ public class PPrimitive implements PDescriptor {
         return null;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return mType.name;
     }
 
+    @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
         return mType.name;
@@ -79,6 +83,7 @@ public class PPrimitive implements PDescriptor {
         return mType.name;
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return mType;

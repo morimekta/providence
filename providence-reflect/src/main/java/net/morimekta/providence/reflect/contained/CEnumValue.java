@@ -24,6 +24,7 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -62,6 +63,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
         return value;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;
@@ -72,11 +74,13 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
         return value;
     }
 
+    @Nonnull
     @Override
     public String asString() {
         return name;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -87,7 +91,7 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -95,13 +99,14 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }
         return null;
     }
 
+    @Nonnull
     @Override
     public PEnumDescriptor<CEnumValue> descriptor() {
         return type;
@@ -158,12 +163,14 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
             return mValue != null;
         }
 
+        @Nonnull
         @Override
         public Builder setByValue(int id) {
             mValue = mType.getValueById(id);
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder setByName(String name) {
             mValue = mType.getValueByName(name);
