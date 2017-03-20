@@ -60,7 +60,6 @@
     <scm>
         <url>https://github.com/morimekta/providence</url>
         <developerConnection>scm:git:ssh://git@github.com/morimekta/providence.git</developerConnection>
-        <tag>v0.2.2</tag>
     </scm>
 
     <prerequisites>
