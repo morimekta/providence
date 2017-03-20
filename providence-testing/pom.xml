@@ -127,6 +127,9 @@
                                 <includes>
                                     <include>src/test/jackson/**/*.thrift</include>
                                 </includes>
+                                <excludes>
+                                    <exclude>src/test/jackson/excluded.thrift</exclude>
+                                </excludes>
                             </inputFiles>
                             <outputDir>target/generated-test-sources/jackson</outputDir>
                         </configuration>
@@ -174,9 +177,6 @@
                                 <includes>
                                     <include>src/test/providence/**/*.thrift</include>
                                 </includes>
-                                <excludes>
-                                    <exclude>src/test/providence/excluded.thrift</exclude>
-                                </excludes>
                             </inputFiles>
                         </configuration>
                     </execution>

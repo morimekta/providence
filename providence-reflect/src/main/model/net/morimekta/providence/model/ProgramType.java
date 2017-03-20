@@ -1060,7 +1060,7 @@ public class ProgramType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.ProgramType.documentation, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ProgramType.documentation, should be message(12)");
                         }
                         break;
                     }
@@ -1070,7 +1070,7 @@ public class ProgramType
                             mProgramName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.ProgramType.program_name, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ProgramType.program_name, should be message(12)");
                         }
                         break;
                     }
@@ -1085,11 +1085,11 @@ public class ProgramType
                                     mIncludes.add(key_6);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_4 + " for model.ProgramType.includes, should be 11");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.PType.nameForId(t_4) + "(" + t_4 + ") for model.ProgramType.includes, should be string(11)");
                             }
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.ProgramType.includes, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ProgramType.includes, should be message(12)");
                         }
                         break;
                     }
@@ -1107,11 +1107,11 @@ public class ProgramType
                                     mNamespaces.put(key_12, val_13);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + t_9 + " or value type " + t_10 + " for model.ProgramType.namespaces, should be 11 and 11");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + net.morimekta.providence.PType.nameForId(t_9) + "(" + t_9 + ") or value type " + net.morimekta.providence.PType.nameForId(t_10) + "(" + t_10 + ") for model.ProgramType.namespaces, should be string(11) and string(11)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.ProgramType.namespaces, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ProgramType.namespaces, should be message(12)");
                         }
                         break;
                     }
@@ -1125,11 +1125,11 @@ public class ProgramType
                                     mDecl.add(key_19);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_17 + " for model.ProgramType.decl, should be 12");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.PType.nameForId(t_17) + "(" + t_17 + ") for model.ProgramType.decl, should be message(12)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for model.ProgramType.decl, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ProgramType.decl, should be message(12)");
                         }
                         break;
                     }

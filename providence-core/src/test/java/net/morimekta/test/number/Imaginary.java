@@ -541,7 +541,7 @@ public class Imaginary
                             mV = reader.expectDouble();
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for number.Imaginary.v, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for number.Imaginary.v, should be message(12)");
                         }
                         break;
                     }
@@ -550,7 +550,7 @@ public class Imaginary
                             mI = reader.expectDouble();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for number.Imaginary.i, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for number.Imaginary.i, should be message(12)");
                         }
                         break;
                     }

@@ -158,13 +158,19 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 writer.end()  // if keyType && valueType
                       .appendln("} else {")
-                      .formatln("    throw new %s(\"Wrong key type \" + %s + \" or value type \" + %s + \" for %s.%s, should be %d and %d\");",
+                      .formatln("    throw new %s(\"Wrong key type \" + %s.nameForId(%s) + \"(\" + %s + \") or value type \" + %s.nameForId(%s) + \"(\" + %s + \") for %s.%s, should be %s(%d) and %s(%d)\");",
                                 SerializerException.class.getName(),
+                                PType.class.getName(),
                                 keyType,
+                                keyType,
+                                PType.class.getName(),
+                                valueType,
                                 valueType,
                                 message.descriptor().getQualifiedName(),
                                 field.name(),
+                                pMap.keyDescriptor().getType().name,
                                 pMap.keyDescriptor().getType().id,
+                                pMap.itemDescriptor().getType().name,
                                 pMap.itemDescriptor().getType().id)
                       .appendln('}');
                 break;
@@ -217,11 +223,14 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 writer.end()  // if itemType
                       .appendln("} else {")
-                      .formatln("    throw new %s(\"Wrong item type \" + %s + \" for %s.%s, should be %d\");",
+                      .formatln("    throw new %s(\"Wrong item type \" + %s.nameForId(%s) + \"(\" + %s + \") for %s.%s, should be %s(%d)\");",
                                 SerializerException.class.getName(),
+                                PType.class.getName(),
+                                itemType,
                                 itemType,
                                 message.descriptor().getQualifiedName(),
                                 field.name(),
+                                pCont.itemDescriptor().getType().name,
                                 pCont.itemDescriptor().getType().id)
                       .appendln('}');
                 break;
@@ -276,10 +285,12 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             }
             writer.end()  // if type
                   .appendln("} else {")
-                  .formatln("    throw new %s(\"Wrong type \" + type + \" for %s.%s, should be %d\");",
+                  .formatln("    throw new %s(\"Wrong type \" + %s.nameForId(type) + \"(\" + type + \") for %s.%s, should be %s(%d)\");",
                             SerializerException.class.getName(),
+                            PType.class.getName(),
                             message.descriptor().getQualifiedName(),
                             field.name(),
+                            message.descriptor().getType().name,
                             message.descriptor().getType().id)
                   .appendln('}');
 

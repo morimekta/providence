@@ -658,7 +658,7 @@ public class Calculator {
                                 mOp = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.Operation.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.calculate___request.op, should be 12");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___request.op, should be message(12)");
                             }
                             break;
                         }
@@ -1288,7 +1288,7 @@ public class Calculator {
                                 mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.Operand.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.calculate___response.success, should be 12");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___response.success, should be message(12)");
                             }
                             break;
                         }
@@ -1297,7 +1297,7 @@ public class Calculator {
                                 mCe = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.CalculateException.kDescriptor, strict);
                                 tUnionField = _Field.CE;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.calculate___response.ce, should be 12");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___response.ce, should be message(12)");
                             }
                             break;
                         }

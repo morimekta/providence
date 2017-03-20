@@ -704,7 +704,7 @@ public class Operand
                             mOperation = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.calculator.Operation.kDescriptor, strict);
                             tUnionField = _Field.OPERATION;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.operation, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.Operand.operation, should be message(12)");
                         }
                         break;
                     }
@@ -713,7 +713,7 @@ public class Operand
                             mNumber = reader.expectDouble();
                             tUnionField = _Field.NUMBER;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.number, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.Operand.number, should be message(12)");
                         }
                         break;
                     }
@@ -722,7 +722,7 @@ public class Operand
                             mImaginary = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.number.Imaginary.kDescriptor, strict);
                             tUnionField = _Field.IMAGINARY;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operand.imaginary, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.Operand.imaginary, should be message(12)");
                         }
                         break;
                     }

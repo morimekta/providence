@@ -1516,7 +1516,7 @@ public class ExceptionFields
                             mBooleanValue = reader.expectUInt8() == 1;
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.booleanValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.booleanValue, should be message(12)");
                         }
                         break;
                     }
@@ -1525,7 +1525,7 @@ public class ExceptionFields
                             mByteValue = reader.expectByte();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.byteValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.byteValue, should be message(12)");
                         }
                         break;
                     }
@@ -1534,7 +1534,7 @@ public class ExceptionFields
                             mShortValue = reader.expectShort();
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.shortValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.shortValue, should be message(12)");
                         }
                         break;
                     }
@@ -1543,7 +1543,7 @@ public class ExceptionFields
                             mIntegerValue = reader.expectInt();
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.integerValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.integerValue, should be message(12)");
                         }
                         break;
                     }
@@ -1552,7 +1552,7 @@ public class ExceptionFields
                             mLongValue = reader.expectLong();
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.longValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.longValue, should be message(12)");
                         }
                         break;
                     }
@@ -1561,7 +1561,7 @@ public class ExceptionFields
                             mDoubleValue = reader.expectDouble();
                             optionals.set(5);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.doubleValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.doubleValue, should be message(12)");
                         }
                         break;
                     }
@@ -1571,7 +1571,7 @@ public class ExceptionFields
                             mStringValue = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(6);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.stringValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.stringValue, should be message(12)");
                         }
                         break;
                     }
@@ -1581,7 +1581,7 @@ public class ExceptionFields
                             mBinaryValue = reader.expectBinary(len_2);
                             optionals.set(7);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.binaryValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.binaryValue, should be message(12)");
                         }
                         break;
                     }
@@ -1590,7 +1590,7 @@ public class ExceptionFields
                             mEnumValue = net.morimekta.test.providence.Value.forValue(reader.expectInt());
                             optionals.set(8);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.enumValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.enumValue, should be message(12)");
                         }
                         break;
                     }
@@ -1599,7 +1599,7 @@ public class ExceptionFields
                             mCompactValue = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.CompactFields.kDescriptor, strict);
                             optionals.set(9);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for providence.ExceptionFields.compactValue, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.ExceptionFields.compactValue, should be message(12)");
                         }
                         break;
                     }

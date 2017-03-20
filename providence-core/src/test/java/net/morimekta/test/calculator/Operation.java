@@ -583,7 +583,7 @@ public class Operation
                             mOperator = net.morimekta.test.calculator.Operator.forValue(reader.expectInt());
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operation.operator, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.Operation.operator, should be message(12)");
                         }
                         break;
                     }
@@ -597,11 +597,11 @@ public class Operation
                                     mOperands.add(key_4);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + t_2 + " for calculator.Operation.operands, should be 12");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.PType.nameForId(t_2) + "(" + t_2 + ") for calculator.Operation.operands, should be message(12)");
                             }
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + type + " for calculator.Operation.operands, should be 12");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.Operation.operands, should be message(12)");
                         }
                         break;
                     }

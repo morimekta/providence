@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence;
 
+import javax.annotation.Nonnull;
+
 /**
  * Value type constants. The ID matches the type ID used in the binary
  * protocol, which is the thrift default.
@@ -61,6 +63,13 @@ public enum PType {
         return name;
     }
 
+    /**
+     * Find the best matching type for a given ID.
+     *
+     * @param id The type byte ID.
+     * @return The type enum value.
+     */
+    @Nonnull
     public static PType findById(byte id) {
         switch (id) {
             case 0:
@@ -99,6 +108,13 @@ public enum PType {
         }
     }
 
+    /**
+     * Find the best matching type for a type name.
+     *
+     * @param name The name of the type.
+     * @return The type enum value.
+     */
+    @Nonnull
     public static PType findByName(String name) {
         switch (name) {
             case "stop":
@@ -139,6 +155,51 @@ public enum PType {
                 return ENUM;
             default:
                 return STOP;
+        }
+    }
+
+    /**
+     * Get the type name for a given type ID, or just the ID if now known.
+     *
+     * @param id The type ID.
+     * @return The type name (best effort).
+     */
+    @Nonnull
+    public static String nameForId(byte id) {
+        switch (id) {
+            case 0:
+                return "stop";
+            case 1:
+                return "void";
+            case 2:
+                return "bool";
+            case 3:
+                return "byte";
+            case 4:
+                return "double";
+            // case 5:
+            case 6:
+                return "i16";
+            // case 7:
+            case 8:
+                // ENUM is same as I32.
+                return "i32";
+            // case 9:
+            case 10:
+                return "i64";
+            case 11:
+                // BINARY is same as STRING.
+                return "string";
+            case 12:
+                return "message";
+            case 13:
+                return "map";
+            case 14:
+                return "set";
+            case 15:
+                return "list";
+            default:
+                return String.valueOf(id);
         }
     }
 }
