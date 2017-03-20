@@ -114,7 +114,13 @@ public class LogFormatter {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     void formatTo(OutputStream out, Message message) {
         IndentedPrintWriter builder = new IndentedPrintWriter(out, indent, newline);
-        appendMessage(builder, message);
+        if (message == null) {
+            builder.append(null);
+        } else {
+            builder.append(message.descriptor().getQualifiedName())
+                   .append(space);
+            appendMessage(builder, message);
+        }
         builder.flush();
     }
 

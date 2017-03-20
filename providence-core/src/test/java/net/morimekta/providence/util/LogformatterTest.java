@@ -26,7 +26,7 @@ public class LogformatterTest {
         });
 
         assertThat(formatter.format(credentials),
-                   is("{stringValue=\"username\",binaryValue=\"********\"}"));
+                   is("providence.OptionalFields{stringValue=\"username\",binaryValue=\"********\"}"));
     }
 
     @Test
@@ -47,9 +47,16 @@ public class LogformatterTest {
         });
 
         assertThat(formatter.format(credentials),
-                   is("{\n" +
+                   is("providence.OptionalFields {\n" +
                       "  stringValue = \"username\"\n" +
                       "  binaryValue = \"********\"\n" +
                       "}"));
+    }
+
+    @Test
+    public void testFormat_null() {
+        LogFormatter formatter = new LogFormatter(true);
+
+        assertThat(formatter.format(null), is("null"));
     }
 }
