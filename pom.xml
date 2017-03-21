@@ -10,7 +10,7 @@
     <url>http://www.morimekta.net/providence</url>
     <groupId>net.morimekta.providence</groupId>
     <artifactId>providence</artifactId>
-    <version>0.3.15-SNAPSHOT</version>
+    <version>0.3.15</version>
     <packaging>pom</packaging>
 
     <inceptionYear>2015</inceptionYear>
@@ -60,7 +60,8 @@
     <scm>
         <url>https://github.com/morimekta/providence</url>
         <developerConnection>scm:git:ssh://git@github.com/morimekta/providence.git</developerConnection>
-    </scm>
+      <tag>v0.3.15</tag>
+  </scm>
 
     <prerequisites>
         <maven>3.0.4</maven>
