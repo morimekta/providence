@@ -307,6 +307,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
+        writer.appendln(JAnnotation.NON_NULL);
         if (field.isVoid()) {
             // Void fields have no value.
             writer.formatln("public _Builder %s() {", field.setter());
@@ -380,6 +381,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (JAnnotation.isDeprecated(field)) {
             writer.appendln(JAnnotation.DEPRECATED);
         }
+        writer.appendln(JAnnotation.NON_NULL);
 
         switch (field.type()) {
             case MAP: {
@@ -504,6 +506,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         comment.newline()
                .return_("The builder")
                .finish();
+        writer.appendln(JAnnotation.NON_NULL);
         writer.formatln("public _Builder %s() {", field.resetter())
               .begin();
 

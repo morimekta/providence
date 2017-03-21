@@ -26,6 +26,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
@@ -78,7 +79,8 @@ public class CommonBuilderFormatter
     }
 
     private void appendMutate(JMessage message) {
-        writer.appendln("@Override")
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("@Override")
               .appendln("public _Builder mutate() {")
               .begin()
               .appendln("return new _Builder(this);")

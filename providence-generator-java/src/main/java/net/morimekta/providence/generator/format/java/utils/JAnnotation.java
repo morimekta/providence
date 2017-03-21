@@ -30,6 +30,7 @@ import net.morimekta.providence.reflect.util.ThriftAnnotation;
  */
 public class JAnnotation {
     public static final String DEPRECATED = "@Deprecated";
+    public static final String NON_NULL = "@javax.annotation.Nonnull";
 
     public static boolean isDeprecated(JField field) {
         return isDeprecated(field.field());

@@ -26,6 +26,7 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
+import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
@@ -68,7 +69,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     }
 
     private void appendMerge(JMessage<?> message) throws GeneratorException {
-        writer.appendln("@Override")
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("@Override")
               .formatln("public _Builder merge(%s from) {", message.instanceType())
               .begin();
 
@@ -210,7 +212,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     }
 
     private void appendOverrideSetter(JMessage<?> message) throws GeneratorException {
-        writer.appendln("@Override")
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("@Override")
               .appendln("@SuppressWarnings(\"unchecked\")")
               .appendln("public _Builder set(int key, Object value) {")
               .begin()
@@ -307,7 +310,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
     }
 
     private void appendOverrideResetter(JMessage<?> message) {
-        writer.appendln("@Override")
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("@Override")
               .appendln("public _Builder clear(int key) {")
               .begin()
               .appendln("switch (key) {")
@@ -429,7 +433,8 @@ public class BuilderCoreOverridesFormatter implements MessageMemberFormatter {
 
     private void appendOverrideDescriptor(JMessage<?> message) throws GeneratorException {
         String typeClass = message.getDescriptorClass();
-        writer.appendln("@Override")
+        writer.appendln(JAnnotation.NON_NULL)
+              .appendln("@Override")
               .formatln("public %s<%s,_Field> descriptor() {", typeClass, message.instanceType())
               .begin()
               .appendln("return kDescriptor;")
