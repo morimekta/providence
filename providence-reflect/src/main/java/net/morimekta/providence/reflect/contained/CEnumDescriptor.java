@@ -127,7 +127,6 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
         @Nonnull
         @Override
         public PEnumBuilder<CEnumValue> builder() {
-            // TODO Auto-generated method stub
             return new CEnumValue.Builder(mType);
         }
     }

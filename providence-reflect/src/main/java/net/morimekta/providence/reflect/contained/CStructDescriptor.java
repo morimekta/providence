@@ -147,7 +147,6 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
         @Nonnull
         @Override
         public PMessageBuilder<CStruct,CField> builder() {
-            // TODO Auto-generated method stub
             return new CStruct.Builder(mType);
         }
     }

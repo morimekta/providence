@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Base formatter for messages
  */
 public abstract class BaseMessageFormatter {
     protected final IndentedPrintWriter          writer;

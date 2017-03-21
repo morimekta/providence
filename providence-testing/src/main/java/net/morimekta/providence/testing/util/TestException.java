@@ -21,7 +21,8 @@
 package net.morimekta.providence.testing.util;
 
 /**
- * TODO(morimekta): Make a real class description.
+ * Simple base exception class for testing of thrift exceptions with case
+ * class.
  */
 public class TestException extends Exception {
     public TestException(String message) {

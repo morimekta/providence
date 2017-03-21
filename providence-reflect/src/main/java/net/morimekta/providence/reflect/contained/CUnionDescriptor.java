@@ -142,7 +142,6 @@ public class CUnionDescriptor extends PUnionDescriptor<CUnion, CField> implement
         @Nonnull
         @Override
         public PMessageBuilder<CUnion,CField> builder() {
-            // TODO Auto-generated method stub
             return new CUnion.Builder(mType);
         }
     }

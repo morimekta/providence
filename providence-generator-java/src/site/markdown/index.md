@@ -49,28 +49,11 @@ public class MyMessage {
     public boolean hasMyField();
 
     // ---- CONTAINERS ----
-    // Container fields will behave a little different.
-
-    // TODO(morimekta): This is current NOT the generated behavior. Update
-    // code and remove this TODO when done.
 
     /**
-     * (current): Returns empty default-container if not present.
-     *
-     * The getter should return the container if present, and null if not.
-     */
-    public List<Integer> getMyContainer();
-
-    /**
-     * (current): Not generated. And currently a container is only present
-     * if it contains at least 1 entry.
-     *
-     * The presence check will behave as a standard non-prmimitive scalar presence check.
-     */
-    public boolean hasMyContainer(); 
-
-    /**
-     * The entry count returns the number of entries in the container, and 0
+     * Containers will also have an extra method.
+     * 
+     * The entry count returns the number of entries in the container, or 0
      * if the container is not present.
      */
     public int numMyContainer();
@@ -139,6 +122,9 @@ public static class _Builder {
      * container (java.util.Collection for list and set, and java.util.Map
      * for map fields). Content is always replaced, and a null value is equal
      * to clearMyContainer().
+     * 
+     * Note that both list and set containers have <code>Collection&lt;T&gt;</code>
+     * as the input type here.
      */
     public _Builder setMyContainer(Collection<Integer> value);
 
@@ -150,8 +136,6 @@ public static class _Builder {
     // -- lists and sets --
 
     /**
-     * (current): Containers are only present if containing items.
-     *
      * Add entries to the list or set. The field is present even if no values
      * were given, and is still empty. Values must be valid, otherwise
      * ClassCastException is thrown.
@@ -161,8 +145,6 @@ public static class _Builder {
     // -- maps --
 
     /**
-     * (current): Containers are only present if containing items.
-     *
      * Put the key / value pair into the map. The field is marked as present
      * (key / value pair must be valid, otherwise ClassCastException is
      * thrown).

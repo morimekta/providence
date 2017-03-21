@@ -1,4 +1,5 @@
 Providence Utils : JavaX WS RESTful compatibility
 =================================================
 
-TODO: Write
+Providence also works with `jax.rs` servlets using the standard message body
+reader / writer interfaces.

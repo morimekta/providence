@@ -26,7 +26,7 @@ import net.morimekta.providence.reflect.contained.CService;
 import java.io.IOException;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Base formatter for java services.
  */
 public interface BaseServiceFormatter {
     @SuppressWarnings("unused")

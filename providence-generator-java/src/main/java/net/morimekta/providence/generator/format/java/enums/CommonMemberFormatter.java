@@ -30,7 +30,7 @@ import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Formatter for common (non-extended) enum content.
  */
 public class CommonMemberFormatter implements EnumMemberFormatter {
     private final IndentedPrintWriter writer;

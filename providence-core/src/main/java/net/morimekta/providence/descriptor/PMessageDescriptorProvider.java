@@ -25,8 +25,7 @@ import net.morimekta.providence.PMessage;
 import javax.annotation.Nonnull;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 25.08.15
+ * Provides message descriptors.
  */
 public abstract class PMessageDescriptorProvider<V extends PMessage<V, F>, F extends PField>
         implements PDescriptorProvider {

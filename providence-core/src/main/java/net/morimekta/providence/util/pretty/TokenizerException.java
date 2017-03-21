@@ -28,7 +28,7 @@ import com.google.common.base.MoreObjects;
 import java.io.File;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Exception when totalizing fails to make token or read the expected content.
  */
 public class TokenizerException extends SerializerException {
     private int    lineNo;

@@ -138,7 +138,6 @@ public class CExceptionDescriptor extends PExceptionDescriptor<CException, CFiel
         @Nonnull
         @Override
         public PMessageBuilder<CException, CField> builder() {
-            // TODO Auto-generated method stub
             return new CException.Builder(mType);
         }
     }

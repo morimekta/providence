@@ -25,7 +25,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Utilities helping with reading and writing binary format (protocol)
+ * messages.
  */
 public class BinaryFormatUtils {
     // --- READ METHODS ---

@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Formatter for extending for jackson annotated serialization.
  */
 public class JacksonEnumFormatter implements EnumMemberFormatter {
     private final IndentedPrintWriter writer;

@@ -37,8 +37,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 05.09.15
+ * Base generator for all java classes.
  */
 public abstract class BaseGenerator extends Generator {
     protected final JHelper helper;

@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Formatting core (providence extended) content.
  */
 public class CoreMemberFormatter implements EnumMemberFormatter {
     private final IndentedPrintWriter writer;

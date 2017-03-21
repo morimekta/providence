@@ -1,6 +1,5 @@
 package net.morimekta.providence.testing.util;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -12,7 +11,6 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
-import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsByteBuffer;
@@ -25,9 +23,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * TODO(steineldar): Make a proper class description.
- */
 public class ResourceUtilsTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();

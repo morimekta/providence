@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Base formatter for all enums.
  */
 public class BaseEnumFormatter {
     private final IndentedPrintWriter       writer;

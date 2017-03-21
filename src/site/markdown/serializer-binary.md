@@ -52,10 +52,6 @@ The call and oneway types are both method calls, where the oneway type does not
 expect, or require a reply. The call require a relply eve in the return type is
 'void'. This is where a 'field' type can be void.
 
-*__TODO:__ Research original thrift reply-type handling of void return types.*
-
-_**TODO:** Update thrift-serializers or client / server to use this behavior._
-
 ## Messages
 
 Messages are a stream of `fields`, and terminated with a 0-byte. Each field

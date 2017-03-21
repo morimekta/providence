@@ -29,9 +29,9 @@ import net.morimekta.providence.generator.format.java.messages.CommonMemberForma
 import net.morimekta.providence.generator.format.java.messages.CommonOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.AndroidMessageFormatter;
-import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryReaderBuilderFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.BinaryWriterFormatter;
+import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
 import net.morimekta.providence.generator.format.java.messages.extras.JacksonMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 /**
- * TODO(steineldar): Make a proper class description.
+ * Formatter for java messages main class.
  */
 public class JavaMessageFormatter extends BaseMessageFormatter {
     public JavaMessageFormatter(IndentedPrintWriter writer,
