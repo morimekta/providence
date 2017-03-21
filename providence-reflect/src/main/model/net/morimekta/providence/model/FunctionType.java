@@ -415,6 +415,7 @@ public class FunctionType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -621,6 +622,7 @@ public class FunctionType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(FunctionType from) {
             if (from.hasDocumentation()) {
@@ -673,6 +675,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -703,6 +706,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -725,6 +729,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOneWay(boolean value) {
             optionals.set(1);
             modified.set(1);
@@ -755,6 +760,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOneWay() {
             optionals.clear(1);
             modified.set(1);
@@ -777,6 +783,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setReturnType(String value) {
             optionals.set(2);
             modified.set(2);
@@ -807,6 +814,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearReturnType() {
             optionals.clear(2);
             modified.set(2);
@@ -829,6 +837,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setName(String value) {
             optionals.set(3);
             modified.set(3);
@@ -859,6 +868,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearName() {
             optionals.clear(3);
             modified.set(3);
@@ -881,6 +891,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setParams(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(4);
             modified.set(4);
@@ -895,6 +906,7 @@ public class FunctionType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToParams(net.morimekta.providence.model.FieldType... values) {
             optionals.set(4);
             modified.set(4);
@@ -927,6 +939,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearParams() {
             optionals.clear(4);
             modified.set(4);
@@ -951,6 +964,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(5);
             modified.set(5);
@@ -965,6 +979,7 @@ public class FunctionType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToExceptions(net.morimekta.providence.model.FieldType... values) {
             optionals.set(5);
             modified.set(5);
@@ -997,6 +1012,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearExceptions() {
             optionals.clear(5);
             modified.set(5);
@@ -1021,6 +1037,7 @@ public class FunctionType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
             modified.set(6);
@@ -1036,6 +1053,7 @@ public class FunctionType
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
             modified.set(6);
@@ -1066,6 +1084,7 @@ public class FunctionType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
             optionals.clear(6);
             modified.set(6);
@@ -1120,6 +1139,7 @@ public class FunctionType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -1177,6 +1197,7 @@ public class FunctionType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -1213,6 +1234,7 @@ public class FunctionType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<FunctionType,_Field> descriptor() {
             return kDescriptor;

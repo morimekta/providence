@@ -502,6 +502,7 @@ public class UnionFields
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -706,6 +707,7 @@ public class UnionFields
             mCompactValue = base.mCompactValue;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(UnionFields from) {
             if (from.unionField() == null) {
@@ -767,6 +769,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBooleanValue(boolean value) {
             tUnionField = _Field.BOOLEAN_VALUE;
             modified = true;
@@ -788,6 +791,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBooleanValue() {
             if (tUnionField == _Field.BOOLEAN_VALUE) tUnionField = null;
             modified = true;
@@ -810,6 +814,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setByteValue(byte value) {
             tUnionField = _Field.BYTE_VALUE;
             modified = true;
@@ -831,6 +836,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearByteValue() {
             if (tUnionField == _Field.BYTE_VALUE) tUnionField = null;
             modified = true;
@@ -853,6 +859,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setShortValue(short value) {
             tUnionField = _Field.SHORT_VALUE;
             modified = true;
@@ -874,6 +881,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearShortValue() {
             if (tUnionField == _Field.SHORT_VALUE) tUnionField = null;
             modified = true;
@@ -896,6 +904,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIntegerValue(int value) {
             tUnionField = _Field.INTEGER_VALUE;
             modified = true;
@@ -917,6 +926,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIntegerValue() {
             if (tUnionField == _Field.INTEGER_VALUE) tUnionField = null;
             modified = true;
@@ -939,6 +949,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setLongValue(long value) {
             tUnionField = _Field.LONG_VALUE;
             modified = true;
@@ -960,6 +971,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearLongValue() {
             if (tUnionField == _Field.LONG_VALUE) tUnionField = null;
             modified = true;
@@ -982,6 +994,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDoubleValue(double value) {
             tUnionField = _Field.DOUBLE_VALUE;
             modified = true;
@@ -1003,6 +1016,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDoubleValue() {
             if (tUnionField == _Field.DOUBLE_VALUE) tUnionField = null;
             modified = true;
@@ -1025,6 +1039,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setStringValue(String value) {
             tUnionField = _Field.STRING_VALUE;
             modified = true;
@@ -1046,6 +1061,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearStringValue() {
             if (tUnionField == _Field.STRING_VALUE) tUnionField = null;
             modified = true;
@@ -1068,6 +1084,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
             tUnionField = _Field.BINARY_VALUE;
             modified = true;
@@ -1089,6 +1106,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBinaryValue() {
             if (tUnionField == _Field.BINARY_VALUE) tUnionField = null;
             modified = true;
@@ -1111,6 +1129,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setEnumValue(net.morimekta.test.providence.Value value) {
             tUnionField = _Field.ENUM_VALUE;
             modified = true;
@@ -1132,6 +1151,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearEnumValue() {
             if (tUnionField == _Field.ENUM_VALUE) tUnionField = null;
             modified = true;
@@ -1154,6 +1174,7 @@ public class UnionFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             tUnionField = _Field.COMPACT_VALUE;
             modified = true;
@@ -1176,6 +1197,7 @@ public class UnionFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearCompactValue() {
             if (tUnionField == _Field.COMPACT_VALUE) tUnionField = null;
             modified = true;
@@ -1257,6 +1279,7 @@ public class UnionFields
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -1308,6 +1331,7 @@ public class UnionFields
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -1348,6 +1372,7 @@ public class UnionFields
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<UnionFields,_Field> descriptor() {
             return kDescriptor;

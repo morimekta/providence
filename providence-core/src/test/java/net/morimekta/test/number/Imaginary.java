@@ -148,6 +148,7 @@ public class Imaginary
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -307,6 +308,7 @@ public class Imaginary
             mI = base.mI;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(Imaginary from) {
             optionals.set(0);
@@ -325,6 +327,7 @@ public class Imaginary
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setV(double value) {
             optionals.set(0);
             modified.set(0);
@@ -355,6 +358,7 @@ public class Imaginary
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearV() {
             optionals.clear(0);
             modified.set(0);
@@ -377,6 +381,7 @@ public class Imaginary
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setI(double value) {
             optionals.set(1);
             modified.set(1);
@@ -407,6 +412,7 @@ public class Imaginary
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearI() {
             optionals.clear(1);
             modified.set(1);
@@ -449,6 +455,7 @@ public class Imaginary
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -489,6 +496,7 @@ public class Imaginary
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -520,6 +528,7 @@ public class Imaginary
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Imaginary,_Field> descriptor() {
             return kDescriptor;

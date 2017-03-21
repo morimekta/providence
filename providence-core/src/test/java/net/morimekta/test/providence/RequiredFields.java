@@ -427,6 +427,7 @@ public class RequiredFields
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -647,6 +648,7 @@ public class RequiredFields
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(RequiredFields from) {
             optionals.set(0);
@@ -712,6 +714,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBooleanValue(boolean value) {
             optionals.set(0);
             modified.set(0);
@@ -742,6 +745,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBooleanValue() {
             optionals.clear(0);
             modified.set(0);
@@ -764,6 +768,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setByteValue(byte value) {
             optionals.set(1);
             modified.set(1);
@@ -794,6 +799,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearByteValue() {
             optionals.clear(1);
             modified.set(1);
@@ -816,6 +822,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setShortValue(short value) {
             optionals.set(2);
             modified.set(2);
@@ -846,6 +853,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearShortValue() {
             optionals.clear(2);
             modified.set(2);
@@ -868,6 +876,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIntegerValue(int value) {
             optionals.set(3);
             modified.set(3);
@@ -898,6 +907,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIntegerValue() {
             optionals.clear(3);
             modified.set(3);
@@ -920,6 +930,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setLongValue(long value) {
             optionals.set(4);
             modified.set(4);
@@ -950,6 +961,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearLongValue() {
             optionals.clear(4);
             modified.set(4);
@@ -972,6 +984,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDoubleValue(double value) {
             optionals.set(5);
             modified.set(5);
@@ -1002,6 +1015,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDoubleValue() {
             optionals.clear(5);
             modified.set(5);
@@ -1024,6 +1038,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setStringValue(String value) {
             optionals.set(6);
             modified.set(6);
@@ -1054,6 +1069,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearStringValue() {
             optionals.clear(6);
             modified.set(6);
@@ -1076,6 +1092,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
             optionals.set(7);
             modified.set(7);
@@ -1106,6 +1123,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBinaryValue() {
             optionals.clear(7);
             modified.set(7);
@@ -1128,6 +1146,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setEnumValue(net.morimekta.test.providence.Value value) {
             optionals.set(8);
             modified.set(8);
@@ -1158,6 +1177,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearEnumValue() {
             optionals.clear(8);
             modified.set(8);
@@ -1180,6 +1200,7 @@ public class RequiredFields
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setCompactValue(net.morimekta.test.providence.CompactFields value) {
             optionals.set(9);
             modified.set(9);
@@ -1211,6 +1232,7 @@ public class RequiredFields
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearCompactValue() {
             optionals.clear(9);
             modified.set(9);
@@ -1280,6 +1302,7 @@ public class RequiredFields
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -1344,6 +1367,7 @@ public class RequiredFields
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -1428,6 +1452,7 @@ public class RequiredFields
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<RequiredFields,_Field> descriptor() {
             return kDescriptor;

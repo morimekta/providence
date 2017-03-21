@@ -288,6 +288,7 @@ public class EnumType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -472,6 +473,7 @@ public class EnumType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(EnumType from) {
             if (from.hasDocumentation()) {
@@ -507,6 +509,7 @@ public class EnumType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -537,6 +540,7 @@ public class EnumType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -559,6 +563,7 @@ public class EnumType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setName(String value) {
             optionals.set(1);
             modified.set(1);
@@ -589,6 +594,7 @@ public class EnumType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearName() {
             optionals.clear(1);
             modified.set(1);
@@ -611,6 +617,7 @@ public class EnumType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setValues(java.util.Collection<net.morimekta.providence.model.EnumValue> value) {
             optionals.set(2);
             modified.set(2);
@@ -625,6 +632,7 @@ public class EnumType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToValues(net.morimekta.providence.model.EnumValue... values) {
             optionals.set(2);
             modified.set(2);
@@ -657,6 +665,7 @@ public class EnumType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearValues() {
             optionals.clear(2);
             modified.set(2);
@@ -681,6 +690,7 @@ public class EnumType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(3);
             modified.set(3);
@@ -696,6 +706,7 @@ public class EnumType
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(3);
             modified.set(3);
@@ -726,6 +737,7 @@ public class EnumType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
             optionals.clear(3);
             modified.set(3);
@@ -774,6 +786,7 @@ public class EnumType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -821,6 +834,7 @@ public class EnumType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -854,6 +868,7 @@ public class EnumType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<EnumType,_Field> descriptor() {
             return kDescriptor;

@@ -223,6 +223,7 @@ public class Operand
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -388,6 +389,7 @@ public class Operand
             mImaginary = base.mImaginary;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(Operand from) {
             if (from.unionField() == null) {
@@ -425,6 +427,7 @@ public class Operand
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             tUnionField = _Field.OPERATION;
             modified = true;
@@ -447,6 +450,7 @@ public class Operand
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOperation() {
             if (tUnionField == _Field.OPERATION) tUnionField = null;
             modified = true;
@@ -482,6 +486,7 @@ public class Operand
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setNumber(double value) {
             tUnionField = _Field.NUMBER;
             modified = true;
@@ -503,6 +508,7 @@ public class Operand
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearNumber() {
             if (tUnionField == _Field.NUMBER) tUnionField = null;
             modified = true;
@@ -525,6 +531,7 @@ public class Operand
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setImaginary(net.morimekta.test.number.Imaginary value) {
             tUnionField = _Field.IMAGINARY;
             modified = true;
@@ -547,6 +554,7 @@ public class Operand
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearImaginary() {
             if (tUnionField == _Field.IMAGINARY) tUnionField = null;
             modified = true;
@@ -615,6 +623,7 @@ public class Operand
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -652,6 +661,7 @@ public class Operand
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -683,6 +693,7 @@ public class Operand
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Operand,_Field> descriptor() {
             return kDescriptor;

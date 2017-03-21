@@ -213,6 +213,7 @@ public class TypedefType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -385,6 +386,7 @@ public class TypedefType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(TypedefType from) {
             if (from.hasDocumentation()) {
@@ -413,6 +415,7 @@ public class TypedefType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -443,6 +446,7 @@ public class TypedefType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -465,6 +469,7 @@ public class TypedefType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setType(String value) {
             optionals.set(1);
             modified.set(1);
@@ -495,6 +500,7 @@ public class TypedefType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearType() {
             optionals.clear(1);
             modified.set(1);
@@ -517,6 +523,7 @@ public class TypedefType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setName(String value) {
             optionals.set(2);
             modified.set(2);
@@ -547,6 +554,7 @@ public class TypedefType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearName() {
             optionals.clear(2);
             modified.set(2);
@@ -591,6 +599,7 @@ public class TypedefType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -634,6 +643,7 @@ public class TypedefType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -654,6 +664,7 @@ public class TypedefType
         public void validate() {
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<TypedefType,_Field> descriptor() {
             return kDescriptor;

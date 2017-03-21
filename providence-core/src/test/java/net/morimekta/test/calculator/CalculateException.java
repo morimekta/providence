@@ -188,6 +188,7 @@ public class CalculateException
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -350,6 +351,7 @@ public class CalculateException
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(CalculateException from) {
             if (from.hasMessage()) {
@@ -379,6 +381,7 @@ public class CalculateException
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setMessage(String value) {
             optionals.set(0);
             modified.set(0);
@@ -409,6 +412,7 @@ public class CalculateException
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearMessage() {
             optionals.clear(0);
             modified.set(0);
@@ -431,6 +435,7 @@ public class CalculateException
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOperation(net.morimekta.test.calculator.Operation value) {
             optionals.set(1);
             modified.set(1);
@@ -462,6 +467,7 @@ public class CalculateException
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOperation() {
             optionals.clear(1);
             modified.set(1);
@@ -515,6 +521,7 @@ public class CalculateException
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -555,6 +562,7 @@ public class CalculateException
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -586,6 +594,7 @@ public class CalculateException
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<CalculateException,_Field> descriptor() {
             return kDescriptor;

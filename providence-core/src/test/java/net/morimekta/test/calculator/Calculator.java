@@ -323,6 +323,7 @@ public class Calculator {
             return length;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder mutate() {
             return new _Builder(this);
@@ -477,6 +478,7 @@ public class Calculator {
                 }
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder merge(Calculate_request from) {
                 if (from.hasOp()) {
@@ -500,6 +502,7 @@ public class Calculator {
              * @param value The new value
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder setOp(net.morimekta.test.calculator.Operation value) {
                 optionals.set(0);
                 modified.set(0);
@@ -531,6 +534,7 @@ public class Calculator {
              *
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder clearOp() {
                 optionals.clear(0);
                 modified.set(0);
@@ -582,6 +586,7 @@ public class Calculator {
                 }
             }
 
+            @javax.annotation.Nonnull
             @Override
             @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
@@ -619,6 +624,7 @@ public class Calculator {
                 return this;
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder clear(int key) {
                 switch (key) {
@@ -637,6 +643,7 @@ public class Calculator {
             public void validate() {
             }
 
+            @javax.annotation.Nonnull
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<Calculate_request,_Field> descriptor() {
                 return kDescriptor;
@@ -860,6 +867,7 @@ public class Calculator {
             return length;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder mutate() {
             return new _Builder(this);
@@ -1019,6 +1027,7 @@ public class Calculator {
                 mCe = base.mCe;
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder merge(Calculate_response from) {
                 if (from.unionField() == null) {
@@ -1052,6 +1061,7 @@ public class Calculator {
              * @param value The new value
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder setSuccess(net.morimekta.test.calculator.Operand value) {
                 tUnionField = _Field.SUCCESS;
                 modified = true;
@@ -1074,6 +1084,7 @@ public class Calculator {
              *
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder clearSuccess() {
                 if (tUnionField == _Field.SUCCESS) tUnionField = null;
                 modified = true;
@@ -1109,6 +1120,7 @@ public class Calculator {
              * @param value The new value
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder setCe(net.morimekta.test.calculator.CalculateException value) {
                 tUnionField = _Field.CE;
                 modified = true;
@@ -1131,6 +1143,7 @@ public class Calculator {
              *
              * @return The builder
              */
+            @javax.annotation.Nonnull
             public _Builder clearCe() {
                 if (tUnionField == _Field.CE) tUnionField = null;
                 modified = true;
@@ -1197,6 +1210,7 @@ public class Calculator {
                 }
             }
 
+            @javax.annotation.Nonnull
             @Override
             @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
@@ -1232,6 +1246,7 @@ public class Calculator {
                 return this;
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder clear(int key) {
                 switch (key) {
@@ -1262,6 +1277,7 @@ public class Calculator {
                 }
             }
 
+            @javax.annotation.Nonnull
             @Override
             public net.morimekta.providence.descriptor.PUnionDescriptor<Calculate_response,_Field> descriptor() {
                 return kDescriptor;
@@ -1395,6 +1411,7 @@ public class Calculator {
             return length;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder mutate() {
             return new _Builder(this);
@@ -1539,6 +1556,7 @@ public class Calculator {
 
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder merge(Iamalive_request from) {
                 return this;
@@ -1565,6 +1583,7 @@ public class Calculator {
                 }
             }
 
+            @javax.annotation.Nonnull
             @Override
             @SuppressWarnings("unchecked")
             public _Builder set(int key, Object value) {
@@ -1599,6 +1618,7 @@ public class Calculator {
                 return this;
             }
 
+            @javax.annotation.Nonnull
             @Override
             public _Builder clear(int key) {
                 switch (key) {
@@ -1616,6 +1636,7 @@ public class Calculator {
             public void validate() {
             }
 
+            @javax.annotation.Nonnull
             @Override
             public net.morimekta.providence.descriptor.PStructDescriptor<Iamalive_request,_Field> descriptor() {
                 return kDescriptor;

@@ -329,6 +329,7 @@ public class MessageType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -521,6 +522,7 @@ public class MessageType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(MessageType from) {
             if (from.hasDocumentation()) {
@@ -562,6 +564,7 @@ public class MessageType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -592,6 +595,7 @@ public class MessageType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -614,6 +618,7 @@ public class MessageType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setVariant(net.morimekta.providence.model.MessageVariant value) {
             optionals.set(1);
             modified.set(1);
@@ -644,6 +649,7 @@ public class MessageType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearVariant() {
             optionals.clear(1);
             modified.set(1);
@@ -666,6 +672,7 @@ public class MessageType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setName(String value) {
             optionals.set(2);
             modified.set(2);
@@ -696,6 +703,7 @@ public class MessageType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearName() {
             optionals.clear(2);
             modified.set(2);
@@ -718,6 +726,7 @@ public class MessageType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setFields(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
             optionals.set(3);
             modified.set(3);
@@ -732,6 +741,7 @@ public class MessageType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToFields(net.morimekta.providence.model.FieldType... values) {
             optionals.set(3);
             modified.set(3);
@@ -764,6 +774,7 @@ public class MessageType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearFields() {
             optionals.clear(3);
             modified.set(3);
@@ -788,6 +799,7 @@ public class MessageType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(4);
             modified.set(4);
@@ -803,6 +815,7 @@ public class MessageType
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(4);
             modified.set(4);
@@ -833,6 +846,7 @@ public class MessageType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
             optionals.clear(4);
             modified.set(4);
@@ -883,6 +897,7 @@ public class MessageType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -933,6 +948,7 @@ public class MessageType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -967,6 +983,7 @@ public class MessageType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<MessageType,_Field> descriptor() {
             return kDescriptor;

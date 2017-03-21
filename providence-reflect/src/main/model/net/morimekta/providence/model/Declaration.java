@@ -308,6 +308,7 @@ public class Declaration
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -488,6 +489,7 @@ public class Declaration
             mDeclConst = base.mDeclConst;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(Declaration from) {
             if (from.unionField() == null) {
@@ -545,6 +547,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
             tUnionField = _Field.DECL_ENUM;
             modified = true;
@@ -567,6 +570,7 @@ public class Declaration
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDeclEnum() {
             if (tUnionField == _Field.DECL_ENUM) tUnionField = null;
             modified = true;
@@ -602,6 +606,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
             tUnionField = _Field.DECL_TYPEDEF;
             modified = true;
@@ -624,6 +629,7 @@ public class Declaration
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDeclTypedef() {
             if (tUnionField == _Field.DECL_TYPEDEF) tUnionField = null;
             modified = true;
@@ -659,6 +665,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDeclStruct(net.morimekta.providence.model.MessageType value) {
             tUnionField = _Field.DECL_STRUCT;
             modified = true;
@@ -681,6 +688,7 @@ public class Declaration
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDeclStruct() {
             if (tUnionField == _Field.DECL_STRUCT) tUnionField = null;
             modified = true;
@@ -716,6 +724,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
             tUnionField = _Field.DECL_SERVICE;
             modified = true;
@@ -738,6 +747,7 @@ public class Declaration
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDeclService() {
             if (tUnionField == _Field.DECL_SERVICE) tUnionField = null;
             modified = true;
@@ -773,6 +783,7 @@ public class Declaration
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDeclConst(net.morimekta.providence.model.ConstType value) {
             tUnionField = _Field.DECL_CONST;
             modified = true;
@@ -795,6 +806,7 @@ public class Declaration
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDeclConst() {
             if (tUnionField == _Field.DECL_CONST) tUnionField = null;
             modified = true;
@@ -870,6 +882,7 @@ public class Declaration
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -911,6 +924,7 @@ public class Declaration
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -947,6 +961,7 @@ public class Declaration
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PUnionDescriptor<Declaration,_Field> descriptor() {
             return kDescriptor;

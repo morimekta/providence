@@ -175,6 +175,7 @@ public class Operation
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -337,6 +338,7 @@ public class Operation
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(Operation from) {
             if (from.hasOperator()) {
@@ -360,6 +362,7 @@ public class Operation
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOperator(net.morimekta.test.calculator.Operator value) {
             optionals.set(0);
             modified.set(0);
@@ -390,6 +393,7 @@ public class Operation
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOperator() {
             optionals.clear(0);
             modified.set(0);
@@ -412,6 +416,7 @@ public class Operation
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOperands(java.util.Collection<net.morimekta.test.calculator.Operand> value) {
             optionals.set(1);
             modified.set(1);
@@ -426,6 +431,7 @@ public class Operation
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToOperands(net.morimekta.test.calculator.Operand... values) {
             optionals.set(1);
             modified.set(1);
@@ -458,6 +464,7 @@ public class Operation
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOperands() {
             optionals.clear(1);
             modified.set(1);
@@ -502,6 +509,7 @@ public class Operation
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -543,6 +551,7 @@ public class Operation
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -562,6 +571,7 @@ public class Operation
         public void validate() {
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Operation,_Field> descriptor() {
             return kDescriptor;

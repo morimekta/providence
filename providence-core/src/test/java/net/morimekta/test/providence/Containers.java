@@ -2009,6 +2009,7 @@ public class Containers
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -2478,6 +2479,7 @@ public class Containers
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(Containers from) {
             if (from.hasBooleanList()) {
@@ -2756,6 +2758,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBooleanList(java.util.Collection<Boolean> value) {
             optionals.set(0);
             modified.set(0);
@@ -2770,6 +2773,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToBooleanList(boolean... values) {
             optionals.set(0);
             modified.set(0);
@@ -2802,6 +2806,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBooleanList() {
             optionals.clear(0);
             modified.set(0);
@@ -2826,6 +2831,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setByteList(java.util.Collection<Byte> value) {
             optionals.set(1);
             modified.set(1);
@@ -2840,6 +2846,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToByteList(byte... values) {
             optionals.set(1);
             modified.set(1);
@@ -2872,6 +2879,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearByteList() {
             optionals.clear(1);
             modified.set(1);
@@ -2896,6 +2904,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setShortList(java.util.Collection<Short> value) {
             optionals.set(2);
             modified.set(2);
@@ -2910,6 +2919,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToShortList(short... values) {
             optionals.set(2);
             modified.set(2);
@@ -2942,6 +2952,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearShortList() {
             optionals.clear(2);
             modified.set(2);
@@ -2966,6 +2977,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIntegerList(java.util.Collection<Integer> value) {
             optionals.set(3);
             modified.set(3);
@@ -2980,6 +2992,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToIntegerList(int... values) {
             optionals.set(3);
             modified.set(3);
@@ -3012,6 +3025,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIntegerList() {
             optionals.clear(3);
             modified.set(3);
@@ -3036,6 +3050,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setLongList(java.util.Collection<Long> value) {
             optionals.set(4);
             modified.set(4);
@@ -3050,6 +3065,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToLongList(long... values) {
             optionals.set(4);
             modified.set(4);
@@ -3082,6 +3098,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearLongList() {
             optionals.clear(4);
             modified.set(4);
@@ -3106,6 +3123,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDoubleList(java.util.Collection<Double> value) {
             optionals.set(5);
             modified.set(5);
@@ -3120,6 +3138,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToDoubleList(double... values) {
             optionals.set(5);
             modified.set(5);
@@ -3152,6 +3171,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDoubleList() {
             optionals.clear(5);
             modified.set(5);
@@ -3176,6 +3196,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setStringList(java.util.Collection<String> value) {
             optionals.set(6);
             modified.set(6);
@@ -3190,6 +3211,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToStringList(String... values) {
             optionals.set(6);
             modified.set(6);
@@ -3222,6 +3244,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearStringList() {
             optionals.clear(6);
             modified.set(6);
@@ -3246,6 +3269,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBinaryList(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(7);
             modified.set(7);
@@ -3260,6 +3284,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToBinaryList(net.morimekta.util.Binary... values) {
             optionals.set(7);
             modified.set(7);
@@ -3292,6 +3317,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBinaryList() {
             optionals.clear(7);
             modified.set(7);
@@ -3316,6 +3342,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBooleanSet(java.util.Collection<Boolean> value) {
             optionals.set(8);
             modified.set(8);
@@ -3330,6 +3357,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToBooleanSet(boolean... values) {
             optionals.set(8);
             modified.set(8);
@@ -3362,6 +3390,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBooleanSet() {
             optionals.clear(8);
             modified.set(8);
@@ -3386,6 +3415,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setByteSet(java.util.Collection<Byte> value) {
             optionals.set(9);
             modified.set(9);
@@ -3400,6 +3430,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToByteSet(byte... values) {
             optionals.set(9);
             modified.set(9);
@@ -3432,6 +3463,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearByteSet() {
             optionals.clear(9);
             modified.set(9);
@@ -3456,6 +3488,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setShortSet(java.util.Collection<Short> value) {
             optionals.set(10);
             modified.set(10);
@@ -3470,6 +3503,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToShortSet(short... values) {
             optionals.set(10);
             modified.set(10);
@@ -3502,6 +3536,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearShortSet() {
             optionals.clear(10);
             modified.set(10);
@@ -3526,6 +3561,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIntegerSet(java.util.Collection<Integer> value) {
             optionals.set(11);
             modified.set(11);
@@ -3540,6 +3576,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToIntegerSet(int... values) {
             optionals.set(11);
             modified.set(11);
@@ -3572,6 +3609,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIntegerSet() {
             optionals.clear(11);
             modified.set(11);
@@ -3596,6 +3634,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setLongSet(java.util.Collection<Long> value) {
             optionals.set(12);
             modified.set(12);
@@ -3610,6 +3649,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToLongSet(long... values) {
             optionals.set(12);
             modified.set(12);
@@ -3642,6 +3682,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearLongSet() {
             optionals.clear(12);
             modified.set(12);
@@ -3666,6 +3707,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDoubleSet(java.util.Collection<Double> value) {
             optionals.set(13);
             modified.set(13);
@@ -3680,6 +3722,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToDoubleSet(double... values) {
             optionals.set(13);
             modified.set(13);
@@ -3712,6 +3755,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDoubleSet() {
             optionals.clear(13);
             modified.set(13);
@@ -3736,6 +3780,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setStringSet(java.util.Collection<String> value) {
             optionals.set(14);
             modified.set(14);
@@ -3750,6 +3795,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToStringSet(String... values) {
             optionals.set(14);
             modified.set(14);
@@ -3782,6 +3828,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearStringSet() {
             optionals.clear(14);
             modified.set(14);
@@ -3806,6 +3853,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBinarySet(java.util.Collection<net.morimekta.util.Binary> value) {
             optionals.set(15);
             modified.set(15);
@@ -3820,6 +3868,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToBinarySet(net.morimekta.util.Binary... values) {
             optionals.set(15);
             modified.set(15);
@@ -3852,6 +3901,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBinarySet() {
             optionals.clear(15);
             modified.set(15);
@@ -3876,6 +3926,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBooleanMap(java.util.Map<Boolean,Boolean> value) {
             optionals.set(16);
             modified.set(16);
@@ -3891,6 +3942,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInBooleanMap(boolean key, boolean value) {
             optionals.set(16);
             modified.set(16);
@@ -3921,6 +3973,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBooleanMap() {
             optionals.clear(16);
             modified.set(16);
@@ -3945,6 +3998,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setByteMap(java.util.Map<Byte,Byte> value) {
             optionals.set(17);
             modified.set(17);
@@ -3960,6 +4014,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInByteMap(byte key, byte value) {
             optionals.set(17);
             modified.set(17);
@@ -3990,6 +4045,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearByteMap() {
             optionals.clear(17);
             modified.set(17);
@@ -4014,6 +4070,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setShortMap(java.util.Map<Short,Short> value) {
             optionals.set(18);
             modified.set(18);
@@ -4029,6 +4086,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInShortMap(short key, short value) {
             optionals.set(18);
             modified.set(18);
@@ -4059,6 +4117,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearShortMap() {
             optionals.clear(18);
             modified.set(18);
@@ -4083,6 +4142,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIntegerMap(java.util.Map<Integer,Integer> value) {
             optionals.set(19);
             modified.set(19);
@@ -4098,6 +4158,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInIntegerMap(int key, int value) {
             optionals.set(19);
             modified.set(19);
@@ -4128,6 +4189,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIntegerMap() {
             optionals.clear(19);
             modified.set(19);
@@ -4152,6 +4214,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setLongMap(java.util.Map<Long,Long> value) {
             optionals.set(20);
             modified.set(20);
@@ -4167,6 +4230,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInLongMap(long key, long value) {
             optionals.set(20);
             modified.set(20);
@@ -4197,6 +4261,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearLongMap() {
             optionals.clear(20);
             modified.set(20);
@@ -4221,6 +4286,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDoubleMap(java.util.Map<Double,Double> value) {
             optionals.set(21);
             modified.set(21);
@@ -4236,6 +4302,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInDoubleMap(double key, double value) {
             optionals.set(21);
             modified.set(21);
@@ -4266,6 +4333,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDoubleMap() {
             optionals.clear(21);
             modified.set(21);
@@ -4290,6 +4358,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setStringMap(java.util.Map<String,String> value) {
             optionals.set(22);
             modified.set(22);
@@ -4305,6 +4374,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInStringMap(String key, String value) {
             optionals.set(22);
             modified.set(22);
@@ -4335,6 +4405,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearStringMap() {
             optionals.clear(22);
             modified.set(22);
@@ -4359,6 +4430,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setBinaryMap(java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> value) {
             optionals.set(23);
             modified.set(23);
@@ -4374,6 +4446,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInBinaryMap(net.morimekta.util.Binary key, net.morimekta.util.Binary value) {
             optionals.set(23);
             modified.set(23);
@@ -4404,6 +4477,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearBinaryMap() {
             optionals.clear(23);
             modified.set(23);
@@ -4428,6 +4502,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setEnumList(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(24);
             modified.set(24);
@@ -4442,6 +4517,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToEnumList(net.morimekta.test.providence.Value... values) {
             optionals.set(24);
             modified.set(24);
@@ -4474,6 +4550,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearEnumList() {
             optionals.clear(24);
             modified.set(24);
@@ -4498,6 +4575,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setEnumSet(java.util.Collection<net.morimekta.test.providence.Value> value) {
             optionals.set(25);
             modified.set(25);
@@ -4512,6 +4590,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToEnumSet(net.morimekta.test.providence.Value... values) {
             optionals.set(25);
             modified.set(25);
@@ -4544,6 +4623,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearEnumSet() {
             optionals.clear(25);
             modified.set(25);
@@ -4568,6 +4648,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setEnumMap(java.util.Map<net.morimekta.test.providence.Value,net.morimekta.test.providence.Value> value) {
             optionals.set(26);
             modified.set(26);
@@ -4583,6 +4664,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInEnumMap(net.morimekta.test.providence.Value key, net.morimekta.test.providence.Value value) {
             optionals.set(26);
             modified.set(26);
@@ -4613,6 +4695,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearEnumMap() {
             optionals.clear(26);
             modified.set(26);
@@ -4637,6 +4720,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setMessageList(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(27);
             modified.set(27);
@@ -4651,6 +4735,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToMessageList(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(27);
             modified.set(27);
@@ -4683,6 +4768,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearMessageList() {
             optionals.clear(27);
             modified.set(27);
@@ -4707,6 +4793,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setMessageSet(java.util.Collection<net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(28);
             modified.set(28);
@@ -4721,6 +4808,7 @@ public class Containers
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToMessageSet(net.morimekta.test.providence.DefaultFields... values) {
             optionals.set(28);
             modified.set(28);
@@ -4753,6 +4841,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearMessageSet() {
             optionals.clear(28);
             modified.set(28);
@@ -4777,6 +4866,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setMessageMap(java.util.Map<String,net.morimekta.test.providence.DefaultFields> value) {
             optionals.set(29);
             modified.set(29);
@@ -4792,6 +4882,7 @@ public class Containers
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInMessageMap(String key, net.morimekta.test.providence.DefaultFields value) {
             optionals.set(29);
             modified.set(29);
@@ -4822,6 +4913,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearMessageMap() {
             optionals.clear(29);
             modified.set(29);
@@ -4846,6 +4938,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setRequiredFields(net.morimekta.test.providence.RequiredFields value) {
             optionals.set(30);
             modified.set(30);
@@ -4877,6 +4970,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearRequiredFields() {
             optionals.clear(30);
             modified.set(30);
@@ -4909,6 +5003,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDefaultFields(net.morimekta.test.providence.DefaultFields value) {
             optionals.set(31);
             modified.set(31);
@@ -4940,6 +5035,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDefaultFields() {
             optionals.clear(31);
             modified.set(31);
@@ -4972,6 +5068,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setOptionalFields(net.morimekta.test.providence.OptionalFields value) {
             optionals.set(32);
             modified.set(32);
@@ -5003,6 +5100,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearOptionalFields() {
             optionals.clear(32);
             modified.set(32);
@@ -5035,6 +5133,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setUnionFields(net.morimekta.test.providence.UnionFields value) {
             optionals.set(33);
             modified.set(33);
@@ -5066,6 +5165,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearUnionFields() {
             optionals.clear(33);
             modified.set(33);
@@ -5098,6 +5198,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setExceptionFields(net.morimekta.test.providence.ExceptionFields value) {
             optionals.set(34);
             modified.set(34);
@@ -5129,6 +5230,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearExceptionFields() {
             optionals.clear(34);
             modified.set(34);
@@ -5161,6 +5263,7 @@ public class Containers
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDefaultValues(net.morimekta.test.providence.DefaultValues value) {
             optionals.set(35);
             modified.set(35);
@@ -5192,6 +5295,7 @@ public class Containers
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDefaultValues() {
             optionals.clear(35);
             modified.set(35);
@@ -5318,6 +5422,7 @@ public class Containers
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -5480,6 +5585,7 @@ public class Containers
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -5533,6 +5639,7 @@ public class Containers
         public void validate() {
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<Containers,_Field> descriptor() {
             return kDescriptor;

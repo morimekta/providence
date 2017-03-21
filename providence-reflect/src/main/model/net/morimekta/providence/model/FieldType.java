@@ -393,6 +393,7 @@ public class FieldType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -606,6 +607,7 @@ public class FieldType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(FieldType from) {
             if (from.hasDocumentation()) {
@@ -656,6 +658,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -686,6 +689,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -708,6 +712,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setKey(int value) {
             optionals.set(1);
             modified.set(1);
@@ -738,6 +743,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearKey() {
             optionals.clear(1);
             modified.set(1);
@@ -760,6 +766,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setRequirement(net.morimekta.providence.model.FieldRequirement value) {
             optionals.set(2);
             modified.set(2);
@@ -790,6 +797,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearRequirement() {
             optionals.clear(2);
             modified.set(2);
@@ -812,6 +820,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setType(String value) {
             optionals.set(3);
             modified.set(3);
@@ -842,6 +851,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearType() {
             optionals.clear(3);
             modified.set(3);
@@ -864,6 +874,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setName(String value) {
             optionals.set(4);
             modified.set(4);
@@ -894,6 +905,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearName() {
             optionals.clear(4);
             modified.set(4);
@@ -916,6 +928,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDefaultValue(String value) {
             optionals.set(5);
             modified.set(5);
@@ -946,6 +959,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDefaultValue() {
             optionals.clear(5);
             modified.set(5);
@@ -968,6 +982,7 @@ public class FieldType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
             optionals.set(6);
             modified.set(6);
@@ -983,6 +998,7 @@ public class FieldType
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInAnnotations(String key, String value) {
             optionals.set(6);
             modified.set(6);
@@ -1013,6 +1029,7 @@ public class FieldType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearAnnotations() {
             optionals.clear(6);
             modified.set(6);
@@ -1067,6 +1084,7 @@ public class FieldType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -1122,6 +1140,7 @@ public class FieldType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -1168,6 +1187,7 @@ public class FieldType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<FieldType,_Field> descriptor() {
             return kDescriptor;

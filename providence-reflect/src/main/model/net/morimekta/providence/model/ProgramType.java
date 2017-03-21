@@ -357,6 +357,7 @@ public class ProgramType
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -548,6 +549,7 @@ public class ProgramType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(ProgramType from) {
             if (from.hasDocumentation()) {
@@ -590,6 +592,7 @@ public class ProgramType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
             optionals.set(0);
             modified.set(0);
@@ -620,6 +623,7 @@ public class ProgramType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDocumentation() {
             optionals.clear(0);
             modified.set(0);
@@ -642,6 +646,7 @@ public class ProgramType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setProgramName(String value) {
             optionals.set(1);
             modified.set(1);
@@ -672,6 +677,7 @@ public class ProgramType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearProgramName() {
             optionals.clear(1);
             modified.set(1);
@@ -696,6 +702,7 @@ public class ProgramType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setIncludes(java.util.Collection<String> value) {
             optionals.set(2);
             modified.set(2);
@@ -712,6 +719,7 @@ public class ProgramType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToIncludes(String... values) {
             optionals.set(2);
             modified.set(2);
@@ -750,6 +758,7 @@ public class ProgramType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearIncludes() {
             optionals.clear(2);
             modified.set(2);
@@ -778,6 +787,7 @@ public class ProgramType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setNamespaces(java.util.Map<String,String> value) {
             optionals.set(3);
             modified.set(3);
@@ -795,6 +805,7 @@ public class ProgramType
          * @param value The inserted value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder putInNamespaces(String key, String value) {
             optionals.set(3);
             modified.set(3);
@@ -831,6 +842,7 @@ public class ProgramType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearNamespaces() {
             optionals.clear(3);
             modified.set(3);
@@ -857,6 +869,7 @@ public class ProgramType
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setDecl(java.util.Collection<net.morimekta.providence.model.Declaration> value) {
             optionals.set(4);
             modified.set(4);
@@ -871,6 +884,7 @@ public class ProgramType
          * @param values The added value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder addToDecl(net.morimekta.providence.model.Declaration... values) {
             optionals.set(4);
             modified.set(4);
@@ -903,6 +917,7 @@ public class ProgramType
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearDecl() {
             optionals.clear(4);
             modified.set(4);
@@ -953,6 +968,7 @@ public class ProgramType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -1004,6 +1020,7 @@ public class ProgramType
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -1038,6 +1055,7 @@ public class ProgramType
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PStructDescriptor<ProgramType,_Field> descriptor() {
             return kDescriptor;

@@ -198,6 +198,7 @@ public class PApplicationException
         return length;
     }
 
+    @javax.annotation.Nonnull
     @Override
     public _Builder mutate() {
         return new _Builder(this);
@@ -363,6 +364,7 @@ public class PApplicationException
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder merge(PApplicationException from) {
             if (from.hasMessage()) {
@@ -385,6 +387,7 @@ public class PApplicationException
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setMessage(String value) {
             optionals.set(0);
             modified.set(0);
@@ -415,6 +418,7 @@ public class PApplicationException
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearMessage() {
             optionals.clear(0);
             modified.set(0);
@@ -437,6 +441,7 @@ public class PApplicationException
          * @param value The new value
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder setId(net.morimekta.providence.PApplicationExceptionType value) {
             optionals.set(1);
             modified.set(1);
@@ -467,6 +472,7 @@ public class PApplicationException
          *
          * @return The builder
          */
+        @javax.annotation.Nonnull
         public _Builder clearId() {
             optionals.clear(1);
             modified.set(1);
@@ -509,6 +515,7 @@ public class PApplicationException
             }
         }
 
+        @javax.annotation.Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public _Builder set(int key, Object value) {
@@ -549,6 +556,7 @@ public class PApplicationException
             return this;
         }
 
+        @javax.annotation.Nonnull
         @Override
         public _Builder clear(int key) {
             switch (key) {
@@ -568,6 +576,7 @@ public class PApplicationException
         public void validate() {
         }
 
+        @javax.annotation.Nonnull
         @Override
         public net.morimekta.providence.descriptor.PExceptionDescriptor<PApplicationException,_Field> descriptor() {
             return kDescriptor;
