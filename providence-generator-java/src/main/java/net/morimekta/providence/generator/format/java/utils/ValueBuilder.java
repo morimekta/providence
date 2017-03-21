@@ -98,6 +98,11 @@ public class ValueBuilder {
                       .append("d");
                 break;
             case BINARY:
+                if (value == null) {
+                    writer.format("null");
+                    break;
+                }
+
                 writer.append("Binary.wrap(new byte[]{");
                 byte[] bytes = ((Binary) value).get();
                 boolean first = true;
@@ -112,6 +117,11 @@ public class ValueBuilder {
                 writer.append("})");
                 break;
             case STRING:
+                if (value == null) {
+                    writer.format("null");
+                    break;
+                }
+
                 try {
                     JsonWriter json = new JsonWriter(writer);
                     json.value(value.toString());
@@ -124,6 +134,10 @@ public class ValueBuilder {
                 writer.format("%s.%s", helper.getValueType(type), JUtils.enumConst((PEnumValue) value));
                 break;
             case MESSAGE: {
+                if (value == null) {
+                    writer.format("null");
+                    break;
+                }
                 writer.format("%s.builder()", helper.getFieldType(type))
                       .begin();
                 PMessage message = (PMessage) value;

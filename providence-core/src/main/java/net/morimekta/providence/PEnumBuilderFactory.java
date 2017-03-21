@@ -20,11 +20,14 @@
  */
 package net.morimekta.providence;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
 public abstract class PEnumBuilderFactory<T extends PEnumValue<T>> implements PBuilderFactory<T> {
+    @Nonnull
     @Override
     public abstract PEnumBuilder<T> builder();
 }

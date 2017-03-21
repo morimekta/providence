@@ -25,6 +25,7 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.contained.CProgram;
@@ -147,10 +148,22 @@ public class ProgramRegistry extends TypeRegistry {
         final String finalName = name;
 
         // Otherwise it's a declared type.
-        return () -> (PDescriptor) getDeclaredType(finalName, context);
+        return () -> {
+            PDescriptor descriptor = getDeclaredType(finalName, context);
+            if (descriptor == null) {
+                throw new IllegalStateException("No such type " + finalName + " in context " + context);
+            }
+            return descriptor;
+        };
     }
 
-    public PServiceProvider getServiceProvider(String serviceName, final String packageContext) {
-        return () -> getService(serviceName, packageContext);
+    public PServiceProvider getServiceProvider(final String serviceName, final String packageContext) {
+        return () -> {
+            PService service = getService(serviceName, packageContext);
+            if (service == null) {
+                throw new IllegalStateException("No such service " + serviceName + " in context " + packageContext);
+            }
+            return service;
+        };
     }
 }

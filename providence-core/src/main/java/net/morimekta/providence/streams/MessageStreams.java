@@ -249,14 +249,12 @@ public class MessageStreams {
                         return null;
                     in.reset();
                 }
-                Message out = serializer.deserialize(in, descriptor);
-                if (out == null) {
-                    close();
-                }
-                return out;
+                return serializer.deserialize(in, descriptor);
             } catch (SerializerException e) {
+                close();
                 throw new UncheckedIOException(new IOException(e));
             } catch (IOException e) {
+                close();
                 throw new UncheckedIOException(e);
             } finally {
                 ++num;

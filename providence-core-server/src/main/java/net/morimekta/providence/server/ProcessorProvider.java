@@ -22,6 +22,7 @@ package net.morimekta.providence.server;
 
 import net.morimekta.providence.PProcessor;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,5 +31,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @FunctionalInterface
 public interface ProcessorProvider {
+    @Nonnull
     PProcessor processorForRequest(HttpServletRequest request);
 }

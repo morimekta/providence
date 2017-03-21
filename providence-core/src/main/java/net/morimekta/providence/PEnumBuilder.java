@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence;
 
+import javax.annotation.Nonnull;
+
 /**
  * A builder-helper for getting a correct enum entity from value or name.
  */
@@ -38,6 +40,7 @@ public abstract class PEnumBuilder<T> implements PBuilder<T> {
      * @param value The value to match.
      * @return The builder.
      */
+    @Nonnull
     public abstract PEnumBuilder<T> setByValue(int value);
 
     /**
@@ -46,5 +49,6 @@ public abstract class PEnumBuilder<T> implements PBuilder<T> {
      * @param name The name to match.
      * @return The builder.
      */
+    @Nonnull
     public abstract PEnumBuilder<T> setByName(String name);
 }

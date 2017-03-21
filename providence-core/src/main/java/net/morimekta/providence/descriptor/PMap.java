@@ -27,6 +27,7 @@ import net.morimekta.providence.PType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,17 +51,20 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         return keyDescriptor.descriptor();
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "map<" + keyDescriptor().getName() + "," + itemDescriptor().getName() + ">";
     }
 
+    @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
         return "map<" + keyDescriptor().getQualifiedName(programContext) + "," +
                itemDescriptor().getQualifiedName(programContext) + ">";
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return PType.MAP;
@@ -85,15 +89,20 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
     }
 
     public interface Builder<K, V> extends PBuilder<Map<K, V>> {
+        @Nonnull
         Builder<K, V> put(K key, V value);
+        @Nonnull
         Builder<K, V> putAll(Map<K, V> map);
+        @Nonnull
         Builder<K, V> clear();
 
+        @Nonnull
         @Override
         Map<K, V> build();
     }
 
     private interface BuilderFactory<K, V> extends PBuilderFactory<Map<K, V>> {
+        @Nonnull
         Builder<K, V> builder();
     }
 
@@ -104,24 +113,28 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
             this.builder = ImmutableMap.builder();
         }
 
+        @Nonnull
         @Override
         public ImmutableMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableMapBuilder<K, V> clear() {
             builder = ImmutableMap.builder();
             return this;
         }
 
+        @Nonnull
         @Override
         public Map<K, V> build() {
             return builder.build();
@@ -135,24 +148,28 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
             this.builder = ImmutableSortedMap.naturalOrder();
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
             return this;
         }
 
+        @Nonnull
         @Override
         public ImmutableSortedMapBuilder<K, V> clear() {
             builder = ImmutableSortedMap.naturalOrder();
             return this;
         }
 
+        @Nonnull
         @Override
         public Map<K, V> build() {
             return builder.build();
@@ -166,24 +183,28 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
             this.builder = new LinkedHashMap<>();
         }
 
+        @Nonnull
         @Override
         public LinkedHashMapBuilder<K, V> put(K key, V value) {
             builder.put(key, value);
             return this;
         }
 
+        @Nonnull
         @Override
         public LinkedHashMapBuilder<K, V> putAll(Map<K, V> map) {
             builder.putAll(map);
             return this;
         }
 
+        @Nonnull
         @Override
         public LinkedHashMapBuilder<K, V> clear() {
             builder.clear();
             return this;
         }
 
+        @Nonnull
         @Override
         public Map<K, V> build() {
             return Collections.unmodifiableMap(builder);

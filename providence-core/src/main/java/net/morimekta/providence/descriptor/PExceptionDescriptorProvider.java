@@ -22,11 +22,14 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessage;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provider for exception descriptor.
  */
 public abstract class PExceptionDescriptorProvider<Exception extends PMessage<Exception, Field>, Field extends PField>
         extends PMessageDescriptorProvider<Exception, Field> {
+    @Nonnull
     @Override
     public abstract PExceptionDescriptor<Exception, Field> descriptor();
 }

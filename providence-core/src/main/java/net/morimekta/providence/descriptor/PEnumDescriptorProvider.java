@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PEnumValue;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provider for enum type descriptor.
  */
@@ -32,6 +34,7 @@ public class PEnumDescriptorProvider<E extends PEnumValue<E>> implements PDescri
         mType = type;
     }
 
+    @Nonnull
     @Override
     public PEnumDescriptor<E> descriptor() {
         return mType;

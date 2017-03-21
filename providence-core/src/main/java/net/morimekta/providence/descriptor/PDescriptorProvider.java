@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.descriptor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Base descriptor provider interface. Descriptor providers are used to enable
  * types to reference each other in a circular fashion. The providers lets the
@@ -30,5 +32,6 @@ public interface PDescriptorProvider {
     /**
      * @return The descriptor for the given type.
      */
+    @Nonnull
     PDescriptor descriptor();
 }

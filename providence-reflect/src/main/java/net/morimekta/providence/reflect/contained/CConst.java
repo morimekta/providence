@@ -24,17 +24,19 @@ import net.morimekta.providence.descriptor.PDescriptorProvider;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PValueProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
  * First stage before we have a totally separate CConst from the CField contained type class.
  */
 public class CConst extends CField {
-    public CConst(String comment,
-                  String name,
-                  PDescriptorProvider typeProvider,
-                  PValueProvider defaultValue,
-                  Map<String, String> annotations) {
+    public CConst(@Nullable String comment,
+                  @Nonnull String name,
+                  @Nonnull PDescriptorProvider typeProvider,
+                  @Nonnull PValueProvider defaultValue,
+                  @Nullable Map<String, String> annotations) {
         super(comment, -1, PRequirement.REQUIRED, name, typeProvider, defaultValue, annotations);
     }
 }

@@ -64,6 +64,8 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * </ul>
  */
 public class ConstParser {
+    public static final String NULL = "null";
+
     private final TypeRegistry registry;
     private final String program;
 
@@ -75,7 +77,7 @@ public class ConstParser {
     public Object parse(InputStream inputStream, PDescriptor type) throws ParseException {
         try {
             Tokenizer tokenizer = new Tokenizer(inputStream);
-            return parseTypedValue(tokenizer.expect("const value"), tokenizer, type);
+            return parseTypedValue(tokenizer.expect("const value"), tokenizer, type, true);
         } catch (IOException e) {
             throw new ParseException(e, "Unable to read const data from input: " + e.getMessage());
         }
@@ -109,7 +111,7 @@ public class ConstParser {
             tokenizer.expectSymbol("parsing message key-value sep", Token.kFieldIdSep);
 
             builder.set(field.getKey(),
-                        parseTypedValue(tokenizer.expect("parsing field value"), tokenizer, field.getDescriptor()));
+                        parseTypedValue(tokenizer.expect("parsing field value"), tokenizer, field.getDescriptor(), false));
 
             token = tokenizer.peek("optional line sep or message end");
             if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
@@ -125,7 +127,7 @@ public class ConstParser {
         return builder.build();
     }
 
-    private Object parseTypedValue(Token token, Tokenizer tokenizer, PDescriptor valueType)
+    private Object parseTypedValue(Token token, Tokenizer tokenizer, PDescriptor valueType, boolean allowNull)
             throws ParseException, IOException {
         switch (valueType.getType()) {
             case BOOL:
@@ -163,6 +165,8 @@ public class ConstParser {
             case STRING:
                 if (token.isStringLiteral()) {
                     return token.decodeStringLiteral();
+                } else if (allowNull && token.asString().equals(NULL)) {
+                    return null;
                 }
                 throw new ParseException(tokenizer, token, "Not a valid string value.");
             case BINARY:
@@ -178,8 +182,7 @@ public class ConstParser {
                     name = name.substring(valueType.getName()
                                                    .length() + 1);
                 }
-                Object ev = eb.setByName(name)
-                              .build();
+                Object ev = eb.setByName(name).build();
                 if (ev == null) {
                     throw new ParseException(tokenizer, token, "No such " + valueType.getQualifiedName() + " enum value.");
                 }
@@ -188,12 +191,19 @@ public class ConstParser {
             case MESSAGE: {
                 if (token.isSymbol(Token.kMessageStart)) {
                     return parseMessage(tokenizer, (PMessageDescriptor<?, ?>) valueType);
+                } else if (allowNull && token.asString().equals(NULL)) {
+                    // messages can be null values in constants.
+                    return null;
                 }
                 throw new ParseException(tokenizer, token, "Not a valid message start.");
             }
             case LIST: {
                 PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
                 LinkedList<Object> list = new LinkedList<>();
+
+                if (!token.isSymbol(Token.kListStart)) {
+                    throw new ParseException(tokenizer, token, "Expected list start, found " + token.asString());
+                }
 
                 if (tokenizer.peek("checking for empty list")
                              .isSymbol(Token.kListEnd)) {
@@ -202,7 +212,7 @@ public class ConstParser {
                 }
 
                 while (true) {
-                    list.add(parseTypedValue(tokenizer.expect("list item value"), tokenizer, itemType));
+                    list.add(parseTypedValue(tokenizer.expect("list item value"), tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
                     if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
@@ -221,6 +231,10 @@ public class ConstParser {
                 PDescriptor itemType = ((PSet<?>) valueType).itemDescriptor();
                 HashSet<Object> set = new HashSet<>();
 
+                if (!token.isSymbol(Token.kListStart)) {
+                    throw new ParseException(tokenizer, token, "Expected list start, found " + token.asString());
+                }
+
                 if (tokenizer.peek("checking for empty list")
                              .isSymbol(Token.kListEnd)) {
                     tokenizer.next();
@@ -228,7 +242,7 @@ public class ConstParser {
                 }
 
                 while (true) {
-                    set.add(parseTypedValue(tokenizer.expect("set item value"), tokenizer, itemType));
+                    set.add(parseTypedValue(tokenizer.expect("set item value"), tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
                     if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
@@ -247,6 +261,10 @@ public class ConstParser {
                 PDescriptor keyType = ((PMap<?, ?>) valueType).keyDescriptor();
 
                 HashMap<Object, Object> map = new HashMap<>();
+
+                if (!token.isSymbol(Token.kMessageStart)) {
+                    throw new ParseException(tokenizer, token, "Expected map start, found " + token.asString());
+                }
 
                 if (tokenizer.peek("checking for empty map")
                              .isSymbol(Token.kMessageEnd)) {
@@ -267,7 +285,7 @@ public class ConstParser {
                         key = parsePrimitiveKey(token.asString(), token, tokenizer, keyType);
                     }
                     tokenizer.expectSymbol("map key-value separator", Token.kFieldIdSep);
-                    map.put(key, parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType));
+                    map.put(key, parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
                     if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {

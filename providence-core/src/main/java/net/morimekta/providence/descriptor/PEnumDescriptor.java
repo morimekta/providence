@@ -25,6 +25,7 @@ import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -41,6 +42,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
         factory = provider;
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return PType.ENUM;
@@ -49,6 +51,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
     /**
      * @return The array of enum instances.
      */
+    @Nonnull
     public abstract T[] getValues();
 
     /**

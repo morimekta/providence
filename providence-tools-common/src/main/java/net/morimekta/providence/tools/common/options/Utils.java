@@ -16,6 +16,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -46,8 +47,9 @@ public class Utils {
 
     public static String getVersionString() throws IOException {
         Properties properties = new Properties();
-        properties.load(Utils.class.getResourceAsStream("/build.properties"));
-
+        try (InputStream in = Utils.class.getResourceAsStream("/build.properties")) {
+            properties.load(in);
+        }
         return "v" + properties.getProperty("build.version");
     }
 

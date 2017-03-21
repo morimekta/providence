@@ -23,6 +23,8 @@ package net.morimekta.providence.reflect.contained;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
         this.annotations = annotations;
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     public Collection<CServiceMethod> getMethods() {
         return (Collection<CServiceMethod>) super.getMethods();
@@ -56,6 +59,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
         return (CService) super.getExtendsService();
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -66,7 +70,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -74,7 +78,7 @@ public class CService extends PService implements CAnnotatedDescriptor {
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }

@@ -61,7 +61,7 @@ public class Compiler {
                 System.out.println("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...");
                 System.out.println();
                 if (options.help.generator != null) {
-                    System.out.format("%s : %s\n",
+                    System.out.format("%s : %s%n",
                                       options.help.generator.name(),
                                       options.help.generator.desc);
                     System.out.println("Available options");
@@ -85,7 +85,7 @@ public class Compiler {
                     System.out.println();
                     System.out.println("Available generators:");
                     for (Language lang : Language.values()) {
-                        System.out.format(" - %-10s : %s\n", lang.name(), lang.desc);
+                        System.out.format(" - %-10s : %s%n", lang.name(), lang.desc);
                     }
                 }
                 return;

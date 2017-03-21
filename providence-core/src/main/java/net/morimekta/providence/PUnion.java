@@ -30,5 +30,9 @@ import net.morimekta.providence.descriptor.PField;
  */
 public interface PUnion<Union extends PUnion<Union, Field>, Field extends PField>
         extends PMessage<Union, Field> {
+    /**
+     * The user should be able to assume that this value never is null.
+     * @return The field set on the union.
+     */
     Field unionField();
 }

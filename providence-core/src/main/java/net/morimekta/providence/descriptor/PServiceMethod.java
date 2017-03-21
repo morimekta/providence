@@ -20,6 +20,9 @@
  */
 package net.morimekta.providence.descriptor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Descriptor for a single service method.
  */
@@ -27,6 +30,7 @@ public interface PServiceMethod {
     /**
      * @return Name of the method.
      */
+    @Nonnull
     String getName();
 
     /**
@@ -37,10 +41,12 @@ public interface PServiceMethod {
     /**
      * @return The descriptor of the request type.
      */
+    @Nonnull
     PStructDescriptor getRequestType();
 
     /**
      * @return The descriptor of the response type, or null for oneway methods.
      */
+    @Nullable
     PUnionDescriptor getResponseType();
 }

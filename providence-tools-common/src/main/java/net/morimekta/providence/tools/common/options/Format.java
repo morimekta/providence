@@ -30,7 +30,7 @@ public enum Format {
     compact_protocol("TCompactProtocol"),
     tuple_protocol("TTupleProtocol");
 
-    public String desc;
+    public final String desc;
 
     Format(String desc) {
         this.desc = desc;

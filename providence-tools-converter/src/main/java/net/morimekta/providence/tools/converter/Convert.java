@@ -50,7 +50,7 @@ public class Convert {
             try {
 
                 cli.parse(args);
-                if (options.help) {
+                if (options.showHelp()) {
                     System.out.println(cli.getProgramDescription());
                     System.out.println("Usage: " + cli.getSingleLineUsage());
                     System.out.println();
@@ -65,7 +65,7 @@ public class Convert {
                         System.out.println(String.format(" - %-20s : %s", format.name(), format.desc));
                     }
                     return;
-                } else if (options.version) {
+                } else if (options.showVersion()) {
                     System.out.println("Providence Converter - " + getVersionString());
                     return;
                 }
@@ -80,7 +80,7 @@ public class Convert {
                 System.out.println("Usage: " + cli.getSingleLineUsage());
                 System.err.println();
                 System.err.println("Run $ pvd --help # for available options.");
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -88,7 +88,7 @@ public class Convert {
                 System.out.flush();
                 System.err.println();
                 System.err.println(e.asString());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -96,7 +96,7 @@ public class Convert {
                 System.out.flush();
                 System.err.println();
                 System.err.println("I/O error: " + e.getMessage());
-                if (options.verbose) {
+                if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -105,7 +105,7 @@ public class Convert {
             System.out.flush();
             System.err.println();
             System.err.println("Unchecked exception: " + e.getMessage());
-            if (options.verbose) {
+            if (options.verbose()) {
                 System.err.println();
                 e.printStackTrace();
             }

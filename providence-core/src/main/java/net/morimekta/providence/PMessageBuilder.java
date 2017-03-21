@@ -23,9 +23,7 @@ package net.morimekta.providence;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import javax.annotation.meta.When;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -61,7 +59,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param value The value to be set.
      * @return The message builder.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public abstract PMessageBuilder<T, F> set(int key, Object value);
 
     /**
@@ -71,7 +69,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param value The value to be set.
      * @return True if the field is set.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public PMessageBuilder<T, F> set(@Nonnull F field, Object value) {
         return set(field.getKey(), value);
     }
@@ -117,6 +115,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @return Collection of F
      */
+    @Nonnull
     public Collection<F> modifiedFields() {
            return Arrays.stream(descriptor().getFields())
                         .filter(this::isModified)
@@ -131,7 +130,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return The message builder.
      * @throws IllegalArgumentException if the field is not a list or set.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public abstract PMessageBuilder<T, F> addTo(int key, Object value);
 
     /**
@@ -141,7 +140,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param value The value to add.
      * @return True if the field is set.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public PMessageBuilder<T, F> addTo(@Nonnull F field, Object value) {
         return addTo(field.getKey(), value);
     }
@@ -152,7 +151,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param key The key of the field to clear.
      * @return The message builder.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public abstract PMessageBuilder<T, F> clear(int key);
 
 
@@ -162,7 +161,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param field The field to clear.
      * @return The message builder.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public PMessageBuilder<T, F> clear(@Nonnull F field) {
         return clear(field.getKey());
     }
@@ -176,7 +175,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @param from The message to merge values from.
      * @return The message builder.
      */
-    @CheckReturnValue(when = When.NEVER)
+    @Nonnull
     public abstract PMessageBuilder<T, F> merge(T from);
 
     /**
@@ -186,7 +185,9 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @param key The field key.
      * @return The field builder.
+     * @throws IllegalArgumentException if field is not a message field.
      */
+    @Nonnull
     public abstract PMessageBuilder mutator(int key);
 
     /**
@@ -196,7 +197,9 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @param field The field to mutate.
      * @return The field builder.
+     * @throws IllegalArgumentException if field is not a message field.
      */
+    @Nonnull
     public PMessageBuilder mutator(@Nonnull F field) {
         return mutator(field.getKey());
     }
@@ -206,5 +209,6 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      *
      * @return The struct descriptor.
      */
+    @Nonnull
     public abstract PMessageDescriptor<T, F> descriptor();
 }

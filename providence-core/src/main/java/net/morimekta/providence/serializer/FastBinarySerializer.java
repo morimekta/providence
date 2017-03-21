@@ -44,6 +44,7 @@ import net.morimekta.util.Binary;
 import net.morimekta.util.io.LittleEndianBinaryReader;
 import net.morimekta.util.io.LittleEndianBinaryWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -62,7 +63,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class FastBinarySerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.morimekta.providence.binary";
 
-    protected final boolean readStrict;
+    private final boolean readStrict;
 
     /**
      * Construct a serializer instance.
@@ -101,6 +102,7 @@ public class FastBinarySerializer extends Serializer {
         return len;
     }
 
+    @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream is, PMessageDescriptor<Message, Field> descriptor)
@@ -109,6 +111,7 @@ public class FastBinarySerializer extends Serializer {
         return readMessage(in, descriptor);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>

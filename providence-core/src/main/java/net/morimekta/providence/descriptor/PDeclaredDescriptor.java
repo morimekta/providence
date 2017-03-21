@@ -22,6 +22,8 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * Descriptor for a declared type. A declared type is a value type that is
  * derived from a thrift definition.
@@ -30,21 +32,24 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor {
     private final String programName;
     private final String name;
 
-    protected PDeclaredDescriptor(String programName, String name) {
+    protected PDeclaredDescriptor(@Nonnull String programName, @Nonnull String name) {
         this.programName = programName;
         this.name = name;
     }
 
+    @Nonnull
     @Override
     public final String getProgramName() {
         return programName;
     }
 
+    @Nonnull
     @Override
     public final String getName() {
         return name;
     }
 
+    @Nonnull
     @Override
     public final String getQualifiedName(String programContext) {
         if (!this.programName.equals(programContext)) {

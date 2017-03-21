@@ -22,6 +22,7 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PServiceMethod;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class CServiceMethod implements PServiceMethod,
         this.annotations = annotations;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;
@@ -63,6 +65,7 @@ public class CServiceMethod implements PServiceMethod,
         return oneway;
     }
 
+    @Nonnull
     @Override
     public CStructDescriptor getRequestType() {
         return requestType;
@@ -73,6 +76,7 @@ public class CServiceMethod implements PServiceMethod,
         return responseType;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -83,7 +87,7 @@ public class CServiceMethod implements PServiceMethod,
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -91,7 +95,7 @@ public class CServiceMethod implements PServiceMethod,
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }

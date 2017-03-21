@@ -6,6 +6,7 @@ import net.morimekta.providence.PMessageBuilderFactory;
 import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -28,6 +29,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
     /**
      * @return An unmodifiable list of fields that the struct holds.
      */
+    @Nonnull
     public abstract F[] getFields();
 
     /**
@@ -55,6 +57,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
         return simple;
     }
 
+    @Nonnull
     @Override
     public PType getType() {
         return PType.MESSAGE;

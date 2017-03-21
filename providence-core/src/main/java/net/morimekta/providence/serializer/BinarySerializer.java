@@ -32,6 +32,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.BigEndianBinaryWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -124,6 +125,7 @@ public class BinarySerializer extends Serializer {
         return len;
     }
 
+    @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor)
@@ -132,6 +134,7 @@ public class BinarySerializer extends Serializer {
         return readMessage(reader, descriptor, readStrict);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>

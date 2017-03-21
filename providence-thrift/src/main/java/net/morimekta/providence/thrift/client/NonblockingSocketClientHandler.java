@@ -22,17 +22,17 @@ package net.morimekta.providence.thrift.client;
 
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
-import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
 import net.morimekta.providence.PServiceCallType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.thrift.io.FramedBufferInputSteram;
 import net.morimekta.providence.thrift.io.FramedBufferOutputStream;
 
+import javax.annotation.Nonnull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,6 +67,7 @@ public class NonblockingSocketClientHandler implements PServiceCallHandler, Clos
         this.read_timeout = read_timeout;
     }
 
+    @Nonnull
     private SocketChannel connect() throws IOException {
         if (channel == null) {
             channel = SocketChannel.open();

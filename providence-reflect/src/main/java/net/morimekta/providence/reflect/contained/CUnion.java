@@ -32,6 +32,7 @@ import net.morimekta.providence.descriptor.PUnionDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -50,16 +51,19 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
         this.descriptor = builder.descriptor;
     }
 
+    @Nonnull
     @Override
     public PMessageBuilder<CUnion,CField> mutate() {
         return new Builder(descriptor);
     }
 
+    @Nonnull
     @Override
     public CUnionDescriptor descriptor() {
         return descriptor;
     }
 
+    @Nonnull
     @Override
     public CField unionField() {
         return unionField;
@@ -98,6 +102,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             }
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public PMessageBuilder mutator(int key) {
@@ -124,6 +129,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             return (PMessageBuilder) currentValue;
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder merge(CUnion from) {
@@ -133,10 +139,15 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
                 int key = unionField.getKey();
                 switch (unionField.getType()) {
                     case MESSAGE: {
-                        PMessage src = (PMessage) currentValue;
+                        PMessageBuilder src;
+                        if (currentValue instanceof PMessageBuilder) {
+                            src = (PMessageBuilder) currentValue;
+                        } else {
+                            src = ((PMessage) currentValue).mutate();
+                        }
                         PMessage toMerge = (PMessage) from.get(key);
 
-                        currentValue = src.mutate().merge(toMerge).build();
+                        currentValue = src.merge(toMerge);
                         break;
                     }
                     case SET:
@@ -154,11 +165,13 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             return this;
         }
 
+        @Nonnull
         @Override
         public PUnionDescriptor<CUnion, CField> descriptor() {
             return descriptor;
         }
 
+        @Nonnull
         @Override
         public CUnion build() {
             return new CUnion(this);
@@ -177,6 +190,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             }
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder set(int key, Object value) {
@@ -216,6 +230,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             return false;
         }
 
+        @Nonnull
         @Override
         @SuppressWarnings("unchecked")
         public Builder addTo(int key, Object value) {
@@ -259,6 +274,7 @@ public class CUnion extends CMessage<CUnion,CField> implements PUnion<CUnion,CFi
             return this;
         }
 
+        @Nonnull
         @Override
         public Builder clear(int key) {
             if (unionField != null && unionField.getKey() == key) {

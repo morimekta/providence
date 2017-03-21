@@ -59,10 +59,6 @@ public class HttpClientHandler implements PServiceCallHandler {
         this.factory = factory;
         this.serializerProvider = serializerProvider;
         this.requestSerializer = serializerProvider.getDefault();
-
-        if (requestSerializer == null) {
-            throw new IllegalStateException("Serializer provider has no default serializer");
-        }
     }
 
     @Override

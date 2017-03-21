@@ -20,7 +20,7 @@ enum PServiceCallType {
      * An application exception, i.e. either a non-declared exception, or a
      * providence service or serialization exception. This is also happens when
      * such exceptions happen on the server side, it will try to send an
-     * application exception back to the cliend.
+     * application exception back to the client.
      */
     exception = 3;
 

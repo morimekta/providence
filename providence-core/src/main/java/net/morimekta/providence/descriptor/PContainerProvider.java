@@ -20,6 +20,8 @@
  */
 package net.morimekta.providence.descriptor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provider for a container type. See {@link PContainer}.
  *
@@ -34,6 +36,7 @@ public class PContainerProvider<Container, Descriptor extends PContainer<Contain
         this.type = type;
     }
 
+    @Nonnull
     @Override
     public Descriptor descriptor() {
         return type;

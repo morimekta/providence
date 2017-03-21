@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.SerializerProvider;
 
+import javax.annotation.Nonnull;
 import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -41,7 +42,7 @@ import java.lang.reflect.Type;
 public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<PMessage> {
     private final SerializerProvider provider;
 
-    protected ProvidenceMessageBodyWriter(SerializerProvider provider) {
+    protected ProvidenceMessageBodyWriter(@Nonnull SerializerProvider provider) {
         this.provider = provider;
     }
 
@@ -52,7 +53,8 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
         }
         String contentType = mediaType.getType() + "/" + mediaType.getSubtype();
         try {
-            return provider.getSerializer(contentType) != null;
+            provider.getSerializer(contentType);
+            return true;
         } catch (Exception e) {
             return false;
         }
@@ -65,6 +67,7 @@ public abstract class ProvidenceMessageBodyWriter implements MessageBodyWriter<P
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void writeTo(PMessage entity,
                         Class<?> type,
                         Type genericType,

@@ -48,6 +48,7 @@ import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -139,6 +140,7 @@ public class PrettySerializer extends Serializer {
         return cout.getByteCount();
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
@@ -209,6 +211,7 @@ public class PrettySerializer extends Serializer {
         }
     }
 
+    @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input,

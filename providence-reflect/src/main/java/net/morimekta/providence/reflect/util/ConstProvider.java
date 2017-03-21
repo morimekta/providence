@@ -25,6 +25,7 @@ import net.morimekta.providence.descriptor.PValueProvider;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.internal.ConstParser;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +43,10 @@ public class ConstProvider implements PValueProvider<Object> {
 
     private Object parsedValue;
 
-    public ConstProvider(ProgramRegistry registry, String typeName, String programContext, String defaultValue) {
+    public ConstProvider(@Nonnull ProgramRegistry registry,
+                         @Nonnull String typeName,
+                         @Nonnull String programContext,
+                         @Nonnull String defaultValue) {
         this.registry = registry;
         this.typeName = typeName;
         this.programContext = programContext;

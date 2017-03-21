@@ -36,7 +36,7 @@ public class Config {
                                                       "Providence Config Tool");
             try {
                 cli.parse(args);
-                if (op.isHelp()) {
+                if (op.showHelp()) {
                     System.out.println(cli.getDescription() + " - " + getVersionString());
                     System.out.println("Usage: " + cli.getSingleLineUsage());
                     System.out.println();
@@ -46,7 +46,7 @@ public class Config {
                     System.out.println();
                     op.getCommandSet().printUsage(System.out);
                     return;
-                } else if (op.version) {
+                } else if (op.showVersion()) {
                     System.out.println(cli.getDescription() + " - " + getVersionString());
                     return;
                 }
@@ -57,34 +57,34 @@ public class Config {
             } catch (ArgumentException e) {
                 System.err.println("Invalid argument: " + e.getMessage());
                 System.err.println("Usage: " + cli.getSingleLineUsage());
-                if (op.verbose) {
+                if (op.verbose()) {
                     e.printStackTrace();
                 }
             } catch (ParseException e) {
                 System.out.flush();
                 System.err.println(e.asString());
-                if (op.verbose) {
+                if (op.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (TokenizerException e) {
                 System.out.flush();
                 System.err.println(e.asString());
-                if (op.verbose) {
+                if (op.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (SerializerException e) {
                 System.out.flush();
                 System.err.println("Serialization error: " + e.toString());
-                if (op.verbose) {
+                if (op.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
             } catch (IOException | RuntimeException e) {
                 System.out.flush();
                 System.err.println("IO Error: " + e.toString());
-                if (op.verbose) {
+                if (op.verbose()) {
                     System.err.println();
                     e.printStackTrace();
                 }
@@ -92,7 +92,7 @@ public class Config {
         } catch (Exception e) {
             System.out.flush();
             System.err.println("Unhandled exception: " + e.toString());
-            if (op.verbose) {
+            if (op.verbose()) {
                 System.err.println();
                 e.printStackTrace();
             }

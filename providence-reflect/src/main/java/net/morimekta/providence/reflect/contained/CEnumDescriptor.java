@@ -24,6 +24,7 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -63,6 +64,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
         return comment;
     }
 
+    @Nonnull
     @Override
     public CEnumValue[] getValues() {
         return Arrays.copyOf(values, values.length);
@@ -89,6 +91,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
         return null;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
@@ -99,7 +102,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     }
 
     @Override
-    public boolean hasAnnotation(String name) {
+    public boolean hasAnnotation(@Nonnull String name) {
         if (annotations != null) {
             return annotations.containsKey(name);
         }
@@ -107,7 +110,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     }
 
     @Override
-    public String getAnnotationValue(String name) {
+    public String getAnnotationValue(@Nonnull String name) {
         if (annotations != null) {
             return annotations.get(name);
         }
@@ -121,6 +124,7 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
             mType = type;
         }
 
+        @Nonnull
         @Override
         public PEnumBuilder<CEnumValue> builder() {
             // TODO Auto-generated method stub

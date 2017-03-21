@@ -35,10 +35,10 @@ import static net.morimekta.providence.tools.common.options.Utils.getVersionStri
  */
 @SuppressWarnings("all")
 public class CommonOptions {
-    public boolean help;
-    public boolean verbose;
-    public boolean version;
-    public STTY    tty;
+    private boolean help;
+    private boolean verbose;
+    private boolean version;
+    private STTY    tty;
 
     public CommonOptions(STTY tty) {
         this.tty = tty;
@@ -58,13 +58,22 @@ public class CommonOptions {
         return parser;
     }
 
-    private void setVerbose(boolean verbose) {
-        this.verbose = verbose;
+    public boolean showHelp() {
+        return help;
+    }
+    public boolean showVersion() {
+        return version;
+    }
+    public boolean verbose() {
+        return verbose;
+    }
+    private void setHelp(boolean help) {
+        this.help = help;
     }
     private void setVersion(boolean version) {
         this.version = version;
     }
-    private void setHelp(boolean help) {
-        this.help = help;
+    private void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 }

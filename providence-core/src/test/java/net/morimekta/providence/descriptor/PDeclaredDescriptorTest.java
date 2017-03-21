@@ -25,6 +25,8 @@ import net.morimekta.providence.PType;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
@@ -64,6 +66,7 @@ public class PDeclaredDescriptorTest {
             super("test", "MockDescriptor");
         }
 
+        @Nonnull
         @Override
         public PType getType() {
             return PType.STRING;
@@ -72,6 +75,7 @@ public class PDeclaredDescriptorTest {
         @Override
         public PBuilder<String> builder() {
             return new PBuilder<String>() {
+                @Nonnull
                 @Override
                 public String build() {
                     return "";

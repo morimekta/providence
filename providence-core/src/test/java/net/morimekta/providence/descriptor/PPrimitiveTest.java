@@ -21,12 +21,12 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Stein Eldar Johnsen
@@ -59,26 +59,26 @@ public class PPrimitiveTest {
 
     @Test
     public void testGetPackageName() {
-        assertNull(PPrimitive.BOOL.getProgramName());
-        assertNull(PPrimitive.BYTE.getProgramName());
-        assertNull(PPrimitive.I16.getProgramName());
-        assertNull(PPrimitive.I32.getProgramName());
-        assertNull(PPrimitive.I64.getProgramName());
-        assertNull(PPrimitive.DOUBLE.getProgramName());
-        assertNull(PPrimitive.STRING.getProgramName());
-        assertNull(PPrimitive.BINARY.getProgramName());
+        assertThat(PPrimitive.BOOL.getProgramName(), nullValue());
+        assertThat(PPrimitive.BYTE.getProgramName(), nullValue());
+        assertThat(PPrimitive.I16.getProgramName(), nullValue());
+        assertThat(PPrimitive.I32.getProgramName(), nullValue());
+        assertThat(PPrimitive.I64.getProgramName(), nullValue());
+        assertThat(PPrimitive.DOUBLE.getProgramName(), nullValue());
+        assertThat(PPrimitive.STRING.getProgramName(), nullValue());
+        assertThat(PPrimitive.BINARY.getProgramName(), nullValue());
     }
 
     @Test
     public void testGetTypeGroup() {
-        Assert.assertEquals(PType.BOOL, PPrimitive.BOOL.getType());
-        Assert.assertEquals(PType.BYTE, PPrimitive.BYTE.getType());
-        Assert.assertEquals(PType.I16, PPrimitive.I16.getType());
-        Assert.assertEquals(PType.I32, PPrimitive.I32.getType());
-        Assert.assertEquals(PType.I64, PPrimitive.I64.getType());
-        Assert.assertEquals(PType.DOUBLE, PPrimitive.DOUBLE.getType());
-        Assert.assertEquals(PType.STRING, PPrimitive.STRING.getType());
-        Assert.assertEquals(PType.BINARY, PPrimitive.BINARY.getType());
+        assertEquals(PType.BOOL, PPrimitive.BOOL.getType());
+        assertEquals(PType.BYTE, PPrimitive.BYTE.getType());
+        assertEquals(PType.I16, PPrimitive.I16.getType());
+        assertEquals(PType.I32, PPrimitive.I32.getType());
+        assertEquals(PType.I64, PPrimitive.I64.getType());
+        assertEquals(PType.DOUBLE, PPrimitive.DOUBLE.getType());
+        assertEquals(PType.STRING, PPrimitive.STRING.getType());
+        assertEquals(PType.BINARY, PPrimitive.BINARY.getType());
     }
 
     @Test

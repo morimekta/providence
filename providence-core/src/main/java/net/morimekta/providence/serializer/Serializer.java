@@ -27,6 +27,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PService;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,9 +45,11 @@ public abstract class Serializer {
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream output, PServiceCall<Message, Field> call) throws IOException;
 
+    @Nonnull
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
     Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException;
 
+    @Nonnull
     public abstract <Message extends PMessage<Message, Field>, Field extends PField>
     PServiceCall<Message, Field> deserialize(InputStream input, PService service) throws IOException;
 

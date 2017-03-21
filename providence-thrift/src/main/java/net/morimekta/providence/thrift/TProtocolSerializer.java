@@ -58,6 +58,7 @@ import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -132,6 +133,7 @@ class TProtocolSerializer extends Serializer {
         }
     }
 
+    @Nonnull
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField> Message
     deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor) throws IOException {
@@ -147,6 +149,7 @@ class TProtocolSerializer extends Serializer {
         }
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public <Message extends PMessage<Message, Field>, Field extends PField>
