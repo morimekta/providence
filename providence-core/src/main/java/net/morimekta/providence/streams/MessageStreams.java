@@ -49,7 +49,7 @@ public class MessageStreams {
     @SuppressFBWarnings(justification = "We need this constant some place anyway, and" +
                                         "java does still not support truly const arrays.",
                         value = "MS_MUTABLE_ARRAY")
-    public static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
+    static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
 
     /**
      * Read a file containing entries of a given type. Tries to detect the

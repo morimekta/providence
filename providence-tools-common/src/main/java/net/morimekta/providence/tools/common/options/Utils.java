@@ -71,8 +71,10 @@ public class Utils {
 
         final Serializer serializer = fmt.createSerializer(strict);
         if (file != null) {
+            file = file.getCanonicalFile();
+
             if (file.exists() && !file.isFile()) {
-                throw new ArgumentException("%s exists and is not a file.", file.getAbsolutePath());
+                throw new ArgumentException("%s exists and is not a file.", file.toString());
             }
 
             return MessageCollectors.toFile(file, serializer);
@@ -95,10 +97,15 @@ public class Utils {
 
         Serializer serializer = fmt.createSerializer(strict);
         if (file != null) {
+            file = file.getCanonicalFile();
+            if (!file.exists() || !file.isFile()) {
+                throw new ArgumentException("%s does not exists or is not a file.", file.toString());
+            }
+
             try {
                 return MessageStreams.file(file, serializer, descriptor);
             } catch (IOException e) {
-                throw new ArgumentException("Unable to read file %s", file.getName());
+                throw new ArgumentException("Unable to read file %s", file.toString());
             }
         } else {
             BufferedInputStream is = new BufferedInputStream(System.in);

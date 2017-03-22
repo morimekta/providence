@@ -24,8 +24,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.streams.MessageStreams;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,21 +43,13 @@ public class IOMessageWriter implements MessageWriter {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(Message message) throws IOException {
-        int ret = serializer.serialize(out, message);
-        if (!serializer.binaryProtocol()) {
-            out.write(MessageStreams.READABLE_ENTRY_SEP);
-        }
-        return ret;
+        return serializer.serialize(out, message);
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException {
-        int ret = serializer.serialize(out, call);
-        if (!serializer.binaryProtocol()) {
-            out.write(MessageStreams.READABLE_ENTRY_SEP);
-        }
-        return ret;
+        return serializer.serialize(out, call);
     }
 
     @Override

@@ -36,25 +36,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 28.01.16.
+ * Collector helpers for writing a number of messages to a output stream, file etc.
  */
 public class MessageCollectors {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Collector<Message, OutputStream, Integer> toFile(File file,
+    Collector<Message, OutputStream, Integer> toPath(Path file,
                                                      Serializer serializer) {
-        return toPath(file.toPath(), serializer);
+        return toFile(file.toFile(), serializer);
     }
 
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Collector<Message, OutputStream, Integer> toPath(Path file,
+    Collector<Message, OutputStream, Integer> toFile(File file,
                                                      Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
         return Collector.of(() -> {
             try {
-                return new BufferedOutputStream(new FileOutputStream(file.toFile()));
+                return new BufferedOutputStream(new FileOutputStream(file));
             } catch (IOException e) {
-                throw new UncheckedIOException("Unable to open " + file.getFileName(), e);
+                throw new UncheckedIOException("Unable to open " + file.getName(), e);
             }
         }, (outputStream, t) -> {
             try {
@@ -67,14 +66,14 @@ public class MessageCollectors {
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new UncheckedIOException("Unable to write to " + file.getFileName(), e);
+                throw new UncheckedIOException("Unable to write to " + file.getName(), e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
                 outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new UncheckedIOException("Unable to close " + file.getFileName(), e);
+                throw new UncheckedIOException("Unable to close " + file.getName(), e);
             }
             return result.get();
         });

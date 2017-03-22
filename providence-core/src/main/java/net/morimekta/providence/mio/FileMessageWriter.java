@@ -24,8 +24,6 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.streams.MessageStreams;
 
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -58,21 +56,13 @@ public class FileMessageWriter implements MessageWriter, Closeable {
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(Message message) throws IOException {
-        int ret = serializer.serialize(getOutputStream(), message);
-        if (!serializer.binaryProtocol()) {
-            out.write(MessageStreams.READABLE_ENTRY_SEP);
-        }
-        return ret;
+        return serializer.serialize(getOutputStream(), message);
     }
 
     @Override
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException {
-        int ret = serializer.serialize(getOutputStream(), call);
-        if (!serializer.binaryProtocol()) {
-            out.write(MessageStreams.READABLE_ENTRY_SEP);
-        }
-        return ret;
+        return serializer.serialize(getOutputStream(), call);
     }
 
     @Override

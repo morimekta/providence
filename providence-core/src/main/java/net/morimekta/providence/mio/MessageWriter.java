@@ -23,7 +23,6 @@ package net.morimekta.providence.mio;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.serializer.SerializerException;
 
 import java.io.Closeable;
 import java.io.IOException;
