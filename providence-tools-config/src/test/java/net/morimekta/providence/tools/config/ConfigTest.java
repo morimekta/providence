@@ -2,6 +2,7 @@ package net.morimekta.providence.tools.config;
 
 import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -59,9 +60,7 @@ public class ConfigTest {
         when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
         when(tty.isInteractive()).thenReturn(true);
 
-        Properties properties = new Properties();
-        properties.load(getResourceAsStream("/build.properties"));
-        version = properties.getProperty("build.version");
+        version = Utils.getVersionString();
 
         temp = new TemporaryFolder();
         temp.create();
@@ -103,7 +102,7 @@ public class ConfigTest {
 
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
-                "Providence Config Tool - v" + version + "\n" +
+                "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
@@ -129,7 +128,7 @@ public class ConfigTest {
 
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
-                "Providence Config Tool - v" + version + "\n" +
+                "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -155,7 +154,7 @@ public class ConfigTest {
 
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
-                "Providence Config Tool - v" + version + "\n" +
+                "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [...] print [-f fmt] file\n" +
                 "\n" +
                 " --format (-f) fmt : the output format (default: pretty)\n" +

@@ -2,6 +2,7 @@ package net.morimekta.providence.tools.converter;
 
 import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -58,9 +59,7 @@ public class ConvertTest {
         when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
         when(tty.isInteractive()).thenReturn(true);
 
-        Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/build.properties"));
-        version = properties.getProperty("build.version");
+        version = Utils.getVersionString();
 
         temp = new TemporaryFolder();
         temp.create();
@@ -102,7 +101,7 @@ public class ConvertTest {
 
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
-                "Providence Converter - v" + version + "\n" +
+                "Providence Converter - " + version + "\n" +
                 "Usage: pvd [-hVvS] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
                 "Example code to run:\n" +

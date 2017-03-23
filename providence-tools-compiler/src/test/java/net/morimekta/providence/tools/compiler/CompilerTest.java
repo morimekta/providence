@@ -2,6 +2,7 @@ package net.morimekta.providence.tools.compiler;
 
 import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -62,9 +63,7 @@ public class CompilerTest {
         when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
         when(tty.isInteractive()).thenReturn(true);
 
-        Properties properties = new Properties();
-        properties.load(getResourceAsStream("/build.properties"));
-        version = properties.getProperty("build.version");
+        version = Utils.getVersionString();
 
         temp = new TemporaryFolder();
         temp.create();
@@ -115,7 +114,7 @@ public class CompilerTest {
         compiler.run("--help");
 
         assertThat(outContent.toString(),
-                   is(equalToLines("Providence compiler - v" + version + "\n" +
+                   is(equalToLines("Providence compiler - " + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
                      "Example code to run:\n" +
@@ -142,7 +141,7 @@ public class CompilerTest {
 
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(),
-                     is(equalToLines("Providence compiler - v" + version + "\n" +
+                     is(equalToLines("Providence compiler - " + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
                      "java : Main java (1.8+) code generator.\n" +

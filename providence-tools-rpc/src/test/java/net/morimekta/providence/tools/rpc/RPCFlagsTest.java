@@ -2,6 +2,7 @@ package net.morimekta.providence.tools.rpc;
 
 import net.morimekta.console.util.STTY;
 import net.morimekta.console.util.TerminalSize;
+import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.util.io.IOUtils;
 
 import org.junit.After;
@@ -62,9 +63,7 @@ public class RPCFlagsTest {
         when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
         when(tty.isInteractive()).thenReturn(true);
 
-        Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/build.properties"));
-        version = properties.getProperty("build.version");
+        version = Utils.getVersionString();
 
         temp = new TemporaryFolder();
         temp.create();
@@ -107,7 +106,7 @@ public class RPCFlagsTest {
         assertEquals(0, exitCode);
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
-                "Providence RPC Tool - v" + version + "\n" +
+                "Providence RPC Tool - " + version + "\n" +
                 "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Example code to run:\n" +

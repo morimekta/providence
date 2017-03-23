@@ -47,7 +47,7 @@ public class Utils {
 
     public static String getVersionString() throws IOException {
         Properties properties = new Properties();
-        try (InputStream in = Utils.class.getResourceAsStream("/build.properties")) {
+        try (InputStream in = Utils.class.getResourceAsStream("/version.properties")) {
             properties.load(in);
         }
         return "v" + properties.getProperty("build.version");
