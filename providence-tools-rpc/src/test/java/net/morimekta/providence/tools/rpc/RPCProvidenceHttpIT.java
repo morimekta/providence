@@ -8,6 +8,7 @@ import net.morimekta.test.providence.MyService;
 import net.morimekta.test.providence.Request;
 import net.morimekta.test.providence.Response;
 import net.morimekta.testing.IntegrationExecutor;
+import net.morimekta.testing.ResourceUtils;
 import net.morimekta.util.io.IOUtils;
 
 import org.eclipse.jetty.server.Server;
@@ -18,6 +19,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
@@ -40,9 +42,11 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class RPCProvidenceHttpIT {
-    private TemporaryFolder temp;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
     private IntegrationExecutor rpc;
+    private File rc;
 
     private static int             port;
     private static MyService.Iface impl;
@@ -77,8 +81,8 @@ public class RPCProvidenceHttpIT {
     public void setUp() throws Exception {
         reset(impl);
 
-        temp = new TemporaryFolder();
-        temp.create();
+        rc = ResourceUtils.copyResourceTo("/pvdrc", temp.getRoot());
+
         File thriftFile = temp.newFile("test.thrift");
 
         FileOutputStream file = new FileOutputStream(thriftFile);
@@ -114,6 +118,7 @@ public class RPCProvidenceHttpIT {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -146,6 +151,7 @@ public class RPCProvidenceHttpIT {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 "-i", "file:" + inFile.getAbsolutePath(),
@@ -172,6 +178,7 @@ public class RPCProvidenceHttpIT {
         when(impl.test(any(Request.class))).thenThrow(Failure.builder().setText("failure").build());
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -201,6 +208,7 @@ public class RPCProvidenceHttpIT {
         when(impl.test(any(Request.class))).thenThrow(Failure.builder().setText("failure").build());
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint() + "_does_not_exsist");

@@ -24,10 +24,13 @@ package net.morimekta.providence.tools.common.options;
 import net.morimekta.console.args.ArgumentOptions;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
+import net.morimekta.console.args.Option;
 import net.morimekta.console.util.STTY;
 
+import java.io.File;
 import java.io.IOException;
 
+import static net.morimekta.console.util.Parser.file;
 import static net.morimekta.providence.tools.common.options.Utils.getVersionString;
 
 /**
@@ -39,6 +42,7 @@ public class CommonOptions {
     private boolean verbose;
     private boolean version;
     private STTY    tty;
+    private File    rc = new File(System.getenv("HOME"), ".pvdrc");
 
     public CommonOptions(STTY tty) {
         this.tty = tty;
@@ -54,6 +58,7 @@ public class CommonOptions {
         parser.add(new Flag("--help", "h?", "This help listing.", this::setHelp));
         parser.add(new Flag("--verbose", "V", "Show verbose output and error messages.", this::setVerbose));
         parser.add(new Flag("--version", "v", "Show program version.", this::setVersion));
+        parser.add(new Option("--rc", null, "FILE", "Providence RC to use", file(this::setRc), "~" + File.separator + ".pvdrc"));
 
         return parser;
     }
@@ -67,6 +72,9 @@ public class CommonOptions {
     public boolean verbose() {
         return verbose;
     }
+    public File getRc() {
+        return rc;
+    }
     private void setHelp(boolean help) {
         this.help = help;
     }
@@ -75,5 +83,8 @@ public class CommonOptions {
     }
     private void setVerbose(boolean verbose) {
         this.verbose = verbose;
+    }
+    private void setRc(File file) {
+        this.rc = file;
     }
 }

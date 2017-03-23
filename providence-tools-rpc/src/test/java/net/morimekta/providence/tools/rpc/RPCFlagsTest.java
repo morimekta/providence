@@ -107,7 +107,7 @@ public class RPCFlagsTest {
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
                 "Providence RPC Tool - " + version + "\n" +
-                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvdrpc -I thrift/ -s cal.Calculator http://localhost:8080/service\n" +
@@ -116,6 +116,7 @@ public class RPCFlagsTest {
                 " --help (-h, -?)           : This help listing.\n" +
                 " --verbose (-V)            : Show verbose output and error messages.\n" +
                 " --version (-v)            : Show program version.\n" +
+                " --rc FILE                 : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --include (-I) dir        : Allow includes of files in directory\n" +
                 " --in (-i) spec            : Input specification (default: json)\n" +
                 " --out (-o) spec           : Output Specification (default: pretty_json)\n" +
@@ -150,7 +151,7 @@ public class RPCFlagsTest {
         assertEquals("", outContent.toString());
         assertThat(errContent.toString(), is(equalToLines(
                 "Option --service is required\n" +
-                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }
@@ -164,7 +165,7 @@ public class RPCFlagsTest {
         assertEquals("", outContent.toString());
         assertThat(errContent.toString(), is(equalToLines(
                 "Argument \"URL\" is required\n" +
-                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }
@@ -180,7 +181,7 @@ public class RPCFlagsTest {
         assertEquals("", outContent.toString());
         assertThat(errContent.toString(), is(equalToLines(
                 "No such directory " + dir.getCanonicalFile().getAbsolutePath() + "\n" +
-                "Usage: pvdrpc [-hVvS] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
+                "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));
     }

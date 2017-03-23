@@ -81,6 +81,7 @@ import java.util.stream.Collectors;
 import static net.morimekta.console.util.Parser.dir;
 import static net.morimekta.console.util.Parser.i32;
 import static net.morimekta.console.util.Parser.oneOf;
+import static net.morimekta.providence.tools.common.options.Utils.collectConfigIncludes;
 import static net.morimekta.providence.tools.common.options.Utils.collectIncludes;
 
 /**
@@ -201,6 +202,7 @@ public class RPCOptions extends CommonOptions {
         if (includes.isEmpty()) {
             includes.add(new File("."));
         }
+        collectConfigIncludes(getRc(), includeMap);
         for (File file : includes) {
             collectIncludes(file, includeMap);
         }

@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Properties;
 
-import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -103,11 +101,12 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n" +
+                " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " -Pkey=value        : Config parameter override.\n" +
@@ -129,10 +128,12 @@ public class ConfigTest {
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" + "\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
                 " --version (-v)     : Show program version.\n" +
+                " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
                 " -Pkey=value        : Config parameter override.\n" +

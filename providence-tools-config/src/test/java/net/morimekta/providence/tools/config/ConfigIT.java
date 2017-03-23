@@ -25,9 +25,11 @@ public class ConfigIT {
     private IntegrationExecutor config;
     private File configRoot;
     private File thriftRoot;
+    private File rc;
 
     @Before
     public void setUp() throws IOException {
+        rc = copyResourceTo("/pvdrc", temp.getRoot());
         configRoot = temp.newFolder("config");
         thriftRoot = temp.newFolder("providence");
 
@@ -57,6 +59,7 @@ public class ConfigIT {
         standardConfig();
 
         int exitCode = config.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
                 "print",
                 configRoot.getAbsolutePath() + "/prod.cfg");
@@ -88,6 +91,7 @@ public class ConfigIT {
         standardConfig();
 
         int exitCode = config.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
                 "-Phttp_port=12345",
                 "print",
@@ -137,6 +141,7 @@ public class ConfigIT {
                 new File(configRoot, "base_service.cfg"));
 
         int exitCode = config.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
                 "-Phttp_port=12345",
                 "print",
@@ -155,6 +160,7 @@ public class ConfigIT {
         standardConfig();
 
         int exitCode = config.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", thriftRoot.getAbsolutePath(),
                 "-Phttp_port=12345",
                 "params",

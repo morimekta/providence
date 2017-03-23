@@ -705,7 +705,7 @@ public class ProvidenceConfig {
                 }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
-                throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected message begin")
+                throw new TokenizerException(token, "Unexpected token " + token.asString() + ", expected reference identifier")
                         .setLine(tokenizer.getLine(token.getLineNo()));
             }
         } else if (parents.containsKey(path)) {

@@ -43,6 +43,8 @@ import net.morimekta.providence.tools.config.cmd.Validate;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -55,7 +57,7 @@ import static net.morimekta.console.util.Parser.dir;
  */
 // @SuppressWarnings("all")
 public class ConfigOptions extends CommonOptions {
-    private Map<String, File>   includes = new TreeMap<>();
+    private List<File>        includes = new LinkedList<>();
     private Map<String, String> params   = new TreeMap<>();
     private Command             command  = null;
     private boolean             strict   = false;
@@ -71,7 +73,7 @@ public class ConfigOptions extends CommonOptions {
         ArgumentParser parser = super.getArgumentParser(prog, description);
 
         parser.add(new Flag("--strict", "S", "Parse config strictly", this::setStrict, false));
-        parser.add(new Option("--include", "I", "dir", "Read config definitions from these directories.", dir().andApply(dir -> this.collectIncludes(dir, includes)), null, true, false, false));
+        parser.add(new Option("--include", "I", "dir", "Read config definitions from these directories.", dir(includes::add), null, true, false, false));
         parser.add(new Property("--param", 'P', "key", "value", "Config parameter override.", params::put, false));
 
         commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, getArgumentOptions());
@@ -100,21 +102,23 @@ public class ConfigOptions extends CommonOptions {
         return super.showHelp() || command == null;
     }
 
-    private void collectIncludes(File dir, Map<String, File> includes) {
+    public void execute() throws ParseException, IOException {
+        Map<String, File> includeMap = new TreeMap<>();
         try {
-            Utils.collectIncludes(dir, includes);
+            Utils.collectConfigIncludes(getRc(), includeMap);
+            for (File include : includes) {
+                Utils.collectIncludes(include, includeMap);
+            }
         } catch (IOException e) {
             throw new ArgumentException(e.getMessage(), e);
         }
-    }
 
-    public void execute() throws ParseException, IOException {
-        Set<File> rootSet = includes.values()
-                                    .stream()
-                                    .map(File::getParentFile)
-                                    .collect(Collectors.toSet());
+        Set<File> rootSet = includeMap.values()
+                                      .stream()
+                                      .map(File::getParentFile)
+                                      .collect(Collectors.toSet());
         TypeLoader loader = new TypeLoader(rootSet, new ThriftProgramParser());
-        for (File file : includes.values()) {
+        for (File file : includeMap.values()) {
             loader.load(file);
         }
 

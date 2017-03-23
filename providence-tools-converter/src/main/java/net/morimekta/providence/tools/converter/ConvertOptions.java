@@ -117,6 +117,7 @@ public class ConvertOptions extends CommonOptions {
         if (includes.isEmpty()) {
             includes.add(new File("."));
         }
+        Utils.collectConfigIncludes(getRc(), includeMap);
         for (File file : includes) {
             collectIncludes(file, includeMap);
         }

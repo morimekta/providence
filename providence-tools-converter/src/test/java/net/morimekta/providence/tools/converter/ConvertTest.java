@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Properties;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
@@ -102,7 +101,7 @@ public class ConvertTest {
         assertEquals("", errContent.toString());
         assertThat(outContent.toString(), is(equalToLines(
                 "Providence Converter - " + version + "\n" +
-                "Usage: pvd [-hVvS] [-I dir] [-i spec] [-o spec] type\n" +
+                "Usage: pvd [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
                 "Example code to run:\n" +
                 "$ cat call.json | pvd -I thrift/ -S cal.Calculator\n" +
@@ -110,7 +109,9 @@ public class ConvertTest {
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
-                " --version (-v)     : Show program version.\n --include (-I) dir : Include from directories. (default: ${PWD})\n" +
+                " --version (-v)     : Show program version.\n" +
+                " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
+                " --include (-I) dir : Include from directories. (default: ${PWD})\n" +
                 " --in (-i) spec     : Input specification (default: binary)\n" +
                 " --out (-o) spec    : Output specification (default: pretty)\n" +
                 " --strict (-S)      : Read incoming messages strictly.\n" +

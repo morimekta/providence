@@ -6,6 +6,7 @@ import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
 import net.morimekta.test.thrift.Response;
 import net.morimekta.testing.IntegrationExecutor;
+import net.morimekta.testing.ResourceUtils;
 import net.morimekta.util.io.IOUtils;
 
 import org.apache.commons.codec.DecoderException;
@@ -19,6 +20,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
@@ -47,13 +49,15 @@ import static org.mockito.Mockito.when;
  * Test that we can connect to a thrift servlet and get reasonable input and output.
  */
 public class RPCThriftSocketIT {
-    private TemporaryFolder temp;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
     private static int             port;
     private static MyService.Iface impl;
     private static TServer         server;
 
     private IntegrationExecutor rpc;
+    private File rc;
 
     private String endpoint() {
         return "thrift://localhost:" + port;
@@ -80,8 +84,7 @@ public class RPCThriftSocketIT {
     public void setUp() throws Exception {
         reset(impl);
 
-        temp = new TemporaryFolder();
-        temp.create();
+        rc = ResourceUtils.copyResourceTo("/pvdrc", temp.getRoot());
 
         File thriftFile = temp.newFile("test.thrift");
         FileOutputStream file = new FileOutputStream(thriftFile);
@@ -117,6 +120,7 @@ public class RPCThriftSocketIT {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -151,6 +155,7 @@ public class RPCThriftSocketIT {
         when(impl.test(any(Request.class))).thenReturn(new Response("response"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 "-i", "file:" + inFile.getAbsolutePath(),
@@ -178,6 +183,7 @@ public class RPCThriftSocketIT {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 endpoint());
@@ -215,6 +221,7 @@ public class RPCThriftSocketIT {
         when(impl.test(any(Request.class))).thenThrow(new Failure("failure"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService2",
                 endpoint());
@@ -245,6 +252,7 @@ public class RPCThriftSocketIT {
         when(impl.test(any(Request.class))).thenReturn(new Response("failure"));
 
         int exitCode = rpc.run(
+                "--rc", rc.getAbsolutePath(),
                 "-I", temp.getRoot().getAbsolutePath(),
                 "-s", "test.MyService",
                 "thrift://localhost:" + (port - 10));
