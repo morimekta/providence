@@ -31,9 +31,35 @@ import java.io.IOException;
  * An interface for writing messages and service calls.
  */
 public interface MessageWriter extends Closeable {
+    /**
+     * Write a providence message to the writer.
+     *
+     * @param message The message to write.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The number of bytes written.
+     * @throws IOException If write failed.
+     */
     <Message extends PMessage<Message, Field>, Field extends PField>
     int write(Message message) throws IOException;
 
+    /**
+     * Write a providence service call to the writer.
+     *
+     * @param call The service call to write.
+     * @param <Message> The message type embedded in the call.
+     * @param <Field> The field type embedded in the call.
+     * @return The number of bytes written.
+     * @throws IOException If write failed.
+     */
     <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException;
+
+    /**
+     * Write an entry separator to the writer.
+     *
+     * @return The number of bytes written.
+     * @throws IOException If write failed.
+     */
+    int separator() throws IOException;
 }

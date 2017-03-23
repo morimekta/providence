@@ -92,6 +92,7 @@ public class RPC {
                 PServiceCall resp = handler.handleCall(call, service);
 
                 out.write(resp);
+                out.separator();
                 return;
             } catch (ConnectException e) {
                 System.out.flush();

@@ -24,6 +24,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
+import net.morimekta.providence.streams.MessageStreams;
 
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -36,7 +37,7 @@ import java.io.OutputStream;
 /**
  * A writer helper class for matching a serializer with an output stream.
  */
-public class FileMessageWriter implements MessageWriter, Closeable {
+public class FileMessageWriter implements MessageWriter {
     private final File       file;
     private final Serializer serializer;
     private final boolean    append;
@@ -63,6 +64,16 @@ public class FileMessageWriter implements MessageWriter, Closeable {
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int write(PServiceCall<Message, Field> call) throws IOException {
         return serializer.serialize(getOutputStream(), call);
+    }
+
+    @Override
+    public int separator() throws IOException {
+        if (!serializer.binaryProtocol()) {
+            getOutputStream().write(MessageStreams.READABLE_ENTRY_SEP);
+            return MessageStreams.READABLE_ENTRY_SEP.length;
+        }
+
+        return 0;
     }
 
     @Override
