@@ -19,7 +19,6 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.http-client</groupId>
@@ -41,7 +40,6 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

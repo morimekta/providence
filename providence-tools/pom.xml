@@ -48,7 +48,9 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptor>src/assembly/tools.xml</descriptor>
+                            <descriptors>
+                                <descriptor>src/assembly/tools.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>

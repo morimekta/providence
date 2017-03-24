@@ -53,7 +53,9 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptor>src/assembly/providence.xml</descriptor>
+                            <descriptors>
+                                <descriptor>src/assembly/providence.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>

@@ -22,7 +22,6 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -73,7 +72,9 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptor>src/assembly/providence.xml</descriptor>
+                            <descriptors>
+                                <descriptor>src/assembly/providence.xml</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>

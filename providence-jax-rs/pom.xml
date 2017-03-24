@@ -14,16 +14,11 @@
     </parent>
     <artifactId>providence-jax-rs</artifactId>
 
-    <properties>
-        <dropwizard.version>1.0.6</dropwizard.version>
-    </properties>
-
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- external dependencies -->
@@ -48,19 +43,16 @@
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-testing</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-client</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core-server</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
