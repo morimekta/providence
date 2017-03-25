@@ -99,7 +99,7 @@ public class ConfigOptions extends CommonOptions {
     }
 
     public boolean showHelp() {
-        return super.showHelp() || command == null;
+        return (super.showHelp() || command == null) && !showVersion();
     }
 
     public void execute() throws ParseException, IOException {
