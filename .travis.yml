@@ -7,3 +7,5 @@ branches:
   - master
 before_install:
 - sudo apt-get -y install rpm
+after_success:
+- bash <(curl -s https://codecov.io/bash)
