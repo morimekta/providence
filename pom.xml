@@ -116,7 +116,7 @@
         <commons.lang3.version>3.5</commons.lang3.version>
         <commons.math3.version>3.6.1</commons.math3.version>
 
-        <morimekta_utils.version>0.4.4</morimekta_utils.version>
+        <morimekta_utils.version>0.4.5</morimekta_utils.version>
     </properties>
 
     <dependencyManagement>
