@@ -60,13 +60,12 @@ struct MyStruct {
 ```
 
 Annotations are there for the compiler only, and should not be saved in the
-generated code. Currently the recognized annotations are:
+generated code. Currently the recognized core annotations are:
  
 * `container = "ORDERED"`: On fields with set or map type only, will replace the
   default hash-based container with an order-preserving container.
 * `container = "SORTED"`: On fields with set or map type only, will replace the
   default hash-based container with a sorted container.
-* `json.compact = ""`: On structs only, see the (Compact Messages)[#compact-messages] section.
 * `java.implements` Each java message (union, struct, exception) can implement
   additional interfaces specified by this annotation. Full package and class name.
   Note that the message is still a full implementation, so the interface methods
@@ -120,35 +119,6 @@ struct Operation {
 This makes model structures like the calculator possible. Since the model
 objects are immutable and created with builders, it is not possible to create
 a circular instance containment.
-
-#### Compact JSON Messages
-
-A struct may be defined as **compact** for json using the `json.compact`
-annotation. A compact struct must adhere to the compact criteria:
-
-- Only structs may be compact (not union or exception).
-- May have a maximum of 10 fields.
-- Fields must be numbered 1 .. N.
-- A required field may not come after an optional field.
-- For the 'compact' serialization to take effect, the first M fields must be set,
-  and no other fields may be set. E.g.:
-    * If 1, 2 abd 3 are set, and 4, 5 are not set, then compact is used.
-    * If 1, 2 and 4 are set, and 3, 5 are not set, compact is **not** used.
-
-When the compact struct is serialized the serializer may choose to use a
-different serialization format that serializes the first M fields of the struct
-in order. E.g. in JSON a compact struct may be serialized as an array if (and
-only if).
-
-Compactible messages will have a `jsonCompact()` method that determines if the
-message is compact for serialization. The descriptor will have a similar
-`isJsonCompactible()` method which determines if the message can be
-deserialized with the compact format.
-
-To make a struct compact, add the `json.compact = ""` annotation to the struct.
-This will still allow thrift compiler to parse the .thrift files. This applies
-both to using the `JsonSerializer` and using the `jackson` java generator
-option with a jackson JSON serializer and deserializer.
 
 #### Simple Messages.
 
