@@ -552,7 +552,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <configuration>
-                    <rulesUri>file:version-rules.xml</rulesUri>
+                    <rulesUri>https://raw.githubusercontent.com/morimekta/utils/master/version-rules.xml</rulesUri>
                 </configuration>
             </plugin>
             <plugin>
