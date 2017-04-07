@@ -15,57 +15,59 @@ Proper releases are done with a branch cut.
 
 #### Check for dependency updates
 
-* Run `mvn versions:display-dependency-updates` to see what has been updated of
-  dependencies. See if updates should be done. Usually it's better to depend on
-  newer versions, as you may drag in older versions into other projects that
-  misses features or has specific bugs.
+Run the maven versions plugin to see what has been updated of dependencies and
+plugins. See if updates should be done. Usually it's better to depend on
+newer versions, as you may drag in older versions into other projects that
+misses features or has specific bugs.
+
+```bash
+mvn versions:display-dependency-updates
+mvn versions:display-plugin-updates
+```
 
 #### Making the release cut.
 
-* Run `# mvn -Plib,cli,it clean install` to build and verify the snapshot build
-  you want to release.
-* Run `# mvn -Plib,cli,it release:prepare`, which will create two new commits, one with the
-  actual release, and one with the "next development cycle".
-* Run `# mvn -Plib release:perform` to generate the artifacts and push to sonatype
-  for staging.
-* Run `# git fetch origin` to update the local git cache (the release plugin uses
-  JGit, which does not update the local git remote cache, as it uses SSH against github
-  directly).
+```bash
+# Do the maven release:
+mvn -Plib,cli,it release:prepare
+mvn -Plib release:perform
+git fetch origin
+```
 
 If the artifacts found at the [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories)
-are correct, you're ready to make the release. First make the actual binary release:
+are correct, you're ready to make the release. If not a git hard rollback is needed (to remove release
+version, tag and commits). First make the actual binary release:
 
-* Run `# git checkout HEAD~1 -b release-${version}`.
-  This will check out the actual release commit.
+```bash
+# check out the release commit
+git checkout HEAD~1 -b release
+# make the versions env variable:
+export pvd_version=$(cat pom.xml | grep '^    <version>' | sed 's: *[<][/]\?version[>]::g')
 
-First build the release CLI packages, and update the GIT release info:
+# build the tarball, DEB and RPM packages, which produces:
+# - providence-tools/target/providence-tools-${pvd_version}.tar.gz
+# - providence-tools/target/providence-${pvd_version}_all.deb
+# - providence-tools/target/rpm/providence/RPMS/noarch/providence-${pvd_version}-1.noarch.rpm
+mvn -Pcli clean package
 
-* Run `# mvn -Pcli clean package` to make sure the release-artifacts are
-  available locally.
-* Take out the two files: `providence-tools/target/providence-{version}_all.deb`
-  and `providence-tools/target/rpm/providence/RPMS/noarch/providence-{version}-1.noarch.rpm`
-  and save them to the release TAG info on `github.com`.
+# Site release:
+mvn clean verify site site:stage
+git checkout gh-pages && pull -p && cp -R target/staging/* .
+rm -rf providence-testing/testapidocs
+git commit -a -m "Site release for ${pvd_version}"
+git push
+```
 
-Then update and release the gradle plugin
+Then update and release the gradle plugin. You may need to wait 20+ minutes for
+the maven indices to be updates with the providence release before you can do this
+step:
 
 * Go to `providence-gradle-plugin` repository.
 * Update version in `gradle.properties` and in the `README.md` file.
-* Run `./gradlew clean test publishPlugins` to test and publish the gradle plugin.
 
-Then prepare the site update.
-  
-* Run `# mvn clean verify site site:stage`, which will build the website for the
-  release.
-* Run `# git checkout gh-pages && cp -R target/site/* .`, which will
-  prepare the page site for the release.
-* Run `# git commit -a -m "Site release for ${version}"` to commit.
-* Run `# jekyll serve` and go to `http://localhost:4000/` and go through the
-  docs. If that looks right, and the artifacts found at the
-  [Nexus Repository Manager](https://oss.sonatype.org/#stagingRepositories) are
-  correct, you're ready to make the release.
-* Select artifact and push `release` in the top action bar to push the artifacts
-  to the maven repository of sonatype.
-* Check out the `master` branch again, and run `git push`.
-* Then wait for a bit and check out the `gh-pages` branch, and run `git push`.
+```bash
+# in the providence-gradle-plugin repository:
+./gradlew clean test publishPlugins
+```
 
 Now the release is complete.
