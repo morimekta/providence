@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
-import static net.morimekta.providence.testing.util.TestNetUtil.factory;
+import static net.morimekta.providence.jax.rs.test_web_app.TestNetUtil.factory;
 import static net.morimekta.providence.util.PrettyPrinter.debugString;
 import static net.morimekta.test.calculator.Operand.withImaginary;
 import static net.morimekta.test.calculator.Operand.withNumber;

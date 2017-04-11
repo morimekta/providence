@@ -3,7 +3,7 @@ package net.morimekta.providence.server;
 import net.morimekta.providence.client.HttpClientHandler;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
-import net.morimekta.providence.testing.util.NoLogging;
+import net.morimekta.providence.server.internal.NoLogging;
 import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
@@ -26,8 +26,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static net.morimekta.providence.testing.util.TestNetUtil.factory;
-import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
+import static net.morimekta.providence.server.internal.TestNetUtil.factory;
+import static net.morimekta.providence.server.internal.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;

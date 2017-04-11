@@ -41,10 +41,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
-import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsString;
-import static net.morimekta.providence.testing.util.ResourceUtils.writeContentTo;
 import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
+import static net.morimekta.testing.ResourceUtils.getResourceAsString;
+import static net.morimekta.testing.ResourceUtils.writeContentTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;

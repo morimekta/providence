@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.testing.util;
+package net.morimekta.providence.client.internal;
 
 import org.eclipse.jetty.util.log.Logger;
 

@@ -1,8 +1,8 @@
 package net.morimekta.providence.client;
 
+import net.morimekta.providence.client.internal.NoLogging;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
-import net.morimekta.providence.testing.util.NoLogging;
 import net.morimekta.test.providence.service.Failure;
 import net.morimekta.test.providence.service.Request;
 import net.morimekta.test.providence.service.Response;
@@ -32,9 +32,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import static net.morimekta.providence.client.internal.TestNetUtil.factory;
+import static net.morimekta.providence.client.internal.TestNetUtil.getExposedPort;
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
-import static net.morimekta.providence.testing.util.TestNetUtil.factory;
-import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;

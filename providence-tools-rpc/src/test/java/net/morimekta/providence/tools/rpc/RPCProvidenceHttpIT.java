@@ -2,7 +2,7 @@ package net.morimekta.providence.tools.rpc;
 
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.server.ProvidenceServlet;
-import net.morimekta.providence.testing.util.NoLogging;
+import net.morimekta.providence.tools.rpc.internal.NoLogging;
 import net.morimekta.test.providence.Failure;
 import net.morimekta.test.providence.MyService;
 import net.morimekta.test.providence.Request;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-import static net.morimekta.providence.testing.util.TestNetUtil.getExposedPort;
+import static net.morimekta.providence.tools.rpc.internal.TestNetUtil.getExposedPort;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.reset;

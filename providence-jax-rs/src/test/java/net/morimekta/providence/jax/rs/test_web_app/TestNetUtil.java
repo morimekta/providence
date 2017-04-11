@@ -18,32 +18,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.testing.util;
+package net.morimekta.providence.jax.rs.test_web_app;
 
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-
-import static org.junit.Assert.fail;
 
 /**
  * Networking utility for testing.
  */
 public class TestNetUtil {
-    public static int getExposedPort(Server server) {
-        for (Connector connector : server.getConnectors()) {
-            if (connector instanceof ServerConnector) {
-                return  ((ServerConnector) connector).getLocalPort();
-            }
-        }
-        fail("Unable to determine port of server");
-        return -1;
-    }
-
     public static HttpRequestFactory factory() {
         return transport().createRequestFactory();
     }

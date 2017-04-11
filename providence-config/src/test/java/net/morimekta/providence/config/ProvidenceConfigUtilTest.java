@@ -4,7 +4,6 @@ import net.morimekta.config.IncompatibleValueException;
 import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
-import net.morimekta.providence.testing.util.ResourceUtils;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.test.config.Service;
 import net.morimekta.test.config.ServicePort;
@@ -20,7 +19,7 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
-import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -51,7 +50,7 @@ public class ProvidenceConfigUtilTest {
         copyResourceTo("/net/morimekta/providence/config/base_service.cfg", tmp.getRoot());
         copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", tmp.getRoot());
 
-        File cfg = ResourceUtils.copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
+        File cfg = copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
 
         service = new ProvidenceConfig(registry, new HashMap<>()).getSupplier(cfg);
     }

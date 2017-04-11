@@ -1,6 +1,6 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.providence.testing.util.NoLogging;
+import net.morimekta.providence.tools.rpc.internal.NoLogging;
 import net.morimekta.test.thrift.Failure;
 import net.morimekta.test.thrift.MyService;
 import net.morimekta.test.thrift.Request;
@@ -16,7 +16,6 @@ import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.eclipse.jetty.util.log.Log;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

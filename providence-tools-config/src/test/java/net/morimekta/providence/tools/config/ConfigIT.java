@@ -1,6 +1,5 @@
 package net.morimekta.providence.tools.config;
 
-import net.morimekta.providence.testing.util.ResourceUtils;
 import net.morimekta.testing.IntegrationExecutor;
 
 import org.junit.After;
