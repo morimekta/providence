@@ -3,6 +3,7 @@ package net.morimekta.providence.testing.util;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 import net.morimekta.providence.descriptor.PField;
@@ -10,9 +11,12 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.mio.IOMessageWriter;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.mio.MessageWriter;
 import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.util.LogFormatter;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableList;
@@ -21,7 +25,7 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import java.io.IOException;
-import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +38,7 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Providence message formatter that can be used as a junit rule.
+ * Providence message serializer that can be used as a junit rule.
  *
  * <pre>{@code
  * class MyTest {
@@ -66,6 +70,12 @@ public class MessageGenerator extends TestWatcher {
         M instance;
         if (!preGenerated.isEmpty()) {
             instance = (M) preGenerated.pollFirst();
+        } else if (reader != null) {
+            try {
+                instance = reader.read(descriptor);
+            } catch (IOException e) {
+                throw new AssertionError(e.getMessage(), e);
+            }
         } else {
             instance = generateInternal(descriptor);
         }
@@ -94,17 +104,17 @@ public class MessageGenerator extends TestWatcher {
     public static class Builder {
         private int                              maxCollectionItems;
         private LinkedList<ValueSupplierFactory> factories;
-        private LogFormatter                     formatter;
         private Random                           random;
         private boolean                          globalDumpOnFailure;
         private Fairy                            fairy;
         private List<PMessage>                   preGenerated;
-        private PrintStream                      writer;
+        private Serializer                       serializer;
+        private MessageWriter                    writer;
+        private MessageReader                    reader;
 
         public Builder() {
             this.factories = new LinkedList<>();
             this.preGenerated = new LinkedList<>();
-            this.formatter = null;
             this.random = null;
             this.globalDumpOnFailure = false;
             this.maxCollectionItems = 10;
@@ -113,12 +123,12 @@ public class MessageGenerator extends TestWatcher {
 
         public MessageGenerator build() {
             return new MessageGenerator(
-                    formatter == null ? new LogFormatter(true) : formatter,
+                    serializer == null ? new PrettySerializer(true, false) : serializer,
                     random == null ? new Random() : random,
                     fairy == null ? Fairy.create(Locale.ENGLISH) : fairy,
                     preGenerated,
                     factories,
-                    writer,
+                    writer, reader,
                     maxCollectionItems,
                     globalDumpOnFailure);
         }
@@ -143,8 +153,8 @@ public class MessageGenerator extends TestWatcher {
             return this;
         }
 
-        public MessageGenerator.Builder withLogFormatter(LogFormatter formatter) {
-            this.formatter = formatter;
+        public MessageGenerator.Builder withFactories(Collection<ValueSupplierFactory> factories) {
+            this.factories.addAll(factories);
             return this;
         }
 
@@ -158,17 +168,32 @@ public class MessageGenerator extends TestWatcher {
             return this;
         }
 
-        public MessageGenerator.Builder withWriter(PrintStream writer) {
+        public MessageGenerator.Builder withSerializer(Serializer serializer) {
+            assert writer == null : "Generator already has a writer.";
+            this.serializer = serializer;
+            return this;
+        }
+
+        public MessageGenerator.Builder withMessageWriter(MessageWriter writer) {
+            assert serializer == null : "Generator already has a serializer.";
             this.writer = writer;
             return this;
         }
 
+        public MessageGenerator.Builder withMessageReader(MessageReader messageReader) {
+            assert preGenerated.isEmpty() : "Generator already contains pre-generated messages.";
+            this.reader = messageReader;
+            return this;
+        }
+
         public <M extends PMessage<M, F>, F extends PField> MessageGenerator.Builder withPregenMessage(M message) {
+            assert reader == null : "Generator already contains reader for messages.";
             preGenerated.add(message);
             return this;
         }
 
         public <M extends PMessage<M, F>, F extends PField> MessageGenerator.Builder withPregenResource(String resource, PMessageDescriptor<M,F> descriptor) {
+            assert reader == null : "Generator already contains reader for messages.";
             PrettySerializer serializer = new PrettySerializer(true, false);
 
             try {
@@ -181,22 +206,24 @@ public class MessageGenerator extends TestWatcher {
         }
     }
 
-    private MessageGenerator(LogFormatter formatter,
+    private MessageGenerator(Serializer serializer,
                              Random random,
                              Fairy fairy,
                              List<PMessage> preGenerated,
                              List<ValueSupplierFactory> factories,
-                             PrintStream writer,
+                             MessageWriter writer,
+                             MessageReader messageReader,
                              int maxCollectionItems,
                              boolean globalDumpOnFailure) {
+        this.serializer = serializer;
         this.factories = ImmutableList.copyOf(factories);
         this.preGenerated = new LinkedList<>(preGenerated);
-        this.formatter = formatter;
         this.fairy = fairy;
         this.random = random;
         this.writer = writer;
         this.globalDumpOnFailure = globalDumpOnFailure;
         this.maxCollectionItems = maxCollectionItems;
+        this.reader = messageReader;
 
         this.generated = null;
         this.dumpOnFailure = globalDumpOnFailure;
@@ -237,29 +264,35 @@ public class MessageGenerator extends TestWatcher {
     protected void failed(Throwable e, Description description) {
         super.failed(e, description);
         if (dumpOnFailure) {
-            PrintStream writer = this.writer;
+            MessageWriter writer = this.writer;
             if (writer == null) {
-                writer = System.err;
+                writer = new IOMessageWriter(System.err, serializer);
             }
 
-            for (PMessage message : generated) {
-                writer.format("%s%n", formatter.format(message));
+            try {
+                for (PMessage message : generated) {
+                    writer.write(message);
+                    writer.separator();
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                e.addSuppressed(e1);
             }
-            writer.flush();
         }
         this.generated = null;
         this.dumpOnFailure = this.globalDumpOnFailure;
     }
 
     // --- PRIVATE ---
-    private final LogFormatter               formatter;
     private final List<ValueSupplierFactory> factories;
     private final Random                     random;
     private final Fairy                      fairy;
     private final boolean                    globalDumpOnFailure;
     private final LinkedList<PMessage>       preGenerated;
     private final int                        maxCollectionItems;
-    private final PrintStream                writer;
+    private final MessageWriter              writer;
+    private final MessageReader              reader;
+    private final Serializer                 serializer;
 
     private List<PMessage>                   generated;
     private boolean                          dumpOnFailure;
@@ -292,11 +325,11 @@ public class MessageGenerator extends TestWatcher {
             case ENUM: {
                 PEnumDescriptor ed = (PEnumDescriptor) descriptor;
                 PEnumValue[] values = ed.getValues();
-                return () -> values[random.nextInt(values.length)];
+                return () -> values[random.nextInt() % values.length];
             }
             case BINARY: {
                 return () -> {
-                    byte[] tmp = new byte[random.nextInt(maxCollectionItems)];
+                    byte[] tmp = new byte[random.nextInt() % maxCollectionItems];
                     random.nextBytes(tmp);
                     return Binary.wrap(tmp);
                 };
@@ -360,14 +393,27 @@ public class MessageGenerator extends TestWatcher {
 
     private <M extends PMessage<M, F>, F extends PField> M generateInternal(PMessageDescriptor<M, F> descriptor) {
         PMessageBuilder<M, F> builder = descriptor.builder();
-        for (F field : descriptor.getFields()) {
+        if (descriptor.getVariant() == PMessageVariant.UNION) {
+            F field = descriptor.getFields()[random.nextInt() % descriptor.getFields().length];
             Supplier<Object> supplier = getValueSupplier(field);
             assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(),
                           supplier);
+
             // Only non-null values are set.
             Object value = supplier.get();
             if (value != null) {
                 builder.set(field, value);
+            }
+        } else {
+            for (F field : descriptor.getFields()) {
+                Supplier<Object> supplier = getValueSupplier(field);
+                assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(),
+                              supplier);
+                // Only non-null values are set.
+                Object value = supplier.get();
+                if (value != null) {
+                    builder.set(field, value);
+                }
             }
         }
         return builder.build();

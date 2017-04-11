@@ -1,6 +1,14 @@
 package net.morimekta.providence.testing.util;
 
-import net.morimekta.providence.util.LogFormatter;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.mio.IOMessageReader;
+import net.morimekta.providence.mio.IOMessageWriter;
+import net.morimekta.providence.mio.MessageReader;
+import net.morimekta.providence.serializer.FastBinarySerializer;
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.android.CompactFields;
 import net.morimekta.testing.rules.ConsoleWatcher;
 
@@ -9,11 +17,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.Description;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Random;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
@@ -44,17 +55,49 @@ public class MessageGeneratorTest {
         generator.failed(new Throwable(), Description.EMPTY);
 
         assertThat(console.output(), is(""));
-        assertThat(console.error(),
-                   is(new LogFormatter(true).format(compact) + "\n"));
+        assertThat(console.error(), is(pretty(compact) + "\n"));
     }
 
     @Test
-    public void testRandom_customDump() {
+    public void testRandom_customSerializer() throws SerializerException {
+        Random random = new Random();
+        Fairy fairy = Fairy.create(Locale.ENGLISH);
+        MessageGenerator generator = MessageGenerator.builder()
+                                                     .withSerializer(new JsonSerializer())
+                                                     .withMaxCollectionItems(2)
+                                                     .withRandom(random)
+                                                     .withFactory(f -> {
+                                                         if (f.equals(CompactFields._Field.NAME)) {
+                                                             return () -> fairy.textProducer().word(1);
+                                                         }
+                                                         return null;
+                                                     })
+                                                     .withFairy(fairy)
+                                                     .dumpOnFailure()
+                                                     .build();
+        generator.starting(Description.EMPTY);
+
+        CompactFields compact = generator.generate(CompactFields.kDescriptor);
+
+        assertThat(compact.getLabel(), is(notNullValue()));
+        assertThat(compact.getName(), is(notNullValue()));
+        assertThat(compact.getName(), not(containsString(" ")));
+        assertThat(compact.hasId(), is(true));
+
+        assertThat(generator.getGenerated(), hasItem(compact));
+
+        generator.failed(new Throwable(), Description.EMPTY);
+
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(json(compact) + "\n"));
+    }
+
+    @Test
+    public void testRandom_customWriter() throws IOException {
         Fairy fairy = Fairy.create(Locale.ENGLISH);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(baos);
         MessageGenerator generator = MessageGenerator.builder()
-                                                     .withLogFormatter(new LogFormatter(false))
+                                                     .withMessageWriter(new IOMessageWriter(baos, new FastBinarySerializer()))
                                                      .withMaxCollectionItems(2)
                                                      .withFactory(f -> {
                                                          if (f.equals(CompactFields._Field.NAME)) {
@@ -63,7 +106,6 @@ public class MessageGeneratorTest {
                                                          return null;
                                                      })
                                                      .dumpOnFailure()
-                                                     .withWriter(out)
                                                      .build();
         generator.starting(Description.EMPTY);
 
@@ -81,8 +123,9 @@ public class MessageGeneratorTest {
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(""));
 
-        assertThat(new String(baos.toByteArray(), StandardCharsets.UTF_8),
-                   is(new LogFormatter(false).format(compact) + "\n"));
+        IOMessageReader reader = new IOMessageReader(new ByteArrayInputStream(baos.toByteArray()), new FastBinarySerializer());
+
+        assertThat(reader.read(CompactFields.kDescriptor), is(equalToMessage(compact)));
     }
 
     @Test
@@ -102,6 +145,44 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(""));
+    }
+
+    @Test
+    public void testRandom_withReader() {
+        ByteArrayInputStream bais = new ByteArrayInputStream((
+                "{\n" +
+                "  name = \"villa\"\n" +
+                "  id = 123\n" +
+                "  label = \"Sjampanjebrus\"\n" +
+                "}\n").getBytes(StandardCharsets.UTF_8));
+        MessageReader reader = new IOMessageReader(bais, new PrettySerializer(true, false));
+
+        CompactFields compact = CompactFields.builder()
+                                             .setId(123)
+                                             .setName("villa")
+                                             .setLabel("Sjampanjebrus")
+                                             .build();
+
+        MessageGenerator generator = MessageGenerator.builder()
+                                                     .dumpOnFailure()
+                                                     .withMessageReader(reader)
+                                                     .build();
+        generator.starting(Description.EMPTY);
+
+        CompactFields gen = generator.generate(CompactFields.kDescriptor);
+
+        assertThat(gen, is(equalToMessage(compact)));
+        assertThat(generator.getGenerated(), hasItem(compact));
+
+        generator.failed(new Throwable(), Description.EMPTY);
+
+        assertThat(console.output(), is(""));
+        assertThat(console.error(),
+                   is("{\n" +
+                      "  name = \"villa\"\n" +
+                      "  id = 123\n" +
+                      "  label = \"Sjampanjebrus\"\n" +
+                      "}\n"));
     }
 
     @Test
@@ -127,7 +208,7 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("android.CompactFields {\n" +
+                   is("{\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
@@ -165,15 +246,27 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("android.CompactFields {\n" +
+                   is("{\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
                       "}\n" +
-                      "android.CompactFields {\n" +
+                      "{\n" +
                       "  name = \"villa2\"\n" +
                       "  id = 125\n" +
                       "  label = \"Brus med smak\"\n" +
                       "}\n"));
+    }
+
+    private <M extends PMessage<M, F>, F extends PField> String json(M message) throws SerializerException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new JsonSerializer().serialize(baos, message);
+        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    private <M extends PMessage<M, F>, F extends PField> String pretty(M message) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new PrettySerializer(true, false).serialize(baos, message);
+        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
     }
 }
