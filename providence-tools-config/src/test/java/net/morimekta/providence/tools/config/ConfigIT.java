@@ -11,7 +11,8 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-import static net.morimekta.providence.testing.util.ResourceUtils.copyResourceTo;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
+import static net.morimekta.testing.ResourceUtils.writeContentTo;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -122,7 +123,7 @@ public class ConfigIT {
     @Test
     public void testPrint_withError() throws IOException {
         standardConfig();
-        ResourceUtils.writeContentTo(
+        writeContentTo(
                 "params {\n" +
                 "    http_port = 8080\n" +
                 "    admin_port = 8088\n" +

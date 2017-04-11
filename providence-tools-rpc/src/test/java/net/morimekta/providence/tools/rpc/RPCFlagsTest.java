@@ -1,88 +1,47 @@
 package net.morimekta.providence.tools.rpc;
 
-import net.morimekta.console.util.STTY;
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.tools.common.options.Utils;
-import net.morimekta.util.io.IOUtils;
+import net.morimekta.testing.rules.ConsoleWatcher;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.Properties;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests for the flag values for .
  */
 public class RPCFlagsTest {
-    private static InputStream defaultIn;
-    private static PrintStream defaultOut;
-    private static PrintStream defaultErr;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
-    public TemporaryFolder temp;
-
-    private OutputStream outContent;
-    private OutputStream errContent;
+    @Rule
+    public ConsoleWatcher console = new ConsoleWatcher()
+            .setTerminalSize(40, 100);
 
     private int exitCode;
     private RPC rpc;
-    private File thriftFile;
     private String version;
-    private STTY tty;
 
     public String endpoint() {
         return "http://localhost:8080/test";
     }
 
-    @BeforeClass
-    public static void setUpIO() {
-        defaultIn = System.in;
-        defaultOut = System.out;
-        defaultErr = System.err;
-    }
-
     @Before
     public void setUp() throws IOException {
-        tty = mock(STTY.class);
-        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
-        when(tty.isInteractive()).thenReturn(true);
-
         version = Utils.getVersionString();
-
-        temp = new TemporaryFolder();
-        temp.create();
-        thriftFile = temp.newFile("test.thrift");
-
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/test.thrift"), file);
-        file.flush();
-        file.close();
+        copyResourceTo("/test.thrift", temp.getRoot());
 
         exitCode = 0;
-
-        outContent = new ByteArrayOutputStream();
-        errContent = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-
-        rpc = new RPC(tty) {
+        rpc = new RPC(console.tty()) {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -90,22 +49,12 @@ public class RPCFlagsTest {
         };
     }
 
-    @After
-    public void tearDown() {
-        System.setErr(defaultErr);
-        System.setOut(defaultOut);
-        System.setIn(defaultIn);
-
-        temp.delete();
-    }
-
     @Test
     public void testHelp() {
         rpc.run("--help");
 
-        assertEquals(0, exitCode);
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(), is(equalToLines(
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
                 "Providence RPC Tool - " + version + "\n" +
                 "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
@@ -141,15 +90,16 @@ public class RPCFlagsTest {
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +
                 " - tuple_protocol       : TTupleProtocol\n")));
+        assertThat(exitCode, is(0));
     }
 
     @Test
     public void testMissingFlags_noService() {
         rpc.run(endpoint());
 
-        assertEquals(1, exitCode);
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(), is(equalToLines(
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
                 "Option --service is required\n" +
                 "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
@@ -161,9 +111,9 @@ public class RPCFlagsTest {
     public void testMissingFlags_noURL() {
         rpc.run("-s", "test.MyTest");
 
-        assertEquals(1, exitCode);
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(), is(equalToLines(
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
                 "Argument \"URL\" is required\n" +
                 "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
@@ -177,9 +127,9 @@ public class RPCFlagsTest {
 
         rpc.run("-I", dir.getCanonicalFile().getAbsolutePath(), "-s", "test.MyService", endpoint());
 
-        assertEquals(1, exitCode);
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(), is(equalToLines(
+        assertThat(exitCode, is(1));
+        assertThat(console.output(), is(""));
+        assertThat(console.error(), is(equalToLines(
                 "No such directory " + dir.getCanonicalFile().getAbsolutePath() + "\n" +
                 "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +

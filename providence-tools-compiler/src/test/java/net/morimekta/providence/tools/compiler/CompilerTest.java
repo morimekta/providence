@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Properties;
 
-import static net.morimekta.providence.testing.util.ResourceUtils.getResourceAsStream;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -28,9 +26,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by morimekta on 4/26/16.
- */
 public class CompilerTest {
     private static InputStream defaultIn;
     private static PrintStream defaultOut;

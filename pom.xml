@@ -74,8 +74,7 @@
         <dependency.locations.enabled>false</dependency.locations.enabled>
 
         <additionalparam>-Xdoclint:all</additionalparam>
-        <skip.unit.tests>false</skip.unit.tests>
-        <skip.integration.tests>false</skip.integration.tests>
+        <skipTests>false</skipTests>
         <!-- Arg lines not specified, set by jacoco plugin -->
         <!-- surefireArgLine -->
         <!-- failsafeArgLine -->
@@ -633,8 +632,8 @@
                 <configuration>
                     <!-- Sets the VM argument line used when unit tests are run. -->
                     <argLine>${surefireArgLine}</argLine>
-                    <!-- Skips unit tests if the value of skip.unit.tests property is true -->
-                    <skipTests>${skip.unit.tests}</skipTests>
+                    <!-- Skips unit tests if the value of skipTests property is true -->
+                    <skipTests>${skipTests}</skipTests>
                     <!-- Excludes integration tests when unit tests are run. -->
                     <includes>
                         <include>**/*Test.java</include>
@@ -658,9 +657,8 @@
                         <configuration>
                             <!-- Sets the VM argument line used when unit tests are run. -->
                             <argLine>${failsafeArgLine}</argLine>
-                            <!-- Skips unit tests if the value of skip.unit.tests property is true -->
-                            <skipITs>${skip.integration.tests}</skipITs>
-                            <skipTests>true</skipTests>
+                            <!-- Skips unit tests if the value of skipTests property is true -->
+                            <skipTests>${skipTests}</skipTests>
                             <includes>
                                 <include>**/*IT.java</include>
                             </includes>

@@ -1,83 +1,49 @@
 package net.morimekta.providence.tools.converter;
 
-import net.morimekta.console.util.STTY;
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.tools.common.options.Utils;
-import net.morimekta.util.io.IOUtils;
+import net.morimekta.testing.rules.ConsoleWatcher;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
+import static net.morimekta.testing.ResourceUtils.getResourceAsBytes;
+import static net.morimekta.testing.ResourceUtils.getResourceAsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test the providence converter (pvd) command.
  */
 public class ConvertTest {
-    private static InputStream defaultIn;
-    private static PrintStream defaultOut;
-    private static PrintStream defaultErr;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
-    public TemporaryFolder temp;
-
-    private OutputStream outContent;
-    private OutputStream errContent;
+    @Rule
+    public ConsoleWatcher console = new ConsoleWatcher()
+            .setTerminalSize(40, 100);
 
     private int     exitCode;
     private Convert convert;
-    private File    thriftFile;
     private String  version;
-    private STTY tty;
-
-    @BeforeClass
-    public static void setUpIO() {
-        defaultIn = System.in;
-        defaultOut = System.out;
-        defaultErr = System.err;
-    }
+    private File    rc;
 
     @Before
     public void setUp() throws IOException {
-        tty = mock(STTY.class);
-        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
-        when(tty.isInteractive()).thenReturn(true);
-
         version = Utils.getVersionString();
 
-        temp = new TemporaryFolder();
-        temp.create();
-        thriftFile = temp.newFile("cont.thrift");
-
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/cont.thrift"), file);
-        file.flush();
-        file.close();
+        copyResourceTo("/cont.thrift", temp.getRoot());
+        rc = copyResourceTo("/pvdrc", temp.getRoot());
 
         exitCode = 0;
-
-        outContent = new ByteArrayOutputStream();
-        errContent = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-
-        convert = new Convert(tty) {
+        convert = new Convert(console.tty()) {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -85,21 +51,12 @@ public class ConvertTest {
         };
     }
 
-    @After
-    public void tearDown() {
-        System.setErr(defaultErr);
-        System.setOut(defaultOut);
-        System.setIn(defaultIn);
-
-        temp.delete();
-    }
-
     @Test
     public void testHelp() {
         convert.run("--help");
 
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(), is(equalToLines(
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
                 "Providence Converter - " + version + "\n" +
                 "Usage: pvd [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] type\n" +
                 "\n" +
@@ -130,5 +87,57 @@ public class ConvertTest {
                 " - compact_protocol     : TCompactProtocol\n" +
                 " - tuple_protocol       : TTupleProtocol\n")));
         assertEquals(0, exitCode);
+    }
+
+    @Test
+    public void testStream_BinaryToJson() throws IOException {
+        console.setInput(getResourceAsBytes("/binary.data"));
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "binary",
+                "-o", "pretty_json",
+                "cont.Containers");
+
+        String tmp = getResourceAsString("/pretty.json");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(tmp));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testStream_JsonToBinary() throws IOException {
+        console.setInput(getResourceAsBytes("/pretty.json"));
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "pretty_json",
+                "-o", "binary",
+                "cont.Containers");
+
+        String tmp = getResourceAsString("/binary.data");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(tmp));
+        assertThat(exitCode, is(0));
+    }
+
+    @Test
+    public void testFileToPretty() throws IOException {
+        String input = copyResourceTo("/binary.data", temp.getRoot())
+                .getCanonicalFile().getAbsolutePath();
+
+        convert.run(
+                "--rc", rc.getAbsolutePath(),
+                "-I", temp.getRoot().getAbsolutePath(),
+                "-i", "binary,file:" + input,
+                "-o", "pretty_json",
+                "cont.Containers");
+
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(getResourceAsString("/pretty.json")));
     }
 }
