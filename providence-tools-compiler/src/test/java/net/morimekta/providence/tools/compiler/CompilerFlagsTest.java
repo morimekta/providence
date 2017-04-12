@@ -1,93 +1,45 @@
 package net.morimekta.providence.tools.compiler;
 
-import net.morimekta.console.util.STTY;
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.tools.common.options.Utils;
-import net.morimekta.util.io.IOUtils;
+import net.morimekta.testing.rules.ConsoleWatcher;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class CompilerTest {
-    private static InputStream defaultIn;
-    private static PrintStream defaultOut;
-    private static PrintStream defaultErr;
+public class CompilerFlagsTest {
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
-    private TemporaryFolder temp;
-
-    private OutputStream outContent;
-    private OutputStream errContent;
+    @Rule
+    public ConsoleWatcher console = new ConsoleWatcher()
+            .setTerminalSize(40, 100);
 
     private int      exitCode;
-    private Compiler compiler;
+    private Compiler sut;
     private File     thriftFile;
-    private File     refFile;
     private String   version;
-    private File     include;
-    private File     output;
-    private STTY tty;
-
-    @BeforeClass
-    public static void setUpIO() {
-        defaultIn = System.in;
-        defaultOut = System.out;
-        defaultErr = System.err;
-    }
 
     @Before
     public void setUp() throws IOException {
-        tty = mock(STTY.class);
-        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
-        when(tty.isInteractive()).thenReturn(true);
-
         version = Utils.getVersionString();
 
-        temp = new TemporaryFolder();
-        temp.create();
+        File include = temp.newFolder("include").getCanonicalFile();
 
-        include = temp.newFolder("include").getCanonicalFile();
-        output = temp.newFolder("output").getCanonicalFile();
-
-        refFile = new File(include, "ref.thrift").getCanonicalFile();
-        thriftFile = temp.newFile("test.thrift").getCanonicalFile();
-
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/compiler/test.thrift"), file);
-        file.flush();
-        file.close();
-
-        file = new FileOutputStream(refFile);
-        IOUtils.copy(getClass().getResourceAsStream("/compiler/ref.thrift"), file);
-        file.flush();
-        file.close();
+        copyResourceTo("/compiler/ref.thrift", include);
+        thriftFile = copyResourceTo("/compiler/test.thrift", temp.getRoot());
 
         exitCode = 0;
-
-        outContent = new ByteArrayOutputStream();
-        errContent = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-
-        compiler = new Compiler(tty) {
+        sut = new Compiler(console.tty()) {
             @Override
             protected void exit(int i) {
                 exitCode = i;
@@ -95,20 +47,12 @@ public class CompilerTest {
         };
     }
 
-    @After
-    public void tearDown() {
-        System.setErr(defaultErr);
-        System.setOut(defaultOut);
-        System.setIn(defaultIn);
-
-        temp.delete();
-    }
-
     @Test
     public void testHelp() {
-        compiler.run("--help");
+        sut.run("--help");
 
-        assertThat(outContent.toString(),
+        assertThat(console.error(), is(""));
+        assertThat(console.output(),
                    is(equalToLines("Providence compiler - " + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
@@ -126,16 +70,15 @@ public class CompilerTest {
                      "Available generators:\n" +
                      " - java       : Main java (1.8+) code generator.\n" +
                      " - json       : Generates JSON specification files.\n")));
-        assertEquals("", errContent.toString());
-        assertEquals(0, exitCode);
+        assertThat(exitCode, is(0));
     }
 
     @Test
     public void testHelp_java() {
-        compiler.run("--help", "java");
+        sut.run("--help", "java");
 
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(),
+        assertThat(console.error(), is(""));
+        assertThat(console.output(),
                      is(equalToLines("Providence compiler - " + version + "\n" +
                      "Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "\n" +
@@ -146,70 +89,70 @@ public class CompilerTest {
                      " - jackson            : Add jackson 2 annotations to model classes.\n" +
                      " - no_rw_binary       : Skip adding the binary RW methods to generated code.\n" +
                      " - hazelcast_portable : Add hazelcast portable to annotated model classes, and add portable factories.\n")));
-        assertEquals(0, exitCode);
+        assertThat(exitCode, is(0));
     }
 
     @Test
     public void testIncludeNotExist() {
-        compiler.run("-I",
+        sut.run("-I",
                      temp.getRoot().getAbsolutePath() + "/does_not_exist",
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
+                "-g", "java",
+                thriftFile.getAbsolutePath());
 
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(),
+        assertThat(console.output(), is(""));
+        assertThat(console.error(),
                    is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n")));
-        assertEquals(1, exitCode);
+        assertThat(exitCode, is(1));
     }
 
     @Test
     public void testIncludeNotADirectory() throws IOException {
-        compiler.run("-I",
-                     thriftFile.getAbsolutePath(),
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
+        sut.run("-I",
+                thriftFile.getAbsolutePath(),
+                "-g", "java",
+                thriftFile.getAbsolutePath());
 
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(),
+        assertThat(console.output(), is(""));
+        assertThat(console.error(),
                    is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "" + temp.getRoot().getCanonicalPath() + File.separator + "test.thrift is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n")));
-        assertEquals(1, exitCode);
+        assertThat(exitCode, is(1));
     }
 
     @Test
     public void testOutputDirNotExist() {
-        compiler.run("--out",
+        sut.run("--out",
                      temp.getRoot().getAbsolutePath() + "/does_not_exist",
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
+                "-g", "java",
+                thriftFile.getAbsolutePath());
 
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(),
+        assertThat(console.output(), is(""));
+        assertThat(console.error(),
                    is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      "No such directory " + temp.getRoot().getAbsolutePath() + "/does_not_exist\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n")));
-        assertEquals(1, exitCode);
+        assertThat(exitCode, is(1));
     }
 
     @Test
     public void testOutputDirNotADirectory() {
-        compiler.run("--out",
-                     thriftFile.getAbsolutePath(),
-                     "-g", "java",
-                     thriftFile.getAbsolutePath());
+        sut.run("--out",
+                thriftFile.getAbsolutePath(),
+                "-g", "java",
+                thriftFile.getAbsolutePath());
 
-        assertEquals("", outContent.toString());
-        assertThat(errContent.toString(),
+        assertThat(console.output(), is(""));
+        assertThat(console.error(),
                    is(equalToLines("Usage: pvdc [-I dir] [-o dir] -g generator[:opt[,opt]*] file...\n" +
                      thriftFile.getAbsolutePath() + " is not a directory\n" +
                      "\n" +
                      "Run $ pvdc --help # for available options.\n")));
-        assertEquals(1, exitCode);
+        assertThat(exitCode, is(1));
     }
 }

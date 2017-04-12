@@ -8,3 +8,12 @@ protocol, and it can parse anything the providence `JsonSerializer` (and also th
 `TSimpleProtocolSerializer`) can generate, including supporting the `json.compact` annotation.
 
 It is triggered with the `jackson` generator option.
+
+The generated code will now also require:
+```xml
+<dependencies>
+    <dependency>
+        <groupId></groupId>    
+    </dependency>
+</dependencies>
+```

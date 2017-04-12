@@ -1,105 +1,35 @@
 package net.morimekta.providence.tools.config;
 
-import net.morimekta.console.util.STTY;
-import net.morimekta.console.util.TerminalSize;
 import net.morimekta.providence.tools.common.options.Utils;
-import net.morimekta.util.io.IOUtils;
 
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test the providence converter (pvd) command.
  */
-public class ConfigTest {
-    private static InputStream defaultIn;
-    private static PrintStream defaultOut;
-    private static PrintStream defaultErr;
-
-    public TemporaryFolder temp;
-
-    private OutputStream outContent;
-    private OutputStream errContent;
-
-    private int    exitCode;
-    private Config config;
-    private File   thriftFile;
+public class ConfigHelpTest extends ConfigTestBase {
     private String version;
-    private STTY tty;
-
-    @BeforeClass
-    public static void setUpIO() {
-        defaultIn = System.in;
-        defaultOut = System.out;
-        defaultErr = System.err;
-    }
 
     @Before
     public void setUp() throws IOException {
-        tty = mock(STTY.class);
-        when(tty.getTerminalSize()).thenReturn(new TerminalSize(40, 100));
-        when(tty.isInteractive()).thenReturn(true);
+        super.setUp();
 
         version = Utils.getVersionString();
-
-        temp = new TemporaryFolder();
-        temp.create();
-        thriftFile = temp.newFile("config.thrift");
-
-        FileOutputStream file = new FileOutputStream(thriftFile);
-        IOUtils.copy(getClass().getResourceAsStream("/config.thrift"), file);
-        file.flush();
-        file.close();
-
-        exitCode = 0;
-
-        outContent = new ByteArrayOutputStream();
-        errContent = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-
-        config = new Config(tty) {
-            @Override
-            protected void exit(int i) {
-                exitCode = i;
-            }
-        };
-    }
-
-    @After
-    public void tearDown() {
-        System.setErr(defaultErr);
-        System.setOut(defaultOut);
-        System.setIn(defaultIn);
-
-        temp.delete();
     }
 
     @Test
     public void testHelp() {
-        config.run("--help");
+        sut.run("--help");
 
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(), is(equalToLines(
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
@@ -118,15 +48,15 @@ public class ConfigTest {
                 " print    : Print the resulting config.\n" +
                 " validate : Validate the file, print an error if not valid.\n" +
                 " params   : Show params that can be applied on the config.\n")));
-        assertEquals(0, exitCode);
+        assertThat(exitCode, is(0));
     }
 
     @Test
     public void testHelpCmd() {
-        config.run("help");
+        sut.run("help");
 
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(), is(equalToLines(
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
                 "\n" +
@@ -145,21 +75,20 @@ public class ConfigTest {
                 " print    : Print the resulting config.\n" +
                 " validate : Validate the file, print an error if not valid.\n" +
                 " params   : Show params that can be applied on the config.\n")));
-        assertEquals(0, exitCode);
+        assertThat(exitCode, is(0));
     }
-
 
     @Test
     public void testHelpPrint() {
-        config.run("help", "print");
+        sut.run("help", "print");
 
-        assertEquals("", errContent.toString());
-        assertThat(outContent.toString(), is(equalToLines(
+        assertThat(console.error(), is(""));
+        assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
                 "Usage: pvdcfg [...] print [-f fmt] file\n" +
                 "\n" +
                 " --format (-f) fmt : the output format (default: pretty)\n" +
                 " file              : Config file to parse and print\n")));
-        assertEquals(0, exitCode);
+        assertThat(exitCode, is(0));
     }
 }

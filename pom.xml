@@ -115,7 +115,7 @@
         <commons.lang3.version>3.5</commons.lang3.version>
         <commons.math3.version>3.6.1</commons.math3.version>
 
-        <morimekta_utils.version>0.4.6</morimekta_utils.version>
+        <morimekta_utils.version>0.4.7</morimekta_utils.version>
     </properties>
 
     <dependencyManagement>
@@ -641,6 +641,9 @@
                     <excludes>
                         <exclude>**/*IT.java</exclude>
                     </excludes>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -673,6 +676,15 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>net/morimekta/providence/**/*</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/test/**/*</exclude>
+                        <exclude>**/model/**/*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <!--
                         Prepares the property pointing to the JaCoCo runtime agent which
