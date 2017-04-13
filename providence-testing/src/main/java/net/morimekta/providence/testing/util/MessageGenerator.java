@@ -43,11 +43,13 @@ import static org.junit.Assert.assertNotNull;
  * <pre>{@code
  * class MyTest {
  *    {@literal @}Rule
- *     public MessageGenerator gen = new MessageGenerator.builder()
- *                                                       .dumpOnFailure()
- *                                                       .build();
+ *     public MessageGenerator gen = new MessageGenerator()
+ *             .dumpOnFailure()
+ *             .addFactory(f -> f.getName().endsWith("uuid") ? () -> UUID.randomUUID().toString() : null);
+ *
  *    {@literal @}Test
  *     public testSomething() {
+ *         gen.addFactory(f -> f.equals(MyMessage._Field.NAME) ? () -> "name" : null);
  *         MyMessage msg = gen.generate(MyMessage.kDescriptor);
  *         sut.doSomething(msg);
  *
@@ -57,6 +59,32 @@ import static org.junit.Assert.assertNotNull;
  * }</pre>
  */
 public class MessageGenerator extends TestWatcher {
+    /**
+     * Factory for value suppliers. The generator can hold any number of value supplier
+     */
+    @FunctionalInterface
+    public interface ValueSupplierFactory {
+        Supplier<Object> get(PField field);
+    }
+
+    /**
+     * Make a simple default message generator.
+     */
+    public MessageGenerator() {
+        this.globalFairy              = this.fairy              = Fairy.create(Locale.ENGLISH);
+        this.globalRandom             = this.random             = new Random();
+        this.globalDefaultSerializer  = this.defaultSerializer  = new PrettySerializer(true, false);
+        this.globalMaxCollectionItems = this.maxCollectionItems = 10;
+        this.globalPreGenerated       = this.preGenerated       = new LinkedList<>();
+        this.globalFactories          = this.factories          = new LinkedList<>();
+        this.globalDumpOnFailure      = this.dumpOnFailure      = false;
+        this.globalReader             = this.reader             = null;
+        this.globalWriter             = this.writer             = null;
+
+        this.generated = new LinkedList<>();
+        this.started = false;
+    }
+
     /**
      * Generate a message with random content.
      *
@@ -84,159 +112,6 @@ public class MessageGenerator extends TestWatcher {
     }
 
     /**
-     * Factory for value suppliers. The generator can hold any number of value supplier
-     */
-    @FunctionalInterface
-    public interface ValueSupplierFactory {
-        Supplier<Object> get(PField field);
-    }
-
-    /**
-     * @return A message generator builder.
-     */
-    public static Builder builder() {
-        return new MessageGenerator.Builder();
-    }
-
-    /**
-     * Builder to make the MessageGenerator.
-     */
-    public static class Builder {
-        private int                              maxCollectionItems;
-        private LinkedList<ValueSupplierFactory> factories;
-        private Random                           random;
-        private boolean                          globalDumpOnFailure;
-        private Fairy                            fairy;
-        private List<PMessage>                   preGenerated;
-        private Serializer                       serializer;
-        private MessageWriter                    writer;
-        private MessageReader                    reader;
-
-        public Builder() {
-            this.factories = new LinkedList<>();
-            this.preGenerated = new LinkedList<>();
-            this.random = null;
-            this.globalDumpOnFailure = false;
-            this.maxCollectionItems = 10;
-            this.writer = null;
-        }
-
-        public MessageGenerator build() {
-            return new MessageGenerator(
-                    serializer == null ? new PrettySerializer(true, false) : serializer,
-                    random == null ? new Random() : random,
-                    fairy == null ? Fairy.create(Locale.ENGLISH) : fairy,
-                    preGenerated,
-                    factories,
-                    writer, reader,
-                    maxCollectionItems,
-                    globalDumpOnFailure);
-        }
-
-        public MessageGenerator.Builder dumpOnFailure() {
-            this.globalDumpOnFailure = true;
-            return this;
-        }
-
-        public MessageGenerator.Builder withMaxCollectionItems(int max) {
-            this.maxCollectionItems = max;
-            return this;
-        }
-
-        public MessageGenerator.Builder withFactory(ValueSupplierFactory factory) {
-            this.factories.add(factory);
-            return this;
-        }
-
-        public MessageGenerator.Builder withFactories(ValueSupplierFactory... factories) {
-            Collections.addAll(this.factories, factories);
-            return this;
-        }
-
-        public MessageGenerator.Builder withFactories(Collection<ValueSupplierFactory> factories) {
-            this.factories.addAll(factories);
-            return this;
-        }
-
-        public MessageGenerator.Builder withRandom(Random random) {
-            this.random = random;
-            return this;
-        }
-
-        public MessageGenerator.Builder withFairy(Fairy fairy) {
-            this.fairy = fairy;
-            return this;
-        }
-
-        public MessageGenerator.Builder withSerializer(Serializer serializer) {
-            assert writer == null : "Generator already has a writer.";
-            this.serializer = serializer;
-            return this;
-        }
-
-        public MessageGenerator.Builder withMessageWriter(MessageWriter writer) {
-            assert serializer == null : "Generator already has a serializer.";
-            this.writer = writer;
-            return this;
-        }
-
-        public MessageGenerator.Builder withMessageReader(MessageReader messageReader) {
-            assert preGenerated.isEmpty() : "Generator already contains pre-generated messages.";
-            this.reader = messageReader;
-            return this;
-        }
-
-        public <M extends PMessage<M, F>, F extends PField> MessageGenerator.Builder withPregenMessage(M message) {
-            assert reader == null : "Generator already contains reader for messages.";
-            preGenerated.add(message);
-            return this;
-        }
-
-        public <M extends PMessage<M, F>, F extends PField> MessageGenerator.Builder withPregenResource(String resource, PMessageDescriptor<M,F> descriptor) {
-            assert reader == null : "Generator already contains reader for messages.";
-            PrettySerializer serializer = new PrettySerializer(true, false);
-
-            try {
-                MessageStreams.resource(resource, serializer, descriptor)
-                              .forEach(m -> preGenerated.add(m));
-                return this;
-            } catch (IOException e) {
-                throw new AssertionError(e.getMessage(), e);
-            }
-        }
-    }
-
-    private MessageGenerator(Serializer serializer,
-                             Random random,
-                             Fairy fairy,
-                             List<PMessage> preGenerated,
-                             List<ValueSupplierFactory> factories,
-                             MessageWriter writer,
-                             MessageReader messageReader,
-                             int maxCollectionItems,
-                             boolean globalDumpOnFailure) {
-        this.serializer = serializer;
-        this.factories = ImmutableList.copyOf(factories);
-        this.preGenerated = new LinkedList<>(preGenerated);
-        this.fairy = fairy;
-        this.random = random;
-        this.writer = writer;
-        this.globalDumpOnFailure = globalDumpOnFailure;
-        this.maxCollectionItems = maxCollectionItems;
-        this.reader = messageReader;
-
-        this.generated = null;
-        this.dumpOnFailure = globalDumpOnFailure;
-    }
-
-    /**
-     * Dump all generated messages on failure for this test only.
-     */
-    public void dumpOnFailure() {
-        this.dumpOnFailure = true;
-    }
-
-    /**
      * Get all generated messages. It will return the messages that was *requested*
      * to be generated with all contained messages, not all messages generated all
      * over the place.
@@ -247,55 +122,335 @@ public class MessageGenerator extends TestWatcher {
         return ImmutableList.copyOf(generated);
     }
 
+    /**
+     * Dump all generated messages.
+     *
+     * @throws IOException If writing the messages failed.
+     */
+    @SuppressWarnings("unchecked")
+    public void dumpGeneratedMessages() throws IOException {
+        MessageWriter writer = this.writer;
+        if (writer == null) {
+            writer = new IOMessageWriter(System.err, defaultSerializer);
+        }
+
+        for (PMessage message : generated) {
+            writer.write(message);
+            writer.separator();
+        }
+    }
+
+    // --- generator setup ---:
+
+    /**
+     * Set the random generator being used.
+     *
+     * @param random The random generator.
+     * @return The message generator.
+     */
+    public MessageGenerator setRandom(Random random) {
+        if (started) {
+            this.random = random;
+        } else {
+            this.globalRandom = random;
+            this.random = random;
+        }
+        return this;
+    }
+
+    /**
+     * Set the feiry data generator being used.
+     *
+     * @param fairy The fairy data generator.
+     * @return The message generator.
+     */
+    public MessageGenerator setFairy(Fairy fairy) {
+        if (started) {
+            this.fairy = fairy;
+        } else {
+            this.globalFairy = fairy;
+            this.fairy = fairy;
+        }
+        return this;
+    }
+
+
+    /**
+     * Add a value supplier factory to the generator.
+     *
+     * @param factory The factory.
+     * @return The message generator.
+     */
+    public MessageGenerator addFactory(ValueSupplierFactory factory) {
+        if (started) {
+            this.factories.add(factory);
+        } else {
+            this.globalFactories.add(factory);
+        }
+        return this;
+    }
+
+    /**
+     * Add value supplier factories to the generator.
+     *
+     * @param factories The factories.
+     * @return The message generator.
+     */
+    public MessageGenerator addFactories(ValueSupplierFactory... factories) {
+        if (started) {
+            Collections.addAll(this.factories, factories);
+        } else {
+            Collections.addAll(this.globalFactories, factories);
+        }
+        return this;
+    }
+
+    /**
+     * Add a collection of value supplier factories to the generator.
+     *
+     * @param factories The factory.
+     * @return The message generator.
+     */
+    public MessageGenerator addFactories(Collection<ValueSupplierFactory> factories) {
+        if (started) {
+            this.factories.addAll(factories);
+        } else {
+            this.globalFactories.addAll(factories);
+        }
+        return this;
+    }
+
+    /**
+     * Set the message writer in case of failure.
+     *
+     * @param writer The message writer.
+     * @return The message generator.
+     */
+    public MessageGenerator setMessageWriter(MessageWriter writer) {
+        if (started) {
+            this.writer = writer;
+        } else {
+            this.globalWriter = writer;
+            this.writer = writer;
+        }
+        return this;
+    }
+
+    /**
+     * Set the message reader for the generator.
+     *
+     * @param reader The message reader. All messages will be read from this
+     * @return The message generator.
+     */
+    public MessageGenerator setMessageReader(MessageReader reader) {
+        if (started) {
+            preGenerated.clear();
+            this.reader = reader;
+        } else {
+            assert preGenerated.isEmpty() : "Generator already contains pre-generated messages.";
+            assert globalReader == null : "Generator already contains reader for messages.";
+            this.globalReader = reader;
+            this.reader = reader;
+        }
+        return this;
+    }
+
+    /**
+     * Add a pre generated message to the returned messages.
+     *
+     * @param message The message to add.
+     * @param <M> The message type.
+     * @param <F> The field type.
+     * @return The message generator.
+     */
+    public <M extends PMessage<M, F>, F extends PField>
+    MessageGenerator addPregenMessage(M message) {
+        if (started) {
+            reader = null;
+            preGenerated.add(message);
+        } else {
+            assert globalReader == null : "Generator already contains reader for messages.";
+            globalPreGenerated.add(message);
+        }
+        return this;
+    }
+
+    /**
+     * Read messages from the given resource and add to pre generated messages.
+     *
+     * @param resource The resource path.
+     * @param descriptor The message descriptor.
+     * @param <M> The message type.
+     * @param <F> The field type.
+     * @return The message generator.
+     */
+    public <M extends PMessage<M, F>, F extends PField>
+    MessageGenerator addPregenResource(String resource,
+                                       PMessageDescriptor<M, F> descriptor) {
+        return addPregenResource(resource,
+                                 new PrettySerializer(true, false),
+                                 descriptor);
+    }
+
+    /**
+     * Read messages from the given resource and add to the pre generated
+     * messages.
+     *
+     * @param resource The resource path.
+     * @param serializer Serializer to use for reading reaource.
+     * @param descriptor The message descriptor.
+     * @param <M> The message type.
+     * @param <F> The field type.
+     * @return The message generator.
+     */
+    public <M extends PMessage<M, F>, F extends PField>
+    MessageGenerator addPregenResource(String resource,
+                                       Serializer serializer,
+                                       PMessageDescriptor<M, F> descriptor) {
+        List<PMessage> into = started ? preGenerated : globalPreGenerated;
+        if (started) {
+            reader = null;
+        } else {
+            assert globalReader == null : "Generator already contains reader for messages.";
+        }
+
+        try {
+            MessageStreams.resource(resource, serializer, descriptor)
+                          .forEach(into::add);
+            return this;
+        } catch (IOException e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Set default serializer to standard output. If test case not started and a
+     * writer is already set, this method fails.
+     *
+     * @param defaultSerializer The new default serializer.
+     * @return The message generator.
+     */
+    public MessageGenerator setDefaultSerializer(Serializer defaultSerializer) {
+        if (started) {
+            this.writer = null;
+            this.defaultSerializer = defaultSerializer;
+        } else {
+            assert globalWriter == null : "Generator already has a writer.";
+            this.defaultSerializer = defaultSerializer;
+            this.globalDefaultSerializer = defaultSerializer;
+        }
+        return this;
+    }
+
+    /**
+     * Set the max collection items for default generated collections.
+     *
+     * @param max The max number of items.
+     * @return The message generator.
+     */
+    public MessageGenerator setMaxCollectionItems(int max) {
+        if (!started) {
+            this.maxCollectionItems = max;
+        } else {
+            this.globalMaxCollectionItems = max;
+            this.maxCollectionItems = max;
+        }
+        return this;
+    }
+
+    /**
+     * Dump all generated messages on failure for this test only.
+     */
+    public MessageGenerator dumpOnFailure() {
+        if (started) {
+            this.dumpOnFailure = true;
+        } else {
+            this.globalDumpOnFailure = true;
+            this.dumpOnFailure = true;
+        }
+        return this;
+    }
+
+    // -------------- INHERITED --------------
+
     @Override
     protected void starting(Description description) {
         super.starting(description);
+        if (!description.isEmpty() && description.getMethodName() == null) {
+            throw new AssertionError("MessageGenerator instantiated as class rule: forbidden");
+        }
+
+        this.random = globalRandom;
+        this.fairy = globalFairy;
+        this.writer = globalWriter;
+        this.reader = globalReader;
+        this.factories = new LinkedList<>(globalFactories);
+        this.preGenerated = new LinkedList<>(globalPreGenerated);
+        this.dumpOnFailure = globalDumpOnFailure;
+        this.defaultSerializer = globalDefaultSerializer;
+        this.maxCollectionItems = globalMaxCollectionItems;
+
+        // Reset content.
         this.generated = new LinkedList<>();
+        this.started = true;
     }
 
     @Override
-    protected void succeeded(Description description) {
-        this.generated = null;
-        this.dumpOnFailure = this.globalDumpOnFailure;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     protected void failed(Throwable e, Description description) {
-        super.failed(e, description);
         if (dumpOnFailure) {
-            MessageWriter writer = this.writer;
-            if (writer == null) {
-                writer = new IOMessageWriter(System.err, serializer);
-            }
-
             try {
-                for (PMessage message : generated) {
-                    writer.write(message);
-                    writer.separator();
-                }
+                dumpGeneratedMessages();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 e.addSuppressed(e1);
             }
         }
-        this.generated = null;
-        this.dumpOnFailure = this.globalDumpOnFailure;
+    }
+
+    @Override
+    protected void finished(Description description) {
+        // generated kept in case of secondary watchers.
+        started = false;
+
+        // Set some interesting stated back to be the global.
+        dumpOnFailure = globalDumpOnFailure;
+        maxCollectionItems = globalMaxCollectionItems;
+        defaultSerializer = globalDefaultSerializer;
+        preGenerated = globalPreGenerated;
+        factories = globalFactories;
+        fairy = globalFairy;
+        random = globalRandom;
+        writer = globalWriter;
+        reader = globalReader;
     }
 
     // --- PRIVATE ---
-    private final List<ValueSupplierFactory> factories;
-    private final Random                     random;
-    private final Fairy                      fairy;
-    private final boolean                    globalDumpOnFailure;
-    private final LinkedList<PMessage>       preGenerated;
-    private final int                        maxCollectionItems;
-    private final MessageWriter              writer;
-    private final MessageReader              reader;
-    private final Serializer                 serializer;
+    // --- Global: set before starting(),
+    //             and copied below in starting().
+    private Random                     globalRandom;
+    private Fairy                      globalFairy;
+    private Serializer                 globalDefaultSerializer;
+    private int                        globalMaxCollectionItems;
+    private boolean                    globalDumpOnFailure;
+    private MessageWriter              globalWriter;
+    private MessageReader              globalReader;
+    private List<ValueSupplierFactory> globalFactories;
+    private LinkedList<PMessage>       globalPreGenerated;
 
-    private List<PMessage>                   generated;
-    private boolean                          dumpOnFailure;
+    // --- Per test: set after starting()
+    private Random                     random;
+    private Fairy                      fairy;
+    private Serializer                 defaultSerializer;
+    private int                        maxCollectionItems;
+    private boolean                    dumpOnFailure;
+    private MessageWriter              writer;
+    private MessageReader              reader;
+    private List<ValueSupplierFactory> factories;
+    private LinkedList<PMessage>       preGenerated;
+
+    // generated during test.
+    private List<PMessage>             generated;
+    private boolean                    started;
 
     private Supplier<Object> getValueSupplier(PField field) {
         for (ValueSupplierFactory factory : factories) {
@@ -335,7 +490,8 @@ public class MessageGenerator extends TestWatcher {
                 };
             }
             case STRING:
-                return () -> fairy.textProducer().sentence();
+                return () -> fairy.textProducer()
+                                  .sentence();
             case SET: {
                 PSet<Object> set = (PSet<Object>) descriptor;
                 Supplier<Object> itemSupplier = getValueSupplier(set.itemDescriptor());
@@ -396,8 +552,7 @@ public class MessageGenerator extends TestWatcher {
         if (descriptor.getVariant() == PMessageVariant.UNION) {
             F field = descriptor.getFields()[random.nextInt() % descriptor.getFields().length];
             Supplier<Object> supplier = getValueSupplier(field);
-            assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(),
-                          supplier);
+            assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(), supplier);
 
             // Only non-null values are set.
             Object value = supplier.get();

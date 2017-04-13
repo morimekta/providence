@@ -39,9 +39,8 @@ public class MessageGeneratorTest {
 
     @Test
     public void testRandom_defaultDump() {
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .dumpOnFailure()
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .dumpOnFailure();
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -62,19 +61,20 @@ public class MessageGeneratorTest {
     public void testRandom_customSerializer() throws SerializerException {
         Random random = new Random();
         Fairy fairy = Fairy.create(Locale.ENGLISH);
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .withSerializer(new JsonSerializer())
-                                                     .withMaxCollectionItems(2)
-                                                     .withRandom(random)
-                                                     .withFactory(f -> {
-                                                         if (f.equals(CompactFields._Field.NAME)) {
-                                                             return () -> fairy.textProducer().word(1);
-                                                         }
-                                                         return null;
-                                                     })
-                                                     .withFairy(fairy)
-                                                     .dumpOnFailure()
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .setDefaultSerializer(new JsonSerializer())
+                .setMaxCollectionItems(2)
+                .setRandom(random)
+                .addFactory(f -> {
+                    if (f.equals(CompactFields._Field.NAME)) {
+                        return () -> fairy.textProducer()
+                                          .word(1);
+                    }
+                    return null;
+                })
+                .setFairy(fairy)
+                .dumpOnFailure();
+
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -96,17 +96,16 @@ public class MessageGeneratorTest {
     public void testRandom_customWriter() throws IOException {
         Fairy fairy = Fairy.create(Locale.ENGLISH);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .withMessageWriter(new IOMessageWriter(baos, new FastBinarySerializer()))
-                                                     .withMaxCollectionItems(2)
-                                                     .withFactory(f -> {
-                                                         if (f.equals(CompactFields._Field.NAME)) {
-                                                             return () -> fairy.textProducer().word(1);
-                                                         }
-                                                         return null;
-                                                     })
-                                                     .dumpOnFailure()
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .setMessageWriter(new IOMessageWriter(baos, new FastBinarySerializer()))
+                .setMaxCollectionItems(2)
+                .addFactory(f -> {
+                    if (f.equals(CompactFields._Field.NAME)) {
+                        return () -> fairy.textProducer().word(1);
+                    }
+                    return null;
+                })
+                .dumpOnFailure();
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -130,8 +129,7 @@ public class MessageGeneratorTest {
 
     @Test
     public void testRandom_noDump() {
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator();
         generator.starting(Description.EMPTY);
 
         CompactFields compact = generator.generate(CompactFields.kDescriptor);
@@ -163,10 +161,9 @@ public class MessageGeneratorTest {
                                              .setLabel("Sjampanjebrus")
                                              .build();
 
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .dumpOnFailure()
-                                                     .withMessageReader(reader)
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .dumpOnFailure()
+                .setMessageReader(reader);
         generator.starting(Description.EMPTY);
 
         CompactFields gen = generator.generate(CompactFields.kDescriptor);
@@ -193,10 +190,9 @@ public class MessageGeneratorTest {
                                              .setLabel("Sjampanjebrus")
                                              .build();
 
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .dumpOnFailure()
-                                                     .withPregenMessage(compact)
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .dumpOnFailure()
+                .addPregenMessage(compact);
         generator.starting(Description.EMPTY);
 
         CompactFields gen = generator.generate(CompactFields.kDescriptor);
@@ -228,10 +224,9 @@ public class MessageGeneratorTest {
                                              .setLabel("Brus med smak")
                                              .build();
 
-        MessageGenerator generator = MessageGenerator.builder()
-                                                     .dumpOnFailure()
-                                                     .withPregenResource("/pregen.cfg", CompactFields.kDescriptor)
-                                                     .build();
+        MessageGenerator generator = new MessageGenerator()
+                .dumpOnFailure()
+                .addPregenResource("/pregen.cfg", CompactFields.kDescriptor);
         generator.starting(Description.EMPTY);
 
         CompactFields gen = generator.generate(CompactFields.kDescriptor);
