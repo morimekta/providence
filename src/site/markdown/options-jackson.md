@@ -9,11 +9,21 @@ protocol, and it can parse anything the providence `JsonSerializer` (and also th
 
 It is triggered with the `jackson` generator option.
 
-The generated code will now also require:
+The generated code will now also require maven dependencies to jackson `2.8.+`:
+
 ```xml
 <dependencies>
     <dependency>
-        <groupId></groupId>    
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
     </dependency>
 </dependencies>
 ```
