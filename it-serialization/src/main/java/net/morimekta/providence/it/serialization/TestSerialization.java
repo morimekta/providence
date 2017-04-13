@@ -1,7 +1,6 @@
 package net.morimekta.providence.it.serialization;
 
 import net.morimekta.console.chr.Char;
-import net.morimekta.providence.it.Format;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;

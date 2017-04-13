@@ -33,6 +33,15 @@
             <artifactId>providence-thrift</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>console-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
@@ -45,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>it-common</artifactId>
+            <artifactId>providence-reflect</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -73,6 +82,30 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/main/java-gen</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>net.morimekta.test</excludePackageNames>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <configuration>
@@ -99,20 +132,11 @@
                 -->
                 <executions>
                     <execution>
-                        <id>generate-test-providence</id>
-                        <phase>generate-test-sources</phase>
+                        <id>generate-providence</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>testCompile</goal>
+                            <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>net.morimekta.providence</groupId>
-                                    <artifactId>it-common</artifactId>
-                                    <version>${project.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

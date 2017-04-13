@@ -1,4 +1,4 @@
-package net.morimekta.providence.it;
+package net.morimekta.providence.it.serialization;
 
 import net.morimekta.util.Stringable;
 

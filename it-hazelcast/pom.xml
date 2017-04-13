@@ -25,12 +25,6 @@
     <dependencies>
         <dependency>
             <groupId>net.morimekta.providence</groupId>
-            <artifactId>it-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.morimekta.providence</groupId>
             <artifactId>providence-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -113,19 +107,13 @@
                 -->
                 <executions>
                     <execution>
-                        <id>generate-test-providence</id>
-                        <phase>generate-test-sources</phase>
+                        <id>generate-providence</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>testCompile</goal>
+                            <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>net.morimekta.providence</groupId>
-                                    <artifactId>it-common</artifactId>
-                                    <version>${project.version}</version>
-                                </dependency>
-                            </dependencies>
+                            <hazelcast_portable>true</hazelcast_portable>
                         </configuration>
                     </execution>
                 </executions>
