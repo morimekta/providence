@@ -108,7 +108,6 @@
         <!-- compile dependencies -->
         <jackson.version>2.8.8</jackson.version>
         <guava.version>21.0</guava.version>
-        <findbugs.version>3.0.1</findbugs.version>
         <slf4j.version>1.7.25</slf4j.version>
         <jfairy.version>0.3.0</jfairy.version>
 
@@ -210,12 +209,12 @@
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>${findbugs.version}</version>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>findbugs-annotations</artifactId>
-                <version>${findbugs.version}</version>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
