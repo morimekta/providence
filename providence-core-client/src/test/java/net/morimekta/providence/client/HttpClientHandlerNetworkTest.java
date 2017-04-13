@@ -2,9 +2,9 @@ package net.morimekta.providence.client;
 
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.serializer.SerializerProvider;
-import net.morimekta.test.providence.service.Failure;
-import net.morimekta.test.providence.service.Request;
-import net.morimekta.test.providence.service.TestService;
+import net.morimekta.test.providence.client.Failure;
+import net.morimekta.test.providence.client.Request;
+import net.morimekta.test.providence.client.TestService;
 import net.morimekta.util.Strings;
 
 import com.google.api.client.http.GenericUrl;

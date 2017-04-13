@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.service
+namespace java net.morimekta.test.providence.testing.service
 
 struct Request {
     1: string text;

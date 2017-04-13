@@ -3,13 +3,13 @@ package net.morimekta.providence.thrift.client;
 import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.test.providence.srv.Failure;
-import net.morimekta.test.providence.srv.MyService;
-import net.morimekta.test.providence.srv.MyService2;
-import net.morimekta.test.providence.srv.Request;
-import net.morimekta.test.providence.srv.Response;
-import net.morimekta.test.thrift.srv.MyService.Iface;
-import net.morimekta.test.thrift.srv.MyService.Processor;
+import net.morimekta.test.providence.thrift.service.Failure;
+import net.morimekta.test.providence.thrift.service.MyService;
+import net.morimekta.test.providence.thrift.service.MyService2;
+import net.morimekta.test.providence.thrift.service.Request;
+import net.morimekta.test.providence.thrift.service.Response;
+import net.morimekta.test.thrift.thrift.service.MyService.Iface;
+import net.morimekta.test.thrift.thrift.service.MyService.Processor;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.thrift.TException;
@@ -89,23 +89,23 @@ public class NonblockingSocketClientHandlerTest {
 
     @Test
     public void testSimpleRequest()
-            throws IOException, TException, net.morimekta.test.providence.srv.Failure {
-        when(impl.test(new net.morimekta.test.thrift.srv.Request("test")))
-                .thenReturn(new net.morimekta.test.thrift.srv.Response("response"));
+            throws IOException, TException, net.morimekta.test.providence.thrift.service.Failure {
+        when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test")))
+                .thenReturn(new net.morimekta.test.thrift.thrift.service.Response("response"));
 
         MyService.Iface client = new MyService.Client(new NonblockingSocketClientHandler(serializer, address));
 
         Response response = client.test(Request.builder().setText("test").build());
 
-        verify(impl).test(any(net.morimekta.test.thrift.srv.Request.class));
+        verify(impl).test(any(net.morimekta.test.thrift.thrift.service.Request.class));
 
         assertThat(response, is(equalToMessage(new Response("response"))));
     }
 
     @Test
     public void testSimpleRequest_exception() throws IOException, TException, Failure {
-        when(impl.test(new net.morimekta.test.thrift.srv.Request("test")))
-                .thenThrow(new net.morimekta.test.thrift.srv.Failure("failure"));
+        when(impl.test(new net.morimekta.test.thrift.thrift.service.Request("test")))
+                .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
         MyService.Iface client = new MyService.Client(new NonblockingSocketClientHandler(serializer, address));
         try {
@@ -115,14 +115,14 @@ public class NonblockingSocketClientHandlerTest {
             assertThat(f, is(equalToMessage(new Failure("failure"))));
         }
 
-        verify(impl).test(any(net.morimekta.test.thrift.srv.Request.class));
+        verify(impl).test(any(net.morimekta.test.thrift.thrift.service.Request.class));
     }
 
     @Test
     public void testSimpleRequest_wrongMethod()
             throws IOException, TException, DecoderException, Failure {
-        when(impl.test(any(net.morimekta.test.thrift.srv.Request.class)))
-                .thenThrow(new net.morimekta.test.thrift.srv.Failure("failure"));
+        when(impl.test(any(net.morimekta.test.thrift.thrift.service.Request.class)))
+                .thenThrow(new net.morimekta.test.thrift.thrift.service.Failure("failure"));
 
         MyService2.Iface client = new MyService2.Client(new NonblockingSocketClientHandler(serializer, address));
 

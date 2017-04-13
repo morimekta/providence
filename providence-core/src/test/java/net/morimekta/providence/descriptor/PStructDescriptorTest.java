@@ -19,9 +19,9 @@
 
 package net.morimekta.providence.descriptor;
 
-import net.morimekta.test.calculator.Operand;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.core.calculator.Operand;
+import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.number.Imaginary;
 
 import org.junit.Before;
 import org.junit.Test;

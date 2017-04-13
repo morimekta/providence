@@ -1,7 +1,7 @@
 package net.morimekta.providence.testing;
 
-import net.morimekta.test.providence.calculator.Operation;
-import net.morimekta.test.providence.calculator.Operator;
+import net.morimekta.test.providence.testing.calculator.Operation;
+import net.morimekta.test.providence.testing.calculator.Operator;
 
 import org.hamcrest.Description;
 import org.hamcrest.StringDescription;
@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.hasFieldValue;
-import static net.morimekta.test.providence.calculator.Operation._Field.OPERATOR;
+import static net.morimekta.test.providence.testing.calculator.Operation._Field.OPERATOR;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

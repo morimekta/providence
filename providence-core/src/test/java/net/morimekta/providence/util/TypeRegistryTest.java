@@ -1,8 +1,8 @@
 package net.morimekta.providence.util;
 
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.number.Imaginary;
 
 import org.junit.Test;
 

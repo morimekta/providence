@@ -21,9 +21,9 @@ package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PMessageVariant;
-import net.morimekta.test.calculator.CalculateException;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.core.calculator.CalculateException;
+import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.number.Imaginary;
 
 import org.junit.Before;
 import org.junit.Test;

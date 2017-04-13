@@ -1,6 +1,6 @@
 package net.morimekta.providence;
 
-import net.morimekta.test.providence.UnionFields;
+import net.morimekta.test.providence.core.UnionFields;
 
 import org.junit.Test;
 

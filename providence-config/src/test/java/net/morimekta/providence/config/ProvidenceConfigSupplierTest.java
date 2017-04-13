@@ -20,7 +20,7 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.test.config.Database;
+import net.morimekta.test.providence.config.Database;
 
 import org.junit.Before;
 import org.junit.Rule;

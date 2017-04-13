@@ -24,9 +24,9 @@ import net.morimekta.config.ConfigException;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.util.pretty.TokenizerException;
-import net.morimekta.test.config.Database;
-import net.morimekta.test.config.Service;
-import net.morimekta.test.config.Value;
+import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.Service;
+import net.morimekta.test.providence.config.Value;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.After;

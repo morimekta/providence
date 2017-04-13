@@ -4,9 +4,9 @@ import net.morimekta.providence.PApplicationException;
 import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.test.calculator.CalculateException;
-import net.morimekta.test.calculator.Calculator;
-import net.morimekta.test.calculator.Operation;
+import net.morimekta.test.providence.jax.rs.calculator.CalculateException;
+import net.morimekta.test.providence.jax.rs.calculator.Calculator;
+import net.morimekta.test.providence.jax.rs.calculator.Operation;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

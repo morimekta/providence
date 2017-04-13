@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.thrift.num
+namespace java net.morimekta.test.thrift.thrift.number
 
 
 typedef double real

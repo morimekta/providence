@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.config
+namespace java net.morimekta.test.providence.config
 
 enum Value {
     FIRST = 1,

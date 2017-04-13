@@ -1,9 +1,9 @@
 package net.morimekta.providence.testing;
 
-import net.morimekta.test.providence.calculator.Operand;
-import net.morimekta.test.providence.calculator.Operation;
-import net.morimekta.test.providence.calculator.Operator;
-import net.morimekta.test.providence.number.Imaginary;
+import net.morimekta.test.providence.testing.calculator.Operand;
+import net.morimekta.test.providence.testing.calculator.Operation;
+import net.morimekta.test.providence.testing.calculator.Operator;
+import net.morimekta.test.providence.testing.number.Imaginary;
 
 import org.hamcrest.Description;
 import org.hamcrest.StringDescription;

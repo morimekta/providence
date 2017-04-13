@@ -21,15 +21,15 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.test.providence.AutoIdFields;
-import net.morimekta.test.providence.CompactFields;
-import net.morimekta.test.providence.Containers;
-import net.morimekta.test.providence.DefaultValues;
-import net.morimekta.test.providence.EnumNames;
-import net.morimekta.test.providence.OptionalFields;
-import net.morimekta.test.providence.RequiredFields;
-import net.morimekta.test.providence.UnionFields;
-import net.morimekta.test.providence.Value;
+import net.morimekta.test.providence.testing.AutoIdFields;
+import net.morimekta.test.providence.testing.CompactFields;
+import net.morimekta.test.providence.testing.Containers;
+import net.morimekta.test.providence.testing.DefaultValues;
+import net.morimekta.test.providence.testing.EnumNames;
+import net.morimekta.test.providence.testing.OptionalFields;
+import net.morimekta.test.providence.testing.RequiredFields;
+import net.morimekta.test.providence.testing.UnionFields;
+import net.morimekta.test.providence.testing.Value;
 import net.morimekta.util.Binary;
 
 import org.junit.Test;

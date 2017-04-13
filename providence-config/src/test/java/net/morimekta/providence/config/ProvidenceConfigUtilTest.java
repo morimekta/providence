@@ -5,8 +5,8 @@ import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.providence.model.ConstType;
 import net.morimekta.providence.model.Declaration;
 import net.morimekta.providence.util.TypeRegistry;
-import net.morimekta.test.config.Service;
-import net.morimekta.test.config.ServicePort;
+import net.morimekta.test.providence.config.Service;
+import net.morimekta.test.providence.config.ServicePort;
 
 import org.junit.Before;
 import org.junit.Rule;

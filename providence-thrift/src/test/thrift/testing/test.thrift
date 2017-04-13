@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.thrift
+namespace java net.morimekta.test.thrift.thrift
 
 enum Value {
    FIRST = 1,

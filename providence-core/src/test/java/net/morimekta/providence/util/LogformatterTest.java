@@ -1,6 +1,6 @@
 package net.morimekta.providence.util;
 
-import net.morimekta.test.providence.OptionalFields;
+import net.morimekta.test.providence.core.OptionalFields;
 import net.morimekta.util.Binary;
 
 import org.junit.Test;

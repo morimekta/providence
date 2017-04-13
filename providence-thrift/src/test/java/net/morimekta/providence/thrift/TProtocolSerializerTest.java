@@ -7,7 +7,7 @@ import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.test.providence.Containers;
+import net.morimekta.test.providence.thrift.Containers;
 import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -195,7 +195,7 @@ public class TProtocolSerializerTest {
         TProtocol outProt = factory.getProtocol(outTrans);
 
         for (int i = 0; i < containers.size(); ++i) {
-            net.morimekta.test.thrift.Containers tc = new net.morimekta.test.thrift.Containers();
+            net.morimekta.test.thrift.thrift.Containers tc = new net.morimekta.test.thrift.thrift.Containers();
             tc.read(inProt);
 
             Containers expected = containers.get(i);

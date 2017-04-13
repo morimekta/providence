@@ -19,7 +19,7 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.test.providence.CompactFields;
+import net.morimekta.test.providence.core.CompactFields;
 
 import org.junit.Test;
 

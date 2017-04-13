@@ -4,7 +4,7 @@ import net.morimekta.providence.jax.rs.DefaultProvidenceMessageBodyReader;
 import net.morimekta.providence.jax.rs.DefaultProvidenceMessageBodyWriter;
 import net.morimekta.providence.serializer.DefaultSerializerProvider;
 import net.morimekta.providence.server.ProvidenceServlet;
-import net.morimekta.test.calculator.Calculator;
+import net.morimekta.test.providence.jax.rs.calculator.Calculator;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;

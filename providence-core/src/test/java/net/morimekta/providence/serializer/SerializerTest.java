@@ -22,8 +22,8 @@ package net.morimekta.providence.serializer;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.providence.util.pretty.TokenizerException;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.providence.Containers;
+import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.util.Binary;
 
 import org.junit.Before;

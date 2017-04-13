@@ -1,11 +1,11 @@
 package net.morimekta.providence.util;
 
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.test.calculator.Operand;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.calculator.Operator;
-import net.morimekta.test.number.Imaginary;
-import net.morimekta.test.providence.Containers;
+import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.calculator.Operand;
+import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.calculator.Operator;
+import net.morimekta.test.providence.core.number.Imaginary;
 
 import org.junit.Test;
 

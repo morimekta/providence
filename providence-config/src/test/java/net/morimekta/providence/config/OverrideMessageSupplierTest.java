@@ -20,8 +20,8 @@
  */
 package net.morimekta.providence.config;
 
-import net.morimekta.test.config.Credentials;
-import net.morimekta.test.config.Database;
+import net.morimekta.test.providence.config.Credentials;
+import net.morimekta.test.providence.config.Database;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;

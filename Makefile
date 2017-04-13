@@ -1,14 +1,5 @@
 VERSION := $(shell cat pom.xml | grep "^    <version>" | sed -e 's:.*<version>::' -e 's:</version>.*::')
 
-clean:
-	mvn clean
-
-resources:
-	cp providence-testing/src/test/providence/service.thrift providence-core-client/src/test/providence/
-	cp providence-testing/src/test/providence/service.thrift providence-core-server/src/test/providence/
-	cp providence-testing/src/test/thrift/service.thrift providence-core-client/src/test/thrift/
-	cp providence-testing/src/test/thrift/service.thrift providence-core-server/src/test/thrift/
-
 compile:
 	mvn net.morimekta.providence:providence-maven-plugin:$(VERSION):compile
 
@@ -23,11 +14,11 @@ models: compile
 	   providence-core/src/main/java/net/morimekta/providence
 
 test-models: test-compile
-	cp -R providence-core/target/generated-test-sources/providence/* \
-	      providence-core/src/test/java/
-	rm -rf providence-core/target/generated-test-sources/providence/*
+	rm -rf providence-core/src/test/java-gen/*
+	mv providence-core/target/generated-test-sources/providence/* \
+	   providence-core/src/test/java-gen/
 
 thrift:
 	gradle -b thrift.gradle generateStaticThrift
 
-.PHONY: clean compile test-compile models test-models
+.PHONY: compile test-compile models test-models

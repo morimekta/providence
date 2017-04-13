@@ -2,7 +2,7 @@ package net.morimekta.providence.streams;
 
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.test.providence.CompactFields;
+import net.morimekta.test.providence.core.CompactFields;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;

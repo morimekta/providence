@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.includes
+namespace java net.morimekta.test.providence.testing.includes
 
 include "model.thrift"
 

@@ -20,11 +20,11 @@
  */
 package net.morimekta.providence.gentests;
 
-import net.morimekta.test.providence.CompactFields;
-import net.morimekta.test.providence.Containers;
-import net.morimekta.test.providence.OptionalFields;
-import net.morimekta.test.providence.calculator.Operand;
-import net.morimekta.test.providence.number.Imaginary;
+import net.morimekta.test.providence.testing.CompactFields;
+import net.morimekta.test.providence.testing.Containers;
+import net.morimekta.test.providence.testing.OptionalFields;
+import net.morimekta.test.providence.testing.calculator.Operand;
+import net.morimekta.test.providence.testing.number.Imaginary;
 
 import org.junit.Test;
 

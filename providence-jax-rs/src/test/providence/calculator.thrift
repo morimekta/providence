@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.calculator
+namespace java net.morimekta.test.providence.jax.rs.calculator
 
 include "number.thrift"
 

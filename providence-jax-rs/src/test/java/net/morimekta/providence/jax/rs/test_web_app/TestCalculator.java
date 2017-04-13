@@ -1,10 +1,10 @@
 package net.morimekta.providence.jax.rs.test_web_app;
 
-import net.morimekta.test.calculator.CalculateException;
-import net.morimekta.test.calculator.Calculator;
-import net.morimekta.test.calculator.Operand;
-import net.morimekta.test.calculator.Operation;
-import net.morimekta.test.number.Imaginary;
+import net.morimekta.test.providence.jax.rs.calculator.CalculateException;
+import net.morimekta.test.providence.jax.rs.calculator.Calculator;
+import net.morimekta.test.providence.jax.rs.calculator.Operand;
+import net.morimekta.test.providence.jax.rs.calculator.Operation;
+import net.morimekta.test.providence.jax.rs.number.Imaginary;
 
 import java.util.List;
 

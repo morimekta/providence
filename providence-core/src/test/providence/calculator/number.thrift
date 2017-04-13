@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.number
+namespace java net.morimekta.test.providence.core.number
 
 
 typedef double real

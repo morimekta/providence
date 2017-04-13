@@ -3,8 +3,8 @@ package net.morimekta.providence.thrift;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.test.providence.Containers;
-import net.morimekta.test.providence.srv.Request;
+import net.morimekta.test.providence.thrift.Containers;
+import net.morimekta.test.providence.thrift.service.Request;
 
 import org.junit.Before;
 import org.junit.Test;

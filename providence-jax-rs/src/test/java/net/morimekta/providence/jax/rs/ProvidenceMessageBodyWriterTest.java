@@ -3,7 +3,7 @@ package net.morimekta.providence.jax.rs;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.serializer.BinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.test.calculator.Operand;
+import net.morimekta.test.providence.jax.rs.calculator.Operand;
 
 import org.junit.Test;
 

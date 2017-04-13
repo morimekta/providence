@@ -1,4 +1,4 @@
-namespace java net.morimekta.test.providence.srv
+namespace java net.morimekta.test.providence.thrift.service
 
 
 struct Request {
