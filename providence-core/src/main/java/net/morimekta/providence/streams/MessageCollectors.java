@@ -39,12 +39,30 @@ import java.util.stream.Collector;
  * Collector helpers for writing a number of messages to a output stream, file etc.
  */
 public class MessageCollectors {
+    /**
+     * Write stream of messages to file described by path.
+     *
+     * @param file The file path.
+     * @param serializer The serializer to use.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The collector.
+     */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, OutputStream, Integer> toPath(Path file,
                                                      Serializer serializer) {
         return toFile(file.toFile(), serializer);
     }
 
+    /**
+     * write stream of messages to file.
+     *
+     * @param file The file to write.
+     * @param serializer The serializer to use.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The collector.
+     */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, OutputStream, Integer> toFile(File file,
                                                      Serializer serializer) {
@@ -62,23 +80,29 @@ public class MessageCollectors {
                     result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
                 }
             } catch (SerializerException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Unable to write to " + file.getName(), e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
                 outputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Unable to close " + file.getName(), e);
             }
             return result.get();
         });
     }
 
+    /**
+     * Serialize stream of messages into stream.
+     *
+     * @param out The output stream to write to.
+     * @param serializer The serializer to use.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The collector.
+     */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Collector<Message, OutputStream, Integer> toStream(OutputStream out,
                                                        Serializer serializer) {
@@ -92,17 +116,14 @@ public class MessageCollectors {
                     }
                 }
             } catch (SerializerException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Bad data", new IOException(e));
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Broken pipe", e);
             }
         }, (a, b) -> null, (outputStream) -> {
             try {
                 outputStream.flush();
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException("Broken pipe", e);
             }
             return result.get();
@@ -114,7 +135,6 @@ public class MessageCollectors {
             try {
                 out.write(bytes);
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new UncheckedIOException(e);
             }
         }

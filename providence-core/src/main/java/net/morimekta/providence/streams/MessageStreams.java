@@ -35,10 +35,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -50,6 +50,28 @@ public class MessageStreams {
                                         "java does still not support truly const arrays.",
                         value = "MS_MUTABLE_ARRAY")
     public static final byte[] READABLE_ENTRY_SEP  = new byte[]{'\n'};
+
+    /**
+     * Read a file containing entries of a given type. Tries to detect the
+     * entry format of the file based on file magic. If not detected will try
+     * to use the default binary serializer format.
+     *
+     * @param file       The file to read.
+     * @param serializer The serializer to use.
+     * @param descriptor The descriptor of the entry type of the file.
+     * @param <Message>  The message type.
+     * @param <Field>    The message field type.
+     * @return The stream that reads the file.
+     * @throws IOException when unable to open the stream.
+     */
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Stream<Message> path(Path file,
+                         Serializer serializer,
+                         PMessageDescriptor<Message, Field> descriptor)
+            throws IOException {
+        return file(file.toFile(), serializer, descriptor);
+    }
+
 
     /**
      * Read a file containing entries of a given type. Tries to detect the
@@ -95,17 +117,17 @@ public class MessageStreams {
         if (in == null) {
             throw new IOException("No such resource " + resource);
         }
-        return StreamSupport.stream(new StreamMessageSpliterator<>(new BufferedInputStream(in),
-                                                                   serializer,
-                                                                   descriptor,
-                                                                   is -> {
-                                                                       try {
-                                                                           is.close();
-                                                                           return null;
-                                                                       } catch (IOException e) {
-                                                                           throw new UncheckedIOException(e);
-                                                                       }
-                                                                   }), false);
+        return StreamSupport.stream(new StreamMessageSpliterator<>(
+                new BufferedInputStream(in),
+                serializer,
+                descriptor,
+                is -> {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }), false);
     }
 
     /**
@@ -140,14 +162,6 @@ public class MessageStreams {
                 return true;
             }
             return false;
-        }
-
-        @Override
-        public void forEachRemaining(Consumer<? super Message> action) {
-            Message message;
-            while ((message = read()) != null) {
-                action.accept(message);
-            }
         }
 
         /**
@@ -205,17 +219,17 @@ public class MessageStreams {
 
     private static class StreamMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
             extends BaseMessageSpliterator<Message, Field> {
-        private final InputStream                       in;
+        private final InputStream                        in;
         private final PMessageDescriptor<Message, Field> descriptor;
-        private final Serializer                        serializer;
+        private final Serializer                         serializer;
 
-        private int                         num;
-        private Function<InputStream, Void> closer;
+        private int                   num;
+        private Consumer<InputStream> closer;
 
         private StreamMessageSpliterator(InputStream in,
                                          Serializer serializer,
                                          PMessageDescriptor<Message, Field> descriptor,
-                                         Function<InputStream, Void> closer) throws IOException {
+                                         Consumer<InputStream> closer) throws IOException {
             this.in = in;
             this.closer = closer;
 
@@ -245,8 +259,9 @@ public class MessageStreams {
                 // supported.
                 if (in.markSupported()) {
                     in.mark(2);
-                    if (in.read() < 0)
+                    if (in.read() < 0) {
                         return null;
+                    }
                     in.reset();
                 }
                 return serializer.deserialize(in, descriptor);
@@ -264,7 +279,7 @@ public class MessageStreams {
         void close() {
             if (closer != null) {
                 try {
-                    closer.apply(in);
+                    closer.accept(in);
                 } finally {
                     closer = null;
                 }

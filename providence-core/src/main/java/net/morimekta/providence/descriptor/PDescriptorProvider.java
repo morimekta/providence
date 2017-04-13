@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
  * types initialize itself without requiring descriptor instances for the other
  * type be present yet.
  */
+@FunctionalInterface
 public interface PDescriptorProvider {
     /**
      * @return The descriptor for the given type.
