@@ -32,7 +32,6 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.pretty.Token;
 import net.morimekta.providence.util.pretty.Tokenizer;
 import net.morimekta.providence.util.pretty.TokenizerException;
@@ -40,7 +39,6 @@ import net.morimekta.util.Binary;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
@@ -51,34 +49,31 @@ import java.util.function.Supplier;
 import static net.morimekta.providence.config.ProvidenceConfig.UNDEFINED;
 
 /**
- * A supplier of a providence message config based on a message reader. For reading a simple
- * message from a readable file, use the FileMessageReader with the PrettySerializer:
+ * A supplier of a providence message config based on a parent config
+ * (supplier) and a map of value overrides. Handy for use with
+ * argument parser overrides, system property overrides or similar.
  *
- * NOTE: The message reader will be closed after every read, so only message readers that
- * can be reset that way can be supported, e.g. {@link net.morimekta.providence.mio.FileMessageReader}.
- *
- * <code>
- *     OverrideMessageSupplier supplier = new OverrideMessageSupplier(
- *             baseConfig,
+ * <pre>{@code
+ *     Supplier<Service> supplier = new OverrideMessageSupplier<>(
+ *             baseServiceConfig,
  *             ImmutableMap.of(
  *                 "db.username", "root",
  *                 "jdbc.driver", "com.oracle.jdbc.Driver"
  *             ));
- * </code>
+ * }</pre>
  */
 public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, Field extends PField>
         implements ReloadableSupplier<Message> {
     /**
      * Create a config that wraps a providence message instance. This message
-     * will be exposed without any key prefix.
+     * will be exposed without any key prefix. Note that reading from properties
+     * are <b>never</b> strict.
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
-     * @throws IOException If message read failed.
-     * @throws SerializerException If message deserialization failed.
+     * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent,
-                                   Properties overrides) throws IOException {
+    public OverrideMessageSupplier(Supplier<Message> parent, Properties overrides) {
         this(parent, propertiesMap(overrides), false);
     }
 
@@ -88,11 +83,9 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
-     * @throws IOException If message read failed.
-     * @throws SerializerException If message deserialization failed.
+     * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent,
-                                   Map<String,String> overrides) throws IOException {
+    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides) {
         this(parent, overrides, false);
     }
 
@@ -102,16 +95,13 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      *
      * @param parent The parent message to override values of.
      * @param overrides The message override values.
-     * @throws IOException If message read failed.
-     * @throws SerializerException If message deserialization failed.
+     * @throws ConfigException If message overriding failed
      */
-    public OverrideMessageSupplier(Supplier<Message> parent,
-                                   Map<String,String> overrides,
-                                   boolean strict) throws IOException {
-        this.parent    = parent;
+    public OverrideMessageSupplier(Supplier<Message> parent, Map<String, String> overrides, boolean strict) {
+        this.parent = parent;
         this.overrides = overrides;
-        this.strict    = strict;
-        this.instance  = new AtomicReference<>(loadInternal());
+        this.strict = strict;
+        this.instance = new AtomicReference<>(loadInternal());
     }
 
     /**
@@ -129,14 +119,10 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
      */
     @Override
     public void reload() {
-        try {
-            instance.set(loadInternal());
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        instance.set(loadInternal());
     }
 
-    private Message loadInternal() throws IOException {
+    private Message loadInternal() {
         PMessageBuilder<Message, Field> builder = parent.get()
                                                         .mutate();
         for (Map.Entry<String, String> override : overrides.entrySet()) {
@@ -148,38 +134,50 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
             if (containedBuilder == null) {
                 continue;
             }
-            PField field = containedBuilder.descriptor().getField(fieldName);
+            PField field = containedBuilder.descriptor()
+                                           .getField(fieldName);
             if (field == null) {
                 if (strict) {
                     throw new ConfigException("No such field %s in %s [%s]",
                                               fieldName,
-                                              containedBuilder.descriptor().getQualifiedName(),
+                                              containedBuilder.descriptor()
+                                                              .getQualifiedName(),
                                               String.join(".", path));
                 }
                 continue;
             }
 
-            Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(
-                    override.getValue().getBytes(StandardCharsets.UTF_8)), true);
-            if (UNDEFINED.equals(override.getValue())) {
-                containedBuilder.clear(field.getKey());
-            } else if (field.getType() == PType.STRING) {
-                if (tokenizer.hasNext()) {
-                    Token next = tokenizer.next();
-                    if (next.isStringLiteral()) {
-                        containedBuilder.set(field.getKey(), next.decodeLiteral());
-                        if (tokenizer.hasNext()) {
-                            throw new ConfigException("Garbage after string value [%s]: '%s'", override.getKey(), override.getValue());
+            try {
+                Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(override.getValue()
+                                                                                     .getBytes(StandardCharsets.UTF_8)),
+                                                    true);
+                if (UNDEFINED.equals(override.getValue())) {
+                    containedBuilder.clear(field.getKey());
+                } else if (field.getType() == PType.STRING) {
+                    if (tokenizer.hasNext()) {
+                        Token next = tokenizer.next();
+                        if (next.isStringLiteral()) {
+                            containedBuilder.set(field.getKey(), next.decodeLiteral());
+                            if (tokenizer.hasNext()) {
+                                throw new ConfigException("Garbage after string value [%s]: '%s'",
+                                                          override.getKey(),
+                                                          override.getValue());
+                            }
+                            continue;
                         }
-                        continue;
+                    }
+                    containedBuilder.set(field.getKey(), override.getValue());
+                } else {
+                    containedBuilder.set(field.getKey(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
+                    if (tokenizer.hasNext()) {
+                        throw new ConfigException("Garbage after %s value [%s]: '%s'",
+                                                  field.getType(),
+                                                  override.getKey(),
+                                                  override.getValue());
                     }
                 }
-                containedBuilder.set(field.getKey(), override.getValue());
-            } else {
-                containedBuilder.set(field.getKey(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
-                if (tokenizer.hasNext()) {
-                    throw new ConfigException("Garbage after %s value [%s]: '%s'", field.getType(), override.getKey(), override.getValue());
-                }
+            } catch (IOException e) {
+                throw new ConfigException(e.getMessage() + " [" + override.getKey() + "]", e);
             }
         }
 
@@ -210,7 +208,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 return null;
             }
             if (field.getType() != PType.MESSAGE) {
-                throw new ConfigException("Trying to look up field %s in non-message type %s [%s]",
+                throw new ConfigException("'%s' is not a message field in %s [%s]",
                                           fieldName,
                                           descriptor.getQualifiedName(),
                                           String.join(".", path));
@@ -263,7 +261,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     }
                     return (short) val;
                 } else {
-                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                    throw new TokenizerException(token, "Invalid i16 value: " + token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
@@ -276,7 +274,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     }
                     return (int) val;
                 } else {
-                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                    throw new TokenizerException(token, "Invalid i32 value: " + token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
@@ -284,7 +282,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 if (token.isInteger()) {
                     return token.parseInteger();
                 } else {
-                    throw new TokenizerException(token, "Invalid byte value: " + token.asString())
+                    throw new TokenizerException(token, "Invalid i64 value: " + token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
@@ -292,7 +290,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 try {
                     return token.parseDouble();
                 } catch (NumberFormatException nfe) {
-                    throw new TokenizerException(token, "Number format error: " + nfe.getMessage())
+                    throw new TokenizerException(token, "Invalid double value: " + token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             }
@@ -304,13 +302,25 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 return token.decodeLiteral();
             }
             case BINARY: {
-                tokenizer.expectSymbol("binary content start", Token.kMethodStart);
-                String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
                 switch (token.asString()) {
-                    case "b64":
-                        return Binary.fromBase64(content);
-                    case "hex":
-                        return Binary.fromHexString(content);
+                    case "b64": {
+                        try {
+                            tokenizer.expectSymbol("binary content start", Token.kMethodStart);
+                            String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
+                            return Binary.fromBase64(content);
+                        } catch (IllegalArgumentException e) {
+                            throw new TokenizerException(e, e.getMessage());
+                        }
+                    }
+                    case "hex": {
+                        try {
+                            tokenizer.expectSymbol("binary content start", Token.kMethodStart);
+                            String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
+                            return Binary.fromHexString(content);
+                        } catch (NumberFormatException e) {
+                            throw new TokenizerException(e, "Invalid hex value: " + e.getMessage());
+                        }
+                    }
                     default:
                         throw new TokenizerException(token, "Unrecognized binary format " + token.asString())
                                 .setLine(tokenizer.getLine(token.getLineNo()));
@@ -327,7 +337,8 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
             }
             case MESSAGE: {
                 // TODO: Parse messages?
-                throw new TokenizerException(token, "Message overrides not allowed").setLine(tokenizer.getLine(token.getLineNo()));
+                throw new TokenizerException(token, "Message overrides not allowed")
+                        .setLine(tokenizer.getLine(token.getLineNo()));
             }
             case MAP: {
                 if (!token.isSymbol(Token.kMessageStart)) {
