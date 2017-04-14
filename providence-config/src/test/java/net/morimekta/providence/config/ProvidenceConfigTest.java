@@ -25,6 +25,7 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.RefMerge;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.Value;
 
@@ -66,6 +67,7 @@ public class ProvidenceConfigTest {
         registry = new TypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
         registry.registerRecursively(Value.kDescriptor);
+        registry.registerRecursively(RefMerge.kDescriptor);
     }
 
     @After
@@ -211,7 +213,7 @@ public class ProvidenceConfigTest {
         stageDb.delete();
         writeContentTo(getResourceAsString("/net/morimekta/providence/config/stage_db2.cfg"), stageDb);
 
-        assertThat((Service) (Object) config.getSupplier(stage).get(), is(sameInstance(stage_service.get())));
+        assertThat(config.getSupplier(stage).get(), is(sameInstance(stage_service.get())));
 
         config.reload(stageDb);
 
@@ -390,6 +392,97 @@ public class ProvidenceConfigTest {
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Included file \"b.cfg\" not found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testInternalReference() throws IOException {
+        File a = writeContentTo(
+                "config.RefMerge {\n" +
+                "  ref1 & first = {\n" +
+                "    bool_value & boo = false\n" +
+                "    msg_value & db {\n" +
+                "      driver = \"Driver\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "  ref1_1 = first {\n" +
+                "    i16_value = 12345\n" +
+                "    msg_value & db2 = db {\n" +
+                "      uri = \"someuri\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "  ref2 {\n" +
+                "    bool_value = boo" +
+                "    msg_value = db2\n" +
+                "  }\n" +
+                "}\n", temp.newFile("a.cfg"));
+
+        try {
+            ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+            RefMerge merged = config.getSupplier(a, RefMerge.kDescriptor)
+                                    .get();
+
+            assertThat(debugString(merged), is(
+                    "ref1 = {\n" +
+                    "  bool_value = false\n" +
+                    "  msg_value = {\n" +
+                    "    driver = \"Driver\"\n" +
+                    "  }\n" +
+                    "}\n" +
+                    "ref1_1 = {\n" +
+                    "  bool_value = false\n" +
+                    "  i16_value = 12345\n" +
+                    "  msg_value = {\n" +
+                    "    uri = \"someuri\"\n" +
+                    "    driver = \"Driver\"\n" +
+                    "  }\n" +
+                    "}\n" +
+                    "ref2 = {\n" +
+                    "  bool_value = false\n" +
+                    "  msg_value = {\n" +
+                    "    uri = \"someuri\"\n" +
+                    "    driver = \"Driver\"\n" +
+                    "  }\n" +
+                    "}"));
+        } catch (TokenizerException e) {
+            System.err.println(e.asString());
+            throw e;
+        }
+    }
+
+    @Test
+    public void testInternalReferenceFails() throws IOException {
+        writeContentTo("config.Database {}\n", temp.newFile("db.cfg"));
+
+        assertReferenceFails("include \"db.cfg\" as db\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & db {\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reassign include alias 'db' to reference.");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {}\n" +
+                             "  ref1_1 & first {}\n" +
+                             "}\n",
+                             "Trying to reassign reference 'first', original at line 3");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    db = first\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reassign reference 'first', original at line 3");
+    }
+
+    private void assertReferenceFails(String cfg, String message) throws IOException {
+        try {
+            File a = writeContentTo(cfg, temp.newFile());
+            ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+            config.getSupplier(a, RefMerge.kDescriptor).get();
+            fail("No exception on fail: " + message);
+        } catch (TokenizerException e) {
+            assertThat(e.getMessage(), is(message));
         }
     }
 

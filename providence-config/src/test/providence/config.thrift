@@ -33,3 +33,45 @@ struct Service {
     3: optional ServicePort admin;
     4: optional Database db;
 }
+
+struct RefConfig1 {
+    1: optional bool bool_value;
+    2: optional byte byte_value;
+    3: optional i16 i16_value;
+    4: optional i32 i32_value;
+    5: optional i64 i64_value;
+    6: optional double double_value;
+    7: optional Value enum_value;
+    8: optional binary bin_value;
+    9: optional string str_value;
+    10: optional Database msg_value;
+
+    11: optional list<string> list_value;
+    12: optional set<i16> set_value;
+    13: optional map<Value,ServicePort> map_value;
+}
+
+// different name, so we can have it 'unknown'.
+struct RefConfig2 {
+    1: optional bool bool_value;
+    2: optional byte byte_value;
+    3: optional i16 i16_value;
+    4: optional i32 i32_value;
+    5: optional i64 i64_value;
+    6: optional double double_value;
+    7: optional Value enum_value;
+    8: optional binary bin_value;
+    9: optional string str_value;
+    10: optional Database msg_value;
+
+    11: optional list<string> list_value;
+    12: optional set<i16> set_value;
+    13: optional map<Value,ServicePort> map_value;
+}
+
+struct RefMerge {
+    1: optional RefConfig1 ref1;
+    2: optional RefConfig1 ref1_1;
+    3: optional RefConfig2 ref2;
+    4: optional RefConfig2 ref2_2;
+}

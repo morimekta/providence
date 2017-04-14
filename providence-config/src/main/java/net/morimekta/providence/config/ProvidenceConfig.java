@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.config;
 
+import net.morimekta.config.IncompatibleValueException;
 import net.morimekta.config.KeyNotFoundException;
 import net.morimekta.config.util.ConfigUtil;
 import net.morimekta.providence.PEnumValue;
@@ -41,6 +42,7 @@ import net.morimekta.util.Binary;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
@@ -48,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +66,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.morimekta.config.util.ConfigUtil.asBoolean;
-import static net.morimekta.config.util.ConfigUtil.asCollection;
 import static net.morimekta.config.util.ConfigUtil.asDouble;
 import static net.morimekta.config.util.ConfigUtil.asInteger;
 import static net.morimekta.config.util.ConfigUtil.asLong;
@@ -366,20 +368,6 @@ public class ProvidenceConfig {
         }
     }
 
-    static class Context {
-        final File file;
-        final Map<String, Object> params;
-        final Map<String, Object> references;
-        final Map<String, PMessage> includes;
-
-        Context(File file) {
-            this.file = file;
-            this.params = new ConcurrentHashMap<>();
-            this.references = new HashMap<>();
-            this.includes = new HashMap<>();
-        }
-    }
-
     private List<ProvidenceConfigParam> loadParamsRecursively(File file, String... stack)
             throws IOException {
         try {
@@ -530,7 +518,7 @@ public class ProvidenceConfig {
             tokenizer = new Tokenizer(in, false);
         }
 
-        Context context = new Context(file);
+        ProvidenceConfigContext context = new ProvidenceConfigContext();
         Map<String, Object> params = new HashMap<>();
 
         Stage stage = Stage.PARAMS;
@@ -594,11 +582,12 @@ public class ProvidenceConfig {
                     }
                     String alias = tokenizer.expectIdentifier("Include alias")
                                             .asString();
+                    if (RESERVED_WORDS.contains(alias)) {
+                        throw new TokenizerException(token, "Alias \"" + alias + "\" is a reserved word").setLine(
+                                tokenizer.getLine(token.getLineNo()));
+                    }
                     if (context.includes.containsKey(alias)) {
                         throw new TokenizerException(token, "Alias \"" + alias + "\" is already used").setLine(
-                                tokenizer.getLine(token.getLineNo()));
-                    } else if (PARAMS.equals(alias) || INCLUDE.equals(alias) || AS.equals(alias)) {
-                        throw new TokenizerException(token, "Alias \"" + alias + "\" is reserved word").setLine(
                                 tokenizer.getLine(token.getLineNo()));
                     }
                     context.includes.put(alias, included);
@@ -700,7 +689,7 @@ public class ProvidenceConfig {
 
     @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField> M parseConfigMessage(Tokenizer tokenizer,
-                                                                              Context context,
+                                                                              ProvidenceConfigContext context,
                                                                               PMessageBuilder<M, F> builder,
                                                                               File file)
             throws IOException {
@@ -716,9 +705,13 @@ public class ProvidenceConfig {
 
             if (token.isReferenceIdentifier()) {
                 try {
-                    builder.merge(resolve(context, token.asString()));
+                    builder.merge(resolve(context, token, tokenizer, builder.descriptor()));
+                } catch (ClassCastException e) {
+                    throw new TokenizerException(token, "Config type mismatch, expected  ")
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 } catch (KeyNotFoundException e) {
-                    throw new TokenizerException(token, e.getMessage()).setLine(tokenizer.getLine(token.getLineNo()));
+                    throw new TokenizerException(token, e.getMessage())
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
                 tokenizer.expectSymbol("object begin", Token.kMessageStart);
             } else {
@@ -732,7 +725,7 @@ public class ProvidenceConfig {
         return parseMessage(tokenizer, context, builder);
     }
 
-    private void consumeValue(Tokenizer tokenizer, Token token) throws IOException {
+    private void consumeValue(ProvidenceConfigContext context, Tokenizer tokenizer, Token token) throws IOException {
         if (UNDEFINED.equals(token.asString())) {
             // ignore undefined.
             return;
@@ -755,9 +748,9 @@ public class ProvidenceConfig {
                         throw new TokenizerException(token, "Invalid map key: " + token.asString())
                                 .setLine(tokenizer.getLine(token.getLineNo()));
                     }
-                    consumeValue(tokenizer, token);
+                    consumeValue(context, tokenizer, token);
                     tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
-                    consumeValue(tokenizer, tokenizer.expect("map value"));
+                    consumeValue(context, tokenizer, tokenizer.expect("map value"));
 
                     // maps do *not* require separator, but allows ',' separator, and separator after last.
                     token = tokenizer.expect("map key, end or sep");
@@ -772,13 +765,19 @@ public class ProvidenceConfig {
                         throw new TokenizerException(token, "Invalid field name: " + token.asString())
                                 .setLine(tokenizer.getLine(token.getLineNo()));
                     }
+                    if (tokenizer.peek().isSymbol(kDefineReference)) {
+                        tokenizer.next();
+                        context.setReference(
+                                context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer),
+                                null);
+                    }
 
                     if (tokenizer.peek().isSymbol(Token.kMessageStart)) {
                         // direct inheritance of message field.
-                        consumeValue(tokenizer, tokenizer.next());
+                        consumeValue(context, tokenizer, tokenizer.next());
                     } else {
                         tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
-                        consumeValue(tokenizer, tokenizer.next());
+                        consumeValue(context, tokenizer, tokenizer.next());
                     }
                     token = nextNotLineSep(tokenizer, "message field or end");
                 }
@@ -786,7 +785,7 @@ public class ProvidenceConfig {
         } else if (token.isSymbol(Token.kListStart)) {
             token = tokenizer.next();
             while (!token.isSymbol(Token.kListEnd)) {
-                consumeValue(tokenizer, token);
+                consumeValue(context, tokenizer, token);
                 // lists and sets require list separator (,), and allows trailing separator.
                 if (tokenizer.expectSymbol("list separator or end", Token.kLineSep1, Token.kListEnd) == Token.kListEnd) {
                     break;
@@ -807,7 +806,7 @@ public class ProvidenceConfig {
 
     @SuppressWarnings("unchecked")
     private <M extends PMessage<M, F>, F extends PField> M parseMessage(Tokenizer tokenizer,
-                                                                        Context context,
+                                                                        ProvidenceConfigContext context,
                                                                         PMessageBuilder<M, F> builder)
             throws IOException {
         PMessageDescriptor<M, F> descriptor = builder.descriptor();
@@ -825,7 +824,14 @@ public class ProvidenceConfig {
                     throw new TokenizerException("No such field " + token.asString() + " in " + descriptor.getQualifiedName())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 } else {
-                    token = tokenizer.expect("field value sep or message start");
+                    token = tokenizer.expect("field value sep, message start or reference start");
+                    if (token.isSymbol(kDefineReference)) {
+                        context.setReference(
+                                context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer),
+                                null);
+                        // Ignore reference.
+                        token = tokenizer.expect("field value sep or message start");
+                    }
                     if (token.isSymbol(Token.kFieldValueSep)) {
                         token = tokenizer.expect("value declaration");
                     } else if (!token.isSymbol(Token.kMessageStart)) {
@@ -834,7 +840,7 @@ public class ProvidenceConfig {
                     }
                     // Non-strict will just consume unknown fields, this way
                     // we can be forward-compatible when reading config.
-                    consumeValue(tokenizer, token);
+                    consumeValue(context, tokenizer, token);
                     token = nextNotLineSep(tokenizer, "field or message end");
                     continue;
                 }
@@ -842,13 +848,24 @@ public class ProvidenceConfig {
 
             if (field.getType() == PType.MESSAGE) {
                 // go recursive with optional
-                char symbol = tokenizer.expectSymbol("Message assigner or start", Token.kFieldValueSep, Token.kMessageStart);
+                String reference = null;
+                char symbol = tokenizer.expectSymbol(
+                        "Message assigner or start",
+                        Token.kFieldValueSep,
+                        Token.kMessageStart,
+                        kDefineReference);
+                if (symbol == kDefineReference) {
+                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    symbol = tokenizer.expectSymbol("Message assigner or start after " + reference, Token.kFieldValueSep, Token.kMessageStart);
+                }
+
                 PMessageBuilder bld;
                 if (symbol == Token.kFieldValueSep) {
                     token = tokenizer.expect("reference or message start");
                     if (UNDEFINED.equals(token.asString())) {
                         // unset.
                         builder.clear(field.getKey());
+                        context.setReference(reference, null);
 
                         // special casing this, as we don't want to duplicate the parse line below.
                         token = nextNotLineSep(tokenizer, "field or message end");
@@ -859,7 +876,7 @@ public class ProvidenceConfig {
                     if (token.isReferenceIdentifier()) {
                         // Inherit from reference.
                         try {
-                            PMessage ref = resolve(context, token.asString());
+                            PMessage ref = resolve(context, token, tokenizer, field.getDescriptor());
                             if (ref != null) {
                                 bld.merge(ref);
                             } else {
@@ -880,7 +897,7 @@ public class ProvidenceConfig {
                         // if the following symbol is *not* message start,
                         // we assume a new field or end of current message.
                         if (!token.isSymbol(Token.kMessageStart)) {
-                            builder.set(field.getKey(), bld.build());
+                            builder.set(field.getKey(), context.setReference(reference, bld.build()));
                             continue;
                         }
                     } else if (!token.isSymbol(Token.kMessageStart)) {
@@ -892,34 +909,39 @@ public class ProvidenceConfig {
                     // extend in-line.
                     bld = builder.mutator(field.getKey());
                 }
-
-                builder.set(field.getKey(), parseMessage(tokenizer, context, bld));
+                builder.set(field.getKey(), context.setReference(reference, parseMessage(tokenizer, context, bld)));
             } else if (field.getType() == PType.MAP) {
                 // maps can be extended the same way as
                 token = tokenizer.expect("field sep or value start");
                 Map baseValue = new HashMap();
+                String reference = null;
+                if (token.isSymbol(kDefineReference)) {
+                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    token = tokenizer.expect("field sep or value start");
+                }
 
                 if (token.isSymbol(Token.kFieldValueSep)) {
                     token = tokenizer.expect("field id or start");
                     if (UNDEFINED.equals(token.asString())) {
                         builder.clear(field.getKey());
+                        context.setReference(reference, null);
 
                         token = tokenizer.expect("message end or field");
                         continue;
                     } else if (token.isReferenceIdentifier()) {
                         try {
-                            baseValue.putAll(resolve(context, token.asString()));
+                            baseValue = resolve(context, token, tokenizer, field.getDescriptor());
                         } catch (KeyNotFoundException e) {
                             throw new TokenizerException(token, e.getMessage())
-                                    .setLine(tokenizer.getLine(token.getLineNo()));
-                        } catch (ClassCastException e) {
-                            throw new TokenizerException(token, "Reference %s not pointing to a map.", token.asString())
                                     .setLine(tokenizer.getLine(token.getLineNo()));
                         }
 
                         token = tokenizer.expect("map start or next field");
                         if (!token.isSymbol(Token.kMessageStart)) {
+                            builder.set(field.getKey(), context.setReference(reference, baseValue));
                             continue;
+                        } else if (baseValue == null) {
+                            baseValue = new HashMap();
                         }
                     }
                 } else {
@@ -930,16 +952,23 @@ public class ProvidenceConfig {
                     throw new TokenizerException(token, "Expected map start, but got '%s'", token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-
-                builder.set(field.getKey(), parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue));
+                Map map =  parseMapValue(tokenizer, context, (PMap) field.getDescriptor(), baseValue);
+                builder.set(field.getKey(), context.setReference(reference, map));
             } else {
-                // Simple fields *must* have the '=' separation.
-                tokenizer.expectSymbol("field value sep", Token.kFieldValueSep);
+                String reference = null;
+                // Simple fields *must* have the '=' separation, may have '&' reference.
+                if (tokenizer.expectSymbol("field value sep", Token.kFieldValueSep, kDefineReference) ==
+                    kDefineReference) {
+                    reference = context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer);
+                    tokenizer.expectSymbol("field value sep", Token.kFieldValueSep);
+                }
                 token = tokenizer.expect("field value");
                 if (UNDEFINED.equals(token.asString())) {
                     builder.clear(field.getKey());
+                    context.setReference(reference, null);
                 } else {
-                    builder.set(field.getKey(), parseFieldValue(token, tokenizer, context, field.getDescriptor()));
+                    Object value = parseFieldValue(token, tokenizer, context, field.getDescriptor());
+                    builder.set(field.getKey(), context.setReference(reference, value));
                 }
             }
 
@@ -951,7 +980,7 @@ public class ProvidenceConfig {
 
     @SuppressWarnings("unchecked")
     private Map parseMapValue(Tokenizer tokenizer,
-                              Context context,
+                              ProvidenceConfigContext context,
                               PMap descriptor,
                               Map builder) throws IOException {
         Token next = tokenizer.expect("map key or end");
@@ -975,14 +1004,9 @@ public class ProvidenceConfig {
         return descriptor.builder().putAll(builder).build();
     }
 
-    private static Object orIfNull(Object o, Object alt) {
-        if (o == null) return alt;
-        return o;
-    }
-
     private Object parseFieldValue(Token next,
                                    Tokenizer tokenizer,
-                                   Context context,
+                                   ProvidenceConfigContext context,
                                    PDescriptor descriptor) throws IOException {
         try {
             switch (descriptor.getType()) {
@@ -992,47 +1016,47 @@ public class ProvidenceConfig {
                     } else if (FALSE.equals(next.asString())) {
                         return false;
                     } else if (next.isReferenceIdentifier()) {
-                        return asBoolean(orIfNull(resolve(context, next.asString()), Boolean.FALSE));
+                        return resolve(context, next, tokenizer, descriptor);
                     }
                     break;
                 case BYTE:
                     if (next.isReferenceIdentifier()) {
-                        return (byte) asInteger(orIfNull(resolve(context, next.asString()), 0));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isInteger()) {
                         return (byte) next.parseInteger();
                     }
                     break;
                 case I16:
                     if (next.isReferenceIdentifier()) {
-                        return (short) asInteger(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isInteger()) {
                         return (short) next.parseInteger();
                     }
                     break;
                 case I32:
                     if (next.isReferenceIdentifier()) {
-                        return asInteger(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isInteger()) {
                         return (int) next.parseInteger();
                     }
                     break;
                 case I64:
                     if (next.isReferenceIdentifier()) {
-                        return asLong(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isInteger()) {
                         return next.parseInteger();
                     }
                     break;
                 case DOUBLE:
                     if (next.isReferenceIdentifier()) {
-                        return asDouble(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isInteger() || next.isReal()) {
                         return next.parseDouble();
                     }
                     break;
                 case STRING:
                     if (next.isReferenceIdentifier()) {
-                        return asString(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isStringLiteral()) {
                         return next.decodeLiteral();
                     }
@@ -1045,19 +1069,7 @@ public class ProvidenceConfig {
                         tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
                         return Binary.fromHexString(tokenizer.readUntil(Token.kMethodEnd, false, false));
                     } else if (next.isReferenceIdentifier()) {
-                        Object o = resolve(context, next.asString());
-                        if (o == null) {
-                            return null;
-                        } else if (o instanceof Binary) {
-                            return o;
-                        } else if (o instanceof CharSequence) {
-                            return Binary.fromBase64((String) o);
-                        }
-                        throw new TokenizerException(next,
-                                                     "Reference %s (%s) is not a binary",
-                                                     next.asString(),
-                                                     o.getClass()
-                                                      .getSimpleName()).setLine(tokenizer.getLine(next.getLineNo()));
+                        return resolve(context, next, tokenizer, descriptor);
                     }
                     break;
                 case ENUM: {
@@ -1068,7 +1080,7 @@ public class ProvidenceConfig {
                     } else if (next.isIdentifier()) {
                         value = ed.getValueByName(next.asString());
                     } else if (next.isReferenceIdentifier()) {
-                        value = resolve(context, next.asString());
+                        value = resolve(context, next, tokenizer, descriptor);
                     } else {
                         break;
                     }
@@ -1082,7 +1094,7 @@ public class ProvidenceConfig {
                 }
                 case MESSAGE:
                     if (next.isReferenceIdentifier()) {
-                        return resolve(context, next.asString());
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isSymbol(Token.kMessageStart)) {
                         return parseMessage(tokenizer, context, ((PMessageDescriptor) descriptor).builder());
                     }
@@ -1092,7 +1104,7 @@ public class ProvidenceConfig {
                         Map resolved;
                         try {
                             // Make sure the reference is to a map.
-                            resolved = resolve(context, next.asString());
+                            resolved = resolve(context, next, tokenizer, descriptor);
                         } catch (ClassCastException e) {
                             throw new TokenizerException(next, "Reference %s is not a map field ", next.asString())
                                     .setLine(tokenizer.getLine(next.getLineNo()));
@@ -1105,7 +1117,7 @@ public class ProvidenceConfig {
                 }
                 case SET: {
                     if (next.isReferenceIdentifier()) {
-                        return asCollection(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isSymbol(Token.kListStart)) {
                         @SuppressWarnings("unchecked")
                         PSet<Object> ct = (PSet) descriptor;
@@ -1129,7 +1141,7 @@ public class ProvidenceConfig {
                 }
                 case LIST: {
                     if (next.isReferenceIdentifier()) {
-                        return asCollection(resolve(context, next.asString()));
+                        return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isSymbol(Token.kListStart)) {
                         @SuppressWarnings("unchecked")
                         PList<Object> ct = (PList) descriptor;
@@ -1202,12 +1214,81 @@ public class ProvidenceConfig {
      * Resolve a value reference.
      *
      * @param context The parsing context.
-     * @param key The key to look for.
+     * @param token The ID token to look for.
+     * @param tokenizer The tokenizer.
+     * @param descriptor The item descriptor.
      * @return The value at the given key, or exception if not found.
      */
     @SuppressWarnings("unchecked")
-    private <V> V resolve(Context context,
-                          String key) {
+    private <V> V resolve(ProvidenceConfigContext context,
+                          Token token,
+                          Tokenizer tokenizer,
+                          PDescriptor descriptor) throws TokenizerException {
+        String key = token.asString();
+        Object value = resolveAny(context, token, tokenizer);
+        if (value == null) {
+            return null;
+        }
+        switch (descriptor.getType()) {
+            case BOOL:
+                return (V) (Object) asBoolean(value);
+            case BYTE:
+                return (V) (Object) (byte) asInteger(value);
+            case I16:
+                return (V) (Object) (short) asInteger(value);
+            case I32:
+                return (V) (Object) asInteger(value);
+            case I64:
+                return (V) (Object) asLong(value);
+            case DOUBLE:
+                return (V) (Object) asDouble(value);
+            case ENUM:
+                if (value instanceof PEnumValue) {
+                    PEnumValue verified = ((PEnumDescriptor) descriptor).getValueById(((PEnumValue) value).getValue());
+                    if (value.equals(verified)) {
+                        return (V) value;
+                    }
+                } else if (value instanceof Number) {
+                    return (V) ((PEnumDescriptor) descriptor).getValueById(((Number) value).intValue());
+                } else if (value instanceof CharSequence) {
+                    return (V) ((PEnumDescriptor) descriptor).getValueByName(value.toString());
+                }
+                throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getQualifiedName());
+            case STRING:
+                return (V) asString(value);
+            case BINARY:
+                if (value instanceof Binary) {
+                    return (V) value;
+                } else if (value instanceof CharSequence) {
+                    return (V) Binary.fromBase64(value.toString());
+                }
+                throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with binary");
+            case MAP:
+                if (value instanceof Map) {
+                    return (V) value;
+                }
+                throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with map");
+            case SET:
+            case LIST:
+                if (value instanceof Collection) {
+                    return (V) value;
+                }
+                throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getType());
+            case MESSAGE:
+                if (value instanceof PMessage) {
+                    if (descriptor.equals(((PMessage) value).descriptor())) {
+                        return (V) value;
+                    }
+                }
+                throw new IncompatibleValueException(value.getClass().getSimpleName() + " is not compatible with " + descriptor.getQualifiedName());
+            default:
+                throw new IllegalArgumentException("Type " + descriptor.getType() + " is not handled by config.");
+        }
+    }
+
+    private Object resolveAny(ProvidenceConfigContext context, Token token, Tokenizer tokenizer)
+            throws TokenizerException {
+        String key = token.asString();
         if (key.contains(IDENTIFIER_SEP)) {
             int idx = key.indexOf(IDENTIFIER_SEP);
             String name = key.substring(0, idx);
@@ -1216,7 +1297,7 @@ public class ProvidenceConfig {
                 if (!context.params.containsKey(sub)) {
                     throw new KeyNotFoundException("Name " + sub + " not in params (\"" + key + "\")");
                 }
-                return (V) context.params.get(sub);
+                return context.params.get(sub);
             } else if (context.includes.containsKey(name)) {
                 PMessage include = context.includes.get(name);
                 if (include == null) {
@@ -1225,15 +1306,14 @@ public class ProvidenceConfig {
                     }
                     return null;
                 }
-                return (V) ProvidenceConfigUtil.getInMessage(include, sub, null);
+                return ProvidenceConfigUtil.getInMessage(include, sub, null);
             }
             throw new KeyNotFoundException("Reference name " + key + " not declared");
         } else if (context.includes.containsKey(key)) {
-            return (V) context.includes.get(key);
-        } else if (context.references.containsKey(key)) {
-            return (V) context.references.get(key);
+            return context.includes.get(key);
+        } else {
+            return context.getReference(token, tokenizer);
         }
-        throw new KeyNotFoundException("Reference name " + key + " not declared");
     }
 
     private static final String IDENTIFIER_SEP = ".";
@@ -1241,9 +1321,20 @@ public class ProvidenceConfig {
     private static final String FALSE     = "false";
     private static final String TRUE      = "true";
     private static final String PARAMS    = "params";
-    static final String UNDEFINED = "undefined";
+            static final String UNDEFINED = "undefined";
     private static final String INCLUDE   = "include";
     private static final String AS        = "as";
+
+    static final Set<String> RESERVED_WORDS = ImmutableSet.of(
+            TRUE,
+            FALSE,
+            UNDEFINED,
+            PARAMS,
+            AS,
+            INCLUDE
+    );
+
+    private static final char kDefineReference = '&';
 
     /**
      * Full path to resolved instance.
