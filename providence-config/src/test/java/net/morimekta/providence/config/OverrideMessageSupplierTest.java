@@ -21,17 +21,26 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.config.ConfigException;
+import net.morimekta.providence.testing.util.MessageGenerator;
 import net.morimekta.test.providence.config.Credentials;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.RefConfig1;
+import net.morimekta.test.providence.config.Value;
+import net.morimekta.util.Binary;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -44,6 +53,9 @@ import static org.junit.Assert.fail;
  */
 public class OverrideMessageSupplierTest {
     private AtomicReference<Database> base = new AtomicReference<>();
+
+    @Rule
+    public MessageGenerator generator = new MessageGenerator();
 
     @Before
     @SuppressWarnings("unchecked")
@@ -94,13 +106,6 @@ public class OverrideMessageSupplierTest {
 
     @Test
     public void testFaliures() throws IOException {
-        AtomicReference<Database> base = new AtomicReference<>();
-        base.set(Database.builder()
-                         .setUri("http://hostname:9057/path")
-                         .setDriver("driver")
-                         .setCredentials(new Credentials("username", "complicated password that no one guesses"))
-                         .build());
-
         try {
             new OverrideMessageSupplier<>(
                     base::get, ImmutableMap.of(
@@ -126,13 +131,6 @@ public class OverrideMessageSupplierTest {
 
     @Test
     public void testFaliures_noStrict() throws IOException {
-        AtomicReference<Database> base = new AtomicReference<>();
-        base.set(Database.builder()
-                         .setUri("http://hostname:9057/path")
-                         .setDriver("driver")
-                         .setCredentials(new Credentials("username", "complicated password that no one guesses"))
-                         .build());
-
         // no exception. See testFailures()
         new OverrideMessageSupplier<>(
                 base::get, ImmutableMap.of(
@@ -162,5 +160,50 @@ public class OverrideMessageSupplierTest {
             assertThat(e.getMessage(),
                        is("Garbage after enum value [value]: 'FIRST SECOND'"));
         }
+    }
+
+    @Test
+    public void testOverrideEveryType() throws IOException {
+        AtomicReference<RefConfig1> ref = new AtomicReference<>();
+        ref.set(generator.generate(RefConfig1.kDescriptor)
+                         .mutate()
+                         .clearMsgValue()
+                         .clearMapValue()
+                         .build());
+
+        Supplier<RefConfig1> supplier = new OverrideMessageSupplier<>(
+                ref::get,
+                ImmutableMap.<String,String>builder()
+                            .put("bool_value", "true")
+                            .put("byte_value", "123")
+                            .put("i16_value", "12345")
+                            .put("i32_value", "1234567890")
+                            .put("i64_value", "12345678901234567")
+                            .put("double_value", "1234567.1234567")
+                            .put("enum_value", "SECOND")
+                            .put("bin_value", "hex(01020304)")
+                            .put("str_value", "\"This is a string\"")
+                            .put("list_value", "[\"first\",\"second\"]")
+                            .put("set_value", "[1234, 4321]")
+                            .put("simple_map", "{12345678:SECOND}")
+                            .build(),
+                true);
+
+        // Make sure every field is overridden.
+        assertThat(supplier.get(), is(equalToMessage(
+                RefConfig1.builder()
+                          .setBoolValue(true)
+                          .setByteValue((byte) 123)
+                          .setI16Value((short) 12345)
+                          .setI32Value(1234567890)
+                          .setI64Value(12345678901234567L)
+                          .setDoubleValue(1234567.1234567)
+                          .setEnumValue(Value.SECOND)
+                          .setBinValue(Binary.fromHexString("01020304"))
+                          .setStrValue("This is a string")
+                          .setListValue(ImmutableList.of("first", "second"))
+                          .setSetValue(ImmutableSet.of((short) 1234, (short) 4321))
+                          .setSimpleMap(ImmutableMap.of(12345678, Value.SECOND))
+                          .build())));
     }
 }

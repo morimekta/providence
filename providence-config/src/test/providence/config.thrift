@@ -49,6 +49,8 @@ struct RefConfig1 {
     11: optional list<string> list_value;
     12: optional set<i16> set_value;
     13: optional map<Value,ServicePort> map_value;
+
+    20: optional map<i32,Value> simple_map;
 }
 
 // different name, so we can have it 'unknown'.
