@@ -98,6 +98,7 @@ public class HazelcastIT {
 
     @BeforeClass
     public static void setupClass() {
+        if (IGNORE_HAZELCAST) return;
         config1 = new Config();
         Hazelcast_Factory.populateConfig(config1);
         config1.getSerializationConfig().setPortableVersion(1);
@@ -107,6 +108,7 @@ public class HazelcastIT {
 
     @AfterClass
     public static void afterClass() {
+        if (IGNORE_HAZELCAST) return;
         instance1.shutdown();
         instance2.shutdown();
     }
