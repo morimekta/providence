@@ -100,6 +100,11 @@ public class TokenizerException extends SerializerException {
     }
 
     @Override
+    public TokenizerException initCause(Throwable cause) {
+        return (TokenizerException) super.initCause(cause);
+    }
+
+    @Override
     public String asString() {
         if (lineNo > 0) {
             String fileSpec = "";

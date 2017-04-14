@@ -503,6 +503,10 @@ public class Tokenizer extends InputStream {
         if (theLine < 1) {
             throw new IllegalStateException(theLine + " is not a valid line number. Must be 1 .. N");
         }
+        int originalReadOffset = readOffset;
+        int originalLineNo = lineNo;
+        int originalLinePos = linePos;
+
         // reset read position.
         readOffset = -1;
         lineNo = 1;
@@ -518,6 +522,10 @@ public class Tokenizer extends InputStream {
             return IOUtils.readString(this, "\n");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } finally {
+            readOffset = originalReadOffset;
+            lineNo = originalLineNo;
+            linePos = originalLinePos;
         }
     }
 

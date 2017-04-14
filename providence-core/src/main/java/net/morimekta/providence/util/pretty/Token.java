@@ -52,7 +52,7 @@ public class Token extends Slice {
     public static final String B64 = "b64";
     public static final String HEX = "hex";
 
-    public static final String kSymbols = "{}:=()<>,;#[]";
+    public static final String kSymbols = "{}:=()<>,;#[]&/%$@^-";
 
     private static final Pattern RE_IDENTIFIER                  = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
     private static final Pattern RE_QUALIFIED_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
