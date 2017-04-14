@@ -222,19 +222,6 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
 
     private Object readFieldValue(Tokenizer tokenizer, Token token, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
-            case VOID: {
-                // Even void fields needs a value token...
-                // Allow any boolean true value that is an _identifier_. No numbers here.
-                switch (token.asString().toLowerCase()) {
-                    case "t":
-                    case "true":
-                    case "y":
-                    case "yes":
-                        return Boolean.TRUE;
-                }
-                throw new TokenizerException(token, "Invalid void value " + token.asString())
-                        .setLine(tokenizer.getLine(token.getLineNo()));
-            }
             case BOOL: {
                 switch (token.asString().toLowerCase()) {
                     case "1":
