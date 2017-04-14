@@ -43,6 +43,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -56,13 +58,29 @@ import static net.morimekta.providence.config.ProvidenceConfig.UNDEFINED;
  * can be reset that way can be supported, e.g. {@link net.morimekta.providence.mio.FileMessageReader}.
  *
  * <code>
- *     MessageSupplier supplier = new MessageSupplier(
- *             MyConfig.kDescriptor,
- *             new FileMessageReader(configFile, new PrettySerializer()));
+ *     OverrideMessageSupplier supplier = new OverrideMessageSupplier(
+ *             baseConfig,
+ *             ImmutableMap.of(
+ *                 "db.username", "root",
+ *                 "jdbc.driver", "com.oracle.jdbc.Driver"
+ *             ));
  * </code>
  */
 public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, Field extends PField>
         implements ReloadableSupplier<Message> {
+    /**
+     * Create a config that wraps a providence message instance. This message
+     * will be exposed without any key prefix.
+     *
+     * @param parent The parent message to override values of.
+     * @param overrides The message override values.
+     * @throws IOException If message read failed.
+     * @throws SerializerException If message deserialization failed.
+     */
+    public OverrideMessageSupplier(Supplier<Message> parent,
+                                   Properties overrides) throws IOException {
+        this(parent, propertiesMap(overrides), false);
+    }
 
     /**
      * Create a config that wraps a providence message instance. This message
@@ -124,8 +142,6 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
         for (Map.Entry<String, String> override : overrides.entrySet()) {
             String[] path = override.getKey()
                                     .split("[.]");
-            Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(
-                    override.getValue().getBytes(StandardCharsets.UTF_8)), true);
 
             String fieldName = lastFieldName(path);
             PMessageBuilder containedBuilder = builderForField(builder, path);
@@ -135,13 +151,16 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
             PField field = containedBuilder.descriptor().getField(fieldName);
             if (field == null) {
                 if (strict) {
-                    throw new TokenizerException("No such field %s in %s [%s]",
-                                                 fieldName,
-                                                 containedBuilder.descriptor().getQualifiedName(),
-                                                 String.join(".", path));
+                    throw new ConfigException("No such field %s in %s [%s]",
+                                              fieldName,
+                                              containedBuilder.descriptor().getQualifiedName(),
+                                              String.join(".", path));
                 }
                 continue;
             }
+
+            Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(
+                    override.getValue().getBytes(StandardCharsets.UTF_8)), true);
             if (UNDEFINED.equals(override.getValue())) {
                 containedBuilder.clear(field.getKey());
             } else if (field.getType() == PType.STRING) {
@@ -150,9 +169,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     if (next.isStringLiteral()) {
                         containedBuilder.set(field.getKey(), next.decodeLiteral());
                         if (tokenizer.hasNext()) {
-                            throw new TokenizerException(tokenizer.next(),
-                                                         "Garbage after string value")
-                                    .setLine(override.getValue());
+                            throw new ConfigException("Garbage after string value [%s]: '%s'", override.getKey(), override.getValue());
                         }
                         continue;
                     }
@@ -161,10 +178,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
             } else {
                 containedBuilder.set(field.getKey(), readFieldValue(tokenizer, tokenizer.expect("value"), field.getDescriptor()));
                 if (tokenizer.hasNext()) {
-                    throw new TokenizerException(tokenizer.next(),
-                                                 "Garbage after %s value",
-                                                 field.getDescriptor().getQualifiedName() )
-                            .setLine(override.getValue());
+                    throw new ConfigException("Garbage after %s value [%s]: '%s'", field.getType(), override.getKey(), override.getValue());
                 }
             }
         }
@@ -401,5 +415,13 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 throw new IllegalStateException("Unhandled field type: " + descriptor.getType());
             }
         }
+    }
+
+    private static Map<String,String> propertiesMap(Properties properties) {
+        Map<String,String> overrides = new TreeMap<>();
+        for (String key : properties.stringPropertyNames()) {
+            overrides.put(key, properties.getProperty(key));
+        }
+        return overrides;
     }
 }
