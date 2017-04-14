@@ -10,6 +10,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.mio.IOMessageWriter;
 import net.morimekta.providence.mio.MessageReader;
@@ -80,7 +81,9 @@ public class MessageGenerator extends TestWatcher {
         this.globalDumpOnFailure      = this.dumpOnFailure      = false;
         this.globalReader             = this.reader             = null;
         this.globalWriter             = this.writer             = null;
+        this.globalFillRate           = this.fillRate           = 1.0;
 
+        this.defaultFactory = this::getDefaultValueSupplier;
         this.generated = new LinkedList<>();
         this.started = false;
     }
@@ -174,6 +177,22 @@ public class MessageGenerator extends TestWatcher {
         return this;
     }
 
+    /**
+     * Set the field fill rate in the range &lt;0.0 .. 1.0].
+     *
+     * @param fillRate The new full rate.
+     * @return The message generator.
+     */
+    public MessageGenerator setFillRate(double fillRate) {
+        assert fillRate > 0.0 && fillRate <= 1.0 : "Fill rate outside the range < 0.0 .. 1.0 ]: " + fillRate;
+        if (started) {
+            this.fillRate = fillRate;
+        } else {
+            this.globalFillRate = fillRate;
+            this.fillRate = fillRate;
+        }
+        return this;
+    }
 
     /**
      * Add a value supplier factory to the generator.
@@ -371,99 +390,14 @@ public class MessageGenerator extends TestWatcher {
         return this;
     }
 
-    // -------------- INHERITED --------------
-
-    @Override
-    protected void starting(Description description) {
-        super.starting(description);
-        if (!description.isEmpty() && description.getMethodName() == null) {
-            throw new AssertionError("MessageGenerator instantiated as class rule: forbidden");
-        }
-
-        this.random = globalRandom;
-        this.fairy = globalFairy;
-        this.writer = globalWriter;
-        this.reader = globalReader;
-        this.factories = new LinkedList<>(globalFactories);
-        this.preGenerated = new LinkedList<>(globalPreGenerated);
-        this.dumpOnFailure = globalDumpOnFailure;
-        this.defaultSerializer = globalDefaultSerializer;
-        this.maxCollectionItems = globalMaxCollectionItems;
-
-        // Reset content.
-        this.generated = new LinkedList<>();
-        this.started = true;
-    }
-
-    @Override
-    protected void failed(Throwable e, Description description) {
-        if (dumpOnFailure) {
-            try {
-                dumpGeneratedMessages();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                e.addSuppressed(e1);
-            }
-        }
-    }
-
-    @Override
-    protected void finished(Description description) {
-        // generated kept in case of secondary watchers.
-        started = false;
-
-        // Set some interesting stated back to be the global.
-        dumpOnFailure = globalDumpOnFailure;
-        maxCollectionItems = globalMaxCollectionItems;
-        defaultSerializer = globalDefaultSerializer;
-        preGenerated = globalPreGenerated;
-        factories = globalFactories;
-        fairy = globalFairy;
-        random = globalRandom;
-        writer = globalWriter;
-        reader = globalReader;
-    }
-
-    // --- PRIVATE ---
-    // --- Global: set before starting(),
-    //             and copied below in starting().
-    private Random                     globalRandom;
-    private Fairy                      globalFairy;
-    private Serializer                 globalDefaultSerializer;
-    private int                        globalMaxCollectionItems;
-    private boolean                    globalDumpOnFailure;
-    private MessageWriter              globalWriter;
-    private MessageReader              globalReader;
-    private List<ValueSupplierFactory> globalFactories;
-    private LinkedList<PMessage>       globalPreGenerated;
-
-    // --- Per test: set after starting()
-    private Random                     random;
-    private Fairy                      fairy;
-    private Serializer                 defaultSerializer;
-    private int                        maxCollectionItems;
-    private boolean                    dumpOnFailure;
-    private MessageWriter              writer;
-    private MessageReader              reader;
-    private List<ValueSupplierFactory> factories;
-    private LinkedList<PMessage>       preGenerated;
-
-    // generated during test.
-    private List<PMessage>             generated;
-    private boolean                    started;
-
-    private Supplier<Object> getValueSupplier(PField field) {
-        for (ValueSupplierFactory factory : factories) {
-            Supplier<Object> supplier = factory.get(field);
-            if (supplier != null) {
-                return supplier;
-            }
-        }
-        return getValueSupplier(field.getDescriptor());
-    }
-
+    /**
+     * Get the default value supplier for the given descriptor.
+     *
+     * @param descriptor The descriptor to make a supplier for.
+     * @return The value supplier.
+     */
     @SuppressWarnings("unchecked")
-    private Supplier<Object> getValueSupplier(PDescriptor descriptor) {
+    public Supplier<Object> getValueSupplier(PDescriptor descriptor) {
         switch (descriptor.getType()) {
             case BOOL:
                 return random::nextBoolean;
@@ -545,6 +479,111 @@ public class MessageGenerator extends TestWatcher {
             default:
                 throw new IllegalArgumentException(descriptor.getType() + " field in message");
         }
+    }
+
+    // -------------- INHERITED --------------
+
+    @Override
+    protected void starting(Description description) {
+        super.starting(description);
+        if (!description.isEmpty() && description.getMethodName() == null) {
+            throw new AssertionError("MessageGenerator instantiated as class rule: forbidden");
+        }
+
+        random = globalRandom;
+        fairy = globalFairy;
+        writer = globalWriter;
+        reader = globalReader;
+        factories = new LinkedList<>(globalFactories);
+        preGenerated = new LinkedList<>(globalPreGenerated);
+        dumpOnFailure = globalDumpOnFailure;
+        defaultSerializer = globalDefaultSerializer;
+        maxCollectionItems = globalMaxCollectionItems;
+        fillRate = globalFillRate;
+
+        // Reset content.
+        generated = new LinkedList<>();
+        started = true;
+    }
+
+    @Override
+    protected void failed(Throwable e, Description description) {
+        if (dumpOnFailure) {
+            try {
+                dumpGeneratedMessages();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                e.addSuppressed(e1);
+            }
+        }
+    }
+
+    @Override
+    protected void finished(Description description) {
+        // generated kept in case of secondary watchers.
+        started = false;
+
+        // Set some interesting stated back to be the global.
+        dumpOnFailure = globalDumpOnFailure;
+        maxCollectionItems = globalMaxCollectionItems;
+        defaultSerializer = globalDefaultSerializer;
+        preGenerated = globalPreGenerated;
+        factories = globalFactories;
+        fairy = globalFairy;
+        random = globalRandom;
+        writer = globalWriter;
+        reader = globalReader;
+        fillRate = globalFillRate;
+    }
+
+    // --- PRIVATE ---
+    private final ValueSupplierFactory defaultFactory;
+    // --- Global: set before starting(),
+    //             and copied below in starting().
+    private Random                     globalRandom;
+    private Fairy                      globalFairy;
+    private Serializer                 globalDefaultSerializer;
+    private int                        globalMaxCollectionItems;
+    private boolean                    globalDumpOnFailure;
+    private MessageWriter              globalWriter;
+    private MessageReader              globalReader;
+    private List<ValueSupplierFactory> globalFactories;
+    private LinkedList<PMessage>       globalPreGenerated;
+    private double                     globalFillRate;
+
+    // --- Per test: set after starting()
+    private Random                     random;
+    private Fairy                      fairy;
+    private Serializer                 defaultSerializer;
+    private int                        maxCollectionItems;
+    private boolean                    dumpOnFailure;
+    private MessageWriter              writer;
+    private MessageReader              reader;
+    private List<ValueSupplierFactory> factories;
+    private LinkedList<PMessage>       preGenerated;
+    private double                     fillRate;
+
+    // generated during test.
+    private List<PMessage>             generated;
+    private boolean                    started;
+
+    private Supplier<Object> getValueSupplier(PField field) {
+        for (ValueSupplierFactory factory : factories) {
+            Supplier<Object> supplier = factory.get(field);
+            if (supplier != null) {
+                return supplier;
+            }
+        }
+        return defaultFactory.get(field);
+    }
+
+    private Supplier<Object> getDefaultValueSupplier(PField field) {
+        if (field.getRequirement() != PRequirement.REQUIRED) {
+            if (fillRate < 1.0 && random.nextDouble() < fillRate) {
+                return () -> null;
+            }
+        }
+        return getValueSupplier(field.getDescriptor());
     }
 
     private <M extends PMessage<M, F>, F extends PField> M generateInternal(PMessageDescriptor<M, F> descriptor) {

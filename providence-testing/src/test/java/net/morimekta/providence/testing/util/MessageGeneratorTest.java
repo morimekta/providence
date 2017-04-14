@@ -11,6 +11,7 @@ import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.android.CompactFields;
 import net.morimekta.testing.rules.ConsoleWatcher;
+import net.morimekta.util.ExtraStreams;
 
 import org.jfairy.Fairy;
 import org.junit.Rule;
@@ -21,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
 
@@ -55,6 +57,29 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(pretty(compact) + "\n"));
+    }
+
+    @Test
+    public void testRandom_multipleMessages() {
+        MessageGenerator generator = new MessageGenerator()
+                .setFillRate(0.667)
+                .dumpOnFailure();
+        generator.starting(Description.EMPTY);
+
+        LinkedList<CompactFields> list = new LinkedList<>();
+        ExtraStreams.range(0, 100).forEach(i -> list.add(generator.generate(CompactFields.kDescriptor)));
+
+        assertThat(list.size(), is(100));
+        for (CompactFields compact : list) {
+            assertThat(generator.getGenerated(), hasItem(compact));
+        }
+
+        generator.failed(new Throwable(), Description.EMPTY);
+
+        assertThat(console.output(), is(""));
+        for (CompactFields compact : list) {
+            assertThat(console.error(), containsString(pretty(compact) + "\n"));
+        }
     }
 
     @Test
