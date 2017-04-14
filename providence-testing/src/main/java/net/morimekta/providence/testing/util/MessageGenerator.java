@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static java.lang.Math.abs;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -390,6 +391,10 @@ public class MessageGenerator extends TestWatcher {
         return this;
     }
 
+    private int nextCollectionSize() {
+        return abs(random.nextInt() % maxCollectionItems);
+    }
+
     /**
      * Get the default value supplier for the given descriptor.
      *
@@ -414,11 +419,11 @@ public class MessageGenerator extends TestWatcher {
             case ENUM: {
                 PEnumDescriptor ed = (PEnumDescriptor) descriptor;
                 PEnumValue[] values = ed.getValues();
-                return () -> values[random.nextInt() % values.length];
+                return () -> values[abs(random.nextInt()) % values.length];
             }
             case BINARY: {
                 return () -> {
-                    byte[] tmp = new byte[random.nextInt() % maxCollectionItems];
+                    byte[] tmp = new byte[nextCollectionSize()];
                     random.nextBytes(tmp);
                     return Binary.wrap(tmp);
                 };
@@ -430,7 +435,7 @@ public class MessageGenerator extends TestWatcher {
                 PSet<Object> set = (PSet<Object>) descriptor;
                 Supplier<Object> itemSupplier = getValueSupplier(set.itemDescriptor());
                 return () -> {
-                    int num = random.nextInt(maxCollectionItems);
+                    int num = nextCollectionSize();
                     // Maps does not necessary allow conflicting keys.
                     HashSet<Object> builder = new HashSet<>();
                     for (int i = 0; i < num; ++i) {
@@ -445,7 +450,7 @@ public class MessageGenerator extends TestWatcher {
                 PList<Object> list = (PList<Object>) descriptor;
                 Supplier<Object> itemSupplier = getValueSupplier(list.itemDescriptor());
                 return () -> {
-                    int num = random.nextInt(maxCollectionItems);
+                    int num = nextCollectionSize();
                     // Maps does not necessary allow conflicting keys.
                     List<Object> builder = new LinkedList<>();
                     for (int i = 0; i < num; ++i) {
@@ -461,7 +466,7 @@ public class MessageGenerator extends TestWatcher {
                 Supplier<Object> keySupplier = getValueSupplier(map.keyDescriptor());
                 Supplier<Object> itemSupplier = getValueSupplier(map.itemDescriptor());
                 return () -> {
-                    int num = random.nextInt(maxCollectionItems);
+                    int num = nextCollectionSize();
                     // Maps does not necessary allow conflicting keys.
                     HashMap<Object, Object> builder = new HashMap<>();
                     for (int i = 0; i < num; ++i) {
