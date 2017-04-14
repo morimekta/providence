@@ -575,13 +575,13 @@ public class ProvidenceConfig {
                         throw new TokenizerException(token, "Included file " + token.asString() + " not found")
                                 .setLine(tokenizer.getLine(token.getLineNo()));
                     }
-                    if (!AS.equals(tokenizer.expectIdentifier("the token 'as'")
-                                            .asString())) {
-                        throw new TokenizerException(token, "Missing alias for included file " + includedFile).setLine(
+                    token = tokenizer.expectIdentifier("the token 'as'");
+                    if (!AS.equals(token.asString())) {
+                        throw new TokenizerException(token, "Expected token 'as' after included file \"" + includedFile.getName() + "\"").setLine(
                                 tokenizer.getLine(token.getLineNo()));
                     }
-                    String alias = tokenizer.expectIdentifier("Include alias")
-                                            .asString();
+                    token = tokenizer.expectIdentifier("Include alias");
+                    String alias = token.asString();
                     if (RESERVED_WORDS.contains(alias)) {
                         throw new TokenizerException(token, "Alias \"" + alias + "\" is a reserved word").setLine(
                                 tokenizer.getLine(token.getLineNo()));
@@ -593,15 +593,15 @@ public class ProvidenceConfig {
                     context.includes.put(alias, included);
                 } else {
                     throw new TokenizerException(token,
-                                                 "Unexpected token " + token.asString() +
-                                                 "expected include, params or message type").setLine(tokenizer.getLine(
-                            token.getLineNo()));
+                                                 "Unexpected token '" + token.asString() +
+                                                 "'. Expected include, params or message type")
+                            .setLine(tokenizer.getLine(token.getLineNo()));
                 }
             } else {
                 throw new TokenizerException(token,
-                                             "Unexpected token " + token.asString() +
-                                             "expected include, params or message type").setLine(tokenizer.getLine(
-                        token.getLineNo()));
+                                             "Unexpected token '" + token.asString() +
+                                             "'. Expected include, params or message type")
+                        .setLine(tokenizer.getLine(token.getLineNo()));
             }
 
             token = tokenizer.peek();

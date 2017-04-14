@@ -38,7 +38,9 @@ public class ProvidenceConfigParam {
         }
         ProvidenceConfigParam p = (ProvidenceConfigParam) o;
 
-        return Objects.equals(name, p.name) && Objects.equals(value, p.value) && Objects.equals(file, p.file);
+        return Objects.equals(name, p.name) &&
+               Objects.equals(value, p.value) &&
+               Objects.equals(file, p.file);
     }
 
     @Override

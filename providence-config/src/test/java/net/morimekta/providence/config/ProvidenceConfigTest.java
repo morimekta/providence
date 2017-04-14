@@ -517,7 +517,7 @@ public class ProvidenceConfigTest {
     private void assertReferenceFails(String cfg, String message) throws IOException {
         try {
             File a = writeContentTo(cfg, temp.newFile());
-            ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+            ProvidenceConfig config = new ProvidenceConfig(registry);
             config.getSupplier(a, RefMerge.kDescriptor).get();
             fail("No exception on fail: " + message);
         } catch (TokenizerException e) {
@@ -547,6 +547,7 @@ public class ProvidenceConfigTest {
         assertEquals(f2_1.getCanonicalPath(), config.resolveFile(f1_1, "../other/other.cfg").getAbsolutePath());
         assertEquals(f2_2.getCanonicalPath(), config.resolveFile(f1_1, "../third.cfg").getAbsolutePath());
 
+        assertFileNotResolved(f1_1, "../", "../ is a directory, expected file");
         assertFileNotResolved(f1_1, "../fourth.cfg", "Included file ../fourth.cfg not found");
         assertFileNotResolved(f1_1, "fourth.cfg", "Included file fourth.cfg not found");
         assertFileNotResolved(f1_1, "/fourth.cfg", "Absolute path includes not allowed: /fourth.cfg");
@@ -554,6 +555,7 @@ public class ProvidenceConfigTest {
         assertFileNotResolved(f1_1, "../other", "../other is a directory, expected file");
         assertFileNotResolved(f1_1, "other", "Included file other not found");
 
+        assertFileNotResolved(null, "../", "../ is a directory, expected file");
         assertFileNotResolved(null, "../fourth.cfg", "File ../fourth.cfg not found");
         assertFileNotResolved(null, "fourth.cfg", "File fourth.cfg not found");
         assertFileNotResolved(null, "/fourth.cfg", "File /fourth.cfg not found");
@@ -575,37 +577,88 @@ public class ProvidenceConfigTest {
 
     @Test
     public void testParseFailure() throws IOException {
-        assertParseFailure("empty file",
-                           "No message in config: test.cfg",
+        writeContentTo("config.Database {}", temp.newFile("a.cfg"));
+        writeContentTo("config.Database {}", temp.newFile("b.cfg"));
+
+        assertParseFailure("No message in config: test.cfg",
                            "");
-        assertParseFailure("bad params number",
-                           "Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
                            "    Invalid termination of number: '1f'\n" +
                            "params { n = 1f }\n" +
                            "--------------^",
                            "params { n = 1f }");
-        assertParseFailure("newline in string",
-                           "Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 3, pos 0:\n" +
+                           "    Params already defined, or passed; must be at head of file\n" +
+                           "params { y = \"baa\"}\n" +
+                           "^",
+                           "params { n = 1 }\n" +
+                           "include \"a.cfg\" as a\n" +
+                           "params { y = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 2, pos 0:\n" +
+                           "    Expected the token 'as', but got 'config.Database'\n" +
+                           "config.Database { driver = \"baa\"}\n" +
+                           "^",
+                           "include \"a.cfg\"\n" +
+                           "config.Database { driver = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 1, pos 16:\n" +
+                           "    Expected token 'as' after included file \"a.cfg\"\n" +
+                           "include \"a.cfg\" ass db\n" +
+                           "----------------^",
+                           "include \"a.cfg\" ass db\n" +
+                           "config.Database { driver = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 2, pos 0:\n" +
+                           "    Expected Include alias, but got 'config.Database'\n" +
+                           "config.Database { driver = \"baa\"}\n" +
+                           "^",
+                           "include \"a.cfg\" as\n" +
+                           "config.Database { driver = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 1, pos 19:\n" +
+                           "    Alias \"params\" is a reserved word\n" +
+                           "include \"a.cfg\" as params\n" +
+                           "-------------------^",
+                           "include \"a.cfg\" as params\n" +
+                           "config.Database { driver = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 2, pos 19:\n" +
+                           "    Alias \"a\" is already used\n" +
+                           "include \"a.cfg\" as a\n" +
+                           "-------------------^",
+                           "include \"a.cfg\" as a\n" +
+                           "include \"a.cfg\" as a\n" +
+                           "config.Database { driver = \"baa\"}\n");
+        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
                            "    Unexpected line break in literal\n" +
                            "params { s = \"\n" +
                            "--------------^",
                            "params { s = \"\n\"}");
-        assertParseFailure("newline in string",
-                           "Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
                            "    Unescaped non-printable char in literal: '\\t'\n" +
                            "params { s = \"\t\"}\n" +
                            "--------------^",
                            "params { s = \"\t\"}");
-        assertParseFailure("unterminated string",
-                           "Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
                            "    Unexpected end of stream in literal\n" +
                            "params { s = \"a\n" +
                            "--------------^",
                            "params { s = \"a");
+        assertParseFailure("Error in test.cfg on line 1, pos 9:\n" +
+                           "    Param name 1 not valid\n" +
+                           "params { 1 = \"boo\" }\n" +
+                           "---------^",
+                           "params { 1 = \"boo\" }");
+        assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
+                           "    Unexpected token '44'. Expected include, params or message type\n" +
+                           "44\n" +
+                           "^",
+                           "44");
+        assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
+                           "    Unexpected token 'boo'. Expected include, params or message type\n" +
+                           "boo {\n" +
+                           "^",
+                           "boo {\n" +
+                           "}\n");
 
         // Parsing that only fails in strict mode.
-        assertParseFailure("unknown identifier",
-                           "Error in test.cfg on line 1, pos 13:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 13:\n" +
                            "    Unknown enum identifier: boo.En\n" +
                            "params { s = boo.En.VAL }\n" +
                            "-------------^",
@@ -613,14 +666,12 @@ public class ProvidenceConfigTest {
     }
 
 
-    private void assertParseFailure(String reason,
-                                    String message,
+    private void assertParseFailure(String message,
                                     String pretty) throws IOException {
-        assertParseFailure(reason, message, pretty, false);
+        assertParseFailure(message, pretty, false);
     }
 
-    private void assertParseFailure(String reason,
-                                    String message,
+    private void assertParseFailure(String message,
                                     String pretty,
                                     boolean strict) throws IOException {
         File a = temp.newFile("test.cfg");
@@ -630,11 +681,11 @@ public class ProvidenceConfigTest {
 
         try {
             config.getSupplier(a);
-            fail("no exception on " + reason);
+            fail("no exception");
         } catch (ConfigException e) {
-            assertEquals("Wrong exception message on " + reason, message, e.getMessage());
+            assertThat(e.getMessage(), is(message));
         } catch (SerializerException e) {
-            assertEquals("Wrong exception message on " + reason, message, e.asString().replaceAll("\\r", ""));
+            assertThat(e.asString().replaceAll("\\r", ""), is(message));
         }
         a.delete();
     }
