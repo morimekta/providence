@@ -7,7 +7,6 @@ import net.morimekta.providence.util.pretty.TokenizerException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -20,9 +19,8 @@ class ProvidenceConfigContext {
     private final Map<String, TokenizerException> referenceExceptions;
 
     ProvidenceConfigContext() {
-        this.params = new ConcurrentHashMap<>();
+        this.params = new HashMap<>();
         this.includes = new HashMap<>();
-
         this.references = new HashMap<>();
         this.referenceExceptions = new HashMap<>();
     }
@@ -61,6 +59,7 @@ class ProvidenceConfigContext {
     Object setReference(String reference, Object value) {
         if (reference != null) {
             if (!referenceExceptions.containsKey(reference)) {
+                // Should be impossible. This is just in case.
                 throw new RuntimeException("Reference '" + reference + "' not initialised");
             }
             references.put(reference, value);

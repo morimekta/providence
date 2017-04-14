@@ -468,11 +468,50 @@ public class ProvidenceConfigTest {
                              "Trying to reassign reference 'first', original at line 3");
         assertReferenceFails("\n" +
                              "config.RefMerge {\n" +
-                             "  ref1 & first {\n" +
-                             "    db = first\n" +
+                             "  ref1 & params {\n" +
                              "  }\n" +
                              "}\n",
-                             "Trying to reassign reference 'first', original at line 3");
+                             "Trying to assign reference id 'params', which is reserved.");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    msg_value & first {}\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    msg_value = first\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reference 'first' while it's being defined, original at line 3");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    msg_value = second\n" +
+                             "  }\n" +
+                             "}\n",
+                             "No such reference 'second'");
+
+        // --- with unknown / consumed values
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    unk & first = {\n" +
+                             "    }\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
+        assertReferenceFails("\n" +
+                             "config.RefMerge {\n" +
+                             "  ref1 & first {\n" +
+                             "    unk = {\n" +
+                             "      val & first = \"str\"\n" +
+                             "    }\n" +
+                             "  }\n" +
+                             "}\n",
+                             "Trying to reassign reference 'first' while calculating it's value, original at line 3");
     }
 
     private void assertReferenceFails(String cfg, String message) throws IOException {

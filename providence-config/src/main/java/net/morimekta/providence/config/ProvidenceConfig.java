@@ -1224,7 +1224,6 @@ public class ProvidenceConfig {
                           Token token,
                           Tokenizer tokenizer,
                           PDescriptor descriptor) throws TokenizerException {
-        String key = token.asString();
         Object value = resolveAny(context, token, tokenizer);
         if (value == null) {
             return null;
@@ -1289,6 +1288,7 @@ public class ProvidenceConfig {
     private Object resolveAny(ProvidenceConfigContext context, Token token, Tokenizer tokenizer)
             throws TokenizerException {
         String key = token.asString();
+
         if (key.contains(IDENTIFIER_SEP)) {
             int idx = key.indexOf(IDENTIFIER_SEP);
             String name = key.substring(0, idx);
