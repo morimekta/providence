@@ -309,6 +309,10 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                 writer.formatln(".addBooleanArrayField(\"%s\")",
                                 field.name());
                 break;
+            case BINARY:
+                writer.formatln(".addByteArrayField(\"%s\")",
+                                field.name());
+                break;
             case DOUBLE:
                 writer.formatln(".addDoubleArrayField(\"%s\")",
                                 field.name());

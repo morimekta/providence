@@ -81,6 +81,8 @@ public class JField {
 
     public String hasName() { return camelCase("__has_", field.getName()); }
 
+    public String sizeName() { return camelCase("__size_", field.getName()); }
+
     public String param() {
         return camelCase("p", field.getName());
     }

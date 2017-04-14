@@ -60,6 +60,7 @@ struct OptionalListFields {
     5: optional list<i64> longValue;
     6: optional list<double> doubleValue;
 //    7: optional list<string> stringValue;
+    8: optional list<binary> binaryValue;
     10: optional list<CompactFields> compactValue;
     11: optional list<string> anotherStringValues;
     12: optional list<i32> anotherIntegerValue;
