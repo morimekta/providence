@@ -24,7 +24,6 @@ import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceProvider;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -52,6 +51,19 @@ public class CService extends PService implements CAnnotatedDescriptor {
     @SuppressWarnings("unchecked")
     public Collection<CServiceMethod> getMethods() {
         return (Collection<CServiceMethod>) super.getMethods();
+    }
+
+    @Override
+    public CServiceMethod getMethod(String name) {
+        for (CServiceMethod method : getMethods()) {
+            if (method.getName().equals(name)) {
+                return method;
+            }
+        }
+        if (getExtendsService() != null) {
+            return getExtendsService().getMethod(name);
+        }
+        return null;
     }
 
     @Override

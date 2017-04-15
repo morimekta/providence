@@ -10,6 +10,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,7 +41,18 @@ public class WrappedProcessorTest {
         PApplicationException r = new PApplicationException("call", PApplicationExceptionType.INTERNAL_ERROR);
 
         AtomicReference<PService> service = new AtomicReference<>();
-        service.set(new PService("test", "Service", service::get, new PServiceMethod[]{}));
+        service.set(new PService("test", "Service", service::get, new PServiceMethod[]{}) {
+            @Nullable
+            @Override
+            public PServiceMethod getMethod(String name) {
+                for (PServiceMethod method : getMethods()) {
+                    if (method.getName().equals(name)) {
+                        return method;
+                    }
+                }
+                return null;
+            }
+        });
 
         PServiceCall call =
                 new PServiceCall<>("test", PServiceCallType.CALL, 44, c);

@@ -31,6 +31,10 @@ service Calculator {
     oneway void iamalive();
 }
 
+service Calculator2 extends Calculator {
+    string extra();
+}
+
 const Operand PI = {
   "number": 3.141592
 };

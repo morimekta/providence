@@ -78,7 +78,10 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof PEnumDescriptor)) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null || !(o.getClass().equals(getClass()))) {
             return false;
         }
         PEnumDescriptor<?> other = (PEnumDescriptor<?>) o;
@@ -88,7 +91,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
         }
         for (PEnumValue<?> value : getValues()) {
             PEnumValue<?> ovI = other.getValueById(value.getValue());
-            if (!value.equals(ovI)) {
+            if (ovI != null && !value.getName().equals(ovI.getName())) {
                 return false;
             }
         }

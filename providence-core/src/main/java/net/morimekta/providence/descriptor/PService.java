@@ -29,7 +29,7 @@ import java.util.Collection;
 /**
  * Descriptor for a complete service.
  */
-public class PService {
+public abstract class PService {
     private final String                               name;
     private final String                               programName;
     private final PServiceProvider                     extendsService;
@@ -49,35 +49,50 @@ public class PService {
                     @Nonnull String name,
                     @Nullable PServiceProvider extendsService,
                     @Nonnull PServiceMethod[] methods) {
-        this.name = name;
-        this.programName = programName;
-        this.extendsService = extendsService;
-        this.methods = ImmutableList.copyOf(methods);
+        this(programName, name, extendsService, ImmutableList.copyOf(methods));
     }
 
+    /**
+     * @return Get the program name for the service.
+     */
     @Nonnull
     public String getProgramName() {
         return programName;
     }
 
+    /**
+     * @return Get the name of the service.
+     */
     @Nonnull
     public String getName() {
         return name;
     }
 
+    /**
+     * @param programContext The relative program context.
+     * @return Get the qualified name or relative name given the current program context.
+     */
     @Nonnull
-    public String getQualifiedName(String packageContext) {
-        if (programName.equals(packageContext)) {
+    public String getQualifiedName(String programContext) {
+        if (programName.equals(programContext)) {
             return name;
         }
         return programName + "." + name;
     }
 
+    /**
+     * @return Get the qualified name for the service.
+     */
     @Nonnull
     public String getQualifiedName() {
         return getQualifiedName(null);
     }
 
+    /**
+     * Get the service that this service extends.
+     *
+     * @return Extended service or null if none.
+     */
     @Nullable
     public PService getExtendsService() {
         if (extendsService != null) {
@@ -86,21 +101,23 @@ public class PService {
         return null;
     }
 
+    /**
+     * Get the collection of methods for the service, including all inherited
+     * services.
+     *
+     * @return The collection of methods.
+     */
     @Nonnull
     public Collection<? extends PServiceMethod> getMethods() {
         return methods;
     }
 
+    /**
+     * Get the method definition for the given method name.
+     *
+     * @param name The service method name.
+     * @return The service method.
+     */
     @Nullable
-    public PServiceMethod getMethod(String name) {
-        for (PServiceMethod method : methods) {
-            if (method.getName().equals(name)) {
-                return method;
-            }
-        }
-        if (extendsService != null) {
-            return extendsService.getService().getMethod(name);
-        }
-        return null;
-    }
+    public abstract PServiceMethod getMethod(String name);
 }

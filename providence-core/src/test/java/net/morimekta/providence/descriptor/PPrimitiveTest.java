@@ -23,6 +23,7 @@ import net.morimekta.providence.PType;
 
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -33,6 +34,30 @@ import static org.junit.Assert.assertThat;
  * @since 18.10.15
  */
 public class PPrimitiveTest {
+    @Test
+    public void testToString() {
+        assertEquals("bool", PPrimitive.BOOL.toString());
+        assertEquals("byte", PPrimitive.BYTE.toString());
+        assertEquals("i16", PPrimitive.I16.toString());
+        assertEquals("i32", PPrimitive.I32.toString());
+        assertEquals("i64", PPrimitive.I64.toString());
+        assertEquals("double", PPrimitive.DOUBLE.toString());
+        assertEquals("string", PPrimitive.STRING.toString());
+        assertEquals("binary", PPrimitive.BINARY.toString());
+    }
+
+    @Test
+    public void testDefaultValue() {
+        assertEquals(false, PPrimitive.BOOL.getDefaultValue());
+        assertEquals((byte) 0, PPrimitive.BYTE.getDefaultValue());
+        assertEquals((short) 0, PPrimitive.I16.getDefaultValue());
+        assertEquals(0, PPrimitive.I32.getDefaultValue());
+        assertEquals(0L, PPrimitive.I64.getDefaultValue());
+        assertEquals(0.0d, PPrimitive.DOUBLE.getDefaultValue());
+        assertEquals(null, PPrimitive.STRING.getDefaultValue());
+        assertEquals(null, PPrimitive.BINARY.getDefaultValue());
+    }
+
     @Test
     public void testGetName() {
         assertEquals("bool", PPrimitive.BOOL.getName());
@@ -135,5 +160,20 @@ public class PPrimitiveTest {
         assertNotEquals(PPrimitive.BINARY,
                         PPrimitive.BOOL.provider()
                                        .descriptor());
+    }
+
+    @Test
+    public void testFindByName() {
+        assertThat(PPrimitive.findByName("void"), is(PPrimitive.VOID));
+        assertThat(PPrimitive.findByName("bool"), is(PPrimitive.BOOL));
+        assertThat(PPrimitive.findByName("byte"), is(PPrimitive.BYTE));
+        assertThat(PPrimitive.findByName("i8"), is(PPrimitive.BYTE));
+        assertThat(PPrimitive.findByName("i16"), is(PPrimitive.I16));
+        assertThat(PPrimitive.findByName("i32"), is(PPrimitive.I32));
+        assertThat(PPrimitive.findByName("i64"), is(PPrimitive.I64));
+        assertThat(PPrimitive.findByName("double"), is(PPrimitive.DOUBLE));
+        assertThat(PPrimitive.findByName("string"), is(PPrimitive.STRING));
+        assertThat(PPrimitive.findByName("binary"), is(PPrimitive.BINARY));
+        assertThat(PPrimitive.findByName("goo"), is(nullValue()));
     }
 }

@@ -118,7 +118,7 @@ public class BinaryFormatUtils {
                 throw new SerializerException("Mismatching field type in strict mode.");
             } else {
                 // consume the content.
-                readFieldValue(in, fieldInfo, null, readStrict);
+                readFieldValue(in, fieldInfo, null, false);
                 // return 'null', which should clear the field value.
                 return null;
             }
@@ -159,7 +159,7 @@ public class BinaryFormatUtils {
                 }
             case MESSAGE: {
                 if (type == null) {
-                    consumeMessage(in, readStrict);
+                    consumeMessage(in, false);
                     return null;
                 }
                 return readMessage(in, (PMessageDescriptor<?,?>) type, readStrict);
