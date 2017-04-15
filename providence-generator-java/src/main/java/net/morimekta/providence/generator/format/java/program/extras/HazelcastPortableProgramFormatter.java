@@ -302,15 +302,12 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
         switch (listType.itemDescriptor()
                         .getType()) {
             case BYTE:
+            case BINARY:
                 writer.formatln(".addByteArrayField(\"%s\")",
                                 field.name());
                 break;
             case BOOL:
                 writer.formatln(".addBooleanArrayField(\"%s\")",
-                                field.name());
-                break;
-            case BINARY:
-                writer.formatln(".addByteArrayField(\"%s\")",
                                 field.name());
                 break;
             case DOUBLE:
@@ -322,6 +319,7 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                                 field.name());
                 break;
             case I32:
+            case ENUM:
                 writer.formatln(".addIntArrayField(\"%s\")",
                                 field.name());
                 break;

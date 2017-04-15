@@ -59,6 +59,7 @@ struct OptionalListFields {
     6: optional list<double> doubleValue;
     7: optional list<string> stringValue;
     8: optional list<binary> binaryValue;
+    9: optional list<Value> valueValue;
     10: optional list<CompactFields> compactValue;
 } (hazelcast.class.id = "3")
 

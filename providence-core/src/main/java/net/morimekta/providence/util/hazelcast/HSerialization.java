@@ -1,5 +1,6 @@
 package net.morimekta.providence.util.hazelcast;
 
+import net.morimekta.providence.PEnumValue;
 import net.morimekta.util.Binary;
 
 import java.io.ByteArrayInputStream;
@@ -48,6 +49,10 @@ public class HSerialization {
             result.add(new Binary(readBytes(bis, length)));
         }
         return result;
+    }
+
+    public static int[] fromEnumList(List<PEnumValue<?>> enums) {
+        return enums.stream().map(PEnumValue::getValue).mapToInt(t -> t).toArray();
     }
 
     /**

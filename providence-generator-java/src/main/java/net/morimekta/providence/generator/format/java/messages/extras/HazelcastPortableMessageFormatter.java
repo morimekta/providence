@@ -425,6 +425,12 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                               Doubles.class.getName(),
                               field.member());
                 break;
+            case ENUM:
+                writer.formatln("%s.writeIntArray(\"%s\", %s.build().stream().mapToInt(t -> t.getValue()).toArray());",
+                                PORTABLE_WRITER,
+                                field.name(),
+                                field.member());
+                break;
             case I16:
                 writer.formatln("%s.writeShortArray(\"%s\", %s.toArray(%s.build()));",
                               PORTABLE_WRITER,
@@ -447,10 +453,9 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                               field.member());
                 break;
             case STRING:
-                writer.formatln("%s.writeUTFArray(\"%s\", %s.build().toArray(new String[%s.build().size()]));",
+                writer.formatln("%s.writeUTFArray(\"%s\", %s.build().toArray(new String[0]));",
                               PORTABLE_WRITER,
                               field.name(),
-                              field.member(),
                               field.member());
                 break;
             case MESSAGE:
@@ -517,6 +522,12 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 PORTABLE_WRITER,
                                 field.name(),
                                 helper.getValueType(listType.itemDescriptor()));
+                break;
+            case ENUM:
+                writer.formatln("%s.writeIntArray(\"%s\", new %s[0]);",
+                                PORTABLE_WRITER,
+                                field.name(),
+                                int.class.getName()); //TODO need fixed as value isn't doable.
                 break;
             case I16:
                 writer.formatln("%s.writeShortArray(\"%s\", new %s[0]);",
@@ -707,6 +718,16 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 Doubles.class.getName(),
                                 PORTABLE_READER,
                                 field.name());
+                break;
+            case ENUM:
+                writer.formatln("%s(%s.asList(%s.readIntArray(\"%s\")).stream().map(t -> %s.%s(t.intValue())).collect(%s.toList()));",
+                                field.setter(),
+                                Ints.class.getName(),
+                                PORTABLE_READER,
+                                field.name(),
+                                listType.itemDescriptor().getName(),
+                                "forValue", //TODO need to change this to another value.
+                                Collectors.class.getName());
                 break;
             case I16:
                 writer.formatln("%s(%s.asList(%s.readShortArray(\"%s\")));",
