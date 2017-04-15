@@ -371,7 +371,7 @@ public class PrettySerializer extends Serializer {
             }
             case BINARY: {
                 tokenizer.expectSymbol("binary content start", Token.kMethodStart);
-                String content = tokenizer.readUntil(Token.kMethodEnd, false, false);
+                String content = tokenizer.readBinary(Token.kMethodEnd);
                 switch (token.asString()) {
                     case "b64":
                         return Binary.fromBase64(content);
@@ -691,7 +691,7 @@ public class PrettySerializer extends Serializer {
 
                     tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
                     consumeValue(tokenizer, tokenizer.next());
-                    token = nextNotLineSep(tokenizer, "message field or end");
+                    token = nextNotLineSep(tokenizer);
                 }
             }
         } else if (token.isSymbol(Token.kListStart)) {
@@ -706,7 +706,7 @@ public class PrettySerializer extends Serializer {
             }
         } else if (token.asString().equals(Token.HEX)) {
             tokenizer.expectSymbol("hex body start", Token.kMethodStart);
-            tokenizer.readUntil(Token.kMethodEnd, false, false);
+            tokenizer.readBinary(Token.kMethodEnd);
         } else if (!(token.isReal() ||  // number (double)
                      token.isInteger() ||  // number (int)
                      token.isStringLiteral() ||  // string literal
@@ -716,11 +716,11 @@ public class PrettySerializer extends Serializer {
         }
     }
 
-    private Token nextNotLineSep(Tokenizer tokenizer, String message) throws IOException {
+    private Token nextNotLineSep(Tokenizer tokenizer) throws IOException {
         if (tokenizer.peek().isSymbol(Token.kLineSep1) ||
             tokenizer.peek().isSymbol(Token.kLineSep2)) {
-            tokenizer.expect(message);
+            tokenizer.expect("message field or end");
         }
-        return tokenizer.expect(message);
+        return tokenizer.expect("message field or end");
     }
 }

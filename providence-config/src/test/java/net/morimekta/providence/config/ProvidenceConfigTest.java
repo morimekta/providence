@@ -25,12 +25,14 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.test.providence.config.Database;
+import net.morimekta.test.providence.config.RefConfig1;
 import net.morimekta.test.providence.config.RefMerge;
 import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.Value;
+import net.morimekta.util.Binary;
 
-import com.google.common.collect.ImmutableMap;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,10 +40,9 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.function.Supplier;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
 import static net.morimekta.providence.util.PrettyPrinter.debugString;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.getResourceAsString;
@@ -84,9 +85,7 @@ public class ProvidenceConfigTest {
         File prod = copyResourceTo("/net/morimekta/providence/config/prod.cfg", temp.getRoot());
         File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(
-                "admin_port", "14256"
-        ), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
         Service stage_service = config.getConfig(stage, Service.kDescriptor);
         Service prod_service = config.getConfig(prod);
 
@@ -102,7 +101,7 @@ public class ProvidenceConfigTest {
                      "  ]\n" +
                      "}\n" +
                      "admin = {\n" +
-                     "  port = 14256\n" +
+                     "  port = 8088\n" +
                      "  oauth_token_key = b64(VGVzdCBPYXV0aCBLZXkK)\n" +
                      "}\n" +
                      "db = {\n" +
@@ -141,7 +140,7 @@ public class ProvidenceConfigTest {
         File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
         File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
         config.getConfig(f_stage_db);
         Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, f_stage_db);
 
@@ -155,7 +154,7 @@ public class ProvidenceConfigTest {
         File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
         File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
         config.getConfig(f_stage_db);
         Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, f_stage_db, Database.kDescriptor);
 
@@ -169,7 +168,7 @@ public class ProvidenceConfigTest {
         File f_stage_db = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
         File f_stage_nocred = copyResourceTo("/net/morimekta/providence/config/stage_nocred.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
         Supplier<Database> stage_db = config.getSupplier(f_stage_db, Database.kDescriptor);
         Supplier<Database> stage_nocred = config.getSupplierWithParent(f_stage_nocred, stage_db);
 
@@ -178,6 +177,29 @@ public class ProvidenceConfigTest {
                      debugString(stage_nocred.get()));
     }
 
+    @Test
+    public void testDefinesEveryType() throws IOException {
+        ProvidenceConfig config = new ProvidenceConfig(registry);
+        File defs = copyResourceTo("/net/morimekta/providence/config/all_defs.cfg", temp.getRoot());
+        RefConfig1 ref = config.getSupplier(defs, RefConfig1.kDescriptor).get();
+
+        // Make sure every field is overridden.
+        Assert.assertThat(ref, is(equalToMessage(
+                RefConfig1.builder()
+                          .setBoolValue(true)
+                          .setByteValue((byte) 123)
+                          .setI16Value((short) 12345)
+                          .setI32Value(1234567890)
+                          .setI64Value(12345678901234567L)
+                          .setDoubleValue(1234567.1234567)
+                          .setEnumValue(Value.SECOND)
+                          .setBinValue(Binary.fromHexString("01020304"))
+                          .setStrValue("This is a string")
+                          .setMsgValue(Database.builder()
+                                               .setDriver("Driver")
+                                               .build())
+                          .build())));
+    }
 
     @Test
     public void testReload() throws IOException {
@@ -185,7 +207,7 @@ public class ProvidenceConfigTest {
         File stageDb = copyResourceTo("/net/morimekta/providence/config/stage_db.cfg", temp.getRoot());
         File stage = copyResourceTo("/net/morimekta/providence/config/stage.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
 
         Supplier<Service> stage_service = config.getSupplier(stage);
 
@@ -247,7 +269,7 @@ public class ProvidenceConfigTest {
         copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
         File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of());
+        ProvidenceConfig config = new ProvidenceConfig(registry);
         Supplier<Database> cfg = config.getSupplier(file);
 
         // all the unknowns are skipped.
@@ -273,7 +295,7 @@ public class ProvidenceConfigTest {
         copyResourceTo("/net/morimekta/providence/config/unknown.cfg", temp.getRoot());
         File file = copyResourceTo("/net/morimekta/providence/config/unknown_include.cfg", temp.getRoot());
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), true);
+        ProvidenceConfig config = new ProvidenceConfig(registry, true);
         try {
             config.getSupplier(file);
             fail("no exception");
@@ -299,57 +321,6 @@ public class ProvidenceConfigTest {
     }
 
     @Test
-    public void testParams() throws IOException {
-        File a = temp.newFile("a.cfg");
-        File b = temp.newFile("b.cfg");
-
-        writeContentTo("params {\n" +
-                       "  a_number = 4321\n" +
-                       "  a_real = 43.21\n" +
-                       "  a_text = \"string\"\n" +
-                       "  a_enum = config.Value.SECOND\n" +
-                       "  a_bin = b64(dGVzdAo=)\n" +
-                       "}\n" + "config.Database {}\n", a);
-        writeContentTo("include \"a.cfg\" as a\n" +
-                       "\n" +
-                       "params {\n" +
-                       "  b_number = 4321\n" +
-                       "  b_real = 43.21\n" +
-                       "  b_text = \"string\"\n" +
-                       "  b_enum = config.Value.SECOND\n" +
-                       "  b_bin = hex(0123456789abcdef)\n" +
-                       "}\n" +
-                       "config.Database {}\n", b);
-
-        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
-
-        List<ProvidenceConfigParam> params = config.params(b);
-
-        StringBuilder builder = new StringBuilder();
-        params.stream()
-              .map(ProvidenceConfigParam::toString)
-              .sorted()
-              .forEachOrdered(s -> {
-                  builder.append(s);
-                  builder.append('\n');
-              });
-
-        assertEquals(
-                "a_bin = b64(dGVzdAo) (a.cfg)\n" +
-                "a_enum = config.Value.SECOND (a.cfg)\n" +
-                "a_number = 4321 (a.cfg)\n" +
-                "a_real = 43.21 (a.cfg)\n" +
-                "a_text = \"string\" (a.cfg)\n" +
-                "b_bin = b64(ASNFZ4mrze8) (b.cfg)\n" +
-                "b_enum = config.Value.SECOND (b.cfg)\n" +
-                "b_number = 4321 (b.cfg)\n" +
-                "b_real = 43.21 (b.cfg)\n" +
-                "b_text = \"string\" (b.cfg)\n" +
-                "",
-                builder.toString());
-    }
-
-    @Test
     public void testCircularIncludes() throws IOException {
         File a = temp.newFile("a.cfg");
         File b = temp.newFile("b.cfg");
@@ -362,17 +333,10 @@ public class ProvidenceConfigTest {
         writeContentTo("include \"a.cfg\" as a\n" +
                        "config.Database {}\n", c);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+        ProvidenceConfig config = new ProvidenceConfig(registry);
 
         try {
             config.getSupplier(a);
-            fail("no exception on circular deps");
-        } catch (SerializerException e) {
-            assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
-        }
-
-        try {
-            config.params(a);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
             assertEquals("Circular includes detected: a.cfg -> b.cfg -> c.cfg -> a.cfg", e.getMessage());
@@ -385,13 +349,13 @@ public class ProvidenceConfigTest {
         writeContentTo("include \"b.cfg\" as a\n" +
                        "config.Database {}\n", a);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+        ProvidenceConfig config = new ProvidenceConfig(registry);
 
         try {
             config.getSupplier(a);
             fail("no exception on circular deps");
         } catch (SerializerException e) {
-            assertEquals("Included file \"b.cfg\" not found", e.getMessage());
+            assertEquals("Included file \"b.cfg\" not found.", e.getMessage());
         }
     }
 
@@ -418,7 +382,7 @@ public class ProvidenceConfigTest {
                 "}\n", temp.newFile("a.cfg"));
 
         try {
-            ProvidenceConfig config = new ProvidenceConfig(registry, new HashMap<>());
+            ProvidenceConfig config = new ProvidenceConfig(registry);
             RefMerge merged = config.getSupplier(a, RefMerge.kDescriptor)
                                     .get();
 
@@ -468,10 +432,10 @@ public class ProvidenceConfigTest {
                              "Trying to reassign reference 'first', original at line 3");
         assertReferenceFails("\n" +
                              "config.RefMerge {\n" +
-                             "  ref1 & params {\n" +
+                             "  ref1 & def {\n" +
                              "  }\n" +
                              "}\n",
-                             "Trying to assign reference id 'params', which is reserved.");
+                             "Trying to assign reference id 'def', which is reserved.");
         assertReferenceFails("\n" +
                              "config.RefMerge {\n" +
                              "  ref1 & first {\n" +
@@ -539,8 +503,7 @@ public class ProvidenceConfigTest {
         writeContentTo("a", f1_2);
         writeContentTo("a", f2_1);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry,
-                                                       ImmutableMap.of());
+        ProvidenceConfig config = new ProvidenceConfig(registry);
 
         assertEquals(f1_1.getCanonicalPath(), config.resolveFile(null, temp.getRoot() + "/test/test.cfg").getAbsolutePath());
         assertEquals(f1_2.getCanonicalPath(), config.resolveFile(f1_1, "same.cfg").getAbsolutePath());
@@ -565,7 +528,7 @@ public class ProvidenceConfigTest {
     }
 
     private void assertFileNotResolved(File ref, String file, String message) throws IOException {
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of());
+        ProvidenceConfig config = new ProvidenceConfig(registry);
 
         try {
             config.resolveFile(ref, file);
@@ -582,18 +545,18 @@ public class ProvidenceConfigTest {
 
         assertParseFailure("No message in config: test.cfg",
                            "");
-        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
                            "    Invalid termination of number: '1f'\n" +
-                           "params { n = 1f }\n" +
-                           "--------------^",
-                           "params { n = 1f }");
+                           "def { n = 1f }\n" +
+                           "-----------^",
+                           "def { n = 1f }");
         assertParseFailure("Error in test.cfg on line 3, pos 0:\n" +
-                           "    Params already defined, or passed; must be at head of file\n" +
-                           "params { y = \"baa\"}\n" +
+                           "    Defines already complete or passed.\n" +
+                           "def { y = \"baa\"}\n" +
                            "^",
-                           "params { n = 1 }\n" +
                            "include \"a.cfg\" as a\n" +
-                           "params { y = \"baa\"}\n");
+                           "def { n = 1 }\n" +
+                           "def { y = \"baa\"}\n");
         assertParseFailure("Error in test.cfg on line 2, pos 0:\n" +
                            "    Expected the token 'as', but got 'config.Database'\n" +
                            "config.Database { driver = \"baa\"}\n" +
@@ -601,7 +564,7 @@ public class ProvidenceConfigTest {
                            "include \"a.cfg\"\n" +
                            "config.Database { driver = \"baa\"}\n");
         assertParseFailure("Error in test.cfg on line 1, pos 16:\n" +
-                           "    Expected token 'as' after included file \"a.cfg\"\n" +
+                           "    Expected token 'as' after included file \"a.cfg\".\n" +
                            "include \"a.cfg\" ass db\n" +
                            "----------------^",
                            "include \"a.cfg\" ass db\n" +
@@ -613,56 +576,56 @@ public class ProvidenceConfigTest {
                            "include \"a.cfg\" as\n" +
                            "config.Database { driver = \"baa\"}\n");
         assertParseFailure("Error in test.cfg on line 1, pos 19:\n" +
-                           "    Alias \"params\" is a reserved word\n" +
-                           "include \"a.cfg\" as params\n" +
+                           "    Alias \"def\" is a reserved word.\n" +
+                           "include \"a.cfg\" as def\n" +
                            "-------------------^",
-                           "include \"a.cfg\" as params\n" +
+                           "include \"a.cfg\" as def\n" +
                            "config.Database { driver = \"baa\"}\n");
         assertParseFailure("Error in test.cfg on line 2, pos 19:\n" +
-                           "    Alias \"a\" is already used\n" +
+                           "    Alias \"a\" is already used.\n" +
                            "include \"a.cfg\" as a\n" +
                            "-------------------^",
                            "include \"a.cfg\" as a\n" +
                            "include \"a.cfg\" as a\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
                            "    Unexpected line break in literal\n" +
-                           "params { s = \"\n" +
-                           "--------------^",
-                           "params { s = \"\n\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
+                           "def { s = \"\n" +
+                           "-----------^",
+                           "def { s = \"\n\"}");
+        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
                            "    Unescaped non-printable char in literal: '\\t'\n" +
-                           "params { s = \"\t\"}\n" +
-                           "--------------^",
-                           "params { s = \"\t\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 14:\n" +
+                           "def { s = \"\t\"}\n" +
+                           "-----------^",
+                           "def { s = \"\t\"}");
+        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
                            "    Unexpected end of stream in literal\n" +
-                           "params { s = \"a\n" +
-                           "--------------^",
-                           "params { s = \"a");
-        assertParseFailure("Error in test.cfg on line 1, pos 9:\n" +
-                           "    Param name 1 not valid\n" +
-                           "params { 1 = \"boo\" }\n" +
-                           "---------^",
-                           "params { 1 = \"boo\" }");
+                           "def { s = \"a\n" +
+                           "-----------^",
+                           "def { s = \"a");
+        assertParseFailure("Error in test.cfg on line 1, pos 6:\n" +
+                           "    Reference name '1' is not valid.\n" +
+                           "def { 1 = \"boo\" }\n" +
+                           "------^",
+                           "def { 1 = \"boo\" }");
         assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
-                           "    Unexpected token '44'. Expected include, params or message type\n" +
+                           "    Unexpected token '44'. Expected include, defines or message type\n" +
                            "44\n" +
                            "^",
                            "44");
         assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
-                           "    Unexpected token 'boo'. Expected include, params or message type\n" +
+                           "    Unexpected token 'boo'. Expected include, defines or message type\n" +
                            "boo {\n" +
                            "^",
                            "boo {\n" +
                            "}\n");
 
         // Parsing that only fails in strict mode.
-        assertParseFailure("Error in test.cfg on line 1, pos 13:\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 10:\n" +
                            "    Unknown enum identifier: boo.En\n" +
-                           "params { s = boo.En.VAL }\n" +
-                           "-------------^",
-                           "params { s = boo.En.VAL }", true);
+                           "def { s = boo.En.VAL }\n" +
+                           "----------^",
+                           "def { s = boo.En.VAL }", true);
     }
 
 
@@ -677,7 +640,7 @@ public class ProvidenceConfigTest {
         File a = temp.newFile("test.cfg");
         writeContentTo(pretty, a);
 
-        ProvidenceConfig config = new ProvidenceConfig(registry, ImmutableMap.of(), strict);
+        ProvidenceConfig config = new ProvidenceConfig(registry, strict);
 
         try {
             config.getSupplier(a);

@@ -79,20 +79,20 @@ providence config file syntax:
   The comment can start anywhere except inside a string literal.
 - The config has three parts, which _must_ come in this order,
   where the two first are optional.
-    - The `params`: A set of 'simple' values that can be referenced
-      in the config.
     - The `includes`: Other config files included with an alias, so
-      they too can be referenced from the config.
+      they can be referenced from the config.
+    - The `defines`: A set of values that can also be referenced
+      in the config.
     - The `message`: The 'content' of the config itself.
-- The `params` follow a simple 'map' syntax where the key must be
-  a simple identifier `/[_a-z][_a-zA-Z0-9]/`, and a simple value (number,
-  string, enum, boolean). The params value may be a declared (known)
-  enum, with the double qualified identifier syntax `package.Name.VALUE`.
-- The `include` section is a set of similarly included config files.
+- The `includes` section is a set of recursively included config files.
   Each file is given an `alias`. E.g. `include "other.cfg" as o` will
   make the 'o' reference point to the content of the "other.cfg" config.
   Files referenced in the include statements **MUST** be relative to the PWD
   directory of the including file.
+- The `defines` follow a simple 'map' syntax where the key must be
+  a simple identifier `/[_a-z][_a-zA-Z0-9]/`, and a simple value (number,
+  string, enum, boolean). The params value may be a declared (known)
+  enum, with the double qualified identifier syntax `package.Name.VALUE`.
 - The `message` is a providence message, and is declared with the
   qualified typename (package.Name), and the content, following this
   syntax: `TYPENAME (':' EXTEND)? '{' FIELD_VALUE* '}'`, where the
@@ -121,15 +121,20 @@ get into the whole  world of "scripting".
 Example of config syntax:
 
 ```
-params {
+include "filepath" as alias
+
+def {
   name1 = "value"
   number = 12345.6789
 }
 
-include "filepath" as alias
+def other_num = 4321
+def msg = package.Struct : alias {
+  key = "value"
+}
 
 package.Struct : alias {
-    key = params.name1
+    key = name1
     key2 = 321
 
     # Extending the existing message
@@ -172,16 +177,13 @@ this:
 ```java
 class Loader {
     public Named load() {
-        Map<String,String> params = new HashMap<>();
-        // E.g. load params from flags here.
-        
         TypeRegistry reg = new TypeRegistry();
         // sadly all types needs to be registered, so a utility to register all
         // subtypes are needed. 
         reg.putRecursiveType(Named.kDescriptor);
         reg.putRecursiveType(From.kDescriptor);
     
-        ProvidenceConfig cfg = new ProvidenceConfig(reg, params);
+        ProvidenceConfig cfg = new ProvidenceConfig(reg);
         return cfg.load("myfile.cfg");
     }
 }

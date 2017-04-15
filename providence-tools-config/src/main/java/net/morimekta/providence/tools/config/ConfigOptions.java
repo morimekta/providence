@@ -37,7 +37,6 @@ import net.morimekta.providence.tools.common.options.CommonOptions;
 import net.morimekta.providence.tools.common.options.Utils;
 import net.morimekta.providence.tools.config.cmd.Command;
 import net.morimekta.providence.tools.config.cmd.Help;
-import net.morimekta.providence.tools.config.cmd.Params;
 import net.morimekta.providence.tools.config.cmd.Print;
 import net.morimekta.providence.tools.config.cmd.Validate;
 
@@ -57,10 +56,9 @@ import static net.morimekta.console.util.Parser.dir;
  */
 // @SuppressWarnings("all")
 public class ConfigOptions extends CommonOptions {
-    private List<File>        includes = new LinkedList<>();
-    private Map<String, String> params   = new TreeMap<>();
-    private Command             command  = null;
-    private boolean             strict   = false;
+    private List<File> includes = new LinkedList<>();
+    private Command    command  = null;
+    private boolean    strict   = false;
 
     private SubCommandSet<Command> commandSet;
 
@@ -74,13 +72,11 @@ public class ConfigOptions extends CommonOptions {
 
         parser.add(new Flag("--strict", "S", "Parse config strictly", this::setStrict, false));
         parser.add(new Option("--include", "I", "dir", "Read config definitions from these directories.", dir(includes::add), null, true, false, false));
-        parser.add(new Property("--param", 'P', "key", "value", "Config parameter override.", params::put, false));
 
         commandSet = new SubCommandSet<>("cmd", "Config action.", this::setCommand, null, true, getArgumentOptions());
         commandSet.add(new SubCommand<>("help", "Show help for sub-commands.", false, () -> new Help(commandSet, parser), cmd -> cmd.parser(parser)));
         commandSet.add(new SubCommand<>("print", "Print the resulting config.", false, Print::new, cmd -> cmd.parser(parser), "p", "pr"));
         commandSet.add(new SubCommand<>("validate", "Validate the file, print an error if not valid.", false, Validate::new, cmd -> cmd.parser(parser)));
-        commandSet.add(new SubCommand<>("params", "Show params that can be applied on the config.", false, Params::new, cmd -> cmd.parser(parser)));
         parser.add(commandSet);
 
         return parser;
@@ -122,6 +118,6 @@ public class ConfigOptions extends CommonOptions {
             loader.load(file);
         }
 
-        command.execute(new ProvidenceConfig(loader.getRegistry(), params, strict));
+        command.execute(new ProvidenceConfig(loader.getRegistry(), strict));
     }
 }

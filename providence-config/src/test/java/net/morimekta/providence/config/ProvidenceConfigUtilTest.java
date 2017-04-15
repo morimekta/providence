@@ -15,10 +15,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.function.Supplier;
 
-import static net.morimekta.providence.config.ProvidenceConfigUtil.getInMessage;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -52,50 +50,50 @@ public class ProvidenceConfigUtilTest {
 
         File cfg = copyResourceTo("/net/morimekta/providence/config/stage.cfg", tmp.getRoot());
 
-        service = new ProvidenceConfig(registry, new HashMap<>()).getSupplier(cfg);
+        service = new ProvidenceConfig(registry).getSupplier(cfg);
     }
 
     @Test
     public void testGetInMessage() {
         // Return the field value.
-        assertEquals("44", getInMessage(declaration, "decl_const.value"));
-        assertEquals("Name", getInMessage(declaration, "decl_const.name"));
+        assertEquals("44", ProvidenceConfigUtil.getInMessage(declaration, "decl_const.value"));
+        assertEquals("Name", ProvidenceConfigUtil.getInMessage(declaration, "decl_const.name"));
         // Return the field value even when default is set.
-        assertEquals("44", getInMessage(declaration, "decl_const.value", "66"));
+        assertEquals("44", ProvidenceConfigUtil.getInMessage(declaration, "decl_const.value", "66"));
         // Return null when there are no default in thrift, and none specified.
-        assertEquals(null, getInMessage(declaration, "decl_const.documentation"));
+        assertEquals(null, ProvidenceConfigUtil.getInMessage(declaration, "decl_const.documentation"));
 
-        assertThat(getInMessage(service.get(), "name"), is("stage"));
-        assertThat(getInMessage(service.get(), "admin"), is(nullValue()));
+        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "name"), is("stage"));
+        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "admin"), is(nullValue()));
         ServicePort def = ServicePort.builder().build();
-        assertThat(getInMessage(service.get(), "admin", def), is(sameInstance(def)));
+        assertThat(ProvidenceConfigUtil.getInMessage(service.get(), "admin", def), is(sameInstance(def)));
     }
 
     @Test
     public void testGetInMessage_fail() {
         try {
-            getInMessage(service.get(), "does_not_exist");
+            ProvidenceConfigUtil.getInMessage(service.get(), "does_not_exist");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service.get(), "does_not_exist.name");
+            ProvidenceConfigUtil.getInMessage(service.get(), "does_not_exist.name");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Service has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service.get(), "db.does_not_exist");
+            ProvidenceConfigUtil.getInMessage(service.get(), "db.does_not_exist");
             fail("No exception");
         } catch (KeyNotFoundException e) {
             assertThat(e.getMessage(), is("Message config.Database has no field named does_not_exist"));
         }
 
         try {
-            getInMessage(service.get(), "name.db");
+            ProvidenceConfigUtil.getInMessage(service.get(), "name.db");
             fail("No exception");
         } catch (IncompatibleValueException e) {
             assertThat(e.getMessage(), is("Field 'name' is not of message type in config.Service"));

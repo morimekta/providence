@@ -31,7 +31,7 @@ public class ConfigHelpTest extends ConfigTestBase {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | print | validate] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -39,15 +39,13 @@ public class ConfigHelpTest extends ConfigTestBase {
                 " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
-                " -Pkey=value        : Config parameter override.\n" +
                 " cmd                : Config action.\n" +
                 "\n" +
                 "Available Commands:\n" +
                 "\n" +
                 " help     : Show help for sub-commands.\n" +
                 " print    : Print the resulting config.\n" +
-                " validate : Validate the file, print an error if not valid.\n" +
-                " params   : Show params that can be applied on the config.\n")));
+                " validate : Validate the file, print an error if not valid.\n")));
         assertThat(exitCode, is(0));
     }
 
@@ -58,7 +56,7 @@ public class ConfigHelpTest extends ConfigTestBase {
         assertThat(console.error(), is(""));
         assertThat(console.output(), is(equalToLines(
                 "Providence Config Tool - " + version + "\n" +
-                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [-Pkey=value ...] [help | print | validate | params] [...]\n" +
+                "Usage: pvdcfg [-hVvS] [--rc FILE] [-I dir] [help | print | validate] [...]\n" +
                 "\n" +
                 " --help (-h, -?)    : This help listing.\n" +
                 " --verbose (-V)     : Show verbose output and error messages.\n" +
@@ -66,15 +64,13 @@ public class ConfigHelpTest extends ConfigTestBase {
                 " --rc FILE          : Providence RC to use (default: ~/.pvdrc)\n" +
                 " --strict (-S)      : Parse config strictly (default: false)\n" +
                 " --include (-I) dir : Read config definitions from these directories.\n" +
-                " -Pkey=value        : Config parameter override.\n" +
                 " cmd                : Config action.\n" +
                 "\n" +
                 "Available Commands:\n" +
                 "\n" +
                 " help     : Show help for sub-commands.\n" +
                 " print    : Print the resulting config.\n" +
-                " validate : Validate the file, print an error if not valid.\n" +
-                " params   : Show params that can be applied on the config.\n")));
+                " validate : Validate the file, print an error if not valid.\n")));
         assertThat(exitCode, is(0));
     }
 

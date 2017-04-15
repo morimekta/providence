@@ -6,32 +6,38 @@ import net.morimekta.providence.util.pretty.Tokenizer;
 import net.morimekta.providence.util.pretty.TokenizerException;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
  */
 class ProvidenceConfigContext {
-    final Map<String, Object>             params;
-    final Map<String, PMessage>           includes;
-
+    private final Set<String>                     includeAliases;
     private final Map<String, Object>             references;
     private final Map<String, TokenizerException> referenceExceptions;
 
     ProvidenceConfigContext() {
-        this.params = new HashMap<>();
-        this.includes = new HashMap<>();
         this.references = new HashMap<>();
         this.referenceExceptions = new HashMap<>();
+        this.includeAliases = new HashSet<>();
+    }
+
+    boolean containsReference(String name) {
+        return referenceExceptions.containsKey(name) ||
+               references.containsKey(name);
+    }
+
+    void setInclude(String alias, PMessage include) {
+        references.put(alias, include);
+        includeAliases.add(alias);
     }
 
     String initReference(Token token, Tokenizer tokenizer) throws TokenizerException {
         String reference = token.asString();
         if (ProvidenceConfig.RESERVED_WORDS.contains(reference)) {
             throw new TokenizerException(token, "Trying to assign reference id '%s', which is reserved.", reference).setLine(tokenizer.getLine(token.getLineNo()));
-        }
-        if (includes.containsKey(reference)) {
-            throw new TokenizerException(token, "Trying to reassign include alias '%s' to reference.", reference).setLine(tokenizer.getLine(token.getLineNo()));
         }
 
         TokenizerException ex = referenceExceptions.get(reference);
@@ -50,7 +56,13 @@ class ProvidenceConfigContext {
                                          ex.getLineNo())
                     .setLine(tokenizer.getLine(token.getLineNo()))
                     .initCause(ex);
+        } else if (includeAliases.contains(reference)) {
+            throw new TokenizerException(token,
+                                         "Trying to reassign include alias '%s' to reference.",
+                                         reference)
+                    .setLine(tokenizer.getLine(token.getLineNo()));
         }
+
         referenceExceptions.put(reference, new TokenizerException(token, "Original reference")
                 .setLine(tokenizer.getLine(token.getLineNo())));
         return reference;
@@ -59,7 +71,6 @@ class ProvidenceConfigContext {
     Object setReference(String reference, Object value) {
         if (reference != null) {
             if (!referenceExceptions.containsKey(reference)) {
-                // Should be impossible. This is just in case.
                 throw new RuntimeException("Reference '" + reference + "' not initialised");
             }
             references.put(reference, value);
@@ -67,8 +78,7 @@ class ProvidenceConfigContext {
         return value;
     }
 
-    Object getReference(Token token, Tokenizer tokenizer) throws TokenizerException {
-        String reference = token.asString();
+    Object getReference(String reference, Token token, Tokenizer tokenizer) throws TokenizerException {
         if (references.containsKey(reference)) {
             return references.get(reference);
         }

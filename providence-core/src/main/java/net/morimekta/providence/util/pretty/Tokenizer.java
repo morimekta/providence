@@ -136,7 +136,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public Token expect(String message) throws IOException, TokenizerException {
+    public Token expect(String message) throws IOException {
         if (!hasNext()) {
             throw new TokenizerException("Expected %s, got end of file", message);
         }
@@ -145,19 +145,19 @@ public class Tokenizer extends InputStream {
         return next;
     }
 
-    public Token peek(String message) throws IOException, TokenizerException {
+    public Token peek(String message) throws IOException {
         if (!hasNext()) {
             throw new TokenizerException("Expected %s, got end of file", message);
         }
         return nextToken;
     }
 
-    public Token peek() throws IOException, TokenizerException {
+    public Token peek() throws IOException {
         hasNext();
         return nextToken;
     }
 
-    public char expectSymbol(String message, char... symbols) throws IOException, TokenizerException {
+    public char expectSymbol(String message, char... symbols) throws IOException {
         if (!hasNext()) {
             throw new TokenizerException("Expected %s, got end of file", message);
         } else {
@@ -176,7 +176,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public Token expectIdentifier(String message) throws IOException, TokenizerException {
+    public Token expectIdentifier(String message) throws IOException {
         if (!hasNext()) {
             throw new TokenizerException("Expected %s, got end of file", message);
         } else if (nextToken.isIdentifier()) {
@@ -192,7 +192,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public Token expectStringLiteral(String message) throws IOException, TokenizerException {
+    public Token expectStringLiteral(String message) throws IOException {
         if (!hasNext()) {
             throw new TokenizerException("Expected %s, got end of file", message);
         } else if (nextToken.isStringLiteral()) {
@@ -208,14 +208,14 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public boolean hasNext() throws IOException, TokenizerException {
+    public boolean hasNext() throws IOException {
         if (nextToken == null) {
             nextToken = nextInternal();
         }
         return nextToken != null;
     }
 
-    public Token next() throws IOException, TokenizerException {
+    public Token next() throws IOException {
         if (nextToken != null) {
             Token tmp = nextToken;
             nextToken = null;
@@ -267,7 +267,7 @@ public class Tokenizer extends InputStream {
         return new Token(buffer, startOffset, readOffset - startOffset + 1, lineNo, startLinePos);
     }
 
-    private Token nextInternal() throws IOException, TokenizerException {
+    private Token nextInternal() throws IOException {
         int startOffset = readOffset;
         int r;
         while ((r = read()) != -1) {
@@ -529,7 +529,7 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public String readUntil(char end, boolean allowSpaces, boolean allowNewlines) throws TokenizerException {
+    public String readBinary(char end) throws TokenizerException {
         int startOffset = readOffset + 1;
         int startLinePos = linePos;
         int startLineNo = lineNo;
@@ -538,24 +538,15 @@ public class Tokenizer extends InputStream {
         while ((r = read()) != -1) {
             if (r == end) {
                 return new Slice(buffer, startOffset, readOffset - startOffset).asString();
-            } else if (r == ' ' || r == '\t') {
-                if (!allowSpaces) {
-                    throw new TokenizerException("Illegal char '%s' in binary", escapeChar(r))
-                            .setLineNo(lineNo)
-                            .setLinePos(linePos)
-                            .setLine(getLine(lineNo));
-                }
-            } else if (r == '\n' || r == '\r') {
-                if (!allowNewlines) {
-                    throw new TokenizerException("Illegal char '%s' in binary", escapeChar(r))
-                            .setLineNo(lineNo)
-                            .setLinePos(linePos)
-                            .setLine(getLine(lineNo));
-                }
+            } else if (r == ' ' || r == '\t' || r == '\n' || r == '\r') {
+                throw new TokenizerException("Illegal char '%s' in binary", escapeChar(r))
+                        .setLineNo(lineNo)
+                        .setLinePos(linePos)
+                        .setLine(getLine(lineNo));
             }
         }
 
-        // throw with the old
+        // throw in with the old start.
         throw new TokenizerException("unexpected end of stream in binary")
                 .setLineNo(startLineNo)
                 .setLinePos(startLinePos);
