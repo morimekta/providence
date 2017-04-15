@@ -37,5 +37,10 @@ public class PDefaultValueProviderTest {
 
         assertEquals(a, b);
         assertNotEquals(a, c);
+        assertNotEquals(a, null);
+        assertNotEquals(new Object(), a);
+
+        assertEquals(a.hashCode(), b.hashCode());
+        assertNotEquals(a.hashCode(), c.hashCode());
     }
 }

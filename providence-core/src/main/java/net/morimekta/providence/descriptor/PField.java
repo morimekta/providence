@@ -81,8 +81,7 @@ public interface PField {
      */
     static String toString(PField field) {
         StringBuilder builder = new StringBuilder();
-        builder.append(field.getClass().getSimpleName().replaceAll("[$]", "."))
-               .append("(")
+        builder.append("field(")
                .append(field.getKey())
                .append(": ");
         if (field.getRequirement() != net.morimekta.providence.descriptor.PRequirement.DEFAULT) {

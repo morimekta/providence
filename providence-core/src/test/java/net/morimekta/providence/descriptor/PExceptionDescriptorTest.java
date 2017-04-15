@@ -57,6 +57,7 @@ public class PExceptionDescriptorTest {
         assertThat(type.equals(new Object()), is(false));
         assertThat(type.equals(CalculateException.kDescriptor), is(true));
         assertThat(type.equals((PMessageDescriptor) Operation.kDescriptor), is(false));
+        assertThat(type.getVariant(), is(PMessageVariant.EXCEPTION));
     }
 
     @Test

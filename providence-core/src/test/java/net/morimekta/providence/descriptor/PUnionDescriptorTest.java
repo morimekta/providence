@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.descriptor;
 
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.number.Imaginary;
@@ -47,6 +48,7 @@ public class PUnionDescriptorTest {
         assertEquals("calculator.Operand", Operand.kDescriptor.toString());
         assertEquals("number.Imaginary", Imaginary.kDescriptor.toString());
         assertEquals("calculator.Operation", Operation.kDescriptor.toString());
+        assertEquals(PMessageVariant.UNION, Operand.kDescriptor.getVariant());
     }
 
     @Test
