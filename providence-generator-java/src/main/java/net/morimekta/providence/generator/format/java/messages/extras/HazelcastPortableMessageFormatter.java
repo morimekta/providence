@@ -1,5 +1,7 @@
 package net.morimekta.providence.generator.format.java.messages.extras;
 
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.program.extras.HazelcastPortableProgramFormatter;
@@ -269,7 +271,10 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.member());
                 break;
             case LIST:
-                writePortableFieldList(field);
+                writePortableFieldList(field, field.toPList().itemDescriptor());
+                break;
+            case SET:
+                writePortableFieldList(field, field.toPSet().itemDescriptor());
                 break;
             case MESSAGE:
                 //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
@@ -362,7 +367,10 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case LIST:
-                writeDefaultPortableFieldList(field);
+                writeDefaultPortableFieldList(field, field.toPList().itemDescriptor());
+                break;
+            case SET:
+                writeDefaultPortableFieldList(field, field.toPSet().itemDescriptor());
                 break;
             case MESSAGE:
                 writer.formatln("%s.writePortable(\"%s\", %s);",
@@ -392,10 +400,8 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void writePortableFieldList(JField field) throws GeneratorException {
-        PList listType =  field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void writePortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s.writeByteArray(\"%s\", %s.toArray(%s.build()));",
                               PORTABLE_WRITER,
@@ -408,7 +414,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 PORTABLE_WRITER,
                                 field.name(),
                                 HSerialization.class.getName(),
-                                "fromBinaryList", //TODO change to method name if possible.
+                                field.type().equals(PType.LIST) ? "fromBinaryList" : "fromBinarySet",//TODO change to method name if possible.
                                 field.member());
                 break;
             case BOOL:
@@ -462,7 +468,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
                 writer.formatln("%s<%s.%s> %sList = %s.build().stream().map(i -> i.mutate()).collect(%s.toList());",
                                 List.class.getName(),
-                                helper.getValueType(listType.itemDescriptor()),
+                                helper.getValueType(descriptor),
                                 "_Builder",
                                 camelCase("temp", field.name()),
                                 field.member(),
@@ -471,14 +477,13 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 PORTABLE_WRITER,
                                 field.name(),
                                 camelCase("temp", field.name()),
-                                helper.getValueType(listType.itemDescriptor()),
+                                helper.getValueType(descriptor),
                                 "_Builder",
                                 camelCase("temp", field.name()));
                 break;
             default:
                 throw new GeneratorException("Not implemented writePortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
+                                             descriptor.getType() + " in " + this.getClass()
                                                                                .getSimpleName());
         }
     }
@@ -495,15 +500,13 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void writeDefaultPortableFieldList(JField field) throws GeneratorException {
-        PList listType =  field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void writeDefaultPortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s.writeByteArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case BINARY:
                 writer.formatln("%s.writeByteArray(\"%s\", new %s[0]);",
@@ -515,13 +518,13 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s.writeBooleanArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case DOUBLE:
                 writer.formatln("%s.writeDoubleArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case ENUM:
                 writer.formatln("%s.writeIntArray(\"%s\", new %s[0]);",
@@ -533,36 +536,35 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s.writeShortArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case I32:
                 writer.formatln("%s.writeIntArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case I64:
                 writer.formatln("%s.writeLongArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case STRING:
                 writer.formatln("%s.writeUTFArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             case MESSAGE:
                 writer.formatln("%s.writePortableArray(\"%s\", new %s._Builder[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()));
+                                helper.getValueType(descriptor));
                 break;
             default:
                 throw new GeneratorException("Not implemented writePortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
+                                             descriptor.getType() + " in " + this.getClass()
                                                                                .getSimpleName());
         }
     }
@@ -652,7 +654,10 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.name());
                 break;
             case LIST:
-                readPortableFieldList(field);
+                readPortableFieldList(field, field.toPList().itemDescriptor());
+                break;
+            case SET:
+                readPortableFieldList(field, field.toPSet().itemDescriptor());
                 break;
             case MESSAGE: // ((CompactFields._Builder)portableReader.readPortable("compactValue")).build()
                 writer.formatln("%s(((%s.%s)%s.readPortable(\"%s\")).%s());",
@@ -686,10 +691,8 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void readPortableFieldList(JField field) throws GeneratorException {
-        PList listType = field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void readPortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s(%s.asList(%s.readByteArray(\"%s\")));",
                                 field.setter(),
@@ -701,7 +704,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s(%s.%s(%s.readByteArray(\"%s\")));",
                                 field.setter(),
                                 HSerialization.class.getName(),
-                                "toBinaryList", //TODO change to method name if possible.
+                                field.type().equals(PType.LIST) ? "toBinaryList" : "toBinarySet", //TODO change to method name if possible.
                                 PORTABLE_READER,
                                 field.name());
                 break;
@@ -725,7 +728,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 Ints.class.getName(),
                                 PORTABLE_READER,
                                 field.name(),
-                                listType.itemDescriptor().getName(),
+                                descriptor.getName(),
                                 "forValue", //TODO need to change this to another value.
                                 Collectors.class.getName());
                 break;
@@ -764,16 +767,14 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 Arrays.class.getName(),
                                 PORTABLE_READER,
                                 field.name(),
-                                listType.itemDescriptor()
-                                        .getName(),
+                                descriptor.getName(),
                                 WRAPPER_CLASS_NAME,
                                 Collectors.class.getName());
 
                 break;
             default:
                 throw new GeneratorException("Not implemented readPortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
+                                             descriptor.getType() + " in " + this.getClass()
                                                                                .getSimpleName());
         }
     }

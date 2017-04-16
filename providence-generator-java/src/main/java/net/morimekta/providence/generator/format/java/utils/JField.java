@@ -349,4 +349,9 @@ public class JField {
                              .getDescriptor());
     }
 
+    public PSet toPSet() {
+        return (PSet) (field()
+                .getDescriptor());
+    }
+
 }

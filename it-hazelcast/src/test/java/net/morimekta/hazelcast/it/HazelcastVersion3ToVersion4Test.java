@@ -228,4 +228,66 @@ public class HazelcastVersion3ToVersion4Test extends GenericMethods {
     }
 
 
+    @Test
+    public void testV3toV4OptionalSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV3Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields expected = generator.nextOptionalSetFieldsV3(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertByField(expected, actual);
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertByField(newExpected, newActual);
+    }
+
+    @Test
+    public void testV3toV4OptionalSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV3Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields expected = generator.nextOptionalSetFieldsV3();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertByField(expected, actual);
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertByField(newExpected, newActual);
+    }
+
 }

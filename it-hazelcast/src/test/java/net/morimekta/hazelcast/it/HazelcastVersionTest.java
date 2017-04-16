@@ -220,6 +220,121 @@ public class HazelcastVersionTest extends GenericMethods {
     }
 
     @Test
+    public void testVersion1OptionalSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV1Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV1Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields expected = generator.nextOptionalSetFieldsV1(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setStringValue(actual.getStringValue().stream().filter(t -> t.contains("ab"))
+                                            .collect(Collectors.toList()))
+                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()))
+                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
+                                              .collect(Collectors.toList()))
+                      .setIntegerValue(actual.getIntegerValue().stream().limit(25).collect(Collectors.toList()))
+                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
+                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
+                      .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion1OptionalSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV1Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV1Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields expected = generator.nextOptionalSetFieldsV1();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+        assertThat(expected.hashCode(), is(actual.hashCode()));
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder newBuilder = actual.mutate();
+        if( actual.hasStringValue() ) {
+            newBuilder.setStringValue(actual.getStringValue()
+                                            .stream()
+                                            .filter(t -> t.contains("ab"))
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasDoubleValue() ) {
+            newBuilder.setDoubleValue(actual.getDoubleValue()
+                                            .stream()
+                                            .filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasBooleanValues() ) {
+            newBuilder.setBooleanValues(actual.getBooleanValues()
+                                              .stream()
+                                              .map(t -> !t)
+                                              .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
+                                              .collect(Collectors.toList()));
+        }
+        if( actual.hasIntegerValue() ) {
+            newBuilder.setIntegerValue(actual.getIntegerValue()
+                                             .stream()
+                                             .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
+                                             .collect(Collectors.toList()));
+        }
+        if( actual.hasLongValue() ) {
+            newBuilder.setLongValue(actual.getLongValue()
+                                          .stream()
+                                          .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
+                                          .collect(Collectors.toList()));
+        }
+        if( actual.hasShortValues() ) {
+            newBuilder.setShortValues(actual.getShortValues()
+                                            .stream()
+                                            .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                            .collect(Collectors.toList()));
+        }
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields newExpected = newBuilder.build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v1.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
     public void testVersion2OptionalFieldsAll() throws InterruptedException {
         String mapName = nextString();
         HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV2Config());
@@ -416,6 +531,120 @@ public class HazelcastVersionTest extends GenericMethods {
                                                                                .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV2Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV2Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields expected = generator.nextOptionalSetFieldsV2(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setStringValue(actual.getStringValue().stream().filter(t -> t.contains("ab"))
+                                            .collect(Collectors.toList()))
+                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()))
+                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
+                                              .collect(Collectors.toList()))
+                      .setIntegerValue(actual.getIntegerValue().stream().limit(25).collect(Collectors.toList()))
+                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
+                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
+                      .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV2Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV2Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields expected = generator.nextOptionalSetFieldsV2();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+        assertThat(expected, is(equalToMessage(actual)));
+        assertThat(expected.hashCode(), is(actual.hashCode()));
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder newBuilder = actual.mutate();
+        if( actual.hasStringValue() ) {
+            newBuilder.setStringValue(actual.getStringValue()
+                                            .stream()
+                                            .filter(t -> t.contains("ab"))
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasDoubleValue() ) {
+            newBuilder.setDoubleValue(actual.getDoubleValue()
+                                            .stream()
+                                            .filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasBooleanValues() ) {
+            newBuilder.setBooleanValues(actual.getBooleanValues()
+                                              .stream()
+                                              .map(t -> !t)
+                                              .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
+                                              .collect(Collectors.toList()));
+        }
+        if( actual.hasIntegerValue() ) {
+            newBuilder.setIntegerValue(actual.getIntegerValue()
+                                             .stream()
+                                             .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
+                                             .collect(Collectors.toList()));
+        }
+        if( actual.hasLongValue() ) {
+            newBuilder.setLongValue(actual.getLongValue()
+                                          .stream()
+                                          .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
+                                          .collect(Collectors.toList()));
+        }
+        if( actual.hasShortValues() ) {
+            newBuilder.setShortValues(actual.getShortValues()
+                                            .stream()
+                                            .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                            .collect(Collectors.toList()));
+        }
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected = newBuilder.build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v2.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
         assertThat(newExpected, is(equalToMessage(newActual)));
         assertThat(newExpected.hashCode(), is(newActual.hashCode()));
         assertThat(newExpected, is(newActual));
@@ -625,6 +854,121 @@ public class HazelcastVersionTest extends GenericMethods {
     }
 
     @Test
+    public void testVersion3OptionalSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV3Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV3Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields expected = generator.nextOptionalSetFieldsV3(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setAnotherStringValues(actual.getAnotherStringValues().stream().filter(t -> t.contains("ab"))
+                                                    .collect(Collectors.toList()))
+                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()))
+                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
+                                              .collect(Collectors.toList()))
+                      .setIntegerValue(actual.getIntegerValue().stream().limit(25).collect(Collectors.toList()))
+                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
+                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
+                      .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion3OptionalSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV3Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV3Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields expected = generator.nextOptionalSetFieldsV3();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+        assertThat(expected.hashCode(), is(actual.hashCode()));
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder newBuilder = actual.mutate();
+        if( actual.hasAnotherStringValues() ) {
+            newBuilder.setAnotherStringValues(actual.getAnotherStringValues()
+                                                    .stream()
+                                                    .filter(t -> t.contains("ab"))
+                                                    .collect(Collectors.toList()));
+        }
+        if( actual.hasDoubleValue() ) {
+            newBuilder.setDoubleValue(actual.getDoubleValue()
+                                            .stream()
+                                            .filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasBooleanValues() ) {
+            newBuilder.setBooleanValues(actual.getBooleanValues()
+                                              .stream()
+                                              .map(t -> !t)
+                                              .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
+                                              .collect(Collectors.toList()));
+        }
+        if( actual.hasIntegerValue() ) {
+            newBuilder.setIntegerValue(actual.getIntegerValue()
+                                             .stream()
+                                             .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
+                                             .collect(Collectors.toList()));
+        }
+        if( actual.hasLongValue() ) {
+            newBuilder.setLongValue(actual.getLongValue()
+                                          .stream()
+                                          .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
+                                          .collect(Collectors.toList()));
+        }
+        if( actual.hasShortValues() ) {
+            newBuilder.setShortValues(actual.getShortValues()
+                                            .stream()
+                                            .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                            .collect(Collectors.toList()));
+        }
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newExpected = newBuilder.build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v3.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
     public void testVersion4OptionalFieldsAll() throws InterruptedException {
         String mapName = nextString();
         HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
@@ -822,6 +1166,121 @@ public class HazelcastVersionTest extends GenericMethods {
                                                                                .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion4OptionalSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields expected = generator.nextOptionalSetFieldsV4(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newExpected =
+                actual.mutate()
+                      .setAnotherStringValues(actual.getAnotherStringValues().stream().filter(t -> t.contains("ab"))
+                                                    .collect(Collectors.toList()))
+                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()))
+                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
+                                              .collect(Collectors.toList()))
+                      .setAnotherIntegerValue(actual.getAnotherIntegerValue().stream().limit(25).collect(Collectors.toList()))
+                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
+                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
+                      .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion4OptionalSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
+        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
+
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields expected = generator.nextOptionalSetFieldsV4();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields actual = readMap.get(key)
+                                                                           .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+        assertThat(expected.hashCode(), is(actual.hashCode()));
+        assertThat(expected, is(actual));
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder newBuilder = actual.mutate();
+        if( actual.hasAnotherStringValues() ) {
+            newBuilder.setAnotherStringValues(actual.getAnotherStringValues()
+                                                    .stream()
+                                                    .filter(t -> t.contains("ab"))
+                                                    .collect(Collectors.toList()));
+        }
+        if( actual.hasDoubleValue() ) {
+            newBuilder.setDoubleValue(actual.getDoubleValue()
+                                            .stream()
+                                            .filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()));
+        }
+        if( actual.hasBooleanValues() ) {
+            newBuilder.setBooleanValues(actual.getBooleanValues()
+                                              .stream()
+                                              .map(t -> !t)
+                                              .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
+                                              .collect(Collectors.toList()));
+        }
+        if( actual.hasAnotherIntegerValue() ) {
+            newBuilder.setAnotherIntegerValue(actual.getAnotherIntegerValue()
+                                                    .stream()
+                                                    .limit(actual.numAnotherIntegerValue() - rand.nextInt(actual.numAnotherIntegerValue()))
+                                                    .collect(Collectors.toList()));
+        }
+        if( actual.hasLongValue() ) {
+            newBuilder.setLongValue(actual.getLongValue()
+                                          .stream()
+                                          .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
+                                          .collect(Collectors.toList()));
+        }
+        if( actual.hasShortValues() ) {
+            newBuilder.setShortValues(actual.getShortValues()
+                                            .stream()
+                                            .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                            .collect(Collectors.toList()));
+        }
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newExpected = newBuilder.build();
+
+        readMap.put(key, newExpected.mutate());
+
+        net.morimekta.test.hazelcast.v4.OptionalSetFields newActual = writeMap.get(key)
+                                                                               .build();
+
         assertThat(newExpected, is(equalToMessage(newActual)));
         assertThat(newExpected.hashCode(), is(newActual.hashCode()));
         assertThat(newExpected, is(newActual));

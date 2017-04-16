@@ -2,7 +2,9 @@ package net.morimekta.providence.generator.format.java.program.extras;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
 import net.morimekta.providence.generator.format.java.shared.BaseProgramFormatter;
@@ -273,7 +275,12 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                                 field.name());
                 break;
             case LIST:
-                appendListTypeField(field);
+                final PList pList = field.toPList();
+                appendCollectionTypeField(field, pList.itemDescriptor());
+                break;
+            case SET:
+                final PSet pSet = field.toPSet();
+                appendCollectionTypeField(field, pSet.itemDescriptor());
                 break;
             case MESSAGE:
                 writer.formatln(".addPortableField(\"%s\", %s())",
@@ -297,10 +304,8 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
      * }
      * </pre>
      */
-    private void appendListTypeField(JField field) {
-        PList listType = field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void appendCollectionTypeField(JField field, PDescriptor descriptor) {
+        switch (descriptor.getType()) {
             case BYTE:
             case BINARY:
                 writer.formatln(".addByteArrayField(\"%s\")",
@@ -334,13 +339,11 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
             case MESSAGE:
                 writer.formatln(".addPortableArrayField(\"%s\", %s())",
                                 field.name(),
-                                camelCase("get", listType.itemDescriptor().getName() + "Definition"));
+                                camelCase("get", descriptor.getName() + "Definition"));
                 break;
             default:
                 throw new GeneratorException("Not implemented readPortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
-                                                                               .getSimpleName());
+                                             descriptor.getType() + " in " + this.getClass().getSimpleName());
         }
     }
 

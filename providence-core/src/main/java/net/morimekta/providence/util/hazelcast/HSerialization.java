@@ -8,7 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by scrier on 2017-04-14.
@@ -35,6 +37,23 @@ public class HSerialization {
     }
 
     /**
+     * Method to convert a Set of Binary to a byte array.
+     *
+     * @param binaryList Set containing Binary.
+     * @return Array of bytes.
+     * @throws IOException from {@link ByteArrayOutputStream}
+     */
+    public static byte[] fromBinarySet(Set<Binary> binaryList) throws IOException {
+        baos.reset();
+        baos.write(toBytes(binaryList.size()));
+        for( Binary binary : binaryList ) {
+            baos.write(toBytes(binary.length()));
+            baos.write(binary.get());
+        }
+        return baos.toByteArray();
+    }
+
+    /**
      * Method to convert a byte array to a List of Binary.
      *
      * @param bytes Array of bytes.
@@ -44,6 +63,23 @@ public class HSerialization {
         final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         final int size = readInt(bis);
         List<Binary> result = new ArrayList<>();
+        for( int i = 0; i < size; i++ ) {
+            int length = readInt(bis);
+            result.add(new Binary(readBytes(bis, length)));
+        }
+        return result;
+    }
+
+    /**
+     * Method to convert a byte array to a Set of Binary.
+     *
+     * @param bytes Array of bytes.
+     * @return List of Set.
+     */
+    public static Set<Binary> toBinarySet(byte[] bytes) {
+        final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        final int size = readInt(bis);
+        Set<Binary> result = new HashSet<>();
         for( int i = 0; i < size; i++ ) {
             int length = readInt(bis);
             result.add(new Binary(readBytes(bis, length)));

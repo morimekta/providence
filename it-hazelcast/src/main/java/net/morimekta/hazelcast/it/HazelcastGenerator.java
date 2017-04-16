@@ -401,6 +401,185 @@ public class HazelcastGenerator {
         return builder.build();
     }
 
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1() {
+        return nextOptionalSetFieldsV1(false);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1(boolean setAll) {
+        return nextOptionalSetFieldsV1(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1(int flags) {
+        net.morimekta.test.hazelcast.v1.OptionalSetFields._Builder builder =
+                net.morimekta.test.hazelcast.v1.OptionalSetFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValues(entities.nextBooleans());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValues(Bytes.asList(entities.nextBytes()));
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValues(entities.nextShorts());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValue(entities.nextInts());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValue(entities.nextLongs());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValue(entities.nextDoubles());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValue(entities.nextStrings());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setBinaryValue(entities.nextBinaries());
+        }
+        if( 0 < (INDEX_09 & flags) ) {
+            builder.setValueValue(entities.nextV1Values());
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setCompactValue(entities.nextV1CompactFields(flags, INDEX_09, INDEX_10, INDEX_11));
+        }
+        return builder.build();
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2() {
+        return nextOptionalSetFieldsV2(false);
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2(boolean setAll) {
+        return nextOptionalSetFieldsV2(setAll ? 0x00000FFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2(int flags) {
+        net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder builder =
+                net.morimekta.test.hazelcast.v2.OptionalSetFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValues(entities.nextBooleans());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValues(Bytes.asList(entities.nextBytes()));
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValues(entities.nextShorts());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValue(entities.nextInts());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValue(entities.nextLongs());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValue(entities.nextDoubles());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValue(entities.nextStrings());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setCompactValue(entities.nextV2CompactFields(flags, INDEX_09, INDEX_10, INDEX_11));
+        }
+        if( 0 < (INDEX_12 & flags) ) {
+            builder.setBinaryValue(entities.nextBinaries());
+        }
+        if( 0 < (INDEX_13 & flags) ) {
+            builder.setValueValue(entities.nextV2Values());
+        }
+        if( 0 < (INDEX_14 & flags) ) {
+            builder.setAnotherStringValues(entities.nextStrings());
+        }
+        return builder.build();
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3() {
+        return nextOptionalSetFieldsV3(false);
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3(boolean setAll) {
+        return nextOptionalSetFieldsV3(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3(int flags) {
+        net.morimekta.test.hazelcast.v3.OptionalSetFields._Builder builder =
+                net.morimekta.test.hazelcast.v3.OptionalSetFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValues(entities.nextBooleans());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValues(Bytes.asList(entities.nextBytes()));
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValues(entities.nextShorts());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValue(entities.nextInts());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValue(entities.nextLongs());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValue(entities.nextDoubles());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setCompactValue(entities.nextV3CompactFields(flags, INDEX_08, INDEX_09, INDEX_10));
+        }
+        if( 0 < (INDEX_11 & flags) ) {
+            builder.setBinaryValue(entities.nextBinaries());
+        }
+        if( 0 < (INDEX_12 & flags) ) {
+            builder.setValueValue(entities.nextV3Values());
+        }
+        if( 0 < (INDEX_13 & flags) ) {
+            builder.setAnotherStringValues(entities.nextStrings());
+        }
+        return builder.build();
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4() {
+        return nextOptionalSetFieldsV4(false);
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4(boolean setAll) {
+        return nextOptionalSetFieldsV4(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4(int flags) {
+        net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder builder =
+                net.morimekta.test.hazelcast.v4.OptionalSetFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValues(entities.nextBooleans());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValues(Bytes.asList(entities.nextBytes()));
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValues(entities.nextShorts());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setLongValue(entities.nextLongs());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setDoubleValue(entities.nextDoubles());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setCompactValue(entities.nextV4CompactFields(flags, INDEX_07, INDEX_08, INDEX_09));
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setBinaryValue(entities.nextBinaries());
+        }
+        if( 0 < (INDEX_11 & flags) ) {
+            builder.setValueValue(entities.nextV4Values());
+        }
+        if( 0 < (INDEX_12 & flags) ) {
+            builder.setAnotherStringValues(entities.nextStrings());
+        }
+        if( 0 < (INDEX_13 & flags) ) {
+            builder.setAnotherIntegerValue(entities.nextInts());
+        }
+        return builder.build();
+    }
+
     public class Entities {
 
         public Entities() {  }
@@ -525,10 +704,8 @@ public class HazelcastGenerator {
         }
 
         public Value nextV1Value() {
-            return Arrays.asList(Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
+            Value[] values = Value.values();
+            return values[random.nextInt(values.length)];
         }
 
         public List<Value> nextV1Values() {
@@ -542,10 +719,8 @@ public class HazelcastGenerator {
         }
 
         public net.morimekta.test.hazelcast.v2.Value nextV2Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v2.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
+            net.morimekta.test.hazelcast.v2.Value[] values = net.morimekta.test.hazelcast.v2.Value.values();
+            return values[random.nextInt(values.length)];
         }
 
         public List<net.morimekta.test.hazelcast.v2.Value> nextV2Values() {
@@ -559,10 +734,8 @@ public class HazelcastGenerator {
         }
 
         public net.morimekta.test.hazelcast.v3.Value nextV3Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v3.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
+            net.morimekta.test.hazelcast.v3.Value[] values = net.morimekta.test.hazelcast.v3.Value.values();
+            return values[random.nextInt(values.length)];
         }
 
         public List<net.morimekta.test.hazelcast.v3.Value> nextV3Values() {
@@ -576,10 +749,8 @@ public class HazelcastGenerator {
         }
 
         public net.morimekta.test.hazelcast.v4.Value nextV4Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v4.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
+            net.morimekta.test.hazelcast.v4.Value[] values = net.morimekta.test.hazelcast.v4.Value.values();
+            return values[random.nextInt(values.length)];
         }
 
         public List<net.morimekta.test.hazelcast.v4.Value> nextV4Values() {

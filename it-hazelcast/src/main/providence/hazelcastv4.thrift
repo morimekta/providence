@@ -67,6 +67,21 @@ struct OptionalListFields {
     12: optional list<i32> anotherIntegerValue;
 } (hazelcast.class.id = "3")
 
+struct OptionalSetFields {
+    1: optional set<bool> booleanValues;
+    2: optional set<byte> byteValues;
+    3: optional set<i16> shortValues;
+//    4: optional set<i32> integerValue;
+    5: optional set<i64> longValue;
+    6: optional set<double> doubleValue;
+//    7: optional set<string> stringValue;
+    8: optional set<binary> binaryValue;
+    9: optional set<Value> valueValue;
+    10: optional set<CompactFields> compactValue;
+    11: optional set<string> anotherStringValues;
+    12: optional set<i32> anotherIntegerValue;
+} (hazelcast.class.id = "4")
+
 struct RequiredFields {
     1: required bool booleanValue;
     2: required byte byteValue,
