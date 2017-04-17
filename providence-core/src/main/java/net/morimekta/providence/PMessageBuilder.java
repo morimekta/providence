@@ -93,6 +93,20 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     }
 
     /**
+     * Get a Collection of F with fields set on the builder.
+     *
+     * Unusual naming because it avoids conflict with generated methods.
+     *
+     * @return Collection of F
+     */
+    @Nonnull
+    public Collection<F> collectSetFields() {
+           return Arrays.stream(descriptor().getFields())
+                        .filter(this::isSet)
+                        .collect(Collectors.toList());
+    }
+
+    /**
      * Checks if a specific field is modified on the builder.
      *
      * @param key The key of the field to check.

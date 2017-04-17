@@ -54,6 +54,8 @@ public class BinarySerializer extends Serializer {
 
     private static final int VERSION_MASK = 0xffff0000;
     private static final int VERSION_1    = 0x80010000;
+    // 255 byte (ASCII char) length for a method name is exceptionally long.
+    private static final int MAX_METHOD_NAME_LEN = 255;
 
     private final boolean readStrict;
     private final boolean versioned;
@@ -149,11 +151,18 @@ public class BinarySerializer extends Serializer {
             int typeKey;
             // Accept both "strict" read mode and non-strict.
             // versioned
-            if (methodNameLen < 0) {
+            if (methodNameLen <= 0) {
                 int version = methodNameLen & VERSION_MASK;
                 if (version == VERSION_1) {
                     typeKey = methodNameLen & 0xFF;
                     methodNameLen = in.expectInt();
+                    if (methodNameLen > MAX_METHOD_NAME_LEN) {
+                        throw new SerializerException("Exceptionally long method name of %s bytes", methodNameLen)
+                                .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
+                    } if (methodNameLen < 1) {
+                        throw new SerializerException("Exceptionally short method name of %s bytes", methodNameLen)
+                                .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
+                    }
                     methodName = new String(in.expectBytes(methodNameLen), UTF_8);
                 } else {
                     throw new SerializerException("Bad protocol version: %08x", version >>> 16)
@@ -165,6 +174,10 @@ public class BinarySerializer extends Serializer {
                             .setExceptionType(PApplicationExceptionType.INVALID_PROTOCOL);
                 }
 
+                if (methodNameLen > MAX_METHOD_NAME_LEN) {
+                    throw new SerializerException("Exceptionally long method name of %s bytes", methodNameLen)
+                            .setExceptionType(PApplicationExceptionType.PROTOCOL_ERROR);
+                }
                 methodName = new String(in.expectBytes(methodNameLen), UTF_8);
                 typeKey = in.expectByte();
             }

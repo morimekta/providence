@@ -22,28 +22,14 @@ package net.morimekta.providence;
 
 /**
  * The definition of a thrift structure.
- *
- * @author Stein Eldar Johnsen
- * @since 25.08.15
  */
 public enum PMessageVariant {
     STRUCT,
     UNION,
     EXCEPTION;
 
-    public String getName() {
+    @Override
+    public String toString() {
         return name().toLowerCase();
-    }
-
-    public static PMessageVariant fromName(String name) {
-        switch (name) {
-            case "struct":
-                return STRUCT;
-            case "union":
-                return UNION;
-            case "exception":
-                return EXCEPTION;
-        }
-        return null;
     }
 }
