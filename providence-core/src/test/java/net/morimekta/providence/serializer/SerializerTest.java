@@ -37,7 +37,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import static net.morimekta.testing.ExtraMatchers.equalToLines;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -58,7 +61,7 @@ public class SerializerTest {
                 operation = ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
             }
             if (containers == null) {
-                containers = ProvidenceHelper.arrayListFromJsonResource("/compat/compact.json", Containers.kDescriptor);
+                containers = ProvidenceHelper.arrayListFromResource("/compat/binary.data", Containers.kDescriptor, new BinarySerializer());
             }
         }
     }
@@ -206,7 +209,8 @@ public class SerializerTest {
         if (serializer.binaryProtocol()) {
             assertEquals("Hex data comparison.", expected.toHexString(), actual.toHexString());
         } else {
-            assertEquals(new String(expected.get()).replaceAll("\\r", ""), new String(actual.get()).replaceAll("\\r", ""));
+            assertThat(new String(expected.get()),
+                       is(equalToLines(new String(actual.get()))));
         }
     }
 

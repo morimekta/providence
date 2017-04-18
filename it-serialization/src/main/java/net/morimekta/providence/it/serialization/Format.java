@@ -12,13 +12,13 @@ public enum Format implements Stringable, Comparable<Format> {
 
     // Unique providence formats.
     json_pretty("json", "Prettified JSON",
-            8.70, 0.00,11.43, 0.00, 94490),
+            8.70, 0.00,11.43, 0.00, 94553),
     json_named("json", "Named JSON",
-            6.26, 0.00, 8.91, 0.00, 56246),
+            6.26, 0.00, 8.91, 0.00, 56309),
     json("json", "Compact JSON",
-            5.45, 0.00, 6.28, 0.00, 37848),
+            5.45, 0.00, 6.28, 0.00, 37911),
     pretty("cfg", "Pretty / Config",
-            9.52, 0.00, 9.12, 0.00, 74236),
+            9.52, 0.00, 9.12, 0.00, 74299),
     fast_binary("bin", "Fast Binary",
             1.43, 0.00, 1.51, 0.00, 19062),
 

@@ -22,7 +22,7 @@ public class CompilerFlagsTest {
 
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher()
-            .setTerminalSize(40, 100);
+            .withTerminalSize(40, 100);
 
     private int      exitCode;
     private Compiler sut;

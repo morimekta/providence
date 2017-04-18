@@ -28,7 +28,7 @@ public class ConvertTest {
 
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher()
-            .setTerminalSize(40, 100);
+            .withTerminalSize(40, 100);
 
     private int     exitCode;
     private Convert convert;
@@ -103,7 +103,7 @@ public class ConvertTest {
         String tmp = getResourceAsString("/pretty.json");
 
         assertThat(console.error(), is(""));
-        assertThat(console.output(), is(tmp));
+        assertThat(console.output(), is(equalToLines(tmp)));
         assertThat(exitCode, is(0));
     }
 
@@ -137,7 +137,10 @@ public class ConvertTest {
                 "-o", "pretty_json",
                 "cont.Containers");
 
+        String tmp = getResourceAsString("/pretty.json");
+
         assertThat(console.error(), is(""));
-        assertThat(console.output(), is(getResourceAsString("/pretty.json")));
+        assertThat(console.output(), is(equalToLines(tmp)));
+        assertThat(exitCode, is(0));
     }
 }

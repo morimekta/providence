@@ -19,6 +19,7 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Javax.WS.RS integration testing using io.dropwizard.
  */
+@Ignore
 public class DropWizardIT {
     @Rule
     public DropwizardAppRule<TestConfiguration> drop_wizard =

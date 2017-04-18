@@ -20,7 +20,7 @@ public class ConfigTestBase {
 
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher()
-            .setTerminalSize(40, 100);
+            .withTerminalSize(40, 100);
 
     File   configRoot;
     File   thriftRoot;

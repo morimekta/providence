@@ -25,7 +25,7 @@ public class RPCFlagsTest {
 
     @Rule
     public ConsoleWatcher console = new ConsoleWatcher()
-            .setTerminalSize(40, 100);
+            .withTerminalSize(40, 100);
 
     private int exitCode;
     private RPC rpc;
