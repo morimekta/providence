@@ -1,15 +1,16 @@
 package net.morimekta.hazelcast.it;
 
-import net.morimekta.test.hazelcast.v1.CompactFields;
-import net.morimekta.test.hazelcast.v1.Value;
 import net.morimekta.util.Binary;
 
 import com.google.common.primitives.Bytes;
 import org.jfairy.Fairy;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +33,8 @@ public class HazelcastGenerator {
     public static final int INDEX_12 = 0x00000800;
     public static final int INDEX_13 = 0x00001000;
     public static final int INDEX_14 = 0x00002000;
+    public static final int INDEX_15 = 0x00004000;
+    public static final int INDEX_16 = 0x00008000;
 
     private final Random random;
     private final Fairy  fairy;
@@ -703,18 +706,18 @@ public class HazelcastGenerator {
             return result;
         }
 
-        public Value nextV1Value() {
-            Value[] values = Value.values();
+        public net.morimekta.test.hazelcast.v1.Value nextV1Value() {
+            net.morimekta.test.hazelcast.v1.Value[] values = net.morimekta.test.hazelcast.v1.Value.values();
             return values[random.nextInt(values.length)];
         }
 
-        public List<Value> nextV1Values() {
+        public List<net.morimekta.test.hazelcast.v1.Value> nextV1Values() {
             return Arrays.asList(Stream.generate(() -> nextV1Value())
                                        .limit(random
                                                       .nextInt(Byte.MAX_VALUE) + 1)
                                        .toArray())
                          .stream()
-                         .map(t -> (Value) t)
+                         .map(t -> (net.morimekta.test.hazelcast.v1.Value) t)
                          .collect(Collectors.toList());
         }
 
@@ -763,8 +766,8 @@ public class HazelcastGenerator {
                          .collect(Collectors.toList());
         }
 
-        public CompactFields nextV1CompactField(int flags, int index1, int index2, int index3) {
-            CompactFields._Builder builder = CompactFields.builder();
+        public net.morimekta.test.hazelcast.v1.CompactFields nextV1CompactField(int flags, int index1, int index2, int index3) {
+            net.morimekta.test.hazelcast.v1.CompactFields._Builder builder = net.morimekta.test.hazelcast.v1.CompactFields.builder();
             if (0 < (index1 & flags)) {
                 builder.setName(nextString());
             }
@@ -777,13 +780,13 @@ public class HazelcastGenerator {
             return builder.build();
         }
 
-        public List<CompactFields> nextV1CompactFields(int flags, int index1, int index2, int index3) {
+        public List<net.morimekta.test.hazelcast.v1.CompactFields> nextV1CompactFields(int flags, int index1, int index2, int index3) {
             return Arrays.asList(Stream.generate(() -> nextV1CompactField(flags, index1, index2, index3))
                                        .limit(random
                                                                 .nextInt(Byte.MAX_VALUE) + 1)
                                        .toArray())
                          .stream()
-                         .map(t -> (CompactFields) t)
+                         .map(t -> (net.morimekta.test.hazelcast.v1.CompactFields) t)
                          .collect(Collectors.toList());
         }
 
@@ -876,6 +879,107 @@ public class HazelcastGenerator {
                          .map(t -> (net.morimekta.test.hazelcast.v4.CompactFields) t)
                          .collect(Collectors.toList());
         }
+
+        public Map<Boolean, Boolean> nextBooleanMap() {
+            return nextMap(() -> nextBooleans(), () -> nextBooleans(), 20);
+        }
+
+        public Map<Byte, Byte> nextByteMap() {
+            return nextMap(() -> Bytes.asList(nextBytes()), () -> Bytes.asList(nextBytes()), 20);
+        }
+
+        public Map<Short, Short> nextShortMap() {
+            return nextMap(() -> nextShorts(), () -> nextShorts(), 20);
+        }
+
+        public Map<Integer, Integer> nextIntegerMap() {
+            return nextMap(() -> nextInts(), () -> nextInts(), 20);
+        }
+
+        public Map<Long, Long> nextLongMap() {
+            return nextMap(() -> nextLongs(), () -> nextLongs(), 20);
+        }
+
+        public Map<Double, Double> nextDoubleMap() {
+            return nextMap(() -> nextDoubles(), () -> nextDoubles(), 20);
+        }
+
+        public Map<String, String> nextStringMap() {
+            return nextMap(() -> nextStrings(), () -> nextStrings(), 20);
+        }
+
+        public Map<Binary, Binary> nextBinaryMap() {
+            return nextMap(() -> nextBinaries(), () -> nextBinaries(), 10);
+        }
+
+        public Map<net.morimekta.test.hazelcast.v1.Value, net.morimekta.test.hazelcast.v1.Value> nextV1ValueMap() {
+            return nextMap(() -> nextV1Values(), () -> nextV1Values(), 10);
+        }
+
+        public Map<net.morimekta.test.hazelcast.v1.CompactFields, net.morimekta.test.hazelcast.v1.CompactFields>
+        nextV1CompactMap(int flags, int index1, int index2, int index3, int index4, int index5, int index6) {
+            return nextMap(() -> nextV1CompactFields(flags, index1, index2, index3),
+                           () -> nextV1CompactFields(flags, index4, index5, index6), 10);
+        }
+
+        public <K, V> Map<K, V> nextMap(Supplier<List<K>> keyInput, Supplier<List<V>> valueInput, int maxSize) {
+            Map<K, V> result = new HashMap<>();
+            List<K> keys = keyInput.get().stream().distinct().collect(Collectors.toList());
+            List<V> values = valueInput.get();
+            int size = keys.size() > values.size() ? values.size() : keys.size();
+            size = ((maxSize < size && maxSize != 0) ? maxSize : size);
+            for( int i = 0; i < size; i++ ) {
+                result.put(keys.get(i), values.get(i));
+            }
+            return result;
+        }
         
     }
+
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1() {
+        return nextOptionalMapFieldsV1(false);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1(boolean setAll) {
+        return nextOptionalMapFieldsV1(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1(int flags) {
+        net.morimekta.test.hazelcast.v1.OptionalMapFields._Builder builder =
+                net.morimekta.test.hazelcast.v1.OptionalMapFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValue(entities.nextBooleanMap());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValue(entities.nextByteMap());
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValue(entities.nextShortMap());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValue(entities.nextIntegerMap());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValue(entities.nextLongMap());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValue(entities.nextDoubleMap());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValue(entities.nextStringMap());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setBinaryValue(entities.nextBinaryMap());
+        }
+        if( 0 < (INDEX_09 & flags) ) {
+            builder.setValueValue(entities.nextV1ValueMap());
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setCompactValue(entities.nextV1CompactMap(flags, INDEX_11, INDEX_12, INDEX_13, INDEX_14, INDEX_15, INDEX_16));
+        }
+        return builder.build();
+    }
+
+
 }

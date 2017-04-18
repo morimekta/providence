@@ -4,6 +4,7 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
@@ -242,6 +243,7 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
     private void appendTypeField(JField field) {
         switch (field.type()) {
             case BINARY:
+            case MAP:
                 writer.formatln(".addByteArrayField(\"%s\")",
                                 field.name());
                 break;
@@ -346,5 +348,6 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                                              descriptor.getType() + " in " + this.getClass().getSimpleName());
         }
     }
+
 
 }

@@ -354,4 +354,9 @@ public class JField {
                 .getDescriptor());
     }
 
+    public PMap toPMap() {
+        return (PMap) (field()
+                .getDescriptor());
+    }
+
 }

@@ -1,16 +1,22 @@
 package net.morimekta.providence.util.hazelcast;
 
 import net.morimekta.providence.PEnumValue;
+import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PList;
 import net.morimekta.util.Binary;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Created by scrier on 2017-04-14.
@@ -87,8 +93,28 @@ public class HSerialization {
         return result;
     }
 
-    public static int[] fromEnumList(List<PEnumValue<?>> enums) {
-        return enums.stream().map(PEnumValue::getValue).mapToInt(t -> t).toArray();
+    /**
+     * Method to read an byte from a {@link ByteArrayInputStream}
+     *
+     * @param bis {@link ByteArrayInputStream} to read from.
+     * @return byte with the next byte from the bis.
+     */
+    public static byte readByte(ByteArrayInputStream bis) {
+        byte[] b = new byte[1];
+        bis.read(b, 0, b.length);
+        return ByteBuffer.allocate(b.length).wrap(b).get();
+    }
+
+    /**
+     * Method to read an short from a {@link ByteArrayInputStream}
+     *
+     * @param bis {@link ByteArrayInputStream} to read from.
+     * @return short with the next 2 bytes from the bis.
+     */
+    public static short readShort(ByteArrayInputStream bis) {
+        byte[] b = new byte[2];
+        bis.read(b, 0, b.length);
+        return ByteBuffer.allocate(b.length).wrap(b).getShort();
     }
 
     /**
@@ -97,10 +123,47 @@ public class HSerialization {
      * @param bis {@link ByteArrayInputStream} to read from.
      * @return int with the next 4 bytes from the bis.
      */
-    private static int readInt(ByteArrayInputStream bis) {
+    public static int readInt(ByteArrayInputStream bis) {
         byte[] b = new byte[4];
         bis.read(b, 0, b.length);
-        return ByteBuffer.allocate(4).wrap(b).getInt();
+        return ByteBuffer.allocate(b.length).wrap(b).getInt();
+    }
+
+    /**
+     * Method to read an long from a {@link ByteArrayInputStream}
+     *
+     * @param bis {@link ByteArrayInputStream} to read from.
+     * @return long with the next 8 bytes from the bis.
+     */
+    public static long readLong(ByteArrayInputStream bis) {
+        byte[] b = new byte[8];
+        bis.read(b, 0, b.length);
+        return ByteBuffer.allocate(b.length).wrap(b).getLong();
+    }
+
+    /**
+     * Method to read an double from a {@link ByteArrayInputStream}
+     *
+     * @param bis {@link ByteArrayInputStream} to read from.
+     * @return double with the next 8 bytes from the bis.
+     */
+    public static double readDouble(ByteArrayInputStream bis) {
+        byte[] b = new byte[8];
+        bis.read(b, 0, b.length);
+        return ByteBuffer.allocate(b.length).wrap(b).getDouble();
+    }
+
+    /**
+     * Method to read an string from a {@link ByteArrayInputStream}
+     *
+     * @param bis {@link ByteArrayInputStream} to read from.
+     * @return String with the next length bytes from the bis.
+     */
+    public static String readString(ByteArrayInputStream bis) {
+        int size = readInt(bis);
+        byte[] b = new byte[size];
+        bis.read(b, 0, b.length);
+        return new String(b, StandardCharsets.UTF_8);
     }
 
     /**
@@ -110,7 +173,7 @@ public class HSerialization {
      * @param length int with the length of number of bytes to read.
      * @return byte array with the bytes read.
      */
-    private static byte[] readBytes(ByteArrayInputStream bis, int length) {
+    public static byte[] readBytes(ByteArrayInputStream bis, int length) {
         byte[] b = new byte[length];
         bis.read(b, 0, length);
         return b;
