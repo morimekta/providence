@@ -87,7 +87,7 @@ public class MessageGeneratorTest {
         Random random = new Random();
         Fairy fairy = Fairy.create(Locale.ENGLISH);
         MessageGenerator generator = new MessageGenerator()
-                .setDefaultSerializer(new JsonSerializer())
+                .setOutputSerializer(new JsonSerializer())
                 .setMaxCollectionItems(2)
                 .setRandom(random)
                 .addFactory(f -> {
@@ -208,35 +208,6 @@ public class MessageGeneratorTest {
     }
 
     @Test
-    public void testRandom_withPregenMessage() {
-        CompactFields compact = CompactFields.builder()
-                                             .setId(123)
-                                             .setName("villa")
-                                             .setLabel("Sjampanjebrus")
-                                             .build();
-
-        MessageGenerator generator = new MessageGenerator()
-                .dumpOnFailure()
-                .addPregenMessage(compact);
-        generator.starting(Description.EMPTY);
-
-        CompactFields gen = generator.generate(CompactFields.kDescriptor);
-
-        assertThat(gen, is(sameInstance(compact)));
-        assertThat(generator.getGenerated(), hasItem(compact));
-
-        generator.failed(new Throwable(), Description.EMPTY);
-
-        assertThat(console.output(), is(""));
-        assertThat(console.error(),
-                   is("{\n" +
-                      "  name = \"villa\"\n" +
-                      "  id = 123\n" +
-                      "  label = \"Sjampanjebrus\"\n" +
-                      "}\n"));
-    }
-
-    @Test
     public void testRandom_withPregenResource() {
         CompactFields compact = CompactFields.builder()
                                              .setId(123)
@@ -251,7 +222,7 @@ public class MessageGeneratorTest {
 
         MessageGenerator generator = new MessageGenerator()
                 .dumpOnFailure()
-                .addPregenResource("/pregen.cfg", CompactFields.kDescriptor);
+                .setResourceReader("/pregen.cfg");
         generator.starting(Description.EMPTY);
 
         CompactFields gen = generator.generate(CompactFields.kDescriptor);
