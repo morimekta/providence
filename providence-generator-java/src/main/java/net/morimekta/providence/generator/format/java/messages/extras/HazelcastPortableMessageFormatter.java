@@ -2,6 +2,7 @@ package net.morimekta.providence.generator.format.java.messages.extras;
 
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
+import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.program.extras.HazelcastPortableProgramFormatter;
@@ -33,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -403,6 +405,23 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 tempBinary)
                       .formatln("%s.write(%s);", baos, tempBinary);
                 break;
+            case LIST:
+                PDescriptor inner = ((PList) descriptor).itemDescriptor();
+                final String iterator = tempVariable();
+                writer.formatln("%s.write(%s.allocate(%d).%s(%s.size()).array());",
+                                baos,
+                                ByteBuffer.class.getName(),
+                                Integer.BYTES,
+                                "putInt",
+                                getter);
+                writer.formatln("for( %s %s : %s ) {",
+                                helper.getFieldType(inner),
+                                iterator,
+                                getter)
+                      .begin();
+                writePortableBinary(field, baos, iterator, inner);
+                writer.end().println("}");
+                break;
             case MESSAGE:
                 final String tempMessage = tempVariable();
                 final String tempBigEndian = tempVariable();
@@ -419,7 +438,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                       .formatln("%s.write(%s.toByteArray());", baos, tempMessage);
                 break;
             default:
-                throw new GeneratorException("Not implemented writePortableField for type: " + field.type() + " in " +
+                throw new GeneratorException("Not implemented writePortableBinary for type: " + helper.getFieldType(descriptor) + " in " +
                                              this.getClass()
                                                  .getSimpleName());
         }
@@ -471,6 +490,20 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
             case STRING:
                 writer.formatln("%s = %s.%s(%s);", variable, HSerialization.class.getName(), "readString", bais);
                 break;
+            case LIST:
+                PDescriptor inner = ((PList)descriptor).itemDescriptor();
+                final String tempSize = tempVariable();
+                final String tempCounter = tempVariable();
+                final String tempVariable = tempVariable();
+                writer.formatln("%s = new %s<>();", variable, ArrayList.class.getName());
+                writer.formatln("int %s = %s.%s(%s);", tempSize, HSerialization.class.getName(), "readInt", bais);
+                writer.formatln("%s %s;", helper.getFieldType(inner), tempVariable);
+                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {", tempCounter, tempCounter, tempSize, tempCounter)
+                      .begin();
+                readPortableBinary(field, bais, tempVariable, inner);
+                writer.formatln("%s.add(%s);", variable, tempVariable);
+                writer.end().println("}");
+                break;
             case MESSAGE:
                 final String tempBigEndian = tempVariable();
                 final String tempMessage = tempVariable();
@@ -491,7 +524,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 tempMessage);
                 break;
             default:
-                throw new GeneratorException("Not implemented writePortableField for type: " + field.type() + " in " +
+                throw new GeneratorException("Not implemented readPortableBinary for type: " + helper.getFieldType(descriptor) + " in " +
                                              this.getClass()
                                                  .getSimpleName());
         }
@@ -688,7 +721,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 break;
             default:
                 throw new GeneratorException(
-                        "Not implemented writePortableField for list with type: " + descriptor.getType() + " in " +
+                        "Not implemented writePortableFieldList for list with type: " + descriptor.getType() + " in " +
                         this.getClass()
                             .getSimpleName());
         }
@@ -770,7 +803,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 break;
             default:
                 throw new GeneratorException(
-                        "Not implemented writePortableField for list with type: " + descriptor.getType() + " in " +
+                        "Not implemented writeDefaultPortableFieldList for list with type: " + descriptor.getType() + " in " +
                         this.getClass()
                             .getSimpleName());
         }
@@ -869,16 +902,6 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 baisTemp)
                       .formatln("%s %s;", helper.getFieldType(pMap.keyDescriptor()), keyVariable)
                       .formatln("%s %s;", helper.getFieldType(pMap.itemDescriptor()), valueVariable)
-                      //                      .formatln("%s.read(%s.allocate(%d).%s(%s.build().size()).array());",
-                      //                                baisTemp,
-                      //                                ByteBuffer.class.getName(),
-                      //                                Integer.BYTES,
-                      //                                "putInt",
-                      //                                field.member())
-
-                      /*byte[] b = new byte[4];
-        bis.read(b, 0, b.length);
-        return ByteBuffer.allocate(4).wrap(b).getInt();*/
                       .formatln("for( %s %s = 0; %s < %s; %s++) {",
                                 int.class.getName(),
                                 tempIterator,

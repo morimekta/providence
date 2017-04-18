@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -922,6 +923,67 @@ public class HazelcastGenerator {
                            () -> nextV1CompactFields(flags, index4, index5, index6), 10);
         }
 
+        public Map<Integer, List<Boolean>> nextBooleanListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextBooleans()).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, List<Byte>> nextByteListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> Bytes.asList(nextBytes()))
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, List<Short>> nextShortListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextShorts())
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, List<Integer>> nextIntegerListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextInts())
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, List<Long>> nextLongListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextLongs()).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, List<Double>> nextDoubleListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextDoubles()).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, List<String>> nextStringListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> nextStrings()).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, List<Binary>> nextBinaryListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> nextBinaries()).collect(Collectors.toList()),
+                           10);
+        }
+
+        public Map<Integer, List<net.morimekta.test.hazelcast.v1.Value>> nextV1ValueListMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> nextV1Values()).collect(Collectors.toList()),
+                           10);
+        }
+
+        public Map<Integer, List<net.morimekta.test.hazelcast.v1.CompactFields>>
+        nextV1CompactListMap(int flags, int index1, int index2, int index3) {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> nextV1CompactFields(flags, index1, index2, index3))
+                                          .collect(Collectors.toList()), 10);
+        }
+
         public <K, V> Map<K, V> nextMap(Supplier<List<K>> keyInput, Supplier<List<V>> valueInput, int maxSize) {
             Map<K, V> result = new HashMap<>();
             List<K> keys = keyInput.get().stream().distinct().collect(Collectors.toList());
@@ -981,5 +1043,48 @@ public class HazelcastGenerator {
         return builder.build();
     }
 
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1() {
+        return nextOptionalMapListFieldsV1(false);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1(boolean setAll) {
+        return nextOptionalMapListFieldsV1(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1(int flags) {
+        net.morimekta.test.hazelcast.v1.OptionalMapListFields._Builder builder =
+                net.morimekta.test.hazelcast.v1.OptionalMapListFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValueList(entities.nextBooleanListMap());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValueList(entities.nextByteListMap());
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValueList(entities.nextShortListMap());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValueList(entities.nextIntegerListMap());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValueList(entities.nextLongListMap());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValueList(entities.nextDoubleListMap());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValueList(entities.nextStringListMap());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setBinaryValueList(entities.nextBinaryListMap());
+        }
+        if( 0 < (INDEX_09 & flags) ) {
+            builder.setValueValueList(entities.nextV1ValueListMap());
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setCompactValueList(entities.nextV1CompactListMap(flags, INDEX_11, INDEX_12, INDEX_13));
+        }
+        return builder.build();
+    }
 
 }

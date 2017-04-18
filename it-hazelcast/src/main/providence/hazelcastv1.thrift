@@ -100,7 +100,7 @@ struct OptionalMapListFields {
     8: optional map<i32,list<binary>> binaryValueList;
     9: optional map<i32,list<Value>> valueValueList;
     10: optional map<i32,list<CompactFields>> compactValueList;
-}// (hazelcast.class.id = "6")
+} (hazelcast.class.id = "6")
 
 struct OptionalMapSetFields {
     1: optional map<i32,set<bool>> booleanValueSet;
