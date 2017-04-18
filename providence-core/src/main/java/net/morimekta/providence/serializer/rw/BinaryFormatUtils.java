@@ -34,19 +34,19 @@ public class BinaryFormatUtils {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BigEndianBinaryReader input,
                         PMessageDescriptor<Message, Field> descriptor,
-                        boolean readStrict) throws IOException {
+                        boolean strict) throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         if (builder instanceof BinaryReader) {
-            ((BinaryReader) builder).readBinary(input, readStrict);
+            ((BinaryReader) builder).readBinary(input, strict);
         } else {
             FieldInfo fieldInfo = readFieldInfo(input);
             while (fieldInfo != null) {
                 PField field = descriptor.getField(fieldInfo.getId());
                 if (field != null) {
-                    Object value = readFieldValue(input, fieldInfo, field.getDescriptor(), readStrict);
+                    Object value = readFieldValue(input, fieldInfo, field.getDescriptor(), strict);
                     builder.set(field.getKey(), value);
                 } else {
-                    if (readStrict) {
+                    if (strict) {
                         throw new SerializerException("Unknown field " + fieldInfo.getId() + " for type " + descriptor.getQualifiedName());
                     }
                     readFieldValue(input, fieldInfo, null, false);
@@ -55,7 +55,7 @@ public class BinaryFormatUtils {
                 fieldInfo = readFieldInfo(input);
             }
 
-            if (readStrict) {
+            if (strict) {
                 try {
                     builder.validate();
                 } catch (IllegalStateException e) {
@@ -72,10 +72,10 @@ public class BinaryFormatUtils {
      *
      * @param in Stream to read message from.
      */
-    public static void consumeMessage(BigEndianBinaryReader in, boolean readStrict) throws IOException {
+    public static void consumeMessage(BigEndianBinaryReader in) throws IOException {
         FieldInfo fieldInfo;
         while ((fieldInfo = readFieldInfo(in)) != null) {
-            readFieldValue(in, fieldInfo, null, readStrict);
+            readFieldValue(in, fieldInfo, null, false);
         }
     }
 
@@ -107,21 +107,15 @@ public class BinaryFormatUtils {
     public static Object readFieldValue(BigEndianBinaryReader in,
                                         FieldInfo fieldInfo,
                                         PDescriptor type,
-                                        boolean readStrict)
+                                        boolean strict)
             throws IOException {
         if (type == null) {
-            if (readStrict) {
+            if (strict) {
                 throw new SerializerException("Reading unknown field in strict mode.");
             }
         } else if (type.getType().id != fieldInfo.getType()) {
-            if (readStrict) {
-                throw new SerializerException("Mismatching field type in strict mode.");
-            } else {
-                // consume the content.
-                readFieldValue(in, fieldInfo, null, false);
-                // return 'null', which should clear the field value.
-                return null;
-            }
+            throw new SerializerException("Mismatching field type: (wanted) %s != (seen) %s",
+                                          type.getType(), PType.findById(fieldInfo.getType()));
         }
 
         switch (PType.findById(fieldInfo.getType())) {
@@ -159,10 +153,10 @@ public class BinaryFormatUtils {
                 }
             case MESSAGE: {
                 if (type == null) {
-                    consumeMessage(in, false);
+                    consumeMessage(in);
                     return null;
                 }
-                return readMessage(in, (PMessageDescriptor<?,?>) type, readStrict);
+                return readMessage(in, (PMessageDescriptor<?,?>) type, strict);
             }
             case MAP: {
                 final byte keyT = in.expectByte();
@@ -191,11 +185,11 @@ public class BinaryFormatUtils {
                 FieldInfo keyInfo = new FieldInfo(1, keyT);
                 FieldInfo itemInfo = new FieldInfo(2, itemT);
                 for (int i = 0; i < size; ++i) {
-                    Object key = readFieldValue(in, keyInfo, keyType, readStrict);
-                    Object value = readFieldValue(in, itemInfo, valueType, readStrict);
+                    Object key = readFieldValue(in, keyInfo, keyType, strict);
+                    Object value = readFieldValue(in, itemInfo, valueType, strict);
                     if (key != null && value != null) {
                         out.put(key, value);
-                    } else if (readStrict) {
+                    } else if (strict) {
                         throw new SerializerException("Null key or value in map.");
                     }
                 }
@@ -218,10 +212,10 @@ public class BinaryFormatUtils {
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    Object key = readFieldValue(in, itemInfo, entryType, readStrict);
+                    Object key = readFieldValue(in, itemInfo, entryType, strict);
                     if (key != null) {
                         out.add(key);
-                    } else if (readStrict) {
+                    } else if (strict) {
                         throw new SerializerException("Null value in set.");
                     }
                 }
@@ -245,10 +239,10 @@ public class BinaryFormatUtils {
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    Object key = readFieldValue(in, itemInfo, entryType, readStrict);
+                    Object key = readFieldValue(in, itemInfo, entryType, strict);
                     if (key != null) {
                         out.add(key);
-                    } else if (readStrict) {
+                    } else if (strict) {
                         throw new SerializerException("Null value in list.");
                     }
                 }

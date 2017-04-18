@@ -22,6 +22,8 @@ package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PField;
 
+import java.util.Objects;
+
 /**
  * Enclosed call to a service method.
  */
@@ -77,5 +79,25 @@ public class PServiceCall<Message extends PMessage<Message, Field>, Field extend
      */
     public Message getMessage() {
         return message;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(PServiceCall.class,
+                            method, type, sequence, message);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (o == null || !o.getClass().equals(getClass())) return false;
+
+        PServiceCall other = (PServiceCall) o;
+
+        return Objects.equals(method, other.method) &&
+               Objects.equals(type, other.type) &&
+               sequence == other.sequence &&
+               Objects.equals(message, other.message);
     }
 }

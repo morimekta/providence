@@ -22,7 +22,5 @@ public interface JsonCompactible {
     /**
      * @return If the message is jsonCompact.
      */
-    default boolean jsonCompact() {
-        return false;
-    }
+    boolean jsonCompact();
 }

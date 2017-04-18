@@ -57,7 +57,7 @@ public class BinarySerializer extends Serializer {
     // 255 byte (ASCII char) length for a method name is exceptionally long.
     private static final int MAX_METHOD_NAME_LEN = 255;
 
-    private final boolean readStrict;
+    private final boolean strict;
     private final boolean versioned;
 
     /**
@@ -84,7 +84,7 @@ public class BinarySerializer extends Serializer {
      * @param versioned If the serializer should use the versioned service call format.
      */
     public BinarySerializer(boolean readStrict, boolean versioned) {
-        this.readStrict = readStrict;
+        this.strict = readStrict;
         this.versioned = versioned;
     }
 
@@ -133,7 +133,7 @@ public class BinarySerializer extends Serializer {
     Message deserialize(InputStream input, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         BigEndianBinaryReader reader = new BigEndianBinaryReader(input);
-        return readMessage(reader, descriptor, readStrict);
+        return readMessage(reader, descriptor, strict);
     }
 
     @Nonnull
@@ -169,7 +169,7 @@ public class BinarySerializer extends Serializer {
                             .setExceptionType(PApplicationExceptionType.INVALID_PROTOCOL);
                 }
             } else {
-                if (readStrict && versioned) {
+                if (strict && versioned) {
                     throw new SerializerException("Missing protocol version")
                             .setExceptionType(PApplicationExceptionType.INVALID_PROTOCOL);
                 }
@@ -189,7 +189,7 @@ public class BinarySerializer extends Serializer {
                 throw new SerializerException("Invalid call type " + typeKey)
                         .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             } else if (type == PServiceCallType.EXCEPTION) {
-                PApplicationException ex = readMessage(in, PApplicationException.kDescriptor, readStrict);
+                PApplicationException ex = readMessage(in, PApplicationException.kDescriptor, strict);
                 return (PServiceCall<Message, Field>) new PServiceCall<>(methodName, type, sequence, ex);
             } else if (method == null) {
                 throw new SerializerException("No such method " + methodName + " on " + service.getQualifiedName())
@@ -199,7 +199,7 @@ public class BinarySerializer extends Serializer {
             @SuppressWarnings("unchecked")
             PMessageDescriptor<Message, Field> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
 
-            Message message = readMessage(in, descriptor, readStrict);
+            Message message = readMessage(in, descriptor, strict);
 
             return new PServiceCall<>(methodName, type, sequence, message);
         } catch (SerializerException se) {
