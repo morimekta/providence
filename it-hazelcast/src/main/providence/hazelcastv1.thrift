@@ -113,7 +113,7 @@ struct OptionalMapSetFields {
     8: optional map<i32,set<binary>> binaryValueSet;
     9: optional map<i32,set<Value>> valueValueSet;
     10: optional map<i32,set<CompactFields>> compactValueSet;
-}// (hazelcast.class.id = "7")
+} (hazelcast.class.id = "7")
 
 struct RequiredFields {
     1: required bool booleanValue;

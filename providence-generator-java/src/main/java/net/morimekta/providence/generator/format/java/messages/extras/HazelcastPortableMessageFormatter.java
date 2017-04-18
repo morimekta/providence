@@ -4,6 +4,7 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.program.extras.HazelcastPortableProgramFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
@@ -37,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -406,8 +408,8 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                       .formatln("%s.write(%s);", baos, tempBinary);
                 break;
             case LIST:
-                PDescriptor inner = ((PList) descriptor).itemDescriptor();
-                final String iterator = tempVariable();
+                PDescriptor innerList = ((PList) descriptor).itemDescriptor();
+                final String iteratorList = tempVariable();
                 writer.formatln("%s.write(%s.allocate(%d).%s(%s.size()).array());",
                                 baos,
                                 ByteBuffer.class.getName(),
@@ -415,11 +417,28 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 "putInt",
                                 getter);
                 writer.formatln("for( %s %s : %s ) {",
-                                helper.getFieldType(inner),
-                                iterator,
+                                helper.getFieldType(innerList),
+                                iteratorList,
                                 getter)
                       .begin();
-                writePortableBinary(field, baos, iterator, inner);
+                writePortableBinary(field, baos, iteratorList, innerList);
+                writer.end().println("}");
+                break;
+            case SET:
+                PDescriptor innerSet = ((PSet) descriptor).itemDescriptor();
+                final String iteratorSet = tempVariable();
+                writer.formatln("%s.write(%s.allocate(%d).%s(%s.size()).array());",
+                                baos,
+                                ByteBuffer.class.getName(),
+                                Integer.BYTES,
+                                "putInt",
+                                getter);
+                writer.formatln("for( %s %s : %s ) {",
+                                helper.getFieldType(innerSet),
+                                iteratorSet,
+                                getter)
+                      .begin();
+                writePortableBinary(field, baos, iteratorSet, innerSet);
                 writer.end().println("}");
                 break;
             case MESSAGE:
@@ -491,17 +510,31 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 writer.formatln("%s = %s.%s(%s);", variable, HSerialization.class.getName(), "readString", bais);
                 break;
             case LIST:
-                PDescriptor inner = ((PList)descriptor).itemDescriptor();
-                final String tempSize = tempVariable();
-                final String tempCounter = tempVariable();
-                final String tempVariable = tempVariable();
+                PDescriptor innerList = ((PList)descriptor).itemDescriptor();
+                final String tempSizeList = tempVariable();
+                final String tempCounterList = tempVariable();
+                final String tempVariableList = tempVariable();
                 writer.formatln("%s = new %s<>();", variable, ArrayList.class.getName());
-                writer.formatln("int %s = %s.%s(%s);", tempSize, HSerialization.class.getName(), "readInt", bais);
-                writer.formatln("%s %s;", helper.getFieldType(inner), tempVariable);
-                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {", tempCounter, tempCounter, tempSize, tempCounter)
+                writer.formatln("int %s = %s.%s(%s);", tempSizeList, HSerialization.class.getName(), "readInt", bais);
+                writer.formatln("%s %s;", helper.getFieldType(innerList), tempVariableList);
+                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {", tempCounterList, tempCounterList, tempSizeList, tempCounterList)
                       .begin();
-                readPortableBinary(field, bais, tempVariable, inner);
-                writer.formatln("%s.add(%s);", variable, tempVariable);
+                readPortableBinary(field, bais, tempVariableList, innerList);
+                writer.formatln("%s.add(%s);", variable, tempVariableList);
+                writer.end().println("}");
+                break;
+            case SET:
+                PDescriptor innerSet = ((PSet)descriptor).itemDescriptor();
+                final String tempSizeSet = tempVariable();
+                final String tempCounterSet = tempVariable();
+                final String tempVariableSet = tempVariable();
+                writer.formatln("%s = new %s<>();", variable, HashSet.class.getName());
+                writer.formatln("int %s = %s.%s(%s);", tempSizeSet, HSerialization.class.getName(), "readInt", bais);
+                writer.formatln("%s %s;", helper.getFieldType(innerSet), tempVariableSet);
+                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {", tempCounterSet, tempCounterSet, tempSizeSet, tempCounterSet)
+                      .begin();
+                readPortableBinary(field, bais, tempVariableSet, innerSet);
+                writer.formatln("%s.add(%s);", variable, tempVariableSet);
                 writer.end().println("}");
                 break;
             case MESSAGE:

@@ -7,9 +7,11 @@ import org.jfairy.Fairy;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -984,6 +986,68 @@ public class HazelcastGenerator {
                                           .collect(Collectors.toList()), 10);
         }
 
+        public Map<Integer, Set<Boolean>> nextBooleanSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextBooleans())).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, Set<Byte>> nextByteSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(Bytes.asList(nextBytes())))
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, Set<Short>> nextShortSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextShorts()))
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, Set<Integer>> nextIntegerSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextInts()))
+                                          .collect(Collectors.toList()), 20);
+        }
+
+        public Map<Integer, Set<Long>> nextLongSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextLongs()))
+                                          .collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, Set<Double>> nextDoubleSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextDoubles())).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, Set<String>> nextStringSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 20).mapToObj(i -> new HashSet<>(nextStrings())).collect(Collectors.toList()),
+                           20);
+        }
+
+        public Map<Integer, Set<Binary>> nextBinarySetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> new HashSet<>(nextBinaries())).collect(Collectors.toList()),
+                           10);
+        }
+
+        public Map<Integer, Set<net.morimekta.test.hazelcast.v1.Value>> nextV1ValueSetMap() {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> new HashSet<>(nextV1Values())).collect(Collectors.toList()),
+                           10);
+        }
+
+        public Map<Integer, Set<net.morimekta.test.hazelcast.v1.CompactFields>>
+        nextV1CompactSetMap(int flags, int index1, int index2, int index3) {
+            return nextMap(() -> nextInts(),
+                           () -> IntStream.range(0, 10).mapToObj(i -> new HashSet<>(nextV1CompactFields(flags, index1, index2, index3)))
+                                          .collect(Collectors.toList()), 10);
+        }
+
         public <K, V> Map<K, V> nextMap(Supplier<List<K>> keyInput, Supplier<List<V>> valueInput, int maxSize) {
             Map<K, V> result = new HashMap<>();
             List<K> keys = keyInput.get().stream().distinct().collect(Collectors.toList());
@@ -1083,6 +1147,50 @@ public class HazelcastGenerator {
         }
         if( 0 < (INDEX_10 & flags) ) {
             builder.setCompactValueList(entities.nextV1CompactListMap(flags, INDEX_11, INDEX_12, INDEX_13));
+        }
+        return builder.build();
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1() {
+        return nextOptionalMapSetFieldsV1(false);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1(boolean setAll) {
+        return nextOptionalMapSetFieldsV1(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1(int flags) {
+        net.morimekta.test.hazelcast.v1.OptionalMapSetFields._Builder builder =
+                net.morimekta.test.hazelcast.v1.OptionalMapSetFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setBooleanValueSet(entities.nextBooleanSetMap());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValueSet(entities.nextByteSetMap());
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValueSet(entities.nextShortSetMap());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValueSet(entities.nextIntegerSetMap());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValueSet(entities.nextLongSetMap());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValueSet(entities.nextDoubleSetMap());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValueSet(entities.nextStringSetMap());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setBinaryValueSet(entities.nextBinarySetMap());
+        }
+        if( 0 < (INDEX_09 & flags) ) {
+            builder.setValueValueSet(entities.nextV1ValueSetMap());
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setCompactValueSet(entities.nextV1CompactSetMap(flags, INDEX_11, INDEX_12, INDEX_13));
         }
         return builder.build();
     }
