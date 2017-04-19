@@ -115,6 +115,32 @@ struct OptionalMapSetFields {
     10: optional map<i32,set<CompactFields>> compactValueSet;
 } (hazelcast.class.id = "7")
 
+struct UnionFields {
+    1: optional AllFields all_fields (hazelcast.use.thrift.serialization = "");
+    2: optional byte byteValue;
+    3: optional i16 shortValue;
+    4: optional i32 integerValue;
+    5: optional i64 longValue;
+    6: optional double doubleValue;
+    7: optional string stringValue;
+    8: optional list<AllFields> all_fields_list (hazelcast.use.thrift.serialization = "");
+    9: optional set<AllFields> all_fields_set (hazelcast.use.thrift.serialization = "");
+    10: optional map<string, AllFields> all_fields_map (hazelcast.use.thrift.serialization = "");
+} (hazelcast.class.id = "8")
+
+union AllFields {
+    1: optional bool booleanValue;
+    2: optional byte byteValue;
+    3: optional i16 shortValue;
+    4: optional i32 integerValue;
+    5: optional i64 longValue;
+    6: optional double doubleValue;
+    7: optional string stringValue;
+    8: optional binary binaryValue;
+    9: optional Value enumValue;
+    10: optional CompactFields compactValue;
+}
+
 struct RequiredFields {
     1: required bool booleanValue;
     2: required byte byteValue,

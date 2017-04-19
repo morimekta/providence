@@ -1059,6 +1059,10 @@ public class HazelcastGenerator {
             }
             return result;
         }
+
+        public <V> V randFromArray(V[] array) {
+            return array[random.nextInt(array.length)];
+        }
         
     }
 
@@ -1195,4 +1199,79 @@ public class HazelcastGenerator {
         return builder.build();
     }
 
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1() {
+        return nextUnionFieldsV1(false);
+    }
+
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1(boolean setAll) {
+        return nextUnionFieldsV1(setAll ? 0x0000FFFF : random.nextInt());
+    }
+
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1(int flags) {
+        net.morimekta.test.hazelcast.v1.UnionFields._Builder builder =
+                net.morimekta.test.hazelcast.v1.UnionFields.builder();
+        if( 0 < (INDEX_01 & flags) ) {
+            builder.setAllFields(nextAllFieldsV1());
+        }
+        if( 0 < (INDEX_02 & flags) ) {
+            builder.setByteValue(entities.nextByte());
+        }
+        if( 0 < (INDEX_03 & flags) ) {
+            builder.setShortValue(entities.nextShort());
+        }
+        if( 0 < (INDEX_04 & flags) ) {
+            builder.setIntegerValue(entities.nextInt());
+        }
+        if( 0 < (INDEX_05 & flags) ) {
+            builder.setLongValue(entities.nextLong());
+        }
+        if( 0 < (INDEX_06 & flags) ) {
+            builder.setDoubleValue(entities.nextDouble());
+        }
+        if( 0 < (INDEX_07 & flags) ) {
+            builder.setStringValue(entities.nextString());
+        }
+        if( 0 < (INDEX_08 & flags) ) {
+            builder.setAllFieldsList(IntStream.range(0, 10).mapToObj(i -> nextAllFieldsV1()).collect(Collectors.toList()));
+        }
+        if( 0 < (INDEX_09 & flags) ) {
+            builder.setAllFieldsSet(IntStream.range(0, 10).mapToObj(i -> nextAllFieldsV1()).collect(Collectors.toSet()));
+        }
+        if( 0 < (INDEX_10 & flags) ) {
+            builder.setAllFieldsMap(entities.nextMap(() -> entities.nextStrings(),
+                                                     () -> IntStream.range(0, 10).mapToObj(i -> nextAllFieldsV1())
+                                                                    .collect(Collectors.toList()),
+                                                     10));
+        }
+        return builder.build();
+    }
+
+    public net.morimekta.test.hazelcast.v1.AllFields nextAllFieldsV1() {
+        switch( entities.randFromArray(net.morimekta.test.hazelcast.v1.AllFields._Field.values()) ) {
+            case BINARY_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withBinaryValue(entities.nextBinary());
+            case BOOLEAN_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withBooleanValue(entities.nextBoolean());
+            case BYTE_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withByteValue(entities.nextByte());
+            case COMPACT_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withCompactValue(entities.nextV1CompactField(
+                        random.nextInt(0x0000000F), INDEX_01, INDEX_02, INDEX_03));
+            case DOUBLE_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withDoubleValue(entities.nextDouble());
+            case ENUM_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withEnumValue(entities.nextV1Value());
+            case INTEGER_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withIntegerValue(entities.nextInt());
+            case LONG_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withLongValue(entities.nextLong());
+            case SHORT_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withShortValue(entities.nextShort());
+            case STRING_VALUE:
+                return net.morimekta.test.hazelcast.v1.AllFields.withStringValue(entities.nextString());
+        }
+        return null;
+    }
+
+    
 }

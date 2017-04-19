@@ -4,7 +4,6 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.messages.extras.HazelcastPortableMessageFormatter;
@@ -85,7 +84,7 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
 
         for (PDeclaredDescriptor c : document.getDeclaredTypes()) {
             try {
-                if (PType.MESSAGE == c.getType()) {
+                if (PType.MESSAGE == c.getType() && c instanceof CStructDescriptor) {
                     CStructDescriptor message = (CStructDescriptor) c;
                     if (message.hasAnnotation(ThriftAnnotation.JAVA_HAZELCAST_CLASS_ID)) {
                         writer.formatln("public static final int %s = %s;",
@@ -105,14 +104,13 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
         if (messages.isEmpty()) {
             throw new GeneratorException("No annotations available to generate!");
         } else {
-            writer.formatln("private static class %s implements %s {",
-                            FACTORY_IMPL,
-                            PortableFactory.class.getName())
+            writer.formatln("private static class %s implements %s {", FACTORY_IMPL, PortableFactory.class.getName())
                   .begin()
                   .newline();
             appendCreateMethod(messages);
             appendGetDefinitions(messages);
-            writer.end().appendln("}");
+            writer.end()
+                  .appendln("}");
         }
 
         writer.end()
@@ -140,10 +138,10 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
      */
     private void appendCreateMethod(List<CStructDescriptor> messages) {
         writer.appendln("@Override")
-        .formatln("public %s create(int classId) {", Portable.class.getName())
-        .begin()
-        .appendln("switch(classId) {")
-        .begin();
+              .formatln("public %s create(int classId) {", Portable.class.getName())
+              .begin()
+              .appendln("switch(classId) {")
+              .begin();
         for (CStructDescriptor message : messages) {
             writer.formatln("case %s: {", getHazelcastClassId(message.getName()))
                   .begin()
@@ -188,33 +186,27 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                         Config.class.getName(),
                         CONFIG)
               .begin()
-              .formatln("%s %s = new %s();",
-                        FACTORY_IMPL,
-                        INSTANCE,
-                        FACTORY_IMPL)
-              .formatln("%s.getSerializationConfig().addPortableFactory(%s, %s);",
-                        CONFIG,
-                        FACTORY_ID,
-                        INSTANCE);
-        writer.formatln("%s.getSerializationConfig()",
-                        CONFIG)
-              .begin().begin();
-        for( CStructDescriptor struct : messages ) {
+              .formatln("%s %s = new %s();", FACTORY_IMPL, INSTANCE, FACTORY_IMPL)
+              .formatln("%s.getSerializationConfig().addPortableFactory(%s, %s);", CONFIG, FACTORY_ID, INSTANCE);
+        writer.formatln("%s.getSerializationConfig()", CONFIG)
+              .begin()
+              .begin();
+        for (CStructDescriptor struct : messages) {
             writer.formatln(".addClassDefinition(%s.%s())",
                             INSTANCE,
                             camelCase("get", struct.getName() + "Definition"));
         }
         writer.append(";")
-              .end().end()
-              .formatln("return %s;",
-                        CONFIG)
+              .end()
+              .end()
+              .formatln("return %s;", CONFIG)
               .end()
               .appendln("}")
               .newline();
     }
 
     private void appendGetDefinitions(List<CStructDescriptor> messages) {
-        for( CStructDescriptor message : messages ) {
+        for (CStructDescriptor message : messages) {
             appendGetDefinition(new JMessage<>(message, helper));
         }
     }
@@ -222,20 +214,24 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
     private void appendGetDefinition(JMessage<?> message) {
         writer.formatln("public %s %s() {",
                         ClassDefinition.class.getName(),
-                        camelCase("get", message.descriptor().getName() + "Definition"))
+                        camelCase("get",
+                                  message.descriptor()
+                                         .getName() + "Definition"))
               .begin()
               .formatln("return new %s(%s, %s)",
                         ClassDefinitionBuilder.class.getName(),
                         FACTORY_ID,
                         getHazelcastClassId(message.instanceType()))
-              .begin().begin();
-        for( JField field : message.declaredOrderFields() ) {
-            writer.formatln(".addBooleanField(\"%s\")",
-                            field.hasName());
+              .begin()
+              .begin();
+        for (JField field : message.declaredOrderFields()) {
+            writer.formatln(".addBooleanField(\"%s\")", field.hasName());
             appendTypeField(field);
         }
         writer.appendln(".build();")
-              .end().end().end()
+              .end()
+              .end()
+              .end()
               .appendln("}")
               .newline();
     }
@@ -244,50 +240,57 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
         switch (field.type()) {
             case BINARY:
             case MAP:
-                writer.formatln(".addByteArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addByteArrayField(\"%s\")", field.name());
                 break;
             case BYTE:
-                writer.formatln(".addByteField(\"%s\")",
-                                field.name());
+                writer.formatln(".addByteField(\"%s\")", field.name());
                 break;
             case BOOL:
-                writer.formatln(".addBooleanField(\"%s\")",
-                                field.name());
+                writer.formatln(".addBooleanField(\"%s\")", field.name());
                 break;
             case DOUBLE:
-                writer.formatln(".addDoubleField(\"%s\")",
-                                field.name());
+                writer.formatln(".addDoubleField(\"%s\")", field.name());
                 break;
             case ENUM:
             case I32:
-                writer.formatln(".addIntField(\"%s\")",
-                                field.name());
+                writer.formatln(".addIntField(\"%s\")", field.name());
                 break;
             case I16:
-                writer.formatln(".addShortField(\"%s\")",
-                                field.name());
+                writer.formatln(".addShortField(\"%s\")", field.name());
                 break;
             case I64:
-                writer.formatln(".addLongField(\"%s\")",
-                                field.name());
+                writer.formatln(".addLongField(\"%s\")", field.name());
                 break;
             case STRING:
-                writer.formatln(".addUTFField(\"%s\")",
-                                field.name());
+                writer.formatln(".addUTFField(\"%s\")", field.name());
                 break;
             case LIST:
-                final PList pList = field.toPList();
-                appendCollectionTypeField(field, pList.itemDescriptor());
+                if ( field.isUnion() ) {
+                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
+                } else {
+                    final PList pList = field.toPList();
+                    appendCollectionTypeField(field, pList.itemDescriptor());
+                }
                 break;
             case SET:
-                final PSet pSet = field.toPSet();
-                appendCollectionTypeField(field, pSet.itemDescriptor());
+                if ( field.isUnion() ) {
+                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
+                } else {
+                    final PSet pSet = field.toPSet();
+                    appendCollectionTypeField(field, pSet.itemDescriptor());
+                }
                 break;
             case MESSAGE:
-                writer.formatln(".addPortableField(\"%s\", %s())",
-                                field.name(),
-                                camelCase("get", field.field().getDescriptor().getName() + "Definition"));
+                if ( field.isUnion() ) {
+                    writer.formatln(".addByteArrayField(\"%s\")", field.name());
+                } else {
+                    writer.formatln(".addPortableField(\"%s\", %s())",
+                                    field.name(),
+                                    camelCase("get",
+                                              field.field()
+                                                   .getDescriptor()
+                                                   .getName() + "Definition"));
+                }
                 break;
             default:
                 throw new GeneratorException("Not implemented appendTypeField for type: " + field.type() + " in " +
@@ -310,33 +313,26 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
         switch (descriptor.getType()) {
             case BYTE:
             case BINARY:
-                writer.formatln(".addByteArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addByteArrayField(\"%s\")", field.name());
                 break;
             case BOOL:
-                writer.formatln(".addBooleanArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addBooleanArrayField(\"%s\")", field.name());
                 break;
             case DOUBLE:
-                writer.formatln(".addDoubleArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addDoubleArrayField(\"%s\")", field.name());
                 break;
             case I16:
-                writer.formatln(".addShortArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addShortArrayField(\"%s\")", field.name());
                 break;
             case I32:
             case ENUM:
-                writer.formatln(".addIntArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addIntArrayField(\"%s\")", field.name());
                 break;
             case I64:
-                writer.formatln(".addLongArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addLongArrayField(\"%s\")", field.name());
                 break;
             case STRING:
-                writer.formatln(".addUTFArrayField(\"%s\")",
-                                field.name());
+                writer.formatln(".addUTFArrayField(\"%s\")", field.name());
                 break;
             case MESSAGE:
                 writer.formatln(".addPortableArrayField(\"%s\", %s())",
@@ -344,10 +340,11 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
                                 camelCase("get", descriptor.getName() + "Definition"));
                 break;
             default:
-                throw new GeneratorException("Not implemented readPortableField for list with type: " +
-                                             descriptor.getType() + " in " + this.getClass().getSimpleName());
+                throw new GeneratorException(
+                        "Not implemented appendCollectionTypeField for list with type: " + descriptor.getType() + " in " +
+                        this.getClass()
+                            .getSimpleName());
         }
     }
-
 
 }
