@@ -216,7 +216,7 @@ public class SerializerTest {
 
     @Test
     public void testCompactJson() throws IOException {
-        Serializer serializer = new JsonSerializer(true, JsonSerializer.IdType.ID);
+        Serializer serializer = new JsonSerializer(true);
         testSerializer(serializer);
         testOutput(serializer, "/compat/compact.json");
         testCompatibility(serializer, "/compat/compact.json");
@@ -224,7 +224,7 @@ public class SerializerTest {
 
     @Test
     public void testNamedJson() throws IOException {
-        Serializer serializer = new JsonSerializer(true, JsonSerializer.IdType.NAME);
+        Serializer serializer = new JsonSerializer(true).named();
         testSerializer(serializer);
         testOutput(serializer, "/compat/named.json");
         testCompatibility(serializer, "/compat/named.json");
@@ -232,10 +232,7 @@ public class SerializerTest {
 
     @Test
     public void testPrettyJson() throws IOException {
-        Serializer serializer = new JsonSerializer(true,
-                                                   JsonSerializer.IdType.NAME,
-                                                   JsonSerializer.IdType.NAME,
-                                                   true);
+        Serializer serializer = new JsonSerializer(true).pretty();
         testSerializer(serializer);
         testOutput(serializer, "/compat/pretty.json");
         testCompatibility(serializer, "/compat/pretty.json");

@@ -42,7 +42,7 @@ public class JsonGenerator extends Generator {
     public JsonGenerator(FileManager fileManager, TypeLoader loader) {
         super(fileManager);
         typeLoader = loader;
-        serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
+        serializer = new JsonSerializer().pretty();
     }
 
     @Override

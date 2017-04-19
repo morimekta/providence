@@ -69,7 +69,7 @@ public class IOMessageRWTest {
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (MessageWriter writer = new IOMessageWriter(out, new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, false))) {
+        try (MessageWriter writer = new IOMessageWriter(out, new JsonSerializer().named())) {
             writer.write(call);
         }
 

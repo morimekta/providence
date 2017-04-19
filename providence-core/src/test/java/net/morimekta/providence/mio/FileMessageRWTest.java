@@ -77,7 +77,7 @@ public class FileMessageRWTest {
         }
 
         File result = tmp.newFile();
-        try (FileMessageWriter writer = new FileMessageWriter(result, new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, false))) {
+        try (FileMessageWriter writer = new FileMessageWriter(result, new JsonSerializer().named())) {
             writer.write(call);
         }
 

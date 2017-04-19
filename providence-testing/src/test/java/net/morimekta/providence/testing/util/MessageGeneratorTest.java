@@ -8,7 +8,6 @@ import net.morimekta.providence.mio.MessageReader;
 import net.morimekta.providence.serializer.FastBinarySerializer;
 import net.morimekta.providence.serializer.JsonSerializer;
 import net.morimekta.providence.serializer.PrettySerializer;
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.android.CompactFields;
 import net.morimekta.testing.rules.ConsoleWatcher;
 import net.morimekta.util.ExtraStreams;
@@ -32,7 +31,6 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 public class MessageGeneratorTest {
@@ -83,7 +81,7 @@ public class MessageGeneratorTest {
     }
 
     @Test
-    public void testRandom_customSerializer() throws SerializerException {
+    public void testRandom_customSerializer() throws IOException {
         Random random = new Random();
         Fairy fairy = Fairy.create(Locale.ENGLISH);
         MessageGenerator generator = new MessageGenerator()
@@ -249,7 +247,7 @@ public class MessageGeneratorTest {
                       "}\n"));
     }
 
-    private <M extends PMessage<M, F>, F extends PField> String json(M message) throws SerializerException {
+    private <M extends PMessage<M, F>, F extends PField> String json(M message) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         new JsonSerializer().serialize(baos, message);
         return new String(baos.toByteArray(), StandardCharsets.UTF_8);

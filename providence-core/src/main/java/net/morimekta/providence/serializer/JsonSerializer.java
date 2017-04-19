@@ -59,7 +59,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Compact JSON serializer. This uses the most compact type-safe JSON format
@@ -101,49 +102,38 @@ public class JsonSerializer extends Serializer {
     public static final String MIME_TYPE = "application/vnd.morimekta.providence.json";
     public static final String JSON_MIME_TYPE = "application/json";
 
-    public enum IdType {
-        // print field and enums as numeric IDs and values.
-        ID,
-        // print field and enums as field name and enum name.
-        NAME
-    }
-
-    private final boolean readStrict;
-    private final IdType  idType;
-    private final IdType  enumType;
-    private final boolean pretty;
-
     public JsonSerializer() {
-        this(DEFAULT_STRICT, IdType.ID, IdType.ID, false);
+        this(DEFAULT_STRICT, false, IdType.ID, IdType.ID);
     }
 
     public JsonSerializer(boolean strict) {
-        this(strict, IdType.ID, IdType.ID, false);
+        this(strict, false, IdType.ID, IdType.ID);
     }
 
-    public JsonSerializer(IdType idType) {
-        this(DEFAULT_STRICT, idType, idType, false);
+    public JsonSerializer lenient() {
+        return new JsonSerializer(false, prettyPrint, fieldIdType, enumValueType);
     }
 
-    public JsonSerializer(boolean readStrict, IdType idType) {
-        this(readStrict, idType, idType, false);
+    public JsonSerializer pretty() {
+        return new JsonSerializer(readStrict, true, IdType.NAME, IdType.NAME);
     }
 
-    public JsonSerializer(IdType idType, IdType enumType) {
-        this(DEFAULT_STRICT, idType, enumType, false);
+    public JsonSerializer named() {
+        return withNamedEnums().withNamedFields();
     }
 
-    public JsonSerializer(boolean readStrict, IdType idType, IdType enumType, boolean pretty) {
-        this.readStrict = readStrict;
-        this.idType = idType;
-        this.enumType = enumType;
-        this.pretty = pretty;
+    public JsonSerializer withNamedFields() {
+        return new JsonSerializer(readStrict, prettyPrint, IdType.NAME, enumValueType);
+    }
+
+    public JsonSerializer withNamedEnums() {
+        return new JsonSerializer(readStrict, prettyPrint, fieldIdType, IdType.NAME);
     }
 
     @Override
-    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, T message) throws SerializerException {
+    public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, T message) throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
-        JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
+        JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             appendMessage(jsonWriter, message);
             jsonWriter.flush();
@@ -151,8 +141,6 @@ public class JsonSerializer extends Serializer {
             return counter.getByteCount();
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to serialize JSON");
-        } catch (IOException e) {
-            throw new SerializerException(e, "Unable to write to stream");
         }
     }
 
@@ -160,11 +148,11 @@ public class JsonSerializer extends Serializer {
     public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, PServiceCall<T, F> call)
             throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
-        JsonWriter jsonWriter = pretty ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
+        JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
         try {
             jsonWriter.array()
                       .value(call.getMethod());
-            if (enumType == IdType.ID) {
+            if (enumValueType == IdType.ID) {
                 jsonWriter.value(call.getType().getValue());
             } else {
                 jsonWriter.value(call.getType().getName());
@@ -179,26 +167,22 @@ public class JsonSerializer extends Serializer {
             return counter.getByteCount();
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to serialize JSON");
-        } catch (IOException e) {
-            throw new SerializerException(e, "Unable to write to stream");
         }
     }
 
     @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(InputStream input, PMessageDescriptor<T, TF> type) throws
-                                                                                                                      SerializerException {
+    public <T extends PMessage<T, TF>, TF extends PField> T deserialize(
+            InputStream input, PMessageDescriptor<T, TF> type) throws IOException {
         try {
             JsonTokenizer tokenizer = new JsonTokenizer(input);
             if (!tokenizer.hasNext()) {
                 throw new SerializerException("Empty json body");
             }
-            return Objects.requireNonNull((T) parseTypedValue(tokenizer.next(), tokenizer, type, false));
+            return requireNonNull((T) parseTypedValue(tokenizer.next(), tokenizer, type, false));
         } catch (JsonException e) {
             throw new SerializerException(e, "Unable to parse JSON");
-        } catch (IOException e) {
-            throw new SerializerException(e, "Unable to read stream");
         }
     }
 
@@ -220,6 +204,27 @@ public class JsonSerializer extends Serializer {
         return MIME_TYPE;
     }
 
+    // ------------------- PRIVATE ONLY ------------------
+
+    private JsonSerializer(boolean readStrict, boolean prettyPrint, IdType fieldIdType, IdType enumValueType) {
+        this.readStrict = readStrict;
+        this.prettyPrint = prettyPrint;
+        this.fieldIdType = fieldIdType;
+        this.enumValueType = enumValueType;
+    }
+
+    private enum IdType {
+        // print field or enums as numeric IDs and values.
+        ID,
+        // print field or enums as field name and enum name.
+        NAME
+    }
+
+    private final boolean readStrict;
+    private final IdType  fieldIdType;
+    private final IdType  enumValueType;
+    private final boolean prettyPrint;
+
     @SuppressWarnings("unchecked")
     private <T extends PMessage<T, F>, F extends PField> PServiceCall<T, F> parseServiceCall(JsonTokenizer tokenizer, PService service)
             throws IOException {
@@ -227,26 +232,26 @@ public class JsonSerializer extends Serializer {
         String methodName = null;
         int sequence = 0;
         try {
-            tokenizer.expectSymbol("Service call start", JsonToken.kListStart);
+            tokenizer.expectSymbol("service call start", JsonToken.kListStart);
 
-            methodName = tokenizer.expectString("Service call method")
+            methodName = tokenizer.expectString("method name")
                                   .decodeJsonLiteral();
 
-            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+            tokenizer.expectSymbol("entry sep", JsonToken.kListSep);
 
-            JsonToken callTypeToken = tokenizer.expect("Service call type");
+            JsonToken callTypeToken = tokenizer.expect("call type");
             if (callTypeToken.isInteger()) {
                 int typeKey = callTypeToken.byteValue();
                 type = PServiceCallType.forValue(typeKey);
                 if (type == null) {
-                    throw new SerializerException("Service call type " + typeKey + " is not valid.")
+                    throw new SerializerException("Service call type " + typeKey + " is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else if (callTypeToken.isLiteral()) {
                 String typeName = callTypeToken.decodeJsonLiteral();
                 type = PServiceCallType.forName(typeName);
                 if (type == null) {
-                    throw new SerializerException("Service call type " + typeName + " is not valid.")
+                    throw new SerializerException("Service call type " + typeName + " is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else {
@@ -254,12 +259,12 @@ public class JsonSerializer extends Serializer {
                         .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
             }
 
-            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+            tokenizer.expectSymbol("entry sep", JsonToken.kListSep);
 
             sequence = tokenizer.expectNumber("Service call sequence")
                                 .intValue();
 
-            tokenizer.expectSymbol("Service call sep", JsonToken.kListSep);
+            tokenizer.expectSymbol("entry sep", JsonToken.kListSep);
 
             if (type == PServiceCallType.EXCEPTION) {
                 PApplicationException ex = (PApplicationException) parseTypedValue(tokenizer.expect("Message start"),
@@ -267,7 +272,7 @@ public class JsonSerializer extends Serializer {
                                                                                    PApplicationException.kDescriptor,
                                                                                    false);
 
-                tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
+                tokenizer.expectSymbol("service call end", JsonToken.kListEnd);
 
                 return (PServiceCall<T, F>) new PServiceCall<>(methodName, type, sequence, ex);
             }
@@ -280,9 +285,15 @@ public class JsonSerializer extends Serializer {
 
             @SuppressWarnings("unchecked")
             PMessageDescriptor<T, F> descriptor = isRequestCallType(type) ? method.getRequestType() : method.getResponseType();
-            T message = (T) parseTypedValue(tokenizer.expect("Message start"), tokenizer, descriptor, false);
+            if (descriptor == null) {
+                throw new SerializerException("No %s type for %s.%s()",
+                                              isRequestCallType(type) ? "request" : "response",
+                                              service.getQualifiedName(), methodName)
+                        .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
+            }
+            T message = (T) parseTypedValue(tokenizer.expect("message start"), tokenizer, descriptor, false);
 
-            tokenizer.expectSymbol("Service call end", JsonToken.kListEnd);
+            tokenizer.expectSymbol("service call end", JsonToken.kListEnd);
 
             return new PServiceCall<>(methodName, type, sequence, message);
         } catch (SerializerException se) {
@@ -290,7 +301,7 @@ public class JsonSerializer extends Serializer {
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
-        } catch (IOException | JsonException ie) {
+        } catch (JsonException ie) {
             throw new SerializerException(ie, ie.getMessage())
                     .setMethodName(methodName)
                     .setCallType(type)
@@ -302,12 +313,12 @@ public class JsonSerializer extends Serializer {
             throws JsonException, IOException {
         PMessageBuilder<T, F> builder = type.builder();
 
-        if (tokenizer.peek("checking for empty message").isSymbol(JsonToken.kMapEnd)) {
+        if (tokenizer.peek("message end or key").isSymbol(JsonToken.kMapEnd)) {
             tokenizer.next();
         } else {
             char sep = JsonToken.kMapStart;
             while (sep != JsonToken.kMapEnd) {
-                JsonToken token = tokenizer.expectString("parsing message key");
+                JsonToken token = tokenizer.expectString("field spec");
                 String key = token.decodeJsonLiteral();
                 PField field;
                 if (Strings.isInteger(key)) {
@@ -315,18 +326,16 @@ public class JsonSerializer extends Serializer {
                 } else {
                     field = type.getField(key);
                 }
-                tokenizer.expectSymbol("parsing message field key sep", JsonToken.kKeyValSep);
+                tokenizer.expectSymbol("field KV sep", JsonToken.kKeyValSep);
 
                 if (field != null) {
-                    Object value = parseTypedValue(tokenizer.expect("parsing message field value"), tokenizer, field.getDescriptor(), true);
+                    Object value = parseTypedValue(tokenizer.expect("field value"), tokenizer, field.getDescriptor(), true);
                     builder.set(field.getKey(), value);
-                } else if (readStrict) {
-                    throw new SerializerException("Unknown field " + key + " for type " + type.getQualifiedName());
                 } else {
-                    consume(tokenizer.expect("consuming unknown message value"), tokenizer);
+                    consume(tokenizer.expect("field value"), tokenizer);
                 }
 
-                sep = tokenizer.expectSymbol("parsing message entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
+                sep = tokenizer.expectSymbol("message end or sep", JsonToken.kMapEnd, JsonToken.kListSep);
             }
         }
 
@@ -352,16 +361,13 @@ public class JsonSerializer extends Serializer {
             PField field = type.getField(++i);
 
             if (field != null) {
-                Object value = parseTypedValue(tokenizer.expect("parsing compact message field value"), tokenizer, field.getDescriptor(), true);
+                Object value = parseTypedValue(tokenizer.expect("field value"), tokenizer, field.getDescriptor(), true);
                 builder.set(i, value);
-            } else if (readStrict) {
-                throw new SerializerException("Compact Field ID " + (i) + " outside field spectrum for type " +
-                                              type.getQualifiedName());
             } else {
-                consume(tokenizer.expect("consuming compact message field value"), tokenizer);
+                consume(tokenizer.expect("compact field value"), tokenizer);
             }
 
-            sep = tokenizer.expectSymbol("parsing compact message entry sep", JsonToken.kListEnd, JsonToken.kListSep);
+            sep = tokenizer.expectSymbol("compact entry sep", JsonToken.kListEnd, JsonToken.kListSep);
         }
 
         if (readStrict) {
@@ -378,25 +384,25 @@ public class JsonSerializer extends Serializer {
     private void consume(JsonToken token, JsonTokenizer tokenizer) throws IOException, JsonException {
         if (token.isSymbol()) {
             if (token.isSymbol(JsonToken.kListStart)) {
-                if (tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                if (tokenizer.peek("lists end or value").isSymbol(JsonToken.kListEnd)) {
                     tokenizer.next();
                 } else {
                     char sep = JsonToken.kListStart;
                     while (sep != JsonToken.kListEnd) {
-                        consume(tokenizer.expect("consuming list item"), tokenizer);
-                        sep = tokenizer.expectSymbol("consuming list sep", JsonToken.kListEnd, JsonToken.kListSep);
+                        consume(tokenizer.expect("list item"), tokenizer);
+                        sep = tokenizer.expectSymbol("list sep", JsonToken.kListEnd, JsonToken.kListSep);
                     }
                 }
             } else if (token.isSymbol(JsonToken.kMapStart)) {
-                if (tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                if (tokenizer.peek("map end or key").isSymbol(JsonToken.kMapEnd)) {
                     tokenizer.next();
                 } else {
                     char sep = JsonToken.kMapStart;
                     while (sep != JsonToken.kMapEnd) {
-                        tokenizer.expectString("consuming map key");
-                        tokenizer.expectSymbol("consuming map kv sep", JsonToken.kKeyValSep);
-                        consume(tokenizer.expect("consuming map value"), tokenizer);
-                        sep = tokenizer.expectSymbol("consuming map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
+                        tokenizer.expectString("map key");
+                        tokenizer.expectSymbol("map KV sep", JsonToken.kKeyValSep);
+                        consume(tokenizer.expect("entry value"), tokenizer);
+                        sep = tokenizer.expectSymbol("map end or sep", JsonToken.kMapEnd, JsonToken.kListSep);
                     }
                 }
             }
@@ -416,7 +422,10 @@ public class JsonSerializer extends Serializer {
         try {
             switch (t.getType()) {
                 case VOID: {
-                    return token.booleanValue() ? Boolean.TRUE : null;
+                    if (token.isBoolean()) {
+                        return token.booleanValue() ? Boolean.TRUE : null;
+                    }
+                    throw new SerializerException("Not a void token value: '" + token.asString() + "'");
                 }
                 case BOOL:
                     if (token.isBoolean()) {
@@ -424,44 +433,44 @@ public class JsonSerializer extends Serializer {
                     } else if (token.isInteger()) {
                         return token.intValue() != 0;
                     }
-                    throw new SerializerException("Not boolean value for token: " + token.asString());
+                    throw new SerializerException("No boolean value for token: '" + token.asString() + "'");
                 case BYTE:
                     if (token.isInteger()) {
                         return token.byteValue();
                     }
-                    throw new SerializerException("Not a valid byte value: " + token.asString());
+                    throw new SerializerException("Not a valid byte value: '" + token.asString() + "'");
                 case I16:
                     if (token.isInteger()) {
                         return token.shortValue();
                     }
-                    throw new SerializerException("Not a valid short value: " + token.asString());
+                    throw new SerializerException("Not a valid short value: '" + token.asString() + "'");
                 case I32:
                     if (token.isInteger()) {
                         return token.intValue();
                     }
-                    throw new SerializerException("Not a valid int value: " + token.asString());
+                    throw new SerializerException("Not a valid int value: '" + token.asString() + "'");
                 case I64:
                     if (token.isInteger()) {
                         return token.longValue();
                     }
-                    throw new SerializerException("Not a valid long value: " + token.asString());
+                    throw new SerializerException("Not a valid long value: '" + token.asString() + "'");
                 case DOUBLE:
                     if (token.isNumber()) {
                         return token.doubleValue();
                     }
-                    throw new SerializerException("Not a valid double value: " + token.asString());
+                    throw new SerializerException("Not a valid double value: '" + token.asString() + "'");
                 case STRING:
                     if (token.isLiteral()) {
                         return token.decodeJsonLiteral();
                     }
-                    throw new SerializerException("Not a valid string value: " + token.asString());
+                    throw new SerializerException("Not a valid string value: '" + token.asString() + "'");
                 case BINARY:
                     if (token.isLiteral()) {
                         try {
                             return Binary.fromBase64(token.substring(1, -1)
                                                           .asString());
                         } catch (IllegalArgumentException e) {
-                            throw new SerializerException(e, "Unable to parse Base64 data.");
+                            throw new SerializerException(e, "Unable to parse Base64 data: " + token.asString());
                         }
                     }
                     throw new SerializerException("Not a valid binary value: " + token.asString());
@@ -473,10 +482,10 @@ public class JsonSerializer extends Serializer {
                         eb.setByName(token.substring(1, -1)
                                           .asString());
                     } else {
-                        throw new SerializerException(token.toString() + " is not a enum value type");
+                        throw new SerializerException(token.asString() + " is not a enum value type");
                     }
-                    if (readStrict && !eb.valid()) {
-                        throw new SerializerException(token.toString() + " is not a enum value");
+                    if (!(allowNull || eb.valid())) {
+                        throw new SerializerException(token.asString() + " is not a known enum value for " + t.getQualifiedName());
                     }
                     return eb.build();
                 case MESSAGE: {
@@ -491,7 +500,7 @@ public class JsonSerializer extends Serializer {
                                     st.getName() + " is not compatible for compact struct notation.");
                         }
                     }
-                    throw new SerializerException(token + " not parsable message start.");
+                    throw new SerializerException("expected message start, found: '%s'", token.asString());
                 }
                 case MAP: {
                     @SuppressWarnings("unchecked")
@@ -503,17 +512,23 @@ public class JsonSerializer extends Serializer {
                     }
                     PMap.Builder<Object, Object> map = mapType.builder();
 
-                    if (tokenizer.peek("checking for empty map").isSymbol(JsonToken.kMapEnd)) {
+                    if (tokenizer.peek("map end or value").isSymbol(JsonToken.kMapEnd)) {
                         tokenizer.next();
                     } else {
                         char sep = JsonToken.kMapStart;
                         while (sep != JsonToken.kMapEnd) {
-                            Object key = parseMapKey(tokenizer.expectString("parsing map key")
+                            Object key = parseMapKey(tokenizer.expectString("map key")
                                                               .decodeJsonLiteral(), keyType);
-                            tokenizer.expectSymbol("parsing map K/V sep", JsonToken.kKeyValSep);
-                            Object value = parseTypedValue(tokenizer.expect("parsing map value"), tokenizer, itemType, false);
-                            map.put(key, value);
-                            sep = tokenizer.expectSymbol("parsing map entry sep", JsonToken.kMapEnd, JsonToken.kListSep);
+                            tokenizer.expectSymbol("map K/V sep", JsonToken.kKeyValSep);
+                            Object value = parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false);
+                            if (key != null) {
+                                // In lenient mode, just drop the entire entry if the
+                                // key could not be parsed. Should only be the case
+                                // for unknown enum values.
+                                // -- parseMapKey checked for strictRead mode.
+                                map.put(key, value);
+                            }
+                            sep = tokenizer.expectSymbol("map end or sep", JsonToken.kMapEnd, JsonToken.kListSep);
                         }
                     }
                     return map.build();
@@ -526,13 +541,19 @@ public class JsonSerializer extends Serializer {
                     @SuppressWarnings("unchecked")
                     PSet.Builder<Object> set = ((PSet<Object>) t).builder();
 
-                    if (tokenizer.peek("checking for empty set").isSymbol(JsonToken.kListEnd)) {
+                    if (tokenizer.peek("set end or value").isSymbol(JsonToken.kListEnd)) {
                         tokenizer.next();
                     } else {
                         char sep = JsonToken.kListStart;
                         while (sep != JsonToken.kListEnd) {
-                            set.add(parseTypedValue(tokenizer.expect("parsing set value"), tokenizer, itemType, false));
-                            sep = tokenizer.expectSymbol("parsing set entry sep", JsonToken.kListSep, JsonToken.kListEnd);
+                            Object val = parseTypedValue(tokenizer.expect("set value"), tokenizer, itemType, !readStrict);
+                            if (val != null) {
+                                // In lenient mode, just drop the entire entry if the
+                                // key could not be parsed. Should only be the case
+                                // for unknown enum values.
+                                set.add(val);
+                            }
+                            sep = tokenizer.expectSymbol("set end or sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
                     return set.build();
@@ -544,13 +565,13 @@ public class JsonSerializer extends Serializer {
                     }
                     @SuppressWarnings("unchecked")
                     PList.Builder<Object> list = ((PList<Object>) t).builder();
-                    if (tokenizer.peek("checking for empty list").isSymbol(JsonToken.kListEnd)) {
+                    if (tokenizer.peek("list end or value").isSymbol(JsonToken.kListEnd)) {
                         tokenizer.next();
                     } else {
                         char sep = JsonToken.kListStart;
                         while (sep != JsonToken.kListEnd) {
-                            list.add(parseTypedValue(tokenizer.expect("parsing list value"), tokenizer, itemType, false));
-                            sep = tokenizer.expectSymbol("parsing list entry sep", JsonToken.kListSep, JsonToken.kListEnd);
+                            list.add(parseTypedValue(tokenizer.expect("list value"), tokenizer, itemType, false));
+                            sep = tokenizer.expectSymbol("list end or sep", JsonToken.kListSep, JsonToken.kListEnd);
                         }
                     }
                     return list.build();
@@ -593,12 +614,12 @@ public class JsonSerializer extends Serializer {
                         JsonToken token = tokenizer.next();
                         if (!token.isNumber()) {
                             throw new SerializerException(key + " is not a number");
+                        } else if (tokenizer.hasNext()) {
+                            throw new SerializerException("Garbage after double: \"" + key + "\"");
                         }
                         return token.doubleValue();
-                    } catch (JsonException e) {
+                    } catch (JsonException | IOException e) {
                         throw new SerializerException(e, "Unable to parse double from key \"" + key + "\"");
-                    } catch (IOException e) {
-                        throw new SerializerException(e, "Unable to parse double from key \"" + key + "\" (IO)");
                     }
                 case STRING:
                     return key;
@@ -629,7 +650,7 @@ public class JsonSerializer extends Serializer {
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
-                        tokenizer.expectSymbol("Message start", JsonToken.kMapStart);
+                        tokenizer.expectSymbol("message start", JsonToken.kMapStart);
                         return parseMessage(tokenizer, st);
                     } catch (IOException e) {
                         throw new SerializerException(e, "Unable to tokenize map key: %s", key);
@@ -651,7 +672,7 @@ public class JsonSerializer extends Serializer {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
                 Object value = message.get(field.getKey());
-                if (IdType.ID.equals(idType)) {
+                if (IdType.ID.equals(fieldIdType)) {
                     writer.key(field.getKey());
                 } else {
                     writer.key(field.getName());
@@ -675,7 +696,7 @@ public class JsonSerializer extends Serializer {
                 for (PField field : type.getFields()) {
                     if (message.has(field.getKey())) {
                         Object value = message.get(field.getKey());
-                        if (IdType.ID.equals(idType)) {
+                        if (IdType.ID.equals(fieldIdType)) {
                             writer.key(field.getKey());
                         } else {
                             writer.key(field.getName());
@@ -737,7 +758,7 @@ public class JsonSerializer extends Serializer {
      */
     private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
         if (primitive instanceof PEnumValue) {
-            if (IdType.ID.equals(idType)) {
+            if (IdType.ID.equals(fieldIdType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
             } else {
                 writer.key(primitive.toString());
@@ -784,7 +805,7 @@ public class JsonSerializer extends Serializer {
      */
     private void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
         if (primitive instanceof PEnumValue) {
-            if (IdType.ID.equals(enumType)) {
+            if (IdType.ID.equals(enumValueType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());
             } else {
                 writer.value(primitive.toString());

@@ -340,15 +340,15 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
                 factory = TBinaryProtocol::new;
                 break;
             case json_pretty:
-                serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
+                serializer = new JsonSerializer(false).pretty();
                 factory = null;
                 break;
             case json_named:
-                serializer = new JsonSerializer(false, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, false);
+                serializer = new JsonSerializer(false).named();
                 factory = null;
                 break;
             case json:
-                serializer = new JsonSerializer(false, JsonSerializer.IdType.ID);
+                serializer = new JsonSerializer(false);
                 factory = null;
                 break;
             case pretty:

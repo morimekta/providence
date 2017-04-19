@@ -19,68 +19,260 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.test.providence.core.CompactFields;
+import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.OptionalFields;
+import net.morimekta.test.providence.core.RequiredFields;
+import net.morimekta.test.providence.core.Value;
+import net.morimekta.test.providence.core.calculator.Calculator;
+import net.morimekta.util.Binary;
 
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 18.10.15
  */
 public class JsonSerializerTest {
+    private JsonSerializer compact = new JsonSerializer();
+    private JsonSerializer named   = new JsonSerializer().named();
+    private JsonSerializer pretty  = new JsonSerializer().pretty();
+    private JsonSerializer lenient = new JsonSerializer().lenient();
+
     @Test
-    public void testSerialize_compactStruct() throws SerializerException {
-        CompactFields cat1 = CompactFields.builder()
-                                          .setName("my_category")
-                                          .setId(44)
-                                          .build();
-        CompactFields cat2 = CompactFields.builder()
-                                          .setName("my_category")
-                                          .setId(44)
-                                          .setLabel("My Category")
-                                          .build();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        JsonSerializer serializer = new JsonSerializer(JsonSerializer.IdType.NAME);
-
-        String expectedOutput = "[\"my_category\",44]";
-        int expectedLength = serializer.serialize(baos, cat1);
-
-        assertEquals(expectedOutput, new String(baos.toByteArray(), UTF_8));
-        assertEquals(18, expectedLength);
-
-        baos.reset();
-
-        expectedOutput = "[\"my_category\",44,\"My Category\"]";
-        expectedLength = serializer.serialize(baos, cat2);
-
-        assertEquals(expectedOutput, new String(baos.toByteArray(), UTF_8));
-        assertEquals(32, expectedLength);
+    public void testProperties() {
+        assertThat(compact.binaryProtocol(), is(false));
+        assertThat(pretty.mimeType(), is(JsonSerializer.MIME_TYPE));
     }
 
     @Test
-    public void testDeserialize_compactStruct() throws SerializerException {
-        ByteArrayInputStream bais = new ByteArrayInputStream("[\"my_category\",44]".getBytes(UTF_8));
-        JsonSerializer serializer = new JsonSerializer(JsonSerializer.IdType.NAME);
+    public void testSerializer_CompactFields() throws IOException {
+        assertSerializer(named,
+                         CompactFields.builder()
+                                      .setName("my_category")
+                                      .setId(44)
+                                      .build(),
+                         "[\"my_category\",44]");
+        assertSerializer(compact,
+                         CompactFields.builder()
+                                      .setName("my_category")
+                                      .setId(44)
+                                      .setLabel("My Category")
+                                      .build(),
+                         "[\"my_category\",44,\"My Category\"]");
+    }
 
-        CompactFields category = serializer.deserialize(bais, CompactFields.kDescriptor);
+    @Test
+    public void testSerializer_OptionalFields() throws IOException {
+        RequiredFields struct =
+                RequiredFields.builder()
+                              .setBooleanValue(true)
+                              .setByteValue((byte) 123)
+                              .setShortValue((short) 12345)
+                              .setIntegerValue(1234567890)
+                              .setLongValue(1234567890123456789L)
+                              .setBinaryValue(Binary.fromHexString("AABBCCDD"))
+                              .setStringValue("\"nee'ds\033\u2021esc")
+                              .setDoubleValue(12345.12345)
+                              .setEnumValue(Value.EIGHTEENTH)
+                              .setCompactValue(CompactFields.builder()
+                                                            .setName("my_category")
+                                                            .setId(44)
+                                                            .build())
+                              .build();
 
-        assertEquals("my_category", category.getName());
-        assertEquals(44, category.getId());
-        assertNull(category.getLabel());
+        assertSerializer(named,
+                         struct,
+                         "{\"booleanValue\":true," +
+                         "\"byteValue\":123," +
+                         "\"shortValue\":12345," +
+                         "\"integerValue\":1234567890," +
+                         "\"longValue\":1234567890123456789," +
+                         "\"doubleValue\":12345.12345," +
+                         "\"stringValue\":\"\\\"nee'ds\\u001b\u2021esc\"," +
+                         "\"binaryValue\":\"qrvM3Q\"," +
+                         "\"enumValue\":\"EIGHTEENTH\"," +
+                         "\"compactValue\":[\"my_category\",44]}");
+        assertSerializer(compact,
+                         struct,
+                         "{\"1\":true," +
+                         "\"2\":123," +
+                         "\"3\":12345," +
+                         "\"4\":1234567890," +
+                         "\"5\":1234567890123456789," +
+                         "\"6\":12345.12345," +
+                         "\"7\":\"\\\"nee'ds\\u001b\u2021esc\"," +
+                         "\"8\":\"qrvM3Q\"," +
+                         "\"9\":4181," +
+                         "\"10\":[\"my_category\",44]}");
+        assertSerializer(pretty,
+                         struct,
+                         "{\n" +
+                         "    \"booleanValue\": true,\n" +
+                         "    \"byteValue\": 123,\n" +
+                         "    \"shortValue\": 12345,\n" +
+                         "    \"integerValue\": 1234567890,\n" +
+                         "    \"longValue\": 1234567890123456789,\n" +
+                         "    \"doubleValue\": 12345.12345,\n" +
+                         "    \"stringValue\": \"\\\"nee'ds\\u001b\u2021esc\",\n" +
+                         "    \"binaryValue\": \"qrvM3Q\",\n" +
+                         "    \"enumValue\": \"EIGHTEENTH\",\n" +
+                         "    \"compactValue\": [\n" +
+                         "        \"my_category\",\n" +
+                         "        44\n" +
+                         "    ]\n" +
+                         "}");
+        assertSerializer(lenient,
+                         struct.mutate()
+                               .clearBinaryValue()
+                               .clearStringValue()
+                               .clearCompactValue()
+                               .build(),
+                         "{\"1\":true,\"2\":123,\"3\":12345,\"4\":1234567890," +
+                         "\"5\":1234567890123456789,\"6\":12345.12345,\"9\":4181}");
+    }
 
-        bais = new ByteArrayInputStream("[\"my_category\",44,\"My Category\"]".getBytes(UTF_8));
-        category = serializer.deserialize(bais, CompactFields.kDescriptor);
+    private <M extends PMessage<M,F>, F extends PField>
+    void assertSerializer(JsonSerializer serializer,
+                          M obj,
+                          String json) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int len = serializer.serialize(out, obj);
 
-        assertEquals("my_category", category.getName());
-        assertEquals(44, category.getId());
-        assertEquals("My Category", category.getLabel());
+        assertThat(new String(out.toByteArray(), UTF_8), is(json));
+        assertThat(len, is(out.toByteArray().length));
+
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        M res = serializer.deserialize(in, obj.descriptor());
+
+        assertThat(res, is(equalTo(obj)));
+        assertThat(in.read(), is(-1));
+    }
+
+    @Test
+    public void testSerializer_services() throws IOException {
+        assertSerializer(compact,
+                         Calculator.kDescriptor,
+                         "[\"iamalive\",4,44,{}]");
+    }
+
+    private <M extends PMessage<M,F>, F extends PField>
+    void assertSerializer(JsonSerializer serializer,
+                          PService service,
+                          String json) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes(UTF_8));
+        PServiceCall<M,F> call = serializer.deserialize(in, service);
+
+        assertThat(in.read(), is(-1));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int len = serializer.serialize(out, call);
+
+        assertThat(new String(out.toByteArray(), UTF_8), is(json));
+        assertThat(len, is(out.toByteArray().length));
+
+        in = new ByteArrayInputStream(out.toByteArray());
+        PServiceCall<M,F> res = serializer.deserialize(in, service);
+
+        assertThat(res, is(equalTo(call)));
+        assertThat(in.read(), is(-1));
+    }
+
+    @Test
+    public void testDeserialize_simpleFails() {
+        PMessageDescriptor<?,?> opt = OptionalFields.kDescriptor;
+        PMessageDescriptor<?,?> cnt = Containers.kDescriptor;
+        PService calc = Calculator.kDescriptor;
+
+        assertFail(opt, compact, "",
+                   "Empty json body");
+        assertFail(opt, compact, "[false, 123, 54321]",
+                   "OptionalFields is not compatible for compact struct notation.");
+        assertFail(cnt, compact, "{\"optionalFields\":[false,123,54321]}",
+                   "OptionalFields is not compatible for compact struct notation.");
+        assertFail(opt, compact, "null",
+                   "Null value as body.");
+        assertFail(opt, compact, "\"not a message\"",
+                   "expected message start, found: '\"not a message\"'");
+
+        assertFail(opt, compact, "{\"booleanValue\":\"str\"}",
+                   "No boolean value for token: '\"str\"'");
+        assertFail(opt, compact, "{\"booleanValue\":{}}",
+                   "No boolean value for token: '{'");
+        assertFail(opt, compact, "{\"byteValue\":\"str\"}",
+                   "Not a valid byte value: '\"str\"'");
+        assertFail(opt, compact, "{\"shortValue\":\"str\"}",
+                   "Not a valid short value: '\"str\"'");
+        assertFail(opt, compact, "{\"integerValue\":\"str\"}",
+                   "Not a valid int value: '\"str\"'");
+        assertFail(opt, compact, "{\"longValue\":\"str\"}",
+                   "Not a valid long value: '\"str\"'");
+        assertFail(opt, compact, "{\"doubleValue\":\"str\"}",
+                   "Not a valid double value: '\"str\"'");
+        assertFail(opt, compact, "{\"stringValue\":55}",
+                   "Not a valid string value: '55'");
+        assertFail(opt, compact, "{\"binaryValue\":55}",
+                   "Not a valid binary value: 55");
+        assertFail(opt, compact, "{\"binaryValue\":\"g./ar,bl'e\"}",
+                   "Unable to parse Base64 data: \"g./ar,bl'e\"");
+
+        assertFail(calc, lenient, "{}",
+                   "Expected service call start (one of ['[']): but found '{'");
+        assertFail(calc, lenient, "[123]",
+                   "Expected method name (string literal): but found '123'");
+        assertFail(calc, lenient, "[\"iamalive\", 77]",
+                   "Service call type 77 is not valid");
+        assertFail(calc, lenient, "[\"iamalive\", 1, -55]",
+                   "Expected entry sep (one of [',']): but found ']'");
+        assertFail(calc, lenient, "[\"iamalive\", 2, -55, {\"0\": 6}]",
+                   "No response type for calculator.Calculator.iamalive()");
+    }
+
+    private <M extends PMessage<M, F>, F extends PField>
+    void assertFail(PMessageDescriptor<M,F> descriptor,
+                    JsonSerializer serializer,
+                    String json,
+                    String exception) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(json.getBytes(UTF_8));
+        try {
+            serializer.deserialize(bais, descriptor);
+            fail("no exception");
+        } catch (IOException e) {
+            if (!e.getMessage().equals(exception)) {
+                e.printStackTrace();
+            }
+            assertThat(e.getMessage(), is(exception));
+        }
+    }
+
+    private void assertFail(PService service,
+                            JsonSerializer serializer,
+                            String json,
+                            String exception) {
+        ByteArrayInputStream bais = new ByteArrayInputStream(json.getBytes(UTF_8));
+        try {
+            serializer.deserialize(bais, service);
+            fail("no exception");
+        } catch (IOException e) {
+            if (!e.getMessage().equals(exception)) {
+                e.printStackTrace();
+            }
+            assertThat(e.getMessage(), is(exception));
+        }
     }
 }

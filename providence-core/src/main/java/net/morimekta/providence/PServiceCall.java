@@ -22,6 +22,8 @@ package net.morimekta.providence;
 
 import net.morimekta.providence.descriptor.PField;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Objects;
 
 /**
@@ -99,5 +101,16 @@ public class PServiceCall<Message extends PMessage<Message, Field>, Field extend
                Objects.equals(type, other.type) &&
                sequence == other.sequence &&
                Objects.equals(message, other.message);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                          .omitNullValues()
+                          .add("method", method)
+                          .add("type", type)
+                          .add("seq", sequence)
+                          .add("message", message)
+                          .toString();
     }
 }

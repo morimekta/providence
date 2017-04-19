@@ -170,11 +170,11 @@ public class RPCOptions extends CommonOptions {
             case unversioned_binary:
                 return new BinarySerializer(strict, false);
             case json:
-                return new JsonSerializer(strict, JsonSerializer.IdType.ID);
+                return new JsonSerializer(strict);
             case named_json:
-                return new JsonSerializer(strict, JsonSerializer.IdType.NAME);
+                return new JsonSerializer(strict).named();
             case pretty_json:
-                return new JsonSerializer(strict, JsonSerializer.IdType.NAME, JsonSerializer.IdType.NAME, true);
+                return new JsonSerializer(strict).pretty();
             case fast_binary:
                 return new FastBinarySerializer(strict);
             case pretty:

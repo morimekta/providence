@@ -166,3 +166,6 @@ struct Containers {
     56: optional DefaultValues defaultValues;
 }
 
+service TestService {
+    void voidMethod();
+}
