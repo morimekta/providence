@@ -129,15 +129,52 @@ for that file even though you provide the `hazelcast_portable=true` flag.
   * string
   * message (sub structs)
 * The following list types are supported:
+  * binary (list of byte)
   * byte
   * boolean
   * double
+  * enum
   * i16
   * i32
   * i64
   * string
   * message (sub structs)
-  
-Map, Set, list of enum and list of binary is not supported today (2017-01) as
-the need isn't there for us at the moment. This can be added in future releases, 
-but will most likely be implemented when the need arises.
+* The following set types are supported:
+  * binary (list of byte)
+  * byte
+  * boolean
+  * double
+  * enum
+  * i16
+  * i32
+  * i64
+  * string
+  * message (sub structs)
+* The following map types are supported for keys:
+  * binary (list of byte) 
+  * byte
+  * boolean (although limited to 2 values :) )
+  * double
+  * enum
+  * i16
+  * i32
+  * i64
+  * string
+  * message (sub structs)
+  * list and set of the above
+* The following map types are supported for values:
+  * binary (list of byte) 
+  * byte
+  * boolean
+  * double
+  * enum
+  * i16
+  * i32
+  * i64
+  * string
+  * message (sub structs)
+  * list and set of the above
+
+Currently known items not supported is map of maps, list of lists or sets of sets as of 2017-04.
+
+All maps will be serialized into a binary array, so it will never be available for searching with Hazelcast Predicate.

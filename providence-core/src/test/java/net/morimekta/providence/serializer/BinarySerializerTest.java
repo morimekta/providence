@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static net.morimekta.providence.util_internal.TestUtils.encode;
 import static net.morimekta.providence.util_internal.TestUtils.decode;
+import static net.morimekta.providence.util_internal.TestUtils.encode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

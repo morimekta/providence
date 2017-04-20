@@ -1,17 +1,6 @@
 package net.morimekta.hazelcast.it;
 
-import net.morimekta.test.hazelcast.v1.CompactFields;
-import net.morimekta.test.hazelcast.v1.Value;
-import net.morimekta.util.Binary;
-
-import com.google.common.primitives.Bytes;
-import org.jfairy.Fairy;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Helper for generating sources.
@@ -32,604 +21,380 @@ public class HazelcastGenerator {
     public static final int INDEX_12 = 0x00000800;
     public static final int INDEX_13 = 0x00001000;
     public static final int INDEX_14 = 0x00002000;
+    public static final int INDEX_15 = 0x00004000;
+    public static final int INDEX_16 = 0x00008000;
+    public static final int INDEX_17 = 0x00010000;
+    public static final int INDEX_XX = 0x0001FFFF;
 
-    private final Random random;
-    private final Fairy  fairy;
-    public final Entities entities;
+    private final Random        random;
+    public  final ItemGenerator item;
+    private final HazelcastV1Generator hazelcastV1Generator = new HazelcastV1Generator(this);
+    private final HazelcastV2Generator hazelcastV2Generator = new HazelcastV2Generator(this);
+    private final HazelcastV3Generator hazelcastV3Generator = new HazelcastV3Generator(this);
+    private final HazelcastV4Generator hazelcastV4Generator = new HazelcastV4Generator(this);
 
     public HazelcastGenerator() {
         random = new Random();
-        fairy = Fairy.create();
-        entities = new Entities();
+        item = new ItemGenerator();
+    }
+
+    public ItemGenerator getItem() {
+        return this.item;
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalFields nextOptionalFieldsV1() {
-        return nextOptionalFieldsV1(false);
+        return hazelcastV1Generator.nextOptionalFieldsV1();
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalFields nextOptionalFieldsV1(boolean setAll) {
-        return nextOptionalFieldsV1(setAll ? 0x00001FFF : random.nextInt());
+        return hazelcastV1Generator.nextOptionalFieldsV1(setAll);
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalFields nextOptionalFieldsV1(int flags) {
-        net.morimekta.test.hazelcast.v1.OptionalFields._Builder builder =
-                net.morimekta.test.hazelcast.v1.OptionalFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValue(entities.nextBoolean());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValue(entities.nextByte());
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValue(entities.nextShort());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInt());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLong());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDouble());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setStringValue(entities.nextString());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setBinaryValue(entities.nextBinary());
-        }
-        if( 0 < (INDEX_09 & flags) ) {
-            builder.setEnumValue(entities.nextV1Value());
-        }
-        if( 0 < (INDEX_10 & flags) ) {
-            builder.setCompactValue(entities.nextV1CompactField(flags, INDEX_11, INDEX_12, INDEX_13));
-        }
-        return builder.build();
+        return hazelcastV1Generator.nextOptionalFieldsV1(flags);
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalFields nextOptionalFieldsV2() {
-        return nextOptionalFieldsV2(false);
+        return hazelcastV2Generator.nextOptionalFieldsV2();
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalFields nextOptionalFieldsV2(boolean setAll) {
-        return nextOptionalFieldsV2(setAll ? 0x00003FFF : random.nextInt());
+        return hazelcastV2Generator.nextOptionalFieldsV2(setAll);
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalFields nextOptionalFieldsV2(int flags) {
-        net.morimekta.test.hazelcast.v2.OptionalFields._Builder builder =
-                net.morimekta.test.hazelcast.v2.OptionalFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValue(entities.nextBoolean());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValue(entities.nextByte());
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValue(entities.nextShort());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInt());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLong());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDouble());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setStringValue(entities.nextString());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setBinaryValue(entities.nextBinary());
-        }
-        if( 0 < (INDEX_09 & flags) ) {
-            builder.setEnumValue(entities.nextV2Value());
-        }
-        if( 0 < (INDEX_10 & flags) ) {
-            builder.setCompactValue(entities.nextV2CompactField(flags, INDEX_11, INDEX_12, INDEX_13));
-        }
-        if( 0 < (INDEX_14 & flags) ) {
-            builder.setAnotherStringValue(entities.nextString());
-        }
-        return builder.build();
+        return hazelcastV2Generator.nextOptionalFieldsV2(flags);
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalFields nextOptionalFieldsV3() {
-        return nextOptionalFieldsV3(false);
+        return hazelcastV3Generator.nextOptionalFieldsV3();
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalFields nextOptionalFieldsV3(boolean setAll) {
-        return nextOptionalFieldsV3(setAll ? 0x00001FFF : random.nextInt());
+        return hazelcastV3Generator.nextOptionalFieldsV3(setAll);
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalFields nextOptionalFieldsV3(int flags) {
-        net.morimekta.test.hazelcast.v3.OptionalFields._Builder builder =
-                net.morimekta.test.hazelcast.v3.OptionalFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValue(entities.nextBoolean());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValue(entities.nextByte());
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValue(entities.nextShort());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInt());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLong());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDouble());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setBinaryValue(entities.nextBinary());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setEnumValue(entities.nextV3Value());
-        }
-        if( 0 < (INDEX_09 & flags) ) {
-            builder.setCompactValue(entities.nextV3CompactField(flags, INDEX_10, INDEX_11, INDEX_12));
-        }
-        if( 0 < (INDEX_13 & flags) ) {
-            builder.setAnotherStringValue(entities.nextString());
-        }
-        return builder.build();
+        return hazelcastV3Generator.nextOptionalFieldsV3(flags);
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalFields nextOptionalFieldsV4() {
-        return nextOptionalFieldsV4(false);
+        return hazelcastV4Generator.nextOptionalFieldsV4();
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalFields nextOptionalFieldsV4(boolean setAll) {
-        return nextOptionalFieldsV4(setAll ? 0x00001FFF : random.nextInt());
+        return hazelcastV4Generator.nextOptionalFieldsV4(setAll);
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalFields nextOptionalFieldsV4(int flags) {
-        net.morimekta.test.hazelcast.v4.OptionalFields._Builder builder =
-                net.morimekta.test.hazelcast.v4.OptionalFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValue(entities.nextBoolean());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValue(entities.nextByte());
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setIntegerValue(entities.nextInt());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setLongValue(entities.nextLong());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setDoubleValue(entities.nextDouble());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setBinaryValue(entities.nextBinary());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setEnumValue(entities.nextV4Value());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setCompactValue(entities.nextV4CompactField(flags, INDEX_09, INDEX_10, INDEX_11));
-        }
-        if( 0 < (INDEX_12 & flags) ) {
-            builder.setAnotherStringValue(entities.nextString());
-        }
-        if( 0 < (INDEX_13 & flags)) {
-            builder.setAnotherShortValue(entities.nextShort());
-        }
-        return builder.build();
+        return hazelcastV4Generator.nextOptionalFieldsV4(flags);
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalListFields nextOptionalListFieldsV1() {
-        return nextOptionalListFieldsV1(false);
+        return hazelcastV1Generator.nextOptionalListFieldsV1();
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalListFields nextOptionalListFieldsV1(boolean setAll) {
-        return nextOptionalListFieldsV1(setAll ? 0x000007FF : random.nextInt());
+        return hazelcastV1Generator.nextOptionalListFieldsV1(setAll);
     }
 
     public net.morimekta.test.hazelcast.v1.OptionalListFields nextOptionalListFieldsV1(int flags) {
-        net.morimekta.test.hazelcast.v1.OptionalListFields._Builder builder =
-                net.morimekta.test.hazelcast.v1.OptionalListFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValues(entities.nextBooleans());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValues(Bytes.asList(entities.nextBytes()));
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValues(entities.nextShorts());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInts());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLongs());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDoubles());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setStringValue(entities.nextStrings());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setCompactValue(entities.nextV1CompactFields(flags, INDEX_09, INDEX_10, INDEX_11));
-        }
-        return builder.build();
+        return hazelcastV1Generator.nextOptionalListFieldsV1(flags);
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalListFields nextOptionalListFieldsV2() {
-        return nextOptionalListFieldsV2(false);
+        return hazelcastV2Generator.nextOptionalListFieldsV2();
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalListFields nextOptionalListFieldsV2(boolean setAll) {
-        return nextOptionalListFieldsV2(setAll ? 0x00000FFF : random.nextInt());
+        return hazelcastV2Generator.nextOptionalListFieldsV2(setAll);
     }
 
     public net.morimekta.test.hazelcast.v2.OptionalListFields nextOptionalListFieldsV2(int flags) {
-        net.morimekta.test.hazelcast.v2.OptionalListFields._Builder builder =
-                net.morimekta.test.hazelcast.v2.OptionalListFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValues(entities.nextBooleans());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValues(Bytes.asList(entities.nextBytes()));
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValues(entities.nextShorts());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInts());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLongs());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDoubles());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setStringValue(entities.nextStrings());
-        }
-        if( 0 < (INDEX_08 & flags) ) {
-            builder.setCompactValue(entities.nextV2CompactFields(flags, INDEX_09, INDEX_10, INDEX_11));
-        }
-        if( 0 < (INDEX_12 & flags) ) {
-            builder.setAnotherStringValues(entities.nextStrings());
-        }
-        return builder.build();
+        return hazelcastV2Generator.nextOptionalListFieldsV2(flags);
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalListFields nextOptionalListFieldsV3() {
-        return nextOptionalListFieldsV3(false);
+        return hazelcastV3Generator.nextOptionalListFieldsV3();
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalListFields nextOptionalListFieldsV3(boolean setAll) {
-        return nextOptionalListFieldsV3(setAll ? 0x000007FF : random.nextInt());
+        return hazelcastV3Generator.nextOptionalListFieldsV3(setAll);
     }
 
     public net.morimekta.test.hazelcast.v3.OptionalListFields nextOptionalListFieldsV3(int flags) {
-        net.morimekta.test.hazelcast.v3.OptionalListFields._Builder builder =
-                net.morimekta.test.hazelcast.v3.OptionalListFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValues(entities.nextBooleans());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValues(Bytes.asList(entities.nextBytes()));
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValues(entities.nextShorts());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setIntegerValue(entities.nextInts());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setLongValue(entities.nextLongs());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setDoubleValue(entities.nextDoubles());
-        }
-        if( 0 < (INDEX_07 & flags) ) {
-            builder.setCompactValue(entities.nextV3CompactFields(flags, INDEX_08, INDEX_09, INDEX_10));
-        }
-        if( 0 < (INDEX_11 & flags) ) {
-            builder.setAnotherStringValues(entities.nextStrings());
-        }
-        return builder.build();
+        return hazelcastV3Generator.nextOptionalListFieldsV3(flags);
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalListFields nextOptionalListFieldsV4() {
-        return nextOptionalListFieldsV4(false);
+        return hazelcastV4Generator.nextOptionalListFieldsV4();
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalListFields nextOptionalListFieldsV4(boolean setAll) {
-        return nextOptionalListFieldsV4(setAll ? 0x000007FF : random.nextInt());
+        return hazelcastV4Generator.nextOptionalListFieldsV4(setAll);
     }
 
     public net.morimekta.test.hazelcast.v4.OptionalListFields nextOptionalListFieldsV4(int flags) {
-        net.morimekta.test.hazelcast.v4.OptionalListFields._Builder builder =
-                net.morimekta.test.hazelcast.v4.OptionalListFields.builder();
-        if( 0 < (INDEX_01 & flags) ) {
-            builder.setBooleanValues(entities.nextBooleans());
-        }
-        if( 0 < (INDEX_02 & flags) ) {
-            builder.setByteValues(Bytes.asList(entities.nextBytes()));
-        }
-        if( 0 < (INDEX_03 & flags) ) {
-            builder.setShortValues(entities.nextShorts());
-        }
-        if( 0 < (INDEX_04 & flags) ) {
-            builder.setLongValue(entities.nextLongs());
-        }
-        if( 0 < (INDEX_05 & flags) ) {
-            builder.setDoubleValue(entities.nextDoubles());
-        }
-        if( 0 < (INDEX_06 & flags) ) {
-            builder.setCompactValue(entities.nextV4CompactFields(flags, INDEX_07, INDEX_08, INDEX_09));
-        }
-        if( 0 < (INDEX_10 & flags) ) {
-            builder.setAnotherStringValues(entities.nextStrings());
-        }
-        if( 0 < (INDEX_11 & flags) ) {
-            builder.setAnotherIntegerValue(entities.nextInts());
-        }
-        return builder.build();
+        return hazelcastV4Generator.nextOptionalListFieldsV4(flags);
     }
 
-    public class Entities {
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1() {
+        return hazelcastV1Generator.nextOptionalSetFieldsV1();
+    }
 
-        public Entities() {  }
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1(boolean setAll) {
+        return hazelcastV1Generator.nextOptionalSetFieldsV1(setAll);
+    }
 
-        public boolean nextBoolean() {
-            return random.nextBoolean();
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalSetFields nextOptionalSetFieldsV1(int flags) {
+        return hazelcastV1Generator.nextOptionalSetFieldsV1(flags);
+    }
 
-        public List<Boolean> nextBooleans() {
-            return Arrays.asList(Stream.generate(() -> nextBoolean())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (Boolean) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2() {
+        return hazelcastV2Generator.nextOptionalSetFieldsV2();
+    }
 
-        public byte nextByte() {
-            return (byte) random
-                                            .nextInt(Byte.MAX_VALUE);
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2(boolean setAll) {
+        return hazelcastV2Generator.nextOptionalSetFieldsV2(setAll);
+    }
 
-        public short nextShort() {
-            return (short) random
-                                             .nextInt(Short.MAX_VALUE);
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalSetFields nextOptionalSetFieldsV2(int flags) {
+        return hazelcastV2Generator.nextOptionalSetFieldsV2(flags);
+    }
 
-        public List<Short> nextShorts() {
-            return Arrays.asList(Stream.generate(() -> nextShort())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (Short) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3() {
+        return hazelcastV3Generator.nextOptionalSetFieldsV3();
+    }
 
-        public int nextInt() {
-            return random
-                                     .nextInt();
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3(boolean setAll) {
+        return hazelcastV3Generator.nextOptionalSetFieldsV3(setAll);
+    }
 
-        private List<Integer> nextInts() {
-            return Arrays.asList(Stream.generate(() -> nextInt())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (Integer) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalSetFields nextOptionalSetFieldsV3(int flags) {
+        return hazelcastV3Generator.nextOptionalSetFieldsV3(flags);
+    }
 
-        public long nextLong() {
-            return random
-                                     .nextLong();
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4() {
+        return hazelcastV4Generator.nextOptionalSetFieldsV4();
+    }
 
-        public List<Long> nextLongs() {
-            return Arrays.asList(Stream.generate(() -> nextLong())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (Long) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4(boolean setAll) {
+        return hazelcastV4Generator.nextOptionalSetFieldsV4(setAll);
+    }
 
-        public double nextDouble() {
-            return random
-                                     .nextDouble();
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalSetFields nextOptionalSetFieldsV4(int flags) {
+        return hazelcastV4Generator.nextOptionalSetFieldsV4(flags);
+    }
 
-        public List<Double> nextDoubles() {
-            return Arrays.asList(Stream.generate(() -> nextDouble())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (Double) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1() {
+        return hazelcastV1Generator.nextOptionalMapFieldsV1();
+    }
 
-        public String nextString() {
-            return fairy
-                                     .textProducer()
-                                     .randomString(random
-                                                                     .nextInt(Byte.MAX_VALUE));
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1(boolean setAll) {
+        return hazelcastV1Generator.nextOptionalMapFieldsV1(setAll);
+    }
 
-        public List<String> nextStrings() {
-            return Arrays.asList(Stream.generate(() -> nextString())
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (String) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapFields nextOptionalMapFieldsV1(int flags) {
+        return hazelcastV1Generator.nextOptionalMapFieldsV1(flags);
+    }
 
-        public Binary nextBinary() {
-            return Binary.copy(nextBytes());
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalMapFields nextOptionalMapFieldsV2() {
+        return hazelcastV2Generator.nextOptionalMapFieldsV2();
+    }
 
-        public byte[] nextBytes() {
-            byte[] result = new byte[random
-                                                       .nextInt(Byte.MAX_VALUE)];
-            random
-                              .nextBytes(result);
-            return result;
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalMapFields nextOptionalMapFieldsV2(boolean setAll) {
+        return hazelcastV2Generator.nextOptionalMapFieldsV2(setAll);
+    }
 
-        public Value nextV1Value() {
-            return Arrays.asList(Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalMapFields nextOptionalMapFieldsV2(int flags) {
+        return hazelcastV2Generator.nextOptionalMapFieldsV2(flags);
+    }
 
-        public net.morimekta.test.hazelcast.v2.Value nextV2Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v2.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalMapFields nextOptionalMapFieldsV3() {
+        return hazelcastV3Generator.nextOptionalMapFieldsV3();
+    }
 
-        public net.morimekta.test.hazelcast.v3.Value nextV3Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v3.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalMapFields nextOptionalMapFieldsV3(boolean setAll) {
+        return hazelcastV3Generator.nextOptionalMapFieldsV3(setAll);
+    }
 
-        public net.morimekta.test.hazelcast.v4.Value nextV4Value() {
-            return Arrays.asList(net.morimekta.test.hazelcast.v4.Value.values())
-                         .stream()
-                         .findAny()
-                         .get();
-        }
+    public net.morimekta.test.hazelcast.v3.OptionalMapFields nextOptionalMapFieldsV3(int flags) {
+        return hazelcastV3Generator.nextOptionalMapFieldsV3(flags);
+    }
 
-        public CompactFields nextV1CompactField(int flags, int index1, int index2, int index3) {
-            CompactFields._Builder builder = CompactFields.builder();
-            if (0 < (index1 & flags)) {
-                builder.setName(nextString());
-            }
-            if (0 < (index2 & flags)) {
-                builder.setId(nextInt());
-            }
-            if (0 < (index3 & flags)) {
-                builder.setLabel(nextString());
-            }
-            return builder.build();
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalMapFields nextOptionalMapFieldsV4() {
+        return hazelcastV4Generator.nextOptionalMapFieldsV4();
+    }
 
-        public List<CompactFields> nextV1CompactFields(int flags, int index1, int index2, int index3) {
-            return Arrays.asList(Stream.generate(() -> nextV1CompactField(flags, index1, index2, index3))
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (CompactFields) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalMapFields nextOptionalMapFieldsV4(boolean setAll) {
+        return hazelcastV4Generator.nextOptionalMapFieldsV4(setAll);
+    }
 
-        public net.morimekta.test.hazelcast.v2.CompactFields nextV2CompactField(int flags,
-                                                                                 int index1,
-                                                                                 int index2,
-                                                                                 int index3) {
-            net.morimekta.test.hazelcast.v2.CompactFields._Builder builder = net.morimekta.test.hazelcast.v2.CompactFields.builder();
-            if (0 < (index1 & flags)) {
-                builder.setName(nextString());
-            }
-            if (0 < (index2 & flags)) {
-                builder.setId(nextInt());
-            }
-            if (0 < (index3 & flags)) {
-                builder.setLabel(nextString());
-            }
-            return builder.build();
-        }
+    public net.morimekta.test.hazelcast.v4.OptionalMapFields nextOptionalMapFieldsV4(int flags) {
+        return hazelcastV4Generator.nextOptionalMapFieldsV4(flags);
+    }
 
-        public List<net.morimekta.test.hazelcast.v2.CompactFields> nextV2CompactFields(int flags,
-                                                                                        int index1,
-                                                                                        int index2,
-                                                                                        int index3) {
-            return Arrays.asList(Stream.generate(() -> nextV2CompactField(flags, index1, index2, index3))
-                                       .limit(random
-                                                                .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (net.morimekta.test.hazelcast.v2.CompactFields) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1() {
+        return hazelcastV1Generator.nextOptionalMapListFieldsV1();
+    }
 
-        public net.morimekta.test.hazelcast.v3.CompactFields nextV3CompactField(int flags,
-                                                                                int index1,
-                                                                                int index2,
-                                                                                int index3) {
-            net.morimekta.test.hazelcast.v3.CompactFields._Builder builder = net.morimekta.test.hazelcast.v3.CompactFields.builder();
-            if (0 < (index1 & flags)) {
-                builder.setName(nextString());
-            }
-            if (0 < (index2 & flags)) {
-                builder.setId(nextInt());
-            }
-            if (0 < (index3 & flags)) {
-                builder.setLabel(nextString());
-            }
-            return builder.build();
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1(boolean setAll) {
+        return hazelcastV1Generator.nextOptionalMapListFieldsV1(setAll);
+    }
 
-        public List<net.morimekta.test.hazelcast.v3.CompactFields> nextV3CompactFields(int flags,
-                                                                                       int index1,
-                                                                                       int index2,
-                                                                                       int index3) {
-            return Arrays.asList(Stream.generate(() -> nextV3CompactField(flags, index1, index2, index3))
-                                       .limit(random
-                                                      .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (net.morimekta.test.hazelcast.v3.CompactFields) t)
-                         .collect(Collectors.toList());
-        }
+    public net.morimekta.test.hazelcast.v1.OptionalMapListFields nextOptionalMapListFieldsV1(int flags) {
+        return hazelcastV1Generator.nextOptionalMapListFieldsV1(flags);
+    }
 
-        public net.morimekta.test.hazelcast.v4.CompactFields nextV4CompactField(int flags,
-                                                                                int index1,
-                                                                                int index2,
-                                                                                int index3) {
-            net.morimekta.test.hazelcast.v4.CompactFields._Builder builder = net.morimekta.test.hazelcast.v4.CompactFields.builder();
-            if (0 < (index1 & flags)) {
-                builder.setName(nextString());
-            }
-            if (0 < (index2 & flags)) {
-                builder.setId(nextInt());
-            }
-            if (0 < (index3 & flags)) {
-                builder.setLabel(nextString());
-            }
-            return builder.build();
-        }
+    public net.morimekta.test.hazelcast.v2.OptionalMapListFields nextOptionalMapListFieldsV2() {
+        return hazelcastV2Generator.nextOptionalMapListFieldsV2();
+    }
 
-        public List<net.morimekta.test.hazelcast.v4.CompactFields> nextV4CompactFields(int flags,
-                                                                                       int index1,
-                                                                                       int index2,
-                                                                                       int index3) {
-            return Arrays.asList(Stream.generate(() -> nextV4CompactField(flags, index1, index2, index3))
-                                       .limit(random
-                                                      .nextInt(Byte.MAX_VALUE) + 1)
-                                       .toArray())
-                         .stream()
-                         .map(t -> (net.morimekta.test.hazelcast.v4.CompactFields) t)
-                         .collect(Collectors.toList());
-        }
-        
+    public net.morimekta.test.hazelcast.v2.OptionalMapListFields nextOptionalMapListFieldsV2(boolean setAll) {
+        return hazelcastV2Generator.nextOptionalMapListFieldsV2(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalMapListFields nextOptionalMapListFieldsV2(int flags) {
+        return hazelcastV2Generator.nextOptionalMapListFieldsV2(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapListFields nextOptionalMapListFieldsV3() {
+        return hazelcastV3Generator.nextOptionalMapListFieldsV3();
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapListFields nextOptionalMapListFieldsV3(boolean setAll) {
+        return hazelcastV3Generator.nextOptionalMapListFieldsV3(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapListFields nextOptionalMapListFieldsV3(int flags) {
+        return hazelcastV3Generator.nextOptionalMapListFieldsV3(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapListFields nextOptionalMapListFieldsV4() {
+        return hazelcastV4Generator.nextOptionalMapListFieldsV4();
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapListFields nextOptionalMapListFieldsV4(boolean setAll) {
+        return hazelcastV4Generator.nextOptionalMapListFieldsV4(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapListFields nextOptionalMapListFieldsV4(int flags) {
+        return hazelcastV4Generator.nextOptionalMapListFieldsV4(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1() {
+        return hazelcastV1Generator.nextOptionalMapSetFieldsV1();
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1(boolean setAll) {
+        return hazelcastV1Generator.nextOptionalMapSetFieldsV1(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v1.OptionalMapSetFields nextOptionalMapSetFieldsV1(int flags) {
+        return hazelcastV1Generator.nextOptionalMapSetFieldsV1(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalMapSetFields nextOptionalMapSetFieldsV2() {
+        return hazelcastV2Generator.nextOptionalMapSetFieldsV2();
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalMapSetFields nextOptionalMapSetFieldsV2(boolean setAll) {
+        return hazelcastV2Generator.nextOptionalMapSetFieldsV2(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v2.OptionalMapSetFields nextOptionalMapSetFieldsV2(int flags) {
+        return hazelcastV2Generator.nextOptionalMapSetFieldsV2(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapSetFields nextOptionalMapSetFieldsV3() {
+        return hazelcastV3Generator.nextOptionalMapSetFieldsV3();
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapSetFields nextOptionalMapSetFieldsV3(boolean setAll) {
+        return hazelcastV3Generator.nextOptionalMapSetFieldsV3(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v3.OptionalMapSetFields nextOptionalMapSetFieldsV3(int flags) {
+        return hazelcastV3Generator.nextOptionalMapSetFieldsV3(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapSetFields nextOptionalMapSetFieldsV4() {
+        return hazelcastV4Generator.nextOptionalMapSetFieldsV4();
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapSetFields nextOptionalMapSetFieldsV4(boolean setAll) {
+        return hazelcastV4Generator.nextOptionalMapSetFieldsV4(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v4.OptionalMapSetFields nextOptionalMapSetFieldsV4(int flags) {
+        return hazelcastV4Generator.nextOptionalMapSetFieldsV4(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1() {
+        return hazelcastV1Generator.nextUnionFieldsV1();
+    }
+
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1(boolean setAll) {
+        return hazelcastV1Generator.nextUnionFieldsV1(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v1.UnionFields nextUnionFieldsV1(int flags) {
+        return hazelcastV1Generator.nextUnionFieldsV1(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v2.UnionFields nextUnionFieldsV2() {
+        return hazelcastV2Generator.nextUnionFieldsV2();
+    }
+
+    public net.morimekta.test.hazelcast.v2.UnionFields nextUnionFieldsV2(boolean setAll) {
+        return hazelcastV2Generator.nextUnionFieldsV2(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v2.UnionFields nextUnionFieldsV2(int flags) {
+        return hazelcastV2Generator.nextUnionFieldsV2(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v3.UnionFields nextUnionFieldsV3() {
+        return hazelcastV3Generator.nextUnionFieldsV3();
+    }
+
+    public net.morimekta.test.hazelcast.v3.UnionFields nextUnionFieldsV3(boolean setAll) {
+        return hazelcastV3Generator.nextUnionFieldsV3(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v3.UnionFields nextUnionFieldsV3(int flags) {
+        return hazelcastV3Generator.nextUnionFieldsV3(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v4.UnionFields nextUnionFieldsV4() {
+        return hazelcastV4Generator.nextUnionFieldsV4();
+    }
+
+    public net.morimekta.test.hazelcast.v4.UnionFields nextUnionFieldsV4(boolean setAll) {
+        return hazelcastV4Generator.nextUnionFieldsV4(setAll);
+    }
+
+    public net.morimekta.test.hazelcast.v4.UnionFields nextUnionFieldsV4(int flags) {
+        return hazelcastV4Generator.nextUnionFieldsV4(flags);
+    }
+
+    public net.morimekta.test.hazelcast.v1.AllFields nextAllFieldsV1() {
+        return hazelcastV1Generator.nextAllFieldsV1();
+    }
+
+    public net.morimekta.test.hazelcast.v2.AllFields nextAllFieldsV2() {
+        return hazelcastV2Generator.nextAllFieldsV2();
+    }
+
+    public net.morimekta.test.hazelcast.v3.AllFields nextAllFieldsV3() {
+        return hazelcastV3Generator.nextAllFieldsV3();
+    }
+
+    public net.morimekta.test.hazelcast.v4.AllFields nextAllFieldsV4() {
+        return hazelcastV4Generator.nextAllFieldsV4();
+    }
+
+    public Random getRandom() {
+        return random;
     }
 }

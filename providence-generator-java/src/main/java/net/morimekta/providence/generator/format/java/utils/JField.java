@@ -20,9 +20,12 @@
  */
 package net.morimekta.providence.generator.format.java.utils;
 
+import net.morimekta.providence.PMessageVariant;
 import net.morimekta.providence.PType;
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
@@ -80,6 +83,8 @@ public class JField {
     }
 
     public String hasName() { return camelCase("__has_", field.getName()); }
+
+    public String sizeName() { return camelCase("__size_", field.getName()); }
 
     public String param() {
         return camelCase("p", field.getName());
@@ -346,5 +351,51 @@ public class JField {
         return (PList) (field()
                              .getDescriptor());
     }
+
+    public PSet toPSet() {
+        return (PSet) (field()
+                .getDescriptor());
+    }
+
+    public PMap toPMap() {
+        return (PMap) (field()
+                .getDescriptor());
+    }
+
+    public boolean isUnion() {
+        boolean result = false;
+        switch ( type() ) {
+            case MESSAGE:
+                result = ((PMessageDescriptor)field().getDescriptor()).getVariant().equals(PMessageVariant.UNION);
+                break;
+            case SET:
+            case LIST:
+                PDescriptor descriptor = extractItemDescriptor(field().getDescriptor());
+                if( descriptor.getType().equals(PType.MESSAGE) ) {
+                    result = ((PMessageDescriptor)descriptor).getVariant().equals(PMessageVariant.UNION);
+                }
+                break;
+        }
+        return result;
+
+    }
+
+    private PDescriptor extractItemDescriptor(PDescriptor descriptor) {
+        PDescriptor result;
+        switch (descriptor.getType()) {
+            case SET:
+                result = extractItemDescriptor(((PSet)descriptor).itemDescriptor());
+                break;
+            case LIST:
+                result = extractItemDescriptor(((PList)descriptor).itemDescriptor());
+                break;
+            default: {
+                result = descriptor;
+            }
+        }
+        return result;
+    }
+
+
 
 }

@@ -22,7 +22,6 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PStructDescriptor;
-import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
 /**
  * See the struct descriptor of {@link PStructDescriptor}. It is avoided in this case in

@@ -20,7 +20,6 @@
 package net.morimekta.providence.reflect.parser;
 
 import net.morimekta.providence.model.ProgramType;
-import net.morimekta.testing.ExtraMatchers;
 
 import org.junit.Rule;
 import org.junit.Test;

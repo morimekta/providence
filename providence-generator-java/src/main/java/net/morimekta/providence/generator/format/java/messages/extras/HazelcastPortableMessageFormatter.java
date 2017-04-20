@@ -1,6 +1,9 @@
 package net.morimekta.providence.generator.format.java.messages.extras;
 
+import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.program.extras.HazelcastPortableProgramFormatter;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
@@ -9,7 +12,10 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.reflect.util.ThriftAnnotation;
 import net.morimekta.util.Binary;
+import net.morimekta.util.BinaryUtil;
 import net.morimekta.util.Strings;
+import net.morimekta.util.io.BigEndianBinaryReader;
+import net.morimekta.util.io.BigEndianBinaryWriter;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.google.common.collect.ImmutableList;
@@ -23,13 +29,17 @@ import com.hazelcast.nio.serialization.Portable;
 import com.hazelcast.nio.serialization.PortableReader;
 import com.hazelcast.nio.serialization.PortableWriter;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -52,9 +62,16 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
     private final IndentedPrintWriter writer;
     private final JHelper             helper;
 
+    private Integer uniqueVariable;
+
     public HazelcastPortableMessageFormatter(IndentedPrintWriter writer, JHelper helper) {
         this.writer = writer;
         this.helper = helper;
+        this.uniqueVariable = 0;
+    }
+
+    private String tempVariable() {
+        return "temp" + Integer.toHexString((--uniqueVariable).hashCode());
     }
 
     @Override
@@ -150,12 +167,12 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
               .begin();
         //TODO write optionals bitset.
         for (JField field : message.declaredOrderFields()) {
-            if( !field.isRequired() ) {
+            if (!field.isRequired()) {
                 writer.formatln("if( %s() ) {", field.isSet())
                       .begin();
             }
             writePortableField(field);
-            if( !field.isRequired() ) {
+            if (!field.isRequired()) {
                 writer.end()
                       .appendln("} else {")
                       .begin();
@@ -214,106 +231,319 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * </pre>
      */
     private void writePortableField(JField field) throws GeneratorException {
+        String baosTemp = camelCase("baos", field.name());
+        String bebwTemp = camelCase("bebw", field.name());
         switch (field.type()) {
             case BINARY:
-                writer.formatln("%s.writeByteArray(\"%s\", %s.get());",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeByteArray(\"%s\", %s.get());", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case BOOL:
-                writer.formatln("%s.writeBoolean(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeBoolean(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case BYTE:
-                writer.formatln("%s.writeByte(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeByte(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case DOUBLE:
-                writer.formatln("%s.writeDouble(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeDouble(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case ENUM:
-                writer.formatln("%s.writeInt(\"%s\", %s.getValue());",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeInt(\"%s\", %s.getValue());", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case I16:
-                writer.formatln("%s.writeShort(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeShort(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case I32:
-                writer.formatln("%s.writeInt(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeInt(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case I64:
-                writer.formatln("%s.writeLong(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeLong(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
                 break;
             case STRING:
-                writer.formatln("%s.writeUTF(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
+                writer.formatln("%s.writeUTF(\"%s\", %s);", PORTABLE_WRITER, field.name(), field.member());
+                break;
+            case MAP:
+                PMap pMap = field.toPMap();
+                String iterator = "entry";
+                writer.formatln("try (%s %s = new %s();",
+                                ByteArrayOutputStream.class.getName(),
+                                baosTemp,
+                                ByteArrayOutputStream.class.getName())
+                      .formatln("%s %s = new %s(%s) ) {",
+                                BigEndianBinaryWriter.class.getName(),
+                                bebwTemp,
+                                BigEndianBinaryWriter.class.getName(),
+                                baosTemp)
+                      .begin()
+                      .formatln("%s.writeInt(%s.build().size());", bebwTemp, field.member())
+                      .formatln("for( %s.Entry<%s,%s> %s : %s.build().entrySet() ) {",
+                                Map.class.getName(),
+                                helper.getFieldType(pMap.keyDescriptor()),
+                                helper.getFieldType(pMap.itemDescriptor()),
+                                iterator,
                                 field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                      .begin();
+                writePortableBinary(field, bebwTemp, iterator + ".getKey()", pMap.keyDescriptor());
+                writePortableBinary(field, bebwTemp, iterator + ".getValue()", pMap.itemDescriptor());
+                writer.end()
+                      .println("}");
+                writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());", PORTABLE_WRITER, field.name(), baosTemp)
+                      .end()
+                      .println("}");
                 break;
             case LIST:
-                writePortableFieldList(field);
+                if (field.isUnion()) {
+                    writer.formatln("try (%s %s = new %s();",
+                                    ByteArrayOutputStream.class.getName(),
+                                    baosTemp,
+                                    ByteArrayOutputStream.class.getName())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryWriter.class.getName(),
+                                    bebwTemp,
+                                    BigEndianBinaryWriter.class.getName(),
+                                    baosTemp)
+                          .begin();
+                    writePortableBinary(field, bebwTemp, field.member() + ".build()", field.toPList());
+                    writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    baosTemp)
+                          .end()
+                          .println("}");
+                } else {
+                    writePortableFieldList(field,
+                                           field.toPList()
+                                                .itemDescriptor());
+                }
+                break;
+            case SET:
+                if (field.isUnion()) {
+                    writer.formatln("try (%s %s = new %s();",
+                                    ByteArrayOutputStream.class.getName(),
+                                    baosTemp,
+                                    ByteArrayOutputStream.class.getName())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryWriter.class.getName(),
+                                    bebwTemp,
+                                    BigEndianBinaryWriter.class.getName(),
+                                    baosTemp)
+                          .begin();
+                    writePortableBinary(field, bebwTemp, field.member() + ".build()", field.toPSet());
+                    writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    baosTemp)
+                          .end()
+                          .println("}");
+                } else {
+                    writePortableFieldList(field,
+                                           field.toPSet()
+                                                .itemDescriptor());
+                }
                 break;
             case MESSAGE:
-                //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
-                //TODO: method name should be fetched as helper from a single point, so it is collectively added all the places.
-                writer.formatln("%s.writePortable(\"%s\", %s());",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                Strings.camelCase("mutable", field.name()))
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                if (field.isUnion()) {
+                    writer.formatln("try (%s %s = new %s();",
+                                    ByteArrayOutputStream.class.getName(),
+                                    baosTemp,
+                                    ByteArrayOutputStream.class.getName())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryWriter.class.getName(),
+                                    bebwTemp,
+                                    BigEndianBinaryWriter.class.getName(),
+                                    baosTemp)
+                          .begin();
+                    writer.formatln("%s.writeBinary(%s);", field.member(), bebwTemp);
+                    writer.formatln("%s.writeByteArray(\"%s\", %s.toByteArray());",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    baosTemp)
+                          .end()
+                          .println("}");
+                } else {
+                    //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
+                    //TODO: method name should be fetched as helper from a single point, so it is collectively added all the places.
+                    writer.formatln("%s.writePortable(\"%s\", %s());",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    Strings.camelCase("mutable", field.name()));
+                }
                 break;
             default:
                 throw new GeneratorException("Not implemented writePortableField for type: " + field.type() + " in " +
                                              this.getClass()
                                                  .getSimpleName());
+        }
+        writer.formatln("%s.writeBoolean(\"%s\", true);", PORTABLE_WRITER, field.hasName());
+    }
+
+    /**
+     * Method to convert fields to a binary array.
+     *
+     * @param field JField that is to be converted.
+     * @param bebw {@link BigEndianBinaryWriter} to append the information to.
+     * @param getter Method to access the current data to serialize.
+     * @param descriptor PDescriptor that is connected to the getter. Can be nested subtypes of the field.
+     */
+    private void writePortableBinary(JField field, String bebw, String getter, PDescriptor descriptor) {
+        switch (descriptor.getType()) {
+            case BINARY:
+                writer.formatln("%s.%s(%s.length());", bebw, "writeInt", getter)
+                      .formatln("%s.%s(%s.get());", bebw, "write", getter);
+                break;
+            case BOOL:
+                writer.formatln("%s.%s(%s ? (byte)1 : 0);", bebw, "writeByte", getter);
+                break;
+            case BYTE:
+                writer.formatln("%s.%s(%s);", bebw, "writeByte", getter);
+                break;
+            case DOUBLE:
+                writer.formatln("%s.%s(%s);", bebw, "writeDouble", getter);
+                break;
+            case ENUM:
+                writer.formatln("%s.%s(%s.getValue());", bebw, "writeInt", getter);
+                break;
+            case I16:
+                writer.formatln("%s.%s(%s);", bebw, "writeShort", getter);
+                break;
+            case I32:
+                writer.formatln("%s.%s(%s);", bebw, "writeInt", getter);
+                break;
+            case I64:
+                writer.formatln("%s.%s(%s);", bebw, "writeLong", getter);
+                break;
+            case STRING:
+                final String tempBinary = tempVariable();
+                writer.formatln("%s[] %s = %s.getBytes(%s.UTF_8);",
+                                byte.class.getName(),
+                                tempBinary,
+                                getter,
+                                StandardCharsets.class.getName())
+                      .formatln("%s.%s(%s.length);", bebw, "writeInt", tempBinary)
+                      .formatln("%s.%s(%s);", bebw, "write", tempBinary);
+                break;
+            case LIST:
+                PDescriptor innerList = ((PList) descriptor).itemDescriptor();
+                final String iteratorList = tempVariable();
+                writer.formatln("%s.%s(%s.size());", bebw, "writeInt", getter);
+                writer.formatln("for( %s %s : %s ) {", helper.getFieldType(innerList), iteratorList, getter)
+                      .begin();
+                writePortableBinary(field, bebw, iteratorList, innerList);
+                writer.end()
+                      .println("}");
+                break;
+            case SET:
+                PDescriptor innerSet = ((PSet) descriptor).itemDescriptor();
+                final String iteratorSet = tempVariable();
+                writer.formatln("%s.%s(%s.size());", bebw, "writeInt", getter);
+                writer.formatln("for( %s %s : %s ) {", helper.getFieldType(innerSet), iteratorSet, getter)
+                      .begin();
+                writePortableBinary(field, bebw, iteratorSet, innerSet);
+                writer.end()
+                      .println("}");
+                break;
+            case MESSAGE:
+                writer.formatln("%s.writeBinary(%s);", getter, bebw);
+                break;
+            default:
+                throw new GeneratorException(
+                        "Not implemented writePortableBinary for type: " + helper.getFieldType(descriptor) + " in " +
+                        this.getClass()
+                            .getSimpleName());
+        }
+    }
+
+    private void readPortableBinary(JField field, String bebr, String variable, PDescriptor descriptor) {
+        switch (descriptor.getType()) {
+            case BINARY:
+                writer.formatln("%s = %s.%s(%s.%s());", variable, bebr, "expectBinary", bebr, "expectInt");
+                break;
+            case BOOL:
+                writer.formatln("%s = (%s.%s() > 0 ? true : false);", variable, bebr, "expectByte");
+                break;
+            case BYTE:
+                writer.formatln("%s = %s.%s();", variable, bebr, "expectByte");
+                break;
+            case DOUBLE:
+                writer.formatln("%s = %s.%s();", variable, bebr, "expectDouble");
+                break;
+            case ENUM:
+                writer.formatln("%s = %s.forValue(%s.%s());",
+                                variable,
+                                helper.getFieldType(descriptor),
+                                bebr,
+                                "expectInt");
+                break;
+            case I16:
+                writer.formatln("%s = %s.%s();", variable, bebr, "expectShort");
+                break;
+            case I32:
+                writer.formatln("%s = %s.%s();", variable, bebr, "expectInt");
+                break;
+            case I64:
+                writer.formatln("%s = %s.%s();", variable, bebr, "expectLong");
+                break;
+            case STRING:
+                writer.formatln("%s = new %s(%s.%s(%s.%s()), %s.UTF_8);",
+                                variable,
+                                helper.getFieldType(descriptor),
+                                bebr,
+                                "expectBytes",
+                                bebr,
+                                "expectInt",
+                                StandardCharsets.class.getName());
+                break;
+            case LIST:
+                PDescriptor innerList = ((PList) descriptor).itemDescriptor();
+                final String tempSizeList = tempVariable();
+                final String tempCounterList = tempVariable();
+                final String tempVariableList = tempVariable();
+                writer.formatln("%s = new %s<>();", variable, ArrayList.class.getName());
+                writer.formatln("int %s = %s.%s();", tempSizeList, bebr, "expectInt");
+                writer.formatln("%s %s;", helper.getFieldType(innerList), tempVariableList);
+                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {",
+                                tempCounterList,
+                                tempCounterList,
+                                tempSizeList,
+                                tempCounterList)
+                      .begin();
+                readPortableBinary(field, bebr, tempVariableList, innerList);
+                writer.formatln("%s.add(%s);", variable, tempVariableList);
+                writer.end()
+                      .println("}");
+                break;
+            case SET:
+                PDescriptor innerSet = ((PSet) descriptor).itemDescriptor();
+                final String tempSizeSet = tempVariable();
+                final String tempCounterSet = tempVariable();
+                final String tempVariableSet = tempVariable();
+                writer.formatln("%s = new %s<>();", variable, HashSet.class.getName());
+                writer.formatln("int %s = %s.%s();", tempSizeSet, bebr, "expectInt");
+                writer.formatln("%s %s;", helper.getFieldType(innerSet), tempVariableSet);
+                writer.formatln("for( int %s = 0; %s < %s; %s++ ) {",
+                                tempCounterSet,
+                                tempCounterSet,
+                                tempSizeSet,
+                                tempCounterSet)
+                      .begin();
+                readPortableBinary(field, bebr, tempVariableSet, innerSet);
+                writer.formatln("%s.add(%s);", variable, tempVariableSet);
+                writer.end()
+                      .println("}");
+                break;
+            case MESSAGE:
+                final String tempMessage = tempVariable();
+                writer.formatln("%s._Builder %s = %s.builder();",
+                                helper.getFieldType(descriptor),
+                                tempMessage,
+                                helper.getFieldType(descriptor))
+                      .formatln("%s.readBinary(%s, false);", tempMessage, bebr)
+                      .formatln("%s = %s.build();", variable, tempMessage);
+                break;
+            default:
+                throw new GeneratorException(
+                        "Not implemented readPortableBinary for type: " + helper.getFieldType(descriptor) + " in " +
+                        this.getClass()
+                            .getSimpleName());
         }
     }
 
@@ -336,103 +566,93 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
     private void writeDefaultPortableField(JField field) throws GeneratorException {
         switch (field.type()) {
             case BINARY:
+            case MAP:
                 writer.formatln("%s.writeByteArray(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case BOOL:
                 writer.formatln("%s.writeBoolean(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case BYTE:
                 writer.formatln("%s.writeByte(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case DOUBLE:
                 writer.formatln("%s.writeDouble(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case ENUM:
-                writer.formatln("%s.writeInt(\"%s\", %s);",
-                                PORTABLE_WRITER,
-                                field.name(),
-                                "0")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                writer.formatln("%s.writeInt(\"%s\", %s);", PORTABLE_WRITER, field.name(), "0");
                 break;
             case I16:
                 writer.formatln("%s.writeShort(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case I32:
                 writer.formatln("%s.writeInt(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case I64:
                 writer.formatln("%s.writeLong(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case STRING:
                 writer.formatln("%s.writeUTF(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             case LIST:
-                writeDefaultPortableFieldList(field);
+                if (field.isUnion()) {
+                    writer.formatln("%s.writeByteArray(\"%s\", %s);",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    field.hasDefaultConstant() ? field.kDefault() : "null");
+                } else {
+                    writeDefaultPortableFieldList(field,
+                                                  field.toPList()
+                                                       .itemDescriptor());
+                }
+                break;
+            case SET:
+                if (field.isUnion()) {
+                    writer.formatln("%s.writeByteArray(\"%s\", %s);",
+                                    PORTABLE_WRITER,
+                                    field.name(),
+                                    field.hasDefaultConstant() ? field.kDefault() : "null");
+                } else {
+                    writeDefaultPortableFieldList(field,
+                                                  field.toPSet()
+                                                       .itemDescriptor());
+                }
                 break;
             case MESSAGE:
                 writer.formatln("%s.writePortable(\"%s\", %s);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null")
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                field.hasDefaultConstant() ? field.kDefault() : "null");
                 break;
             default:
-                throw new GeneratorException("Not implemented writePortableField for type: " + field.type() + " in " +
-                                             this.getClass()
-                                                 .getSimpleName());
+                throw new GeneratorException(
+                        "Not implemented writeDefaultPortableField for type: " + field.type() + " in " + this.getClass()
+                                                                                                             .getSimpleName());
         }
+        writer.formatln("%s.writeBoolean(\"%s\", false);", PORTABLE_WRITER, field.hasName());
     }
 
     /**
@@ -447,85 +667,75 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void writePortableFieldList(JField field) throws GeneratorException {
-        PList listType =  field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void writePortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s.writeByteArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Bytes.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Bytes.class.getName(),
+                                field.member());
+                break;
+            case BINARY:
+                writer.formatln("%s.writeByteArray(\"%s\", %s.%s(%s.build()));",
+                                PORTABLE_WRITER,
+                                field.name(),
+                                BinaryUtil.class.getName(),
+                                "fromBinaryCollection",
+                                field.member());
                 break;
             case BOOL:
                 writer.formatln("%s.writeBooleanArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Booleans.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Booleans.class.getName(),
+                                field.member());
                 break;
             case DOUBLE:
                 writer.formatln("%s.writeDoubleArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Doubles.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Doubles.class.getName(),
+                                field.member());
+                break;
+            case ENUM:
+                writer.formatln("%s.writeIntArray(\"%s\", %s.build().stream().mapToInt(t -> t.getValue()).toArray());",
+                                PORTABLE_WRITER,
+                                field.name(),
+                                field.member());
                 break;
             case I16:
                 writer.formatln("%s.writeShortArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Shorts.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Shorts.class.getName(),
+                                field.member());
                 break;
             case I32:
                 writer.formatln("%s.writeIntArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Ints.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Ints.class.getName(),
+                                field.member());
                 break;
             case I64:
                 writer.formatln("%s.writeLongArray(\"%s\", %s.toArray(%s.build()));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              Longs.class.getName(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                Longs.class.getName(),
+                                field.member());
                 break;
             case STRING:
-                writer.formatln("%s.writeUTFArray(\"%s\", %s.build().toArray(new String[%s.build().size()]));",
-                              PORTABLE_WRITER,
-                              field.name(),
-                              field.member(),
-                              field.member())
-                      .formatln("%s.writeBoolean(\"%s\", true);",
+                writer.formatln("%s.writeUTFArray(\"%s\", %s.build().toArray(new String[0]));",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                field.member());
                 break;
             case MESSAGE:
                 //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
                 writer.formatln("%s<%s.%s> %sList = %s.build().stream().map(i -> i.mutate()).collect(%s.toList());",
                                 List.class.getName(),
-                                helper.getValueType(listType.itemDescriptor()),
+                                helper.getValueType(descriptor),
                                 "_Builder",
                                 camelCase("temp", field.name()),
                                 field.member(),
@@ -534,18 +744,15 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 PORTABLE_WRITER,
                                 field.name(),
                                 camelCase("temp", field.name()),
-                                helper.getValueType(listType.itemDescriptor()),
+                                helper.getValueType(descriptor),
                                 "_Builder",
-                                camelCase("temp", field.name()))
-                      .formatln("%s.writeBoolean(\"%s\", true);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                camelCase("temp", field.name()));
                 break;
             default:
-                throw new GeneratorException("Not implemented writePortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
-                                                                               .getSimpleName());
+                throw new GeneratorException(
+                        "Not implemented writePortableFieldList for list with type: " + descriptor.getType() + " in " +
+                        this.getClass()
+                            .getSimpleName());
         }
     }
 
@@ -561,87 +768,73 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void writeDefaultPortableFieldList(JField field) throws GeneratorException {
-        PList listType =  field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void writeDefaultPortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s.writeByteArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
+                                helper.getValueType(descriptor));
+                break;
+            case BINARY:
+                writer.formatln("%s.writeByteArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                "byte"); //TODO becomes binary otherwise, and doesn't fit with byte array.
                 break;
             case BOOL:
                 writer.formatln("%s.writeBooleanArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             case DOUBLE:
                 writer.formatln("%s.writeDoubleArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
+                                helper.getValueType(descriptor));
+                break;
+            case ENUM:
+                writer.formatln("%s.writeIntArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
-                                field.hasName());
+                                field.name(),
+                                int.class.getName()); //TODO need fixed as value isn't doable.
                 break;
             case I16:
                 writer.formatln("%s.writeShortArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             case I32:
                 writer.formatln("%s.writeIntArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             case I64:
                 writer.formatln("%s.writeLongArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             case STRING:
                 writer.formatln("%s.writeUTFArray(\"%s\", new %s[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             case MESSAGE:
                 writer.formatln("%s.writePortableArray(\"%s\", new %s._Builder[0]);",
                                 PORTABLE_WRITER,
                                 field.name(),
-                                helper.getValueType(listType.itemDescriptor()))
-                      .formatln("%s.writeBoolean(\"%s\", false);",
-                                PORTABLE_WRITER,
-                                field.hasName());
+                                helper.getValueType(descriptor));
                 break;
             default:
-                throw new GeneratorException("Not implemented writePortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
-                                                                               .getSimpleName());
+                throw new GeneratorException(
+                        "Not implemented writeDefaultPortableFieldList for list with type: " + descriptor.getType() +
+                        " in " + this.getClass()
+                                     .getSimpleName());
         }
     }
 
@@ -662,7 +855,11 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * </pre>
      */
     private void readPortableField(JField field) {
-        if( !field.isRequired() ) {
+        String baisTemp = camelCase("bais", field.name());
+        String bebrTemp = camelCase("bebr", field.name());
+        String tempIterator = tempVariable();
+        String valueVariable = tempVariable();
+        if (!field.isRequired()) {
             writer.formatln("if( %s.hasField(\"%s\") && %s.readBoolean(\"%s\") && %s.hasField(\"%s\") ) {",
                             PORTABLE_READER,
                             field.hasName(),
@@ -681,22 +878,13 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.name());
                 break;
             case BOOL:
-                writer.formatln("%s(%s.readBoolean(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readBoolean(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case BYTE:
-                writer.formatln("%s(%s.readByte(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readByte(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case DOUBLE:
-                writer.formatln("%s(%s.readDouble(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readDouble(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case ENUM:
                 writer.formatln("%s(%s.forValue(%s.readInt(\"%s\")));",
@@ -706,47 +894,142 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.name());
                 break;
             case I16:
-                writer.formatln("%s(%s.readShort(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readShort(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case I32:
-                writer.formatln("%s(%s.readInt(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readInt(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case I64:
-                writer.formatln("%s(%s.readLong(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readLong(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case STRING:
-                writer.formatln("%s(%s.readUTF(\"%s\"));",
-                                field.setter(),
-                                PORTABLE_READER,
-                                field.name());
+                writer.formatln("%s(%s.readUTF(\"%s\"));", field.setter(), PORTABLE_READER, field.name());
                 break;
             case LIST:
-                readPortableFieldList(field);
+                if (field.isUnion()) {
+                    writer.formatln("try ( %s %s = new %s(%s.readByteArray(\"%s\"));",
+                                    ByteArrayInputStream.class.getName(),
+                                    baisTemp,
+                                    ByteArrayInputStream.class.getName(),
+                                    PORTABLE_READER,
+                                    field.name())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryReader.class.getName(),
+                                    bebrTemp,
+                                    BigEndianBinaryReader.class.getName(),
+                                    baisTemp)
+                          .begin()
+                          .formatln("%s %s;", helper.getFieldType(field.toPList()), valueVariable);
+                    readPortableBinary(field, bebrTemp, valueVariable, field.toPList());
+                    writer.formatln("%s(%s);", field.setter(), valueVariable)
+                          .end()
+                          .println("}");
+                } else {
+                    readPortableFieldList(field,
+                                          field.toPList()
+                                               .itemDescriptor());
+                }
+                break;
+            case SET:
+                if (field.isUnion()) {
+                    writer.formatln("try ( %s %s = new %s(%s.readByteArray(\"%s\"));",
+                                    ByteArrayInputStream.class.getName(),
+                                    baisTemp,
+                                    ByteArrayInputStream.class.getName(),
+                                    PORTABLE_READER,
+                                    field.name())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryReader.class.getName(),
+                                    bebrTemp,
+                                    BigEndianBinaryReader.class.getName(),
+                                    baisTemp)
+                          .begin()
+                          .formatln("%s %s;", helper.getFieldType(field.toPSet()), valueVariable);
+                    readPortableBinary(field, bebrTemp, valueVariable, field.toPSet());
+                    writer.formatln("%s(%s);", field.setter(), valueVariable)
+                          .end()
+                          .println("}");
+                } else {
+                    readPortableFieldList(field,
+                                          field.toPSet()
+                                               .itemDescriptor());
+                }
+                break;
+            case MAP:
+                PMap pMap = field.toPMap();
+                String mapSize = tempVariable();
+                String keyVariable = tempVariable();
+                writer.formatln("try ( %s %s = new %s(%s.readByteArray(\"%s\"));",
+                                ByteArrayInputStream.class.getName(),
+                                baisTemp,
+                                ByteArrayInputStream.class.getName(),
+                                PORTABLE_READER,
+                                field.name())
+                      .formatln("%s %s = new %s(%s) ) {",
+                                BigEndianBinaryReader.class.getName(),
+                                bebrTemp,
+                                BigEndianBinaryReader.class.getName(),
+                                baisTemp)
+                      .begin()
+                      .formatln("%s %s = %s.%s();", int.class.getName(), mapSize, bebrTemp, "expectInt")
+                      .formatln("%s %s;", helper.getFieldType(pMap.keyDescriptor()), keyVariable)
+                      .formatln("%s %s;", helper.getFieldType(pMap.itemDescriptor()), valueVariable)
+                      .formatln("for( %s %s = 0; %s < %s; %s++) {",
+                                int.class.getName(),
+                                tempIterator,
+                                tempIterator,
+                                mapSize,
+                                tempIterator)
+                      .begin();
+                readPortableBinary(field, bebrTemp, keyVariable, pMap.keyDescriptor());
+                readPortableBinary(field, bebrTemp, valueVariable, pMap.itemDescriptor());
+                writer.formatln("%s(%s, %s);", field.adder(), keyVariable, valueVariable)
+                      .end()
+                      .println("}");
+                writer.end()
+                      .println("}");
                 break;
             case MESSAGE: // ((CompactFields._Builder)portableReader.readPortable("compactValue")).build()
-                writer.formatln("%s(((%s.%s)%s.readPortable(\"%s\")).%s());",
-                                field.setter(),
-                                field.instanceType(),
-                                "_Builder",
-                                PORTABLE_READER,
-                                field.name(),
-                                "build");
+                if (field.isUnion()) {
+                    String tempBuilder = tempVariable();
+                    writer.formatln("try ( %s %s = new %s(%s.readByteArray(\"%s\"));",
+                                    ByteArrayInputStream.class.getName(),
+                                    baisTemp,
+                                    ByteArrayInputStream.class.getName(),
+                                    PORTABLE_READER,
+                                    field.name())
+                          .formatln("%s %s = new %s(%s) ) {",
+                                    BigEndianBinaryReader.class.getName(),
+                                    bebrTemp,
+                                    BigEndianBinaryReader.class.getName(),
+                                    baisTemp)
+                          .begin()
+                          .formatln("%s._Builder %s = %s.builder();",
+                                    helper.getFieldType(field.field()
+                                                             .getDescriptor()),
+                                    tempBuilder,
+                                    helper.getFieldType(field.field()
+                                                             .getDescriptor()))
+                          .formatln("%s.readBinary(%s, false);", tempBuilder, bebrTemp)
+                          .formatln("%s(%s.build());", field.setter(), tempBuilder)
+                          .end()
+                          .println("}");
+                } else {
+                    writer.formatln("%s(((%s.%s)%s.readPortable(\"%s\")).%s());",
+                                    field.setter(),
+                                    field.instanceType(),
+                                    "_Builder",
+                                    PORTABLE_READER,
+                                    field.name(),
+                                    "build");
+                }
                 break;
             default:
                 throw new GeneratorException("Not implemented readPortableField for type: " + field.type() + " in " +
                                              this.getClass()
                                                  .getSimpleName());
         }
-        if( !field.isRequired() ) {
+        if (!field.isRequired()) {
             writer.end()
                   .appendln("}");
         }
@@ -764,14 +1047,20 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
      * }
      * </pre>
      */
-    private void readPortableFieldList(JField field) throws GeneratorException {
-        PList listType = field.toPList();
-        switch (listType.itemDescriptor()
-                        .getType()) {
+    private void readPortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
+        switch (descriptor.getType()) {
             case BYTE:
                 writer.formatln("%s(%s.asList(%s.readByteArray(\"%s\")));",
                                 field.setter(),
                                 Bytes.class.getName(),
+                                PORTABLE_READER,
+                                field.name());
+                break;
+            case BINARY:
+                writer.formatln("%s(%s.%s(%s.readByteArray(\"%s\")));",
+                                field.setter(),
+                                BinaryUtil.class.getName(),
+                                "toBinaryCollection",
                                 PORTABLE_READER,
                                 field.name());
                 break;
@@ -788,6 +1077,18 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 Doubles.class.getName(),
                                 PORTABLE_READER,
                                 field.name());
+                break;
+            case ENUM:
+                writer.formatln(
+                        "%s(%s.asList(%s.readIntArray(\"%s\")).stream().map(t -> %s.%s(t.intValue())).collect(%s.toList()));",
+                        field.setter(),
+                        Ints.class.getName(),
+                        PORTABLE_READER,
+                        field.name(),
+                        descriptor.getName(),
+                        "forValue",
+                        //TODO need to change this to another value.
+                        Collectors.class.getName());
                 break;
             case I16:
                 writer.formatln("%s(%s.asList(%s.readShortArray(\"%s\")));",
@@ -824,17 +1125,16 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 Arrays.class.getName(),
                                 PORTABLE_READER,
                                 field.name(),
-                                listType.itemDescriptor()
-                                        .getName(),
+                                descriptor.getName(),
                                 WRAPPER_CLASS_NAME,
                                 Collectors.class.getName());
 
                 break;
             default:
-                throw new GeneratorException("Not implemented readPortableField for list with type: " +
-                                             listType.itemDescriptor()
-                                                     .getType() + " in " + this.getClass()
-                                                                               .getSimpleName());
+                throw new GeneratorException(
+                        "Not implemented readPortableField for list with type: " + descriptor.getType() + " in " +
+                        this.getClass()
+                            .getSimpleName());
         }
     }
 

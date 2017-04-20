@@ -27,7 +27,6 @@ import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageStreams;
 
 import java.io.BufferedOutputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
