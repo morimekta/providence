@@ -521,7 +521,7 @@ public class JsonSerializer extends Serializer {
                                                               .decodeJsonLiteral(), keyType);
                             tokenizer.expectSymbol("map K/V sep", JsonToken.kKeyValSep);
                             Object value = parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false);
-                            if (key != null) {
+                            if (key != null && value != null) {
                                 // In lenient mode, just drop the entire entry if the
                                 // key could not be parsed. Should only be the case
                                 // for unknown enum values.

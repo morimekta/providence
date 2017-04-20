@@ -80,13 +80,6 @@ public class Tokenizer extends InputStream {
                         }
                     } else if (r == '{') {
                         ++stack;
-                    } else if (stack == 0) {
-                        // This means there is a "meaningful" symbol
-                        // before the first { character. This means we are
-                        // actually in non-enclosed mode. Setting the max
-                        // stack to 1, so that the read will not stop until
-                        // end or file, or something invalid has occurred.
-                        stack = 1;
                     }
 
                     tmp.write(r);

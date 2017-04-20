@@ -82,6 +82,7 @@ public class ConvertTest {
                 " - unversioned_binary   : Binary serialization without version spec (deprecated).\n" +
                 " - fast_binary          : Fast binary protocol based on proto format.\n" +
                 " - pretty               : Debug format that allows comments with an easy to read syntax.\n" +
+                " - config               : As a complete config (see providence-config)\n" +
                 " - json_protocol        : TJsonProtocol\n" +
                 " - binary_protocol      : TBinaryProtocol\n" +
                 " - compact_protocol     : TCompactProtocol\n" +

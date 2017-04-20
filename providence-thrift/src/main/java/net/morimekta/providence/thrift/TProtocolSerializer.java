@@ -51,6 +51,7 @@ import org.apache.thrift.protocol.TMap;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
+import org.apache.thrift.protocol.TProtocolUtil;
 import org.apache.thrift.protocol.TSet;
 import org.apache.thrift.protocol.TStruct;
 import org.apache.thrift.protocol.TType;
@@ -238,22 +239,21 @@ class TProtocolSerializer extends Serializer {
             PField field;
             // f.name is never fulled out, rely on f.id being correct.
             field = descriptor.getField(f.id);
-            if (field == null) {
-                throw new SerializerException("No such field " + f.id + " in " + descriptor.getQualifiedName());
-            }
+            if (field != null) {
+                if (f.type != getFieldType(field.getDescriptor())) {
+                    throw new SerializerException("Incompatible serialized type " + PType.findById(f.type) +
+                                                  " for field " + field.getName() +
+                                                  ", expected " + field.getDescriptor()
+                                                                       .getType());
+                }
 
-            if (f.type != getFieldType(field.getDescriptor())) {
-                throw new SerializerException("Incompatible serialized type " + PType.findById(f.type) +
-                                              " for field " + field.getName() +
-                                              ", expected " + field.getDescriptor()
-                                                                   .getType());
+                Object value = readTypedValue(f.type, field.getDescriptor(), protocol, true);
+                if (value != null) {
+                    builder.set(field.getKey(), value);
+                }
+            } else {
+                TProtocolUtil.skip(protocol, f.type);
             }
-
-            Object value = readTypedValue(f.type, field.getDescriptor(), protocol);
-            if (value == null) {
-                throw new SerializerException("Illegal null field value");
-            }
-            builder.set(field.getKey(), value);
 
             protocol.readFieldEnd();
         }
@@ -270,7 +270,7 @@ class TProtocolSerializer extends Serializer {
         return builder.build();
     }
 
-    private Object readTypedValue(byte tType, PDescriptor type, TProtocol protocol)
+    private Object readTypedValue(byte tType, PDescriptor type, TProtocol protocol, boolean allowNull)
             throws TException, SerializerException {
         switch (tType) {
             case TType.BOOL:
@@ -285,7 +285,7 @@ class TProtocolSerializer extends Serializer {
                     PEnumBuilder<?> eb = et.builder();
                     int value = protocol.readI32();
                     eb.setByValue(value);
-                    if (!eb.valid() && readStrict) {
+                    if (!eb.valid() && !allowNull) {
                         throw new SerializerException("Invalid enum value " + value + " for " +
                                                       et.getQualifiedName());
                     }
@@ -312,7 +312,7 @@ class TProtocolSerializer extends Serializer {
 
                 PList.Builder<Object> list = lDesc.builder();
                 for (int i = 0; i < listInfo.size; ++i) {
-                    list.add(readTypedValue(listInfo.elemType, liDesc, protocol));
+                    list.add(readTypedValue(listInfo.elemType, liDesc, protocol, false));
                 }
 
                 protocol.readListEnd();
@@ -324,7 +324,7 @@ class TProtocolSerializer extends Serializer {
 
                 PSet.Builder<Object> set = sDesc.builder();
                 for (int i = 0; i < setInfo.size; ++i) {
-                    set.add(readTypedValue(setInfo.elemType, siDesc, protocol));
+                    set.add(readTypedValue(setInfo.elemType, siDesc, protocol, false));
                 }
 
                 protocol.readSetEnd();
@@ -337,8 +337,8 @@ class TProtocolSerializer extends Serializer {
 
                 PMap.Builder<Object, Object> map = mDesc.builder();
                 for (int i = 0; i < mapInfo.size; ++i) {
-                    Object key = readTypedValue(mapInfo.keyType, mkDesc, protocol);
-                    Object val = readTypedValue(mapInfo.valueType, miDesc, protocol);
+                    Object key = readTypedValue(mapInfo.keyType, mkDesc, protocol, false);
+                    Object val = readTypedValue(mapInfo.valueType, miDesc, protocol, false);
                     map.put(key, val);
                 }
 

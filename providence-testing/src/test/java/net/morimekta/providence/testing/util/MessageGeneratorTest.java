@@ -176,7 +176,7 @@ public class MessageGeneratorTest {
                 "  id = 123\n" +
                 "  label = \"Sjampanjebrus\"\n" +
                 "}\n").getBytes(StandardCharsets.UTF_8));
-        MessageReader reader = new IOMessageReader(bais, new PrettySerializer(true, false));
+        MessageReader reader = new IOMessageReader(bais, new PrettySerializer().debug());
 
         CompactFields compact = CompactFields.builder()
                                              .setId(123)
@@ -198,7 +198,7 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("{\n" +
+                   is("android.CompactFields {\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
@@ -235,12 +235,12 @@ public class MessageGeneratorTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(),
-                   is("{\n" +
+                   is("android.CompactFields {\n" +
                       "  name = \"villa\"\n" +
                       "  id = 123\n" +
                       "  label = \"Sjampanjebrus\"\n" +
                       "}\n" +
-                      "{\n" +
+                      "android.CompactFields {\n" +
                       "  name = \"villa2\"\n" +
                       "  id = 125\n" +
                       "  label = \"Brus med smak\"\n" +
@@ -255,7 +255,7 @@ public class MessageGeneratorTest {
 
     private <M extends PMessage<M, F>, F extends PField> String pretty(M message) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new PrettySerializer(true, false).serialize(baos, message);
+        new PrettySerializer().config().serialize(baos, message);
         return new String(baos.toByteArray(), StandardCharsets.UTF_8);
     }
 }

@@ -24,7 +24,7 @@ public class ConfigPrintTest extends ConfigTestBase {
                 configRoot.getAbsolutePath() + "/prod.cfg");
 
         assertThat(console.error(), is(""));
-        assertThat(console.output(), is("{\n" +
+        assertThat(console.output(), is("config.Service {\n" +
                      "  name = \"prod\"\n" +
                      "  http = {\n" +
                      "    port = 8080\n" +
@@ -41,7 +41,7 @@ public class ConfigPrintTest extends ConfigTestBase {
                      "      password = \"DbP4s5w0rD\"\n" +
                      "    }\n" +
                      "  }\n" +
-                     "}"));
+                     "}\n"));
         assertThat(exitCode, is(0));
     }
 

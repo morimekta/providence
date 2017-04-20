@@ -48,6 +48,9 @@ import java.util.Map;
 /**
  * LogFormatter is a formatter (one-way serialization) similar to the PrettySerializer,
  * except it supports adding FieldHandlers to modify in.
+ *
+ * Note that the LogFormatter is <b>not</b> a serializer, as there is no guarantee the
+ * result can be parsed back at all.
  */
 public class LogFormatter {
     /**

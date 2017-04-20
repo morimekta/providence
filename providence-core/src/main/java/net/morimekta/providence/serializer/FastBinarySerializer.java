@@ -211,10 +211,6 @@ public class FastBinarySerializer extends Serializer {
                 Object value = readFieldValue(in, type, field.getDescriptor());
                 builder.set(field.getKey(), value);
             } else {
-                if (readStrict) {
-                    throw new SerializerException(
-                            "Unknown field ID %d in type %s", id, descriptor.getQualifiedName());
-                }
                 readFieldValue(in, tag, null);
             }
         }
@@ -429,9 +425,6 @@ public class FastBinarySerializer extends Serializer {
                 return readMessage(in, (PMessageDescriptor<?, ?>) descriptor);
             case COLLECTION:
                 if (descriptor == null) {
-                    if (readStrict) {
-                        throw new SerializerException("");
-                    }
                     final int len = in.readIntVarint();
                     final int tag = in.readIntVarint();
                     final int vtype = tag & 0x07;
@@ -457,7 +450,14 @@ public class FastBinarySerializer extends Serializer {
                     for (int i = 0; i < len; ++i, ++i) {
                         Object key = readFieldValue(in, ktype, kt);
                         Object value = readFieldValue(in, vtype, vt);
-                        out.put(key, value);
+                        if (key != null && value != null) {
+                            out.put(key, value);
+                        } else if (readStrict) {
+                            if (key == null) {
+                                throw new SerializerException("Unknown enum key in map");
+                            }
+                            throw new SerializerException("Null value in map");
+                        }
                     }
                     return out.build();
                 } else if (descriptor.getType() == PType.LIST) {
@@ -467,7 +467,12 @@ public class FastBinarySerializer extends Serializer {
                     final int len = in.readIntVarint();
                     final int vtype = in.readIntVarint() & 0x07;
                     for (int i = 0; i < len; ++i) {
-                        out.add(readFieldValue(in, vtype, it));
+                        Object item = readFieldValue(in, vtype, it);
+                        if (item != null) {
+                            out.add(item);
+                        } else if (readStrict) {
+                            throw new SerializerException("Null value in list");
+                        }
                     }
                     return out.build();
                 } else if (descriptor.getType() == PType.SET) {
@@ -477,12 +482,17 @@ public class FastBinarySerializer extends Serializer {
                     final int len = in.readIntVarint();
                     final int vtype = in.readIntVarint() & 0x07;
                     for (int i = 0; i < len; ++i) {
-                        out.add(readFieldValue(in, vtype, it));
+                        Object item = readFieldValue(in, vtype, it);
+                        if (item != null) {
+                            out.add(item);
+                        } else if (readStrict) {
+                            throw new SerializerException("Null value in set");
+                        }
                     }
                     return out.build();
                 } else {
                     throw new SerializerException("Type " + descriptor.getType() +
-                                                  " not compatible with collection data.");
+                                                  " not compatible with collection data");
                 }
             default:
                 throw new Error("Unreachable code reached");

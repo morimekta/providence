@@ -441,108 +441,107 @@ public class ThriftProgramParserTest {
         File annotations = new File(tmp.getRoot(), "annotations.thrift");
 
         ThriftProgramParser parser = new ThriftProgramParser();
-        ProgramType program = parser.parse(new FileInputStream(annotations),
-                                               annotations,
-                                               new TreeSet<>());
+        ProgramType program = parser.parse(new FileInputStream(annotations), annotations, new TreeSet<>());
 
-        assertEquals("program_name = \"annotations\"\n" +
-                     "namespaces = {\n" +
-                     "  \"java\": \"net.morimekta.test.annotations\"\n" +
-                     "}\n" +
-                     "decl = [\n" +
-                     "  {\n" +
-                     "    decl_enum = {\n" +
-                     "      name = \"E\"\n" +
-                     "      values = [\n" +
-                     "        {\n" +
-                     "          name = \"VAL\"\n" +
-                     "          value = 0\n" +
-                     "          annotations = {\n" +
-                     "            \"anno\": \"str\",\n" +
-                     "            \"anno.other\": \"other\"\n" +
-                     "          }\n" +
-                     "        }\n" +
-                     "      ]\n" +
-                     "      annotations = {\n" +
-                     "        \"e.anno\": \"E\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "  },\n" +
-                     "  {\n" +
-                     "    decl_struct = {\n" +
-                     "      variant = EXCEPTION\n" +
-                     "      name = \"S\"\n" +
-                     "      fields = [\n" +
-                     "        {\n" +
-                     "          key = 1\n" +
-                     "          type = \"bool\"\n" +
-                     "          name = \"val\"\n" +
-                     "          annotations = {\n" +
-                     "            \"anno\": \"str\"\n" +
-                     "          }\n" +
-                     "        }\n" +
-                     "      ]\n" +
-                     "      annotations = {\n" +
-                     "        \"other\": \"\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "  },\n" +
-                     "  {\n" +
-                     "    decl_service = {\n" +
-                     "      name = \"Srv\"\n" +
-                     "      methods = [\n" +
-                     "        {\n" +
-                     "          one_way = false\n" +
-                     "          name = \"method\"\n" +
-                     "          params = [\n" +
-                     "            {\n" +
-                     "              key = 1\n" +
-                     "              type = \"i32\"\n" +
-                     "              name = \"param\"\n" +
-                     "              annotations = {\n" +
-                     "                \"abba\": \"7\"\n" +
-                     "              }\n" +
-                     "            }\n" +
-                     "          ]\n" +
-                     "          annotations = {\n" +
-                     "            \"anno\": \"anno\"\n" +
-                     "          }\n" +
-                     "        },\n" +
-                     "        {\n" +
-                     "          one_way = false\n" +
-                     "          name = \"method2\"\n" +
-                     "          params = [\n" +
-                     "            {\n" +
-                     "              key = 1\n" +
-                     "              type = \"i32\"\n" +
-                     "              name = \"param\"\n" +
-                     "              annotations = {\n" +
-                     "                \"abba\": \"7\"\n" +
-                     "              }\n" +
-                     "            }\n" +
-                     "          ]\n" +
-                     "          exceptions = [\n" +
-                     "            {\n" +
-                     "              key = 1\n" +
-                     "              type = \"S\"\n" +
-                     "              name = \"e\"\n" +
-                     "              annotations = {\n" +
-                     "                \"ex\": \"667\"\n" +
-                     "              }\n" +
-                     "            }\n" +
-                     "          ]\n" +
-                     "          annotations = {\n" +
-                     "            \"anno\": \"anno\"\n" +
-                     "          }\n" +
-                     "        }\n" +
-                     "      ]\n" +
-                     "      annotations = {\n" +
-                     "        \"src\": \"src\",\n" +
-                     "        \"bin\": \"bin\"\n" +
-                     "      }\n" +
-                     "    }\n" +
-                     "  }\n" +
-                     "]", debugString(program));
+        assertThat(debugString(program),
+                   equalToLines("program_name = \"annotations\"\n" +
+                                "namespaces = {\n" +
+                                "  \"java\": \"net.morimekta.test.annotations\"\n" +
+                                "}\n" +
+                                "decl = [\n" +
+                                "  {\n" +
+                                "    decl_enum = {\n" +
+                                "      name = \"E\"\n" +
+                                "      values = [\n" +
+                                "        {\n" +
+                                "          name = \"VAL\"\n" +
+                                "          value = 0\n" +
+                                "          annotations = {\n" +
+                                "            \"anno\": \"str\"\n" +
+                                "            \"anno.other\": \"other\"\n" +
+                                "          }\n" +
+                                "        }\n" +
+                                "      ]\n" +
+                                "      annotations = {\n" +
+                                "        \"e.anno\": \"E\"\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  },\n" +
+                                "  {\n" +
+                                "    decl_struct = {\n" +
+                                "      variant = EXCEPTION\n" +
+                                "      name = \"S\"\n" +
+                                "      fields = [\n" +
+                                "        {\n" +
+                                "          key = 1\n" +
+                                "          type = \"bool\"\n" +
+                                "          name = \"val\"\n" +
+                                "          annotations = {\n" +
+                                "            \"anno\": \"str\"\n" +
+                                "          }\n" +
+                                "        }\n" +
+                                "      ]\n" +
+                                "      annotations = {\n" +
+                                "        \"other\": \"\"\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  },\n" +
+                                "  {\n" +
+                                "    decl_service = {\n" +
+                                "      name = \"Srv\"\n" +
+                                "      methods = [\n" +
+                                "        {\n" +
+                                "          one_way = false\n" +
+                                "          name = \"method\"\n" +
+                                "          params = [\n" +
+                                "            {\n" +
+                                "              key = 1\n" +
+                                "              type = \"i32\"\n" +
+                                "              name = \"param\"\n" +
+                                "              annotations = {\n" +
+                                "                \"abba\": \"7\"\n" +
+                                "              }\n" +
+                                "            }\n" +
+                                "          ]\n" +
+                                "          annotations = {\n" +
+                                "            \"anno\": \"anno\"\n" +
+                                "          }\n" +
+                                "        },\n" +
+                                "        {\n" +
+                                "          one_way = false\n" +
+                                "          name = \"method2\"\n" +
+                                "          params = [\n" +
+                                "            {\n" +
+                                "              key = 1\n" +
+                                "              type = \"i32\"\n" +
+                                "              name = \"param\"\n" +
+                                "              annotations = {\n" +
+                                "                \"abba\": \"7\"\n" +
+                                "              }\n" +
+                                "            }\n" +
+                                "          ]\n" +
+                                "          exceptions = [\n" +
+                                "            {\n" +
+                                "              key = 1\n" +
+                                "              type = \"S\"\n" +
+                                "              name = \"e\"\n" +
+                                "              annotations = {\n" +
+                                "                \"ex\": \"667\"\n" +
+                                "              }\n" +
+                                "            }\n" +
+                                "          ]\n" +
+                                "          annotations = {\n" +
+                                "            \"anno\": \"anno\"\n" +
+                                "          }\n" +
+                                "        }\n" +
+                                "      ]\n" +
+                                "      annotations = {\n" +
+                                "        \"src\": \"src\"\n" +
+                                "        \"bin\": \"bin\"\n" +
+                                "      }\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "]"));
     }
 
     @Test

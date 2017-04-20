@@ -17,13 +17,14 @@ import java.io.IOException;
  * Print the resulting config.
  */
 public class Print implements Command {
-    private Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true);
+    private Serializer serializer = new PrettySerializer().config();
     private File       file       = null;
 
     @Override
     @SuppressWarnings("unchecked")
     public void execute(ProvidenceConfig config) throws IOException {
         serializer.serialize(System.out, (PMessage) config.getConfig(file));
+        System.out.println();
     }
 
     @Override

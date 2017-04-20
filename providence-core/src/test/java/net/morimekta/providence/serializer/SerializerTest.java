@@ -58,10 +58,10 @@ public class SerializerTest {
         synchronized (SerializerTest.class) {
             // Since these are immutable, we don't need to read for each test.
             if (operation == null) {
-                operation = ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
+                operation = ProvidenceHelper.fromResource("/json/calculator/compact.json", Operation.kDescriptor, new JsonSerializer(true));
             }
             if (containers == null) {
-                containers = ProvidenceHelper.arrayListFromResource("/compat/binary.data", Containers.kDescriptor, new BinarySerializer());
+                containers = ProvidenceHelper.arrayListFromResource("/compat/binary.data", Containers.kDescriptor, new BinarySerializer(true));
             }
         }
     }
@@ -240,10 +240,12 @@ public class SerializerTest {
 
     @Test
     public void testPretty() throws IOException {
-        Serializer serializer = new PrettySerializer("  ", " ", "\n", "", true);
+        Serializer serializer = new PrettySerializer();
         testOutput(serializer, "/compat/pretty.cfg");
         testSerializer(serializer);
         testCompatibility(serializer, "/compat/pretty.cfg");
+
+        testSerializer(new PrettySerializer().config());
     }
 
     @Test

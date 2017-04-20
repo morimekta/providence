@@ -75,7 +75,7 @@ public class MessageGenerator extends TestWatcher {
     public MessageGenerator() {
         this.globalFairy              = this.fairy              = Fairy.create(Locale.ENGLISH);
         this.globalRandom             = this.random             = new Random();
-        this.globalOutputSerializer = this.outputSerializer = new PrettySerializer(true, false);
+        this.globalOutputSerializer   = this.outputSerializer   = new PrettySerializer().config();
         this.globalMaxCollectionItems = this.maxCollectionItems = 10;
         this.globalFactories          = this.factories          = new LinkedList<>();
         this.globalDumpOnFailure      = this.dumpOnFailure      = false;
@@ -277,8 +277,7 @@ public class MessageGenerator extends TestWatcher {
      * @return The message generator.
      */
     public MessageGenerator setResourceReader(String resource) {
-        return setResourceReader(resource,
-                                 new PrettySerializer(true, false));
+        return setResourceReader(resource, new PrettySerializer());
     }
 
     /**

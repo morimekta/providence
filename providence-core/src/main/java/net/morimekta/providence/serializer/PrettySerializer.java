@@ -77,42 +77,82 @@ public class PrettySerializer extends Serializer {
     private final String  entrySep;
     private final boolean encloseOuter;
     private final boolean strict;
+    private final boolean prefixWithQualifiedName;
 
     public PrettySerializer() {
-        this(true, DEFAULT_STRICT);
+        this(DEFAULT_STRICT);
     }
 
-    public PrettySerializer(boolean encloseOuter, boolean strict) {
-        this(INDENT, SPACE, NEWLINE, LIST_SEP, encloseOuter, strict);
+    public PrettySerializer(boolean strict) {
+        this(INDENT, SPACE, NEWLINE, "", true, strict, false);
     }
 
-    public PrettySerializer(String indent,
-                            String space,
-                            String newline,
-                            String entrySep,
-                            boolean encloseOuter) {
-        this(indent, space, newline, entrySep, encloseOuter, false);
+    /**
+     * Make a PrettySerializer that generates content similar to the PMessage toString methods.
+     * The output of this has <b>very little</b> whitespace, so can be pretty difficult to read.
+     *
+     * @return Compact pretty serializer.
+     */
+    public PrettySerializer compact() {
+        return new PrettySerializer("", "", "", LIST_SEP, true, strict, true);
     }
 
-    public PrettySerializer(String indent,
-                            String space,
-                            String newline,
-                            String entrySep,
-                            boolean encloseOuter,
-                            boolean strict) {
+    /**
+     * Make a PrettySerializer that generates content similar to what the ProvidenceConfig
+     * reads. It will not make use of  references or anything fancy though.
+     *
+     * @return Config-like pretty serializer.
+     */
+    public PrettySerializer config() {
+        return new PrettySerializer(indent,
+                                    space,
+                                    newline,
+                                    entrySep,
+                                    true,
+                                    strict,
+                                    true);
+    }
+
+    /**
+     * Make a PrettySerializer that generates content with minimal diff.
+     *
+     * @return Debug pretty serializer.
+     */
+    public PrettySerializer debug() {
+        return new PrettySerializer(indent,
+                                    space,
+                                    newline,
+                                    entrySep,
+                                    false,
+                                    strict,
+                                    prefixWithQualifiedName);
+    }
+
+    private PrettySerializer(String indent,
+                             String space,
+                             String newline,
+                             String entrySep,
+                             boolean encloseOuter,
+                             boolean strict,
+                             boolean prefixWithQualifiedName) {
         this.indent = indent;
         this.space = space;
         this.newline = newline;
         this.entrySep = entrySep;
         this.encloseOuter = encloseOuter;
         this.strict = strict;
+        this.prefixWithQualifiedName = prefixWithQualifiedName;
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
     int serialize(OutputStream out, Message message) {
         CountingOutputStream cout = new CountingOutputStream(out);
         IndentedPrintWriter builder = new IndentedPrintWriter(cout, indent, newline);
-        appendMessage(builder, message, encloseOuter);
+        if (prefixWithQualifiedName) {
+            builder.append(message.descriptor().getQualifiedName())
+                   .append(space);
+        }
+        appendMessage(builder, message, encloseOuter || prefixWithQualifiedName);
         builder.flush();
         return cout.getByteCount();
     }
@@ -219,12 +259,20 @@ public class PrettySerializer extends Serializer {
             throws IOException {
         Tokenizer tokenizer = new Tokenizer(input, encloseOuter);
         Token first = tokenizer.peek();
-        if (first != null && first.isSymbol(Token.kMessageStart)) {
-            tokenizer.next();
-            return readMessage(tokenizer, descriptor, true);
-        } else {
-            return readMessage(tokenizer, descriptor, false);
+        if (first == null) {
+            return descriptor.builder().build();
         }
+
+        boolean requireEnd = false;
+        if (first.asString().equals(descriptor.getQualifiedName())) {
+            tokenizer.next();  // skip the name
+            tokenizer.expectSymbol("message start", Token.kMessageStart);
+            requireEnd = true;
+        } else if (first.isSymbol(Token.kMessageStart)) {
+            tokenizer.next();
+            requireEnd = true;
+        }
+        return readMessage(tokenizer, descriptor, requireEnd);
     }
 
     private <Message extends PMessage<Message, Field>, Field extends PField>

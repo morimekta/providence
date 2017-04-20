@@ -45,7 +45,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public abstract class CMessage<Message extends PMessage<Message, Field>, Field extends PField>
         implements PMessage<Message, Field>, JsonCompactible {
-    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer("", "", "", ",", true);
+    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer().compact();
 
     private final Map<Integer, Object> values;
 

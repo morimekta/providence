@@ -40,16 +40,8 @@ import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
-import net.morimekta.providence.serializer.BinarySerializer;
-import net.morimekta.providence.serializer.FastBinarySerializer;
-import net.morimekta.providence.serializer.JsonSerializer;
-import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerProvider;
-import net.morimekta.providence.thrift.TBinaryProtocolSerializer;
-import net.morimekta.providence.thrift.TCompactProtocolSerializer;
-import net.morimekta.providence.thrift.TJsonProtocolSerializer;
-import net.morimekta.providence.thrift.TTupleProtocolSerializer;
 import net.morimekta.providence.thrift.ThriftSerializerProvider;
 import net.morimekta.providence.thrift.client.NonblockingSocketClientHandler;
 import net.morimekta.providence.thrift.client.SocketClientHandler;
@@ -164,32 +156,7 @@ public class RPCOptions extends CommonOptions {
     }
 
     protected Serializer getSerializer(Format format) {
-        switch (format) {
-            case binary:
-                return new BinarySerializer(strict, true);
-            case unversioned_binary:
-                return new BinarySerializer(strict, false);
-            case json:
-                return new JsonSerializer(strict);
-            case named_json:
-                return new JsonSerializer(strict).named();
-            case pretty_json:
-                return new JsonSerializer(strict).pretty();
-            case fast_binary:
-                return new FastBinarySerializer(strict);
-            case pretty:
-                return new PrettySerializer("  ", " ", "\n", "", false);
-            case binary_protocol:
-                return new TBinaryProtocolSerializer(strict);
-            case json_protocol:
-                return new TJsonProtocolSerializer(strict);
-            case compact_protocol:
-                return new TCompactProtocolSerializer(strict);
-            case tuple_protocol:
-                return new TTupleProtocolSerializer(strict);
-        }
-
-        throw new ArgumentException("Unknown format %s", format.name());
+        return format.createSerializer(strict);
     }
 
     public PService getDefinition() throws ParseException, IOException {

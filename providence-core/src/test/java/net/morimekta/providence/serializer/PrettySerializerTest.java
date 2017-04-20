@@ -19,7 +19,6 @@
 
 package net.morimekta.providence.serializer;
 
-import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
@@ -31,6 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.morimekta.test.providence.core.calculator.Operand.withImaginary;
+import static net.morimekta.test.providence.core.calculator.Operand.withNumber;
+import static net.morimekta.test.providence.core.calculator.Operand.withOperation;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -45,23 +47,12 @@ public class PrettySerializerTest {
     public void setUp() {
         mOperation = Operation.builder()
                               .setOperator(Operator.MULTIPLY)
-                              .addToOperands(Operand.builder()
-                                                    .setOperation(Operation.builder()
-                                                                           .setOperator(Operator.ADD)
-                                                                           .addToOperands(Operand.builder()
-                                                                                                 .setNumber(1234)
-                                                                                                 .build())
-                                                                           .addToOperands(Operand.builder()
-                                                                                                 .setNumber(4.321)
-                                                                                                 .build())
-                                                                           .build())
-                                                    .build())
-                              .addToOperands(Operand.builder()
-                                                    .setImaginary(Imaginary.builder()
-                                                                           .setV(1.7)
-                                                                           .setI(-2.0)
-                                                                           .build())
-                                                    .build())
+                              .addToOperands(withOperation(Operation.builder()
+                                                                    .setOperator(Operator.ADD)
+                                                                    .addToOperands(withNumber(1234))
+                                                                    .addToOperands(withNumber(4.321))
+                                                                    .build()))
+                              .addToOperands(withImaginary(new Imaginary(1.7, -2.0)))
                               .build();
 
         mFormatted = "operator = MULTIPLY\n" +
@@ -91,14 +82,14 @@ public class PrettySerializerTest {
     @Test
     public void testFormat() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrettySerializer serializer = new PrettySerializer("  ", " ", "\n", "", false);
+        PrettySerializer serializer = new PrettySerializer().debug();
         serializer.serialize(baos, mOperation);
         assertEquals(mFormatted, new String(baos.toByteArray(), UTF_8));
     }
 
     @Test
     public void testParse() throws IOException {
-        PrettySerializer serializer = new PrettySerializer("  ", " ", "\n", "", false);
+        PrettySerializer serializer = new PrettySerializer().debug();
 
         Operation actual = serializer.deserialize(getClass().getResourceAsStream("/json/calculator/pretty.cfg"), Operation.kDescriptor);
 

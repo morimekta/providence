@@ -46,9 +46,6 @@ public class BinaryFormatUtils {
                     Object value = readFieldValue(input, fieldInfo, field.getDescriptor(), strict);
                     builder.set(field.getKey(), value);
                 } else {
-                    if (strict) {
-                        throw new SerializerException("Unknown field " + fieldInfo.getId() + " for type " + descriptor.getQualifiedName());
-                    }
                     readFieldValue(input, fieldInfo, null, false);
                 }
 
@@ -167,8 +164,7 @@ public class BinaryFormatUtils {
                 PDescriptor valueType = null;
                 PMap.Builder<Object, Object> out;
                 if (type != null) {
-                    if (!type.getType()
-                             .equals(PType.MAP)) {
+                    if (!type.getType().equals(PType.MAP)) {
                         throw new SerializerException("Invalid type for map encoding: " + type);
                     }
 
@@ -190,7 +186,11 @@ public class BinaryFormatUtils {
                     if (key != null && value != null) {
                         out.put(key, value);
                     } else if (strict) {
-                        throw new SerializerException("Null key or value in map.");
+                        if (key == null) {
+                            throw new SerializerException("Null key in map");
+                        } else {
+                            throw new SerializerException("Null value in map");
+                        }
                     }
                 }
                 return out.build();
@@ -212,11 +212,11 @@ public class BinaryFormatUtils {
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    Object key = readFieldValue(in, itemInfo, entryType, strict);
-                    if (key != null) {
-                        out.add(key);
+                    Object value = readFieldValue(in, itemInfo, entryType, strict);
+                    if (value != null) {
+                        out.add(value);
                     } else if (strict) {
-                        throw new SerializerException("Null value in set.");
+                        throw new SerializerException("Null value in set");
                     }
                 }
 
@@ -239,11 +239,11 @@ public class BinaryFormatUtils {
 
                 FieldInfo itemInfo = new FieldInfo(0, itemT);
                 for (int i = 0; i < size; ++i) {
-                    Object key = readFieldValue(in, itemInfo, entryType, strict);
-                    if (key != null) {
-                        out.add(key);
+                    Object value = readFieldValue(in, itemInfo, entryType, strict);
+                    if (value != null) {
+                        out.add(value);
                     } else if (strict) {
-                        throw new SerializerException("Null value in list.");
+                        throw new SerializerException("Null value in list");
                     }
                 }
 
