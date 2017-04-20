@@ -1,5 +1,14 @@
 package net.morimekta.hazelcast.it;
 
+import net.morimekta.test.hazelcast.v2.AllFields;
+import net.morimekta.test.hazelcast.v2.OptionalFields;
+import net.morimekta.test.hazelcast.v2.OptionalListFields;
+import net.morimekta.test.hazelcast.v2.OptionalMapFields;
+import net.morimekta.test.hazelcast.v2.OptionalMapListFields;
+import net.morimekta.test.hazelcast.v2.OptionalMapSetFields;
+import net.morimekta.test.hazelcast.v2.OptionalSetFields;
+import net.morimekta.test.hazelcast.v2.UnionFields;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -36,36 +45,32 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalFieldsAll() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalFields expected = generator.nextOptionalFieldsV2(true);
+        OptionalFields expected = generator.nextOptionalFieldsV2(true);
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalFields actual = readMap.get(key)
-                                                                       .build();
+        OptionalFields actual = readMap.get(key)
+                                       .build();
 
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalFields newExpected = actual.mutate()
-                                                                           .setStringValue(
-                                                                                   actual.getStringValue() + "asdf")
-                                                                           .setDoubleValue(
-                                                                                   actual.getDoubleValue() - 0.12345)
-                                                                           .setBooleanValue(!actual.isBooleanValue())
-                                                                           .setIntegerValue(
-                                                                                   actual.getIntegerValue() - 12345)
-                                                                           .setLongValue(actual.getLongValue() - 123456)
-                                                                           .setShortValue((short) (
-                                                                                   actual.getShortValue() - 1234))
-                                                                           .build();
+        OptionalFields newExpected = actual.mutate()
+                                           .setStringValue(actual.getStringValue() + "asdf")
+                                           .setDoubleValue(actual.getDoubleValue() - 0.12345)
+                                           .setBooleanValue(!actual.isBooleanValue())
+                                           .setIntegerValue(actual.getIntegerValue() - 12345)
+                                           .setLongValue(actual.getLongValue() - 123456)
+                                           .setShortValue((short) (actual.getShortValue() - 1234))
+                                           .build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalFields newActual = writeMap.get(key)
-                                                                           .build();
+        OptionalFields newActual = writeMap.get(key)
+                                           .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
         assertThat(newExpected, is(equalToMessage(newActual)));
@@ -77,36 +82,32 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalFieldsRand() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalFields expected = generator.nextOptionalFieldsV2();
+        OptionalFields expected = generator.nextOptionalFieldsV2();
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalFields actual = readMap.get(key)
-                                                                       .build();
+        OptionalFields actual = readMap.get(key)
+                                       .build();
 
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalFields newExpected = actual.mutate()
-                                                                           .setStringValue(
-                                                                                   actual.getStringValue() + "asdf")
-                                                                           .setDoubleValue(
-                                                                                   actual.getDoubleValue() - 0.12345)
-                                                                           .setBooleanValue(!actual.isBooleanValue())
-                                                                           .setIntegerValue(
-                                                                                   actual.getIntegerValue() - 12345)
-                                                                           .setLongValue(actual.getLongValue() - 123456)
-                                                                           .setShortValue((short) (
-                                                                                   actual.getShortValue() - 1234))
-                                                                           .build();
+        OptionalFields newExpected = actual.mutate()
+                                           .setStringValue(actual.getStringValue() + "asdf")
+                                           .setDoubleValue(actual.getDoubleValue() - 0.12345)
+                                           .setBooleanValue(!actual.isBooleanValue())
+                                           .setIntegerValue(actual.getIntegerValue() - 12345)
+                                           .setLongValue(actual.getLongValue() - 123456)
+                                           .setShortValue((short) (actual.getShortValue() - 1234))
+                                           .build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalFields newActual = writeMap.get(key)
-                                                                           .build();
+        OptionalFields newActual = writeMap.get(key)
+                                           .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
         assertThat(newExpected, is(equalToMessage(newActual)));
@@ -118,36 +119,51 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalListFieldsAll() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalListFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalListFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields expected = generator.nextOptionalListFieldsV2(true);
+        OptionalListFields expected = generator.nextOptionalListFieldsV2(true);
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields actual = readMap.get(key)
-                                                                           .build();
+        OptionalListFields actual = readMap.get(key)
+                                           .build();
 
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields newExpected =
-                actual.mutate()
-                      .setStringValue(actual.getStringValue().stream().filter(t -> t.contains("ab"))
-                                            .collect(Collectors.toList()))
-                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
-                                            .collect(Collectors.toList()))
-                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
-                                              .collect(Collectors.toList()))
-                      .setIntegerValue(actual.getIntegerValue().stream().limit(25).collect(Collectors.toList()))
-                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
-                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
-                      .build();
+        OptionalListFields newExpected = actual.mutate()
+                                               .setStringValue(actual.getStringValue()
+                                                                     .stream()
+                                                                     .filter(t -> t.contains("ab"))
+                                                                     .collect(Collectors.toList()))
+                                               .setDoubleValue(actual.getDoubleValue()
+                                                                     .stream()
+                                                                     .filter(t -> t < 0.5)
+                                                                     .collect(Collectors.toList()))
+                                               .setBooleanValues(actual.getBooleanValues()
+                                                                       .stream()
+                                                                       .map(t -> !t)
+                                                                       .limit(25)
+                                                                       .collect(Collectors.toList()))
+                                               .setIntegerValue(actual.getIntegerValue()
+                                                                      .stream()
+                                                                      .limit(25)
+                                                                      .collect(Collectors.toList()))
+                                               .setLongValue(actual.getLongValue()
+                                                                   .stream()
+                                                                   .limit(23)
+                                                                   .collect(Collectors.toList()))
+                                               .setShortValues(actual.getShortValues()
+                                                                     .stream()
+                                                                     .limit(12)
+                                                                     .collect(Collectors.toList()))
+                                               .build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields newActual = writeMap.get(key)
-                                                                               .build();
+        OptionalListFields newActual = writeMap.get(key)
+                                               .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
         assertThat(newExpected, is(equalToMessage(newActual)));
@@ -159,66 +175,67 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalListFieldsRand() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalListFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalListFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields expected = generator.nextOptionalListFieldsV2();
+        OptionalListFields expected = generator.nextOptionalListFieldsV2();
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields actual = readMap.get(key)
-                                                                           .build();
+        OptionalListFields actual = readMap.get(key)
+                                           .build();
         assertThat(expected.toString(), is(actual.toString()));
         assertThat(expected, is(equalToMessage(actual)));
         assertThat(expected.hashCode(), is(actual.hashCode()));
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields._Builder newBuilder = actual.mutate();
-        if( actual.hasStringValue() ) {
+        OptionalListFields._Builder newBuilder = actual.mutate();
+        if (actual.hasStringValue()) {
             newBuilder.setStringValue(actual.getStringValue()
-                                             .stream()
-                                             .filter(t -> t.contains("ab"))
-                                             .collect(Collectors.toList()));
+                                            .stream()
+                                            .filter(t -> t.contains("ab"))
+                                            .collect(Collectors.toList()));
         }
-        if( actual.hasDoubleValue() ) {
+        if (actual.hasDoubleValue()) {
             newBuilder.setDoubleValue(actual.getDoubleValue()
-                                             .stream()
-                                             .filter(t -> t < 0.5)
-                                             .collect(Collectors.toList()));
+                                            .stream()
+                                            .filter(t -> t < 0.5)
+                                            .collect(Collectors.toList()));
         }
-        if( actual.hasBooleanValues() ) {
+        if (actual.hasBooleanValues()) {
             newBuilder.setBooleanValues(actual.getBooleanValues()
-                                               .stream()
-                                               .map(t -> !t)
-                                               .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
-                                               .collect(Collectors.toList()));
-        }
-        if( actual.hasIntegerValue() ) {
-            newBuilder.setIntegerValue(actual.getIntegerValue()
                                               .stream()
-                                              .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
+                                              .map(t -> !t)
+                                              .limit(actual.numBooleanValues() -
+                                                     rand.nextInt(actual.numBooleanValues()))
                                               .collect(Collectors.toList()));
         }
-        if( actual.hasLongValue() ) {
-            newBuilder.setLongValue(actual.getLongValue()
-                                           .stream()
-                                           .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
-                                           .collect(Collectors.toList()));
-        }
-        if( actual.hasShortValues() ) {
-            newBuilder.setShortValues(actual.getShortValues()
+        if (actual.hasIntegerValue()) {
+            newBuilder.setIntegerValue(actual.getIntegerValue()
                                              .stream()
-                                             .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                             .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
                                              .collect(Collectors.toList()));
         }
+        if (actual.hasLongValue()) {
+            newBuilder.setLongValue(actual.getLongValue()
+                                          .stream()
+                                          .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
+                                          .collect(Collectors.toList()));
+        }
+        if (actual.hasShortValues()) {
+            newBuilder.setShortValues(actual.getShortValues()
+                                            .stream()
+                                            .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
+                                            .collect(Collectors.toList()));
+        }
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields newExpected = newBuilder.build();
+        OptionalListFields newExpected = newBuilder.build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalListFields newActual = writeMap.get(key)
-                                                                               .build();
+        OptionalListFields newActual = writeMap.get(key)
+                                               .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
         assertThat(newExpected, is(equalToMessage(newActual)));
@@ -230,36 +247,51 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalSetFieldsAll() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields expected = generator.nextOptionalSetFieldsV2(true);
+        OptionalSetFields expected = generator.nextOptionalSetFieldsV2(true);
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields actual = readMap.get(key)
-                                                                           .build();
+        OptionalSetFields actual = readMap.get(key)
+                                          .build();
 
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected =
-                actual.mutate()
-                      .setStringValue(actual.getStringValue().stream().filter(t -> t.contains("ab"))
-                                            .collect(Collectors.toList()))
-                      .setDoubleValue(actual.getDoubleValue().stream().filter(t -> t < 0.5)
-                                            .collect(Collectors.toList()))
-                      .setBooleanValues(actual.getBooleanValues().stream().map(t -> !t).limit(25)
-                                              .collect(Collectors.toList()))
-                      .setIntegerValue(actual.getIntegerValue().stream().limit(25).collect(Collectors.toList()))
-                      .setLongValue(actual.getLongValue().stream().limit(23).collect(Collectors.toList()))
-                      .setShortValues(actual.getShortValues().stream().limit(12).collect(Collectors.toList()))
-                      .build();
+        OptionalSetFields newExpected = actual.mutate()
+                                              .setStringValue(actual.getStringValue()
+                                                                    .stream()
+                                                                    .filter(t -> t.contains("ab"))
+                                                                    .collect(Collectors.toList()))
+                                              .setDoubleValue(actual.getDoubleValue()
+                                                                    .stream()
+                                                                    .filter(t -> t < 0.5)
+                                                                    .collect(Collectors.toList()))
+                                              .setBooleanValues(actual.getBooleanValues()
+                                                                      .stream()
+                                                                      .map(t -> !t)
+                                                                      .limit(25)
+                                                                      .collect(Collectors.toList()))
+                                              .setIntegerValue(actual.getIntegerValue()
+                                                                     .stream()
+                                                                     .limit(25)
+                                                                     .collect(Collectors.toList()))
+                                              .setLongValue(actual.getLongValue()
+                                                                  .stream()
+                                                                  .limit(23)
+                                                                  .collect(Collectors.toList()))
+                                              .setShortValues(actual.getShortValues()
+                                                                    .stream()
+                                                                    .limit(12)
+                                                                    .collect(Collectors.toList()))
+                                              .build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields newActual = writeMap.get(key)
-                                                                               .build();
+        OptionalSetFields newActual = writeMap.get(key)
+                                              .build();
 
         assertThat(newExpected.toString(), is(newActual.toString()));
         assertThat(newExpected, is(equalToMessage(newActual)));
@@ -271,65 +303,375 @@ public class HazelcastVersion2Test extends GenericMethods {
     public void testVersion2OptionalSetFieldsRand() throws InterruptedException {
         String mapName = nextString();
 
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
-        IMap<String, net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
+        IMap<String, OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields expected = generator.nextOptionalSetFieldsV2();
+        OptionalSetFields expected = generator.nextOptionalSetFieldsV2();
 
         String key = nextString();
         writeMap.put(key, expected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields actual = readMap.get(key)
-                                                                           .build();
+        OptionalSetFields actual = readMap.get(key)
+                                          .build();
         assertThat(expected, is(equalToMessage(actual)));
         assertThat(expected.hashCode(), is(actual.hashCode()));
         assertThat(expected, is(actual));
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields._Builder newBuilder = actual.mutate();
-        if( actual.hasStringValue() ) {
+        OptionalSetFields._Builder newBuilder = actual.mutate();
+        if (actual.hasStringValue()) {
             newBuilder.setStringValue(actual.getStringValue()
                                             .stream()
                                             .filter(t -> t.contains("ab"))
                                             .collect(Collectors.toList()));
         }
-        if( actual.hasDoubleValue() ) {
+        if (actual.hasDoubleValue()) {
             newBuilder.setDoubleValue(actual.getDoubleValue()
                                             .stream()
                                             .filter(t -> t < 0.5)
                                             .collect(Collectors.toList()));
         }
-        if( actual.hasBooleanValues() ) {
+        if (actual.hasBooleanValues()) {
             newBuilder.setBooleanValues(actual.getBooleanValues()
                                               .stream()
                                               .map(t -> !t)
-                                              .limit(actual.numBooleanValues() - rand.nextInt(actual.numBooleanValues()))
+                                              .limit(actual.numBooleanValues() -
+                                                     rand.nextInt(actual.numBooleanValues()))
                                               .collect(Collectors.toList()));
         }
-        if( actual.hasIntegerValue() ) {
+        if (actual.hasIntegerValue()) {
             newBuilder.setIntegerValue(actual.getIntegerValue()
                                              .stream()
                                              .limit(actual.numIntegerValue() - rand.nextInt(actual.numIntegerValue()))
                                              .collect(Collectors.toList()));
         }
-        if( actual.hasLongValue() ) {
+        if (actual.hasLongValue()) {
             newBuilder.setLongValue(actual.getLongValue()
                                           .stream()
                                           .limit(actual.numLongValue() - rand.nextInt(actual.numLongValue()))
                                           .collect(Collectors.toList()));
         }
-        if( actual.hasShortValues() ) {
+        if (actual.hasShortValues()) {
             newBuilder.setShortValues(actual.getShortValues()
                                             .stream()
                                             .limit(actual.numShortValues() - rand.nextInt(actual.numShortValues()))
                                             .collect(Collectors.toList()));
         }
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected = newBuilder.build();
+        OptionalSetFields newExpected = newBuilder.build();
 
         readMap.put(key, newExpected.mutate());
 
-        net.morimekta.test.hazelcast.v2.OptionalSetFields newActual = writeMap.get(key)
-                                                                               .build();
+        OptionalSetFields newActual = writeMap.get(key)
+                                              .build();
+
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapFields expected = generator.nextOptionalMapFieldsV2(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapFields actual = readMap.get(key)
+                                          .build();
+
+        assertThat(expected, is(actual));
+
+        OptionalMapFields newExpected = actual.mutate()
+                                              .setIntegerValue(generator.item.nextIntegerMap())
+                                              .setDoubleValue(generator.item.nextDoubleMap())
+                                              .setLongValue(generator.item.nextLongMap())
+                                              .setShortValue(generator.item.nextShortMap())
+                                              .setStringValue(generator.item.nextStringMap())
+                                              .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapFields newActual = writeMap.get(key)
+                                              .build();
+
+        for (OptionalMapFields._Field field : OptionalMapFields._Field.values()) {
+            assertThat(actual.has(field), is(true));
+            assertThat(expected.has(field), is(true));
+            assertThat(newActual.has(field), is(true));
+            assertThat(newExpected.has(field), is(true));
+        }
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapFields expected = generator.nextOptionalMapFieldsV2();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapFields actual = readMap.get(key)
+                                          .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+
+        OptionalMapFields newExpected = actual.mutate()
+                                              .setIntegerValue(generator.item.nextIntegerMap())
+                                              .setDoubleValue(generator.item.nextDoubleMap())
+                                              .setLongValue(generator.item.nextLongMap())
+                                              .setShortValue(generator.item.nextShortMap())
+                                              .setStringValue(generator.item.nextStringMap())
+                                              .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapFields newActual = writeMap.get(key)
+                                              .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapListFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapListFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapListFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapListFields expected = generator.nextOptionalMapListFieldsV2(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapListFields actual = readMap.get(key)
+                                              .build();
+
+        assertThat(expected, is(actual));
+
+        OptionalMapListFields newExpected = actual.mutate()
+                                                  .setIntegerValueList(generator.item.nextIntegerListMap())
+                                                  .setDoubleValueList(generator.item.nextDoubleListMap())
+                                                  .setLongValueList(generator.item.nextLongListMap())
+                                                  .setShortValueList(generator.item.nextShortListMap())
+                                                  .setStringValueList(generator.item.nextStringListMap())
+                                                  .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapListFields newActual = writeMap.get(key)
+                                                  .build();
+
+        for (OptionalMapListFields._Field field : OptionalMapListFields._Field.values()) {
+            assertThat(actual.has(field), is(true));
+            assertThat(expected.has(field), is(true));
+            assertThat(newActual.has(field), is(true));
+            assertThat(newExpected.has(field), is(true));
+        }
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapListFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapListFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapListFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapListFields expected = generator.nextOptionalMapListFieldsV2();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapListFields actual = readMap.get(key)
+                                              .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+
+        OptionalMapListFields newExpected = actual.mutate()
+                                                  .setIntegerValueList(generator.item.nextIntegerListMap())
+                                                  .setDoubleValueList(generator.item.nextDoubleListMap())
+                                                  .setLongValueList(generator.item.nextLongListMap())
+                                                  .setShortValueList(generator.item.nextShortListMap())
+                                                  .setStringValueList(generator.item.nextStringListMap())
+                                                  .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapListFields newActual = writeMap.get(key)
+                                                  .build();
+
+        assertThat(newExpected.toString(), is(newActual.toString()));
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapSetFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapSetFields expected = generator.nextOptionalMapSetFieldsV2(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapSetFields actual = readMap.get(key)
+                                             .build();
+
+        assertThat(expected, is(actual));
+
+        OptionalMapSetFields newExpected = actual.mutate()
+                                                 .setIntegerValueSet(generator.item.nextIntegerSetMap())
+                                                 .setDoubleValueSet(generator.item.nextDoubleSetMap())
+                                                 .setLongValueSet(generator.item.nextLongSetMap())
+                                                 .setShortValueSet(generator.item.nextShortSetMap())
+                                                 .setStringValueSet(generator.item.nextStringSetMap())
+                                                 .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapSetFields newActual = writeMap.get(key)
+                                                 .build();
+
+        for (OptionalMapSetFields._Field field : OptionalMapSetFields._Field.values()) {
+            assertThat(actual.has(field), is(true));
+            assertThat(expected.has(field), is(true));
+            assertThat(newActual.has(field), is(true));
+            assertThat(newExpected.has(field), is(true));
+        }
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2OptionalMapSetFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, OptionalMapSetFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, OptionalMapSetFields._Builder> readMap = instance2.getMap(mapName);
+
+        OptionalMapSetFields expected = generator.nextOptionalMapSetFieldsV2();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        OptionalMapSetFields actual = readMap.get(key)
+                                             .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+
+        OptionalMapSetFields newExpected = actual.mutate()
+                                                 .setIntegerValueSet(generator.item.nextIntegerSetMap())
+                                                 .setDoubleValueSet(generator.item.nextDoubleSetMap())
+                                                 .setLongValueSet(generator.item.nextLongSetMap())
+                                                 .setShortValueSet(generator.item.nextShortSetMap())
+                                                 .setStringValueSet(generator.item.nextStringSetMap())
+                                                 .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        OptionalMapSetFields newActual = writeMap.get(key)
+                                                 .build();
+
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2UnionFieldsAll() throws InterruptedException {
+        String mapName = nextString();
+
+        IMap<String, UnionFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, UnionFields._Builder> readMap = instance2.getMap(mapName);
+
+        UnionFields expected = generator.nextUnionFieldsV2(true);
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        UnionFields actual = readMap.get(key)
+                                    .build();
+
+        assertThat(expected, is(actual));
+
+        UnionFields newExpected = actual.mutate()
+                                        .setIntegerValue(generator.item.nextInt())
+                                        .setDoubleValue(generator.item.nextDouble())
+                                        .setLongValue(generator.item.nextLong())
+                                        .setShortValue(generator.item.nextShort())
+                                        .setStringValue(generator.item.nextString())
+                                        .setAllFields(AllFields.withByteValue(generator.item.nextByte()))
+                                        .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        UnionFields newActual = writeMap.get(key)
+                                        .build();
+
+        for (UnionFields._Field field : UnionFields._Field.values()) {
+            assertThat(actual.has(field), is(true));
+            assertThat(expected.has(field), is(true));
+            assertThat(newActual.has(field), is(true));
+            assertThat(newExpected.has(field), is(true));
+        }
+        assertThat(newExpected, is(equalToMessage(newActual)));
+        assertThat(newExpected.hashCode(), is(newActual.hashCode()));
+        assertThat(newExpected, is(newActual));
+    }
+
+    @Test
+    public void testVersion2UnionFieldsRand() throws InterruptedException {
+        String mapName = nextString();
+        IMap<String, UnionFields._Builder> writeMap = instance1.getMap(mapName);
+        IMap<String, UnionFields._Builder> readMap = instance2.getMap(mapName);
+
+        UnionFields expected = generator.nextUnionFieldsV2();
+
+        String key = nextString();
+        writeMap.put(key, expected.mutate());
+
+        UnionFields actual = readMap.get(key)
+                                    .build();
+
+        assertThat(expected, is(equalToMessage(actual)));
+
+        UnionFields newExpected = actual.mutate()
+                                        .setIntegerValue(generator.item.nextInt())
+                                        .setDoubleValue(generator.item.nextDouble())
+                                        .setLongValue(generator.item.nextLong())
+                                        .setShortValue(generator.item.nextShort())
+                                        .setStringValue(generator.item.nextString())
+                                        .setAllFields(AllFields.withByteValue(generator.item.nextByte()))
+                                        .build();
+
+        readMap.put(key, newExpected.mutate());
+
+        UnionFields newActual = writeMap.get(key)
+                                        .build();
 
         assertThat(newExpected, is(equalToMessage(newActual)));
         assertThat(newExpected.hashCode(), is(newActual.hashCode()));

@@ -196,7 +196,7 @@ public class HazelcastVersion1ToVersion2Test extends GenericMethods {
 
         net.morimekta.test.hazelcast.v2.OptionalListFields newExpected =
                 actual.mutate()
-                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+                      .setAnotherStringValues(generator.item.nextStrings()).build();
 
         readMap.put(key, newExpected.mutate());
 
@@ -225,7 +225,7 @@ public class HazelcastVersion1ToVersion2Test extends GenericMethods {
 
         net.morimekta.test.hazelcast.v2.OptionalListFields newExpected =
                 actual.mutate()
-                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+                      .setAnotherStringValues(generator.item.nextStrings()).build();
 
         readMap.put(key, newExpected.mutate());
 
@@ -254,7 +254,7 @@ public class HazelcastVersion1ToVersion2Test extends GenericMethods {
 
         net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected =
                 actual.mutate()
-                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+                      .setAnotherStringValues(generator.item.nextStrings()).build();
 
         readMap.put(key, newExpected.mutate());
 
@@ -283,7 +283,7 @@ public class HazelcastVersion1ToVersion2Test extends GenericMethods {
 
         net.morimekta.test.hazelcast.v2.OptionalSetFields newExpected =
                 actual.mutate()
-                      .setAnotherStringValues(generator.entities.nextStrings()).build();
+                      .setAnotherStringValues(generator.item.nextStrings()).build();
 
         readMap.put(key, newExpected.mutate());
 

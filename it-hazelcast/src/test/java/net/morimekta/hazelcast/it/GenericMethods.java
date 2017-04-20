@@ -2,14 +2,11 @@ package net.morimekta.hazelcast.it;
 
 import com.hazelcast.config.Config;
 import org.jfairy.Fairy;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.core.Is.is;
@@ -19,6 +16,11 @@ import static org.junit.Assert.assertThat;
  * Created by scrier on 2017-01-05.
  */
 public class GenericMethods {
+
+    static { // fix logging.
+        final String logging = "hazelcast.logging.type";
+        System.setProperty(logging, "none");
+    }
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -32,17 +34,7 @@ public class GenericMethods {
         rand = new Random();
         fairy = Fairy.create();
         generator = new HazelcastGenerator();
-        // Disable the hazelcast logging for INFO. set to INFO for normal behaviour.
-        Logger logger = Logger.getLogger("");
-        logger.setLevel(Level.WARNING);
     }
-
-    @After
-    public void tearDown() {
-        // Important to make sure that all instances on this computer is destroyed.
-        //Hazelcast.shutdownAll();
-    }
-
 
     protected static Config getV1Config() {
         Config config = new Config();
