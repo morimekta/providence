@@ -884,6 +884,7 @@
                 <module>providence-testing</module>
                 <module>providence-thrift</module>
                 <module>providence-config</module>
+                <module>providence-storage</module>
                 <module>providence-jax-rs</module>
             </modules>
         </profile>
