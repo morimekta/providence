@@ -2,9 +2,9 @@ package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.gentests.hazelcast.PortableReader;
 import net.morimekta.providence.gentests.hazelcast.PortableWriter;
+import net.morimekta.test.hazelcast.CompactFields;
 import net.morimekta.test.hazelcast.Hazelcast_Factory;
 import net.morimekta.test.hazelcast.OptionalFields;
-import net.morimekta.test.hazelcast.CompactFields;
 import net.morimekta.test.hazelcast.OptionalListFields;
 import net.morimekta.test.hazelcast.Value;
 import net.morimekta.util.Binary;
@@ -14,11 +14,11 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.jfairy.Fairy;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.jfairy.Fairy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

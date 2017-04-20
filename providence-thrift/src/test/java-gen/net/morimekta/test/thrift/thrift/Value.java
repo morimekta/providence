@@ -6,11 +6,6 @@
  */
 package net.morimekta.test.thrift.thrift;
 
-
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
-
 public enum Value implements org.apache.thrift.TEnum {
   FIRST(1),
   SECOND(2),

@@ -22,11 +22,9 @@ package net.morimekta.providence.generator.format.java.shared;
 
 import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
-import net.morimekta.util.io.IndentedPrintWriter;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Base interface for formatting a providence message class.

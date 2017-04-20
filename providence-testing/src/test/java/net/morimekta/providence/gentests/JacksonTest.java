@@ -1,7 +1,6 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.test.jackson.CompactFields;
-import net.morimekta.test.jackson.DefaultValues;
 import net.morimekta.test.jackson.OptionalFields;
 import net.morimekta.test.jackson.UnionFields;
 import net.morimekta.test.jackson.Value;

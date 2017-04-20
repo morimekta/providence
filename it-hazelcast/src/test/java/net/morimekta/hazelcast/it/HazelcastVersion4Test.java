@@ -3,6 +3,8 @@ package net.morimekta.hazelcast.it;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.stream.Collectors;
@@ -16,11 +18,23 @@ import static org.junit.Assert.assertThat;
  */
 public class HazelcastVersion4Test extends GenericMethods {
 
+    static HazelcastInstance instance1;
+    static HazelcastInstance instance2;
+
+    @BeforeClass
+    public static void setupClass() {
+        instance1 = Hazelcast.newHazelcastInstance(getV4Config());
+        instance2 = Hazelcast.newHazelcastInstance(getV4Config());
+    }
+
+    @AfterClass
+    public static void shutDownClass() {
+        Hazelcast.shutdownAll();
+    }
+
     @Test
     public void testVersion4OptionalFieldsAll() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalFields._Builder> readMap = instance2.getMap(mapName);
@@ -62,8 +76,6 @@ public class HazelcastVersion4Test extends GenericMethods {
     @Test
     public void testVersion4OptionalFieldsRand() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalFields._Builder> readMap = instance2.getMap(mapName);
@@ -105,8 +117,6 @@ public class HazelcastVersion4Test extends GenericMethods {
     @Test
     public void testVersion4OptionalListFieldsAll() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalListFields._Builder> readMap = instance2.getMap(mapName);
@@ -148,8 +158,6 @@ public class HazelcastVersion4Test extends GenericMethods {
     @Test
     public void testVersion4OptionalListFieldsRand() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalListFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalListFields._Builder> readMap = instance2.getMap(mapName);
@@ -222,8 +230,6 @@ public class HazelcastVersion4Test extends GenericMethods {
     @Test
     public void testVersion4OptionalSetFieldsAll() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);
@@ -265,8 +271,6 @@ public class HazelcastVersion4Test extends GenericMethods {
     @Test
     public void testVersion4OptionalSetFieldsRand() throws InterruptedException {
         String mapName = nextString();
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance(getV4Config());
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance(getV4Config());
 
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> writeMap = instance1.getMap(mapName);
         IMap<String, net.morimekta.test.hazelcast.v4.OptionalSetFields._Builder> readMap = instance2.getMap(mapName);

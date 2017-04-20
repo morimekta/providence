@@ -73,6 +73,13 @@
             <artifactId>hazelcast</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>${hazelcast.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jfairy</groupId>
             <artifactId>jfairy</artifactId>
         </dependency>

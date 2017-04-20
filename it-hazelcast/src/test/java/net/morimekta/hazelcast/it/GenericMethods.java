@@ -1,7 +1,6 @@
 package net.morimekta.hazelcast.it;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
 import org.jfairy.Fairy;
 import org.junit.After;
 import org.junit.Before;
@@ -41,11 +40,11 @@ public class GenericMethods {
     @After
     public void tearDown() {
         // Important to make sure that all instances on this computer is destroyed.
-        Hazelcast.shutdownAll();
+        //Hazelcast.shutdownAll();
     }
 
 
-    protected Config getV1Config() {
+    protected static Config getV1Config() {
         Config config = new Config();
         net.morimekta.test.hazelcast.v1.Hazelcastv1_Factory.populateConfig(config);
         config.getSerializationConfig()
@@ -53,7 +52,7 @@ public class GenericMethods {
         return config;
     }
 
-    protected Config getV2Config() {
+    protected static Config getV2Config() {
         Config config = new Config();
         net.morimekta.test.hazelcast.v2.Hazelcastv2_Factory.populateConfig(config);
         config.getSerializationConfig()
@@ -61,7 +60,7 @@ public class GenericMethods {
         return config;
     }
 
-    protected Config getV3Config() {
+    protected static Config getV3Config() {
         Config config = new Config();
         net.morimekta.test.hazelcast.v3.Hazelcastv3_Factory.populateConfig(config);
         config.getSerializationConfig()
@@ -69,7 +68,7 @@ public class GenericMethods {
         return config;
     }
 
-    protected Config getV4Config() {
+    protected static Config getV4Config() {
         Config config = new Config();
         net.morimekta.test.hazelcast.v4.Hazelcastv4_Factory.populateConfig(config);
         config.getSerializationConfig()

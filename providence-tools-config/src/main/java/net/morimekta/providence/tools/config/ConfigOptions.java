@@ -25,7 +25,6 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.args.Flag;
 import net.morimekta.console.args.Option;
-import net.morimekta.console.args.Property;
 import net.morimekta.console.args.SubCommand;
 import net.morimekta.console.args.SubCommandSet;
 import net.morimekta.console.util.STTY;
