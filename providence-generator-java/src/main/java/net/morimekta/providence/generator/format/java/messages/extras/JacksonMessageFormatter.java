@@ -20,6 +20,7 @@
  */
 package net.morimekta.providence.generator.format.java.messages.extras;
 
+import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
@@ -29,6 +30,7 @@ import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -47,8 +49,11 @@ import com.fasterxml.jackson.databind.type.ArrayType;
 import com.fasterxml.jackson.databind.type.MapType;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 
@@ -84,11 +89,22 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                 PMap mType = (PMap) field.field()
                                          .getDescriptor();
                 PDescriptor kType = mType.keyDescriptor();
-                writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
-                                JavaType.class.getName(),
-                                helper.getFieldType(kType));
-                PDescriptor iType = mType.itemDescriptor();
+                String keyGeneric = helper.getFieldType(kType);
+                String mkKey = "k";
+                if (kType.getType() == PType.BINARY) {
+                    writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(String.class);",
+                                    JavaType.class.getName());
+                    keyGeneric = "String";
+                    mkKey = String.format("%s.fromBase64(k)", Binary.class.getName());
+                } else {
+                    writer.formatln("%s kType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
+                                    JavaType.class.getName(),
+                                    helper.getFieldType(kType));
+                }
 
+                PDescriptor iType = mType.itemDescriptor();
+                String valueGeneric = helper.getFieldType(iType);
+                String mkValue = "v";
                 if (iType instanceof PMap) {
                     PMap imType = (PMap) iType;
                     PDescriptor ikType = imType.keyDescriptor();
@@ -114,6 +130,11 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                     writer.formatln("%s iType = ctxt.getTypeFactory().constructArrayType(%s.class);",
                                     MapType.class.getName(),
                                     helper.getFieldType(iiType));
+                } else if (iType.getType() == PType.BINARY) {
+                    writer.formatln("%s iType = ctxt.getTypeFactory().uncheckedSimpleType(String.class);",
+                                    JavaType.class.getName());
+                    valueGeneric = "String";
+                    mkValue = String.format("%s.fromBase64(v)", Binary.class.getName());
                 } else {
                     writer.formatln("%s iType = ctxt.getTypeFactory().uncheckedSimpleType(%s.class);",
                                     JavaType.class.getName(),
@@ -122,9 +143,17 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                 writer.formatln("%s type = ctxt.getTypeFactory().constructMapType(%s.class, kType, iType);",
                                 MapType.class.getName(),
                                 HashMap.class.getName());
-                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
+                writer.formatln("builder.%s();", Strings.camelCase("mutable", field.name()));
+                writer.formatln("((%s<%s,%s>) ctxt.readValue(jp, type))",
+                                Map.class.getName(),
+                                keyGeneric, valueGeneric,
+                                field.setter());
+                writer.appendln("        .forEach((k, v) -> {");
+                writer.formatln("            builder.%s(%s, %s);", field.adder(), mkKey, mkValue);
+                writer.appendln("        });");
                 break;
             }
+            case SET:
             case LIST: {
                 PContainer cType = (PContainer) field.field()
                                                      .getDescriptor();
@@ -143,6 +172,7 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                     writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(itype);",
                                     ArrayType.class.getName(),
                                     helper.getFieldType(iType));
+                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
                 } else if (iType instanceof PContainer) {
                     PContainer icType = (PContainer) iType;
                     PDescriptor iiType = icType.itemDescriptor();
@@ -153,23 +183,24 @@ public class JacksonMessageFormatter implements MessageMemberFormatter {
                     writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(itype);",
                                     ArrayType.class.getName(),
                                     helper.getFieldType(iType));
+                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
+                } else if (iType.getType() == PType.BINARY) {
+                    writer.formatln("%s iType = ctxt.getTypeFactory().constructArrayType(String.class);",
+                                    JavaType.class.getName(),
+                                    helper.getFieldType(iType));
+                    String setterSpaces = Strings.times(" ", field.setter().length());
+                    String arraysSpaces = Strings.times(" ", Arrays.class.getName().length());
+                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, iType))", field.setter(), Arrays.class.getName());
+                    writer.formatln("        %s %s.stream()", setterSpaces, arraysSpaces);
+                    writer.formatln("        %s %s.map(Object::toString)", setterSpaces, arraysSpaces);
+                    writer.formatln("        %s %s.map(%s::fromBase64)", setterSpaces, arraysSpaces, Binary.class.getName());
+                    writer.formatln("        %s %s.collect(%s.toList()));", setterSpaces, arraysSpaces, Collectors.class.getName());
                 } else {
                     writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(%s.class);",
                                     ArrayType.class.getName(),
                                     helper.getFieldType(iType));
+                    writer.formatln("builder.%s(%s.asList(ctxt.readValue(jp, type)));", field.setter(), Arrays.class.getName());
                 }
-                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
-                break;
-            }
-            case SET: {
-                PContainer cType = (PContainer) field.field()
-                                                     .getDescriptor();
-                PDescriptor iType = cType.itemDescriptor();
-                writer.formatln("%s type = ctxt.getTypeFactory().constructArrayType(%s.class);",
-                                ArrayType.class.getName(),
-                                helper.getFieldType(iType));
-
-                writer.formatln("builder.%s(ctxt.readValue(jp, type));", field.setter());
                 break;
             }
             case BINARY:

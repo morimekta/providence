@@ -542,7 +542,7 @@ public class MessageGenerator extends TestWatcher {
     private <M extends PMessage<M, F>, F extends PField> M generateInternal(PMessageDescriptor<M, F> descriptor) {
         PMessageBuilder<M, F> builder = descriptor.builder();
         if (descriptor.getVariant() == PMessageVariant.UNION) {
-            F field = descriptor.getFields()[random.nextInt() % descriptor.getFields().length];
+            F field = descriptor.getFields()[random.nextInt(descriptor.getFields().length)];
             Supplier<Object> supplier = getValueSupplier(field);
             assertNotNull("No supplier for field: " + descriptor.getQualifiedName() + "." + field.getName(), supplier);
 

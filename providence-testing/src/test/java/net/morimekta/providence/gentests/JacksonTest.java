@@ -1,6 +1,9 @@
 package net.morimekta.providence.gentests;
 
+import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.testing.util.MessageGenerator;
 import net.morimekta.test.jackson.CompactFields;
+import net.morimekta.test.jackson.Containers;
 import net.morimekta.test.jackson.OptionalFields;
 import net.morimekta.test.jackson.UnionFields;
 import net.morimekta.test.jackson.Value;
@@ -8,6 +11,7 @@ import net.morimekta.util.Binary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -17,12 +21,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Jackson serialization and seserialization testing.
  */
 public class JacksonTest {
+    @Rule
+    public MessageGenerator generator = new MessageGenerator();
+
     private OptionalFields primitives;
 
     @Before
@@ -142,6 +152,28 @@ public class JacksonTest {
                      out.get(0)
                         .toString()
                         .replaceAll(",", ",\n"));
+    }
+
+    @Test
+    public void testJsonSerializerCompat() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonSerializer compact = new JsonSerializer();
+        JsonSerializer pretty = new JsonSerializer().pretty();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for (int i = 0; i < 100; ++i) {
+            Containers containers = generator.generate(Containers.kDescriptor);
+
+            out.reset();
+            compact.serialize(out, containers);
+            Containers res = mapper.readValue(out.toByteArray(), Containers.class);
+            assertThat(res, is(equalToMessage(containers)));
+
+            out.reset();
+            pretty.serialize(out, containers);
+            res = mapper.readValue(out.toByteArray(), Containers.class);
+            assertThat(res, is(equalToMessage(containers)));
+        }
     }
 
     private String serialize(Object value) throws IOException {

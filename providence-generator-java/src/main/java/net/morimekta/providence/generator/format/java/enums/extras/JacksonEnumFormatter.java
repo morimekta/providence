@@ -86,6 +86,9 @@ public class JacksonEnumFormatter implements EnumMemberFormatter {
               .formatln("        } else if (jp.getCurrentToken() == %s.%s) {",
                         JsonToken.class.getName(),
                         JsonToken.VALUE_STRING.name())
+              .formatln("            if (%s.isInteger(jp.getText())) {", Strings.class.getName())
+              .formatln("                return %s.forValue(Integer.parseInt(jp.getText()));", simpleClass)
+              .appendln("            }")
               .formatln("            return %s.forName(jp.getText());", simpleClass)
               .appendln("        } else {")
               .formatln("            throw new %s(jp, \"Invalid token for enum %s deserialization \" + jp.getText());",
