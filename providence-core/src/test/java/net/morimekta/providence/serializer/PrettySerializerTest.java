@@ -52,7 +52,7 @@ public class PrettySerializerTest {
     private String    mFormatted;
 
     @Rule
-    public MessageGenerator generator = new MessageGenerator().dumpOnFailure();
+    public MessageGenerator generator = new MessageGenerator();
 
     @Before
     public void setUp() {
