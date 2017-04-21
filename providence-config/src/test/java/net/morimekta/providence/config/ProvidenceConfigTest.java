@@ -31,9 +31,9 @@ import net.morimekta.test.providence.config.Service;
 import net.morimekta.test.providence.config.Value;
 import net.morimekta.util.Binary;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -57,23 +57,17 @@ import static org.junit.Assert.fail;
  * Tests for the providence config parser.
  */
 public class ProvidenceConfigTest {
-    private TemporaryFolder temp;
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
+
     private TypeRegistry registry;
 
     @Before
     public void setUp() throws IOException {
-        temp = new TemporaryFolder();
-        temp.create();
-
         registry = new TypeRegistry();
         registry.registerRecursively(Service.kDescriptor);
         registry.registerRecursively(Value.kDescriptor);
         registry.registerRecursively(RefMerge.kDescriptor);
-    }
-
-    @After
-    public void tearDown() {
-        temp.delete();
     }
 
     @Test
