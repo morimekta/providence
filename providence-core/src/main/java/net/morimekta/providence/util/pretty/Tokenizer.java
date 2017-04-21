@@ -53,9 +53,9 @@ public class Tokenizer extends InputStream {
             while ((r = in.read()) >= 0) {
                 if (comment) {
                     if (r == '\n' || r == '\r') {
-                        tmp.write(r);
                         comment = false;
                     }
+                    tmp.write(r);
                 } else {
                     if (literal != '\0') {
                         if (escaped) {
@@ -360,20 +360,21 @@ public class Tokenizer extends InputStream {
                 }
 
                 return new Token(buffer, startOffset, len, lineNo, startLinePos);
-            }
-
-            // Octal
-            while ((lastByte = read()) != -1) {
-                if ((lastByte >= '0' && lastByte <= '7')) {
-                    ++len;
-                    continue;
+            } else if (lastByte != '.') {
+                // Octal
+                while ((lastByte = read()) != -1) {
+                    if ((lastByte >= '0' && lastByte <= '7')) {
+                        ++len;
+                        continue;
+                    }
+                    // we read a char that's *not* part of the
+                    unread();
+                    break;
                 }
-                // we read a char that's *not* part of the
-                unread();
-                break;
+
+                return new Token(buffer, startOffset, len, lineNo, startLinePos);
             }
 
-            return new Token(buffer, startOffset, len, lineNo, startLinePos);
         }
 
         // decimal part.

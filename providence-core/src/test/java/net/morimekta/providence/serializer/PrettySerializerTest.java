@@ -19,13 +19,18 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.util_internal.MessageGenerator;
+import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
+import net.morimekta.testing.ResourceUtils;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -33,7 +38,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.test.providence.core.calculator.Operand.withImaginary;
 import static net.morimekta.test.providence.core.calculator.Operand.withNumber;
 import static net.morimekta.test.providence.core.calculator.Operand.withOperation;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Stein Eldar Johnsen
@@ -42,6 +50,9 @@ import static org.junit.Assert.assertEquals;
 public class PrettySerializerTest {
     private Operation mOperation;
     private String    mFormatted;
+
+    @Rule
+    public MessageGenerator generator = new MessageGenerator().dumpOnFailure();
 
     @Before
     public void setUp() {
@@ -94,5 +105,32 @@ public class PrettySerializerTest {
         Operation actual = serializer.deserialize(getClass().getResourceAsStream("/json/calculator/pretty.cfg"), Operation.kDescriptor);
 
         assertEquals(mOperation, actual);
+    }
+
+    @Test
+    public void testConfig() throws IOException {
+        PrettySerializer serializer = new PrettySerializer().config();
+        Containers containers = generator.generate(Containers.kDescriptor);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        serializer.serialize(out, containers);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        Containers res = serializer.deserialize(in, Containers.kDescriptor);
+
+        assertThat(res, is(containers));
+    }
+
+    @Test
+    public void testConfig2() throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(ResourceUtils.getResourceAsBytes("/compat/config.cfg"));
+        PrettySerializer serializer = new PrettySerializer().config();
+
+        try {
+            serializer.deserialize(in, Containers.kDescriptor);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
     }
 }
