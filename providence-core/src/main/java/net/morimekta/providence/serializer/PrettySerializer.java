@@ -694,10 +694,6 @@ public class PrettySerializer extends Serializer {
             if (d == ((double) d.longValue())) {
                 // actually an integer or long value.
                 writer.print(d.longValue());
-            } else if (d > ((10 << 9) - 1) || (1 / d) > (10 << 6)) {
-                // Scientific notation should be used, this enforces a decimal
-                // length that is not too overwhelming.
-                writer.print((new DecimalFormat("0.#########E0")).format(d.doubleValue()));
             } else {
                 writer.print(d.doubleValue());
             }

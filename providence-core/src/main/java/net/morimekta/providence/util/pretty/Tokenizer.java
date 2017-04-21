@@ -360,8 +360,8 @@ public class Tokenizer extends InputStream {
                 }
 
                 return new Token(buffer, startOffset, len, lineNo, startLinePos);
-            } else if (lastByte != '.') {
-                // Octal
+            } else if ('1' <= lastByte && lastByte <= '7') {
+                // Octals have *1* 0 in front.
                 while ((lastByte = read()) != -1) {
                     if ((lastByte >= '0' && lastByte <= '7')) {
                         ++len;

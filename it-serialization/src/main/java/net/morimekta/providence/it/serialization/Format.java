@@ -18,7 +18,7 @@ public enum Format implements Stringable, Comparable<Format> {
     json("json", "Compact JSON",
             5.45, 0.00, 6.28, 0.00, 37911),
     pretty("cfg", "Pretty / Config",
-            9.52, 0.00, 9.12, 0.00, 74299),
+            9.52, 0.00, 9.12, 0.00, 74687),
     fast_binary("bin", "Fast Binary",
             1.43, 0.00, 1.51, 0.00, 19062),
 
