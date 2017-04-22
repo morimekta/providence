@@ -1,8 +1,14 @@
 package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.PApplicationExceptionType;
+import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.serializer.rw.BinaryType;
 import net.morimekta.providence.test_internal.Containers;
+import net.morimekta.providence.test_internal.OptionalFields;
+import net.morimekta.providence.test_internal.RequiredFields;
 import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.test.providence.core.calculator.CalculateException;
@@ -19,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.morimekta.providence.util_internal.EqualToMessage.equalToMessage;
 import static net.morimekta.providence.util_internal.TestUtils.decode;
 import static net.morimekta.providence.util_internal.TestUtils.encode;
 import static org.hamcrest.CoreMatchers.is;
@@ -253,6 +260,85 @@ public class BinarySerializerTest {
         } catch (SerializerException e) {
             assertThat(e.getExceptionType(), is(PApplicationExceptionType.UNKNOWN_METHOD));
             assertThat(e.getMessage(), is("No such method abcd on calculator.Calculator"));
+        }
+    }
+
+    @Test
+    public void testReadOK() throws IOException {
+        assertOK(bytes(BinaryType.STOP), OptionalFields.builder().build(), strict);
+        assertOK(bytes(BinaryType.STRUCT,
+                       (short) 44,
+                       BinaryType.I32,
+                       (short) 44,
+                       44,
+                       BinaryType.VOID,
+                       (short) 11,
+                       BinaryType.STOP,
+                       BinaryType.STOP),
+                 OptionalFields.builder().build(),
+                 strict);
+    }
+
+    @Test
+    public void testReadFailures() throws IOException {
+        assertFailure(bytes(),
+                      "Missing expected byte",
+                      OptionalFields.kDescriptor, lenient);
+        assertFailure(bytes(BinaryType.I16),
+                      "Missing byte 1 to expected short",
+                      OptionalFields.kDescriptor, lenient);
+        assertFailure(bytes(BinaryType.I16, (short) 4),
+                      "Wrong field type for id=4: expected i32(8), got i16(6)",
+                      OptionalFields.kDescriptor, lenient);
+        assertFailure(bytes(BinaryType.I32, (short) 4, 4),
+                      "Missing expected byte",
+                      OptionalFields.kDescriptor, lenient);
+        assertFailure(bytes(BinaryType.STOP),
+                      "Missing required fields booleanValue,byteValue,shortValue,integerValue,longValue,doubleValue,stringValue,binaryValue,enumValue,compactValue in message providence.RequiredFields",
+                      RequiredFields.kDescriptor, strict);
+    }
+
+    private byte[] bytes(Object... values) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        BigEndianBinaryWriter writer = new BigEndianBinaryWriter(baos);
+        for (Object o : values) {
+            if (o instanceof Byte) {
+                writer.writeByte((Byte) o);
+            } else if (o instanceof Short) {
+                writer.writeShort((Short) o);
+            } else if (o instanceof Integer) {
+                writer.writeInt((Integer) o);
+            } else if (o instanceof Long) {
+                writer.writeLong((Long) o);
+            } else if (o instanceof Double) {
+                writer.writeDouble((Double) o);
+            } else {
+                throw new IllegalArgumentException("");
+            }
+        }
+        return baos.toByteArray();
+    }
+
+    private <M extends PMessage<M,F>, F extends PField>
+    void assertOK(byte[] data, M message, Serializer serializer) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        assertThat(serializer.deserialize(in, message.descriptor()),
+                   is(equalToMessage(message)));
+    }
+
+    private void assertFailure(byte[] data,
+                               String message,
+                               PMessageDescriptor<?,?> descriptor,
+                               Serializer serializer) {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        try {
+            serializer.deserialize(in, descriptor);
+            fail("no exception: " + message);
+        } catch (IOException e) {
+            if (!e.getMessage().equals(message)) {
+                e.printStackTrace();
+            }
+            assertThat(e.getMessage(), is(message));
         }
     }
 }

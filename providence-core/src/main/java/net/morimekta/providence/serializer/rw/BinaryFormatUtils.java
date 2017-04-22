@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
+import static net.morimekta.providence.serializer.rw.BinaryType.asString;
 import static net.morimekta.providence.serializer.rw.BinaryType.forType;
 
 /**
@@ -97,26 +98,24 @@ public class BinaryFormatUtils {
      *
      * @param in        The stream to consume.
      * @param fieldInfo The field info about the content.
-     * @param type      The type to generate content for.
+     * @param fieldType The type to generate content for.
      * @return The field value, or null if no type.
      *
      * @throws IOException If unable to read from stream or invalid field type.
      */
     public static Object readFieldValue(BigEndianBinaryReader in,
                                         FieldInfo fieldInfo,
-                                        PDescriptor type,
+                                        PDescriptor fieldType,
                                         boolean strict)
             throws IOException {
-        if (type == null) {
-            if (strict) {
-                throw new SerializerException("Reading unknown field in strict mode.");
-            }
-        } else if (forType(type.getType()) != fieldInfo.getType()) {
-            throw new SerializerException("Mismatching field type: wanted %s != (seen) %s",
-                                          type.getType(), BinaryType.typeOf(fieldInfo.getType()));
+        if (fieldType != null && forType(fieldType.getType()) != fieldInfo.type) {
+            throw new SerializerException("Wrong field type for id=%d: expected %s, got %s",
+                                          fieldInfo.id,
+                                          asString(forType(fieldType.getType())),
+                                          asString(fieldInfo.getType()));
         }
 
-        switch (fieldInfo.getType()) {
+        switch (fieldInfo.type) {
             case BinaryType.VOID:
                 return Boolean.TRUE;
             case BinaryType.BOOL:
@@ -127,9 +126,9 @@ public class BinaryFormatUtils {
                 return in.expectShort();
             case BinaryType.I32:
                 int val = in.expectInt();
-                if (type != null && type instanceof PEnumDescriptor) {
+                if (fieldType != null && fieldType instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
-                    PEnumBuilder builder = ((PEnumDescriptor<?>)type).builder();
+                    PEnumBuilder builder = ((PEnumDescriptor<?>)fieldType).builder();
                     builder.setByValue(val);
                     return builder.build();
                 } else {
@@ -142,17 +141,17 @@ public class BinaryFormatUtils {
             case BinaryType.STRING:
                 int len = in.expectUInt32();
                 byte[] data = in.expectBytes(len);
-                if (type != null && type.getType() == PType.STRING) {
+                if (fieldType != null && fieldType.getType() == PType.STRING) {
                     return new String(data, StandardCharsets.UTF_8);
                 } else {
                     return Binary.wrap(data);
                 }
             case BinaryType.STRUCT: {
-                if (type == null) {
+                if (fieldType == null) {
                     consumeMessage(in);
                     return null;
                 }
-                return readMessage(in, (PMessageDescriptor<?,?>) type, strict);
+                return readMessage(in, (PMessageDescriptor<?,?>) fieldType, strict);
             }
             case BinaryType.MAP: {
                 final byte keyT = in.expectByte();
@@ -162,13 +161,9 @@ public class BinaryFormatUtils {
                 PDescriptor keyType = null;
                 PDescriptor valueType = null;
                 PMap.Builder<Object, Object> out;
-                if (type != null) {
-                    if (!type.getType().equals(PType.MAP)) {
-                        throw new SerializerException("Invalid type for map encoding: " + type);
-                    }
-
+                if (fieldType != null) {
                     @SuppressWarnings("unchecked")
-                    PMap<Object, Object> mapType = (PMap<Object, Object>) type;
+                    PMap<Object, Object> mapType = (PMap<Object, Object>) fieldType;
                     keyType = mapType.keyDescriptor();
                     valueType = mapType.itemDescriptor();
 
@@ -200,9 +195,9 @@ public class BinaryFormatUtils {
 
                 PDescriptor entryType = null;
                 PSet.Builder<Object> out;
-                if (type != null) {
+                if (fieldType != null) {
                     @SuppressWarnings("unchecked")
-                    PSet<Object> setType = (PSet<Object>) type;
+                    PSet<Object> setType = (PSet<Object>) fieldType;
                     entryType = setType.itemDescriptor();
                     out = setType.builder();
                 } else {
@@ -227,9 +222,9 @@ public class BinaryFormatUtils {
 
                 PDescriptor entryType = null;
                 PList.Builder<Object> out;
-                if (type != null) {
+                if (fieldType != null) {
                     @SuppressWarnings("unchecked")
-                    PList<Object> listType = (PList<Object>) type;
+                    PList<Object> listType = (PList<Object>) fieldType;
                     entryType = listType.itemDescriptor();
                     out = listType.builder();
                 } else {
@@ -377,7 +372,7 @@ public class BinaryFormatUtils {
 
         @Override
         public String toString() {
-            return String.format("field(%d: %s)", id, BinaryType.asString(type));
+            return String.format("field(%d: %s)", id, asString(type));
         }
 
         public int getId() {

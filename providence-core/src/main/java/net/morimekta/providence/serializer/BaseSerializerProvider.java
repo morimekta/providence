@@ -21,7 +21,7 @@
 package net.morimekta.providence.serializer;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,7 +38,7 @@ public abstract class BaseSerializerProvider implements SerializerProvider {
      */
     public BaseSerializerProvider(String defaultContentType) {
         this.defaultContentType = defaultContentType;
-        this.serializerMap = new LinkedHashMap<>();
+        this.serializerMap = new HashMap<>();
     }
 
     @Override

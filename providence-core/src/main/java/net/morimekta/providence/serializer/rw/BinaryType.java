@@ -2,8 +2,11 @@ package net.morimekta.providence.serializer.rw;
 
 import net.morimekta.providence.PType;
 
+import javax.annotation.Nonnull;
+
 /**
- *
+ * Helper class for having binary type ID constants and getting
+ * the right binary type ID for a value type.
  */
 public class BinaryType {
     public static final byte STOP   = 0;
@@ -24,52 +27,13 @@ public class BinaryType {
     public static final byte LIST   = 15;
 
     /**
-     * Find the best matching type for a given ID.
+     * Get the binary type for the given value type.
      *
-     * @param id The type byte ID.
-     * @return The type enum value.
+     * @param type The type to check.
+     * @return The binary type ID.
      */
-    public static PType typeOf(byte id) {
-        switch (id) {
-            case STOP:
-                return PType.STOP;
-            case VOID:
-                return PType.VOID;
-            case BOOL:
-                return PType.BOOL;
-            case BYTE:
-                return PType.BYTE;
-            case DOUBLE:
-                return PType.DOUBLE;
-            // case 5:
-            case I16:
-                return PType.I16;
-            // case 7:
-            case I32:
-                // ENUM is same as I32.
-                return PType.I32;
-            // case 9:
-            case I64:
-                return PType.I64;
-            case STRING:
-                // BINARY is same as STRING.
-                return PType.STRING;
-            case STRUCT:
-                return PType.MESSAGE;
-            case MAP:
-                return PType.MAP;
-            case SET:
-                return PType.SET;
-            case LIST:
-                return PType.LIST;
-            default:
-                return PType.STOP;
-        }
-    }
-
-    public static byte forType(PType type) {
+    public static byte forType(@Nonnull PType type) {
         switch (type) {
-            case STOP: return STOP;
             case VOID: return VOID;
             case BOOL: return BOOL;
             case BYTE: return BYTE;
@@ -84,7 +48,7 @@ public class BinaryType {
             case SET: return SET;
             case LIST: return LIST;
             case MESSAGE: return STRUCT;
-            default: return STOP;
+            default: throw new IllegalArgumentException("Unknown binary type for " + type.toString());
         }
     }
 
@@ -131,4 +95,7 @@ public class BinaryType {
                 return "unknown(" + id + ")";
         }
     }
+
+    // Defeat instantiation
+    private BinaryType() {}
 }
