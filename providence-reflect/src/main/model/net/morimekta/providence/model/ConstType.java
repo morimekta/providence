@@ -367,7 +367,7 @@ public class ConstType
 
         @Override
         public String toString() {
-            return net.morimekta.providence.descriptor.PField.toString(this);
+            return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
         public static _Field forKey(int key) {
@@ -975,7 +975,7 @@ public class ConstType
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ConstType.documentation, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -985,7 +985,7 @@ public class ConstType
                             mType = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ConstType.type, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.type, should be struct(12)");
                         }
                         break;
                     }
@@ -995,7 +995,7 @@ public class ConstType
                             mName = new String(reader.expectBytes(len_3), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ConstType.name, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.name, should be struct(12)");
                         }
                         break;
                     }
@@ -1005,7 +1005,7 @@ public class ConstType
                             mValue = new String(reader.expectBytes(len_4), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ConstType.value, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.value, should be struct(12)");
                         }
                         break;
                     }
@@ -1023,11 +1023,14 @@ public class ConstType
                                     mAnnotations.put(key_9, val_10);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + net.morimekta.providence.PType.nameForId(t_6) + "(" + t_6 + ") or value type " + net.morimekta.providence.PType.nameForId(t_7) + "(" + t_7 + ") for model.ConstType.annotations, should be string(11) and string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException(
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_6) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_7) +
+                                        " for model.ConstType.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(4);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.ConstType.annotations, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.annotations, should be struct(12)");
                         }
                         break;
                     }

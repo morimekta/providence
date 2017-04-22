@@ -557,7 +557,7 @@ public class UnionFields
 
         @Override
         public String toString() {
-            return net.morimekta.providence.descriptor.PField.toString(this);
+            return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
         public static _Field forKey(int key) {
@@ -1389,7 +1389,7 @@ public class UnionFields
                             mBooleanValue = reader.expectUInt8() == 1;
                             tUnionField = _Field.BOOLEAN_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.booleanValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.booleanValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1398,7 +1398,7 @@ public class UnionFields
                             mByteValue = reader.expectByte();
                             tUnionField = _Field.BYTE_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.byteValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.byteValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1407,7 +1407,7 @@ public class UnionFields
                             mShortValue = reader.expectShort();
                             tUnionField = _Field.SHORT_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.shortValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.shortValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1416,7 +1416,7 @@ public class UnionFields
                             mIntegerValue = reader.expectInt();
                             tUnionField = _Field.INTEGER_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.integerValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.integerValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1425,7 +1425,7 @@ public class UnionFields
                             mLongValue = reader.expectLong();
                             tUnionField = _Field.LONG_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.longValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.longValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1434,7 +1434,7 @@ public class UnionFields
                             mDoubleValue = reader.expectDouble();
                             tUnionField = _Field.DOUBLE_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.doubleValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.doubleValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1444,7 +1444,7 @@ public class UnionFields
                             mStringValue = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             tUnionField = _Field.STRING_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.stringValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.stringValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1454,7 +1454,7 @@ public class UnionFields
                             mBinaryValue = reader.expectBinary(len_2);
                             tUnionField = _Field.BINARY_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.binaryValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.binaryValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1463,7 +1463,7 @@ public class UnionFields
                             mEnumValue = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
                             tUnionField = _Field.ENUM_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.enumValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.enumValue, should be struct(12)");
                         }
                         break;
                     }
@@ -1472,7 +1472,7 @@ public class UnionFields
                             mCompactValue = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
                             tUnionField = _Field.COMPACT_VALUE;
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for providence.UnionFields.compactValue, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.UnionFields.compactValue, should be struct(12)");
                         }
                         break;
                     }

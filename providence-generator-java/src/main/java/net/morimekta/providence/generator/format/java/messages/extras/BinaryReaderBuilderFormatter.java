@@ -32,6 +32,7 @@ import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.serializer.rw.BinaryFormatUtils;
 import net.morimekta.providence.serializer.rw.BinaryReader;
+import net.morimekta.providence.serializer.rw.BinaryType;
 import net.morimekta.util.io.BigEndianBinaryReader;
 import net.morimekta.util.io.IndentedPrintWriter;
 
@@ -43,6 +44,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+import static net.morimekta.providence.serializer.rw.BinaryType.forType;
 
 /**
  * @author Stein Eldar Johnsen
@@ -127,8 +129,8 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 writer.formatln("byte %s = reader.expectByte();", keyType)
                       .formatln("byte %s = reader.expectByte();", valueType)
                       .formatln("if (%s == %d && %s == %d) {",
-                                keyType, pMap.keyDescriptor().getType().id,
-                                valueType, pMap.itemDescriptor().getType().id)
+                                keyType, forType(pMap.keyDescriptor().getType()),
+                                valueType, forType(pMap.itemDescriptor().getType()))
                       .begin()
                       .formatln("final int %s = reader.expectUInt32();", len);
 
@@ -158,20 +160,18 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 writer.end()  // if keyType && valueType
                       .appendln("} else {")
-                      .formatln("    throw new %s(\"Wrong key type \" + %s.nameForId(%s) + \"(\" + %s + \") or value type \" + %s.nameForId(%s) + \"(\" + %s + \") for %s.%s, should be %s(%d) and %s(%d)\");",
-                                SerializerException.class.getName(),
-                                PType.class.getName(),
-                                keyType,
-                                keyType,
-                                PType.class.getName(),
-                                valueType,
-                                valueType,
+                      .formatln("    throw new %s(", SerializerException.class.getName())
+                      .formatln("            \"Wrong key type \" + %s.asString(%s) +",
+                                BinaryType.class.getName(),
+                                keyType)
+                      .formatln("            \" or value type \" + %s.asString(%s) +",
+                                BinaryType.class.getName(),
+                                valueType)
+                      .formatln("            \" for %s.%s, should be %s and %s\");",
                                 message.descriptor().getQualifiedName(),
                                 field.name(),
-                                pMap.keyDescriptor().getType().name,
-                                pMap.keyDescriptor().getType().id,
-                                pMap.itemDescriptor().getType().name,
-                                pMap.itemDescriptor().getType().id)
+                                BinaryType.asString(forType(pMap.keyDescriptor().getType())),
+                                BinaryType.asString(forType(pMap.itemDescriptor().getType())))
                       .appendln('}');
                 break;
             }
@@ -198,7 +198,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 String itemType = "t_" + nextId.getAndIncrement();
                 writer.formatln("byte %s = reader.expectByte();", itemType)
                       .formatln("if (%s == %d) {",
-                                itemType, pCont.itemDescriptor().getType().id)
+                                itemType, forType(pCont.itemDescriptor().getType()))
                       .begin()
                       .formatln("final int %s = reader.expectUInt32();", len);
 
@@ -223,15 +223,13 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 writer.end()  // if itemType
                       .appendln("} else {")
-                      .formatln("    throw new %s(\"Wrong item type \" + %s.nameForId(%s) + \"(\" + %s + \") for %s.%s, should be %s(%d)\");",
+                      .formatln("    throw new %s(\"Wrong item type \" + %s.asString(%s) + \" for %s.%s, should be %s\");",
                                 SerializerException.class.getName(),
-                                PType.class.getName(),
-                                itemType,
+                                BinaryType.class.getName(),
                                 itemType,
                                 message.descriptor().getQualifiedName(),
                                 field.name(),
-                                pCont.itemDescriptor().getType().name,
-                                pCont.itemDescriptor().getType().id)
+                                BinaryType.asString(forType(pCont.itemDescriptor().getType())))
                       .appendln('}');
                 break;
             }
@@ -258,7 +256,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
               .begin();
 
         writer.appendln("byte type = reader.expectByte();")
-              .formatln("while (type != %d) {", PType.STOP.id)
+              .formatln("while (type != %d) {", BinaryType.STOP)
               .begin();
 
         writer.appendln("int field = reader.expectShort();")
@@ -269,7 +267,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             writer.formatln("case %d: {", field.id())
                   .begin();
 
-            writer.formatln("if (type == %d) {", field.type().id)
+            writer.formatln("if (type == %d) {", forType(field.type()))
                   .begin();
 
             appendReadFieldValue(field.member(),
@@ -285,13 +283,12 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
             }
             writer.end()  // if type
                   .appendln("} else {")
-                  .formatln("    throw new %s(\"Wrong type \" + %s.nameForId(type) + \"(\" + type + \") for %s.%s, should be %s(%d)\");",
+                  .formatln("    throw new %s(\"Wrong type \" + %s.asString(type) + \" for %s.%s, should be %s\");",
                             SerializerException.class.getName(),
-                            PType.class.getName(),
+                            BinaryType.class.getName(),
                             message.descriptor().getQualifiedName(),
                             field.name(),
-                            message.descriptor().getType().name,
-                            message.descriptor().getType().id)
+                            BinaryType.asString(forType(message.descriptor().getType())))
                   .appendln('}');
 
             writer.appendln("break;")

@@ -24,12 +24,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
+import static net.morimekta.providence.serializer.rw.BinaryType.forType;
+
 /**
  * Utilities helping with reading and writing binary format (protocol)
  * messages.
  */
 public class BinaryFormatUtils {
-    // --- READ METHODS ---
 
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BigEndianBinaryReader input,
@@ -85,7 +86,7 @@ public class BinaryFormatUtils {
      */
     private static FieldInfo readFieldInfo(BigEndianBinaryReader in) throws IOException {
         byte type = in.expectByte();
-        if (type == PType.STOP.id) {
+        if (type == BinaryType.STOP) {
             return null;
         }
         return new FieldInfo(in.expectShort(), type);
@@ -110,22 +111,21 @@ public class BinaryFormatUtils {
             if (strict) {
                 throw new SerializerException("Reading unknown field in strict mode.");
             }
-        } else if (type.getType().id != fieldInfo.getType()) {
-            throw new SerializerException("Mismatching field type: (wanted) %s != (seen) %s",
-                                          type.getType(), PType.findById(fieldInfo.getType()));
+        } else if (forType(type.getType()) != fieldInfo.getType()) {
+            throw new SerializerException("Mismatching field type: wanted %s != (seen) %s",
+                                          type.getType(), BinaryType.typeOf(fieldInfo.getType()));
         }
 
-        switch (PType.findById(fieldInfo.getType())) {
-            case VOID:
+        switch (fieldInfo.getType()) {
+            case BinaryType.VOID:
                 return Boolean.TRUE;
-            case BOOL:
+            case BinaryType.BOOL:
                 return in.expectByte() != 0;
-            case BYTE:
+            case BinaryType.BYTE:
                 return in.expectByte();
-            case I16:
+            case BinaryType.I16:
                 return in.expectShort();
-            case ENUM:
-            case I32:
+            case BinaryType.I32:
                 int val = in.expectInt();
                 if (type != null && type instanceof PEnumDescriptor) {
                     @SuppressWarnings("unchecked")
@@ -135,12 +135,11 @@ public class BinaryFormatUtils {
                 } else {
                     return val;
                 }
-            case I64:
+            case BinaryType.I64:
                 return in.expectLong();
-            case DOUBLE:
+            case BinaryType.DOUBLE:
                 return in.expectDouble();
-            case STRING:
-            case BINARY:
+            case BinaryType.STRING:
                 int len = in.expectUInt32();
                 byte[] data = in.expectBytes(len);
                 if (type != null && type.getType() == PType.STRING) {
@@ -148,14 +147,14 @@ public class BinaryFormatUtils {
                 } else {
                     return Binary.wrap(data);
                 }
-            case MESSAGE: {
+            case BinaryType.STRUCT: {
                 if (type == null) {
                     consumeMessage(in);
                     return null;
                 }
                 return readMessage(in, (PMessageDescriptor<?,?>) type, strict);
             }
-            case MAP: {
+            case BinaryType.MAP: {
                 final byte keyT = in.expectByte();
                 final byte itemT = in.expectByte();
                 final int size = in.expectUInt32();
@@ -195,7 +194,7 @@ public class BinaryFormatUtils {
                 }
                 return out.build();
             }
-            case SET: {
+            case BinaryType.SET: {
                 final byte itemT = in.expectByte();
                 final int size = in.expectUInt32();
 
@@ -222,7 +221,7 @@ public class BinaryFormatUtils {
 
                 return out.build();
             }
-            case LIST: {
+            case BinaryType.LIST: {
                 final byte itemT = in.expectByte();
                 final int size = in.expectUInt32();
 
@@ -267,7 +266,7 @@ public class BinaryFormatUtils {
         if (message instanceof PUnion) {
             PField field = ((PUnion) message).unionField();
             if (field != null) {
-                len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
+                len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getKey());
                 len += writeFieldValue(writer,
                                        message.get(field.getKey()),
                                        field.getDescriptor());
@@ -275,14 +274,14 @@ public class BinaryFormatUtils {
         } else {
             for (PField field : message.descriptor().getFields()) {
                 if (message.has(field.getKey())) {
-                    len += writeFieldSpec(writer, field.getDescriptor().getType().id, field.getKey());
+                    len += writeFieldSpec(writer, forType(field.getDescriptor().getType()), field.getKey());
                     len += writeFieldValue(writer,
                                            message.get(field.getKey()),
                                            field.getDescriptor());
                 }
             }
         }
-        len += writer.writeUInt8(PType.STOP.id);
+        len += writer.writeUInt8(BinaryType.STOP);
         return len;
     }
 
@@ -331,8 +330,8 @@ public class BinaryFormatUtils {
                 @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) value;
                 PMap<?,?> pMap = (PMap<?, ?>) descriptor;
-                int len = out.writeByte(pMap.keyDescriptor().getType().id);
-                len += out.writeByte(pMap.itemDescriptor().getType().id);
+                int len = out.writeByte(forType(pMap.keyDescriptor().getType()));
+                len += out.writeByte(forType(pMap.itemDescriptor().getType()));
                 len += out.writeUInt32(map.size());
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     len += writeFieldValue(out, entry.getKey(), pMap.keyDescriptor());
@@ -346,7 +345,7 @@ public class BinaryFormatUtils {
                 Collection<Object> coll = (Collection<Object>) value;
                 PContainer<?> pSet = (PContainer<?>) descriptor;
 
-                int len = out.writeByte(pSet.itemDescriptor().getType().id);
+                int len = out.writeByte(forType(pSet.itemDescriptor().getType()));
                 len += out.writeUInt32(coll.size());
 
                 for (Object item : coll) {
@@ -378,7 +377,7 @@ public class BinaryFormatUtils {
 
         @Override
         public String toString() {
-            return String.format("field(%d: %s)", id, PType.findById(type));
+            return String.format("field(%d: %s)", id, BinaryType.asString(type));
         }
 
         public int getId() {

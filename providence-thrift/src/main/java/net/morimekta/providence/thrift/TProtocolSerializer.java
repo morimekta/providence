@@ -41,6 +41,7 @@ import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.rw.BinaryType;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.CountingOutputStream;
 
@@ -54,7 +55,6 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.protocol.TProtocolUtil;
 import org.apache.thrift.protocol.TSet;
 import org.apache.thrift.protocol.TStruct;
-import org.apache.thrift.protocol.TType;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -67,6 +67,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static net.morimekta.providence.serializer.rw.BinaryType.asString;
+import static net.morimekta.providence.serializer.rw.BinaryType.forType;
 
 /**
  * @author Stein Eldar Johnsen
@@ -212,7 +215,7 @@ class TProtocolSerializer extends Serializer {
             }
 
             protocol.writeFieldBegin(new TField(field.getName(),
-                                                getFieldType(field.getDescriptor()),
+                                                forType(field.getDescriptor().getType()),
                                                 (short) field.getKey()));
 
             writeTypedValue(message.get(field.getKey()), field.getDescriptor(), protocol);
@@ -232,7 +235,7 @@ class TProtocolSerializer extends Serializer {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         protocol.readStructBegin();  // ignored.
         while ((f = protocol.readFieldBegin()) != null) {
-            if (f.type == TType.STOP) {
+            if (f.type == BinaryType.STOP) {
                 break;
             }
 
@@ -240,11 +243,10 @@ class TProtocolSerializer extends Serializer {
             // f.name is never fulled out, rely on f.id being correct.
             field = descriptor.getField(f.id);
             if (field != null) {
-                if (f.type != getFieldType(field.getDescriptor())) {
-                    throw new SerializerException("Incompatible serialized type " + PType.findById(f.type) +
+                if (f.type != forType(field.getDescriptor().getType())) {
+                    throw new SerializerException("Incompatible serialized type " + asString(f.type) +
                                                   " for field " + field.getName() +
-                                                  ", expected " + field.getDescriptor()
-                                                                       .getType());
+                                                  ", expected " + asString(forType(field.getDescriptor().getType())));
                 }
 
                 Object value = readTypedValue(f.type, field.getDescriptor(), protocol, true);
@@ -272,14 +274,20 @@ class TProtocolSerializer extends Serializer {
 
     private Object readTypedValue(byte tType, PDescriptor type, TProtocol protocol, boolean allowNull)
             throws TException, SerializerException {
+        if (tType != forType(type.getType())) {
+            throw new SerializerException("Expected type " +
+                                          asString(forType(type.getType())) +
+                                          " but found " +
+                                          asString(tType));
+        }
         switch (tType) {
-            case TType.BOOL:
+            case BinaryType.BOOL:
                 return protocol.readBool();
-            case TType.BYTE:
+            case BinaryType.BYTE:
                 return protocol.readByte();
-            case TType.I16:
+            case BinaryType.I16:
                 return protocol.readI16();
-            case TType.I32:
+            case BinaryType.I32:
                 if (PType.ENUM == type.getType()) {
                     PEnumDescriptor<?> et = (PEnumDescriptor<?>) type;
                     PEnumBuilder<?> eb = et.builder();
@@ -293,19 +301,19 @@ class TProtocolSerializer extends Serializer {
                 } else {
                     return protocol.readI32();
                 }
-            case TType.I64:
+            case BinaryType.I64:
                 return protocol.readI64();
-            case TType.DOUBLE:
+            case BinaryType.DOUBLE:
                 return protocol.readDouble();
-            case TType.STRING:
+            case BinaryType.STRING:
                 if (type == PPrimitive.BINARY) {
                     ByteBuffer buffer = protocol.readBinary();
                     return Binary.wrap(buffer.array());
                 }
                 return protocol.readString();
-            case TType.STRUCT:
+            case BinaryType.STRUCT:
                 return readMessage(protocol, (PMessageDescriptor<?, ?>) type);
-            case TType.LIST:
+            case BinaryType.LIST:
                 TList listInfo = protocol.readListBegin();
                 PList<Object> lDesc = (PList<Object>) type;
                 PDescriptor liDesc = lDesc.itemDescriptor();
@@ -317,7 +325,7 @@ class TProtocolSerializer extends Serializer {
 
                 protocol.readListEnd();
                 return list.build();
-            case TType.SET:
+            case BinaryType.SET:
                 TSet setInfo = protocol.readSetBegin();
                 PSet<Object> sDesc = (PSet<Object>) type;
                 PDescriptor siDesc = sDesc.itemDescriptor();
@@ -329,7 +337,7 @@ class TProtocolSerializer extends Serializer {
 
                 protocol.readSetEnd();
                 return set.build();
-            case TType.MAP:
+            case BinaryType.MAP:
                 TMap mapInfo = protocol.readMapBegin();
                 PMap<Object, Object> mDesc = (PMap<Object, Object>) type;
                 PDescriptor mkDesc = mDesc.keyDescriptor();
@@ -386,7 +394,7 @@ class TProtocolSerializer extends Serializer {
             case LIST:
                 PList<?> lType = (PList<?>) type;
                 List<?> list = (List<?>) item;
-                TList listInfo = new TList(getFieldType(lType.itemDescriptor()), list.size());
+                TList listInfo = new TList(forType(lType.itemDescriptor().getType()), list.size());
                 protocol.writeListBegin(listInfo);
                 for (Object i : list) {
                     writeTypedValue(i, lType.itemDescriptor(), protocol);
@@ -396,7 +404,7 @@ class TProtocolSerializer extends Serializer {
             case SET:
                 PSet<?> sType = (PSet<?>) type;
                 Set<?> set = (Set<?>) item;
-                TSet setInfo = new TSet(getFieldType(sType.itemDescriptor()), set.size());
+                TSet setInfo = new TSet(forType(sType.itemDescriptor().getType()), set.size());
                 protocol.writeSetBegin(setInfo);
                 for (Object i : set) {
                     writeTypedValue(i, sType.itemDescriptor(), protocol);
@@ -406,8 +414,8 @@ class TProtocolSerializer extends Serializer {
             case MAP:
                 PMap<?, ?> mType = (PMap<?, ?>) type;
                 Map<?, ?> map = (Map<?, ?>) item;
-                protocol.writeMapBegin(new TMap(getFieldType(mType.keyDescriptor()),
-                                                getFieldType(mType.itemDescriptor()),
+                protocol.writeMapBegin(new TMap(forType(mType.keyDescriptor().getType()),
+                                                forType(mType.itemDescriptor().getType()),
                                                 map.size()));
 
                 for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -420,12 +428,5 @@ class TProtocolSerializer extends Serializer {
             default:
                 break;
         }
-    }
-
-    private byte getFieldType(PDescriptor type) throws SerializerException {
-        if (type == null) {
-            throw new SerializerException("No type!");
-        }
-        return type.getType().id;
     }
 }

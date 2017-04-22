@@ -312,7 +312,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
 
         writer.appendln("@Override")
               .appendln("public String toString() {")
-              .formatln("    return %s.toString(this);", PField.class.getName())
+              .formatln("    return %s.asString(this);", PField.class.getName())
               .appendln('}')
               .newline();
 

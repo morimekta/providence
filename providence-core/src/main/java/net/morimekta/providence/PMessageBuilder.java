@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
 /**
  * Base class for message builders.
  */
-public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField> implements PBuilder<T> {
+public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField>
+        implements PBuilder<T> {
     /**
      * Checks if the current set data is enough to make a valid struct. It
      * will check for all required fields, and if any are missing it will

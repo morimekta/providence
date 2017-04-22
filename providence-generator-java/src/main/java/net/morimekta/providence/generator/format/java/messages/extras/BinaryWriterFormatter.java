@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.generator.format.java.messages.extras;
 
-import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
@@ -30,6 +29,7 @@ import net.morimekta.providence.generator.format.java.utils.JField;
 import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.serializer.rw.BinaryFormatUtils;
+import net.morimekta.providence.serializer.rw.BinaryType;
 import net.morimekta.providence.serializer.rw.BinaryWriter;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryWriter;
@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
+import static net.morimekta.providence.serializer.rw.BinaryType.forType;
 
 /**
  * @author Stein Eldar Johnsen
@@ -111,8 +112,8 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                 PMap<?, ?> pMap = (PMap<?, ?>) descriptor;
                 String entryName = "entry_" + nextId.getAndIncrement();
 
-                writer.formatln("length += writer.writeByte((byte) %d);", pMap.keyDescriptor().getType().id)
-                      .formatln("length += writer.writeByte((byte) %d);", pMap.itemDescriptor().getType().id)
+                writer.formatln("length += writer.writeByte((byte) %d);", forType(pMap.keyDescriptor().getType()))
+                      .formatln("length += writer.writeByte((byte) %d);", forType(pMap.itemDescriptor().getType()))
                       .formatln("length += writer.writeUInt32(%s.size());", member)
                       .formatln("for (%s.Entry<%s,%s> %s : %s.entrySet()) {",
                                 Map.class.getName(),
@@ -133,7 +134,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                 PContainer<?> pContainer = (PContainer<?>) descriptor;
                 String entryName = "entry_" + nextId.getAndIncrement();
 
-                writer.formatln("length += writer.writeByte((byte) %d);", pContainer.itemDescriptor().getType().id)
+                writer.formatln("length += writer.writeByte((byte) %d);", forType(pContainer.itemDescriptor().getType()))
                       .formatln("length += writer.writeUInt32(%s.size());", member)
                       .formatln("for (%s %s : %s) {",
                                 helper.getFieldType(pContainer.itemDescriptor()),
@@ -178,7 +179,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
             for (JField field : message.numericalOrderFields()) {
                 writer.formatln("case %s: {", field.fieldEnum())
                       .begin()
-                      .formatln("length += writer.writeByte((byte) %d);", field.type().id)
+                      .formatln("length += writer.writeByte((byte) %d);", forType(field.type()))
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
@@ -201,7 +202,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
                           .begin();
                 }
 
-                writer.formatln("length += writer.writeByte((byte) %d);", field.type().id)
+                writer.formatln("length += writer.writeByte((byte) %d);", forType(field.type()))
                       .formatln("length += writer.writeShort((short) %d);", field.id());
 
                 appendWriteFieldValue(field.member(),
@@ -217,7 +218,7 @@ public class BinaryWriterFormatter implements MessageMemberFormatter {
             }
         }
 
-        writer.formatln("length += writer.writeByte((byte) %d);", PType.STOP.id);
+        writer.formatln("length += writer.writeByte((byte) %d);", BinaryType.STOP);
 
         writer.appendln("return length;")
               .end()

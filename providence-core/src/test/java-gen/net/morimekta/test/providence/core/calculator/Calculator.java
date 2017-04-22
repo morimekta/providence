@@ -369,7 +369,7 @@ public class Calculator {
 
             @Override
             public String toString() {
-                return net.morimekta.providence.descriptor.PField.toString(this);
+                return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
             public static _Field forKey(int key) {
@@ -660,7 +660,7 @@ public class Calculator {
                                 mOp = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operation.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___request.op, should be message(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.calculate___request.op, should be struct(12)");
                             }
                             break;
                         }
@@ -914,7 +914,7 @@ public class Calculator {
 
             @Override
             public String toString() {
-                return net.morimekta.providence.descriptor.PField.toString(this);
+                return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
             public static _Field forKey(int key) {
@@ -1294,7 +1294,7 @@ public class Calculator {
                                 mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operand.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___response.success, should be message(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.calculate___response.success, should be struct(12)");
                             }
                             break;
                         }
@@ -1303,7 +1303,7 @@ public class Calculator {
                                 mCe = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.CalculateException.kDescriptor, strict);
                                 tUnionField = _Field.CE;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for calculator.calculate___response.ce, should be message(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.calculate___response.ce, should be struct(12)");
                             }
                             break;
                         }
@@ -1456,7 +1456,7 @@ public class Calculator {
 
             @Override
             public String toString() {
-                return net.morimekta.providence.descriptor.PField.toString(this);
+                return net.morimekta.providence.descriptor.PField.asString(this);
             }
 
             public static _Field forKey(int key) {

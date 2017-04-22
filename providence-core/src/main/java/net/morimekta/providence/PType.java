@@ -30,82 +30,33 @@ import javax.annotation.Nonnull;
  * themselves.
  */
 public enum PType {
-    STOP(0, "stop"),
-    VOID(1, "void"),
-    BOOL(2, "bool"),
-    BYTE(3, "byte"),
-    I16(6, "i16"),
-    I32(8, "i32"),
-    I64(10, "i64"),
-    DOUBLE(4, "double"),
-    STRING(11, "string"),
-    // encodes as string.
-    BINARY(11, "binary"),
-    // encodes as i32
-    ENUM(8, "enum"),
+    STOP("stop"),
+    VOID("void"),
+    BOOL("bool"),
+    BYTE("byte"),
+    I16("i16"),
+    I32("i32"),
+    I64("i64"),
+    DOUBLE("double"),
+    STRING("string"),
+    BINARY("binary"),
+    ENUM("enum"),
     // Called 'struct' in apache thrift.
-    MESSAGE(12, "message"),
-    MAP(13, "map"),
-    SET(14, "set"),
-    LIST(15, "list"),;
+    MESSAGE("message"),
+    MAP("map"),
+    SET("set"),
+    LIST("list"),
+    ;
 
-    // Thrift serialized type ID number.
-    public final byte   id;
-    public final String name;
+    private final String name;
 
-    PType(int typeId, String name) {
-        this.id = (byte) typeId;
+    PType(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
         return name;
-    }
-
-    /**
-     * Find the best matching type for a given ID.
-     *
-     * @param id The type byte ID.
-     * @return The type enum value.
-     */
-    @Nonnull
-    public static PType findById(byte id) {
-        switch (id) {
-            case 0:
-                return STOP;
-            case 1:
-                return VOID;
-            case 2:
-                return BOOL;
-            case 3:
-                return BYTE;
-            case 4:
-                return DOUBLE;
-            // case 5:
-            case 6:
-                return I16;
-            // case 7:
-            case 8:
-                // ENUM is same as I32.
-                return I32;
-            // case 9:
-            case 10:
-                return I64;
-            case 11:
-                // BINARY is same as STRING.
-                return STRING;
-            case 12:
-                return MESSAGE;
-            case 13:
-                return MAP;
-            case 14:
-                return SET;
-            case 15:
-                return LIST;
-            default:
-                return STOP;
-        }
     }
 
     /**

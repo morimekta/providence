@@ -23,7 +23,7 @@ package net.morimekta.providence;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Interface for handling a call request from a synchronous client.
+ * Base class for handling a call request from a synchronous client.
  */
 public abstract class PClient {
     /**

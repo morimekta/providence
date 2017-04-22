@@ -69,18 +69,18 @@ public class PPrimitive implements PDescriptor {
     @Nonnull
     @Override
     public String getName() {
-        return mType.name;
+        return mType.toString();
     }
 
     @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
-        return mType.name;
+        return mType.toString();
     }
 
     @Override
     public String toString() {
-        return mType.name;
+        return mType.toString();
     }
 
     @Nonnull

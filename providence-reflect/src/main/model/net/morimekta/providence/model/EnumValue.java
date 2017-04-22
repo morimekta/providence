@@ -315,7 +315,7 @@ public class EnumValue
 
         @Override
         public String toString() {
-            return net.morimekta.providence.descriptor.PField.toString(this);
+            return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
         public static _Field forKey(int key) {
@@ -837,7 +837,7 @@ public class EnumValue
                             mDocumentation = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.EnumValue.documentation, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.documentation, should be struct(12)");
                         }
                         break;
                     }
@@ -847,7 +847,7 @@ public class EnumValue
                             mName = new String(reader.expectBytes(len_2), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.EnumValue.name, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.name, should be struct(12)");
                         }
                         break;
                     }
@@ -856,7 +856,7 @@ public class EnumValue
                             mValue = reader.expectInt();
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.EnumValue.value, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.value, should be struct(12)");
                         }
                         break;
                     }
@@ -874,11 +874,14 @@ public class EnumValue
                                     mAnnotations.put(key_7, val_8);
                                 }
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong key type " + net.morimekta.providence.PType.nameForId(t_4) + "(" + t_4 + ") or value type " + net.morimekta.providence.PType.nameForId(t_5) + "(" + t_5 + ") for model.EnumValue.annotations, should be string(11) and string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException(
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_4) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_5) +
+                                        " for model.EnumValue.annotations, should be string(11) and string(11)");
                             }
                             optionals.set(3);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for model.EnumValue.annotations, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.annotations, should be struct(12)");
                         }
                         break;
                     }

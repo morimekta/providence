@@ -245,7 +245,7 @@ public class PApplicationException
 
         @Override
         public String toString() {
-            return net.morimekta.providence.descriptor.PField.toString(this);
+            return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
         public static _Field forKey(int key) {
@@ -594,7 +594,7 @@ public class PApplicationException
                             mMessage = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for service.PApplicationException.message, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for service.PApplicationException.message, should be struct(12)");
                         }
                         break;
                     }
@@ -603,7 +603,7 @@ public class PApplicationException
                             mId = net.morimekta.providence.PApplicationExceptionType.forValue(reader.expectInt());
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for service.PApplicationException.id, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for service.PApplicationException.id, should be struct(12)");
                         }
                         break;
                     }

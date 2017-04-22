@@ -74,12 +74,12 @@ public interface PField {
     Object getDefaultValue();
 
     /**
-     * toString helper for fields.
+     * asString helper for fields.
      *
      * @param field The field to make string of.
-     * @return The field toString.
+     * @return The field asString.
      */
-    static String toString(PField field) {
+    static String asString(PField field) {
         StringBuilder builder = new StringBuilder();
         builder.append("field(")
                .append(field.getKey())

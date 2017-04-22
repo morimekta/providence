@@ -291,7 +291,7 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                     writer.formatln("   .append(%s.asString());", field.param());
                     break;
                 default:
-                    writer.formatln("   .append(%s.toString());", field.param());
+                    writer.formatln("   .append(%s.asString());", field.param());
                     break;
             }
 

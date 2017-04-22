@@ -195,7 +195,7 @@ public class Imaginary
 
         @Override
         public String toString() {
-            return net.morimekta.providence.descriptor.PField.toString(this);
+            return net.morimekta.providence.descriptor.PField.asString(this);
         }
 
         public static _Field forKey(int key) {
@@ -545,7 +545,7 @@ public class Imaginary
                             mV = reader.expectDouble();
                             optionals.set(0);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for number.Imaginary.v, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for number.Imaginary.v, should be struct(12)");
                         }
                         break;
                     }
@@ -554,7 +554,7 @@ public class Imaginary
                             mI = reader.expectDouble();
                             optionals.set(1);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.PType.nameForId(type) + "(" + type + ") for number.Imaginary.i, should be message(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for number.Imaginary.i, should be struct(12)");
                         }
                         break;
                     }
