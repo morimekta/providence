@@ -29,8 +29,12 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static net.morimekta.test.providence.core.calculator.Operation._Field.OPERANDS;
+import static net.morimekta.test.providence.core.calculator.Operation._Field.OPERATOR;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Stein Eldar Johnsen
@@ -102,5 +106,12 @@ public class PMessageTest {
 
         assertEquals(a, b);
         assertNotEquals(a, c);
+    }
+
+    @Test
+    public void testHasNumGet() {
+        assertThat(operation.has(OPERATOR), is(true));
+        assertThat(operation.num(OPERANDS), is(2));
+        assertThat(operation.get(OPERATOR), is(Operator.MULTIPLY));
     }
 }
