@@ -60,20 +60,19 @@ public abstract class BaseGenerator extends Generator {
 
     @Override
     @SuppressWarnings("resource")
-    public void generate(CProgram document) throws IOException, GeneratorException {
-        String javaPackage = JUtils.getJavaPackage(document);
+    public void generate(CProgram program) throws IOException, GeneratorException {
+        String javaPackage = JUtils.getJavaPackage(program);
 
         String path = JUtils.getPackageClassPath(javaPackage);
 
-        if (document.getConstants()
-                    .size() > 0) {
-            String file = helper.getConstantsClassName(document) + ".java";
+        if (program.getConstants().size() > 0) {
+            String file = helper.getConstantsClassName(program) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, document);
-                constFomatter(writer).appendProgramClass(document);
+                appendFileHeader(writer, program);
+                constFomatter(writer).appendProgramClass(program);
 
                 writer.flush();
             } finally {
@@ -85,16 +84,16 @@ public abstract class BaseGenerator extends Generator {
             }
         }
 
-        if (document.getConstants()
-                    .stream().filter(t -> t.getName().equals("FACTORY_ID")).findAny().isPresent() ) { //TODO check if hazelcast flag set?
+        if (program.getConstants()
+                   .stream().anyMatch(t -> t.getName().equals("FACTORY_ID"))) { //TODO check if hazelcast flag set?
 
-            String file = helper.getHazelcastFactoryClassName(document) + ".java";
+            String file = helper.getHazelcastFactoryClassName(program) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, document);
-                hazelcastFomatter(writer).appendProgramClass(document);
+                appendFileHeader(writer, program);
+                hazelcastFomatter(writer).appendProgramClass(program);
 
                 writer.flush();
             } finally {
@@ -106,13 +105,13 @@ public abstract class BaseGenerator extends Generator {
             }
         }
 
-        for (PDeclaredDescriptor<?> type : document.getDeclaredTypes()) {
+        for (PDeclaredDescriptor<?> type : program.getDeclaredTypes()) {
             String file = JUtils.getClassName(type) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
 
-                appendFileHeader(writer, document);
+                appendFileHeader(writer, program);
 
                 switch (type.getType()) {
                     case MESSAGE:
@@ -135,12 +134,12 @@ public abstract class BaseGenerator extends Generator {
             }
         }
 
-        for (CService service : document.getServices()) {
+        for (CService service : program.getServices()) {
             String file = JUtils.getClassName(service) + ".java";
             OutputStream out = getFileManager().create(path, file);
             try {
                 IndentedPrintWriter writer = new IndentedPrintWriter(out);
-                appendFileHeader(writer, document);
+                appendFileHeader(writer, program);
                 serviceFormatter(writer).appendServiceClass(service);
                 writer.flush();
             } finally {

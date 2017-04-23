@@ -56,6 +56,9 @@ public class JUtils {
     }
 
     public static String getJavaPackage(CProgram document) throws GeneratorException {
+        if (document == null) {
+            System.err.println("NOOO");
+        }
         String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
             throw new GeneratorException("No java namespace for thrift package " + document.getProgramName());

@@ -43,21 +43,21 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
     }
 
     @Override
-    public void appendProgramClass(CProgram document) throws GeneratorException {
+    public void appendProgramClass(CProgram program) throws GeneratorException {
         ValueBuilder value = new ValueBuilder(writer, helper);
 
-        if (document.getComment() != null) {
+        if (program.getComment() != null) {
             new BlockCommentBuilder(writer)
-                    .comment(document.getComment())
+                    .comment(program.getComment())
                     .finish();
         }
 
         writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s {", helper.getConstantsClassName(document))
+              .formatln("public class %s {", helper.getConstantsClassName(program))
               .begin()
-              .formatln("private %s() {}", helper.getConstantsClassName(document));
+              .formatln("private %s() {}", helper.getConstantsClassName(program));
 
-        for (CField c : document.getConstants()) {
+        for (CField c : program.getConstants()) {
             writer.newline();
 
             try {
@@ -77,7 +77,7 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
                       .appendln('}');
 
             } catch (Exception e) {
-                throw new GeneratorException("Unable to generate constant " + document.getProgramName() + "." + c.getName(),
+                throw new GeneratorException("Unable to generate constant " + program.getProgramName() + "." + c.getName(),
                                              e);
             }
         }
