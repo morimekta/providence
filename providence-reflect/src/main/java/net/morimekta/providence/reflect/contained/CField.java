@@ -47,14 +47,14 @@ public class CField implements PField, CAnnotatedDescriptor {
     private final PValueProvider      defaultValue;
     private final Map<String, String> annotations;
 
-    public CField(@Nullable String comment,
+    public CField(@Nullable String docs,
                   int key,
                   @Nonnull PRequirement requirement,
                   @Nonnull String name,
                   @Nonnull PDescriptorProvider typeProvider,
                   @Nullable PValueProvider defaultValue,
                   @Nullable Map<String, String> annotations) {
-        this.comment = comment;
+        this.comment = docs;
         this.key = key;
         this.requirement = requirement;
         this.typeProvider = typeProvider;

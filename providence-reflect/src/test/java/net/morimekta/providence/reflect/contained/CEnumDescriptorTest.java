@@ -19,6 +19,7 @@
 
 package net.morimekta.providence.reflect.contained;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,10 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Stein Eldar Johnsen
@@ -52,6 +56,11 @@ public class CEnumDescriptorTest {
 
     @Test
     public void testEnum() {
+        assertThat(type.getDocumentation(), is("My comment"));
+        assertThat(type.getAnnotations(), is(ImmutableSet.of()));
+        assertThat(type.hasAnnotation("boo"), is(false));
+        assertThat(type.getAnnotationValue("boo"), is(nullValue()));
+
         assertEquals(6, type.getValues().length);
 
         assertEquals("ONE", type.getValues()[0].toString());

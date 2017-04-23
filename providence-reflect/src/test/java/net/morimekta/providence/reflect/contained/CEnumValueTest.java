@@ -22,13 +22,18 @@ package net.morimekta.providence.reflect.contained;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -64,6 +69,24 @@ public class CEnumValueTest {
         value5 = type.builder()
                      .setByValue(5)
                      .build();
+    }
+
+    @Test
+    public void testBasics() {
+        assertThat(value3.getDocumentation(), is(nullValue()));
+        assertThat(value5.getDocumentation(), is("Skipping stuff"));
+
+        assertThat(value3.asInteger(), is(3));
+        assertThat(value3.asString(), is("THREE"));
+        assertThat(value3.getAnnotations(), is(Collections.EMPTY_SET));
+        assertThat(value3.hasAnnotation("boo"), is(false));
+        assertThat(value3.getAnnotationValue("boo"), is(nullValue()));
+
+        assertThat(value3.hashCode(), is(value3_other.hashCode()));
+        assertThat(value3.hashCode(), is(not(value5.hashCode())));
+
+        assertThat(value3.compareTo(value3_other), is(0));
+        assertThat(value3.compareTo(value5), is(-1));
     }
 
     @Test

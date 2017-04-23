@@ -52,7 +52,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -88,12 +87,25 @@ public class PrettySerializer extends Serializer {
     }
 
     /**
-     * Make a PrettySerializer that generates content similar to the PMessage toString methods.
+     * Make a PrettySerializer that generates content similar to the PMessage asString methods.
      * The output of this has <b>very little</b> whitespace, so can be pretty difficult to read.
+     * It's similar to the {@link #string()} variant, but without the qualified name prefix.
      *
      * @return Compact pretty serializer.
      */
     public PrettySerializer compact() {
+        return new PrettySerializer("", "", "", LIST_SEP, true, strict, false);
+    }
+
+    /**
+     * Make a PrettySerializer that generates content similar to the PMessage toString methods.
+     * The output of this has <b>very little</b> whitespace, so can be pretty difficult to read.
+     * It prefixes the message with the root message qualified name, as any
+     * {@link PMessage}.toString() would expect.
+     *
+     * @return String pretty serializer.
+     */
+    public PrettySerializer string() {
         return new PrettySerializer("", "", "", LIST_SEP, true, strict, true);
     }
 

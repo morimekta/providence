@@ -30,9 +30,63 @@ import static net.morimekta.providence.serializer.rw.BinaryType.forType;
 /**
  * Utilities helping with reading and writing binary format (protocol)
  * messages.
+ *
+ * NOTE: This class is not meant to be used directly, use the
+ * {@link net.morimekta.providence.serializer.BinarySerializer} serializer
+ * class instead. It is separated out and made public in order for
+ * pre-generated serialization code to be able to use the same utility
+ * methods.
  */
 public class BinaryFormatUtils {
+    /**
+     * Field info data holder with convenience methods.
+     */
+    public static class FieldInfo {
+        private final int id;
+        private final byte type;
 
+        /**
+         * Create a field info instance.
+         *
+         * @param id The field ID or key.
+         * @param type The field binary written type.
+         */
+        public FieldInfo(int id, byte type) {
+            this.id = id;
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("field(%d: %s)", id, asString(type));
+        }
+
+        /**
+         * @return The field ID or key.
+         */
+        public int getId() {
+            return id;
+        }
+
+        /**
+         * @return The binary field type.
+         */
+        public byte getType() {
+            return type;
+        }
+    }
+
+    /**
+     * Read message from reader.
+     *
+     * @param input The input reader.
+     * @param descriptor The message descriptor.
+     * @param strict If the message should be read in strict mode.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The read and parsed message.
+     * @throws IOException If read failed.
+     */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(BigEndianBinaryReader input,
                         PMessageDescriptor<Message, Field> descriptor,
@@ -70,6 +124,7 @@ public class BinaryFormatUtils {
      * Consume a message from the stream without parsing the content into a message.
      *
      * @param in Stream to read message from.
+     * @throws IOException On read failures.
      */
     public static void consumeMessage(BigEndianBinaryReader in) throws IOException {
         FieldInfo fieldInfo;
@@ -84,6 +139,7 @@ public class BinaryFormatUtils {
      *
      * @param in The stream to consume.
      * @return The field info or null.
+     * @throws IOException If read failed.
      */
     private static FieldInfo readFieldInfo(BigEndianBinaryReader in) throws IOException {
         byte type = in.expectByte();
@@ -99,8 +155,8 @@ public class BinaryFormatUtils {
      * @param in        The stream to consume.
      * @param fieldInfo The field info about the content.
      * @param fieldType The type to generate content for.
+     * @param strict    If the field should be read strictly.
      * @return The field value, or null if no type.
-     *
      * @throws IOException If unable to read from stream or invalid field type.
      */
     public static Object readFieldValue(BigEndianBinaryReader in,
@@ -250,6 +306,16 @@ public class BinaryFormatUtils {
 
     // --- WRITE METHODS ---
 
+    /**
+     * Write message to writer.
+     *
+     * @param writer The binary writer.
+     * @param message The message to write.
+     * @param <Message> The message type.
+     * @param <Field> The field type.
+     * @return The number of bytes written.
+     * @throws IOException If write failed.
+     */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     int writeMessage(BigEndianBinaryWriter writer, Message message)
             throws IOException {
@@ -286,13 +352,6 @@ public class BinaryFormatUtils {
         return 3;
     }
 
-    /**
-     * Write a field value to stream.
-     *
-     * @param out   The stream to write to.
-     * @param value The value to write.
-     * @return The number of bytes written.
-     */
     private static int writeFieldValue(BigEndianBinaryWriter out, Object value, PDescriptor descriptor) throws IOException {
         switch (descriptor.getType()) {
             case VOID:
@@ -357,32 +416,4 @@ public class BinaryFormatUtils {
                 throw new SerializerException("Unhandled field type: " + descriptor.getType());
         }
     }
-
-    /**
-     * Field info data holder with convenience methods.
-     */
-    public static class FieldInfo {
-        private final int id;
-        private final byte type;
-
-        public FieldInfo(int id, byte type) {
-            this.id = id;
-            this.type = type;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("field(%d: %s)", id, asString(type));
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public byte getType() {
-            return type;
-        }
-
-    }
-
 }

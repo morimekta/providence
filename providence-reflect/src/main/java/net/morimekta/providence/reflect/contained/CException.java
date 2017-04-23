@@ -116,9 +116,8 @@ public class CException extends Exception implements PMessage<CException, CField
 
         CException other = (CException) o;
         PMessageDescriptor<?, ?> type = other.descriptor();
-        if (!descriptor().getQualifiedName()
-                         .equals(type.getQualifiedName()) || !descriptor().getVariant()
-                                                                          .equals(type.getVariant())) {
+        if (!descriptor().getQualifiedName().equals(type.getQualifiedName()) ||
+            !descriptor().getVariant().equals(type.getVariant())) {
             return false;
         }
 
@@ -127,7 +126,7 @@ public class CException extends Exception implements PMessage<CException, CField
             if (has(id) != other.has(id)) {
                 return false;
             }
-            if (Objects.equals(get(id), other.get(id))) {
+            if (!Objects.equals(get(id), other.get(id))) {
                 return false;
             }
         }
