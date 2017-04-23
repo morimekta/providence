@@ -34,5 +34,16 @@
             <artifactId>findbugs-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.morimekta.utils</groupId>
+            <artifactId>testing-util</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
