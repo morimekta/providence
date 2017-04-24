@@ -11,7 +11,7 @@
     <parent>
         <groupId>net.morimekta.providence</groupId>
         <artifactId>providence</artifactId>
-        <version>0.4.0-SNAPSHOT</version>
+        <version>0.3.91</version>
     </parent>
     <artifactId>providence-tools-rpc</artifactId>
 
