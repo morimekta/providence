@@ -164,3 +164,6 @@ struct Containers {
     56: optional DefaultValues defaultValues;
 }
 
+service ContainerService {
+    CompactFields load(1: Containers c) throws (1: ExceptionFields ef);
+}

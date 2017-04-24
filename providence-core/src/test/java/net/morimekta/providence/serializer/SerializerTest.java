@@ -19,12 +19,24 @@
 
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationException;
+import net.morimekta.providence.PApplicationExceptionType;
+import net.morimekta.providence.PMessage;
+import net.morimekta.providence.PProcessor;
+import net.morimekta.providence.PServiceCall;
+import net.morimekta.providence.PServiceCallHandler;
+import net.morimekta.providence.PServiceCallType;
+import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.EqualToMessage;
 import net.morimekta.providence.util_internal.MessageGenerator;
+import net.morimekta.test.providence.core.CompactFields;
+import net.morimekta.test.providence.core.ContainerService;
 import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.ExceptionFields;
 import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
@@ -34,6 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,14 +69,15 @@ import static org.junit.Assert.fail;
  * P*SerializerTest.
  */
 public class SerializerTest {
-    private static Operation             operation;
-    private static ArrayList<Containers> containers;
+    private static Operation               operation;
+    private static ArrayList<Containers>   containers;
+    private static ArrayList<PServiceCall> serviceCalls;
 
     @Rule
     public MessageGenerator generator = new MessageGenerator();
 
     @BeforeClass
-    public static void setUpData() throws IOException {
+    public static void setUpData() throws IOException, ExceptionFields {
         MessageGenerator gen = new MessageGenerator()
                 .addFactory(f -> {
                     if (f.equals(Operand._Field.OPERATION)) {
@@ -84,6 +98,59 @@ public class SerializerTest {
             for (int i = 0; i < 1; ++i) {
                 containers.add(gen.generate(Containers.kDescriptor));
             }
+        }
+        serviceCalls = new ArrayList<>();
+
+        /**
+         * Temporary setup needed to generate
+         */
+        ContainerService.Iface impl = pC -> {
+            if (pC == null) {
+                throw new PApplicationException("", PApplicationExceptionType.INTERNAL_ERROR);
+            }
+            if (pC.mutate().collectSetFields().isEmpty()) {
+                throw gen.generate(ExceptionFields.kDescriptor);
+            }
+            return CompactFields.builder()
+                                .setName("" + pC.hashCode())
+                                .setId(pC.hashCode())
+                                .build();
+        };
+        PProcessor processor = new ContainerService.Processor(impl);
+
+        PServiceCallHandler handler = new PServiceCallHandler() {
+            @Nullable
+            @Override
+            @SuppressWarnings("unchecked")
+            public <Request extends PMessage<Request, RequestField>,
+                    Response extends PMessage<Response, ResponseField>,
+                    RequestField extends PField,
+                    ResponseField extends PField> PServiceCall<Response, ResponseField> handleCall(
+                    PServiceCall<Request, RequestField> call,
+                    PService service) throws IOException {
+                serviceCalls.add(call);
+                try {
+                    PServiceCall response = processor.handleCall(call, service);
+                    serviceCalls.add(response);
+                    return response;
+                } catch (PApplicationException e) {
+                    PServiceCall ex = new PServiceCall(call.getMethod(), PServiceCallType.EXCEPTION, call.getSequence(), e);
+                    serviceCalls.add(ex);
+                    return ex;
+                }
+            }
+        };
+        ContainerService.Client client = new ContainerService.Client(handler);
+        client.load(gen.generate(Containers.kDescriptor));
+        try {
+            client.load(Containers.builder().build());
+        } catch (ExceptionFields e) {
+            // ignore.
+        }
+        try {
+            client.load(null);  // NPE -> PApplicationException
+        } catch (PApplicationException e) {
+            // ignore.
         }
     }
 
@@ -165,6 +232,18 @@ public class SerializerTest {
             }
 
             assertEquals(0, bais.available());
+        }
+
+        // service
+        for (PServiceCall<?,?> call : serviceCalls) {
+            baos.reset();
+            int i = serializer.serialize(baos, call);
+            assertThat(i, is(baos.size()));
+
+            bais = new ByteArrayInputStream(baos.toByteArray());
+            PServiceCall<?,?> re = serializer.deserialize(bais, ContainerService.kDescriptor);
+
+            assertThat(re, is(call));
         }
     }
 

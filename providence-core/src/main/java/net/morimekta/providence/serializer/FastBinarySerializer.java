@@ -97,7 +97,7 @@ public class FastBinarySerializer extends Serializer {
         int len = out.writeVarint(method.length << 3 | call.getType().getValue());
         len += method.length;
         out.write(method);
-        len += out.writeInt(call.getSequence());
+        len += out.writeVarint(call.getSequence());
         len += writeMessage(out, call.getMessage());
         return len;
     }
@@ -203,7 +203,7 @@ public class FastBinarySerializer extends Serializer {
             throws IOException {
         PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
-        while ((tag = in.readIntVarint()) > STOP) {
+        while ((tag = in.readIntVarint()) != STOP) {
             int id = tag >>> 3;
             int type = tag & 0x07;
             Field field = descriptor.getField(id);
