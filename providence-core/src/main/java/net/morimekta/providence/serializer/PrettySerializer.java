@@ -315,9 +315,6 @@ public class PrettySerializer extends Serializer {
 
             PField field = descriptor.getField(token.asString());
             if (field == null) {
-                if (strict) {
-                    throw new TokenizerException(token, "No such field %s on %s", token.asString(), descriptor.getQualifiedName()).setLine(tokenizer.getLine(token.getLineNo()));
-                }
                 consumeValue(tokenizer, tokenizer.expect("field value"));
             } else {
                 builder.set(field.getKey(), readFieldValue(
@@ -720,35 +717,34 @@ public class PrettySerializer extends Serializer {
         if (token.isSymbol(Token.kMessageStart)) {
             // message or map.
             token = tokenizer.expect("map or message first entry");
-
-            if (!token.isSymbol(Token.kMessageEnd) && !token.isIdentifier()) {
-                // assume map.
-                while (!token.isSymbol(Token.kMessageEnd)) {
-                    if (token.isIdentifier() || token.isReferenceIdentifier()) {
-                        throw new TokenizerException(token, "Invalid map key: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
-                    consumeValue(tokenizer, token);
-                    tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
-                    consumeValue(tokenizer, tokenizer.expect("map value"));
-
-                    // maps do *not* require separator, but allows ',' separator, and separator after last.
-                    token = tokenizer.expect("map key, end or sep");
-                    if (token.isSymbol(Token.kLineSep1)) {
-                        token = tokenizer.expect("map key or end");
-                    }
-                }
+            if (token.isSymbol(Token.kMessageEnd)) {
+                // ignore, empty map or message.
             } else {
-                // assume message.
-                while (!token.isSymbol(Token.kMessageEnd)) {
-                    if (!token.isIdentifier()) {
-                        throw new TokenizerException(token, "Invalid field name: " + token.asString())
-                                .setLine(tokenizer.getLine(token.getLineNo()));
-                    }
+                if (!tokenizer.peek().isSymbol(Token.kFieldValueSep)) {
+                    // assume map.
+                    while (!token.isSymbol(Token.kMessageEnd)) {
+                        consumeValue(tokenizer, token);
+                        tokenizer.expectSymbol("key value sep.", Token.kKeyValueSep);
+                        consumeValue(tokenizer, tokenizer.expect("map value"));
 
-                    tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
-                    consumeValue(tokenizer, tokenizer.next());
-                    token = nextNotLineSep(tokenizer);
+                        // maps do *not* require separator, but allows ',' separator, and separator after last.
+                        token = tokenizer.expect("map key, end or sep");
+                        if (token.isSymbol(Token.kLineSep1)) {
+                            token = tokenizer.expect("map key or end");
+                        }
+                    }
+                } else {
+                    // assume message.
+                    while (!token.isSymbol(Token.kMessageEnd)) {
+                        if (!token.isIdentifier()) {
+                            throw new TokenizerException(token, "Invalid field name: " + token.asString())
+                                    .setLine(tokenizer.getLine(token.getLineNo()));
+                        }
+
+                        tokenizer.expectSymbol("field value sep.", Token.kFieldValueSep);
+                        consumeValue(tokenizer, tokenizer.next());
+                        token = nextNotLineSep(tokenizer);
+                    }
                 }
             }
         } else if (token.isSymbol(Token.kListStart)) {
@@ -761,7 +757,8 @@ public class PrettySerializer extends Serializer {
                 }
                 token = tokenizer.expect("list value or end");
             }
-        } else if (token.asString().equals(Token.HEX)) {
+        } else if (token.asString().equals(Token.HEX) ||
+                   token.asString().equals(Token.B64)) {
             tokenizer.expectSymbol("hex body start", Token.kMethodStart);
             tokenizer.readBinary(Token.kMethodEnd);
         } else if (!(token.isReal() ||  // number (double)

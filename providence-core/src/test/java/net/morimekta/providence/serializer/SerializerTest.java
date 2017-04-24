@@ -34,6 +34,7 @@ import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.EqualToMessage;
 import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.CompactFields;
+import net.morimekta.test.providence.core.ConsumeAll;
 import net.morimekta.test.providence.core.ContainerService;
 import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.ExceptionFields;
@@ -52,11 +53,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -192,7 +193,7 @@ public class SerializerTest {
             try {
                 actual = serializer.deserialize(bais, Containers.kDescriptor);
             } catch (TokenizerException e) {
-                System.err.println(new String(baos.toByteArray(), StandardCharsets.UTF_8));
+                System.err.println(new String(baos.toByteArray(), UTF_8));
                 System.err.println(e.asString());
                 fail("oops");
                 return;
@@ -232,6 +233,29 @@ public class SerializerTest {
             }
 
             assertEquals(0, bais.available());
+        }
+
+        try {
+            if (serializer instanceof PrettySerializer) {
+                String tmp = new String(baos.toByteArray(), UTF_8);
+                bais = new ByteArrayInputStream(tmp.replaceFirst("providence[.]Containers", "providence.ConsumeAll").getBytes(UTF_8));
+            } else {
+                bais = new ByteArrayInputStream(baos.toByteArray());
+            }
+
+            boolean first = true;
+            for (Containers ignore : containers) {
+                if (first) {
+                    first = false;
+                } else {
+                    assertThat(bais.read(), is((int)'\n'));
+                }
+                ConsumeAll actual = serializer.deserialize(bais, ConsumeAll.kDescriptor);
+                assertThat(actual, new EqualToMessage<>(ConsumeAll.builder().build()));
+            }
+        } catch (TokenizerException e) {
+            System.err.println(e.asString());
+            throw e;
         }
 
         // service

@@ -59,7 +59,7 @@ public class Token extends Slice {
     private static final Pattern RE_DOUBLE_QUALIFIED_IDENTIFIER = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
     private static final Pattern RE_REFERENCE_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*([.][_a-zA-Z][_a-zA-Z0-9]*)*");
     private static final Pattern RE_INTEGER                     = Pattern.compile("-?(0|[1-9][0-9]*|0[0-7]+|0x[0-9a-fA-F]+)");
-    private static final Pattern RE_REAL                        = Pattern.compile("-?(\\.[0-9]+|[1-9][0-9]*\\.[0-9]*)([eE][+-]?[0-9][0-9]*)?");
+    private static final Pattern RE_REAL                        = Pattern.compile("-?(0?\\.[0-9]+|[1-9][0-9]*\\.[0-9]*)([eE][+-]?[0-9][0-9]*)?");
 
     private final int lineNo;
     private final int linePos;

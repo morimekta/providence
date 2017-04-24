@@ -162,8 +162,9 @@ public class Tokenizer extends InputStream {
             }
 
             throw new TokenizerException(nextToken,
-                                         "Expected %s, but found '%s'",
+                                         "Expected %s ('%s'), but found '%s'",
                                          message,
+                                         Strings.joinP("', '", symbols),
                                          Strings.escape(nextToken.asString()))
                     .setLine(getLine(nextToken.getLineNo()));
         }

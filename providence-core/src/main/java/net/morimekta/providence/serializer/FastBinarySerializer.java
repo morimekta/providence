@@ -201,8 +201,16 @@ public class FastBinarySerializer extends Serializer {
     private <Message extends PMessage<Message, Field>, Field extends PField>
     Message readMessage(LittleEndianBinaryReader in, PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
-        PMessageBuilder<Message, Field> builder = descriptor.builder();
         int tag;
+        if (descriptor == null) {
+            while ((tag = in.readIntVarint()) != STOP) {
+                int type = tag & 0x07;
+                readFieldValue(in, type, null);
+            }
+            return null;
+        }
+
+        PMessageBuilder<Message, Field> builder = descriptor.builder();
         while ((tag = in.readIntVarint()) != STOP) {
             int id = tag >>> 3;
             int type = tag & 0x07;
@@ -211,7 +219,7 @@ public class FastBinarySerializer extends Serializer {
                 Object value = readFieldValue(in, type, field.getDescriptor());
                 builder.set(field.getKey(), value);
             } else {
-                readFieldValue(in, tag, null);
+                readFieldValue(in, type, null);
             }
         }
 
@@ -373,9 +381,6 @@ public class FastBinarySerializer extends Serializer {
                 return Boolean.TRUE;
             case VARINT: {
                 if (descriptor == null) {
-                    if (readStrict) {
-                        throw new SerializerException("");
-                    }
                     in.readLongVarint();
                     return null;
                 }
@@ -415,9 +420,6 @@ public class FastBinarySerializer extends Serializer {
                             throw new SerializerException("");
                     }
                 } else {
-                    if (readStrict) {
-                        throw new SerializerException("");
-                    }
                     return null;
                 }
             }
