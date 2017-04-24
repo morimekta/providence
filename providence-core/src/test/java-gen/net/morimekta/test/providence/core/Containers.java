@@ -38,6 +38,7 @@ public class Containers
     private final java.util.List<net.morimekta.test.providence.core.DefaultFields> mMessageList;
     private final java.util.Set<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
     private final java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
+    private final java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
     private final net.morimekta.test.providence.core.RequiredFields mRequiredFields;
     private final net.morimekta.test.providence.core.DefaultFields mDefaultFields;
     private final net.morimekta.test.providence.core.OptionalFields mOptionalFields;
@@ -77,6 +78,7 @@ public class Containers
                       java.util.List<net.morimekta.test.providence.core.DefaultFields> pMessageList,
                       java.util.Set<net.morimekta.test.providence.core.DefaultFields> pMessageSet,
                       java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> pMessageMap,
+                      java.util.Map<net.morimekta.test.providence.core.CompactFields,String> pMessageKeyMap,
                       net.morimekta.test.providence.core.RequiredFields pRequiredFields,
                       net.morimekta.test.providence.core.DefaultFields pDefaultFields,
                       net.morimekta.test.providence.core.OptionalFields pOptionalFields,
@@ -232,6 +234,11 @@ public class Containers
             mMessageMap = com.google.common.collect.ImmutableMap.copyOf(pMessageMap);
         } else {
             mMessageMap = null;
+        }
+        if (pMessageKeyMap != null) {
+            mMessageKeyMap = com.google.common.collect.ImmutableMap.copyOf(pMessageKeyMap);
+        } else {
+            mMessageKeyMap = null;
         }
         mRequiredFields = pRequiredFields;
         mDefaultFields = pDefaultFields;
@@ -391,6 +398,11 @@ public class Containers
             mMessageMap = builder.mMessageMap.build();
         } else {
             mMessageMap = null;
+        }
+        if (builder.isSetMessageKeyMap()) {
+            mMessageKeyMap = builder.mMessageKeyMap.build();
+        } else {
+            mMessageKeyMap = null;
         }
         mRequiredFields = builder.mRequiredFields_builder != null ? builder.mRequiredFields_builder.build() : builder.mRequiredFields;
         mDefaultFields = builder.mDefaultFields_builder != null ? builder.mDefaultFields_builder.build() : builder.mDefaultFields;
@@ -860,6 +872,21 @@ public class Containers
         return mMessageMap;
     }
 
+    public int numMessageKeyMap() {
+        return mMessageKeyMap != null ? mMessageKeyMap.size() : 0;
+    }
+
+    public boolean hasMessageKeyMap() {
+        return mMessageKeyMap != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public java.util.Map<net.morimekta.test.providence.core.CompactFields,String> getMessageKeyMap() {
+        return mMessageKeyMap;
+    }
+
     public boolean hasRequiredFields() {
         return mRequiredFields != null;
     }
@@ -959,6 +986,7 @@ public class Containers
             case 41: return hasMessageList();
             case 42: return hasMessageSet();
             case 43: return hasMessageMap();
+            case 44: return hasMessageKeyMap();
             case 51: return hasRequiredFields();
             case 52: return hasDefaultFields();
             case 53: return hasOptionalFields();
@@ -1002,6 +1030,7 @@ public class Containers
             case 41: return numMessageList();
             case 42: return numMessageSet();
             case 43: return numMessageMap();
+            case 44: return numMessageKeyMap();
             case 51: return hasRequiredFields() ? 1 : 0;
             case 52: return hasDefaultFields() ? 1 : 0;
             case 53: return hasOptionalFields() ? 1 : 0;
@@ -1045,6 +1074,7 @@ public class Containers
             case 41: return getMessageList();
             case 42: return getMessageSet();
             case 43: return getMessageMap();
+            case 44: return getMessageKeyMap();
             case 51: return getRequiredFields();
             case 52: return getDefaultFields();
             case 53: return getOptionalFields();
@@ -1090,6 +1120,7 @@ public class Containers
                java.util.Objects.equals(mMessageList, other.mMessageList) &&
                java.util.Objects.equals(mMessageSet, other.mMessageSet) &&
                java.util.Objects.equals(mMessageMap, other.mMessageMap) &&
+               java.util.Objects.equals(mMessageKeyMap, other.mMessageKeyMap) &&
                java.util.Objects.equals(mRequiredFields, other.mRequiredFields) &&
                java.util.Objects.equals(mDefaultFields, other.mDefaultFields) &&
                java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
@@ -1133,6 +1164,7 @@ public class Containers
                     _Field.MESSAGE_LIST, mMessageList,
                     _Field.MESSAGE_SET, mMessageSet,
                     _Field.MESSAGE_MAP, mMessageMap,
+                    _Field.MESSAGE_KEY_MAP, mMessageKeyMap,
                     _Field.REQUIRED_FIELDS, mRequiredFields,
                     _Field.DEFAULT_FIELDS, mDefaultFields,
                     _Field.OPTIONAL_FIELDS, mOptionalFields,
@@ -1332,6 +1364,12 @@ public class Containers
             else out.append(',');
             out.append("messageMap:")
                .append(net.morimekta.util.Strings.asString(mMessageMap));
+        }
+        if (hasMessageKeyMap()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("messageKeyMap:")
+               .append(net.morimekta.util.Strings.asString(mMessageKeyMap));
         }
         if (hasRequiredFields()) {
             if (first) first = false;
@@ -1583,6 +1621,13 @@ public class Containers
         if (c != 0) return c;
         if (mMessageMap != null) {
             c = Integer.compare(mMessageMap.hashCode(), other.mMessageMap.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mMessageKeyMap != null, other.mMessageKeyMap != null);
+        if (c != 0) return c;
+        if (mMessageKeyMap != null) {
+            c = Integer.compare(mMessageKeyMap.hashCode(), other.mMessageKeyMap.hashCode());
             if (c != 0) return c;
         }
 
@@ -1969,6 +2014,20 @@ public class Containers
             }
         }
 
+        if (hasMessageKeyMap()) {
+            length += writer.writeByte((byte) 13);
+            length += writer.writeShort((short) 44);
+            length += writer.writeByte((byte) 12);
+            length += writer.writeByte((byte) 11);
+            length += writer.writeUInt32(mMessageKeyMap.size());
+            for (java.util.Map.Entry<net.morimekta.test.providence.core.CompactFields,String> entry_36 : mMessageKeyMap.entrySet()) {
+                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_36.getKey());
+                net.morimekta.util.Binary tmp_37 = net.morimekta.util.Binary.wrap(entry_36.getValue().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                length += writer.writeUInt32(tmp_37.length());
+                length += writer.writeBinary(tmp_37);
+            }
+        }
+
         if (hasRequiredFields()) {
             length += writer.writeByte((byte) 12);
             length += writer.writeShort((short) 51);
@@ -2046,6 +2105,7 @@ public class Containers
         MESSAGE_LIST(41, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageList", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.DefaultFields.provider()), null),
         MESSAGE_SET(42, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageSet", net.morimekta.providence.descriptor.PSet.provider(net.morimekta.test.providence.core.DefaultFields.provider()), null),
         MESSAGE_MAP(43, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.test.providence.core.DefaultFields.provider()), null),
+        MESSAGE_KEY_MAP(44, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "messageKeyMap", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.test.providence.core.CompactFields.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         REQUIRED_FIELDS(51, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requiredFields", net.morimekta.test.providence.core.RequiredFields.provider(), null),
         DEFAULT_FIELDS(52, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "defaultFields", net.morimekta.test.providence.core.DefaultFields.provider(), null),
         OPTIONAL_FIELDS(53, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "optionalFields", net.morimekta.test.providence.core.OptionalFields.provider(), null),
@@ -2125,6 +2185,7 @@ public class Containers
                 case 41: return _Field.MESSAGE_LIST;
                 case 42: return _Field.MESSAGE_SET;
                 case 43: return _Field.MESSAGE_MAP;
+                case 44: return _Field.MESSAGE_KEY_MAP;
                 case 51: return _Field.REQUIRED_FIELDS;
                 case 52: return _Field.DEFAULT_FIELDS;
                 case 53: return _Field.OPTIONAL_FIELDS;
@@ -2167,6 +2228,7 @@ public class Containers
                 case "messageList": return _Field.MESSAGE_LIST;
                 case "messageSet": return _Field.MESSAGE_SET;
                 case "messageMap": return _Field.MESSAGE_MAP;
+                case "messageKeyMap": return _Field.MESSAGE_KEY_MAP;
                 case "requiredFields": return _Field.REQUIRED_FIELDS;
                 case "defaultFields": return _Field.DEFAULT_FIELDS;
                 case "optionalFields": return _Field.OPTIONAL_FIELDS;
@@ -2274,6 +2336,7 @@ public class Containers
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.DefaultFields> mMessageList;
         private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
         private net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
+        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
         private net.morimekta.test.providence.core.RequiredFields mRequiredFields;
         private net.morimekta.test.providence.core.RequiredFields._Builder mRequiredFields_builder;
         private net.morimekta.test.providence.core.DefaultFields mDefaultFields;
@@ -2291,8 +2354,8 @@ public class Containers
          * Make a providence.Containers builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(36);
-            modified = new java.util.BitSet(36);
+            optionals = new java.util.BitSet(37);
+            modified = new java.util.BitSet(37);
             mBooleanList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mByteList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mShortList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
@@ -2323,6 +2386,7 @@ public class Containers
             mMessageList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mMessageSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
             mMessageMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mMessageKeyMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
         /**
@@ -2453,28 +2517,32 @@ public class Containers
                 optionals.set(29);
                 mMessageMap.putAll(base.mMessageMap);
             }
-            if (base.hasRequiredFields()) {
+            if (base.hasMessageKeyMap()) {
                 optionals.set(30);
+                mMessageKeyMap.putAll(base.mMessageKeyMap);
+            }
+            if (base.hasRequiredFields()) {
+                optionals.set(31);
                 mRequiredFields = base.mRequiredFields;
             }
             if (base.hasDefaultFields()) {
-                optionals.set(31);
+                optionals.set(32);
                 mDefaultFields = base.mDefaultFields;
             }
             if (base.hasOptionalFields()) {
-                optionals.set(32);
+                optionals.set(33);
                 mOptionalFields = base.mOptionalFields;
             }
             if (base.hasUnionFields()) {
-                optionals.set(33);
+                optionals.set(34);
                 mUnionFields = base.mUnionFields;
             }
             if (base.hasExceptionFields()) {
-                optionals.set(34);
+                optionals.set(35);
                 mExceptionFields = base.mExceptionFields;
             }
             if (base.hasDefaultValues()) {
-                optionals.set(35);
+                optionals.set(36);
                 mDefaultValues = base.mDefaultValues;
             }
         }
@@ -2672,9 +2740,15 @@ public class Containers
                 mMessageMap.putAll(from.getMessageMap());
             }
 
-            if (from.hasRequiredFields()) {
+            if (from.hasMessageKeyMap()) {
                 optionals.set(30);
                 modified.set(30);
+                mMessageKeyMap.putAll(from.getMessageKeyMap());
+            }
+
+            if (from.hasRequiredFields()) {
+                optionals.set(31);
+                modified.set(31);
                 if (mRequiredFields_builder != null) {
                     mRequiredFields_builder.merge(from.getRequiredFields());
                 } else if (mRequiredFields != null) {
@@ -2686,8 +2760,8 @@ public class Containers
             }
 
             if (from.hasDefaultFields()) {
-                optionals.set(31);
-                modified.set(31);
+                optionals.set(32);
+                modified.set(32);
                 if (mDefaultFields_builder != null) {
                     mDefaultFields_builder.merge(from.getDefaultFields());
                 } else if (mDefaultFields != null) {
@@ -2699,8 +2773,8 @@ public class Containers
             }
 
             if (from.hasOptionalFields()) {
-                optionals.set(32);
-                modified.set(32);
+                optionals.set(33);
+                modified.set(33);
                 if (mOptionalFields_builder != null) {
                     mOptionalFields_builder.merge(from.getOptionalFields());
                 } else if (mOptionalFields != null) {
@@ -2712,8 +2786,8 @@ public class Containers
             }
 
             if (from.hasUnionFields()) {
-                optionals.set(33);
-                modified.set(33);
+                optionals.set(34);
+                modified.set(34);
                 if (mUnionFields_builder != null) {
                     mUnionFields_builder.merge(from.getUnionFields());
                 } else if (mUnionFields != null) {
@@ -2725,8 +2799,8 @@ public class Containers
             }
 
             if (from.hasExceptionFields()) {
-                optionals.set(34);
-                modified.set(34);
+                optionals.set(35);
+                modified.set(35);
                 if (mExceptionFields_builder != null) {
                     mExceptionFields_builder.merge(from.getExceptionFields());
                 } else if (mExceptionFields != null) {
@@ -2738,8 +2812,8 @@ public class Containers
             }
 
             if (from.hasDefaultValues()) {
-                optionals.set(35);
-                modified.set(35);
+                optionals.set(36);
+                modified.set(36);
                 if (mDefaultValues_builder != null) {
                     mDefaultValues_builder.merge(from.getDefaultValues());
                 } else if (mDefaultValues != null) {
@@ -4933,6 +5007,78 @@ public class Containers
         }
 
         /**
+         * Sets the value of messageKeyMap.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setMessageKeyMap(java.util.Map<net.morimekta.test.providence.core.CompactFields,String> value) {
+            optionals.set(30);
+            modified.set(30);
+            mMessageKeyMap.clear();
+            mMessageKeyMap.putAll(value);
+            return this;
+        }
+
+        /**
+         * Adds a mapping to messageKeyMap.
+         *
+         * @param key The inserted key
+         * @param value The inserted value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder putInMessageKeyMap(net.morimekta.test.providence.core.CompactFields key, String value) {
+            optionals.set(30);
+            modified.set(30);
+            mMessageKeyMap.put(key, value);
+            return this;
+        }
+
+        /**
+         * Checks for presence of the messageKeyMap field.
+         *
+         * @return True if messageKeyMap has been set.
+         */
+        public boolean isSetMessageKeyMap() {
+            return optionals.get(30);
+        }
+
+        /**
+         * Checks if messageKeyMap has been modified since the _Builder was created.
+         *
+         * @return True if messageKeyMap has been modified.
+         */
+        public boolean isModifiedMessageKeyMap() {
+            return modified.get(30);
+        }
+
+        /**
+         * Clears the messageKeyMap field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearMessageKeyMap() {
+            optionals.clear(30);
+            modified.set(30);
+            mMessageKeyMap.clear();
+            return this;
+        }
+
+        /**
+         * Gets the builder for the contained messageKeyMap.
+         *
+         * @return The field builder
+         */
+        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.CompactFields,String> mutableMessageKeyMap() {
+            optionals.set(30);
+            modified.set(30);
+            return mMessageKeyMap;
+        }
+
+        /**
          * Sets the value of requiredFields.
          *
          * @param value The new value
@@ -4940,8 +5086,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setRequiredFields(net.morimekta.test.providence.core.RequiredFields value) {
-            optionals.set(30);
-            modified.set(30);
+            optionals.set(31);
+            modified.set(31);
             mRequiredFields_builder = null;
             mRequiredFields = value;
             return this;
@@ -4953,7 +5099,7 @@ public class Containers
          * @return True if requiredFields has been set.
          */
         public boolean isSetRequiredFields() {
-            return optionals.get(30);
+            return optionals.get(31);
         }
 
         /**
@@ -4962,7 +5108,7 @@ public class Containers
          * @return True if requiredFields has been modified.
          */
         public boolean isModifiedRequiredFields() {
-            return modified.get(30);
+            return modified.get(31);
         }
 
         /**
@@ -4972,8 +5118,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearRequiredFields() {
-            optionals.clear(30);
-            modified.set(30);
+            optionals.clear(31);
+            modified.set(31);
             mRequiredFields = null;
             mRequiredFields_builder = null;
             return this;
@@ -4985,8 +5131,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.RequiredFields._Builder mutableRequiredFields() {
-            optionals.set(30);
-            modified.set(30);
+            optionals.set(31);
+            modified.set(31);
 
             if (mRequiredFields != null) {
                 mRequiredFields_builder = mRequiredFields.mutate();
@@ -5005,8 +5151,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDefaultFields(net.morimekta.test.providence.core.DefaultFields value) {
-            optionals.set(31);
-            modified.set(31);
+            optionals.set(32);
+            modified.set(32);
             mDefaultFields_builder = null;
             mDefaultFields = value;
             return this;
@@ -5018,7 +5164,7 @@ public class Containers
          * @return True if defaultFields has been set.
          */
         public boolean isSetDefaultFields() {
-            return optionals.get(31);
+            return optionals.get(32);
         }
 
         /**
@@ -5027,7 +5173,7 @@ public class Containers
          * @return True if defaultFields has been modified.
          */
         public boolean isModifiedDefaultFields() {
-            return modified.get(31);
+            return modified.get(32);
         }
 
         /**
@@ -5037,8 +5183,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearDefaultFields() {
-            optionals.clear(31);
-            modified.set(31);
+            optionals.clear(32);
+            modified.set(32);
             mDefaultFields = null;
             mDefaultFields_builder = null;
             return this;
@@ -5050,8 +5196,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.DefaultFields._Builder mutableDefaultFields() {
-            optionals.set(31);
-            modified.set(31);
+            optionals.set(32);
+            modified.set(32);
 
             if (mDefaultFields != null) {
                 mDefaultFields_builder = mDefaultFields.mutate();
@@ -5070,8 +5216,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setOptionalFields(net.morimekta.test.providence.core.OptionalFields value) {
-            optionals.set(32);
-            modified.set(32);
+            optionals.set(33);
+            modified.set(33);
             mOptionalFields_builder = null;
             mOptionalFields = value;
             return this;
@@ -5083,7 +5229,7 @@ public class Containers
          * @return True if optionalFields has been set.
          */
         public boolean isSetOptionalFields() {
-            return optionals.get(32);
+            return optionals.get(33);
         }
 
         /**
@@ -5092,7 +5238,7 @@ public class Containers
          * @return True if optionalFields has been modified.
          */
         public boolean isModifiedOptionalFields() {
-            return modified.get(32);
+            return modified.get(33);
         }
 
         /**
@@ -5102,8 +5248,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearOptionalFields() {
-            optionals.clear(32);
-            modified.set(32);
+            optionals.clear(33);
+            modified.set(33);
             mOptionalFields = null;
             mOptionalFields_builder = null;
             return this;
@@ -5115,8 +5261,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.OptionalFields._Builder mutableOptionalFields() {
-            optionals.set(32);
-            modified.set(32);
+            optionals.set(33);
+            modified.set(33);
 
             if (mOptionalFields != null) {
                 mOptionalFields_builder = mOptionalFields.mutate();
@@ -5135,8 +5281,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setUnionFields(net.morimekta.test.providence.core.UnionFields value) {
-            optionals.set(33);
-            modified.set(33);
+            optionals.set(34);
+            modified.set(34);
             mUnionFields_builder = null;
             mUnionFields = value;
             return this;
@@ -5148,7 +5294,7 @@ public class Containers
          * @return True if unionFields has been set.
          */
         public boolean isSetUnionFields() {
-            return optionals.get(33);
+            return optionals.get(34);
         }
 
         /**
@@ -5157,7 +5303,7 @@ public class Containers
          * @return True if unionFields has been modified.
          */
         public boolean isModifiedUnionFields() {
-            return modified.get(33);
+            return modified.get(34);
         }
 
         /**
@@ -5167,8 +5313,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearUnionFields() {
-            optionals.clear(33);
-            modified.set(33);
+            optionals.clear(34);
+            modified.set(34);
             mUnionFields = null;
             mUnionFields_builder = null;
             return this;
@@ -5180,8 +5326,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.UnionFields._Builder mutableUnionFields() {
-            optionals.set(33);
-            modified.set(33);
+            optionals.set(34);
+            modified.set(34);
 
             if (mUnionFields != null) {
                 mUnionFields_builder = mUnionFields.mutate();
@@ -5200,8 +5346,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setExceptionFields(net.morimekta.test.providence.core.ExceptionFields value) {
-            optionals.set(34);
-            modified.set(34);
+            optionals.set(35);
+            modified.set(35);
             mExceptionFields_builder = null;
             mExceptionFields = value;
             return this;
@@ -5213,7 +5359,7 @@ public class Containers
          * @return True if exceptionFields has been set.
          */
         public boolean isSetExceptionFields() {
-            return optionals.get(34);
+            return optionals.get(35);
         }
 
         /**
@@ -5222,7 +5368,7 @@ public class Containers
          * @return True if exceptionFields has been modified.
          */
         public boolean isModifiedExceptionFields() {
-            return modified.get(34);
+            return modified.get(35);
         }
 
         /**
@@ -5232,8 +5378,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearExceptionFields() {
-            optionals.clear(34);
-            modified.set(34);
+            optionals.clear(35);
+            modified.set(35);
             mExceptionFields = null;
             mExceptionFields_builder = null;
             return this;
@@ -5245,8 +5391,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.ExceptionFields._Builder mutableExceptionFields() {
-            optionals.set(34);
-            modified.set(34);
+            optionals.set(35);
+            modified.set(35);
 
             if (mExceptionFields != null) {
                 mExceptionFields_builder = mExceptionFields.mutate();
@@ -5265,8 +5411,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDefaultValues(net.morimekta.test.providence.core.DefaultValues value) {
-            optionals.set(35);
-            modified.set(35);
+            optionals.set(36);
+            modified.set(36);
             mDefaultValues_builder = null;
             mDefaultValues = value;
             return this;
@@ -5278,7 +5424,7 @@ public class Containers
          * @return True if defaultValues has been set.
          */
         public boolean isSetDefaultValues() {
-            return optionals.get(35);
+            return optionals.get(36);
         }
 
         /**
@@ -5287,7 +5433,7 @@ public class Containers
          * @return True if defaultValues has been modified.
          */
         public boolean isModifiedDefaultValues() {
-            return modified.get(35);
+            return modified.get(36);
         }
 
         /**
@@ -5297,8 +5443,8 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder clearDefaultValues() {
-            optionals.clear(35);
-            modified.set(35);
+            optionals.clear(36);
+            modified.set(36);
             mDefaultValues = null;
             mDefaultValues_builder = null;
             return this;
@@ -5310,8 +5456,8 @@ public class Containers
          * @return The field builder
          */
         public net.morimekta.test.providence.core.DefaultValues._Builder mutableDefaultValues() {
-            optionals.set(35);
-            modified.set(35);
+            optionals.set(36);
+            modified.set(36);
 
             if (mDefaultValues != null) {
                 mDefaultValues_builder = mDefaultValues.mutate();
@@ -5358,6 +5504,7 @@ public class Containers
                    java.util.Objects.equals(mMessageList, other.mMessageList) &&
                    java.util.Objects.equals(mMessageSet, other.mMessageSet) &&
                    java.util.Objects.equals(mMessageMap, other.mMessageMap) &&
+                   java.util.Objects.equals(mMessageKeyMap, other.mMessageKeyMap) &&
                    java.util.Objects.equals(mRequiredFields, other.mRequiredFields) &&
                    java.util.Objects.equals(mDefaultFields, other.mDefaultFields) &&
                    java.util.Objects.equals(mOptionalFields, other.mOptionalFields) &&
@@ -5400,6 +5547,7 @@ public class Containers
                     _Field.MESSAGE_LIST, mMessageList,
                     _Field.MESSAGE_SET, mMessageSet,
                     _Field.MESSAGE_MAP, mMessageMap,
+                    _Field.MESSAGE_KEY_MAP, mMessageKeyMap,
                     _Field.REQUIRED_FIELDS, mRequiredFields,
                     _Field.DEFAULT_FIELDS, mDefaultFields,
                     _Field.OPTIONAL_FIELDS, mOptionalFields,
@@ -5458,6 +5606,7 @@ public class Containers
                 case 41: setMessageList((java.util.List<net.morimekta.test.providence.core.DefaultFields>) value); break;
                 case 42: setMessageSet((java.util.Set<net.morimekta.test.providence.core.DefaultFields>) value); break;
                 case 43: setMessageMap((java.util.Map<String,net.morimekta.test.providence.core.DefaultFields>) value); break;
+                case 44: setMessageKeyMap((java.util.Map<net.morimekta.test.providence.core.CompactFields,String>) value); break;
                 case 51: setRequiredFields((net.morimekta.test.providence.core.RequiredFields) value); break;
                 case 52: setDefaultFields((net.morimekta.test.providence.core.DefaultFields) value); break;
                 case 53: setOptionalFields((net.morimekta.test.providence.core.OptionalFields) value); break;
@@ -5502,12 +5651,13 @@ public class Containers
                 case 41: return optionals.get(27);
                 case 42: return optionals.get(28);
                 case 43: return optionals.get(29);
-                case 51: return optionals.get(30);
-                case 52: return optionals.get(31);
-                case 53: return optionals.get(32);
-                case 54: return optionals.get(33);
-                case 55: return optionals.get(34);
-                case 56: return optionals.get(35);
+                case 44: return optionals.get(30);
+                case 51: return optionals.get(31);
+                case 52: return optionals.get(32);
+                case 53: return optionals.get(33);
+                case 54: return optionals.get(34);
+                case 55: return optionals.get(35);
+                case 56: return optionals.get(36);
                 default: break;
             }
             return false;
@@ -5546,12 +5696,13 @@ public class Containers
                 case 41: return modified.get(27);
                 case 42: return modified.get(28);
                 case 43: return modified.get(29);
-                case 51: return modified.get(30);
-                case 52: return modified.get(31);
-                case 53: return modified.get(32);
-                case 54: return modified.get(33);
-                case 55: return modified.get(34);
-                case 56: return modified.get(35);
+                case 44: return modified.get(30);
+                case 51: return modified.get(31);
+                case 52: return modified.get(32);
+                case 53: return modified.get(33);
+                case 54: return modified.get(34);
+                case 55: return modified.get(35);
+                case 56: return modified.get(36);
                 default: break;
             }
             return false;
@@ -5619,6 +5770,7 @@ public class Containers
                 case 41: clearMessageList(); break;
                 case 42: clearMessageSet(); break;
                 case 43: clearMessageMap(); break;
+                case 44: clearMessageKeyMap(); break;
                 case 51: clearRequiredFields(); break;
                 case 52: clearDefaultFields(); break;
                 case 53: clearOptionalFields(); break;
@@ -6250,10 +6402,34 @@ public class Containers
                         }
                         break;
                     }
+                    case 44: {
+                        if (type == 13) {
+                            byte t_151 = reader.expectByte();
+                            byte t_152 = reader.expectByte();
+                            if (t_151 == 12 && t_152 == 11) {
+                                final int len_150 = reader.expectUInt32();
+                                for (int i_153 = 0; i_153 < len_150; ++i_153) {
+                                    net.morimekta.test.providence.core.CompactFields key_154 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
+                                    int len_156 = reader.expectUInt32();
+                                    String val_155 = new String(reader.expectBytes(len_156), java.nio.charset.StandardCharsets.UTF_8);
+                                    mMessageKeyMap.put(key_154, val_155);
+                                }
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException(
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_151) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_152) +
+                                        " for providence.Containers.messageKeyMap, should be struct(12) and string(11)");
+                            }
+                            optionals.set(30);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.messageKeyMap, should be struct(12)");
+                        }
+                        break;
+                    }
                     case 51: {
                         if (type == 12) {
                             mRequiredFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.RequiredFields.kDescriptor, strict);
-                            optionals.set(30);
+                            optionals.set(31);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.requiredFields, should be struct(12)");
                         }
@@ -6262,7 +6438,7 @@ public class Containers
                     case 52: {
                         if (type == 12) {
                             mDefaultFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
-                            optionals.set(31);
+                            optionals.set(32);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.defaultFields, should be struct(12)");
                         }
@@ -6271,7 +6447,7 @@ public class Containers
                     case 53: {
                         if (type == 12) {
                             mOptionalFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.OptionalFields.kDescriptor, strict);
-                            optionals.set(32);
+                            optionals.set(33);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.optionalFields, should be struct(12)");
                         }
@@ -6280,7 +6456,7 @@ public class Containers
                     case 54: {
                         if (type == 12) {
                             mUnionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.UnionFields.kDescriptor, strict);
-                            optionals.set(33);
+                            optionals.set(34);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.unionFields, should be struct(12)");
                         }
@@ -6289,7 +6465,7 @@ public class Containers
                     case 55: {
                         if (type == 12) {
                             mExceptionFields = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.ExceptionFields.kDescriptor, strict);
-                            optionals.set(34);
+                            optionals.set(35);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.exceptionFields, should be struct(12)");
                         }
@@ -6298,18 +6474,14 @@ public class Containers
                     case 56: {
                         if (type == 12) {
                             mDefaultValues = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultValues.kDescriptor, strict);
-                            optionals.set(35);
+                            optionals.set(36);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.Containers.defaultValues, should be struct(12)");
                         }
                         break;
                     }
                     default: {
-                        if (strict) {
-                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.Containers");
-                        } else {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                        }
+                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

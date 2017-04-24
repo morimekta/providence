@@ -1477,11 +1477,7 @@ public class UnionFields
                         break;
                     }
                     default: {
-                        if (strict) {
-                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.UnionFields");
-                        } else {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                        }
+                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

@@ -665,11 +665,7 @@ public class Calculator {
                             break;
                         }
                         default: {
-                            if (strict) {
-                                throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in calculator.calculate___request");
-                            } else {
-                                net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                            }
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -1308,11 +1304,7 @@ public class Calculator {
                             break;
                         }
                         default: {
-                            if (strict) {
-                                throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in calculator.calculate___response");
-                            } else {
-                                net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                            }
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -1649,11 +1641,7 @@ public class Calculator {
                     int field = reader.expectShort();
                     switch (field) {
                         default: {
-                            if (strict) {
-                                throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in calculator.iamalive___request");
-                            } else {
-                                net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                            }
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }

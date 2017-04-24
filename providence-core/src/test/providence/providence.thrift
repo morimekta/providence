@@ -155,6 +155,7 @@ struct Containers {
     41: optional list<DefaultFields> messageList;
     42: optional set<DefaultFields> messageSet;
     43: optional map<string,DefaultFields> messageMap;
+    44: optional map<CompactFields,string> messageKeyMap;
 
     51: optional RequiredFields requiredFields;
     52: optional DefaultFields defaultFields;
@@ -162,6 +163,9 @@ struct Containers {
     54: optional UnionFields unionFields;
     55: optional ExceptionFields exceptionFields;
     56: optional DefaultValues defaultValues;
+}
+
+struct ConsumeAll {
 }
 
 service ContainerService {

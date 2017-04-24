@@ -643,11 +643,7 @@ public class ContainerService {
                             break;
                         }
                         default: {
-                            if (strict) {
-                                throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.load___request");
-                            } else {
-                                net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                            }
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
@@ -1286,11 +1282,7 @@ public class ContainerService {
                             break;
                         }
                         default: {
-                            if (strict) {
-                                throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in providence.load___response");
-                            } else {
-                                net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                            }
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                             break;
                         }
                     }
