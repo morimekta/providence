@@ -19,6 +19,12 @@ public class Calculator {
          */
         void iamalive()
                 throws java.io.IOException;
+
+        /**
+         * @throws java.io.IOException On providence or non-declared exceptions.
+         */
+        void ping()
+                throws java.io.IOException;
     }
 
     /**
@@ -75,6 +81,30 @@ public class Calculator {
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
             handler.handleCall(call, Calculator.kDescriptor);
         }
+
+        @Override
+        public void ping()
+                throws java.io.IOException {
+            net.morimekta.test.providence.core.calculator.Calculator.Ping_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator.Ping_request.builder();
+
+            net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("ping", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
+            net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator.kDescriptor);
+
+            if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
+                throw (net.morimekta.providence.PApplicationException) resp.getMessage();
+            }
+
+            net.morimekta.test.providence.core.calculator.Calculator.Ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator.Ping_response) resp.getMessage();
+            if (msg.unionField() != null) {
+                switch (msg.unionField()) {
+                    case SUCCESS:
+                        return;
+                }
+            }
+
+            throw new net.morimekta.providence.PApplicationException("Result field for calculator.Calculator.ping() not set",
+                                                                     net.morimekta.providence.PApplicationExceptionType.MISSING_RESULT);
+        }
     }
 
     public static class Processor implements net.morimekta.providence.PProcessor {
@@ -121,6 +151,18 @@ public class Calculator {
                     impl.iamalive();
                     return null;
                 }
+                case "ping": {
+                    net.morimekta.test.providence.core.calculator.Calculator.Ping_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator.Ping_response.builder();
+                    net.morimekta.test.providence.core.calculator.Calculator.Ping_request req = (net.morimekta.test.providence.core.calculator.Calculator.Ping_request) call.getMessage();
+                    impl.ping();
+                    rsp.setSuccess();
+                    net.morimekta.providence.PServiceCall reply =
+                            new net.morimekta.providence.PServiceCall<>(call.getMethod(),
+                                                                        net.morimekta.providence.PServiceCallType.REPLY,
+                                                                        call.getSequence(),
+                                                                        rsp.build());
+                    return reply;
+                }
                 default: {
                     net.morimekta.providence.PApplicationException ex =
                             new net.morimekta.providence.PApplicationException(
@@ -140,6 +182,7 @@ public class Calculator {
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
         CALCULATE("calculate", false, net.morimekta.test.providence.core.calculator.Calculator.Calculate_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Calculate_response.kDescriptor),
         IAMALIVE("iamalive", true, net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request.kDescriptor, null),
+        PING("ping", false, net.morimekta.test.providence.core.calculator.Calculator.Ping_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Ping_response.kDescriptor),
         ;
 
         private final String name;
@@ -174,6 +217,7 @@ public class Calculator {
             switch (name) {
                 case "calculate": return CALCULATE;
                 case "iamalive": return IAMALIVE;
+                case "ping": return PING;
             }
             return null;
         }
@@ -1652,6 +1696,799 @@ public class Calculator {
             @Override
             public Iamalive_request build() {
                 return new Iamalive_request(this);
+            }
+        }
+    }
+
+    // type --> ping___request
+    @SuppressWarnings("unused")
+    protected static class Ping_request
+            implements net.morimekta.providence.PMessage<Ping_request,Ping_request._Field>,
+                       Comparable<Ping_request>,
+                       java.io.Serializable,
+                       net.morimekta.providence.serializer.rw.BinaryWriter {
+        private final static long serialVersionUID = -7403091342907131296L;
+
+
+        private volatile int tHashCode;
+
+        public Ping_request() {
+        }
+
+        private Ping_request(_Builder builder) {
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                default: return null;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            if (tHashCode == 0) {
+                tHashCode = java.util.Objects.hash(
+                        Ping_request.class);
+            }
+            return tHashCode;
+        }
+
+        @Override
+        public String toString() {
+            return "calculator.ping___request" + asString();
+        }
+
+        @Override
+        public String asString() {
+            StringBuilder out = new StringBuilder();
+            out.append("{");
+
+            out.append('}');
+            return out.toString();
+        }
+
+        @Override
+        public int compareTo(Ping_request other) {
+            int c;
+
+            return 0;
+        }
+
+        @Override
+        public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+            int length = 0;
+
+            length += writer.writeByte((byte) 0);
+            return length;
+        }
+
+        @javax.annotation.Nonnull
+        @Override
+        public _Builder mutate() {
+            return new _Builder(this);
+        }
+
+        public enum _Field implements net.morimekta.providence.descriptor.PField {
+            ;
+
+            private final int mKey;
+            private final net.morimekta.providence.descriptor.PRequirement mRequired;
+            private final String mName;
+            private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
+            private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
+
+            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mKey = key;
+                mRequired = required;
+                mName = name;
+                mTypeProvider = typeProvider;
+                mDefaultValue = defaultValue;
+            }
+
+            @Override
+            public int getKey() { return mKey; }
+
+            @Override
+            public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
+
+            @Override
+            public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
+
+            @Override
+            public String getName() { return mName; }
+
+            @Override
+            public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+            @Override
+            public Object getDefaultValue() {
+                return hasDefaultValue() ? mDefaultValue.get() : null;
+            }
+
+            @Override
+            public String toString() {
+                return net.morimekta.providence.descriptor.PField.asString(this);
+            }
+
+            public static _Field forKey(int key) {
+                switch (key) {
+                }
+                return null;
+            }
+
+            public static _Field forName(String name) {
+                switch (name) {
+                }
+                return null;
+            }
+        }
+
+        public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Ping_request,_Field> provider() {
+            return new _Provider();
+        }
+
+        @Override
+        public net.morimekta.providence.descriptor.PStructDescriptor<Ping_request,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        public static final net.morimekta.providence.descriptor.PStructDescriptor<Ping_request,_Field> kDescriptor;
+
+        private static class _Descriptor
+                extends net.morimekta.providence.descriptor.PStructDescriptor<Ping_request,_Field> {
+            public _Descriptor() {
+                super("calculator", "ping___request", new _Factory(), true);
+            }
+
+            @Override
+            public _Field[] getFields() {
+                return _Field.values();
+            }
+
+            @Override
+            public _Field getField(String name) {
+                return _Field.forName(name);
+            }
+
+            @Override
+            public _Field getField(int key) {
+                return _Field.forKey(key);
+            }
+        }
+
+        static {
+            kDescriptor = new _Descriptor();
+        }
+
+        private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<Ping_request,_Field> {
+            @Override
+            public net.morimekta.providence.descriptor.PStructDescriptor<Ping_request,_Field> descriptor() {
+                return kDescriptor;
+            }
+        }
+
+        private final static class _Factory
+                extends net.morimekta.providence.PMessageBuilderFactory<Ping_request,_Field> {
+            @Override
+            public _Builder builder() {
+                return new _Builder();
+            }
+        }
+
+        /**
+         * Make a calculator.ping___request builder.
+         * @return The builder instance.
+         */
+        public static _Builder builder() {
+            return new _Builder();
+        }
+
+        public static class _Builder
+                extends net.morimekta.providence.PMessageBuilder<Ping_request,_Field>
+                implements net.morimekta.providence.serializer.rw.BinaryReader {
+            private java.util.BitSet optionals;
+            private java.util.BitSet modified;
+
+            /**
+             * Make a calculator.ping___request builder.
+             */
+            public _Builder() {
+                optionals = new java.util.BitSet(0);
+                modified = new java.util.BitSet(0);
+            }
+
+            /**
+             * Make a mutating builder off a base calculator.ping___request.
+             *
+             * @param base The base ping___request
+             */
+            public _Builder(Ping_request base) {
+                this();
+
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public _Builder merge(Ping_request from) {
+                return this;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (o == null || !o.getClass().equals(getClass())) return false;
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(
+                        Ping_request.class, optionals);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public net.morimekta.providence.PMessageBuilder mutator(int key) {
+                switch (key) {
+                    default: throw new IllegalArgumentException("Not a message field ID: " + key);
+                }
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            @SuppressWarnings("unchecked")
+            public _Builder set(int key, Object value) {
+                if (value == null) return clear(key);
+                switch (key) {
+                    default: break;
+                }
+                return this;
+            }
+
+            @Override
+            public boolean isSet(int key) {
+                switch (key) {
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isModified(int key) {
+                switch (key) {
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
+            public _Builder addTo(int key, Object value) {
+                switch (key) {
+                    default: break;
+                }
+                return this;
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public _Builder clear(int key) {
+                switch (key) {
+                    default: break;
+                }
+                return this;
+            }
+
+            @Override
+            public boolean valid() {
+                return true;
+            }
+
+            @Override
+            public void validate() {
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public net.morimekta.providence.descriptor.PStructDescriptor<Ping_request,_Field> descriptor() {
+                return kDescriptor;
+            }
+
+            @Override
+            public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+                byte type = reader.expectByte();
+                while (type != 0) {
+                    int field = reader.expectShort();
+                    switch (field) {
+                        default: {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            break;
+                        }
+                    }
+                    type = reader.expectByte();
+                }
+            }
+
+            @Override
+            public Ping_request build() {
+                return new Ping_request(this);
+            }
+        }
+    }
+
+    // type <-- ping___response
+    @SuppressWarnings("unused")
+    protected static class Ping_response
+            implements net.morimekta.providence.PUnion<Ping_response,Ping_response._Field>,
+                       Comparable<Ping_response>,
+                       java.io.Serializable,
+                       net.morimekta.providence.serializer.rw.BinaryWriter {
+        private final static long serialVersionUID = 1459172367290154434L;
+
+
+        private final _Field tUnionField;
+
+        private volatile int tHashCode;
+
+        /**
+         * @return The created union.
+         */
+        public static Ping_response withSuccess() {
+            return new _Builder().setSuccess().build();
+        }
+
+        private Ping_response(_Builder builder) {
+            tUnionField = builder.tUnionField;
+
+        }
+
+        public boolean hasSuccess() {
+            return tUnionField == _Field.SUCCESS;
+        }
+
+        @Override
+        public boolean has(int key) {
+            switch(key) {
+                case 0: return hasSuccess();
+                default: return false;
+            }
+        }
+
+        @Override
+        public int num(int key) {
+            switch(key) {
+                case 0: return hasSuccess() ? 1 : 0;
+                default: return 0;
+            }
+        }
+
+        @Override
+        public Object get(int key) {
+            switch(key) {
+                case 0: return hasSuccess() ? Boolean.FALSE : null;
+                default: return null;
+            }
+        }
+
+        @Override
+        public _Field unionField() {
+            return tUnionField;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) return true;
+            if (o == null || !o.getClass().equals(getClass())) return false;
+            Ping_response other = (Ping_response) o;
+            return java.util.Objects.equals(tUnionField, other.tUnionField);
+        }
+
+        @Override
+        public int hashCode() {
+            if (tHashCode == 0) {
+                tHashCode = java.util.Objects.hash(
+                        Ping_response.class);
+            }
+            return tHashCode;
+        }
+
+        @Override
+        public String toString() {
+            return "calculator.ping___response" + asString();
+        }
+
+        @Override
+        public String asString() {
+            StringBuilder out = new StringBuilder();
+            out.append("{");
+
+            switch (tUnionField) {
+                case SUCCESS: {
+                    out.append("success:")
+                       .append("true");
+                    break;
+                }
+            }
+            out.append('}');
+            return out.toString();
+        }
+
+        @Override
+        public int compareTo(Ping_response other) {
+            int c = tUnionField.compareTo(other.tUnionField);
+            if (c != 0) return c;
+
+            switch (tUnionField) {
+                case SUCCESS:
+                default: return 0;
+            }
+        }
+
+        @Override
+        public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
+            int length = 0;
+
+            if (tUnionField != null) {
+                switch (tUnionField) {
+                    case SUCCESS: {
+                        length += writer.writeByte((byte) 1);
+                        length += writer.writeShort((short) 0);
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            length += writer.writeByte((byte) 0);
+            return length;
+        }
+
+        @javax.annotation.Nonnull
+        @Override
+        public _Builder mutate() {
+            return new _Builder(this);
+        }
+
+        public enum _Field implements net.morimekta.providence.descriptor.PField {
+            SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.providence.descriptor.PPrimitive.VOID.provider(), null),
+            ;
+
+            private final int mKey;
+            private final net.morimekta.providence.descriptor.PRequirement mRequired;
+            private final String mName;
+            private final net.morimekta.providence.descriptor.PDescriptorProvider mTypeProvider;
+            private final net.morimekta.providence.descriptor.PValueProvider<?> mDefaultValue;
+
+            _Field(int key, net.morimekta.providence.descriptor.PRequirement required, String name, net.morimekta.providence.descriptor.PDescriptorProvider typeProvider, net.morimekta.providence.descriptor.PValueProvider<?> defaultValue) {
+                mKey = key;
+                mRequired = required;
+                mName = name;
+                mTypeProvider = typeProvider;
+                mDefaultValue = defaultValue;
+            }
+
+            @Override
+            public int getKey() { return mKey; }
+
+            @Override
+            public net.morimekta.providence.descriptor.PRequirement getRequirement() { return mRequired; }
+
+            @Override
+            public net.morimekta.providence.descriptor.PDescriptor getDescriptor() { return mTypeProvider.descriptor(); }
+
+            @Override
+            public String getName() { return mName; }
+
+            @Override
+            public boolean hasDefaultValue() { return mDefaultValue != null; }
+
+            @Override
+            public Object getDefaultValue() {
+                return hasDefaultValue() ? mDefaultValue.get() : null;
+            }
+
+            @Override
+            public String toString() {
+                return net.morimekta.providence.descriptor.PField.asString(this);
+            }
+
+            public static _Field forKey(int key) {
+                switch (key) {
+                    case 0: return _Field.SUCCESS;
+                }
+                return null;
+            }
+
+            public static _Field forName(String name) {
+                switch (name) {
+                    case "success": return _Field.SUCCESS;
+                }
+                return null;
+            }
+        }
+
+        public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Ping_response,_Field> provider() {
+            return new _Provider();
+        }
+
+        @Override
+        public net.morimekta.providence.descriptor.PUnionDescriptor<Ping_response,_Field> descriptor() {
+            return kDescriptor;
+        }
+
+        public static final net.morimekta.providence.descriptor.PUnionDescriptor<Ping_response,_Field> kDescriptor;
+
+        private static class _Descriptor
+                extends net.morimekta.providence.descriptor.PUnionDescriptor<Ping_response,_Field> {
+            public _Descriptor() {
+                super("calculator", "ping___response", new _Factory(), true);
+            }
+
+            @Override
+            public _Field[] getFields() {
+                return _Field.values();
+            }
+
+            @Override
+            public _Field getField(String name) {
+                return _Field.forName(name);
+            }
+
+            @Override
+            public _Field getField(int key) {
+                return _Field.forKey(key);
+            }
+        }
+
+        static {
+            kDescriptor = new _Descriptor();
+        }
+
+        private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<Ping_response,_Field> {
+            @Override
+            public net.morimekta.providence.descriptor.PUnionDescriptor<Ping_response,_Field> descriptor() {
+                return kDescriptor;
+            }
+        }
+
+        private final static class _Factory
+                extends net.morimekta.providence.PMessageBuilderFactory<Ping_response,_Field> {
+            @Override
+            public _Builder builder() {
+                return new _Builder();
+            }
+        }
+
+        /**
+         * Make a calculator.ping___response builder.
+         * @return The builder instance.
+         */
+        public static _Builder builder() {
+            return new _Builder();
+        }
+
+        public static class _Builder
+                extends net.morimekta.providence.PMessageBuilder<Ping_response,_Field>
+                implements net.morimekta.providence.serializer.rw.BinaryReader {
+            private _Field tUnionField;
+
+            private boolean modified;
+
+
+            /**
+             * Make a calculator.ping___response builder.
+             */
+            public _Builder() {
+                modified = false;
+            }
+
+            /**
+             * Make a mutating builder off a base calculator.ping___response.
+             *
+             * @param base The base ping___response
+             */
+            public _Builder(Ping_response base) {
+                this();
+
+                tUnionField = base.tUnionField;
+
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public _Builder merge(Ping_response from) {
+                if (from.unionField() == null) {
+                    return this;
+                }
+
+                switch (from.unionField()) {
+                    case SUCCESS: {
+                        tUnionField = _Field.SUCCESS;
+                        break;
+                    }
+                }
+                return this;
+            }
+
+            /**
+             * Sets the value of success.
+             *
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder setSuccess() {
+                tUnionField = _Field.SUCCESS;
+                modified = true;
+                return this;
+            }
+
+            /**
+             * Checks for presence of the success field.
+             *
+             * @return True if success has been set.
+             */
+            public boolean isSetSuccess() {
+                return tUnionField == _Field.SUCCESS;
+            }
+
+            /**
+             * Clears the success field.
+             *
+             * @return The builder
+             */
+            @javax.annotation.Nonnull
+            public _Builder clearSuccess() {
+                if (tUnionField == _Field.SUCCESS) tUnionField = null;
+                modified = true;
+                return this;
+            }
+
+            /**
+             * Checks if ping___response has been modified since the _Builder was created.
+             *
+             * @return True if ping___response has been modified.
+             */
+            public boolean isUnionModified() {
+                return modified;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (o == null || !o.getClass().equals(getClass())) return false;
+                Ping_response._Builder other = (Ping_response._Builder) o;
+                return java.util.Objects.equals(tUnionField, other.tUnionField);
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(
+                        Ping_response.class);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public net.morimekta.providence.PMessageBuilder mutator(int key) {
+                switch (key) {
+                    default: throw new IllegalArgumentException("Not a message field ID: " + key);
+                }
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            @SuppressWarnings("unchecked")
+            public _Builder set(int key, Object value) {
+                if (value == null) return clear(key);
+                switch (key) {
+                    case 0: setSuccess(); break;
+                    default: break;
+                }
+                return this;
+            }
+
+            @Override
+            public boolean isSet(int key) {
+                switch (key) {
+                    case 0: return tUnionField == _Field.SUCCESS;
+                    default: break;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean isModified(int key) {
+                return modified;
+            }
+
+            @Override
+            public _Builder addTo(int key, Object value) {
+                switch (key) {
+                    default: break;
+                }
+                return this;
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public _Builder clear(int key) {
+                switch (key) {
+                    case 0: clearSuccess(); break;
+                    default: break;
+                }
+                return this;
+            }
+
+            @Override
+            public boolean valid() {
+                if (tUnionField == null) {
+                    return false;
+                }
+
+                switch (tUnionField) {
+                    case SUCCESS: return true;
+                    default: return true;
+                }
+            }
+
+            @Override
+            public void validate() {
+                if (!valid()) {
+                    throw new java.lang.IllegalStateException("No union field set in calculator.ping___response");
+                }
+            }
+
+            @javax.annotation.Nonnull
+            @Override
+            public net.morimekta.providence.descriptor.PUnionDescriptor<Ping_response,_Field> descriptor() {
+                return kDescriptor;
+            }
+
+            @Override
+            public void readBinary(net.morimekta.util.io.BigEndianBinaryReader reader, boolean strict) throws java.io.IOException {
+                byte type = reader.expectByte();
+                while (type != 0) {
+                    int field = reader.expectShort();
+                    switch (field) {
+                        case 0: {
+                            if (type == 1) {
+                                tUnionField = _Field.SUCCESS;
+                            } else {
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.ping___response.success, should be struct(12)");
+                            }
+                            break;
+                        }
+                        default: {
+                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
+                            break;
+                        }
+                    }
+                    type = reader.expectByte();
+                }
+            }
+
+            @Override
+            public Ping_response build() {
+                return new Ping_response(this);
             }
         }
     }

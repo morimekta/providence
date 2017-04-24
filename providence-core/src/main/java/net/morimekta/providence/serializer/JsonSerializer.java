@@ -178,7 +178,7 @@ public class JsonSerializer extends Serializer {
             }
             return requireNonNull((T) parseTypedValue(tokenizer.next(), tokenizer, type, false));
         } catch (JsonException e) {
-            throw new SerializerException(e, "Unable to parse JSON");
+            throw new SerializerException(e, "Unable to parse JSON: " + e.getMessage());
         }
     }
 
@@ -247,7 +247,7 @@ public class JsonSerializer extends Serializer {
                 String typeName = callTypeToken.decodeJsonLiteral();
                 type = PServiceCallType.forName(typeName);
                 if (type == null) {
-                    throw new SerializerException("Service call type " + typeName + " is not valid")
+                    throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else {
@@ -426,8 +426,6 @@ public class JsonSerializer extends Serializer {
                 case BOOL:
                     if (token.isBoolean()) {
                         return token.booleanValue();
-                    } else if (token.isInteger()) {
-                        return token.intValue() != 0;
                     }
                     throw new SerializerException("No boolean value for token: '" + token.asString() + "'");
                 case BYTE:
@@ -504,7 +502,7 @@ public class JsonSerializer extends Serializer {
                     PDescriptor itemType = mapType.itemDescriptor();
                     PDescriptor keyType = mapType.keyDescriptor();
                     if (!token.isSymbol(JsonToken.kMapStart)) {
-                        throw new SerializerException("Incompatible start of map " + token);
+                        throw new SerializerException("Invalid start of map '" + token.asString() + "'");
                     }
                     PMap.Builder<Object, Object> map = mapType.builder();
 
@@ -532,7 +530,7 @@ public class JsonSerializer extends Serializer {
                 case SET: {
                     PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new SerializerException("Incompatible start of list " + token);
+                        throw new SerializerException("Invalid start of set '" + token.asString() + "'");
                     }
                     @SuppressWarnings("unchecked")
                     PSet.Builder<Object> set = ((PSet<Object>) t).builder();
@@ -557,7 +555,7 @@ public class JsonSerializer extends Serializer {
                 case LIST: {
                     PDescriptor itemType = ((PList<?>) t).itemDescriptor();
                     if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new SerializerException("Incompatible start of list " + token);
+                        throw new SerializerException("Invalid start of list '" + token.asString() + "'");
                     }
                     @SuppressWarnings("unchecked")
                     PList.Builder<Object> list = ((PList<Object>) t).builder();
@@ -574,9 +572,7 @@ public class JsonSerializer extends Serializer {
                 }
             }
         } catch (JsonException je) {
-            throw new SerializerException(je, "Unable to parse type value.");
-        } catch (ClassCastException ce) {
-            throw new SerializerException(ce, "Serialized type  not compatible with " + t.getQualifiedName());
+            throw new SerializerException(je, je.getMessage());
         }
 
         throw new SerializerException("Unhandled item type " + t.getQualifiedName());
@@ -595,7 +591,12 @@ public class JsonSerializer extends Serializer {
         try {
             switch (keyType.getType()) {
                 case BOOL:
-                    return Boolean.parseBoolean(key);
+                    if (key.equalsIgnoreCase("true")) {
+                        return Boolean.TRUE;
+                    } else if (key.equalsIgnoreCase("false")) {
+                        return Boolean.FALSE;
+                    }
+                    throw new SerializerException("Invalid boolean value: \"" + Strings.escape(key) + "\"");
                 case BYTE:
                     return Byte.parseByte(key);
                 case I16:
@@ -606,14 +607,17 @@ public class JsonSerializer extends Serializer {
                     return Long.parseLong(key);
                 case DOUBLE:
                     try {
-                        JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes(StandardCharsets.US_ASCII)));
+                        JsonTokenizer tokenizer = new JsonTokenizer(new ByteArrayInputStream(key.getBytes(
+                                StandardCharsets.US_ASCII)));
                         JsonToken token = tokenizer.next();
                         if (!token.isNumber()) {
-                            throw new SerializerException(key + " is not a number");
+                            throw new SerializerException("Unable to parse double from key \"" + key + "\"");
                         } else if (tokenizer.hasNext()) {
                             throw new SerializerException("Garbage after double: \"" + key + "\"");
                         }
                         return token.doubleValue();
+                    } catch (SerializerException e) {
+                        throw e;
                     } catch (JsonException | IOException e) {
                         throw new SerializerException(e, "Unable to parse double from key \"" + key + "\"");
                     }
@@ -623,7 +627,7 @@ public class JsonSerializer extends Serializer {
                     try {
                         return Binary.fromBase64(key);
                     } catch (IllegalArgumentException e) {
-                        throw new SerializerException(e, "Unable to parse Base64 data.");
+                        throw new SerializerException(e, "Unable to parse Base64 data");
                     }
                 case ENUM:
                     PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
@@ -633,8 +637,8 @@ public class JsonSerializer extends Serializer {
                         eb.setByName(key);
                     }
                     if (readStrict && !eb.valid()) {
-                        throw new SerializerException("%s is not a valid enum value for %s",
-                                                      key, keyType.getQualifiedName());
+                        throw new SerializerException("\"%s\" is not a known enum value for %s",
+                                                      Strings.escape(key), keyType.getQualifiedName());
                     }
                     return eb.build();
                 case MESSAGE:
@@ -646,15 +650,14 @@ public class JsonSerializer extends Serializer {
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
-                        if (JsonToken.kMapStart == tokenizer.expectSymbol("message start", JsonToken.kMapStart, JsonToken.kListStart)) {
+                        if (JsonToken.kMapStart ==
+                            tokenizer.expectSymbol("message start", JsonToken.kMapStart, JsonToken.kListStart)) {
                             return parseMessage(tokenizer, st);
                         } else {
                             return parseCompactMessage(tokenizer, st);
                         }
-                    } catch (IOException e) {
-                        throw new SerializerException(e, "Unable to tokenize map key: %s", key);
-                    } catch (JsonException e) {
-                        throw new SerializerException(e, "Unable to parse map key: %s", Strings.escape(key));
+                    } catch (JsonException | IOException e) {
+                        throw new SerializerException(e, "Error parsing message key: " + e.getMessage());
                     }
                 default:
                     throw new SerializerException("Illegal key type: %s", keyType.getType());

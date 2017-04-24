@@ -24,7 +24,7 @@ public class PServiceTest {
 
         PService extended = Calculator2.kDescriptor;
 
-        assertThat(extended.getMethods(), hasSize(3));
+        assertThat(extended.getMethods(), hasSize(4));
         assertThat(extended.getExtendsService(), is(base));
         assertThat(extended.getMethod("calculate"), is(notNullValue()));
     }

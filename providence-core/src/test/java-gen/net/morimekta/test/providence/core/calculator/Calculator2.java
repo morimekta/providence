@@ -67,6 +67,30 @@ public class Calculator2 {
         }
 
         @Override
+        public void ping()
+                throws java.io.IOException {
+            net.morimekta.test.providence.core.calculator.Calculator.Ping_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator.Ping_request.builder();
+
+            net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("ping", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
+            net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator2.kDescriptor);
+
+            if (resp.getType() == net.morimekta.providence.PServiceCallType.EXCEPTION) {
+                throw (net.morimekta.providence.PApplicationException) resp.getMessage();
+            }
+
+            net.morimekta.test.providence.core.calculator.Calculator.Ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator.Ping_response) resp.getMessage();
+            if (msg.unionField() != null) {
+                switch (msg.unionField()) {
+                    case SUCCESS:
+                        return;
+                }
+            }
+
+            throw new net.morimekta.providence.PApplicationException("Result field for calculator.Calculator2.ping() not set",
+                                                                     net.morimekta.providence.PApplicationExceptionType.MISSING_RESULT);
+        }
+
+        @Override
         public String extra()
                 throws java.io.IOException {
             net.morimekta.test.providence.core.calculator.Calculator2.Extra_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator2.Extra_request.builder();
@@ -135,6 +159,18 @@ public class Calculator2 {
                     impl.iamalive();
                     return null;
                 }
+                case "ping": {
+                    net.morimekta.test.providence.core.calculator.Calculator.Ping_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator.Ping_response.builder();
+                    net.morimekta.test.providence.core.calculator.Calculator.Ping_request req = (net.morimekta.test.providence.core.calculator.Calculator.Ping_request) call.getMessage();
+                    impl.ping();
+                    rsp.setSuccess();
+                    net.morimekta.providence.PServiceCall reply =
+                            new net.morimekta.providence.PServiceCall<>(call.getMethod(),
+                                                                        net.morimekta.providence.PServiceCallType.REPLY,
+                                                                        call.getSequence(),
+                                                                        rsp.build());
+                    return reply;
+                }
                 case "extra": {
                     net.morimekta.test.providence.core.calculator.Calculator2.Extra_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator2.Extra_response.builder();
                     net.morimekta.test.providence.core.calculator.Calculator2.Extra_request req = (net.morimekta.test.providence.core.calculator.Calculator2.Extra_request) call.getMessage();
@@ -167,6 +203,7 @@ public class Calculator2 {
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
         CALCULATE("calculate", false, net.morimekta.test.providence.core.calculator.Calculator.Calculate_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Calculate_response.kDescriptor),
         IAMALIVE("iamalive", true, net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request.kDescriptor, null),
+        PING("ping", false, net.morimekta.test.providence.core.calculator.Calculator.Ping_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Ping_response.kDescriptor),
         EXTRA("extra", false, net.morimekta.test.providence.core.calculator.Calculator2.Extra_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator2.Extra_response.kDescriptor),
         ;
 
@@ -202,6 +239,7 @@ public class Calculator2 {
             switch (name) {
                 case "calculate": return CALCULATE;
                 case "iamalive": return IAMALIVE;
+                case "ping": return PING;
                 case "extra": return EXTRA;
             }
             return null;

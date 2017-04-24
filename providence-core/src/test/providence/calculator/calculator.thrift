@@ -29,6 +29,7 @@ exception CalculateException {
 service Calculator {
     Operand calculate(1: Operation op) throws (1: CalculateException ce);
     oneway void iamalive();
+    void ping();
 }
 
 service Calculator2 extends Calculator {

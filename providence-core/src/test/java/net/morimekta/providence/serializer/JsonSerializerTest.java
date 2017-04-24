@@ -169,6 +169,9 @@ public class JsonSerializerTest {
         assertSerializer(compact,
                          Calculator.kDescriptor,
                          "[\"iamalive\",4,44,{}]");
+        assertSerializer(compact,
+                         Calculator.kDescriptor,
+                         "[\"ping\",2,44,{\"0\":true}]");
     }
 
     private <M extends PMessage<M,F>, F extends PField>
@@ -241,6 +244,52 @@ public class JsonSerializerTest {
                    "Expected entry sep (one of [',']): but found ']'");
         assertFail(calc, lenient, "[\"iamalive\", 2, -55, {\"0\": 6}]",
                    "No response type for calculator.Calculator.iamalive()");
+        assertFail(calc, lenient, "[\"iamalive\", \"boo\", -55, {\"0\": 6}]",
+                   "Service call type \"boo\" is not valid");
+        assertFail(calc, lenient, "[\"iamalive\", false, -55, {\"0\": 6}]",
+                   "Invalid service call type token false");
+        assertFail(calc, compact, "[\"calculate\", \"reply\", 55, {}]",
+                   "No union field set in calculator.calculate___response");
+        assertFail(calc, compact, "[\"ping\", \"reply\", 55, {\"0\": 3}]",
+                   "Not a void token value: '3'");
+
+        assertFail(opt, compact, "{\"binaryValue\",\"AAss\"}",
+                   "Expected field KV sep (one of [':']): but found ','");
+        assertFail(opt, compact, "{\"enumValue\":false}",
+                   "false is not a enum value type");
+        assertFail(Containers.kDescriptor, compact, "{\"enumMap\":[]}",
+                   "Invalid start of map '['");
+        assertFail(Containers.kDescriptor, compact, "{\"enumSet\":{}}",
+                   "Invalid start of set '{'");
+        assertFail(Containers.kDescriptor, compact, "{\"enumList\":{}}",
+                   "Invalid start of list '{'");
+
+        assertFail(Containers.kDescriptor, compact, "{\"booleanMap\":{\"fleece\":false}}",
+                   "Invalid boolean value: \"fleece\"");
+        assertFail(Containers.kDescriptor, compact, "{\"byteMap\":{\"5boo\":55}}",
+                   "Unable to parse numeric value 5boo");
+        assertFail(Containers.kDescriptor, compact, "{\"shortMap\":{\"5boo\":55}}",
+                   "Unable to parse numeric value 5boo");
+        assertFail(Containers.kDescriptor, compact, "{\"integerMap\":{\"5boo\":55}}",
+                   "Unable to parse numeric value 5boo");
+        assertFail(Containers.kDescriptor, compact, "{\"longMap\":{\"5boo\":4}}",
+                   "Unable to parse numeric value 5boo");
+        assertFail(Containers.kDescriptor, compact, "{\"doubleMap\":{\"5.5boo\":4.4}}",
+                   "Unable to parse double from key \"5.5boo\"");
+        assertFail(Containers.kDescriptor, compact, "{\"doubleMap\":{\"5.5 boo\":4.4}}",
+                   "Garbage after double: \"5.5 boo\"");
+        assertFail(Containers.kDescriptor, compact, "{\"doubleMap\":{\"boo 2\":4.4}}",
+                   "Unable to parse double from key \"boo 2\"");
+
+        assertFail(Containers.kDescriptor, compact, "{\"binaryMap\":{\"\\_(^.^)_/\":\"\"}}",
+                   "Unable to parse Base64 data");
+        assertFail(Containers.kDescriptor, compact, "{\"enumMap\":{\"1\":\"BOO\"}}",
+                   "\"BOO\" is not a known enum value for providence.Value");
+        assertFail(Containers.kDescriptor, compact, "{\"enumMap\":{\"BOO\":\"1\"}}",
+                   "\"BOO\" is not a known enum value for providence.Value");
+        assertFail(Containers.kDescriptor, compact, "{\"messageKeyMap\":{\"{\\\"1\\\":55}\":\"str\"}}",
+                   "Error parsing message key: Not a valid string value: '55'");
+
     }
 
     private <M extends PMessage<M, F>, F extends PField>
