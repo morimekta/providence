@@ -141,8 +141,8 @@ public class ProvidenceServletTest {
         ApacheHttpTransport transport = new ApacheHttpTransport();
         THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
         TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
-        net.morimekta.test.providence.thrift.TestService.Iface client =
-                new net.morimekta.test.providence.thrift.TestService.Client(protocol);
+        net.morimekta.test.thrift.service.TestService.Iface client =
+                new net.morimekta.test.thrift.service.TestService.Client(protocol);
 
         client.voidMethod(55);
 
@@ -155,8 +155,8 @@ public class ProvidenceServletTest {
         ApacheHttpTransport transport = new ApacheHttpTransport();
         THttpClient httpClient = new THttpClient(endpoint().toString(), transport.getHttpClient());
         TBinaryProtocol protocol = new TBinaryProtocol(httpClient);
-        net.morimekta.test.providence.thrift.TestService.Iface client =
-                new net.morimekta.test.providence.thrift.TestService.Client(protocol);
+        net.morimekta.test.thrift.service.TestService.Iface client =
+                new net.morimekta.test.thrift.service.TestService.Client(protocol);
 
         doThrow(new Failure("test"))
                 .when(impl)
@@ -164,7 +164,7 @@ public class ProvidenceServletTest {
 
         try {
             client.voidMethod(55);
-        } catch (net.morimekta.test.providence.thrift.Failure e) {
+        } catch (net.morimekta.test.thrift.service.Failure e) {
             assertEquals("test", e.getText());
         }
 

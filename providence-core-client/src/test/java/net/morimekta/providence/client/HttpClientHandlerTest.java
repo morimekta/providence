@@ -53,7 +53,7 @@ public class HttpClientHandlerTest {
     private static final String NOT_FOUND = "not_found";
 
     private int                                                    port;
-    private net.morimekta.test.providence.thrift.TestService.Iface impl;
+    private net.morimekta.test.thrift.client.TestService.Iface impl;
     private Server                                                 server;
     private SerializerProvider                                     provider;
     private LinkedList<String>                                     contentTypes;
@@ -66,8 +66,8 @@ public class HttpClientHandlerTest {
     public void setUp() throws Exception {
         Log.setLog(new NoLogging());
 
-        impl = mock(net.morimekta.test.providence.thrift.TestService.Iface.class);
-        TProcessor processor = new net.morimekta.test.providence.thrift.TestService.Processor<>(impl);
+        impl = mock(net.morimekta.test.thrift.client.TestService.Iface.class);
+        TProcessor processor = new net.morimekta.test.thrift.client.TestService.Processor<>(impl);
 
         provider = new DefaultSerializerProvider();
         server = new Server(0);
@@ -108,8 +108,8 @@ public class HttpClientHandlerTest {
         TestService.Iface client = new TestService.Client(new HttpClientHandler(
                 this::endpoint, factory(), provider));
 
-        when(impl.test(any(net.morimekta.test.providence.thrift.Request.class)))
-                .thenReturn(new net.morimekta.test.providence.thrift.Response("response"));
+        when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
+                .thenReturn(new net.morimekta.test.thrift.client.Response("response"));
 
         Response response = client.test(new Request("request"));
 
@@ -122,8 +122,8 @@ public class HttpClientHandlerTest {
         TestService.Iface client = new TestService.Client(
                 new HttpClientHandler(this::endpoint, factory(), provider));
 
-        when(impl.test(any(net.morimekta.test.providence.thrift.Request.class)))
-                .thenThrow(new net.morimekta.test.providence.thrift.Failure("failure"));
+        when(impl.test(any(net.morimekta.test.thrift.client.Request.class)))
+                .thenThrow(new net.morimekta.test.thrift.client.Failure("failure"));
 
         try {
             client.test(new Request("request"));
