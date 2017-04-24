@@ -54,6 +54,7 @@ mvn -Pcli clean package
 mvn clean verify site site:stage
 git checkout gh-pages && pull -p && cp -R target/staging/* .
 rm -rf providence-testing/testapidocs
+git add .
 git commit -a -m "Site release for ${pvd_version}"
 git push
 ```
