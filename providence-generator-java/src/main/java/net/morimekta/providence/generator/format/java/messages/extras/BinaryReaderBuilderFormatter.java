@@ -20,7 +20,6 @@
  */
 package net.morimekta.providence.generator.format.java.messages.extras;
 
-import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PMap;
@@ -297,15 +296,9 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
         }
 
         writer.appendln("default: {")
-              .appendln("    if (strict) {")
-              .formatln("        throw new %s(\"No field with id \" + field + \" exists in %s\");",
-                        SerializerException.class.getName(),
-                        message.descriptor().getQualifiedName())
-              .appendln("    } else {")
-              .formatln("        %s.readFieldValue(reader, new %s(field, type), null, false);",
+              .formatln("    %s.readFieldValue(reader, new %s(field, type), null, false);",
                         BinaryFormatUtils.class.getName(),
                         BinaryFormatUtils.FieldInfo.class.getName().replaceAll("\\$", "."))
-              .appendln("    }")
               .appendln("    break;")
               .appendln('}');
 
