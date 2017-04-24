@@ -49,17 +49,25 @@ public class InMemoryMessageStore<K, M extends PMessage<M,F>, F extends PField> 
         return mutex.lockForReading(() -> ImmutableSet.copyOf(map.keySet()));
     }
 
-    @Override
-    public void putAll(@Nonnull Map<K, M> values) {
-        mutex.lockForWriting(() -> map.putAll(values));
+    @Override @Nonnull
+    public Map<K,M> putAll(@Nonnull Map<K, M> values) {
+        return mutex.lockForWriting(() -> {
+            Map<K,M> out = new HashMap<>();
+            for (Map.Entry<K,M> entry : values.entrySet()) {
+                out.put(entry.getKey(), map.put(entry.getKey(), entry.getValue()));
+            }
+            return out;
+        });
     }
 
-    @Override
-    public void removeAll(Collection<K> keys) {
-        mutex.lockForWriting(() -> {
+    @Override @Nonnull
+    public Map<K,M> removeAll(Collection<K> keys) {
+        return mutex.lockForWriting(() -> {
+            Map<K,M> out = new HashMap<>();
             for (K key : keys) {
-                map.remove(key);
+                out.put(key, map.remove(key));
             }
+            return out;
         });
     }
 }

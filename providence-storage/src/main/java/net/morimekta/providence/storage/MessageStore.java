@@ -28,14 +28,18 @@ public interface MessageStore<K, M extends PMessage<M,F>, F extends PField> {
 
     /**
      * @param values Put all key value pairs form this map into the storage.
+     * @return Map of replaced values.
      */
-    void putAll(@Nonnull Map<K,M> values);
+    @Nonnull
+    Map<K,M> putAll(@Nonnull Map<K,M> values);
 
     /**
      * Remove the values for the given keys;
-     * @param keys The
+     * @param keys Map of removed key value pairs.
+     * @return Map of removed key value pairs.
      */
-    void removeAll(Collection<K> keys);
+    @Nonnull
+    Map<K,M> removeAll(Collection<K> keys);
 
     /**
      * @param key The key to look up.
@@ -66,12 +70,14 @@ public interface MessageStore<K, M extends PMessage<M,F>, F extends PField> {
      * @param key The key to put message at.
      * @param message The message to put.
      */
-    default void put(@Nonnull K key, @Nonnull M message) {
-        putAll(ImmutableMap.of(key, message));
+    @Nullable
+    default M put(@Nonnull K key, @Nonnull M message) {
+        return putAll(ImmutableMap.of(key, message)).get(key);
     }
 
-    default void remove(@Nonnull K key) {
-        removeAll(ImmutableList.of(key));
+    @Nullable
+    default M remove(@Nonnull K key) {
+        return removeAll(ImmutableList.of(key)).get(key);
     }
 
     @Nullable
@@ -90,15 +96,24 @@ public interface MessageStore<K, M extends PMessage<M,F>, F extends PField> {
         return out;
     }
 
+    @SuppressWarnings("unchecked")
     default <B extends PMessageBuilder<M,F>>
-    void putBuilder(@Nonnull K key, @Nonnull B builder) {
-        put(key, builder.build());
+    B putBuilder(@Nonnull K key, @Nonnull B builder) {
+        M tmp = put(key, builder.build());
+        if (tmp != null) {
+            return (B) tmp.mutate();
+        }
+        return null;
     }
 
+    @SuppressWarnings("unchecked")
     default <B extends PMessageBuilder<M,F>>
-    void putAllBuilders(@Nonnull Map<K,B> builders) {
-        Map<K,M> tmp = new HashMap<>();
-        builders.forEach((k,b) -> tmp.put(k, b.build()));
-        putAll(tmp);
+    Map<K,B> putAllBuilders(@Nonnull Map<K,B> builders) {
+        Map<K,M> instances = new HashMap<>();
+        builders.forEach((k,b) -> instances.put(k, b.build()));
+        Map<K,M> replaced = putAll(instances);
+        Map<K,B> out = new HashMap<>();
+        replaced.forEach((k,m) -> out.put(k,m==null?null:(B)m.mutate()));
+        return out;
     }
 }
