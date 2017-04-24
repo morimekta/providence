@@ -49,10 +49,10 @@ import static org.junit.Assert.fail;
  * @since 18.10.15
  */
 public class JsonSerializerTest {
-    private JsonSerializer compact = new JsonSerializer();
-    private JsonSerializer named   = new JsonSerializer().named();
-    private JsonSerializer pretty  = new JsonSerializer().pretty();
-    private JsonSerializer lenient = new JsonSerializer().lenient();
+    private JsonSerializer compact = new JsonSerializer(true);
+    private JsonSerializer named   = new JsonSerializer(true).named();
+    private JsonSerializer pretty  = new JsonSerializer(true).pretty();
+    private JsonSerializer lenient = new JsonSerializer(false);
 
     @Test
     public void testProperties() {

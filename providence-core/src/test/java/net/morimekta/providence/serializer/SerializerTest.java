@@ -20,13 +20,18 @@
 package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.streams.MessageCollectors;
-import net.morimekta.providence.util.ProvidenceHelper;
+import net.morimekta.providence.streams.MessageStreams;
 import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.util_internal.EqualToMessage;
+import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.Containers;
+import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
+import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.util.Binary;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -36,12 +41,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -53,15 +59,30 @@ public class SerializerTest {
     private static Operation             operation;
     private static ArrayList<Containers> containers;
 
-    @Before
-    public void setUp() throws IOException {
-        synchronized (SerializerTest.class) {
-            // Since these are immutable, we don't need to read for each test.
-            if (operation == null) {
-                operation = ProvidenceHelper.fromResource("/json/calculator/compact.json", Operation.kDescriptor, new JsonSerializer(true));
-            }
-            if (containers == null) {
-                containers = ProvidenceHelper.arrayListFromResource("/compat/binary.data", Containers.kDescriptor, new BinarySerializer(true));
+    @Rule
+    public MessageGenerator generator = new MessageGenerator();
+
+    @BeforeClass
+    public static void setUpData() throws IOException {
+        MessageGenerator gen = new MessageGenerator()
+                .addFactory(f -> {
+                    if (f.equals(Operand._Field.OPERATION)) {
+                        return () -> Operation.builder()
+                                              .setOperator(Operator.ADD)
+                                              .addToOperands(Operand.withNumber(123))
+                                              .addToOperands(Operand.withNumber(321))
+                                              .build();
+                    }
+                    return null;
+                });
+
+        if (operation == null) {
+            operation = gen.generate(Operation.kDescriptor);
+        }
+        if (containers == null) {
+            containers = new ArrayList<>();
+            for (int i = 0; i < 1; ++i) {
+                containers.add(gen.generate(Containers.kDescriptor));
             }
         }
     }
@@ -75,8 +96,6 @@ public class SerializerTest {
      */
     private void testSerializer(Serializer serializer) throws IOException {
         // Just a sanity check.
-        assertTrue(containers.size() == 10);
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ByteArrayInputStream bais;
         int size;
@@ -95,10 +114,9 @@ public class SerializerTest {
         }
 
         // complex message, one at a time.
-        for (int i = 0; i < 10; ++i) {
+        for (Containers expected : containers) {
             baos.reset();
 
-            Containers expected = containers.get(i);
             size = serializer.serialize(baos, expected);
             assertEquals(baos.size(), size);
 
@@ -113,66 +131,40 @@ public class SerializerTest {
                 return;
             }
 
-            if (serializer.binaryProtocol()) {
-                assertEquals(actual, expected);
-            } else {
-                assertEquals(expected.toString()
-                                     .replaceAll("[,]", ",\n"),
-                             actual.toString()
-                                   .replaceAll("[,]", ",\n"));
-            }
-
+            assertThat(actual, new EqualToMessage<>(expected));
         }
 
         // complex message in stream.
         {
             baos.reset();
+            boolean first = true;
             size = 0;
-            for (int i = 0; i < 10; ++i) {
-                if (i != 0) {
+            for (Containers c : containers) {
+                if (first) {
+                    first = false;
+                } else {
                     baos.write('\n');
                     size += 1;
                 }
-                size += serializer.serialize(baos, containers.get(i));
+                size += serializer.serialize(baos, c);
             }
 
             assertEquals(baos.size(), size);
 
             bais = new ByteArrayInputStream(baos.toByteArray());
 
-            for (int i = 0; i < 10; ++i) {
-                if (i != 0) {
-                    assertEquals('\n', bais.read());
-                }
-                Containers expected = containers.get(i);
-                Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
-
-                if (serializer.binaryProtocol()) {
-                    assertEquals(actual, expected);
+            first = true;
+            for (Containers expected : containers) {
+                if (first) {
+                    first = false;
                 } else {
-                    assertEquals(expected.toString().replaceAll("[,]", ",\n"),
-                                 actual.toString().replaceAll("[,]", ",\n"));
+                    assertThat(bais.read(), is((int)'\n'));
                 }
+                Containers actual = serializer.deserialize(bais, Containers.kDescriptor);
+                assertThat(actual, new EqualToMessage<>(expected));
             }
 
             assertEquals(0, bais.available());
-        }
-    }
-
-    /**
-     * Tests that the serializer can deserialize the given file and still produce the
-     */
-    public void testCompatibility(Serializer serializer, String resource) throws IOException {
-        ArrayList<Containers> actual = ProvidenceHelper.arrayListFromResource(resource, Containers.kDescriptor, serializer);
-
-        assertEquals(containers.size(), actual.size());
-        for (int i = 0; i < containers.size(); ++i) {
-            if (serializer.binaryProtocol()) {
-                assertEquals(containers.get(i), actual.get(i));
-            } else {
-                assertEquals(containers.get(i).toString().replaceAll("[,]", ",\n"),
-                             actual.get(i).toString().replaceAll("[,]", ",\n"));
-            }
         }
     }
 
@@ -182,6 +174,7 @@ public class SerializerTest {
     public void testOutput(Serializer serializer, String resource)
             throws IOException {
         Binary expected;
+        List<Containers> source;
         try (InputStream r = SerializerTest.class.getResourceAsStream(resource)) {
             if (r == null) {
                 File file = new File("src/test/resources" + resource);
@@ -189,8 +182,11 @@ public class SerializerTest {
                 if (testing.isDirectory()) {
                     file = new File(testing, file.toString());
                 }
-                containers.stream().collect(MessageCollectors.toFile(file, serializer));
+                containers.stream()
+                          .limit(10)
+                          .collect(MessageCollectors.toFile(file, serializer));
                 fail("No such resource to compare: " + resource);
+                return;
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -200,10 +196,13 @@ public class SerializerTest {
                 out.write(buffer, 0, len);
             }
             expected = Binary.wrap(out.toByteArray());
+            source = MessageStreams
+                    .stream(new ByteArrayInputStream(out.toByteArray()), serializer, Containers.kDescriptor)
+                    .collect(Collectors.toList());
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        containers.stream().collect(MessageCollectors.toStream(out, serializer));
+        source.stream().collect(MessageCollectors.toStream(out, serializer));
         Binary actual = Binary.wrap(out.toByteArray());
 
         if (serializer.binaryProtocol()) {
@@ -219,7 +218,6 @@ public class SerializerTest {
         Serializer serializer = new JsonSerializer(true);
         testSerializer(serializer);
         testOutput(serializer, "/compat/compact.json");
-        testCompatibility(serializer, "/compat/compact.json");
     }
 
     @Test
@@ -227,7 +225,6 @@ public class SerializerTest {
         Serializer serializer = new JsonSerializer(true).named();
         testSerializer(serializer);
         testOutput(serializer, "/compat/named.json");
-        testCompatibility(serializer, "/compat/named.json");
     }
 
     @Test
@@ -235,17 +232,17 @@ public class SerializerTest {
         Serializer serializer = new JsonSerializer(true).pretty();
         testSerializer(serializer);
         testOutput(serializer, "/compat/pretty.json");
-        testCompatibility(serializer, "/compat/pretty.json");
     }
 
     @Test
     public void testPretty() throws IOException {
-        Serializer serializer = new PrettySerializer();
-        testOutput(serializer, "/compat/pretty.cfg");
-        testSerializer(serializer);
-        testCompatibility(serializer, "/compat/pretty.cfg");
+        testSerializer(new PrettySerializer(true));
+        testSerializer(new PrettySerializer(true).compact());
+        testSerializer(new PrettySerializer(true).debug());
+        testSerializer(new PrettySerializer(true).string());
+        testSerializer(new PrettySerializer(true).config());
+        testOutput(new PrettySerializer(true), "/compat/pretty.cfg");
 
-        testSerializer(new PrettySerializer().config());
     }
 
     @Test
@@ -253,7 +250,6 @@ public class SerializerTest {
         Serializer serializer = new BinarySerializer(true, false);
         testSerializer(serializer);
         testOutput(serializer, "/compat/binary.data");
-        testCompatibility(serializer, "/compat/binary.data");
     }
 
     @Test
@@ -261,6 +257,5 @@ public class SerializerTest {
         Serializer serializer = new FastBinarySerializer(true);
         testSerializer(serializer);
         testOutput(serializer, "/compat/fast-binary.data");
-        testCompatibility(serializer, "/compat/fast-binary.data");
     }
 }

@@ -576,6 +576,7 @@ public class PrettySerializer extends Serializer {
                             builder.appendln();
                         }
                     } else {
+                        builder.append(entrySep);
                         builder.appendln();
                     }
                     Object o = message.get(field.getKey());

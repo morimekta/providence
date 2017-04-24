@@ -110,10 +110,6 @@ public class JsonSerializer extends Serializer {
         this(strict, false, IdType.ID, IdType.ID);
     }
 
-    public JsonSerializer lenient() {
-        return new JsonSerializer(false, prettyPrint, fieldIdType, enumValueType);
-    }
-
     public JsonSerializer pretty() {
         return new JsonSerializer(readStrict, true, IdType.NAME, IdType.NAME);
     }
