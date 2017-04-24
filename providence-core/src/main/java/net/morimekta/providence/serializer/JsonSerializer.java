@@ -646,12 +646,15 @@ public class JsonSerializer extends Serializer {
                     ByteArrayInputStream input = new ByteArrayInputStream(key.getBytes(StandardCharsets.UTF_8));
                     try {
                         JsonTokenizer tokenizer = new JsonTokenizer(input);
-                        tokenizer.expectSymbol("message start", JsonToken.kMapStart);
-                        return parseMessage(tokenizer, st);
+                        if (JsonToken.kMapStart == tokenizer.expectSymbol("message start", JsonToken.kMapStart, JsonToken.kListStart)) {
+                            return parseMessage(tokenizer, st);
+                        } else {
+                            return parseCompactMessage(tokenizer, st);
+                        }
                     } catch (IOException e) {
                         throw new SerializerException(e, "Unable to tokenize map key: %s", key);
                     } catch (JsonException e) {
-                        throw new SerializerException(e, "Unable to parse map key: %s", key);
+                        throw new SerializerException(e, "Unable to parse map key: %s", Strings.escape(key));
                     }
                 default:
                     throw new SerializerException("Illegal key type: %s", keyType.getType());
