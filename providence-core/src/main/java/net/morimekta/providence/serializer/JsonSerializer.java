@@ -130,14 +130,10 @@ public class JsonSerializer extends Serializer {
     public <T extends PMessage<T, F>, F extends PField> int serialize(OutputStream output, T message) throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
-        try {
-            appendMessage(jsonWriter, message);
-            jsonWriter.flush();
-            counter.flush();
-            return counter.getByteCount();
-        } catch (JsonException e) {
-            throw new SerializerException(e, "Unable to serialize JSON");
-        }
+        appendMessage(jsonWriter, message);
+        jsonWriter.flush();
+        counter.flush();
+        return counter.getByteCount();
     }
 
     @Override
@@ -145,25 +141,21 @@ public class JsonSerializer extends Serializer {
             throws IOException {
         CountingOutputStream counter = new CountingOutputStream(output);
         JsonWriter jsonWriter = prettyPrint ? new PrettyJsonWriter(counter) : new JsonWriter(counter);
-        try {
-            jsonWriter.array()
-                      .value(call.getMethod());
-            if (enumValueType == IdType.ID) {
-                jsonWriter.value(call.getType().getValue());
-            } else {
-                jsonWriter.value(call.getType().getName());
-            }
-            jsonWriter.value(call.getSequence());
 
-            appendMessage(jsonWriter, call.getMessage());
-
-            jsonWriter.endArray()
-                      .flush();
-            counter.flush();
-            return counter.getByteCount();
-        } catch (JsonException e) {
-            throw new SerializerException(e, "Unable to serialize JSON");
+        jsonWriter.array().value(call.getMethod());
+        if (enumValueType == IdType.ID) {
+            jsonWriter.value(call.getType().getValue());
+        } else {
+            jsonWriter.value(call.getType().getName());
         }
+        jsonWriter.value(call.getSequence());
+
+        appendMessage(jsonWriter, call.getMessage());
+
+        jsonWriter.endArray().flush();
+        counter.flush();
+        return counter.getByteCount();
+
     }
 
     @Nonnull
@@ -667,7 +659,7 @@ public class JsonSerializer extends Serializer {
         }
     }
 
-    private void appendMessage(JsonWriter writer, PMessage<?,?> message) throws SerializerException, JsonException {
+    private void appendMessage(JsonWriter writer, PMessage<?,?> message) throws SerializerException {
         PMessageDescriptor<?, ?> type = message.descriptor();
         if (message instanceof PUnion) {
             writer.object();
@@ -712,7 +704,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private void appendTypedValue(JsonWriter writer, PDescriptor type, Object value)
-            throws SerializerException, JsonException {
+            throws SerializerException {
         switch (type.getType()) {
             case VOID:
                 writer.value(true);
@@ -758,7 +750,7 @@ public class JsonSerializer extends Serializer {
      * @param writer    The writer to add primitive key to.
      * @param primitive Primitive object to get map key value of.
      */
-    private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
+    private void appendPrimitiveKey(JsonWriter writer, Object primitive) throws SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(fieldIdType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
@@ -805,7 +797,7 @@ public class JsonSerializer extends Serializer {
      * @param writer    The JSON writer.
      * @param primitive The primitive instance.
      */
-    private void appendPrimitive(JsonWriter writer, Object primitive) throws JsonException, SerializerException {
+    private void appendPrimitive(JsonWriter writer, Object primitive) throws SerializerException {
         if (primitive instanceof PEnumValue) {
             if (IdType.ID.equals(enumValueType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());

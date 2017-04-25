@@ -29,9 +29,8 @@ import net.morimekta.providence.reflect.contained.CConst;
 import net.morimekta.providence.reflect.contained.CField;
 import net.morimekta.providence.reflect.contained.CMessageDescriptor;
 import net.morimekta.util.Binary;
+import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
-import net.morimekta.util.json.JsonException;
-import net.morimekta.util.json.JsonWriter;
 
 import java.util.Collection;
 import java.util.List;
@@ -121,14 +120,9 @@ public class ValueBuilder {
                     writer.format("null");
                     break;
                 }
-
-                try {
-                    JsonWriter json = new JsonWriter(writer);
-                    json.value(value.toString());
-                    json.flush();
-                } catch (JsonException je) {
-                    throw new GeneratorException("Unable to appendEnumClass string value");
-                }
+                writer.append('\"')
+                      .append(Strings.escape(value.toString()))
+                      .append('\"');
                 break;
             case ENUM:
                 writer.format("%s.%s", helper.getValueType(type), JUtils.enumConst((PEnumValue) value));

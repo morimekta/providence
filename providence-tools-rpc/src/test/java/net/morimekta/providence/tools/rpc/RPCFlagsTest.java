@@ -115,7 +115,7 @@ public class RPCFlagsTest {
         assertThat(exitCode, is(1));
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(equalToLines(
-                "Argument \"URL\" is required\n" +
+                "Argument URL is required\n" +
                 "Usage: pvdrpc [-hVvS] [--rc FILE] [-I dir] [-i spec] [-o spec] -s srv [-f fmt] [-C ms] [-R ms] [-H hdr] URL\n" +
                 "\n" +
                 "Run $ pvdrpc --help # for available options.\n")));

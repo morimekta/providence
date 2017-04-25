@@ -27,14 +27,11 @@ import net.morimekta.providence.PUnion;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
-import net.morimekta.util.json.JsonException;
-import net.morimekta.util.json.JsonWriter;
 
 import junit.framework.AssertionFailedError;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,8 +40,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Stein Eldar Johnsen
@@ -336,15 +331,7 @@ public class EqualToMessage<Message extends PMessage<Message, Field>, Field exte
                                                          .map(EqualToMessage::toString)
                                                          .collect(Collectors.toList())) + "]";
         } else if (o instanceof CharSequence) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JsonWriter writer = new JsonWriter(baos);
-            try {
-                writer.value((CharSequence) o);
-                writer.flush();
-                return new String(baos.toByteArray(), UTF_8);
-            } catch (JsonException e) {
-                return "\"" + o.toString() + "\"";
-            }
+            return "\"" + Strings.escape(o.toString()) + "\"";
         } else if (o instanceof Binary) {
             int len = ((Binary) o).length();
             if (len > 110) {
