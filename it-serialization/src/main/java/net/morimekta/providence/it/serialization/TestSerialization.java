@@ -124,8 +124,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
                     write,
                     write_thrift,
                     read + write,
-                    read_thrift + write_thrift,
-                    format.output_size / 1024);
+                    read_thrift + write_thrift);
 
         } else {
             return String.format(
@@ -133,8 +132,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
                     format.name(),
                     read,
                     write,
-                    read + write,
-                    format.output_size / 1024);
+                    read + write);
         }
     }
 
@@ -196,28 +194,26 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
             double rwt = (rt + wt) / 2;
 
             return String.format(
-                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f  (%3d kB)",
+                    "%20s:  %5.2f %5.2f -- %5.2f %5.2f  =  %5.2f %5.2f",
                     format.name(),
                     r,
                     rt,
                     w,
                     wt,
                     rw,
-                    rwt,
-                    format.output_size / 1024);
+                    rwt);
         } else {
             return String.format(
-                    "%20s:  %5.2f       -- %5.2f        =  %5.2f        (%3d kB)",
+                    "%20s:  %5.2f       -- %5.2f        =  %5.2f",
                     format.name(),
                     r,
                     w,
-                    rw,
-                    format.output_size / 1024);
+                    rw);
         }
     }
 
     public void runProvidence(List<Containers> content) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(format.output_size);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         long totalTime = 0;
         for (Containers c : content) {
@@ -260,14 +256,6 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
 
         PtotalReadStat.addValue(totalTime);
-
-        // validate?
-        if (baos.size() != format.output_size) {
-            System.out.println("Expected output size: " + format.output_size + ", got " + baos.size());
-        }
-        if (result.size() != content.size()) {
-            System.out.println("Number of parsed message " + result.size() + " does not match source " + content.size());
-        }
     }
 
     public void runThrift(List<net.morimekta.test.thrift.Containers> content)
@@ -276,7 +264,7 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
             return;
         }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(format.output_size);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         TTransport transport = new TIOStreamTransport(baos);
         TProtocol protocol = factory.getProtocol(transport);
 
@@ -321,13 +309,6 @@ public class TestSerialization implements Stringable, Comparable<TestSerializati
         }
 
         TtotalReadStat.addValue(totalTime);
-
-        if (baos.size() != format.output_size) {
-            System.out.println("Expected output size: " + format.output_size + ", got " + baos.size());
-        }
-        if (result.size() != content.size()) {
-            System.out.println("Number of parsed message " + result.size() + " does not match source " + content.size());
-        }
     }
 
     public static TestSerialization forFormat(Format format) {
