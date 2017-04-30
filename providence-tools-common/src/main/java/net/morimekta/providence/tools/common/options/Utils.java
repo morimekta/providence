@@ -22,7 +22,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collector;
@@ -156,11 +155,7 @@ public class Utils {
             }
         } else {
             BufferedInputStream is = new BufferedInputStream(System.in);
-            try {
-                return MessageStreams.stream(is, serializer, descriptor);
-            } catch (IOException e) {
-                throw new ArgumentException("Broken pipe");
-            }
+            return MessageStreams.stream(is, serializer, descriptor);
         }
     }
 
