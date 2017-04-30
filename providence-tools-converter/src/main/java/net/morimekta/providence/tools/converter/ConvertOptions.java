@@ -148,7 +148,7 @@ public class ConvertOptions extends CommonOptions {
     }
 
     public <Message extends PMessage<Message, Field>, Field extends PField>
-    Collector<Message, OutputStream, Integer> getOutput()
+    Collector<Message, ?, Integer> getOutput()
             throws IOException {
         return Utils.getOutput(Format.pretty, out, strict);
     }

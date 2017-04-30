@@ -24,21 +24,16 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.Serializer;
-import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.util.io.IOUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -106,28 +101,19 @@ public class MessageStreams {
      * @param <Message>  The message type.
      * @param <Field>    The message field type.
      * @return The stream that reads the file.
-     * @throws IOException when unable to open the stream.
+     * @throws IOException when unable find the resource.
      */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Stream<Message> resource(String resource,
-                             Serializer serializer,
-                             PMessageDescriptor<Message, Field> descriptor)
+    Stream<Message> resource(@Nonnull String resource,
+                             @Nonnull Serializer serializer,
+                             @Nonnull PMessageDescriptor<Message, Field> descriptor)
             throws IOException {
         InputStream in = MessageStreams.class.getResourceAsStream(resource);
         if (in == null) {
             throw new IOException("No such resource " + resource);
         }
-        return StreamSupport.stream(new StreamMessageSpliterator<>(
-                new BufferedInputStream(in),
-                serializer,
-                descriptor,
-                is -> {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                }), false);
+        in = new BufferedInputStream(in);
+        return stream(in, serializer, descriptor);
     }
 
     /**
@@ -143,147 +129,11 @@ public class MessageStreams {
      * @return The stream that reads the file.
      * @throws IOException when unable to open the stream.
      */
-    public static <Message extends PMessage<Message, Field>, Field extends PField> Stream<Message> stream(InputStream in,
-                                                                                                          Serializer serializer,
-                                                                                                          PMessageDescriptor<Message, Field> descriptor)
-            throws IOException {
-        return StreamSupport.stream(new StreamMessageSpliterator<>(in, serializer, descriptor, null), false);
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Stream<Message> stream(InputStream in,
+                           Serializer serializer,
+                           PMessageDescriptor<Message, Field> descriptor) {
+        return StreamSupport.stream(new MessageSpliterator<>(in, serializer, descriptor), false);
     }
 
-    private static abstract class BaseMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
-            implements Spliterator<Message> {
-        protected abstract Message read();
-
-        @Override
-        public boolean tryAdvance(Consumer<? super Message> action) {
-            Message message = read();
-            if (message != null) {
-                action.accept(message);
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Normally we cannot split the stream.
-         *
-         * @return null (no split).
-         */
-        @Override
-        public Spliterator<Message> trySplit() {
-            return null;
-        }
-
-        /**
-         * We mostly never know the number of messages in a message stream
-         * until the last message has been read.
-         *
-         * @return Long.MAX_VALUE (not known).
-         */
-        @Override
-        public long estimateSize() {
-            return Long.MAX_VALUE;
-        }
-
-        /**
-         * We mostly never know the number of messages in a message stream
-         * until the last message has been read.
-         *
-         * @return -1 (not known).
-         */
-        @Override
-        public long getExactSizeIfKnown() {
-            return -1;
-        }
-
-        /**
-         * Ordered, non-null and immutable.
-         *
-         * @return The characteristics.
-         */
-        @Override
-        public int characteristics() {
-            return ORDERED | NONNULL | IMMUTABLE;
-        }
-
-        /**
-         * Messages are comparable.
-         *
-         * @return Comparable compareTo method.
-         */
-        @Override
-        public Comparator<? super Message> getComparator() {
-            return Comparable::compareTo;
-        }
-    }
-
-    private static class StreamMessageSpliterator<Message extends PMessage<Message, Field>, Field extends PField>
-            extends BaseMessageSpliterator<Message, Field> {
-        private final InputStream                        in;
-        private final PMessageDescriptor<Message, Field> descriptor;
-        private final Serializer                         serializer;
-
-        private int                   num;
-        private Consumer<InputStream> closer;
-
-        private StreamMessageSpliterator(InputStream in,
-                                         Serializer serializer,
-                                         PMessageDescriptor<Message, Field> descriptor,
-                                         Consumer<InputStream> closer) throws IOException {
-            this.in = in;
-            this.closer = closer;
-
-            this.serializer = serializer;
-            this.descriptor = descriptor;
-
-            this.num = 0;
-        }
-
-        @Override
-        public Message read() {
-            try {
-                if (num > 0) {
-                    if (!serializer.binaryProtocol()) {
-                        if (!IOUtils.skipUntil(in, READABLE_ENTRY_SEP)) {
-                            // no next entry found.
-                            close();
-                            return null;
-                        }
-                    }
-                }
-                // Try to check if there is a byte available. Since the
-                // available() method ony checks for available non-blocking
-                // reads, we need to actually try to read a byte.
-                //
-                // Sadly this means it's only available when marks are
-                // supported.
-                if (in.markSupported()) {
-                    in.mark(2);
-                    if (in.read() < 0) {
-                        return null;
-                    }
-                    in.reset();
-                }
-                return serializer.deserialize(in, descriptor);
-            } catch (SerializerException e) {
-                close();
-                throw new UncheckedIOException(new IOException(e));
-            } catch (IOException e) {
-                close();
-                throw new UncheckedIOException(e);
-            } finally {
-                ++num;
-            }
-        }
-
-        void close() {
-            if (closer != null) {
-                try {
-                    closer.accept(in);
-                } finally {
-                    closer = null;
-                }
-            }
-        }
-    }
 }

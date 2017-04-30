@@ -105,9 +105,9 @@ public class Utils {
     }
 
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Collector<Message, OutputStream, Integer> getOutput(Format defaultFormat,
-                                                        ConvertStream out,
-                                                        boolean strict)
+    Collector<Message, ?, Integer> getOutput(Format defaultFormat,
+                                             ConvertStream out,
+                                             boolean strict)
             throws IOException {
         Format fmt = defaultFormat;
         File file = null;

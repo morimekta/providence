@@ -25,6 +25,8 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.serializer.SerializerException;
 
+import com.google.common.base.Suppliers;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,30 +69,33 @@ public class MessageCollectors {
     Collector<Message, OutputStream, Integer> toFile(File file,
                                                      Serializer serializer) {
         final AtomicInteger result = new AtomicInteger(0);
-        return Collector.of(() -> {
+        return Collector.of(Suppliers.memoize(() -> {
+            // Delay file creation until the write starts.
             try {
                 return new BufferedOutputStream(new FileOutputStream(file));
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to open " + file.getName(), e);
             }
-        }, (outputStream, t) -> {
+        }), (outputStream, t) -> {
             try {
-                result.addAndGet(serializer.serialize(outputStream, t));
-                if (!serializer.binaryProtocol()) {
-                    result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                synchronized (result) {
+                    result.addAndGet(serializer.serialize(outputStream, t));
+                    if (!serializer.binaryProtocol()) {
+                        result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                    }
                 }
             } catch (SerializerException e) {
-                throw new UncheckedIOException("Bad data", new IOException(e));
+                throw new UncheckedIOException("Bad data", e);
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to write to " + file.getName(), e);
             }
-        }, (a, b) -> null, (outputStream) -> {
+        }, (a, b) -> a, (outputStream) -> {
             try {
                 outputStream.close();
             } catch (IOException e) {
                 throw new UncheckedIOException("Unable to close " + file.getName(), e);
             }
-            return result.get();
+            return result.getAndSet(0);
         });
     }
 
@@ -104,40 +109,31 @@ public class MessageCollectors {
      * @return The collector.
      */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
-    Collector<Message, OutputStream, Integer> toStream(OutputStream out,
-                                                       Serializer serializer) {
-        final AtomicInteger result = new AtomicInteger(0);
-        return Collector.of(() -> new BufferedOutputStream(out), (outputStream, t) -> {
+    Collector<Message, AtomicInteger, Integer> toStream(OutputStream out,
+                                                        Serializer serializer) {
+        return Collector.of(AtomicInteger::new, (counter, t) -> {
             try {
-                synchronized (outputStream) {
-                    result.addAndGet(serializer.serialize(outputStream, t));
+                synchronized (out) {
+                    counter.addAndGet(serializer.serialize(out, t));
                     if (!serializer.binaryProtocol()) {
-                        result.addAndGet(maybeWriteBytes(outputStream, MessageStreams.READABLE_ENTRY_SEP));
+                        counter.addAndGet(maybeWriteBytes(out, MessageStreams.READABLE_ENTRY_SEP));
                     }
                 }
-            } catch (SerializerException e) {
-                throw new UncheckedIOException("Bad data", new IOException(e));
-            } catch (IOException e) {
-                throw new UncheckedIOException("Broken pipe", e);
-            }
-        }, (a, b) -> null, (outputStream) -> {
-            try {
-                outputStream.flush();
-            } catch (IOException e) {
-                throw new UncheckedIOException("Broken pipe", e);
-            }
-            return result.get();
-        });
-    }
-
-    private static int maybeWriteBytes(OutputStream out, byte[] bytes) {
-        if(bytes.length > 0) {
-            try {
-                out.write(bytes);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
+        }, (a, b) -> {
+            a.addAndGet(b.get());
+            return a;
+        }, AtomicInteger::get);
+    }
+
+    private static int maybeWriteBytes(OutputStream out, byte[] bytes) throws IOException {
+        if(bytes.length > 0) {
+            out.write(bytes);
         }
         return bytes.length;
     }
+
+    private MessageCollectors() {}
 }
