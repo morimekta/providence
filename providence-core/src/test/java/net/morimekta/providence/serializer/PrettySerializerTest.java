@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package net.morimekta.providence.serializer;
 
 import net.morimekta.providence.util_internal.MessageGenerator;

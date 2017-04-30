@@ -86,8 +86,11 @@
                 <configuration>
                     <excludes>
                         <exclude>net/morimekta/providence/PApplicationException.*</exclude>
+                        <exclude>net/morimekta/providence/PApplicationException$*.*</exclude>
                         <exclude>net/morimekta/providence/PApplicationExceptionType.*</exclude>
+                        <exclude>net/morimekta/providence/PApplicationExceptionType$*.*</exclude>
                         <exclude>net/morimekta/providence/PServiceCallType.*</exclude>
+                        <exclude>net/morimekta/providence/PServiceCallType$*.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
