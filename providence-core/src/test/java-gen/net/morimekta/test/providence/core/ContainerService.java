@@ -37,7 +37,7 @@ public class ContainerService {
                 net.morimekta.test.providence.core.Containers pC)
                 throws java.io.IOException,
                        net.morimekta.test.providence.core.ExceptionFields {
-            net.morimekta.test.providence.core.ContainerService.Load_request._Builder rq = net.morimekta.test.providence.core.ContainerService.Load_request.builder();
+            net.morimekta.test.providence.core.ContainerService._load_request._Builder rq = net.morimekta.test.providence.core.ContainerService._load_request.builder();
             rq.setC(pC);
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("load", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
@@ -47,7 +47,7 @@ public class ContainerService {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.ContainerService.Load_response msg = (net.morimekta.test.providence.core.ContainerService.Load_response) resp.getMessage();
+            net.morimekta.test.providence.core.ContainerService._load_response msg = (net.morimekta.test.providence.core.ContainerService._load_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case EF:
@@ -85,9 +85,9 @@ public class ContainerService {
                        net.morimekta.providence.serializer.SerializerException {
             switch(call.getMethod()) {
                 case "load": {
-                    net.morimekta.test.providence.core.ContainerService.Load_response._Builder rsp = net.morimekta.test.providence.core.ContainerService.Load_response.builder();
+                    net.morimekta.test.providence.core.ContainerService._load_response._Builder rsp = net.morimekta.test.providence.core.ContainerService._load_response.builder();
                     try {
-                        net.morimekta.test.providence.core.ContainerService.Load_request req = (net.morimekta.test.providence.core.ContainerService.Load_request) call.getMessage();
+                        net.morimekta.test.providence.core.ContainerService._load_request req = (net.morimekta.test.providence.core.ContainerService._load_request) call.getMessage();
                         net.morimekta.test.providence.core.CompactFields result =
                                 impl.load(req.getC());
                         rsp.setSuccess(result);
@@ -118,7 +118,7 @@ public class ContainerService {
     }
 
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
-        LOAD("load", false, net.morimekta.test.providence.core.ContainerService.Load_request.kDescriptor, net.morimekta.test.providence.core.ContainerService.Load_response.kDescriptor),
+        LOAD("load", false, net.morimekta.test.providence.core.ContainerService._load_request.kDescriptor, net.morimekta.test.providence.core.ContainerService._load_response.kDescriptor),
         ;
 
         private final String name;
@@ -181,24 +181,24 @@ public class ContainerService {
         return new _Provider();
     }
 
-    // type --> load___request
+    // type --> ContainerService.load.request
     @SuppressWarnings("unused")
-    protected static class Load_request
-            implements net.morimekta.providence.PMessage<Load_request,Load_request._Field>,
-                       Comparable<Load_request>,
+    protected static class _load_request
+            implements net.morimekta.providence.PMessage<_load_request,_load_request._Field>,
+                       Comparable<_load_request>,
                        java.io.Serializable,
                        net.morimekta.providence.serializer.rw.BinaryWriter {
-        private final static long serialVersionUID = 8572268612103517953L;
+        private final static long serialVersionUID = 642175186578463330L;
 
         private final net.morimekta.test.providence.core.Containers mC;
 
         private volatile int tHashCode;
 
-        public Load_request(net.morimekta.test.providence.core.Containers pC) {
+        public _load_request(net.morimekta.test.providence.core.Containers pC) {
             mC = pC;
         }
 
-        private Load_request(_Builder builder) {
+        private _load_request(_Builder builder) {
             mC = builder.mC_builder != null ? builder.mC_builder.build() : builder.mC;
         }
 
@@ -241,7 +241,7 @@ public class ContainerService {
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            Load_request other = (Load_request) o;
+            _load_request other = (_load_request) o;
             return java.util.Objects.equals(mC, other.mC);
         }
 
@@ -249,7 +249,7 @@ public class ContainerService {
         public int hashCode() {
             if (tHashCode == 0) {
                 tHashCode = java.util.Objects.hash(
-                        Load_request.class,
+                        _load_request.class,
                         _Field.C, mC);
             }
             return tHashCode;
@@ -257,7 +257,7 @@ public class ContainerService {
 
         @Override
         public String toString() {
-            return "providence.load___request" + asString();
+            return "providence.ContainerService.load.request" + asString();
         }
 
         @Override
@@ -274,7 +274,7 @@ public class ContainerService {
         }
 
         @Override
-        public int compareTo(Load_request other) {
+        public int compareTo(_load_request other) {
             int c;
 
             c = Boolean.compare(mC != null, other.mC != null);
@@ -365,21 +365,21 @@ public class ContainerService {
             }
         }
 
-        public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Load_request,_Field> provider() {
+        public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_load_request,_Field> provider() {
             return new _Provider();
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<Load_request,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
             return kDescriptor;
         }
 
-        public static final net.morimekta.providence.descriptor.PStructDescriptor<Load_request,_Field> kDescriptor;
+        public static final net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> kDescriptor;
 
         private static class _Descriptor
-                extends net.morimekta.providence.descriptor.PStructDescriptor<Load_request,_Field> {
+                extends net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> {
             public _Descriptor() {
-                super("providence", "load___request", new _Factory(), false);
+                super("providence", "ContainerService.load.request", new _Factory(), false);
             }
 
             @Override
@@ -402,15 +402,15 @@ public class ContainerService {
             kDescriptor = new _Descriptor();
         }
 
-        private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<Load_request,_Field> {
+        private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<_load_request,_Field> {
             @Override
-            public net.morimekta.providence.descriptor.PStructDescriptor<Load_request,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
                 return kDescriptor;
             }
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Load_request,_Field> {
+                extends net.morimekta.providence.PMessageBuilderFactory<_load_request,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -418,7 +418,7 @@ public class ContainerService {
         }
 
         /**
-         * Make a providence.load___request builder.
+         * Make a providence.ContainerService.load.request builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -426,7 +426,7 @@ public class ContainerService {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Load_request,_Field>
+                extends net.morimekta.providence.PMessageBuilder<_load_request,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
@@ -435,7 +435,7 @@ public class ContainerService {
             private net.morimekta.test.providence.core.Containers._Builder mC_builder;
 
             /**
-             * Make a providence.load___request builder.
+             * Make a providence.ContainerService.load.request builder.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(1);
@@ -443,11 +443,11 @@ public class ContainerService {
             }
 
             /**
-             * Make a mutating builder off a base providence.load___request.
+             * Make a mutating builder off a base providence.ContainerService.load.request.
              *
-             * @param base The base load___request
+             * @param base The base ContainerService.load.request
              */
-            public _Builder(Load_request base) {
+            public _Builder(_load_request base) {
                 this();
 
                 if (base.hasC()) {
@@ -458,7 +458,7 @@ public class ContainerService {
 
             @javax.annotation.Nonnull
             @Override
-            public _Builder merge(Load_request from) {
+            public _Builder merge(_load_request from) {
                 if (from.hasC()) {
                     optionals.set(0);
                     modified.set(0);
@@ -543,7 +543,7 @@ public class ContainerService {
             public boolean equals(Object o) {
                 if (o == this) return true;
                 if (o == null || !o.getClass().equals(getClass())) return false;
-                Load_request._Builder other = (Load_request._Builder) o;
+                _load_request._Builder other = (_load_request._Builder) o;
                 return java.util.Objects.equals(optionals, other.optionals) &&
                        java.util.Objects.equals(mC, other.mC);
             }
@@ -551,7 +551,7 @@ public class ContainerService {
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
-                        Load_request.class, optionals,
+                        _load_request.class, optionals,
                         _Field.C, mC);
             }
 
@@ -623,7 +623,7 @@ public class ContainerService {
 
             @javax.annotation.Nonnull
             @Override
-            public net.morimekta.providence.descriptor.PStructDescriptor<Load_request,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PStructDescriptor<_load_request,_Field> descriptor() {
                 return kDescriptor;
             }
 
@@ -638,7 +638,7 @@ public class ContainerService {
                                 mC = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.Containers.kDescriptor, strict);
                                 optionals.set(0);
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.load___request.c, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.request.c, should be struct(12)");
                             }
                             break;
                         }
@@ -652,20 +652,20 @@ public class ContainerService {
             }
 
             @Override
-            public Load_request build() {
-                return new Load_request(this);
+            public _load_request build() {
+                return new _load_request(this);
             }
         }
     }
 
-    // type <-- load___response
+    // type <-- ContainerService.load.response
     @SuppressWarnings("unused")
-    protected static class Load_response
-            implements net.morimekta.providence.PUnion<Load_response,Load_response._Field>,
-                       Comparable<Load_response>,
+    protected static class _load_response
+            implements net.morimekta.providence.PUnion<_load_response,_load_response._Field>,
+                       Comparable<_load_response>,
                        java.io.Serializable,
                        net.morimekta.providence.serializer.rw.BinaryWriter {
-        private final static long serialVersionUID = 7392134175263398159L;
+        private final static long serialVersionUID = 4669041823902453548L;
 
         private final net.morimekta.test.providence.core.CompactFields mSuccess;
         private final net.morimekta.test.providence.core.ExceptionFields mEf;
@@ -678,7 +678,7 @@ public class ContainerService {
          * @param value The union value
          * @return The created union.
          */
-        public static Load_response withSuccess(net.morimekta.test.providence.core.CompactFields value) {
+        public static _load_response withSuccess(net.morimekta.test.providence.core.CompactFields value) {
             return new _Builder().setSuccess(value).build();
         }
 
@@ -686,11 +686,11 @@ public class ContainerService {
          * @param value The union value
          * @return The created union.
          */
-        public static Load_response withEf(net.morimekta.test.providence.core.ExceptionFields value) {
+        public static _load_response withEf(net.morimekta.test.providence.core.ExceptionFields value) {
             return new _Builder().setEf(value).build();
         }
 
-        private Load_response(_Builder builder) {
+        private _load_response(_Builder builder) {
             tUnionField = builder.tUnionField;
 
             mSuccess = tUnionField != _Field.SUCCESS
@@ -759,7 +759,7 @@ public class ContainerService {
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            Load_response other = (Load_response) o;
+            _load_response other = (_load_response) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                    java.util.Objects.equals(mSuccess, other.mSuccess) &&
                    java.util.Objects.equals(mEf, other.mEf);
@@ -769,7 +769,7 @@ public class ContainerService {
         public int hashCode() {
             if (tHashCode == 0) {
                 tHashCode = java.util.Objects.hash(
-                        Load_response.class,
+                        _load_response.class,
                         _Field.SUCCESS, mSuccess,
                         _Field.EF, mEf);
             }
@@ -778,7 +778,7 @@ public class ContainerService {
 
         @Override
         public String toString() {
-            return "providence.load___response" + asString();
+            return "providence.ContainerService.load.response" + asString();
         }
 
         @Override
@@ -803,7 +803,7 @@ public class ContainerService {
         }
 
         @Override
-        public int compareTo(Load_response other) {
+        public int compareTo(_load_response other) {
             int c = tUnionField.compareTo(other.tUnionField);
             if (c != 0) return c;
 
@@ -908,21 +908,21 @@ public class ContainerService {
             }
         }
 
-        public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Load_response,_Field> provider() {
+        public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_load_response,_Field> provider() {
             return new _Provider();
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PUnionDescriptor<Load_response,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
             return kDescriptor;
         }
 
-        public static final net.morimekta.providence.descriptor.PUnionDescriptor<Load_response,_Field> kDescriptor;
+        public static final net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> kDescriptor;
 
         private static class _Descriptor
-                extends net.morimekta.providence.descriptor.PUnionDescriptor<Load_response,_Field> {
+                extends net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> {
             public _Descriptor() {
-                super("providence", "load___response", new _Factory(), false);
+                super("providence", "ContainerService.load.response", new _Factory(), false);
             }
 
             @Override
@@ -945,15 +945,15 @@ public class ContainerService {
             kDescriptor = new _Descriptor();
         }
 
-        private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<Load_response,_Field> {
+        private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<_load_response,_Field> {
             @Override
-            public net.morimekta.providence.descriptor.PUnionDescriptor<Load_response,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
                 return kDescriptor;
             }
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Load_response,_Field> {
+                extends net.morimekta.providence.PMessageBuilderFactory<_load_response,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -961,7 +961,7 @@ public class ContainerService {
         }
 
         /**
-         * Make a providence.load___response builder.
+         * Make a providence.ContainerService.load.response builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -969,7 +969,7 @@ public class ContainerService {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Load_response,_Field>
+                extends net.morimekta.providence.PMessageBuilder<_load_response,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private _Field tUnionField;
 
@@ -981,18 +981,18 @@ public class ContainerService {
             private net.morimekta.test.providence.core.ExceptionFields._Builder mEf_builder;
 
             /**
-             * Make a providence.load___response builder.
+             * Make a providence.ContainerService.load.response builder.
              */
             public _Builder() {
                 modified = false;
             }
 
             /**
-             * Make a mutating builder off a base providence.load___response.
+             * Make a mutating builder off a base providence.ContainerService.load.response.
              *
-             * @param base The base load___response
+             * @param base The base ContainerService.load.response
              */
-            public _Builder(Load_response base) {
+            public _Builder(_load_response base) {
                 this();
 
                 tUnionField = base.tUnionField;
@@ -1003,7 +1003,7 @@ public class ContainerService {
 
             @javax.annotation.Nonnull
             @Override
-            public _Builder merge(Load_response from) {
+            public _Builder merge(_load_response from) {
                 if (from.unionField() == null) {
                     return this;
                 }
@@ -1148,9 +1148,9 @@ public class ContainerService {
             }
 
             /**
-             * Checks if load___response has been modified since the _Builder was created.
+             * Checks if ContainerService.load.response has been modified since the _Builder was created.
              *
-             * @return True if load___response has been modified.
+             * @return True if ContainerService.load.response has been modified.
              */
             public boolean isUnionModified() {
                 return modified;
@@ -1160,7 +1160,7 @@ public class ContainerService {
             public boolean equals(Object o) {
                 if (o == this) return true;
                 if (o == null || !o.getClass().equals(getClass())) return false;
-                Load_response._Builder other = (Load_response._Builder) o;
+                _load_response._Builder other = (_load_response._Builder) o;
                 return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                        java.util.Objects.equals(mSuccess, other.mSuccess) &&
                        java.util.Objects.equals(mEf, other.mEf);
@@ -1169,7 +1169,7 @@ public class ContainerService {
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
-                        Load_response.class,
+                        _load_response.class,
                         _Field.SUCCESS, mSuccess,
                         _Field.EF, mEf);
             }
@@ -1247,13 +1247,13 @@ public class ContainerService {
             @Override
             public void validate() {
                 if (!valid()) {
-                    throw new java.lang.IllegalStateException("No union field set in providence.load___response");
+                    throw new java.lang.IllegalStateException("No union field set in providence.ContainerService.load.response");
                 }
             }
 
             @javax.annotation.Nonnull
             @Override
-            public net.morimekta.providence.descriptor.PUnionDescriptor<Load_response,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PUnionDescriptor<_load_response,_Field> descriptor() {
                 return kDescriptor;
             }
 
@@ -1268,7 +1268,7 @@ public class ContainerService {
                                 mSuccess = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.load___response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.success, should be struct(12)");
                             }
                             break;
                         }
@@ -1277,7 +1277,7 @@ public class ContainerService {
                                 mEf = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.ExceptionFields.kDescriptor, strict);
                                 tUnionField = _Field.EF;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.load___response.ef, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for providence.ContainerService.load.response.ef, should be struct(12)");
                             }
                             break;
                         }
@@ -1291,11 +1291,11 @@ public class ContainerService {
             }
 
             @Override
-            public Load_response build() {
-                return new Load_response(this);
+            public _load_response build() {
+                return new _load_response(this);
             }
         }
     }
 
-    private ContainerService() {}
+    protected ContainerService() {}
 }

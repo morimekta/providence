@@ -1347,11 +1347,7 @@ public class FunctionType
                         break;
                     }
                     default: {
-                        if (strict) {
-                            throw new net.morimekta.providence.serializer.SerializerException("No field with id " + field + " exists in model.FunctionType");
-                        } else {
-                            net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
-                        }
+                        net.morimekta.providence.serializer.rw.BinaryFormatUtils.readFieldValue(reader, new net.morimekta.providence.serializer.rw.BinaryFormatUtils.FieldInfo(field, type), null, false);
                         break;
                     }
                 }

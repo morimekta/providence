@@ -1,7 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
-public class Calculator2 {
+public class Calculator2 extends net.morimekta.test.providence.core.calculator.Calculator {
     public interface Iface extends net.morimekta.test.providence.core.calculator.Calculator.Iface {
         /**
          * @return The extra result.
@@ -33,7 +33,7 @@ public class Calculator2 {
                 net.morimekta.test.providence.core.calculator.Operation pOp)
                 throws java.io.IOException,
                        net.morimekta.test.providence.core.calculator.CalculateException {
-            net.morimekta.test.providence.core.calculator.Calculator.Calculate_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator.Calculate_request.builder();
+            net.morimekta.test.providence.core.calculator.Calculator._calculate_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._calculate_request.builder();
             rq.setOp(pOp);
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("calculate", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
@@ -43,7 +43,7 @@ public class Calculator2 {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.calculator.Calculator.Calculate_response msg = (net.morimekta.test.providence.core.calculator.Calculator.Calculate_response) resp.getMessage();
+            net.morimekta.test.providence.core.calculator.Calculator._calculate_response msg = (net.morimekta.test.providence.core.calculator.Calculator._calculate_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case CE:
@@ -60,7 +60,7 @@ public class Calculator2 {
         @Override
         public void iamalive()
                 throws java.io.IOException {
-            net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request.builder();
+            net.morimekta.test.providence.core.calculator.Calculator._iamalive_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._iamalive_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("iamalive", net.morimekta.providence.PServiceCallType.ONEWAY, getNextSequenceId(), rq.build());
             handler.handleCall(call, Calculator2.kDescriptor);
@@ -69,7 +69,7 @@ public class Calculator2 {
         @Override
         public void ping()
                 throws java.io.IOException {
-            net.morimekta.test.providence.core.calculator.Calculator.Ping_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator.Ping_request.builder();
+            net.morimekta.test.providence.core.calculator.Calculator._ping_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator._ping_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("ping", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator2.kDescriptor);
@@ -78,7 +78,7 @@ public class Calculator2 {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.calculator.Calculator.Ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator.Ping_response) resp.getMessage();
+            net.morimekta.test.providence.core.calculator.Calculator._ping_response msg = (net.morimekta.test.providence.core.calculator.Calculator._ping_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case SUCCESS:
@@ -93,7 +93,7 @@ public class Calculator2 {
         @Override
         public String extra()
                 throws java.io.IOException {
-            net.morimekta.test.providence.core.calculator.Calculator2.Extra_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator2.Extra_request.builder();
+            net.morimekta.test.providence.core.calculator.Calculator2._extra_request._Builder rq = net.morimekta.test.providence.core.calculator.Calculator2._extra_request.builder();
 
             net.morimekta.providence.PServiceCall call = new net.morimekta.providence.PServiceCall<>("extra", net.morimekta.providence.PServiceCallType.CALL, getNextSequenceId(), rq.build());
             net.morimekta.providence.PServiceCall resp = handler.handleCall(call, Calculator2.kDescriptor);
@@ -102,7 +102,7 @@ public class Calculator2 {
                 throw (net.morimekta.providence.PApplicationException) resp.getMessage();
             }
 
-            net.morimekta.test.providence.core.calculator.Calculator2.Extra_response msg = (net.morimekta.test.providence.core.calculator.Calculator2.Extra_response) resp.getMessage();
+            net.morimekta.test.providence.core.calculator.Calculator2._extra_response msg = (net.morimekta.test.providence.core.calculator.Calculator2._extra_response) resp.getMessage();
             if (msg.unionField() != null) {
                 switch (msg.unionField()) {
                     case SUCCESS:
@@ -138,9 +138,9 @@ public class Calculator2 {
                        net.morimekta.providence.serializer.SerializerException {
             switch(call.getMethod()) {
                 case "calculate": {
-                    net.morimekta.test.providence.core.calculator.Calculator.Calculate_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator.Calculate_response.builder();
+                    net.morimekta.test.providence.core.calculator.Calculator._calculate_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator._calculate_response.builder();
                     try {
-                        net.morimekta.test.providence.core.calculator.Calculator.Calculate_request req = (net.morimekta.test.providence.core.calculator.Calculator.Calculate_request) call.getMessage();
+                        net.morimekta.test.providence.core.calculator.Calculator._calculate_request req = (net.morimekta.test.providence.core.calculator.Calculator._calculate_request) call.getMessage();
                         net.morimekta.test.providence.core.calculator.Operand result =
                                 impl.calculate(req.getOp());
                         rsp.setSuccess(result);
@@ -155,13 +155,13 @@ public class Calculator2 {
                     return reply;
                 }
                 case "iamalive": {
-                    net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request req = (net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request) call.getMessage();
+                    net.morimekta.test.providence.core.calculator.Calculator._iamalive_request req = (net.morimekta.test.providence.core.calculator.Calculator._iamalive_request) call.getMessage();
                     impl.iamalive();
                     return null;
                 }
                 case "ping": {
-                    net.morimekta.test.providence.core.calculator.Calculator.Ping_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator.Ping_response.builder();
-                    net.morimekta.test.providence.core.calculator.Calculator.Ping_request req = (net.morimekta.test.providence.core.calculator.Calculator.Ping_request) call.getMessage();
+                    net.morimekta.test.providence.core.calculator.Calculator._ping_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator._ping_response.builder();
+                    net.morimekta.test.providence.core.calculator.Calculator._ping_request req = (net.morimekta.test.providence.core.calculator.Calculator._ping_request) call.getMessage();
                     impl.ping();
                     rsp.setSuccess();
                     net.morimekta.providence.PServiceCall reply =
@@ -172,8 +172,8 @@ public class Calculator2 {
                     return reply;
                 }
                 case "extra": {
-                    net.morimekta.test.providence.core.calculator.Calculator2.Extra_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator2.Extra_response.builder();
-                    net.morimekta.test.providence.core.calculator.Calculator2.Extra_request req = (net.morimekta.test.providence.core.calculator.Calculator2.Extra_request) call.getMessage();
+                    net.morimekta.test.providence.core.calculator.Calculator2._extra_response._Builder rsp = net.morimekta.test.providence.core.calculator.Calculator2._extra_response.builder();
+                    net.morimekta.test.providence.core.calculator.Calculator2._extra_request req = (net.morimekta.test.providence.core.calculator.Calculator2._extra_request) call.getMessage();
                     String result =
                             impl.extra();
                     rsp.setSuccess(result);
@@ -201,10 +201,10 @@ public class Calculator2 {
     }
 
     public enum Method implements net.morimekta.providence.descriptor.PServiceMethod {
-        CALCULATE("calculate", false, net.morimekta.test.providence.core.calculator.Calculator.Calculate_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Calculate_response.kDescriptor),
-        IAMALIVE("iamalive", true, net.morimekta.test.providence.core.calculator.Calculator.Iamalive_request.kDescriptor, null),
-        PING("ping", false, net.morimekta.test.providence.core.calculator.Calculator.Ping_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator.Ping_response.kDescriptor),
-        EXTRA("extra", false, net.morimekta.test.providence.core.calculator.Calculator2.Extra_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator2.Extra_response.kDescriptor),
+        CALCULATE("calculate", false, net.morimekta.test.providence.core.calculator.Calculator._calculate_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator._calculate_response.kDescriptor),
+        IAMALIVE("iamalive", true, net.morimekta.test.providence.core.calculator.Calculator._iamalive_request.kDescriptor, null),
+        PING("ping", false, net.morimekta.test.providence.core.calculator.Calculator._ping_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator._ping_response.kDescriptor),
+        EXTRA("extra", false, net.morimekta.test.providence.core.calculator.Calculator2._extra_request.kDescriptor, net.morimekta.test.providence.core.calculator.Calculator2._extra_response.kDescriptor),
         ;
 
         private final String name;
@@ -270,22 +270,22 @@ public class Calculator2 {
         return new _Provider();
     }
 
-    // type --> extra___request
+    // type --> Calculator2.extra.request
     @SuppressWarnings("unused")
-    protected static class Extra_request
-            implements net.morimekta.providence.PMessage<Extra_request,Extra_request._Field>,
-                       Comparable<Extra_request>,
+    protected static class _extra_request
+            implements net.morimekta.providence.PMessage<_extra_request,_extra_request._Field>,
+                       Comparable<_extra_request>,
                        java.io.Serializable,
                        net.morimekta.providence.serializer.rw.BinaryWriter {
-        private final static long serialVersionUID = -5728106025551276030L;
+        private final static long serialVersionUID = 7756543901078345535L;
 
 
         private volatile int tHashCode;
 
-        public Extra_request() {
+        public _extra_request() {
         }
 
-        private Extra_request(_Builder builder) {
+        private _extra_request(_Builder builder) {
         }
 
         @Override
@@ -320,14 +320,14 @@ public class Calculator2 {
         public int hashCode() {
             if (tHashCode == 0) {
                 tHashCode = java.util.Objects.hash(
-                        Extra_request.class);
+                        _extra_request.class);
             }
             return tHashCode;
         }
 
         @Override
         public String toString() {
-            return "calculator.extra___request" + asString();
+            return "calculator.Calculator2.extra.request" + asString();
         }
 
         @Override
@@ -340,7 +340,7 @@ public class Calculator2 {
         }
 
         @Override
-        public int compareTo(Extra_request other) {
+        public int compareTo(_extra_request other) {
             int c;
 
             return 0;
@@ -415,21 +415,21 @@ public class Calculator2 {
             }
         }
 
-        public static net.morimekta.providence.descriptor.PStructDescriptorProvider<Extra_request,_Field> provider() {
+        public static net.morimekta.providence.descriptor.PStructDescriptorProvider<_extra_request,_Field> provider() {
             return new _Provider();
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PStructDescriptor<Extra_request,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> descriptor() {
             return kDescriptor;
         }
 
-        public static final net.morimekta.providence.descriptor.PStructDescriptor<Extra_request,_Field> kDescriptor;
+        public static final net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> kDescriptor;
 
         private static class _Descriptor
-                extends net.morimekta.providence.descriptor.PStructDescriptor<Extra_request,_Field> {
+                extends net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> {
             public _Descriptor() {
-                super("calculator", "extra___request", new _Factory(), true);
+                super("calculator", "Calculator2.extra.request", new _Factory(), true);
             }
 
             @Override
@@ -452,15 +452,15 @@ public class Calculator2 {
             kDescriptor = new _Descriptor();
         }
 
-        private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<Extra_request,_Field> {
+        private final static class _Provider extends net.morimekta.providence.descriptor.PStructDescriptorProvider<_extra_request,_Field> {
             @Override
-            public net.morimekta.providence.descriptor.PStructDescriptor<Extra_request,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> descriptor() {
                 return kDescriptor;
             }
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Extra_request,_Field> {
+                extends net.morimekta.providence.PMessageBuilderFactory<_extra_request,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -468,7 +468,7 @@ public class Calculator2 {
         }
 
         /**
-         * Make a calculator.extra___request builder.
+         * Make a calculator.Calculator2.extra.request builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -476,13 +476,13 @@ public class Calculator2 {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Extra_request,_Field>
+                extends net.morimekta.providence.PMessageBuilder<_extra_request,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private java.util.BitSet optionals;
             private java.util.BitSet modified;
 
             /**
-             * Make a calculator.extra___request builder.
+             * Make a calculator.Calculator2.extra.request builder.
              */
             public _Builder() {
                 optionals = new java.util.BitSet(0);
@@ -490,18 +490,18 @@ public class Calculator2 {
             }
 
             /**
-             * Make a mutating builder off a base calculator.extra___request.
+             * Make a mutating builder off a base calculator.Calculator2.extra.request.
              *
-             * @param base The base extra___request
+             * @param base The base Calculator2.extra.request
              */
-            public _Builder(Extra_request base) {
+            public _Builder(_extra_request base) {
                 this();
 
             }
 
             @javax.annotation.Nonnull
             @Override
-            public _Builder merge(Extra_request from) {
+            public _Builder merge(_extra_request from) {
                 return this;
             }
 
@@ -515,7 +515,7 @@ public class Calculator2 {
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
-                        Extra_request.class, optionals);
+                        _extra_request.class, optionals);
             }
 
             @Override
@@ -581,7 +581,7 @@ public class Calculator2 {
 
             @javax.annotation.Nonnull
             @Override
-            public net.morimekta.providence.descriptor.PStructDescriptor<Extra_request,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PStructDescriptor<_extra_request,_Field> descriptor() {
                 return kDescriptor;
             }
 
@@ -601,20 +601,20 @@ public class Calculator2 {
             }
 
             @Override
-            public Extra_request build() {
-                return new Extra_request(this);
+            public _extra_request build() {
+                return new _extra_request(this);
             }
         }
     }
 
-    // type <-- extra___response
+    // type <-- Calculator2.extra.response
     @SuppressWarnings("unused")
-    protected static class Extra_response
-            implements net.morimekta.providence.PUnion<Extra_response,Extra_response._Field>,
-                       Comparable<Extra_response>,
+    protected static class _extra_response
+            implements net.morimekta.providence.PUnion<_extra_response,_extra_response._Field>,
+                       Comparable<_extra_response>,
                        java.io.Serializable,
                        net.morimekta.providence.serializer.rw.BinaryWriter {
-        private final static long serialVersionUID = -6738098496128366484L;
+        private final static long serialVersionUID = -3257175400506493499L;
 
         private final String mSuccess;
 
@@ -626,11 +626,11 @@ public class Calculator2 {
          * @param value The union value
          * @return The created union.
          */
-        public static Extra_response withSuccess(String value) {
+        public static _extra_response withSuccess(String value) {
             return new _Builder().setSuccess(value).build();
         }
 
-        private Extra_response(_Builder builder) {
+        private _extra_response(_Builder builder) {
             tUnionField = builder.tUnionField;
 
             mSuccess = tUnionField == _Field.SUCCESS ? builder.mSuccess : null;
@@ -680,7 +680,7 @@ public class Calculator2 {
         public boolean equals(Object o) {
             if (o == this) return true;
             if (o == null || !o.getClass().equals(getClass())) return false;
-            Extra_response other = (Extra_response) o;
+            _extra_response other = (_extra_response) o;
             return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                    java.util.Objects.equals(mSuccess, other.mSuccess);
         }
@@ -689,7 +689,7 @@ public class Calculator2 {
         public int hashCode() {
             if (tHashCode == 0) {
                 tHashCode = java.util.Objects.hash(
-                        Extra_response.class,
+                        _extra_response.class,
                         _Field.SUCCESS, mSuccess);
             }
             return tHashCode;
@@ -697,7 +697,7 @@ public class Calculator2 {
 
         @Override
         public String toString() {
-            return "calculator.extra___response" + asString();
+            return "calculator.Calculator2.extra.response" + asString();
         }
 
         @Override
@@ -717,7 +717,7 @@ public class Calculator2 {
         }
 
         @Override
-        public int compareTo(Extra_response other) {
+        public int compareTo(_extra_response other) {
             int c = tUnionField.compareTo(other.tUnionField);
             if (c != 0) return c;
 
@@ -813,21 +813,21 @@ public class Calculator2 {
             }
         }
 
-        public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<Extra_response,_Field> provider() {
+        public static net.morimekta.providence.descriptor.PUnionDescriptorProvider<_extra_response,_Field> provider() {
             return new _Provider();
         }
 
         @Override
-        public net.morimekta.providence.descriptor.PUnionDescriptor<Extra_response,_Field> descriptor() {
+        public net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> descriptor() {
             return kDescriptor;
         }
 
-        public static final net.morimekta.providence.descriptor.PUnionDescriptor<Extra_response,_Field> kDescriptor;
+        public static final net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> kDescriptor;
 
         private static class _Descriptor
-                extends net.morimekta.providence.descriptor.PUnionDescriptor<Extra_response,_Field> {
+                extends net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> {
             public _Descriptor() {
-                super("calculator", "extra___response", new _Factory(), true);
+                super("calculator", "Calculator2.extra.response", new _Factory(), true);
             }
 
             @Override
@@ -850,15 +850,15 @@ public class Calculator2 {
             kDescriptor = new _Descriptor();
         }
 
-        private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<Extra_response,_Field> {
+        private final static class _Provider extends net.morimekta.providence.descriptor.PUnionDescriptorProvider<_extra_response,_Field> {
             @Override
-            public net.morimekta.providence.descriptor.PUnionDescriptor<Extra_response,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> descriptor() {
                 return kDescriptor;
             }
         }
 
         private final static class _Factory
-                extends net.morimekta.providence.PMessageBuilderFactory<Extra_response,_Field> {
+                extends net.morimekta.providence.PMessageBuilderFactory<_extra_response,_Field> {
             @Override
             public _Builder builder() {
                 return new _Builder();
@@ -866,7 +866,7 @@ public class Calculator2 {
         }
 
         /**
-         * Make a calculator.extra___response builder.
+         * Make a calculator.Calculator2.extra.response builder.
          * @return The builder instance.
          */
         public static _Builder builder() {
@@ -874,7 +874,7 @@ public class Calculator2 {
         }
 
         public static class _Builder
-                extends net.morimekta.providence.PMessageBuilder<Extra_response,_Field>
+                extends net.morimekta.providence.PMessageBuilder<_extra_response,_Field>
                 implements net.morimekta.providence.serializer.rw.BinaryReader {
             private _Field tUnionField;
 
@@ -883,18 +883,18 @@ public class Calculator2 {
             private String mSuccess;
 
             /**
-             * Make a calculator.extra___response builder.
+             * Make a calculator.Calculator2.extra.response builder.
              */
             public _Builder() {
                 modified = false;
             }
 
             /**
-             * Make a mutating builder off a base calculator.extra___response.
+             * Make a mutating builder off a base calculator.Calculator2.extra.response.
              *
-             * @param base The base extra___response
+             * @param base The base Calculator2.extra.response
              */
-            public _Builder(Extra_response base) {
+            public _Builder(_extra_response base) {
                 this();
 
                 tUnionField = base.tUnionField;
@@ -904,7 +904,7 @@ public class Calculator2 {
 
             @javax.annotation.Nonnull
             @Override
-            public _Builder merge(Extra_response from) {
+            public _Builder merge(_extra_response from) {
                 if (from.unionField() == null) {
                     return this;
                 }
@@ -964,9 +964,9 @@ public class Calculator2 {
             }
 
             /**
-             * Checks if extra___response has been modified since the _Builder was created.
+             * Checks if Calculator2.extra.response has been modified since the _Builder was created.
              *
-             * @return True if extra___response has been modified.
+             * @return True if Calculator2.extra.response has been modified.
              */
             public boolean isUnionModified() {
                 return modified;
@@ -976,7 +976,7 @@ public class Calculator2 {
             public boolean equals(Object o) {
                 if (o == this) return true;
                 if (o == null || !o.getClass().equals(getClass())) return false;
-                Extra_response._Builder other = (Extra_response._Builder) o;
+                _extra_response._Builder other = (_extra_response._Builder) o;
                 return java.util.Objects.equals(tUnionField, other.tUnionField) &&
                        java.util.Objects.equals(mSuccess, other.mSuccess);
             }
@@ -984,7 +984,7 @@ public class Calculator2 {
             @Override
             public int hashCode() {
                 return java.util.Objects.hash(
-                        Extra_response.class,
+                        _extra_response.class,
                         _Field.SUCCESS, mSuccess);
             }
 
@@ -1055,13 +1055,13 @@ public class Calculator2 {
             @Override
             public void validate() {
                 if (!valid()) {
-                    throw new java.lang.IllegalStateException("No union field set in calculator.extra___response");
+                    throw new java.lang.IllegalStateException("No union field set in calculator.Calculator2.extra.response");
                 }
             }
 
             @javax.annotation.Nonnull
             @Override
-            public net.morimekta.providence.descriptor.PUnionDescriptor<Extra_response,_Field> descriptor() {
+            public net.morimekta.providence.descriptor.PUnionDescriptor<_extra_response,_Field> descriptor() {
                 return kDescriptor;
             }
 
@@ -1077,7 +1077,7 @@ public class Calculator2 {
                                 mSuccess = new String(reader.expectBytes(len_1), java.nio.charset.StandardCharsets.UTF_8);
                                 tUnionField = _Field.SUCCESS;
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.extra___response.success, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for calculator.Calculator2.extra.response.success, should be struct(12)");
                             }
                             break;
                         }
@@ -1091,11 +1091,11 @@ public class Calculator2 {
             }
 
             @Override
-            public Extra_response build() {
-                return new Extra_response(this);
+            public _extra_response build() {
+                return new _extra_response(this);
             }
         }
     }
 
-    private Calculator2() {}
+    protected Calculator2() {}
 }

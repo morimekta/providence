@@ -249,7 +249,7 @@ public class JsonSerializerTest {
         assertFail(calc, lenient, "[\"iamalive\", false, -55, {\"0\": 6}]",
                    "Invalid service call type token false");
         assertFail(calc, compact, "[\"calculate\", \"reply\", 55, {}]",
-                   "No union field set in calculator.calculate___response");
+                   "No union field set in calculator.Calculator.calculate.response");
         assertFail(calc, compact, "[\"ping\", \"reply\", 55, {\"0\": 3}]",
                    "Not a void token value: '3'");
 
