@@ -127,7 +127,6 @@ public class MessageStreams {
      * @param <Message>  The message type.
      * @param <Field>    The message field type.
      * @return The stream that reads the file.
-     * @throws IOException when unable to open the stream.
      */
     public static <Message extends PMessage<Message, Field>, Field extends PField>
     Stream<Message> stream(InputStream in,
