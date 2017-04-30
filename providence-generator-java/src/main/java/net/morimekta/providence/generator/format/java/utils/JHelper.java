@@ -129,11 +129,11 @@ public class JHelper {
     }
 
     public String getConstantsClassName(CProgram document) {
-        return camelCase("", document.getProgramName()) + "_Constants";
+        return camelCase(document.getProgramName()) + "_Constants";
     }
 
     public String getHazelcastFactoryClassName(CProgram document) {
-        return camelCase("", document.getProgramName())  + "_Factory";
+        return camelCase(document.getProgramName())  + "_Factory";
     }
 
     public String getHazelcastOptionalName(JMessage<?> message) {

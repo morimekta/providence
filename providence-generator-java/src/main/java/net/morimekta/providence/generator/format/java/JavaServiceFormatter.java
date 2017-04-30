@@ -75,8 +75,15 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                     .finish();
         }
 
+        String inherits = "";
+        if (service.getService().getExtendsService() != null) {
+            CService other = service.getService().getExtendsService();
+            inherits = "extends " + helper.getJavaPackage(other) + "." +
+                       new JService(other, helper).className() + " ";
+        }
+
         writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s {", service.className())
+              .formatln("public class %s %s{", service.className(), inherits)
               .begin();
 
         appendIface(writer, service);
@@ -89,8 +96,9 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
 
         appendStructs(writer, service);
 
-        // private constructor should defeat instantiation.
-        writer.formatln("private %s() {}", service.className());
+        // protected constructor should defeat instantiation, but can inherit
+        // from parent to be able to get access to inner protected classes.
+        writer.formatln("protected %s() {}", service.className());
 
         writer.end()
               .appendln('}');

@@ -134,7 +134,7 @@ public class JField {
     }
 
     public String fieldEnum() {
-        return c_case("", field.getName()).toUpperCase();
+        return c_case(field.getName()).toUpperCase();
     }
 
     public String kDefault() {

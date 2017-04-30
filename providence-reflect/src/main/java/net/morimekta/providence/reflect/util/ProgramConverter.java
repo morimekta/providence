@@ -170,7 +170,8 @@ public class ProgramConverter {
                             }
                             CStructDescriptor request = new CStructDescriptor(null,
                                                                               document.getProgramName(),
-                                                                              sm.getName() + "___request",
+                                                                              serviceType.getName() + '.' +
+                                                                              sm.getName() + ".request",
                                                                               rqFields,
                                                                               null);
 
@@ -202,7 +203,8 @@ public class ProgramConverter {
 
                                 response = new CUnionDescriptor(null,
                                                                 document.getProgramName(),
-                                                                sm.getName() + "___response",
+                                                                serviceType.getName() + '.' +
+                                                                sm.getName() + ".response",
                                                                 rsFields,
                                                                 null);
                             }

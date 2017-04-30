@@ -28,6 +28,7 @@ import net.morimekta.providence.generator.GeneratorException;
 import net.morimekta.providence.reflect.contained.CProgram;
 import net.morimekta.util.Strings;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 
 /**
@@ -35,7 +36,7 @@ import java.io.File;
  * @since 07.09.15
  */
 public class JUtils {
-    public static long generateSerialVersionUID(PMessageDescriptor<?, ?> type) {
+    public static long generateSerialVersionUID(@Nonnull PMessageDescriptor<?, ?> type) {
         String string = type.getVariant()
                             .toString() + " " + type.getQualifiedName();
 
@@ -47,18 +48,21 @@ public class JUtils {
         return hash;
     }
 
-    public static String getClassName(PDeclaredDescriptor<?> type) {
-        return camelCase("", type.getName());
-    }
-
-    public static String getClassName(PService service) {
-        return camelCase("", service.getName());
-    }
-
-    public static String getJavaPackage(CProgram document) throws GeneratorException {
-        if (document == null) {
-            System.err.println("NOOO");
+    public static String getClassName(@Nonnull PDeclaredDescriptor<?> type) {
+        if (type.getName().contains(".")) {
+            String[] parts = type.getName().split("[.]");
+            if (parts.length != 3) throw new GeneratorException("Unrecognized service message name: " + type.getName());
+            // E.g.: _methodName_request
+            return "_" + parts[1] + "_" + parts[2];
         }
+        return camelCase(type.getName());
+    }
+
+    public static String getClassName(@Nonnull PService service) {
+        return camelCase(service.getName());
+    }
+
+    public static String getJavaPackage(@Nonnull CProgram document) throws GeneratorException {
         String javaPackage = document.getNamespaceForLanguage("java");
         if (javaPackage == null) {
             throw new GeneratorException("No java namespace for thrift package " + document.getProgramName());
@@ -66,9 +70,9 @@ public class JUtils {
         return javaPackage;
     }
 
-    public static String getPackageClassPath(String javaPackage) throws GeneratorException {
+    public static String getPackageClassPath(@Nonnull String javaPackage) throws GeneratorException {
         String[] parts = javaPackage.split("[.]");
-        return Strings.join(File.separator, parts);
+        return Strings.join(File.separator, (Object[]) parts);
     }
 
     /**
@@ -77,8 +81,8 @@ public class JUtils {
      * @param type PStructDescriptor with the information to fetch thrift info from.
      * @return class name for the hazelcast factory.
      */
-    public static String getHazelcastFactory(PMessageDescriptor<?, ?> type) {
-        return camelCase("", type.getProgramName()).concat("_Factory");
+    public static String getHazelcastFactory(@Nonnull PMessageDescriptor<?, ?> type) {
+        return camelCase(type.getProgramName()).concat("_Factory");
     }
 
     /**
@@ -109,59 +113,18 @@ public class JUtils {
      * @return theCamelCasedName
      */
     public static String camelCase(String name) {
-        StringBuilder builder = new StringBuilder();
-
-        String[] parts = name.split("[-._]");
-        boolean first = true;
-        int skipped = 0;
-        for (String part : parts) {
-            if (part.isEmpty()) {
-                skipped++;
-                continue;
-            }
-            if (first) {
-                first = false;
-                builder.append(part);
-            } else if (skipped > 1) {
-                builder.append('_');
-                builder.append(part);
-            } else {
-                builder.append(Strings.capitalize(part));
-            }
-            skipped = 0;
-        }
-
-        return builder.toString();
+        return Strings.camelCase("", name);
     }
 
     /**
      * Format a prefixed name as camelCase. The prefix is kept verbatim, while
      * tha name is split on '_' chars, and joined with each part capitalized.
      *
-     * @param prefix The prefix.
      * @param name   The name to camel-case.
      * @return theCamelCasedName
      */
     public static String camelCase(String prefix, String name) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(prefix);
-
-        String[] parts = name.split("[-._]");
-        int skipped = 0;
-        for (String part : parts) {
-            if (part.isEmpty()) {
-                skipped++;
-                continue;
-            }
-            if (skipped > 1) {
-                builder.append('_');
-                builder.append(part);
-            } else {
-                builder.append(Strings.capitalize(part));
-            }
-            skipped = 0;
-        }
-        return builder.toString();
+        return Strings.camelCase(prefix, name);
     }
 
     /**
