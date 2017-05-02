@@ -389,6 +389,10 @@ public class PApplicationException
          */
         @javax.annotation.Nonnull
         public _Builder setMessage(String value) {
+            if (value == null) {
+                return clearMessage();
+            }
+
             optionals.set(0);
             modified.set(0);
             mMessage = value;
@@ -443,6 +447,10 @@ public class PApplicationException
          */
         @javax.annotation.Nonnull
         public _Builder setId(net.morimekta.providence.PApplicationExceptionType value) {
+            if (value == null) {
+                return clearId();
+            }
+
             optionals.set(1);
             modified.set(1);
             mId = value;

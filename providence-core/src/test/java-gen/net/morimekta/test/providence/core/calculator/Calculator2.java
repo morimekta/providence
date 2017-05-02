@@ -926,6 +926,10 @@ public class Calculator2 extends net.morimekta.test.providence.core.calculator.C
              */
             @javax.annotation.Nonnull
             public _Builder setSuccess(String value) {
+                if (value == null) {
+                    return clearSuccess();
+                }
+
                 tUnionField = _Field.SUCCESS;
                 modified = true;
                 mSuccess = value;

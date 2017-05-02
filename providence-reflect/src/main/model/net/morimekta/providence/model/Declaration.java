@@ -549,6 +549,10 @@ public class Declaration
          */
         @javax.annotation.Nonnull
         public _Builder setDeclEnum(net.morimekta.providence.model.EnumType value) {
+            if (value == null) {
+                return clearDeclEnum();
+            }
+
             tUnionField = _Field.DECL_ENUM;
             modified = true;
             mDeclEnum_builder = null;
@@ -608,6 +612,10 @@ public class Declaration
          */
         @javax.annotation.Nonnull
         public _Builder setDeclTypedef(net.morimekta.providence.model.TypedefType value) {
+            if (value == null) {
+                return clearDeclTypedef();
+            }
+
             tUnionField = _Field.DECL_TYPEDEF;
             modified = true;
             mDeclTypedef_builder = null;
@@ -667,6 +675,10 @@ public class Declaration
          */
         @javax.annotation.Nonnull
         public _Builder setDeclStruct(net.morimekta.providence.model.MessageType value) {
+            if (value == null) {
+                return clearDeclStruct();
+            }
+
             tUnionField = _Field.DECL_STRUCT;
             modified = true;
             mDeclStruct_builder = null;
@@ -726,6 +738,10 @@ public class Declaration
          */
         @javax.annotation.Nonnull
         public _Builder setDeclService(net.morimekta.providence.model.ServiceType value) {
+            if (value == null) {
+                return clearDeclService();
+            }
+
             tUnionField = _Field.DECL_SERVICE;
             modified = true;
             mDeclService_builder = null;
@@ -785,6 +801,10 @@ public class Declaration
          */
         @javax.annotation.Nonnull
         public _Builder setDeclConst(net.morimekta.providence.model.ConstType value) {
+            if (value == null) {
+                return clearDeclConst();
+            }
+
             tUnionField = _Field.DECL_CONST;
             modified = true;
             mDeclConst_builder = null;

@@ -804,7 +804,7 @@ public class UnionFields
          *
          * @return The field value
          */
-        public boolean isBooleanValue() {
+        public boolean getBooleanValue() {
             return mBooleanValue;
         }
 
@@ -1041,6 +1041,10 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setStringValue(String value) {
+            if (value == null) {
+                return clearStringValue();
+            }
+
             tUnionField = _Field.STRING_VALUE;
             modified = true;
             mStringValue = value;
@@ -1086,6 +1090,10 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
+            if (value == null) {
+                return clearBinaryValue();
+            }
+
             tUnionField = _Field.BINARY_VALUE;
             modified = true;
             mBinaryValue = value;
@@ -1131,6 +1139,10 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setEnumValue(net.morimekta.test.providence.core.Value value) {
+            if (value == null) {
+                return clearEnumValue();
+            }
+
             tUnionField = _Field.ENUM_VALUE;
             modified = true;
             mEnumValue = value;
@@ -1176,6 +1188,10 @@ public class UnionFields
          */
         @javax.annotation.Nonnull
         public _Builder setCompactValue(net.morimekta.test.providence.core.CompactFields value) {
+            if (value == null) {
+                return clearCompactValue();
+            }
+
             tUnionField = _Field.COMPACT_VALUE;
             modified = true;
             mCompactValue_builder = null;

@@ -364,6 +364,10 @@ public class Operation
          */
         @javax.annotation.Nonnull
         public _Builder setOperator(net.morimekta.test.providence.core.calculator.Operator value) {
+            if (value == null) {
+                return clearOperator();
+            }
+
             optionals.set(0);
             modified.set(0);
             mOperator = value;
@@ -418,6 +422,10 @@ public class Operation
          */
         @javax.annotation.Nonnull
         public _Builder setOperands(java.util.Collection<net.morimekta.test.providence.core.calculator.Operand> value) {
+            if (value == null) {
+                return clearOperands();
+            }
+
             optionals.set(1);
             modified.set(1);
             mOperands.clear();

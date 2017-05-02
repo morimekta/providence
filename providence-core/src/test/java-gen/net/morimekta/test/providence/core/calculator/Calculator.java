@@ -548,6 +548,10 @@ public class Calculator {
              */
             @javax.annotation.Nonnull
             public _Builder setOp(net.morimekta.test.providence.core.calculator.Operation value) {
+                if (value == null) {
+                    return clearOp();
+                }
+
                 optionals.set(0);
                 modified.set(0);
                 mOp_builder = null;
@@ -1103,6 +1107,10 @@ public class Calculator {
              */
             @javax.annotation.Nonnull
             public _Builder setSuccess(net.morimekta.test.providence.core.calculator.Operand value) {
+                if (value == null) {
+                    return clearSuccess();
+                }
+
                 tUnionField = _Field.SUCCESS;
                 modified = true;
                 mSuccess_builder = null;
@@ -1162,6 +1170,10 @@ public class Calculator {
              */
             @javax.annotation.Nonnull
             public _Builder setCe(net.morimekta.test.providence.core.calculator.CalculateException value) {
+                if (value == null) {
+                    return clearCe();
+                }
+
                 tUnionField = _Field.CE;
                 modified = true;
                 mCe_builder = null;

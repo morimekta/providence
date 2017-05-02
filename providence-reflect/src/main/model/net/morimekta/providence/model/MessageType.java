@@ -566,6 +566,10 @@ public class MessageType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -620,6 +624,10 @@ public class MessageType
          */
         @javax.annotation.Nonnull
         public _Builder setVariant(net.morimekta.providence.model.MessageVariant value) {
+            if (value == null) {
+                return clearVariant();
+            }
+
             optionals.set(1);
             modified.set(1);
             mVariant = value;
@@ -674,6 +682,10 @@ public class MessageType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(2);
             modified.set(2);
             mName = value;
@@ -728,6 +740,10 @@ public class MessageType
          */
         @javax.annotation.Nonnull
         public _Builder setFields(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
+            if (value == null) {
+                return clearFields();
+            }
+
             optionals.set(3);
             modified.set(3);
             mFields.clear();
@@ -801,6 +817,10 @@ public class MessageType
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(4);
             modified.set(4);
             mAnnotations.clear();

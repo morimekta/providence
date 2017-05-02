@@ -482,6 +482,10 @@ public class EnumValue
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -536,6 +540,10 @@ public class EnumValue
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(1);
             modified.set(1);
             mName = value;
@@ -644,6 +652,10 @@ public class EnumValue
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(3);
             modified.set(3);
             mAnnotations.clear();

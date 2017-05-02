@@ -429,6 +429,10 @@ public class Operand
          */
         @javax.annotation.Nonnull
         public _Builder setOperation(net.morimekta.test.providence.core.calculator.Operation value) {
+            if (value == null) {
+                return clearOperation();
+            }
+
             tUnionField = _Field.OPERATION;
             modified = true;
             mOperation_builder = null;
@@ -533,6 +537,10 @@ public class Operand
          */
         @javax.annotation.Nonnull
         public _Builder setImaginary(net.morimekta.test.providence.core.number.Imaginary value) {
+            if (value == null) {
+                return clearImaginary();
+            }
+
             tUnionField = _Field.IMAGINARY;
             modified = true;
             mImaginary_builder = null;

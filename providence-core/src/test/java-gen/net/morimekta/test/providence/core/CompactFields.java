@@ -414,6 +414,10 @@ public class CompactFields
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(0);
             modified.set(0);
             mName = value;
@@ -522,6 +526,10 @@ public class CompactFields
          */
         @javax.annotation.Nonnull
         public _Builder setLabel(String value) {
+            if (value == null) {
+                return clearLabel();
+            }
+
             optionals.set(2);
             modified.set(2);
             mLabel = value;

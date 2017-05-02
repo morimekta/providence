@@ -417,6 +417,10 @@ public class TypedefType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -471,6 +475,10 @@ public class TypedefType
          */
         @javax.annotation.Nonnull
         public _Builder setType(String value) {
+            if (value == null) {
+                return clearType();
+            }
+
             optionals.set(1);
             modified.set(1);
             mType = value;
@@ -525,6 +533,10 @@ public class TypedefType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(2);
             modified.set(2);
             mName = value;

@@ -14,8 +14,8 @@ public class Calculator_Constants {
     public static final java.util.Set<net.morimekta.test.providence.core.calculator.Operator> kComplexOperands;
     static {
         kComplexOperands = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<net.morimekta.test.providence.core.calculator.Operator>()
-                .add(net.morimekta.test.providence.core.calculator.Operator.DIVIDE)
                 .add(net.morimekta.test.providence.core.calculator.Operator.MULTIPLY)
+                .add(net.morimekta.test.providence.core.calculator.Operator.DIVIDE)
                 .build();
     }
 }

@@ -482,6 +482,10 @@ public class ContainerService {
              */
             @javax.annotation.Nonnull
             public _Builder setC(net.morimekta.test.providence.core.Containers value) {
+                if (value == null) {
+                    return clearC();
+                }
+
                 optionals.set(0);
                 modified.set(0);
                 mC_builder = null;
@@ -1037,6 +1041,10 @@ public class ContainerService {
              */
             @javax.annotation.Nonnull
             public _Builder setSuccess(net.morimekta.test.providence.core.CompactFields value) {
+                if (value == null) {
+                    return clearSuccess();
+                }
+
                 tUnionField = _Field.SUCCESS;
                 modified = true;
                 mSuccess_builder = null;
@@ -1096,6 +1104,10 @@ public class ContainerService {
              */
             @javax.annotation.Nonnull
             public _Builder setEf(net.morimekta.test.providence.core.ExceptionFields value) {
+                if (value == null) {
+                    return clearEf();
+                }
+
                 tUnionField = _Field.EF;
                 modified = true;
                 mEf_builder = null;
