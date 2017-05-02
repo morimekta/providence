@@ -52,7 +52,7 @@ public class ValueBuilder {
     public void appendDefaultConstants(List<JField> fields) throws GeneratorException {
         boolean hasDefault = false;
         for (JField field : fields) {
-            if (field.hasDefault() || field.isPrimitiveJavaValue()) {
+            if (field.hasDefaultConstant()) {
                 Object defaultValue = helper.getDefaultValue(field.field());
                 if (defaultValue != null) {
                     hasDefault = true;
@@ -102,7 +102,7 @@ public class ValueBuilder {
                     break;
                 }
 
-                writer.append("Binary.wrap(new byte[]{");
+                writer.format("%s.wrap(new byte[]{", Binary.class.getName());
                 byte[] bytes = ((Binary) value).get();
                 boolean first = true;
                 for (byte b : bytes) {

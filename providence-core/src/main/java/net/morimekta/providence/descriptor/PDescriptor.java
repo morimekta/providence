@@ -23,6 +23,7 @@ package net.morimekta.providence.descriptor;
 import net.morimekta.providence.PType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Descriptor interface for value type V.
@@ -74,4 +75,13 @@ public interface PDescriptor {
      */
     @Nonnull
     PType getType();
+
+    /**
+     * @return The default value for the type used for default and required fields.
+     *         Note that some primitive types don't support null values, and will
+     *         have methods returning a default value regardless of the field
+     *         required value setting.
+     */
+    @Nullable
+    Object getDefaultValue();
 }

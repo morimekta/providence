@@ -20,6 +20,7 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
+import net.morimekta.util.Binary;
 
 import org.junit.Test;
 
@@ -54,8 +55,8 @@ public class PPrimitiveTest {
         assertEquals(0, PPrimitive.I32.getDefaultValue());
         assertEquals(0L, PPrimitive.I64.getDefaultValue());
         assertEquals(0.0d, PPrimitive.DOUBLE.getDefaultValue());
-        assertEquals(null, PPrimitive.STRING.getDefaultValue());
-        assertEquals(null, PPrimitive.BINARY.getDefaultValue());
+        assertEquals("", PPrimitive.STRING.getDefaultValue());
+        assertEquals(Binary.empty(), PPrimitive.BINARY.getDefaultValue());
     }
 
     @Test

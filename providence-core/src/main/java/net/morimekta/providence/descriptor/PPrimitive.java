@@ -21,6 +21,7 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PType;
+import net.morimekta.util.Binary;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -31,24 +32,26 @@ import java.util.Objects;
  * These are the basic types used in the thrift structure except containers.
  */
 public class PPrimitive implements PDescriptor {
-    public static final PPrimitive VOID   = new PPrimitive(PType.VOID, null);
-    public static final PPrimitive BOOL   = new PPrimitive(PType.BOOL, false);
-    public static final PPrimitive BYTE   = new PPrimitive(PType.BYTE, (byte) 0);
-    public static final PPrimitive I16    = new PPrimitive(PType.I16, (short) 0);
-    public static final PPrimitive I32    = new PPrimitive(PType.I32, 0);
-    public static final PPrimitive I64    = new PPrimitive(PType.I64, (long) 0);
-    public static final PPrimitive DOUBLE = new PPrimitive(PType.DOUBLE, 0.0);
-    public static final PPrimitive STRING = new PPrimitive(PType.STRING, null);
-    public static final PPrimitive BINARY = new PPrimitive(PType.BINARY, null);
+    public static final PPrimitive VOID   = new PPrimitive(PType.VOID, null, true);
+    public static final PPrimitive BOOL   = new PPrimitive(PType.BOOL, false, true);
+    public static final PPrimitive BYTE   = new PPrimitive(PType.BYTE, (byte) 0, true);
+    public static final PPrimitive I16    = new PPrimitive(PType.I16, (short) 0, true);
+    public static final PPrimitive I32    = new PPrimitive(PType.I32, 0, true);
+    public static final PPrimitive I64    = new PPrimitive(PType.I64, (long) 0, true);
+    public static final PPrimitive DOUBLE = new PPrimitive(PType.DOUBLE, 0.0, true);
+    public static final PPrimitive STRING = new PPrimitive(PType.STRING, "", false);
+    public static final PPrimitive BINARY = new PPrimitive(PType.BINARY, Binary.empty(), false);
 
-    private final PPrimitiveProvider mProvider;
-    private final PType              mType;
-    private final Object             mDefault;
+    private final PPrimitiveProvider provider;
+    private final PType              type;
+    private final Object             defaultValue;
+    private final boolean            nativePrimitive;
 
-    private PPrimitive(PType type, Object defValue) {
-        mType = type;
-        mProvider = new PPrimitiveProvider(this);
-        mDefault = defValue;
+    private PPrimitive(PType type, Object defValue, boolean nativePrimitive) {
+        this.type = type;
+        this.provider = new PPrimitiveProvider(this);
+        this.defaultValue = defValue;
+        this.nativePrimitive = nativePrimitive;
     }
 
     /**
@@ -58,7 +61,7 @@ public class PPrimitive implements PDescriptor {
      */
     @Nonnull
     public PPrimitiveProvider provider() {
-        return mProvider;
+        return provider;
     }
 
     @Override
@@ -69,24 +72,24 @@ public class PPrimitive implements PDescriptor {
     @Nonnull
     @Override
     public String getName() {
-        return mType.toString();
+        return type.toString();
     }
 
     @Nonnull
     @Override
     public String getQualifiedName(String programContext) {
-        return mType.toString();
+        return type.toString();
     }
 
     @Override
     public String toString() {
-        return mType.toString();
+        return type.toString();
     }
 
     @Nonnull
     @Override
     public PType getType() {
-        return mType;
+        return type;
     }
 
     @Override
@@ -96,14 +99,22 @@ public class PPrimitive implements PDescriptor {
 
     @Override
     public int hashCode() {
-        return Objects.hash(mType, mDefault);
+        return Objects.hash(type, defaultValue);
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 
     /**
-     * @return The default value for the primitive.
+     * @return Returns false if the primitive type allows null values.
+     *         If this method returns true, getter and setter methods
+     *         will have parameters and return type with the native
+     *         primitive type, not it's boxed variant.
      */
-    public Object getDefaultValue() {
-        return mDefault;
+    public boolean isNativePrimitive() {
+        return nativePrimitive;
     }
 
     /**

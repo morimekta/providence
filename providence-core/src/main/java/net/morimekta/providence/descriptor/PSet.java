@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -61,6 +62,12 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     @Override
     public PType getType() {
         return PType.SET;
+    }
+
+    @Nullable
+    @Override
+    public Object getDefaultValue() {
+        return Collections.EMPTY_SET;
     }
 
     @Override

@@ -27,7 +27,9 @@ import net.morimekta.providence.PType;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,6 +60,12 @@ public class PList<Item> extends PContainer<List<Item>> {
     @Override
     public PType getType() {
         return PType.LIST;
+    }
+
+    @Nullable
+    @Override
+    public Object getDefaultValue() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override

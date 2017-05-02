@@ -96,8 +96,9 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
                 return value;
             } else if (field.hasDefaultValue()) {
                 return field.getDefaultValue();
-            } else if (field.getDescriptor() instanceof PPrimitive) {
-                return ((PPrimitive) field.getDescriptor()).getDefaultValue();
+            } else if (field.getDescriptor() instanceof PPrimitive &&
+                       ((PPrimitive) field.getDescriptor()).isNativePrimitive()) {
+                return field.getDescriptor().getDefaultValue();
             }
         }
         return null;

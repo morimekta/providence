@@ -167,12 +167,12 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
               .begin();
         //TODO write optionals bitset.
         for (JField field : message.declaredOrderFields()) {
-            if (!field.isRequired()) {
+            if (!field.alwaysPresent()) {
                 writer.formatln("if( %s() ) {", field.isSet())
                       .begin();
             }
             writePortableField(field);
-            if (!field.isRequired()) {
+            if (!field.alwaysPresent()) {
                 writer.end()
                       .appendln("} else {")
                       .begin();
@@ -566,63 +566,58 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
     private void writeDefaultPortableField(JField field) throws GeneratorException {
         switch (field.type()) {
             case BINARY:
-            case MAP:
-                writer.formatln("%s.writeByteArray(\"%s\", %s);",
+                writer.formatln("%s.writeByteArray(\"%s\", new byte[0]);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case BOOL:
-                writer.formatln("%s.writeBoolean(\"%s\", %s);",
+                writer.formatln("%s.writeBoolean(\"%s\", false);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case BYTE:
-                writer.formatln("%s.writeByte(\"%s\", %s);",
+                writer.formatln("%s.writeByte(\"%s\", (byte) 0);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case DOUBLE:
-                writer.formatln("%s.writeDouble(\"%s\", %s);",
+                writer.formatln("%s.writeDouble(\"%s\", 0.0);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case ENUM:
-                writer.formatln("%s.writeInt(\"%s\", %s);", PORTABLE_WRITER, field.name(), "0");
+                writer.formatln("%s.writeInt(\"%s\", 0);", PORTABLE_WRITER, field.name());
                 break;
             case I16:
-                writer.formatln("%s.writeShort(\"%s\", %s);",
+                writer.formatln("%s.writeShort(\"%s\", (short) 0);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case I32:
-                writer.formatln("%s.writeInt(\"%s\", %s);",
+                writer.formatln("%s.writeInt(\"%s\", 0);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case I64:
-                writer.formatln("%s.writeLong(\"%s\", %s);",
+                writer.formatln("%s.writeLong(\"%s\", 0L);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             case STRING:
-                writer.formatln("%s.writeUTF(\"%s\", %s);",
+                writer.formatln("%s.writeUTF(\"%s\", \"\");",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
+                break;
+            case MAP:
+                writer.formatln("%s.writeByteArray(\"%s\", new byte[0]);",
+                                PORTABLE_WRITER,
+                                field.name());
                 break;
             case LIST:
                 if (field.isUnion()) {
-                    writer.formatln("%s.writeByteArray(\"%s\", %s);",
+                    writer.formatln("%s.writeByteArray(\"%s\", new byte[0]);",
                                     PORTABLE_WRITER,
-                                    field.name(),
-                                    field.hasDefaultConstant() ? field.kDefault() : "null");
+                                    field.name());
                 } else {
                     writeDefaultPortableFieldList(field,
                                                   field.toPList()
@@ -631,10 +626,9 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 break;
             case SET:
                 if (field.isUnion()) {
-                    writer.formatln("%s.writeByteArray(\"%s\", %s);",
+                    writer.formatln("%s.writeByteArray(\"%s\", new byte[0]);",
                                     PORTABLE_WRITER,
-                                    field.name(),
-                                    field.hasDefaultConstant() ? field.kDefault() : "null");
+                                    field.name());
                 } else {
                     writeDefaultPortableFieldList(field,
                                                   field.toPSet()
@@ -642,10 +636,9 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                 }
                 break;
             case MESSAGE:
-                writer.formatln("%s.writePortable(\"%s\", %s);",
+                writer.formatln("%s.writePortable(\"%s\", null);",
                                 PORTABLE_WRITER,
-                                field.name(),
-                                field.hasDefaultConstant() ? field.kDefault() : "null");
+                                field.name());
                 break;
             default:
                 throw new GeneratorException(
@@ -859,7 +852,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
         String bebrTemp = camelCase("bebr", field.name());
         String tempIterator = tempVariable();
         String valueVariable = tempVariable();
-        if (!field.isRequired()) {
+        if (!field.alwaysPresent()) {
             writer.formatln("if( %s.hasField(\"%s\") && %s.readBoolean(\"%s\") && %s.hasField(\"%s\") ) {",
                             PORTABLE_READER,
                             field.hasName(),
@@ -1029,7 +1022,7 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                              this.getClass()
                                                  .getSimpleName());
         }
-        if (!field.isRequired()) {
+        if (!field.alwaysPresent()) {
             writer.end()
                   .appendln("}");
         }
