@@ -390,7 +390,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("switch(key) {")
               .begin();
 
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             if (field.isVoid()) {
                 // Void fields have no value.
                 writer.formatln("case %d: return %s() ? Boolean.FALSE : null;",
@@ -415,7 +415,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("switch(key) {")
               .begin();
 
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             if (field.alwaysPresent() && !message.isUnion()) {
                 writer.formatln("case %d: return true;", field.id());
             } else {
@@ -438,7 +438,7 @@ public class CoreOverridesFormatter implements MessageMemberFormatter {
               .appendln("switch(key) {")
               .begin();
 
-        for (JField field : message.declaredOrderFields()) {
+        for (JField field : message.numericalOrderFields()) {
             if (field.container()) {
                 writer.formatln("case %d: return %s();", field.id(), field.counter());
             } else if (field.alwaysPresent() && !message.isUnion()) {
