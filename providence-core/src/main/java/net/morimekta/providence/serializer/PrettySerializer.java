@@ -698,7 +698,7 @@ public class PrettySerializer extends Serializer {
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {
-            writer.print(Strings.escape(o.toString()));
+            writer.print(o.toString());
         } else if (o instanceof Double) {
             Double d = (Double) o;
             if (d == ((double) d.longValue())) {
