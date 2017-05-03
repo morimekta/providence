@@ -44,7 +44,7 @@ public class JavaEnumFormatter extends BaseEnumFormatter {
     private static List<EnumMemberFormatter> getFormatters(IndentedPrintWriter writer, JavaOptions options) {
         ImmutableList.Builder<EnumMemberFormatter> builder = ImmutableList.builder();
 
-        builder.add(new CommonMemberFormatter(writer))
+        builder.add(new CommonMemberFormatter(writer, options))
                .add(new CoreMemberFormatter(writer));
 
         if (options.jackson) {

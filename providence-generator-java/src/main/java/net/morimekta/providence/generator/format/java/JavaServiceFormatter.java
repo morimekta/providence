@@ -47,13 +47,17 @@ import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Generated;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Properties;
 
 public class JavaServiceFormatter implements BaseServiceFormatter {
     private final JHelper              helper;
     private final JavaMessageFormatter messageFormat;
     private final IndentedPrintWriter  writer;
     private final JavaOptions          options;
+    private final String               version;
 
     JavaServiceFormatter(IndentedPrintWriter writer,
                          JHelper helper,
@@ -63,6 +67,16 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
         this.helper = helper;
         this.messageFormat = messageFormat;
         this.options = options;
+
+        try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/java_generator_version.properties"));
+
+            this.version = properties.getProperty("java_generator_version");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
     }
 
     @Override
@@ -82,8 +96,12 @@ public class JavaServiceFormatter implements BaseServiceFormatter {
                        new JService(other, helper).className() + " ";
         }
 
-        writer.appendln("@SuppressWarnings(\"unused\")")
-              .formatln("public class %s %s{", service.className(), inherits)
+        writer.appendln("@SuppressWarnings(\"unused\")");
+        if (options.generated_annotation) {
+            writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        }
+
+        writer.formatln("public class %s %s{", service.className(), inherits)
               .begin();
 
         appendIface(writer, service);

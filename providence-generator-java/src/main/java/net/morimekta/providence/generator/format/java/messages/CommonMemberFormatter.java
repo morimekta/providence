@@ -21,6 +21,7 @@
 package net.morimekta.providence.generator.format.java.messages;
 
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.shared.MessageMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.BlockCommentBuilder;
 import net.morimekta.providence.generator.format.java.utils.ContainerType;
@@ -30,11 +31,16 @@ import net.morimekta.providence.generator.format.java.utils.JHelper;
 import net.morimekta.providence.generator.format.java.utils.JMessage;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
 import net.morimekta.providence.generator.format.java.utils.ValueBuilder;
+import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Generated;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Properties;
 
 import static net.morimekta.providence.generator.format.java.messages.CoreOverridesFormatter.UNION_FIELD;
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
@@ -48,15 +54,33 @@ import static net.morimekta.providence.generator.format.java.utils.JUtils.camelC
 public class CommonMemberFormatter implements MessageMemberFormatter {
     protected final IndentedPrintWriter writer;
     private final JHelper helper;
+    private final String version;
+    private final JavaOptions options;
 
-    public CommonMemberFormatter(IndentedPrintWriter writer, JHelper helper) {
+    public CommonMemberFormatter(IndentedPrintWriter writer, JHelper helper, JavaOptions options) {
         this.writer = writer;
         this.helper = helper;
+        this.options = options;
+
+        try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/java_generator_version.properties"));
+
+            this.version = properties.getProperty("java_generator_version");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
     public void appendClassAnnotations(JMessage<?> message) throws GeneratorException {
+        if (JAnnotation.isDeprecated((CAnnotatedDescriptor) message.descriptor())) {
+            writer.appendln(JAnnotation.DEPRECATED);
+        }
         writer.appendln("@SuppressWarnings(\"unused\")");
+        if (options.generated_annotation) {
+            writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        }
     }
 
     @Override

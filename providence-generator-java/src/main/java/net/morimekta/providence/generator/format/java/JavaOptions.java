@@ -43,4 +43,9 @@ public class JavaOptions {
      * Add hazelcast_portable serializer and deserializers for portable interface.
      */
     public boolean hazelcast_portable = false;
+
+    /**
+     * Add the <code>@Generated</code> annotation to each generated class.
+     */
+    public boolean generated_annotation = false;
 }

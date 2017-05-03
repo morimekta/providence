@@ -22,6 +22,7 @@ package net.morimekta.providence.generator.format.java.enums;
 
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.generator.GeneratorException;
+import net.morimekta.providence.generator.format.java.JavaOptions;
 import net.morimekta.providence.generator.format.java.shared.EnumMemberFormatter;
 import net.morimekta.providence.generator.format.java.utils.JAnnotation;
 import net.morimekta.providence.generator.format.java.utils.JUtils;
@@ -29,20 +30,40 @@ import net.morimekta.providence.reflect.contained.CAnnotatedDescriptor;
 import net.morimekta.providence.reflect.contained.CEnumDescriptor;
 import net.morimekta.util.io.IndentedPrintWriter;
 
+import javax.annotation.Generated;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Properties;
+
 /**
  * Formatter for common (non-extended) enum content.
  */
 public class CommonMemberFormatter implements EnumMemberFormatter {
     private final IndentedPrintWriter writer;
+    private final JavaOptions options;
+    private final String version;
 
-    public CommonMemberFormatter(IndentedPrintWriter writer) {
+    public CommonMemberFormatter(IndentedPrintWriter writer, JavaOptions options) {
         this.writer = writer;
+        this.options = options;
+
+        try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/java_generator_version.properties"));
+
+            this.version = properties.getProperty("java_generator_version");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Override
     public void appendClassAnnotations(CEnumDescriptor type) throws GeneratorException {
         if (JAnnotation.isDeprecated((CAnnotatedDescriptor) type)) {
             writer.appendln(JAnnotation.DEPRECATED);
+        }
+        if (options.generated_annotation) {
+            writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
         }
     }
 

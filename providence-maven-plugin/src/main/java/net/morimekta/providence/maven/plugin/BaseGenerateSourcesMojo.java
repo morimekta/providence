@@ -113,6 +113,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean hazelcast_portable;
 
     /**
+     * If true add generated annotations to generated files.
+     */
+    @Parameter(defaultValue = "false")
+    protected boolean generated_annotation;
+
+    /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
      * type is implied here.
      */
@@ -132,9 +138,17 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     @Parameter
     protected IncludeExcludeFileSelector includeDirs;
 
+    /**
+     * If the thrift program parser should fail if field ID is missing for any
+     * field definitions parsed.
+     */
     @Parameter
     protected boolean requireFieldId = false;
 
+    /**
+     * If the thrift program parser should fail if enum value is missing for
+     * any enum value definition parsed.
+     */
     @Parameter
     protected boolean requireEnumValue = false;
 
@@ -249,6 +263,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             options.jackson = jackson;
             options.rw_binary = rw_binary;
             options.hazelcast_portable = hazelcast_portable;
+            options.generated_annotation = generated_annotation;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 

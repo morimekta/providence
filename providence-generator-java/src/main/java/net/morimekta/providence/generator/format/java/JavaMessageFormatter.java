@@ -77,7 +77,7 @@ public class JavaMessageFormatter extends BaseMessageFormatter {
         }
 
         ImmutableList.Builder<MessageMemberFormatter> formatters = ImmutableList.builder();
-        formatters.add(new CommonMemberFormatter(writer, helper))
+        formatters.add(new CommonMemberFormatter(writer, helper, options))
                   .add(new CoreOverridesFormatter(writer))
                   .add(new CommonOverridesFormatter(writer));
 

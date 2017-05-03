@@ -186,6 +186,7 @@
                             <goal>testCompile</goal>
                         </goals>
                         <configuration>
+                            <generated_annotation>true</generated_annotation>
                             <inputFiles>
                                 <includes>
                                     <include>src/test/providence/**/*.thrift</include>
