@@ -677,6 +677,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -773,7 +777,7 @@ public class FunctionType
          *
          * @return The field value
          */
-        public boolean isOneWay() {
+        public boolean getOneWay() {
             return mOneWay;
         }
 
@@ -785,6 +789,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setReturnType(String value) {
+            if (value == null) {
+                return clearReturnType();
+            }
+
             optionals.set(2);
             modified.set(2);
             mReturnType = value;
@@ -839,6 +847,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(3);
             modified.set(3);
             mName = value;
@@ -893,6 +905,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setParams(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
+            if (value == null) {
+                return clearParams();
+            }
+
             optionals.set(4);
             modified.set(4);
             mParams.clear();
@@ -966,6 +982,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setExceptions(java.util.Collection<net.morimekta.providence.model.FieldType> value) {
+            if (value == null) {
+                return clearExceptions();
+            }
+
             optionals.set(5);
             modified.set(5);
             mExceptions.clear();
@@ -1039,6 +1059,10 @@ public class FunctionType
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(6);
             modified.set(6);
             mAnnotations.clear();

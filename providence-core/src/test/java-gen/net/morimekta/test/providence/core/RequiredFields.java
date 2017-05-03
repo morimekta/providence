@@ -758,7 +758,7 @@ public class RequiredFields
          *
          * @return The field value
          */
-        public boolean isBooleanValue() {
+        public boolean getBooleanValue() {
             return mBooleanValue;
         }
 
@@ -1040,6 +1040,10 @@ public class RequiredFields
          */
         @javax.annotation.Nonnull
         public _Builder setStringValue(String value) {
+            if (value == null) {
+                return clearStringValue();
+            }
+
             optionals.set(6);
             modified.set(6);
             mStringValue = value;
@@ -1094,6 +1098,10 @@ public class RequiredFields
          */
         @javax.annotation.Nonnull
         public _Builder setBinaryValue(net.morimekta.util.Binary value) {
+            if (value == null) {
+                return clearBinaryValue();
+            }
+
             optionals.set(7);
             modified.set(7);
             mBinaryValue = value;
@@ -1148,6 +1156,10 @@ public class RequiredFields
          */
         @javax.annotation.Nonnull
         public _Builder setEnumValue(net.morimekta.test.providence.core.Value value) {
+            if (value == null) {
+                return clearEnumValue();
+            }
+
             optionals.set(8);
             modified.set(8);
             mEnumValue = value;
@@ -1202,6 +1214,10 @@ public class RequiredFields
          */
         @javax.annotation.Nonnull
         public _Builder setCompactValue(net.morimekta.test.providence.core.CompactFields value) {
+            if (value == null) {
+                return clearCompactValue();
+            }
+
             optionals.set(9);
             modified.set(9);
             mCompactValue_builder = null;

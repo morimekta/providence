@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,6 +69,12 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
     @Override
     public PType getType() {
         return PType.MAP;
+    }
+
+    @Nullable
+    @Override
+    public Object getDefaultValue() {
+        return Collections.EMPTY_MAP;
     }
 
     @Override

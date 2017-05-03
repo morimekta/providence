@@ -162,8 +162,9 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                 writer.appendln(JAnnotation.DEPRECATED);
             }
             writer.formatln("public %s %s() {", field.valueType(), field.getter());
-            if ((field.isPrimitiveJavaValue() && !field.alwaysPresent()) || (
-                    !field.container() && !field.alwaysPresent() && field.field().hasDefaultValue())) {
+            if ((field.isPrimitiveJavaValue() ||
+                 field.field().hasDefaultValue()) &&
+                !field.alwaysPresent()) {
                 writer.formatln("    return %s() ? %s : %s;", field.presence(), field.member(), field.kDefault());
             } else {
                 writer.formatln("    return %s;", field.member());
@@ -410,9 +411,13 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                                         field.member(),
                                         field.fieldInstanceType(),
                                         field.param())
-                              .appendln("} else {")
-                              .formatln("    %s = null;", field.member())
-                              .appendln('}');
+                              .appendln("} else {");
+                        if (field.alwaysPresent()) {
+                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                        } else {
+                            writer.formatln("    %s = null;", field.member());
+                        }
+                        writer.appendln('}');
                         break;
                     case SET:
                         writer.formatln("if (%s != null) {", field.param())
@@ -429,9 +434,13 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                                             field.param());
                         }
                         writer.end()
-                              .appendln("} else {")
-                              .formatln("    %s = null;", field.member())
-                              .appendln('}');
+                              .appendln("} else {");
+                        if (field.alwaysPresent()) {
+                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                        } else {
+                            writer.formatln("    %s = null;", field.member());
+                        }
+                        writer.appendln('}');
                         break;
                     case MAP:
                         writer.formatln("if (%s != null) {", field.param())
@@ -448,12 +457,16 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
                                             field.param());
                         }
                         writer.end()
-                              .appendln("} else {")
-                              .formatln("    %s = null;", field.member())
-                              .appendln('}');
+                              .appendln("} else {");
+                        if (field.alwaysPresent()) {
+                            writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                        } else {
+                            writer.formatln("    %s = null;", field.member());
+                        }
+                        writer.appendln('}');
                         break;
                     default: {
-                        if (field.alwaysPresent() && !field.isRequired()){
+                        if (field.alwaysPresent() && !(field.isRequired() && field.isPrimitiveJavaValue())) {
                             writer.formatln("if (%s != null) {", field.param())
                                   .formatln("    %s = %s;", field.member(), field.param())
                                   .appendln("} else {")

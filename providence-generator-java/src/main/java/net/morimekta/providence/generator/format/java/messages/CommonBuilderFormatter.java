@@ -185,15 +185,29 @@ public class CommonBuilderFormatter
                 if (field.container()) {
                     writer.formatln("if (builder.%s()) {", field.isSet())
                           .formatln("    %s = builder.%s.build();", field.member(), field.member())
-                          .appendln("} else {")
-                          .formatln("    %s = null;", field.member())
-                          .appendln('}');
+                          .appendln("} else {");
+                    if (field.alwaysPresent()) {
+                        writer.formatln("    %s = %s;", field.member(), field.kDefault());
+                    } else {
+                        writer.formatln("    %s = null;", field.member());
+                    }
+                    writer.appendln('}');
                 } else if (field.type() == PType.MESSAGE) {
                     writer.formatln("%s = builder.%s_builder != null ? builder.%s_builder.build() : builder.%s;",
                                     field.member(), field.member(), field.member(), field.member());
                 } else if (!field.isVoid()){
                     // Void fields have no value.
-                    writer.formatln("%s = builder.%s;", field.member(), field.member());
+                    // And primitive java values keep the default state in the builder, so no need to
+                    // explicitly set it here.
+                    if (field.alwaysPresent() && !field.isPrimitiveJavaValue()) {
+                        writer.formatln("if (builder.%s()) {", field.isSet())
+                              .formatln("    %s = builder.%s;", field.member(), field.member())
+                              .appendln("} else {")
+                              .formatln("    %s = %s;", field.member(), field.kDefault())
+                              .appendln('}');
+                    } else {
+                        writer.formatln("%s = builder.%s;", field.member(), field.member());
+                    }
                 }
             }
         }

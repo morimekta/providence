@@ -383,6 +383,10 @@ public class CalculateException
          */
         @javax.annotation.Nonnull
         public _Builder setMessage(String value) {
+            if (value == null) {
+                return clearMessage();
+            }
+
             optionals.set(0);
             modified.set(0);
             mMessage = value;
@@ -437,6 +441,10 @@ public class CalculateException
          */
         @javax.annotation.Nonnull
         public _Builder setOperation(net.morimekta.test.providence.core.calculator.Operation value) {
+            if (value == null) {
+                return clearOperation();
+            }
+
             optionals.set(1);
             modified.set(1);
             mOperation_builder = null;

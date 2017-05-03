@@ -2834,6 +2834,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBooleanList(java.util.Collection<Boolean> value) {
+            if (value == null) {
+                return clearBooleanList();
+            }
+
             optionals.set(0);
             modified.set(0);
             mBooleanList.clear();
@@ -2907,6 +2911,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setByteList(java.util.Collection<Byte> value) {
+            if (value == null) {
+                return clearByteList();
+            }
+
             optionals.set(1);
             modified.set(1);
             mByteList.clear();
@@ -2980,6 +2988,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setShortList(java.util.Collection<Short> value) {
+            if (value == null) {
+                return clearShortList();
+            }
+
             optionals.set(2);
             modified.set(2);
             mShortList.clear();
@@ -3053,6 +3065,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setIntegerList(java.util.Collection<Integer> value) {
+            if (value == null) {
+                return clearIntegerList();
+            }
+
             optionals.set(3);
             modified.set(3);
             mIntegerList.clear();
@@ -3126,6 +3142,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setLongList(java.util.Collection<Long> value) {
+            if (value == null) {
+                return clearLongList();
+            }
+
             optionals.set(4);
             modified.set(4);
             mLongList.clear();
@@ -3199,6 +3219,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDoubleList(java.util.Collection<Double> value) {
+            if (value == null) {
+                return clearDoubleList();
+            }
+
             optionals.set(5);
             modified.set(5);
             mDoubleList.clear();
@@ -3272,6 +3296,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setStringList(java.util.Collection<String> value) {
+            if (value == null) {
+                return clearStringList();
+            }
+
             optionals.set(6);
             modified.set(6);
             mStringList.clear();
@@ -3345,6 +3373,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBinaryList(java.util.Collection<net.morimekta.util.Binary> value) {
+            if (value == null) {
+                return clearBinaryList();
+            }
+
             optionals.set(7);
             modified.set(7);
             mBinaryList.clear();
@@ -3418,6 +3450,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBooleanSet(java.util.Collection<Boolean> value) {
+            if (value == null) {
+                return clearBooleanSet();
+            }
+
             optionals.set(8);
             modified.set(8);
             mBooleanSet.clear();
@@ -3491,6 +3527,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setByteSet(java.util.Collection<Byte> value) {
+            if (value == null) {
+                return clearByteSet();
+            }
+
             optionals.set(9);
             modified.set(9);
             mByteSet.clear();
@@ -3564,6 +3604,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setShortSet(java.util.Collection<Short> value) {
+            if (value == null) {
+                return clearShortSet();
+            }
+
             optionals.set(10);
             modified.set(10);
             mShortSet.clear();
@@ -3637,6 +3681,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setIntegerSet(java.util.Collection<Integer> value) {
+            if (value == null) {
+                return clearIntegerSet();
+            }
+
             optionals.set(11);
             modified.set(11);
             mIntegerSet.clear();
@@ -3710,6 +3758,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setLongSet(java.util.Collection<Long> value) {
+            if (value == null) {
+                return clearLongSet();
+            }
+
             optionals.set(12);
             modified.set(12);
             mLongSet.clear();
@@ -3783,6 +3835,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDoubleSet(java.util.Collection<Double> value) {
+            if (value == null) {
+                return clearDoubleSet();
+            }
+
             optionals.set(13);
             modified.set(13);
             mDoubleSet.clear();
@@ -3856,6 +3912,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setStringSet(java.util.Collection<String> value) {
+            if (value == null) {
+                return clearStringSet();
+            }
+
             optionals.set(14);
             modified.set(14);
             mStringSet.clear();
@@ -3929,6 +3989,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBinarySet(java.util.Collection<net.morimekta.util.Binary> value) {
+            if (value == null) {
+                return clearBinarySet();
+            }
+
             optionals.set(15);
             modified.set(15);
             mBinarySet.clear();
@@ -4002,6 +4066,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBooleanMap(java.util.Map<Boolean,Boolean> value) {
+            if (value == null) {
+                return clearBooleanMap();
+            }
+
             optionals.set(16);
             modified.set(16);
             mBooleanMap.clear();
@@ -4074,6 +4142,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setByteMap(java.util.Map<Byte,Byte> value) {
+            if (value == null) {
+                return clearByteMap();
+            }
+
             optionals.set(17);
             modified.set(17);
             mByteMap.clear();
@@ -4146,6 +4218,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setShortMap(java.util.Map<Short,Short> value) {
+            if (value == null) {
+                return clearShortMap();
+            }
+
             optionals.set(18);
             modified.set(18);
             mShortMap.clear();
@@ -4218,6 +4294,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setIntegerMap(java.util.Map<Integer,Integer> value) {
+            if (value == null) {
+                return clearIntegerMap();
+            }
+
             optionals.set(19);
             modified.set(19);
             mIntegerMap.clear();
@@ -4290,6 +4370,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setLongMap(java.util.Map<Long,Long> value) {
+            if (value == null) {
+                return clearLongMap();
+            }
+
             optionals.set(20);
             modified.set(20);
             mLongMap.clear();
@@ -4362,6 +4446,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDoubleMap(java.util.Map<Double,Double> value) {
+            if (value == null) {
+                return clearDoubleMap();
+            }
+
             optionals.set(21);
             modified.set(21);
             mDoubleMap.clear();
@@ -4434,6 +4522,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setStringMap(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearStringMap();
+            }
+
             optionals.set(22);
             modified.set(22);
             mStringMap.clear();
@@ -4506,6 +4598,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setBinaryMap(java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> value) {
+            if (value == null) {
+                return clearBinaryMap();
+            }
+
             optionals.set(23);
             modified.set(23);
             mBinaryMap.clear();
@@ -4578,6 +4674,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setEnumList(java.util.Collection<net.morimekta.test.providence.core.Value> value) {
+            if (value == null) {
+                return clearEnumList();
+            }
+
             optionals.set(24);
             modified.set(24);
             mEnumList.clear();
@@ -4651,6 +4751,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setEnumSet(java.util.Collection<net.morimekta.test.providence.core.Value> value) {
+            if (value == null) {
+                return clearEnumSet();
+            }
+
             optionals.set(25);
             modified.set(25);
             mEnumSet.clear();
@@ -4724,6 +4828,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setEnumMap(java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> value) {
+            if (value == null) {
+                return clearEnumMap();
+            }
+
             optionals.set(26);
             modified.set(26);
             mEnumMap.clear();
@@ -4796,6 +4904,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setMessageList(java.util.Collection<net.morimekta.test.providence.core.DefaultFields> value) {
+            if (value == null) {
+                return clearMessageList();
+            }
+
             optionals.set(27);
             modified.set(27);
             mMessageList.clear();
@@ -4869,6 +4981,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setMessageSet(java.util.Collection<net.morimekta.test.providence.core.DefaultFields> value) {
+            if (value == null) {
+                return clearMessageSet();
+            }
+
             optionals.set(28);
             modified.set(28);
             mMessageSet.clear();
@@ -4942,6 +5058,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setMessageMap(java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> value) {
+            if (value == null) {
+                return clearMessageMap();
+            }
+
             optionals.set(29);
             modified.set(29);
             mMessageMap.clear();
@@ -5014,6 +5134,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setMessageKeyMap(java.util.Map<net.morimekta.test.providence.core.CompactFields,String> value) {
+            if (value == null) {
+                return clearMessageKeyMap();
+            }
+
             optionals.set(30);
             modified.set(30);
             mMessageKeyMap.clear();
@@ -5086,6 +5210,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setRequiredFields(net.morimekta.test.providence.core.RequiredFields value) {
+            if (value == null) {
+                return clearRequiredFields();
+            }
+
             optionals.set(31);
             modified.set(31);
             mRequiredFields_builder = null;
@@ -5151,6 +5279,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDefaultFields(net.morimekta.test.providence.core.DefaultFields value) {
+            if (value == null) {
+                return clearDefaultFields();
+            }
+
             optionals.set(32);
             modified.set(32);
             mDefaultFields_builder = null;
@@ -5216,6 +5348,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setOptionalFields(net.morimekta.test.providence.core.OptionalFields value) {
+            if (value == null) {
+                return clearOptionalFields();
+            }
+
             optionals.set(33);
             modified.set(33);
             mOptionalFields_builder = null;
@@ -5281,6 +5417,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setUnionFields(net.morimekta.test.providence.core.UnionFields value) {
+            if (value == null) {
+                return clearUnionFields();
+            }
+
             optionals.set(34);
             modified.set(34);
             mUnionFields_builder = null;
@@ -5346,6 +5486,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setExceptionFields(net.morimekta.test.providence.core.ExceptionFields value) {
+            if (value == null) {
+                return clearExceptionFields();
+            }
+
             optionals.set(35);
             modified.set(35);
             mExceptionFields_builder = null;
@@ -5411,6 +5555,10 @@ public class Containers
          */
         @javax.annotation.Nonnull
         public _Builder setDefaultValues(net.morimekta.test.providence.core.DefaultValues value) {
+            if (value == null) {
+                return clearDefaultValues();
+            }
+
             optionals.set(36);
             modified.set(36);
             mDefaultValues_builder = null;

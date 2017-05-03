@@ -511,6 +511,10 @@ public class EnumType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -565,6 +569,10 @@ public class EnumType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(1);
             modified.set(1);
             mName = value;
@@ -619,6 +627,10 @@ public class EnumType
          */
         @javax.annotation.Nonnull
         public _Builder setValues(java.util.Collection<net.morimekta.providence.model.EnumValue> value) {
+            if (value == null) {
+                return clearValues();
+            }
+
             optionals.set(2);
             modified.set(2);
             mValues.clear();
@@ -692,6 +704,10 @@ public class EnumType
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(3);
             modified.set(3);
             mAnnotations.clear();

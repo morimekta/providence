@@ -141,12 +141,10 @@ public class JField {
         return camelCase("kDefault", field.getName());
     }
 
-    public boolean hasDefault() {
-        return alwaysPresent() || field.hasDefaultValue();
-    }
-
     public boolean hasDefaultConstant() {
-        return (null != helper.getDefaultValue(field));
+        return isPrimitiveJavaValue() ||
+               alwaysPresent() ||
+               field.hasDefaultValue();
     }
 
     public boolean isRequired() {
@@ -171,21 +169,12 @@ public class JField {
     public boolean alwaysPresent() {
         return field.getRequirement() != PRequirement.OPTIONAL &&
                field.getDescriptor() instanceof PPrimitive &&
-               ((PPrimitive) field.getDescriptor()).getDefaultValue() != null;
+               ((PPrimitive) field.getDescriptor()).isNativePrimitive();
     }
 
     public boolean isPrimitiveJavaValue() {
-        if (field.getDescriptor() instanceof PPrimitive) {
-            switch (field.getType()) {
-                case STRING:
-                case BINARY:
-                case VOID:
-                    return false;
-                default:
-                    return true;
-            }
-        }
-        return false;
+        return field.getDescriptor() instanceof PPrimitive &&
+               ((PPrimitive) field.getDescriptor()).isNativePrimitive();
     }
 
     public String valueType() throws GeneratorException {

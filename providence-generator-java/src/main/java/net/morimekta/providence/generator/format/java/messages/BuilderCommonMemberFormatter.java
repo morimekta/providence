@@ -321,6 +321,12 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.formatln("public _Builder %s(%s value) {", field.setter(), field.valueType());
         }
         writer.begin();
+        if (!field.isPrimitiveJavaValue()) {
+            writer.formatln("if (value == null) {")
+                  .formatln("    return %s();", field.resetter())
+                  .appendln('}')
+                  .newline();
+        }
 
         if (message.isUnion()) {
             writer.formatln("%s = _Field.%s;", UNION_FIELD, field.fieldEnum());
@@ -643,13 +649,16 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
 
+        // Builder getters are *always* get*, never is* (e.g. for bool)
         writer.formatln("public %s %s() {",
-                        field.valueType(), field.getter())
+                        field.valueType(), camelCase("get", field.name()))
               .begin();
 
-        if (helper.getDefaultValue(field.field()) != null && !field.alwaysPresent()){
+        if ((field.isPrimitiveJavaValue() ||
+             field.field().hasDefaultValue()) &&
+            !field.alwaysPresent()){
             writer.formatln("return %s() ? %s : %s;",
-                            camelCase("isSet", field.name()),
+                            field.isSet(),
                             field.member(),
                             field.kDefault());
         } else {

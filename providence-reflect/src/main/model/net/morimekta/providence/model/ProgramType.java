@@ -594,6 +594,10 @@ public class ProgramType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -648,6 +652,10 @@ public class ProgramType
          */
         @javax.annotation.Nonnull
         public _Builder setProgramName(String value) {
+            if (value == null) {
+                return clearProgramName();
+            }
+
             optionals.set(1);
             modified.set(1);
             mProgramName = value;
@@ -704,6 +712,10 @@ public class ProgramType
          */
         @javax.annotation.Nonnull
         public _Builder setIncludes(java.util.Collection<String> value) {
+            if (value == null) {
+                return clearIncludes();
+            }
+
             optionals.set(2);
             modified.set(2);
             mIncludes.clear();
@@ -789,6 +801,10 @@ public class ProgramType
          */
         @javax.annotation.Nonnull
         public _Builder setNamespaces(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearNamespaces();
+            }
+
             optionals.set(3);
             modified.set(3);
             mNamespaces.clear();
@@ -871,6 +887,10 @@ public class ProgramType
          */
         @javax.annotation.Nonnull
         public _Builder setDecl(java.util.Collection<net.morimekta.providence.model.Declaration> value) {
+            if (value == null) {
+                return clearDecl();
+            }
+
             optionals.set(4);
             modified.set(4);
             mDecl.clear();

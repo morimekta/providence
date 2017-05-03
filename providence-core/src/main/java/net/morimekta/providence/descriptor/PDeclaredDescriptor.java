@@ -23,6 +23,7 @@ package net.morimekta.providence.descriptor;
 import net.morimekta.providence.PBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Descriptor for a declared type. A declared type is a value type that is
@@ -56,6 +57,13 @@ public abstract class PDeclaredDescriptor<T> implements PDescriptor {
             return getProgramName() + "." + getName();
         }
         return getName();
+    }
+
+    @Nullable
+    @Override
+    public T getDefaultValue() {
+        // Declared value types currently cannot have default values defined by the descriptor.
+        return null;
     }
 
     @Override

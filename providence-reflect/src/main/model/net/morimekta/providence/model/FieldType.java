@@ -660,6 +660,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -768,6 +772,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setRequirement(net.morimekta.providence.model.FieldRequirement value) {
+            if (value == null) {
+                return clearRequirement();
+            }
+
             optionals.set(2);
             modified.set(2);
             mRequirement = value;
@@ -822,6 +830,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setType(String value) {
+            if (value == null) {
+                return clearType();
+            }
+
             optionals.set(3);
             modified.set(3);
             mType = value;
@@ -876,6 +888,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(4);
             modified.set(4);
             mName = value;
@@ -930,6 +946,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setDefaultValue(String value) {
+            if (value == null) {
+                return clearDefaultValue();
+            }
+
             optionals.set(5);
             modified.set(5);
             mDefaultValue = value;
@@ -984,6 +1004,10 @@ public class FieldType
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(6);
             modified.set(6);
             mAnnotations.clear();

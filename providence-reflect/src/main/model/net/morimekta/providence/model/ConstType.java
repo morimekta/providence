@@ -550,6 +550,10 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder setDocumentation(String value) {
+            if (value == null) {
+                return clearDocumentation();
+            }
+
             optionals.set(0);
             modified.set(0);
             mDocumentation = value;
@@ -604,6 +608,10 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder setType(String value) {
+            if (value == null) {
+                return clearType();
+            }
+
             optionals.set(1);
             modified.set(1);
             mType = value;
@@ -658,6 +666,10 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder setName(String value) {
+            if (value == null) {
+                return clearName();
+            }
+
             optionals.set(2);
             modified.set(2);
             mName = value;
@@ -712,6 +724,10 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder setValue(String value) {
+            if (value == null) {
+                return clearValue();
+            }
+
             optionals.set(3);
             modified.set(3);
             mValue = value;
@@ -766,6 +782,10 @@ public class ConstType
          */
         @javax.annotation.Nonnull
         public _Builder setAnnotations(java.util.Map<String,String> value) {
+            if (value == null) {
+                return clearAnnotations();
+            }
+
             optionals.set(4);
             modified.set(4);
             mAnnotations.clear();

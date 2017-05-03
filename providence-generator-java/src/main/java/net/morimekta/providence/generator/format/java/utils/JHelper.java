@@ -186,8 +186,6 @@ public class JHelper {
 
     public String getFieldType(PDescriptor type) throws GeneratorException {
         switch (type.getType()) {
-            case VOID:
-                return Void.class.getSimpleName();
             case BOOL:
                 return Boolean.class.getSimpleName();
             case BYTE:
@@ -221,17 +219,14 @@ public class JHelper {
                 PDeclaredDescriptor<?> dt = (PDeclaredDescriptor<?>) type;
                 return getJavaPackage(dt) + packageSeparator + JUtils.getClassName(dt);
         }
-        throw new IllegalArgumentException("Unhandled type group" + type.getType());
+        throw new IllegalArgumentException("Unhandled field type group " + type.getType());
     }
 
     public Object getDefaultValue(PField field) {
         if (field.hasDefaultValue()) {
             return field.getDefaultValue();
         }
-        if (field.getDescriptor() instanceof PPrimitive) {
-            return ((PPrimitive) field.getDescriptor()).getDefaultValue();
-        }
-        return null;
+        return field.getDescriptor().getDefaultValue();
     }
 
     public String getProviderName(PDescriptor type) throws GeneratorException {
