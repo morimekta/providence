@@ -14,10 +14,10 @@ namespace java net.morimekta.providence.model
  * <name> (= <value>)
  */
 struct EnumValue {
-    1: string documentation;
+    1: optional string documentation;
     2: required string name;
-    3: i32 value;
-    4: map<string,string> annotations;
+    3: optional i32 value;
+    4: optional map<string,string> annotations;
 }
 
 /**
@@ -26,19 +26,19 @@ struct EnumValue {
  * }
  */
 struct EnumType {
-    1: string documentation;
+    1: optional string documentation;
     2: required string name;
-    3: list<EnumValue> values;
-    4: map<string,string> annotations;
+    3:          list<EnumValue> values;
+    4: optional map<string,string> annotations;
 }
 
 /**
  * typedef <type> <name>
  */
 struct TypedefType {
-    1: string documentation;
-    2: string type;
-    3: string name;
+    1: optional string documentation;
+    2: required string type;
+    3: required string name;
 }
 
 /**
@@ -77,13 +77,13 @@ enum FieldRequirement {
  * Consts are always given the key '0'.
  */
 struct FieldType {
-    1: string documentation;
+    1: optional string documentation;
     2: required i32 key;
-    3: FieldRequirement requirement = DEFAULT;
+    3: optional FieldRequirement requirement = DEFAULT;
     4: required string type;
     5: required string name;
-    6: string default_value;
-    7: map<string,string> annotations;
+    6: optional string default_value;
+    7: optional map<string,string> annotations;
 }
 
 /**
@@ -92,24 +92,24 @@ struct FieldType {
  * }
  */
 struct MessageType {
-    1: string documentation;
-    2: MessageVariant variant = MessageVariant.STRUCT;
+    1: optional string documentation;
+    2: optional MessageVariant variant = MessageVariant.STRUCT;
     3: required string name;
-    4: list<FieldType> fields;
-    5: map<string,string> annotations;
+    4:          list<FieldType> fields;
+    5: optional map<string,string> annotations;
 }
 
 /**
  * (oneway)? <return_type> <name>'('<param>*')' (throws '(' <exception>+ ')')?
  */
 struct FunctionType {
-    1: string documentation;
-    2: bool one_way = false;
-    3: string return_type
+    1: optional string documentation;
+    2: optional bool one_way = false;
+    3: optional string return_type
     4: required string name;
-    5: list<FieldType> params;
-    6: list<FieldType> exceptions;
-    7: map<string,string> annotations;
+    5:          list<FieldType> params;
+    6: optional list<FieldType> exceptions;
+    7: optional map<string,string> annotations;
 }
 
 /**
@@ -118,22 +118,22 @@ struct FunctionType {
  * }
  */
 struct ServiceType {
-    1: string documentation;
+    1: optional string documentation;
     2: required string name;
-    3: string extend;
-    4: list<FunctionType> methods;
-    5: map<string,string> annotations;
+    3: optional string extend;
+    4:          list<FunctionType> methods;
+    5: optional map<string,string> annotations;
 }
 
 /**
  * const <type> <name> = <value>
  */
 struct ConstType {
-    1: string documentation;
+    1: optional string documentation;
     4: required string type;
     5: required string name;
     6: required string value;
-    7: map<string,string> annotations;
+    7: optional map<string,string> annotations;
 }
 
 /**
@@ -154,7 +154,7 @@ struct ProgramType {
     /**
      * Program documentation must come before the first statement of the header.
      */
-    1: string documentation;
+    1: optional string documentation;
 
     /**
      * The program name, deducted from the .thrift IDL file name.
@@ -166,19 +166,19 @@ struct ProgramType {
      *
      * include "<program>.thrift"
      */
-    3: list<string> includes;
+    3: optional list<string> includes;
 
     /**
      * Map of language to laguage dependent namespace identifier.
      *
      * namespace <key> <value>
      */
-    4: map<string,string> namespaces;
+    4:          map<string,string> namespaces;
 
     /**
      * List of declarations in the program file. Same order as in the thrift file.
      */
-    5: list<Declaration> decl;
+    5:          list<Declaration> decl;
 }
 
 /**

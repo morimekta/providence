@@ -107,10 +107,10 @@ exception PApplicationException {
     /**
      * Exception message.
      */
-    1: string message;
+    1: optional string message;
 
     /**
      * The application exception type.
      */
-    2: PApplicationExceptionType id = PApplicationExceptionType.UNKNOWN;
+    2: optional PApplicationExceptionType id = PApplicationExceptionType.UNKNOWN;
 } (java.exception.class = "java.io.IOException")
