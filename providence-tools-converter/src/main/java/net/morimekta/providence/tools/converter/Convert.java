@@ -25,6 +25,7 @@ import net.morimekta.console.args.ArgumentException;
 import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.providence.tools.common.options.Format;
 
 import java.io.IOException;
@@ -85,6 +86,14 @@ public class Convert {
                     e.printStackTrace();
                 }
             } catch (ParseException e) {
+                System.out.flush();
+                System.err.println();
+                System.err.println(e.asString());
+                if (options.verbose()) {
+                    System.err.println();
+                    e.printStackTrace();
+                }
+            } catch (SerializerException e) {
                 System.out.flush();
                 System.err.println();
                 System.err.println(e.asString());

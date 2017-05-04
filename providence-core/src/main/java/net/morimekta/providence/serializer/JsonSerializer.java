@@ -69,12 +69,10 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * There is also the strict mode. If strict is OFF:
  * - Unknown enum values will be ignored (as field missing).
- * - Unknown fields will be ignored.
- * - Struct validity will be ignored.
+ * - Message validity will be ignored.
  * If strict more is ON:
- * - Unknown enum values will fail the deserialization.
- * - Unknown fields will fail the deserialization.
- * - Struct validity will fail both serialization and deserialization.
+ * - Unknown enum values will fail deserialization.
+ * - Message invalidity will fail deserialization.
  * <p>
  * Format is like this:
  * <pre>
@@ -170,7 +168,7 @@ public class JsonSerializer extends Serializer {
             }
             return requireNonNull((T) parseTypedValue(tokenizer.next(), tokenizer, type, false));
         } catch (JsonException e) {
-            throw new SerializerException(e, "Unable to parse JSON: " + e.getMessage());
+            throw new JsonSerializerException(e);
         }
     }
 
@@ -289,8 +287,8 @@ public class JsonSerializer extends Serializer {
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
-        } catch (JsonException ie) {
-            throw new SerializerException(ie, ie.getMessage())
+        } catch (JsonException je) {
+            throw new JsonSerializerException(je)
                     .setMethodName(methodName)
                     .setCallType(type)
                     .setSequenceNo(sequence);
@@ -399,7 +397,7 @@ public class JsonSerializer extends Serializer {
     }
 
     private Object parseTypedValue(JsonToken token, JsonTokenizer tokenizer, PDescriptor t, boolean allowNull)
-            throws IOException {
+            throws IOException, JsonException {
         if (token.isNull()) {
             if (!allowNull) {
                 throw new SerializerException("Null value as body.");
@@ -407,164 +405,160 @@ public class JsonSerializer extends Serializer {
             return null;
         }
 
-        try {
-            switch (t.getType()) {
-                case VOID: {
-                    if (token.isBoolean()) {
-                        return token.booleanValue() ? Boolean.TRUE : null;
-                    }
-                    throw new SerializerException("Not a void token value: '" + token.asString() + "'");
+        switch (t.getType()) {
+            case VOID: {
+                if (token.isBoolean()) {
+                    return token.booleanValue() ? Boolean.TRUE : null;
                 }
-                case BOOL:
-                    if (token.isBoolean()) {
-                        return token.booleanValue();
-                    }
-                    throw new SerializerException("No boolean value for token: '" + token.asString() + "'");
-                case BYTE:
-                    if (token.isInteger()) {
-                        return token.byteValue();
-                    }
-                    throw new SerializerException("Not a valid byte value: '" + token.asString() + "'");
-                case I16:
-                    if (token.isInteger()) {
-                        return token.shortValue();
-                    }
-                    throw new SerializerException("Not a valid short value: '" + token.asString() + "'");
-                case I32:
-                    if (token.isInteger()) {
-                        return token.intValue();
-                    }
-                    throw new SerializerException("Not a valid int value: '" + token.asString() + "'");
-                case I64:
-                    if (token.isInteger()) {
-                        return token.longValue();
-                    }
-                    throw new SerializerException("Not a valid long value: '" + token.asString() + "'");
-                case DOUBLE:
-                    if (token.isNumber()) {
-                        return token.doubleValue();
-                    }
-                    throw new SerializerException("Not a valid double value: '" + token.asString() + "'");
-                case STRING:
-                    if (token.isLiteral()) {
-                        return token.decodeJsonLiteral();
-                    }
-                    throw new SerializerException("Not a valid string value: '" + token.asString() + "'");
-                case BINARY:
-                    if (token.isLiteral()) {
-                        try {
-                            return Binary.fromBase64(token.substring(1, -1)
-                                                          .asString());
-                        } catch (IllegalArgumentException e) {
-                            throw new SerializerException(e, "Unable to parse Base64 data: " + token.asString());
-                        }
-                    }
-                    throw new SerializerException("Not a valid binary value: " + token.asString());
-                case ENUM:
-                    PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).builder();
-                    if (token.isInteger()) {
-                        eb.setByValue(token.intValue());
-                    } else if (token.isLiteral()) {
-                        eb.setByName(token.substring(1, -1)
-                                          .asString());
-                    } else {
-                        throw new SerializerException(token.asString() + " is not a enum value type");
-                    }
-                    if (!(allowNull || eb.valid())) {
-                        throw new SerializerException(token.asString() + " is not a known enum value for " + t.getQualifiedName());
-                    }
-                    return eb.build();
-                case MESSAGE: {
-                    PMessageDescriptor<?, ?> st = (PMessageDescriptor<?, ?>) t;
-                    if (token.isSymbol(JsonToken.kMapStart)) {
-                        return parseMessage(tokenizer, st);
-                    } else if (token.isSymbol(JsonToken.kListStart)) {
-                        if (isCompactible(st)) {
-                            return parseCompactMessage(tokenizer, st);
-                        } else {
-                            throw new SerializerException(
-                                    st.getName() + " is not compatible for compact struct notation.");
-                        }
-                    }
-                    throw new SerializerException("expected message start, found: '%s'", token.asString());
-                }
-                case MAP: {
-                    @SuppressWarnings("unchecked")
-                    PMap<Object, Object> mapType = (PMap<Object, Object>) t;
-                    PDescriptor itemType = mapType.itemDescriptor();
-                    PDescriptor keyType = mapType.keyDescriptor();
-                    if (!token.isSymbol(JsonToken.kMapStart)) {
-                        throw new SerializerException("Invalid start of map '" + token.asString() + "'");
-                    }
-                    PMap.Builder<Object, Object> map = mapType.builder();
-
-                    if (tokenizer.peek("map end or value").isSymbol(JsonToken.kMapEnd)) {
-                        tokenizer.next();
-                    } else {
-                        char sep = JsonToken.kMapStart;
-                        while (sep != JsonToken.kMapEnd) {
-                            Object key = parseMapKey(tokenizer.expectString("map key")
-                                                              .decodeJsonLiteral(), keyType);
-                            tokenizer.expectSymbol("map K/V sep", JsonToken.kKeyValSep);
-                            Object value = parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false);
-                            if (key != null && value != null) {
-                                // In lenient mode, just drop the entire entry if the
-                                // key could not be parsed. Should only be the case
-                                // for unknown enum values.
-                                // -- parseMapKey checked for strictRead mode.
-                                map.put(key, value);
-                            }
-                            sep = tokenizer.expectSymbol("map end or sep", JsonToken.kMapEnd, JsonToken.kListSep);
-                        }
-                    }
-                    return map.build();
-                }
-                case SET: {
-                    PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
-                    if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new SerializerException("Invalid start of set '" + token.asString() + "'");
-                    }
-                    @SuppressWarnings("unchecked")
-                    PSet.Builder<Object> set = ((PSet<Object>) t).builder();
-
-                    if (tokenizer.peek("set end or value").isSymbol(JsonToken.kListEnd)) {
-                        tokenizer.next();
-                    } else {
-                        char sep = JsonToken.kListStart;
-                        while (sep != JsonToken.kListEnd) {
-                            Object val = parseTypedValue(tokenizer.expect("set value"), tokenizer, itemType, !readStrict);
-                            if (val != null) {
-                                // In lenient mode, just drop the entire entry if the
-                                // key could not be parsed. Should only be the case
-                                // for unknown enum values.
-                                set.add(val);
-                            }
-                            sep = tokenizer.expectSymbol("set end or sep", JsonToken.kListSep, JsonToken.kListEnd);
-                        }
-                    }
-                    return set.build();
-                }
-                case LIST: {
-                    PDescriptor itemType = ((PList<?>) t).itemDescriptor();
-                    if (!token.isSymbol(JsonToken.kListStart)) {
-                        throw new SerializerException("Invalid start of list '" + token.asString() + "'");
-                    }
-                    @SuppressWarnings("unchecked")
-                    PList.Builder<Object> list = ((PList<Object>) t).builder();
-                    if (tokenizer.peek("list end or value").isSymbol(JsonToken.kListEnd)) {
-                        tokenizer.next();
-                    } else {
-                        char sep = JsonToken.kListStart;
-                        while (sep != JsonToken.kListEnd) {
-                            list.add(parseTypedValue(tokenizer.expect("list value"), tokenizer, itemType, false));
-                            sep = tokenizer.expectSymbol("list end or sep", JsonToken.kListSep, JsonToken.kListEnd);
-                        }
-                    }
-                    return list.build();
-                }
+                throw new SerializerException("Not a void token value: '" + token.asString() + "'");
             }
-        } catch (JsonException je) {
-            throw new SerializerException(je, je.getMessage());
+            case BOOL:
+                if (token.isBoolean()) {
+                    return token.booleanValue();
+                }
+                throw new SerializerException("No boolean value for token: '" + token.asString() + "'");
+            case BYTE:
+                if (token.isInteger()) {
+                    return token.byteValue();
+                }
+                throw new SerializerException("Not a valid byte value: '" + token.asString() + "'");
+            case I16:
+                if (token.isInteger()) {
+                    return token.shortValue();
+                }
+                throw new SerializerException("Not a valid short value: '" + token.asString() + "'");
+            case I32:
+                if (token.isInteger()) {
+                    return token.intValue();
+                }
+                throw new SerializerException("Not a valid int value: '" + token.asString() + "'");
+            case I64:
+                if (token.isInteger()) {
+                    return token.longValue();
+                }
+                throw new SerializerException("Not a valid long value: '" + token.asString() + "'");
+            case DOUBLE:
+                if (token.isNumber()) {
+                    return token.doubleValue();
+                }
+                throw new SerializerException("Not a valid double value: '" + token.asString() + "'");
+            case STRING:
+                if (token.isLiteral()) {
+                    return token.decodeJsonLiteral();
+                }
+                throw new SerializerException("Not a valid string value: '" + token.asString() + "'");
+            case BINARY:
+                if (token.isLiteral()) {
+                    try {
+                        return Binary.fromBase64(token.substring(1, -1)
+                                                      .asString());
+                    } catch (IllegalArgumentException e) {
+                        throw new SerializerException(e, "Unable to parse Base64 data: " + token.asString());
+                    }
+                }
+                throw new SerializerException("Not a valid binary value: " + token.asString());
+            case ENUM:
+                PEnumBuilder<?> eb = ((PEnumDescriptor<?>) t).builder();
+                if (token.isInteger()) {
+                    eb.setByValue(token.intValue());
+                } else if (token.isLiteral()) {
+                    eb.setByName(token.substring(1, -1)
+                                      .asString());
+                } else {
+                    throw new SerializerException(token.asString() + " is not a enum value type");
+                }
+                if (!(allowNull || eb.valid())) {
+                    throw new SerializerException(token.asString() + " is not a known enum value for " + t.getQualifiedName());
+                }
+                return eb.build();
+            case MESSAGE: {
+                PMessageDescriptor<?, ?> st = (PMessageDescriptor<?, ?>) t;
+                if (token.isSymbol(JsonToken.kMapStart)) {
+                    return parseMessage(tokenizer, st);
+                } else if (token.isSymbol(JsonToken.kListStart)) {
+                    if (isCompactible(st)) {
+                        return parseCompactMessage(tokenizer, st);
+                    } else {
+                        throw new SerializerException(
+                                st.getName() + " is not compatible for compact struct notation.");
+                    }
+                }
+                throw new SerializerException("expected message start, found: '%s'", token.asString());
+            }
+            case MAP: {
+                @SuppressWarnings("unchecked")
+                PMap<Object, Object> mapType = (PMap<Object, Object>) t;
+                PDescriptor itemType = mapType.itemDescriptor();
+                PDescriptor keyType = mapType.keyDescriptor();
+                if (!token.isSymbol(JsonToken.kMapStart)) {
+                    throw new SerializerException("Invalid start of map '" + token.asString() + "'");
+                }
+                PMap.Builder<Object, Object> map = mapType.builder();
+
+                if (tokenizer.peek("map end or value").isSymbol(JsonToken.kMapEnd)) {
+                    tokenizer.next();
+                } else {
+                    char sep = JsonToken.kMapStart;
+                    while (sep != JsonToken.kMapEnd) {
+                        Object key = parseMapKey(tokenizer.expectString("map key")
+                                                          .decodeJsonLiteral(), keyType);
+                        tokenizer.expectSymbol("map K/V sep", JsonToken.kKeyValSep);
+                        Object value = parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false);
+                        if (key != null && value != null) {
+                            // In lenient mode, just drop the entire entry if the
+                            // key could not be parsed. Should only be the case
+                            // for unknown enum values.
+                            // -- parseMapKey checked for strictRead mode.
+                            map.put(key, value);
+                        }
+                        sep = tokenizer.expectSymbol("map end or sep", JsonToken.kMapEnd, JsonToken.kListSep);
+                    }
+                }
+                return map.build();
+            }
+            case SET: {
+                PDescriptor itemType = ((PSet<?>) t).itemDescriptor();
+                if (!token.isSymbol(JsonToken.kListStart)) {
+                    throw new SerializerException("Invalid start of set '" + token.asString() + "'");
+                }
+                @SuppressWarnings("unchecked")
+                PSet.Builder<Object> set = ((PSet<Object>) t).builder();
+
+                if (tokenizer.peek("set end or value").isSymbol(JsonToken.kListEnd)) {
+                    tokenizer.next();
+                } else {
+                    char sep = JsonToken.kListStart;
+                    while (sep != JsonToken.kListEnd) {
+                        Object val = parseTypedValue(tokenizer.expect("set value"), tokenizer, itemType, !readStrict);
+                        if (val != null) {
+                            // In lenient mode, just drop the entire entry if the
+                            // key could not be parsed. Should only be the case
+                            // for unknown enum values.
+                            set.add(val);
+                        }
+                        sep = tokenizer.expectSymbol("set end or sep", JsonToken.kListSep, JsonToken.kListEnd);
+                    }
+                }
+                return set.build();
+            }
+            case LIST: {
+                PDescriptor itemType = ((PList<?>) t).itemDescriptor();
+                if (!token.isSymbol(JsonToken.kListStart)) {
+                    throw new SerializerException("Invalid start of list '" + token.asString() + "'");
+                }
+                @SuppressWarnings("unchecked")
+                PList.Builder<Object> list = ((PList<Object>) t).builder();
+                if (tokenizer.peek("list end or value").isSymbol(JsonToken.kListEnd)) {
+                    tokenizer.next();
+                } else {
+                    char sep = JsonToken.kListStart;
+                    while (sep != JsonToken.kListEnd) {
+                        list.add(parseTypedValue(tokenizer.expect("list value"), tokenizer, itemType, false));
+                        sep = tokenizer.expectSymbol("list end or sep", JsonToken.kListSep, JsonToken.kListEnd);
+                    }
+                }
+                return list.build();
+            }
         }
 
         throw new SerializerException("Unhandled item type " + t.getQualifiedName());

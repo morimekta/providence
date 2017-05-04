@@ -218,7 +218,7 @@ public class Token extends Slice {
                 }
             } else if (tmp.charAt(i) == '\\') {
                 esc = true;
-            } else if (tmp.charAt(i) < 0x20 || tmp.charAt(1) == 0x7f) {
+            } else if (!Strings.isConsolePrintable(tmp.codePointAt(i))) {
                 if (strict) {
                     throw new IllegalArgumentException("Unescaped string char: '" +
                                                        Strings.escape(String.valueOf(tmp.charAt(i))) +

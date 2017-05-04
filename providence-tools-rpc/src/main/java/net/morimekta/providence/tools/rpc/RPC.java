@@ -117,7 +117,7 @@ public class RPC {
                 System.err.println("Run $ pvdrpc --help # for available options.");
             } catch (SerializerException e) {
                 System.out.flush();
-                System.err.println("Serialization error: " + e.getMessage());
+                System.err.println(e.asString());
                 if (options.verbose()) {
                     System.err.println();
                     e.printStackTrace();

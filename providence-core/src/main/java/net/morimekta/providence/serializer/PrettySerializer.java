@@ -701,7 +701,7 @@ public class PrettySerializer extends Serializer {
             writer.print(o.toString());
         } else if (o instanceof Double) {
             Double d = (Double) o;
-            if (d == ((double) d.longValue())) {
+            if (d.equals(((double) d.longValue()))) {
                 // actually an integer or long value.
                 writer.print(d.longValue());
             } else {
