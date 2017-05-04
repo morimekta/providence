@@ -168,8 +168,7 @@ public class JField {
 
     public boolean alwaysPresent() {
         return field.getRequirement() != PRequirement.OPTIONAL &&
-               field.getDescriptor() instanceof PPrimitive &&
-               ((PPrimitive) field.getDescriptor()).isNativePrimitive();
+               helper.getDefaultValue(field) != null;
     }
 
     public boolean isPrimitiveJavaValue() {

@@ -232,38 +232,40 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
             writer.end()
                   .appendln('}');
         } else {
-            boolean firstFirstCheck = true;
-            boolean alwaysAfter = false;
-            boolean last, first;
+            boolean hasFirstFlag = false;
+            boolean allowSeparator = false;
+            boolean requireSeparator = false;
 
             List<JField> fieldList = message.declaredOrderFields();
 
             JField[] fields = fieldList.toArray(new JField[fieldList.size()]);
             for (int i = 0; i < fields.length; ++i) {
-                first = i == 0;
-                last  = i == (fields.length - 1);
-
                 JField field = fields[i];
+
+                boolean last = (i == (fields.length - 1));
                 if (!field.alwaysPresent()) {
-                    if (!alwaysAfter && firstFirstCheck && !last) {
+                    if (!last && !requireSeparator && !hasFirstFlag) {
                         writer.appendln("boolean first = true;");
+                        hasFirstFlag = true;
                     }
                     writer.formatln("if (%s()) {", field.presence());
                     writer.begin();
                 }
 
-                if (alwaysAfter) {
+                if (requireSeparator) {
                     writer.appendln("out.append(',');");
-                } else if (!field.alwaysPresent()) {
-                    if (firstFirstCheck || first) {
-                        if (!last) {
-                            writer.appendln("first = false;");
+                } else {
+                    if (allowSeparator) {
+                        if (hasFirstFlag) {
+                            if (last || field.alwaysPresent()) {
+                                writer.appendln("if (!first) out.append(',');");
+                            } else {
+                                writer.appendln("if (first) first = false;")
+                                      .appendln("else out.append(',');");
+                            }
                         }
-                    } else if (last) {
-                        writer.appendln("if (!first) out.append(',');");
-                    } else {
-                        writer.appendln("if (first) first = false;")
-                              .appendln("else out.append(',');");
+                    } else if (hasFirstFlag) {
+                        writer.appendln("first = false;");
                     }
                 }
 
@@ -307,14 +309,12 @@ public class CommonOverridesFormatter implements MessageMemberFormatter {
                         break;
                 }
 
-                if (!field.alwaysPresent()) {
+                if (field.alwaysPresent()) {
+                    requireSeparator = true;
+                } else {
                     writer.end()
                           .appendln('}');
-                    if (!alwaysAfter && firstFirstCheck) {
-                        firstFirstCheck = false;
-                    }
-                } else {
-                    alwaysAfter = true;
+                    allowSeparator = true;
                 }
             }
         }

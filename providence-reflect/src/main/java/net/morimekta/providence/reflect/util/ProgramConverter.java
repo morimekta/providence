@@ -34,6 +34,7 @@ import net.morimekta.providence.model.EnumValue;
 import net.morimekta.providence.model.FieldType;
 import net.morimekta.providence.model.FunctionType;
 import net.morimekta.providence.model.MessageType;
+import net.morimekta.providence.model.MessageVariant;
 import net.morimekta.providence.model.ProgramType;
 import net.morimekta.providence.model.ServiceType;
 import net.morimekta.providence.reflect.contained.CConst;
@@ -107,7 +108,7 @@ public class ProgramConverter {
                     if (messageType.hasFields()) {
                         fields.addAll(messageType.getFields()
                                                 .stream()
-                                                .map(field -> makeField(document.getProgramName(), field))
+                                                .map(field -> makeField(document.getProgramName(), field, messageType.getVariant()))
                                                 .collect(Collectors.toList()));
                     }
                     PMessageDescriptor<?, ?> type;
@@ -165,7 +166,7 @@ public class ProgramConverter {
                             List<CField> rqFields = new LinkedList<>();
                             if (sm.numParams() > 0) {
                                 for (FieldType field : sm.getParams()) {
-                                    rqFields.add(makeField(document.getProgramName(), field));
+                                    rqFields.add(makeField(document.getProgramName(), field, MessageVariant.STRUCT));
                                 }
                             }
                             CStructDescriptor request = new CStructDescriptor(null,
@@ -197,7 +198,7 @@ public class ProgramConverter {
 
                                 if (sm.numExceptions() > 0) {
                                     for (FieldType field : sm.getExceptions()) {
-                                        rsFields.add(makeField(document.getProgramName(), field));
+                                        rsFields.add(makeField(document.getProgramName(), field, MessageVariant.UNION));
                                     }
                                 }
 
@@ -282,17 +283,24 @@ public class ProgramConverter {
         return made;
     }
 
-    private CField makeField(String pkg, FieldType field) {
+    private CField makeField(String pkg, FieldType field, MessageVariant variant) {
         PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
             defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getDefaultValue());
         }
+        PRequirement requirement = PRequirement.valueOf(field.getRequirement()
+                                                             .getName());
+        if (variant == MessageVariant.UNION) {
+            if (requirement == PRequirement.REQUIRED) {
+                throw new IllegalArgumentException("Required field in union");
+            }
+            requirement = PRequirement.OPTIONAL;
+        }
         @SuppressWarnings("unchecked")
         CField made = new CField(field.getDocumentation(),
                                  field.getKey(),
-                                 PRequirement.valueOf(field.getRequirement()
-                                                           .getName()),
+                                 requirement,
                                  field.getName(),
                                  type,
                                  defaultValue,

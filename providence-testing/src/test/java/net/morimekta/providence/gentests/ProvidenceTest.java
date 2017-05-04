@@ -104,11 +104,11 @@ public class ProvidenceTest {
         assertThat(rf.getDoubleValue(), is(0.0));
 
         // null pointers, presence = false.
-        assertThat(rf.hasStringValue(), is(false));
-        assertThat(rf.getStringValue(), is(nullValue()));
+        assertThat(rf.hasStringValue(), is(true));
+        assertThat(rf.getStringValue(), is(""));
 
-        assertThat(rf.hasBinaryValue(), is(false));
-        assertThat(rf.getBinaryValue(), is(nullValue()));
+        assertThat(rf.hasBinaryValue(), is(true));
+        assertThat(rf.getBinaryValue(), is(Binary.empty()));
 
         assertThat(rf.hasEnumValue(), is(false));
         assertThat(rf.getEnumValue(), is(nullValue()));

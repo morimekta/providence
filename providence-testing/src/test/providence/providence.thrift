@@ -44,7 +44,7 @@ enum EnumNames {
 struct CompactFields {
     1: required string name
     2: required i32 id,
-    3: string label;
+    3: optional string label;
 } (compact = "")
 
 const list<CompactFields> kDefaultCompactFields = [
