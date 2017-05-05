@@ -14,7 +14,7 @@ public class PFieldTest {
     public void testPField() {
         assertThat(Operation._Field.OPERANDS, is(Operation._Field.OPERANDS));
         assertThat(Operation._Field.OPERANDS.toString(),
-                   is("field(2: list<calculator.Operand> operands)"));
+                   is("field(2: optional list<calculator.Operand> operands)"));
         assertThat(DefaultFields._Field.LONG_VALUE.toString(),
                    is("field(5: i64 longValue)"));
         assertThat(RequiredFields._Field.LONG_VALUE.toString(),

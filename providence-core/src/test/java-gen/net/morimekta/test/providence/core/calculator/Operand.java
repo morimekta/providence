@@ -11,7 +11,7 @@ public class Operand
     private final static double kDefaultNumber = 0.0d;
 
     private final net.morimekta.test.providence.core.calculator.Operation mOperation;
-    private final double mNumber;
+    private final Double mNumber;
     private final net.morimekta.test.providence.core.number.Imaginary mImaginary;
 
     private final _Field tUnionField;
@@ -48,7 +48,7 @@ public class Operand
         mOperation = tUnionField != _Field.OPERATION
                 ? null
                 : builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
-        mNumber = tUnionField == _Field.NUMBER ? builder.mNumber : kDefaultNumber;
+        mNumber = tUnionField == _Field.NUMBER ? builder.mNumber : null;
         mImaginary = tUnionField != _Field.IMAGINARY
                 ? null
                 : builder.mImaginary_builder != null ? builder.mImaginary_builder.build() : builder.mImaginary;
@@ -66,14 +66,14 @@ public class Operand
     }
 
     public boolean hasNumber() {
-        return tUnionField == _Field.NUMBER;
+        return tUnionField == _Field.NUMBER && mNumber != null;
     }
 
     /**
      * @return The field value
      */
     public double getNumber() {
-        return mNumber;
+        return hasNumber() ? mNumber : kDefaultNumber;
     }
 
     public boolean hasImaginary() {
@@ -230,9 +230,9 @@ public class Operand
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        OPERATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
-        NUMBER(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "number", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
-        IMAGINARY(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "imaginary", net.morimekta.test.providence.core.number.Imaginary.provider(), null),
+        OPERATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
+        NUMBER(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "number", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
+        IMAGINARY(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "imaginary", net.morimekta.test.providence.core.number.Imaginary.provider(), null),
         ;
 
         private final int mKey;
@@ -362,7 +362,7 @@ public class Operand
 
         private net.morimekta.test.providence.core.calculator.Operation mOperation;
         private net.morimekta.test.providence.core.calculator.Operation._Builder mOperation_builder;
-        private double mNumber;
+        private Double mNumber;
         private net.morimekta.test.providence.core.number.Imaginary mImaginary;
         private net.morimekta.test.providence.core.number.Imaginary._Builder mImaginary_builder;
 
@@ -371,7 +371,6 @@ public class Operand
          */
         public _Builder() {
             modified = false;
-            mNumber = kDefaultNumber;
         }
 
         /**
@@ -516,7 +515,7 @@ public class Operand
         public _Builder clearNumber() {
             if (tUnionField == _Field.NUMBER) tUnionField = null;
             modified = true;
-            mNumber = kDefaultNumber;
+            mNumber = null;
             return this;
         }
 
@@ -526,7 +525,7 @@ public class Operand
          * @return The field value
          */
         public double getNumber() {
-            return mNumber;
+            return isSetNumber() ? mNumber : kDefaultNumber;
         }
 
         /**
@@ -689,6 +688,7 @@ public class Operand
 
             switch (tUnionField) {
                 case OPERATION: return mOperation != null || mOperation_builder != null;
+                case NUMBER: return mNumber != null;
                 case IMAGINARY: return mImaginary != null || mImaginary_builder != null;
                 default: return true;
             }

@@ -24,6 +24,10 @@ public class InclusionTest {
 
         assertEquals("program = {\n" +
                      "  program_name = \"program\"\n" +
+                     "  namespaces = {\n" +
+                     "  }\n" +
+                     "  decl = [\n" +
+                     "  ]\n" +
                      "}",
                      PrettyPrinter.debugString(prog));
     }

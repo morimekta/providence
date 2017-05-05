@@ -9,6 +9,8 @@ public class CalculateException
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -3144631929815376595L;
 
+    private final static String kDefaultMessage = "";
+
     private final String mMessage;
     private final net.morimekta.test.providence.core.calculator.Operation mOperation;
 
@@ -18,19 +20,27 @@ public class CalculateException
                               net.morimekta.test.providence.core.calculator.Operation pOperation) {
         super(pMessage);
 
-        mMessage = pMessage;
+        if (pMessage != null) {
+            mMessage = pMessage;
+        } else {
+            mMessage = kDefaultMessage;
+        }
         mOperation = pOperation;
     }
 
     private CalculateException(_Builder builder) {
         super(builder.mMessage);
 
-        mMessage = builder.mMessage;
+        if (builder.isSetMessage()) {
+            mMessage = builder.mMessage;
+        } else {
+            mMessage = kDefaultMessage;
+        }
         mOperation = builder.mOperation_builder != null ? builder.mOperation_builder.build() : builder.mOperation;
     }
 
     public boolean hasMessage() {
-        return mMessage != null;
+        return true;
     }
 
     /**
@@ -54,7 +64,7 @@ public class CalculateException
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasMessage();
+            case 1: return true;
             case 2: return hasOperation();
             default: return false;
         }
@@ -63,7 +73,7 @@ public class CalculateException
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasMessage() ? 1 : 0;
+            case 1: return 1;
             case 2: return hasOperation() ? 1 : 0;
             default: return 0;
         }
@@ -128,16 +138,12 @@ public class CalculateException
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        boolean first = true;
-        if (hasMessage()) {
-            first = false;
-            out.append("message:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mMessage))
-               .append('\"');
-        }
+        out.append("message:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mMessage))
+           .append('\"');
         if (hasOperation()) {
-            if (!first) out.append(',');
+            out.append(',');
             out.append("operation:")
                .append(mOperation.asString());
         }
@@ -149,12 +155,8 @@ public class CalculateException
     public int compareTo(CalculateException other) {
         int c;
 
-        c = Boolean.compare(mMessage != null, other.mMessage != null);
+        c = mMessage.compareTo(other.mMessage);
         if (c != 0) return c;
-        if (mMessage != null) {
-            c = mMessage.compareTo(other.mMessage);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mOperation != null, other.mOperation != null);
         if (c != 0) return c;
@@ -170,13 +172,11 @@ public class CalculateException
     public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
         int length = 0;
 
-        if (hasMessage()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 1);
-            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mMessage.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_1.length());
-            length += writer.writeBinary(tmp_1);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 1);
+        net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mMessage.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_1.length());
+        length += writer.writeBinary(tmp_1);
 
         if (hasOperation()) {
             length += writer.writeByte((byte) 12);
@@ -196,7 +196,7 @@ public class CalculateException
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        OPERATION(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
+        OPERATION(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operation", net.morimekta.test.providence.core.calculator.Operation.provider(), null),
         ;
 
         private final int mKey;
@@ -331,6 +331,7 @@ public class CalculateException
         public _Builder() {
             optionals = new java.util.BitSet(2);
             modified = new java.util.BitSet(2);
+            mMessage = kDefaultMessage;
         }
 
         /**
@@ -341,10 +342,8 @@ public class CalculateException
         public _Builder(CalculateException base) {
             this();
 
-            if (base.hasMessage()) {
-                optionals.set(0);
-                mMessage = base.mMessage;
-            }
+            optionals.set(0);
+            mMessage = base.mMessage;
             if (base.hasOperation()) {
                 optionals.set(1);
                 mOperation = base.mOperation;
@@ -354,11 +353,9 @@ public class CalculateException
         @javax.annotation.Nonnull
         @Override
         public _Builder merge(CalculateException from) {
-            if (from.hasMessage()) {
-                optionals.set(0);
-                modified.set(0);
-                mMessage = from.getMessage();
-            }
+            optionals.set(0);
+            modified.set(0);
+            mMessage = from.getMessage();
 
             if (from.hasOperation()) {
                 optionals.set(1);
@@ -420,7 +417,7 @@ public class CalculateException
         public _Builder clearMessage() {
             optionals.clear(0);
             modified.set(0);
-            mMessage = null;
+            mMessage = kDefaultMessage;
             return this;
         }
 

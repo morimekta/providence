@@ -15,12 +15,12 @@ public class UnionFields
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
 
-    private final boolean mBooleanValue;
-    private final byte mByteValue;
-    private final short mShortValue;
-    private final int mIntegerValue;
-    private final long mLongValue;
-    private final double mDoubleValue;
+    private final Boolean mBooleanValue;
+    private final Byte mByteValue;
+    private final Short mShortValue;
+    private final Integer mIntegerValue;
+    private final Long mLongValue;
+    private final Double mDoubleValue;
     private final String mStringValue;
     private final net.morimekta.util.Binary mBinaryValue;
     private final net.morimekta.test.providence.core.Value mEnumValue;
@@ -113,12 +113,12 @@ public class UnionFields
     private UnionFields(_Builder builder) {
         tUnionField = builder.tUnionField;
 
-        mBooleanValue = tUnionField == _Field.BOOLEAN_VALUE ? builder.mBooleanValue : kDefaultBooleanValue;
-        mByteValue = tUnionField == _Field.BYTE_VALUE ? builder.mByteValue : kDefaultByteValue;
-        mShortValue = tUnionField == _Field.SHORT_VALUE ? builder.mShortValue : kDefaultShortValue;
-        mIntegerValue = tUnionField == _Field.INTEGER_VALUE ? builder.mIntegerValue : kDefaultIntegerValue;
-        mLongValue = tUnionField == _Field.LONG_VALUE ? builder.mLongValue : kDefaultLongValue;
-        mDoubleValue = tUnionField == _Field.DOUBLE_VALUE ? builder.mDoubleValue : kDefaultDoubleValue;
+        mBooleanValue = tUnionField == _Field.BOOLEAN_VALUE ? builder.mBooleanValue : null;
+        mByteValue = tUnionField == _Field.BYTE_VALUE ? builder.mByteValue : null;
+        mShortValue = tUnionField == _Field.SHORT_VALUE ? builder.mShortValue : null;
+        mIntegerValue = tUnionField == _Field.INTEGER_VALUE ? builder.mIntegerValue : null;
+        mLongValue = tUnionField == _Field.LONG_VALUE ? builder.mLongValue : null;
+        mDoubleValue = tUnionField == _Field.DOUBLE_VALUE ? builder.mDoubleValue : null;
         mStringValue = tUnionField == _Field.STRING_VALUE ? builder.mStringValue : null;
         mBinaryValue = tUnionField == _Field.BINARY_VALUE ? builder.mBinaryValue : null;
         mEnumValue = tUnionField == _Field.ENUM_VALUE ? builder.mEnumValue : null;
@@ -128,69 +128,69 @@ public class UnionFields
     }
 
     public boolean hasBooleanValue() {
-        return tUnionField == _Field.BOOLEAN_VALUE;
+        return tUnionField == _Field.BOOLEAN_VALUE && mBooleanValue != null;
     }
 
     /**
      * @return The field value
      */
     public boolean isBooleanValue() {
-        return mBooleanValue;
+        return hasBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
     }
 
     public boolean hasByteValue() {
-        return tUnionField == _Field.BYTE_VALUE;
+        return tUnionField == _Field.BYTE_VALUE && mByteValue != null;
     }
 
     /**
      * @return The field value
      */
     public byte getByteValue() {
-        return mByteValue;
+        return hasByteValue() ? mByteValue : kDefaultByteValue;
     }
 
     public boolean hasShortValue() {
-        return tUnionField == _Field.SHORT_VALUE;
+        return tUnionField == _Field.SHORT_VALUE && mShortValue != null;
     }
 
     /**
      * @return The field value
      */
     public short getShortValue() {
-        return mShortValue;
+        return hasShortValue() ? mShortValue : kDefaultShortValue;
     }
 
     public boolean hasIntegerValue() {
-        return tUnionField == _Field.INTEGER_VALUE;
+        return tUnionField == _Field.INTEGER_VALUE && mIntegerValue != null;
     }
 
     /**
      * @return The field value
      */
     public int getIntegerValue() {
-        return mIntegerValue;
+        return hasIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
     }
 
     public boolean hasLongValue() {
-        return tUnionField == _Field.LONG_VALUE;
+        return tUnionField == _Field.LONG_VALUE && mLongValue != null;
     }
 
     /**
      * @return The field value
      */
     public long getLongValue() {
-        return mLongValue;
+        return hasLongValue() ? mLongValue : kDefaultLongValue;
     }
 
     public boolean hasDoubleValue() {
-        return tUnionField == _Field.DOUBLE_VALUE;
+        return tUnionField == _Field.DOUBLE_VALUE && mDoubleValue != null;
     }
 
     /**
      * @return The field value
      */
     public double getDoubleValue() {
-        return mDoubleValue;
+        return hasDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
     }
 
     public boolean hasStringValue() {
@@ -509,16 +509,16 @@ public class UnionFields
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), null),
-        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), null),
-        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), null),
-        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), null),
-        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
-        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
-        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "enumValue", net.morimekta.test.providence.core.Value.provider(), null),
-        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "compactValue", net.morimekta.test.providence.core.CompactFields.provider(), null),
+        BOOLEAN_VALUE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "booleanValue", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), null),
+        BYTE_VALUE(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "byteValue", net.morimekta.providence.descriptor.PPrimitive.BYTE.provider(), null),
+        SHORT_VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "shortValue", net.morimekta.providence.descriptor.PPrimitive.I16.provider(), null),
+        INTEGER_VALUE(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "integerValue", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        LONG_VALUE(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "longValue", net.morimekta.providence.descriptor.PPrimitive.I64.provider(), null),
+        DOUBLE_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "doubleValue", net.morimekta.providence.descriptor.PPrimitive.DOUBLE.provider(), null),
+        STRING_VALUE(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "stringValue", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        BINARY_VALUE(8, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "binaryValue", net.morimekta.providence.descriptor.PPrimitive.BINARY.provider(), null),
+        ENUM_VALUE(9, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "enumValue", net.morimekta.test.providence.core.Value.provider(), null),
+        COMPACT_VALUE(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "compactValue", net.morimekta.test.providence.core.CompactFields.provider(), null),
         ;
 
         private final int mKey;
@@ -660,12 +660,12 @@ public class UnionFields
 
         private boolean modified;
 
-        private boolean mBooleanValue;
-        private byte mByteValue;
-        private short mShortValue;
-        private int mIntegerValue;
-        private long mLongValue;
-        private double mDoubleValue;
+        private Boolean mBooleanValue;
+        private Byte mByteValue;
+        private Short mShortValue;
+        private Integer mIntegerValue;
+        private Long mLongValue;
+        private Double mDoubleValue;
         private String mStringValue;
         private net.morimekta.util.Binary mBinaryValue;
         private net.morimekta.test.providence.core.Value mEnumValue;
@@ -677,12 +677,6 @@ public class UnionFields
          */
         public _Builder() {
             modified = false;
-            mBooleanValue = kDefaultBooleanValue;
-            mByteValue = kDefaultByteValue;
-            mShortValue = kDefaultShortValue;
-            mIntegerValue = kDefaultIntegerValue;
-            mLongValue = kDefaultLongValue;
-            mDoubleValue = kDefaultDoubleValue;
         }
 
         /**
@@ -795,7 +789,7 @@ public class UnionFields
         public _Builder clearBooleanValue() {
             if (tUnionField == _Field.BOOLEAN_VALUE) tUnionField = null;
             modified = true;
-            mBooleanValue = kDefaultBooleanValue;
+            mBooleanValue = null;
             return this;
         }
 
@@ -805,7 +799,7 @@ public class UnionFields
          * @return The field value
          */
         public boolean getBooleanValue() {
-            return mBooleanValue;
+            return isSetBooleanValue() ? mBooleanValue : kDefaultBooleanValue;
         }
 
         /**
@@ -840,7 +834,7 @@ public class UnionFields
         public _Builder clearByteValue() {
             if (tUnionField == _Field.BYTE_VALUE) tUnionField = null;
             modified = true;
-            mByteValue = kDefaultByteValue;
+            mByteValue = null;
             return this;
         }
 
@@ -850,7 +844,7 @@ public class UnionFields
          * @return The field value
          */
         public byte getByteValue() {
-            return mByteValue;
+            return isSetByteValue() ? mByteValue : kDefaultByteValue;
         }
 
         /**
@@ -885,7 +879,7 @@ public class UnionFields
         public _Builder clearShortValue() {
             if (tUnionField == _Field.SHORT_VALUE) tUnionField = null;
             modified = true;
-            mShortValue = kDefaultShortValue;
+            mShortValue = null;
             return this;
         }
 
@@ -895,7 +889,7 @@ public class UnionFields
          * @return The field value
          */
         public short getShortValue() {
-            return mShortValue;
+            return isSetShortValue() ? mShortValue : kDefaultShortValue;
         }
 
         /**
@@ -930,7 +924,7 @@ public class UnionFields
         public _Builder clearIntegerValue() {
             if (tUnionField == _Field.INTEGER_VALUE) tUnionField = null;
             modified = true;
-            mIntegerValue = kDefaultIntegerValue;
+            mIntegerValue = null;
             return this;
         }
 
@@ -940,7 +934,7 @@ public class UnionFields
          * @return The field value
          */
         public int getIntegerValue() {
-            return mIntegerValue;
+            return isSetIntegerValue() ? mIntegerValue : kDefaultIntegerValue;
         }
 
         /**
@@ -975,7 +969,7 @@ public class UnionFields
         public _Builder clearLongValue() {
             if (tUnionField == _Field.LONG_VALUE) tUnionField = null;
             modified = true;
-            mLongValue = kDefaultLongValue;
+            mLongValue = null;
             return this;
         }
 
@@ -985,7 +979,7 @@ public class UnionFields
          * @return The field value
          */
         public long getLongValue() {
-            return mLongValue;
+            return isSetLongValue() ? mLongValue : kDefaultLongValue;
         }
 
         /**
@@ -1020,7 +1014,7 @@ public class UnionFields
         public _Builder clearDoubleValue() {
             if (tUnionField == _Field.DOUBLE_VALUE) tUnionField = null;
             modified = true;
-            mDoubleValue = kDefaultDoubleValue;
+            mDoubleValue = null;
             return this;
         }
 
@@ -1030,7 +1024,7 @@ public class UnionFields
          * @return The field value
          */
         public double getDoubleValue() {
-            return mDoubleValue;
+            return isSetDoubleValue() ? mDoubleValue : kDefaultDoubleValue;
         }
 
         /**
@@ -1373,6 +1367,12 @@ public class UnionFields
             }
 
             switch (tUnionField) {
+                case BOOLEAN_VALUE: return mBooleanValue != null;
+                case BYTE_VALUE: return mByteValue != null;
+                case SHORT_VALUE: return mShortValue != null;
+                case INTEGER_VALUE: return mIntegerValue != null;
+                case LONG_VALUE: return mLongValue != null;
+                case DOUBLE_VALUE: return mDoubleValue != null;
                 case STRING_VALUE: return mStringValue != null;
                 case BINARY_VALUE: return mBinaryValue != null;
                 case ENUM_VALUE: return mEnumValue != null;

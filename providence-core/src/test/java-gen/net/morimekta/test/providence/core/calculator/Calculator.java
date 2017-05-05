@@ -919,7 +919,7 @@ public class Calculator {
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
             SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.core.calculator.Operand.provider(), null),
-            CE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "ce", net.morimekta.test.providence.core.calculator.CalculateException.provider(), null),
+            CE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ce", net.morimekta.test.providence.core.calculator.CalculateException.provider(), null),
             ;
 
             private final int mKey;

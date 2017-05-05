@@ -14,6 +14,9 @@ public class MessageType
     private final static long serialVersionUID = -7041659190974449690L;
 
     private final static net.morimekta.providence.model.MessageVariant kDefaultVariant = net.morimekta.providence.model.MessageVariant.STRUCT;
+    private final static String kDefaultName = "";
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+                .build();
 
     private final String mDocumentation;
     private final net.morimekta.providence.model.MessageVariant mVariant;
@@ -30,11 +33,15 @@ public class MessageType
                        java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
         mVariant = pVariant;
-        mName = pName;
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         if (pFields != null) {
             mFields = com.google.common.collect.ImmutableList.copyOf(pFields);
         } else {
-            mFields = null;
+            mFields = kDefaultFields;
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
@@ -46,11 +53,15 @@ public class MessageType
     private MessageType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
         mVariant = builder.mVariant;
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         if (builder.isSetFields()) {
             mFields = builder.mFields.build();
         } else {
-            mFields = null;
+            mFields = kDefaultFields;
         }
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
@@ -82,7 +93,7 @@ public class MessageType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -97,7 +108,7 @@ public class MessageType
     }
 
     public boolean hasFields() {
-        return mFields != null;
+        return true;
     }
 
     /**
@@ -127,8 +138,8 @@ public class MessageType
         switch(key) {
             case 1: return hasDocumentation();
             case 2: return hasVariant();
-            case 3: return hasName();
-            case 4: return hasFields();
+            case 3: return true;
+            case 4: return true;
             case 5: return hasAnnotations();
             default: return false;
         }
@@ -139,7 +150,7 @@ public class MessageType
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
             case 2: return hasVariant() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
+            case 3: return 1;
             case 4: return numFields();
             case 5: return numAnnotations();
             default: return 0;
@@ -208,22 +219,16 @@ public class MessageType
             out.append("variant:")
                .append(mVariant.asString());
         }
-        if (hasName()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
-        if (hasFields()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("fields:")
-               .append(net.morimekta.util.Strings.asString(mFields));
-        }
+        if (!first) out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        out.append(',');
+        out.append("fields:")
+           .append(net.morimekta.util.Strings.asString(mFields));
         if (hasAnnotations()) {
-            if (!first) out.append(',');
+            out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
@@ -249,19 +254,11 @@ public class MessageType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mFields != null, other.mFields != null);
+        c = Integer.compare(mFields.hashCode(), other.mFields.hashCode());
         if (c != 0) return c;
-        if (mFields != null) {
-            c = Integer.compare(mFields.hashCode(), other.mFields.hashCode());
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -291,22 +288,18 @@ public class MessageType
             length += writer.writeInt(mVariant.getValue());
         }
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 3);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 3);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        if (hasFields()) {
-            length += writer.writeByte((byte) 15);
-            length += writer.writeShort((short) 4);
-            length += writer.writeByte((byte) 12);
-            length += writer.writeUInt32(mFields.size());
-            for (net.morimekta.providence.model.FieldType entry_3 : mFields) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_3);
-            }
+        length += writer.writeByte((byte) 15);
+        length += writer.writeShort((short) 4);
+        length += writer.writeByte((byte) 12);
+        length += writer.writeUInt32(mFields.size());
+        for (net.morimekta.providence.model.FieldType entry_3 : mFields) {
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_3);
         }
 
         if (hasAnnotations()) {
@@ -336,11 +329,11 @@ public class MessageType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        VARIANT(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "variant", net.morimekta.providence.model.MessageVariant.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultVariant)),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        VARIANT(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "variant", net.morimekta.providence.model.MessageVariant.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultVariant)),
         NAME(3, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         FIELDS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "fields", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -488,6 +481,7 @@ public class MessageType
         public _Builder() {
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
+            mName = kDefaultName;
             mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -508,14 +502,10 @@ public class MessageType
                 optionals.set(1);
                 mVariant = base.mVariant;
             }
-            if (base.hasName()) {
-                optionals.set(2);
-                mName = base.mName;
-            }
-            if (base.hasFields()) {
-                optionals.set(3);
-                mFields.addAll(base.mFields);
-            }
+            optionals.set(2);
+            mName = base.mName;
+            optionals.set(3);
+            mFields.addAll(base.mFields);
             if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
@@ -537,18 +527,14 @@ public class MessageType
                 mVariant = from.getVariant();
             }
 
-            if (from.hasName()) {
-                optionals.set(2);
-                modified.set(2);
-                mName = from.getName();
-            }
+            optionals.set(2);
+            modified.set(2);
+            mName = from.getName();
 
-            if (from.hasFields()) {
-                optionals.set(3);
-                modified.set(3);
-                mFields.clear();
-                mFields.addAll(from.getFields());
-            }
+            optionals.set(3);
+            modified.set(3);
+            mFields.clear();
+            mFields.addAll(from.getFields());
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
@@ -719,7 +705,7 @@ public class MessageType
         public _Builder clearName() {
             optionals.clear(2);
             modified.set(2);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

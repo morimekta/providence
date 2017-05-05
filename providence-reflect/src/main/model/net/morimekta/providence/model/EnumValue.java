@@ -11,11 +11,12 @@ public class EnumValue
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -4079600082644582517L;
 
+    private final static String kDefaultName = "";
     private final static int kDefaultValue = 0;
 
     private final String mDocumentation;
     private final String mName;
-    private final int mValue;
+    private final Integer mValue;
     private final java.util.Map<String,String> mAnnotations;
 
     private volatile int tHashCode;
@@ -25,12 +26,12 @@ public class EnumValue
                      Integer pValue,
                      java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
-        mName = pName;
-        if (pValue != null) {
-            mValue = pValue;
+        if (pName != null) {
+            mName = pName;
         } else {
-            mValue = kDefaultValue;
+            mName = kDefaultName;
         }
+        mValue = pValue;
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
         } else {
@@ -40,7 +41,11 @@ public class EnumValue
 
     private EnumValue(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         mValue = builder.mValue;
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
@@ -61,7 +66,7 @@ public class EnumValue
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -72,14 +77,14 @@ public class EnumValue
     }
 
     public boolean hasValue() {
-        return true;
+        return mValue != null;
     }
 
     /**
      * @return The field value
      */
     public int getValue() {
-        return mValue;
+        return hasValue() ? mValue : kDefaultValue;
     }
 
     public int numAnnotations() {
@@ -101,8 +106,8 @@ public class EnumValue
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 2: return hasName();
-            case 3: return true;
+            case 2: return true;
+            case 3: return hasValue();
             case 4: return hasAnnotations();
             default: return false;
         }
@@ -112,8 +117,8 @@ public class EnumValue
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
-            case 3: return 1;
+            case 2: return 1;
+            case 3: return hasValue() ? 1 : 0;
             case 4: return numAnnotations();
             default: return 0;
         }
@@ -172,16 +177,16 @@ public class EnumValue
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasName()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
+        if (!first) out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        if (hasValue()) {
+            out.append(',');
+            out.append("value:")
+               .append(mValue);
         }
-        out.append("value:")
-           .append(mValue);
         if (hasAnnotations()) {
             out.append(',');
             out.append("annotations:")
@@ -202,15 +207,15 @@ public class EnumValue
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
+
+        c = Boolean.compare(mValue != null, other.mValue != null);
+        if (c != 0) return c;
+        if (mValue != null) {
+            c = Integer.compare(mValue, other.mValue);
             if (c != 0) return c;
         }
-
-        c = Integer.compare(mValue, other.mValue);
-        if (c != 0) return c;
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -234,17 +239,17 @@ public class EnumValue
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 2);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        length += writer.writeByte((byte) 8);
-        length += writer.writeShort((short) 3);
-        length += writer.writeInt(mValue);
+        if (hasValue()) {
+            length += writer.writeByte((byte) 8);
+            length += writer.writeShort((short) 3);
+            length += writer.writeInt(mValue);
+        }
 
         if (hasAnnotations()) {
             length += writer.writeByte((byte) 13);
@@ -273,10 +278,10 @@ public class EnumValue
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        VALUE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "value", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "value", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -410,7 +415,7 @@ public class EnumValue
 
         private String mDocumentation;
         private String mName;
-        private int mValue;
+        private Integer mValue;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
 
         /**
@@ -419,7 +424,7 @@ public class EnumValue
         public _Builder() {
             optionals = new java.util.BitSet(4);
             modified = new java.util.BitSet(4);
-            mValue = kDefaultValue;
+            mName = kDefaultName;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
@@ -435,12 +440,12 @@ public class EnumValue
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasName()) {
-                optionals.set(1);
-                mName = base.mName;
+            optionals.set(1);
+            mName = base.mName;
+            if (base.hasValue()) {
+                optionals.set(2);
+                mValue = base.mValue;
             }
-            optionals.set(2);
-            mValue = base.mValue;
             if (base.hasAnnotations()) {
                 optionals.set(3);
                 mAnnotations.putAll(base.mAnnotations);
@@ -456,15 +461,15 @@ public class EnumValue
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasName()) {
-                optionals.set(1);
-                modified.set(1);
-                mName = from.getName();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mName = from.getName();
 
-            optionals.set(2);
-            modified.set(2);
-            mValue = from.getValue();
+            if (from.hasValue()) {
+                optionals.set(2);
+                modified.set(2);
+                mValue = from.getValue();
+            }
 
             if (from.hasAnnotations()) {
                 optionals.set(3);
@@ -577,7 +582,7 @@ public class EnumValue
         public _Builder clearName() {
             optionals.clear(1);
             modified.set(1);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 
@@ -631,7 +636,7 @@ public class EnumValue
         public _Builder clearValue() {
             optionals.clear(2);
             modified.set(2);
-            mValue = kDefaultValue;
+            mValue = null;
             return this;
         }
 
@@ -641,7 +646,7 @@ public class EnumValue
          * @return The field value
          */
         public int getValue() {
-            return mValue;
+            return isSetValue() ? mValue : kDefaultValue;
         }
 
         /**

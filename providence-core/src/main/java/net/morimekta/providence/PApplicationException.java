@@ -205,8 +205,8 @@ public class PApplicationException
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ID(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "id", net.morimekta.providence.PApplicationExceptionType.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
+        MESSAGE(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "message", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        ID(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "id", net.morimekta.providence.PApplicationExceptionType.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultId)),
         ;
 
         private final int mKey;

@@ -14,6 +14,8 @@ public class DefaultFields
     private final static int kDefaultIntegerValue = 0;
     private final static long kDefaultLongValue = 0L;
     private final static double kDefaultDoubleValue = 0.0d;
+    private final static String kDefaultStringValue = "";
+    private final static net.morimekta.util.Binary kDefaultBinaryValue = net.morimekta.util.Binary.wrap(new byte[]{});
 
     private final boolean mBooleanValue;
     private final byte mByteValue;
@@ -68,8 +70,16 @@ public class DefaultFields
         } else {
             mDoubleValue = kDefaultDoubleValue;
         }
-        mStringValue = pStringValue;
-        mBinaryValue = pBinaryValue;
+        if (pStringValue != null) {
+            mStringValue = pStringValue;
+        } else {
+            mStringValue = kDefaultStringValue;
+        }
+        if (pBinaryValue != null) {
+            mBinaryValue = pBinaryValue;
+        } else {
+            mBinaryValue = kDefaultBinaryValue;
+        }
         mEnumValue = pEnumValue;
         mCompactValue = pCompactValue;
     }
@@ -81,8 +91,16 @@ public class DefaultFields
         mIntegerValue = builder.mIntegerValue;
         mLongValue = builder.mLongValue;
         mDoubleValue = builder.mDoubleValue;
-        mStringValue = builder.mStringValue;
-        mBinaryValue = builder.mBinaryValue;
+        if (builder.isSetStringValue()) {
+            mStringValue = builder.mStringValue;
+        } else {
+            mStringValue = kDefaultStringValue;
+        }
+        if (builder.isSetBinaryValue()) {
+            mBinaryValue = builder.mBinaryValue;
+        } else {
+            mBinaryValue = kDefaultBinaryValue;
+        }
         mEnumValue = builder.mEnumValue;
         mCompactValue = builder.mCompactValue_builder != null ? builder.mCompactValue_builder.build() : builder.mCompactValue;
     }
@@ -154,7 +172,7 @@ public class DefaultFields
     }
 
     public boolean hasStringValue() {
-        return mStringValue != null;
+        return true;
     }
 
     /**
@@ -165,7 +183,7 @@ public class DefaultFields
     }
 
     public boolean hasBinaryValue() {
-        return mBinaryValue != null;
+        return true;
     }
 
     /**
@@ -206,8 +224,8 @@ public class DefaultFields
             case 4: return true;
             case 5: return true;
             case 6: return true;
-            case 7: return hasStringValue();
-            case 8: return hasBinaryValue();
+            case 7: return true;
+            case 8: return true;
             case 9: return hasEnumValue();
             case 10: return hasCompactValue();
             default: return false;
@@ -223,8 +241,8 @@ public class DefaultFields
             case 4: return 1;
             case 5: return 1;
             case 6: return 1;
-            case 7: return hasStringValue() ? 1 : 0;
-            case 8: return hasBinaryValue() ? 1 : 0;
+            case 7: return 1;
+            case 8: return 1;
             case 9: return hasEnumValue() ? 1 : 0;
             case 10: return hasCompactValue() ? 1 : 0;
             default: return 0;
@@ -311,20 +329,16 @@ public class DefaultFields
         out.append(',');
         out.append("doubleValue:")
            .append(net.morimekta.util.Strings.asString(mDoubleValue));
-        if (hasStringValue()) {
-            out.append(',');
-            out.append("stringValue:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mStringValue))
-               .append('\"');
-        }
-        if (hasBinaryValue()) {
-            out.append(',');
-            out.append("binaryValue:")
-               .append("b64(")
-               .append(mBinaryValue.toBase64())
-               .append(')');
-        }
+        out.append(',');
+        out.append("stringValue:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mStringValue))
+           .append('\"');
+        out.append(',');
+        out.append("binaryValue:")
+           .append("b64(")
+           .append(mBinaryValue.toBase64())
+           .append(')');
         if (hasEnumValue()) {
             out.append(',');
             out.append("enumValue:")
@@ -361,19 +375,11 @@ public class DefaultFields
         c = Double.compare(mDoubleValue, other.mDoubleValue);
         if (c != 0) return c;
 
-        c = Boolean.compare(mStringValue != null, other.mStringValue != null);
+        c = mStringValue.compareTo(other.mStringValue);
         if (c != 0) return c;
-        if (mStringValue != null) {
-            c = mStringValue.compareTo(other.mStringValue);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mBinaryValue != null, other.mBinaryValue != null);
+        c = mBinaryValue.compareTo(other.mBinaryValue);
         if (c != 0) return c;
-        if (mBinaryValue != null) {
-            c = mBinaryValue.compareTo(other.mBinaryValue);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mEnumValue != null, other.mEnumValue != null);
         if (c != 0) return c;
@@ -420,20 +426,16 @@ public class DefaultFields
         length += writer.writeShort((short) 6);
         length += writer.writeDouble(mDoubleValue);
 
-        if (hasStringValue()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 7);
-            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mStringValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_1.length());
-            length += writer.writeBinary(tmp_1);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 7);
+        net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mStringValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_1.length());
+        length += writer.writeBinary(tmp_1);
 
-        if (hasBinaryValue()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 8);
-            length += writer.writeUInt32(mBinaryValue.length());
-            length += writer.writeBinary(mBinaryValue);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 8);
+        length += writer.writeUInt32(mBinaryValue.length());
+        length += writer.writeBinary(mBinaryValue);
 
         if (hasEnumValue()) {
             length += writer.writeByte((byte) 8);
@@ -632,6 +634,8 @@ public class DefaultFields
             mIntegerValue = kDefaultIntegerValue;
             mLongValue = kDefaultLongValue;
             mDoubleValue = kDefaultDoubleValue;
+            mStringValue = kDefaultStringValue;
+            mBinaryValue = kDefaultBinaryValue;
         }
 
         /**
@@ -654,14 +658,10 @@ public class DefaultFields
             mLongValue = base.mLongValue;
             optionals.set(5);
             mDoubleValue = base.mDoubleValue;
-            if (base.hasStringValue()) {
-                optionals.set(6);
-                mStringValue = base.mStringValue;
-            }
-            if (base.hasBinaryValue()) {
-                optionals.set(7);
-                mBinaryValue = base.mBinaryValue;
-            }
+            optionals.set(6);
+            mStringValue = base.mStringValue;
+            optionals.set(7);
+            mBinaryValue = base.mBinaryValue;
             if (base.hasEnumValue()) {
                 optionals.set(8);
                 mEnumValue = base.mEnumValue;
@@ -699,17 +699,13 @@ public class DefaultFields
             modified.set(5);
             mDoubleValue = from.getDoubleValue();
 
-            if (from.hasStringValue()) {
-                optionals.set(6);
-                modified.set(6);
-                mStringValue = from.getStringValue();
-            }
+            optionals.set(6);
+            modified.set(6);
+            mStringValue = from.getStringValue();
 
-            if (from.hasBinaryValue()) {
-                optionals.set(7);
-                modified.set(7);
-                mBinaryValue = from.getBinaryValue();
-            }
+            optionals.set(7);
+            modified.set(7);
+            mBinaryValue = from.getBinaryValue();
 
             if (from.hasEnumValue()) {
                 optionals.set(8);
@@ -1101,7 +1097,7 @@ public class DefaultFields
         public _Builder clearStringValue() {
             optionals.clear(6);
             modified.set(6);
-            mStringValue = null;
+            mStringValue = kDefaultStringValue;
             return this;
         }
 
@@ -1159,7 +1155,7 @@ public class DefaultFields
         public _Builder clearBinaryValue() {
             optionals.clear(7);
             modified.set(7);
-            mBinaryValue = null;
+            mBinaryValue = kDefaultBinaryValue;
             return this;
         }
 

@@ -9,6 +9,7 @@ public class CompactFields
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -8473304196623780023L;
 
+    private final static String kDefaultName = "";
     private final static int kDefaultId = 0;
 
     private final String mName;
@@ -20,19 +21,27 @@ public class CompactFields
     public CompactFields(String pName,
                          int pId,
                          String pLabel) {
-        mName = pName;
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         mId = pId;
         mLabel = pLabel;
     }
 
     private CompactFields(_Builder builder) {
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         mId = builder.mId;
         mLabel = builder.mLabel;
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -67,7 +76,7 @@ public class CompactFields
     @Override
     public boolean has(int key) {
         switch(key) {
-            case 1: return hasName();
+            case 1: return true;
             case 2: return true;
             case 3: return hasLabel();
             default: return false;
@@ -77,7 +86,7 @@ public class CompactFields
     @Override
     public int num(int key) {
         switch(key) {
-            case 1: return hasName() ? 1 : 0;
+            case 1: return 1;
             case 2: return 1;
             case 3: return hasLabel() ? 1 : 0;
             default: return 0;
@@ -97,12 +106,6 @@ public class CompactFields
     @Override
     public boolean jsonCompact() {
         boolean missing = false;
-        if (hasName()) {
-            if (missing) return false;
-        } else {
-            missing = true;
-        }
-        if (missing) return false;
         if (hasLabel()) {
             if (missing) return false;
         } else {
@@ -143,14 +146,11 @@ public class CompactFields
         StringBuilder out = new StringBuilder();
         out.append("{");
 
-        boolean first = true;
-        if (hasName()) {
-            first = false;
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        out.append(',');
         out.append("id:")
            .append(mId);
         if (hasLabel()) {
@@ -168,12 +168,8 @@ public class CompactFields
     public int compareTo(CompactFields other) {
         int c;
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
         c = Integer.compare(mId, other.mId);
         if (c != 0) return c;
@@ -192,13 +188,11 @@ public class CompactFields
     public int writeBinary(net.morimekta.util.io.BigEndianBinaryWriter writer) throws java.io.IOException {
         int length = 0;
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 1);
-            net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_1.length());
-            length += writer.writeBinary(tmp_1);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 1);
+        net.morimekta.util.Binary tmp_1 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_1.length());
+        length += writer.writeBinary(tmp_1);
 
         length += writer.writeByte((byte) 8);
         length += writer.writeShort((short) 2);
@@ -225,7 +219,7 @@ public class CompactFields
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         NAME(1, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ID(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "id", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        LABEL(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "label", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        LABEL(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "label", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ;
 
         private final int mKey;
@@ -362,6 +356,7 @@ public class CompactFields
         public _Builder() {
             optionals = new java.util.BitSet(3);
             modified = new java.util.BitSet(3);
+            mName = kDefaultName;
             mId = kDefaultId;
         }
 
@@ -373,10 +368,8 @@ public class CompactFields
         public _Builder(CompactFields base) {
             this();
 
-            if (base.hasName()) {
-                optionals.set(0);
-                mName = base.mName;
-            }
+            optionals.set(0);
+            mName = base.mName;
             optionals.set(1);
             mId = base.mId;
             if (base.hasLabel()) {
@@ -388,11 +381,9 @@ public class CompactFields
         @javax.annotation.Nonnull
         @Override
         public _Builder merge(CompactFields from) {
-            if (from.hasName()) {
-                optionals.set(0);
-                modified.set(0);
-                mName = from.getName();
-            }
+            optionals.set(0);
+            modified.set(0);
+            mName = from.getName();
 
             optionals.set(1);
             modified.set(1);
@@ -451,7 +442,7 @@ public class CompactFields
         public _Builder clearName() {
             optionals.clear(0);
             modified.set(0);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

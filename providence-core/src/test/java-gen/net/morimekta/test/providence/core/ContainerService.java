@@ -853,7 +853,7 @@ public class ContainerService {
 
         public enum _Field implements net.morimekta.providence.descriptor.PField {
             SUCCESS(0, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "success", net.morimekta.test.providence.core.CompactFields.provider(), null),
-            EF(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "ef", net.morimekta.test.providence.core.ExceptionFields.provider(), null),
+            EF(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "ef", net.morimekta.test.providence.core.ExceptionFields.provider(), null),
             ;
 
             private final int mKey;

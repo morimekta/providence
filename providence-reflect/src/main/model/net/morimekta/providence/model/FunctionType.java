@@ -12,9 +12,12 @@ public class FunctionType
     private final static long serialVersionUID = 6135149631417317609L;
 
     private final static boolean kDefaultOneWay = false;
+    private final static String kDefaultName = "";
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+                .build();
 
     private final String mDocumentation;
-    private final boolean mOneWay;
+    private final Boolean mOneWay;
     private final String mReturnType;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.FieldType> mParams;
@@ -31,17 +34,17 @@ public class FunctionType
                         java.util.List<net.morimekta.providence.model.FieldType> pExceptions,
                         java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
-        if (pOneWay != null) {
-            mOneWay = pOneWay;
-        } else {
-            mOneWay = kDefaultOneWay;
-        }
+        mOneWay = pOneWay;
         mReturnType = pReturnType;
-        mName = pName;
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         if (pParams != null) {
             mParams = com.google.common.collect.ImmutableList.copyOf(pParams);
         } else {
-            mParams = null;
+            mParams = kDefaultParams;
         }
         if (pExceptions != null) {
             mExceptions = com.google.common.collect.ImmutableList.copyOf(pExceptions);
@@ -59,11 +62,15 @@ public class FunctionType
         mDocumentation = builder.mDocumentation;
         mOneWay = builder.mOneWay;
         mReturnType = builder.mReturnType;
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         if (builder.isSetParams()) {
             mParams = builder.mParams.build();
         } else {
-            mParams = null;
+            mParams = kDefaultParams;
         }
         if (builder.isSetExceptions()) {
             mExceptions = builder.mExceptions.build();
@@ -89,14 +96,14 @@ public class FunctionType
     }
 
     public boolean hasOneWay() {
-        return true;
+        return mOneWay != null;
     }
 
     /**
      * @return The field value
      */
     public boolean isOneWay() {
-        return mOneWay;
+        return hasOneWay() ? mOneWay : kDefaultOneWay;
     }
 
     public boolean hasReturnType() {
@@ -111,7 +118,7 @@ public class FunctionType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -126,7 +133,7 @@ public class FunctionType
     }
 
     public boolean hasParams() {
-        return mParams != null;
+        return true;
     }
 
     /**
@@ -170,10 +177,10 @@ public class FunctionType
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 2: return true;
+            case 2: return hasOneWay();
             case 3: return hasReturnType();
-            case 4: return hasName();
-            case 5: return hasParams();
+            case 4: return true;
+            case 5: return true;
             case 6: return hasExceptions();
             case 7: return hasAnnotations();
             default: return false;
@@ -184,9 +191,9 @@ public class FunctionType
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return 1;
+            case 2: return hasOneWay() ? 1 : 0;
             case 3: return hasReturnType() ? 1 : 0;
-            case 4: return hasName() ? 1 : 0;
+            case 4: return 1;
             case 5: return numParams();
             case 6: return numExceptions();
             case 7: return numAnnotations();
@@ -256,27 +263,28 @@ public class FunctionType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        out.append("one_way:")
-           .append(mOneWay);
+        if (hasOneWay()) {
+            if (first) first = false;
+            else out.append(',');
+            out.append("one_way:")
+               .append(mOneWay);
+        }
         if (hasReturnType()) {
-            out.append(',');
+            if (first) first = false;
+            else out.append(',');
             out.append("return_type:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mReturnType))
                .append('\"');
         }
-        if (hasName()) {
-            out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
-        if (hasParams()) {
-            out.append(',');
-            out.append("params:")
-               .append(net.morimekta.util.Strings.asString(mParams));
-        }
+        if (!first) out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        out.append(',');
+        out.append("params:")
+           .append(net.morimekta.util.Strings.asString(mParams));
         if (hasExceptions()) {
             out.append(',');
             out.append("exceptions:")
@@ -302,8 +310,12 @@ public class FunctionType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mOneWay, other.mOneWay);
+        c = Boolean.compare(mOneWay != null, other.mOneWay != null);
         if (c != 0) return c;
+        if (mOneWay != null) {
+            c = Boolean.compare(mOneWay, other.mOneWay);
+            if (c != 0) return c;
+        }
 
         c = Boolean.compare(mReturnType != null, other.mReturnType != null);
         if (c != 0) return c;
@@ -312,19 +324,11 @@ public class FunctionType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mParams != null, other.mParams != null);
+        c = Integer.compare(mParams.hashCode(), other.mParams.hashCode());
         if (c != 0) return c;
-        if (mParams != null) {
-            c = Integer.compare(mParams.hashCode(), other.mParams.hashCode());
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mExceptions != null, other.mExceptions != null);
         if (c != 0) return c;
@@ -355,9 +359,11 @@ public class FunctionType
             length += writer.writeBinary(tmp_1);
         }
 
-        length += writer.writeByte((byte) 2);
-        length += writer.writeShort((short) 2);
-        length += writer.writeUInt8(mOneWay ? (byte) 1 : (byte) 0);
+        if (hasOneWay()) {
+            length += writer.writeByte((byte) 2);
+            length += writer.writeShort((short) 2);
+            length += writer.writeUInt8(mOneWay ? (byte) 1 : (byte) 0);
+        }
 
         if (hasReturnType()) {
             length += writer.writeByte((byte) 11);
@@ -367,22 +373,18 @@ public class FunctionType
             length += writer.writeBinary(tmp_2);
         }
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 4);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_3.length());
-            length += writer.writeBinary(tmp_3);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 4);
+        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_3.length());
+        length += writer.writeBinary(tmp_3);
 
-        if (hasParams()) {
-            length += writer.writeByte((byte) 15);
-            length += writer.writeShort((short) 5);
-            length += writer.writeByte((byte) 12);
-            length += writer.writeUInt32(mParams.size());
-            for (net.morimekta.providence.model.FieldType entry_4 : mParams) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_4);
-            }
+        length += writer.writeByte((byte) 15);
+        length += writer.writeShort((short) 5);
+        length += writer.writeByte((byte) 12);
+        length += writer.writeUInt32(mParams.size());
+        for (net.morimekta.providence.model.FieldType entry_4 : mParams) {
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_4);
         }
 
         if (hasExceptions()) {
@@ -422,13 +424,13 @@ public class FunctionType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ONE_WAY(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "one_way", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultOneWay)),
-        RETURN_TYPE(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "return_type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        ONE_WAY(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "one_way", net.morimekta.providence.descriptor.PPrimitive.BOOL.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultOneWay)),
+        RETURN_TYPE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "return_type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         PARAMS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "params", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        EXCEPTIONS(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "exceptions", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FieldType.provider()), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -567,7 +569,7 @@ public class FunctionType
         private java.util.BitSet modified;
 
         private String mDocumentation;
-        private boolean mOneWay;
+        private Boolean mOneWay;
         private String mReturnType;
         private String mName;
         private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.providence.model.FieldType> mParams;
@@ -580,7 +582,7 @@ public class FunctionType
         public _Builder() {
             optionals = new java.util.BitSet(7);
             modified = new java.util.BitSet(7);
-            mOneWay = kDefaultOneWay;
+            mName = kDefaultName;
             mParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mExceptions = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
@@ -598,20 +600,18 @@ public class FunctionType
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            optionals.set(1);
-            mOneWay = base.mOneWay;
+            if (base.hasOneWay()) {
+                optionals.set(1);
+                mOneWay = base.mOneWay;
+            }
             if (base.hasReturnType()) {
                 optionals.set(2);
                 mReturnType = base.mReturnType;
             }
-            if (base.hasName()) {
-                optionals.set(3);
-                mName = base.mName;
-            }
-            if (base.hasParams()) {
-                optionals.set(4);
-                mParams.addAll(base.mParams);
-            }
+            optionals.set(3);
+            mName = base.mName;
+            optionals.set(4);
+            mParams.addAll(base.mParams);
             if (base.hasExceptions()) {
                 optionals.set(5);
                 mExceptions.addAll(base.mExceptions);
@@ -631,9 +631,11 @@ public class FunctionType
                 mDocumentation = from.getDocumentation();
             }
 
-            optionals.set(1);
-            modified.set(1);
-            mOneWay = from.isOneWay();
+            if (from.hasOneWay()) {
+                optionals.set(1);
+                modified.set(1);
+                mOneWay = from.isOneWay();
+            }
 
             if (from.hasReturnType()) {
                 optionals.set(2);
@@ -641,18 +643,14 @@ public class FunctionType
                 mReturnType = from.getReturnType();
             }
 
-            if (from.hasName()) {
-                optionals.set(3);
-                modified.set(3);
-                mName = from.getName();
-            }
+            optionals.set(3);
+            modified.set(3);
+            mName = from.getName();
 
-            if (from.hasParams()) {
-                optionals.set(4);
-                modified.set(4);
-                mParams.clear();
-                mParams.addAll(from.getParams());
-            }
+            optionals.set(4);
+            modified.set(4);
+            mParams.clear();
+            mParams.addAll(from.getParams());
 
             if (from.hasExceptions()) {
                 optionals.set(5);
@@ -768,7 +766,7 @@ public class FunctionType
         public _Builder clearOneWay() {
             optionals.clear(1);
             modified.set(1);
-            mOneWay = kDefaultOneWay;
+            mOneWay = null;
             return this;
         }
 
@@ -778,7 +776,7 @@ public class FunctionType
          * @return The field value
          */
         public boolean getOneWay() {
-            return mOneWay;
+            return isSetOneWay() ? mOneWay : kDefaultOneWay;
         }
 
         /**
@@ -884,7 +882,7 @@ public class FunctionType
         public _Builder clearName() {
             optionals.clear(3);
             modified.set(3);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

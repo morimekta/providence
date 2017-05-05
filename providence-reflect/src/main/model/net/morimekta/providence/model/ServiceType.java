@@ -13,6 +13,10 @@ public class ServiceType
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 789757775761432238L;
 
+    private final static String kDefaultName = "";
+    private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FunctionType>()
+                .build();
+
     private final String mDocumentation;
     private final String mName;
     private final String mExtend;
@@ -27,12 +31,16 @@ public class ServiceType
                        java.util.List<net.morimekta.providence.model.FunctionType> pMethods,
                        java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
-        mName = pName;
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         mExtend = pExtend;
         if (pMethods != null) {
             mMethods = com.google.common.collect.ImmutableList.copyOf(pMethods);
         } else {
-            mMethods = null;
+            mMethods = kDefaultMethods;
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
@@ -43,12 +51,16 @@ public class ServiceType
 
     private ServiceType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         mExtend = builder.mExtend;
         if (builder.isSetMethods()) {
             mMethods = builder.mMethods.build();
         } else {
-            mMethods = null;
+            mMethods = kDefaultMethods;
         }
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
@@ -69,7 +81,7 @@ public class ServiceType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -95,7 +107,7 @@ public class ServiceType
     }
 
     public boolean hasMethods() {
-        return mMethods != null;
+        return true;
     }
 
     /**
@@ -124,9 +136,9 @@ public class ServiceType
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 2: return hasName();
+            case 2: return true;
             case 3: return hasExtend();
-            case 4: return hasMethods();
+            case 4: return true;
             case 5: return hasAnnotations();
             default: return false;
         }
@@ -136,7 +148,7 @@ public class ServiceType
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
+            case 2: return 1;
             case 3: return hasExtend() ? 1 : 0;
             case 4: return numMethods();
             case 5: return numAnnotations();
@@ -200,30 +212,23 @@ public class ServiceType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasName()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
+        if (!first) out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
         if (hasExtend()) {
-            if (first) first = false;
-            else out.append(',');
+            out.append(',');
             out.append("extend:")
                .append('\"')
                .append(net.morimekta.util.Strings.escape(mExtend))
                .append('\"');
         }
-        if (hasMethods()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("methods:")
-               .append(net.morimekta.util.Strings.asString(mMethods));
-        }
+        out.append(',');
+        out.append("methods:")
+           .append(net.morimekta.util.Strings.asString(mMethods));
         if (hasAnnotations()) {
-            if (!first) out.append(',');
+            out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
@@ -242,12 +247,8 @@ public class ServiceType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mExtend != null, other.mExtend != null);
         if (c != 0) return c;
@@ -256,12 +257,8 @@ public class ServiceType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mMethods != null, other.mMethods != null);
+        c = Integer.compare(mMethods.hashCode(), other.mMethods.hashCode());
         if (c != 0) return c;
-        if (mMethods != null) {
-            c = Integer.compare(mMethods.hashCode(), other.mMethods.hashCode());
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -285,13 +282,11 @@ public class ServiceType
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 2);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
         if (hasExtend()) {
             length += writer.writeByte((byte) 11);
@@ -301,14 +296,12 @@ public class ServiceType
             length += writer.writeBinary(tmp_3);
         }
 
-        if (hasMethods()) {
-            length += writer.writeByte((byte) 15);
-            length += writer.writeShort((short) 4);
-            length += writer.writeByte((byte) 12);
-            length += writer.writeUInt32(mMethods.size());
-            for (net.morimekta.providence.model.FunctionType entry_4 : mMethods) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_4);
-            }
+        length += writer.writeByte((byte) 15);
+        length += writer.writeShort((short) 4);
+        length += writer.writeByte((byte) 12);
+        length += writer.writeUInt32(mMethods.size());
+        for (net.morimekta.providence.model.FunctionType entry_4 : mMethods) {
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_4);
         }
 
         if (hasAnnotations()) {
@@ -338,11 +331,11 @@ public class ServiceType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        EXTEND(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        EXTEND(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "extend", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         METHODS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "methods", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.FunctionType.provider()), null),
-        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -490,6 +483,7 @@ public class ServiceType
         public _Builder() {
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
+            mName = kDefaultName;
             mMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -506,18 +500,14 @@ public class ServiceType
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasName()) {
-                optionals.set(1);
-                mName = base.mName;
-            }
+            optionals.set(1);
+            mName = base.mName;
             if (base.hasExtend()) {
                 optionals.set(2);
                 mExtend = base.mExtend;
             }
-            if (base.hasMethods()) {
-                optionals.set(3);
-                mMethods.addAll(base.mMethods);
-            }
+            optionals.set(3);
+            mMethods.addAll(base.mMethods);
             if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
@@ -533,11 +523,9 @@ public class ServiceType
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasName()) {
-                optionals.set(1);
-                modified.set(1);
-                mName = from.getName();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mName = from.getName();
 
             if (from.hasExtend()) {
                 optionals.set(2);
@@ -545,12 +533,10 @@ public class ServiceType
                 mExtend = from.getExtend();
             }
 
-            if (from.hasMethods()) {
-                optionals.set(3);
-                modified.set(3);
-                mMethods.clear();
-                mMethods.addAll(from.getMethods());
-            }
+            optionals.set(3);
+            modified.set(3);
+            mMethods.clear();
+            mMethods.addAll(from.getMethods());
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
@@ -663,7 +649,7 @@ public class ServiceType
         public _Builder clearName() {
             optionals.clear(1);
             modified.set(1);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

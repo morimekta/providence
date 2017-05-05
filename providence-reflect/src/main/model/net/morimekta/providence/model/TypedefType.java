@@ -11,6 +11,9 @@ public class TypedefType
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 5431583053440540554L;
 
+    private final static String kDefaultType = "";
+    private final static String kDefaultName = "";
+
     private final String mDocumentation;
     private final String mType;
     private final String mName;
@@ -21,14 +24,30 @@ public class TypedefType
                        String pType,
                        String pName) {
         mDocumentation = pDocumentation;
-        mType = pType;
-        mName = pName;
+        if (pType != null) {
+            mType = pType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
     }
 
     private TypedefType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mType = builder.mType;
-        mName = builder.mName;
+        if (builder.isSetType()) {
+            mType = builder.mType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
     }
 
     public boolean hasDocumentation() {
@@ -43,7 +62,7 @@ public class TypedefType
     }
 
     public boolean hasType() {
-        return mType != null;
+        return true;
     }
 
     /**
@@ -54,7 +73,7 @@ public class TypedefType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -68,8 +87,8 @@ public class TypedefType
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 2: return hasType();
-            case 3: return hasName();
+            case 2: return true;
+            case 3: return true;
             default: return false;
         }
     }
@@ -78,8 +97,8 @@ public class TypedefType
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return hasType() ? 1 : 0;
-            case 3: return hasName() ? 1 : 0;
+            case 2: return 1;
+            case 3: return 1;
             default: return 0;
         }
     }
@@ -134,21 +153,16 @@ public class TypedefType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasType()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("type:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mType))
-               .append('\"');
-        }
-        if (hasName()) {
-            if (!first) out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
+        if (!first) out.append(',');
+        out.append("type:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mType))
+           .append('\"');
+        out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
         out.append('}');
         return out.toString();
     }
@@ -164,19 +178,11 @@ public class TypedefType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mType != null, other.mType != null);
+        c = mType.compareTo(other.mType);
         if (c != 0) return c;
-        if (mType != null) {
-            c = mType.compareTo(other.mType);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
         return 0;
     }
@@ -193,21 +199,17 @@ public class TypedefType
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasType()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 2);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 3);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_3.length());
-            length += writer.writeBinary(tmp_3);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 3);
+        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_3.length());
+        length += writer.writeBinary(tmp_3);
 
         length += writer.writeByte((byte) 0);
         return length;
@@ -220,9 +222,9 @@ public class TypedefType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        TYPE(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        NAME(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        TYPE(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        NAME(3, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ;
 
         private final int mKey;
@@ -362,6 +364,8 @@ public class TypedefType
         public _Builder() {
             optionals = new java.util.BitSet(3);
             modified = new java.util.BitSet(3);
+            mType = kDefaultType;
+            mName = kDefaultName;
         }
 
         /**
@@ -376,14 +380,10 @@ public class TypedefType
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasType()) {
-                optionals.set(1);
-                mType = base.mType;
-            }
-            if (base.hasName()) {
-                optionals.set(2);
-                mName = base.mName;
-            }
+            optionals.set(1);
+            mType = base.mType;
+            optionals.set(2);
+            mName = base.mName;
         }
 
         @javax.annotation.Nonnull
@@ -395,17 +395,13 @@ public class TypedefType
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasType()) {
-                optionals.set(1);
-                modified.set(1);
-                mType = from.getType();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mType = from.getType();
 
-            if (from.hasName()) {
-                optionals.set(2);
-                modified.set(2);
-                mName = from.getName();
-            }
+            optionals.set(2);
+            modified.set(2);
+            mName = from.getName();
             return this;
         }
 
@@ -512,7 +508,7 @@ public class TypedefType
         public _Builder clearType() {
             optionals.clear(1);
             modified.set(1);
-            mType = null;
+            mType = kDefaultType;
             return this;
         }
 
@@ -570,7 +566,7 @@ public class TypedefType
         public _Builder clearName() {
             optionals.clear(2);
             modified.set(2);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 
@@ -669,11 +665,28 @@ public class TypedefType
 
         @Override
         public boolean valid() {
-            return true;
+            return optionals.get(1) &&
+                   optionals.get(2);
         }
 
         @Override
         public void validate() {
+            if (!valid()) {
+                java.util.LinkedList<String> missing = new java.util.LinkedList<>();
+
+                if (!optionals.get(1)) {
+                    missing.add("type");
+                }
+
+                if (!optionals.get(2)) {
+                    missing.add("name");
+                }
+
+                throw new java.lang.IllegalStateException(
+                        "Missing required fields " +
+                        String.join(",", missing) +
+                        " in message model.TypedefType");
+            }
         }
 
         @javax.annotation.Nonnull

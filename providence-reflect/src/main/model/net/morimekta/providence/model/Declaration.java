@@ -315,11 +315,11 @@ public class Declaration
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DECL_ENUM(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_enum", net.morimekta.providence.model.EnumType.provider(), null),
-        DECL_TYPEDEF(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_typedef", net.morimekta.providence.model.TypedefType.provider(), null),
-        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_struct", net.morimekta.providence.model.MessageType.provider(), null),
-        DECL_SERVICE(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_service", net.morimekta.providence.model.ServiceType.provider(), null),
-        DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "decl_const", net.morimekta.providence.model.ConstType.provider(), null),
+        DECL_ENUM(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_enum", net.morimekta.providence.model.EnumType.provider(), null),
+        DECL_TYPEDEF(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_typedef", net.morimekta.providence.model.TypedefType.provider(), null),
+        DECL_STRUCT(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_struct", net.morimekta.providence.model.MessageType.provider(), null),
+        DECL_SERVICE(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_service", net.morimekta.providence.model.ServiceType.provider(), null),
+        DECL_CONST(5, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "decl_const", net.morimekta.providence.model.ConstType.provider(), null),
         ;
 
         private final int mKey;

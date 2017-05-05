@@ -22,6 +22,8 @@ public class FieldType
 
     private final static int kDefaultKey = 0;
     private final static net.morimekta.providence.model.FieldRequirement kDefaultRequirement = net.morimekta.providence.model.FieldRequirement.DEFAULT;
+    private final static String kDefaultType = "";
+    private final static String kDefaultName = "";
 
     private final String mDocumentation;
     private final int mKey;
@@ -43,8 +45,16 @@ public class FieldType
         mDocumentation = pDocumentation;
         mKey = pKey;
         mRequirement = pRequirement;
-        mType = pType;
-        mName = pName;
+        if (pType != null) {
+            mType = pType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         mDefaultValue = pDefaultValue;
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
@@ -57,8 +67,16 @@ public class FieldType
         mDocumentation = builder.mDocumentation;
         mKey = builder.mKey;
         mRequirement = builder.mRequirement;
-        mType = builder.mType;
-        mName = builder.mName;
+        if (builder.isSetType()) {
+            mType = builder.mType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         mDefaultValue = builder.mDefaultValue;
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
@@ -101,7 +119,7 @@ public class FieldType
     }
 
     public boolean hasType() {
-        return mType != null;
+        return true;
     }
 
     /**
@@ -112,7 +130,7 @@ public class FieldType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -154,8 +172,8 @@ public class FieldType
             case 1: return hasDocumentation();
             case 2: return true;
             case 3: return hasRequirement();
-            case 4: return hasType();
-            case 5: return hasName();
+            case 4: return true;
+            case 5: return true;
             case 6: return hasDefaultValue();
             case 7: return hasAnnotations();
             default: return false;
@@ -168,8 +186,8 @@ public class FieldType
             case 1: return hasDocumentation() ? 1 : 0;
             case 2: return 1;
             case 3: return hasRequirement() ? 1 : 0;
-            case 4: return hasType() ? 1 : 0;
-            case 5: return hasName() ? 1 : 0;
+            case 4: return 1;
+            case 5: return 1;
             case 6: return hasDefaultValue() ? 1 : 0;
             case 7: return numAnnotations();
             default: return 0;
@@ -238,6 +256,7 @@ public class FieldType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
+        if (!first) out.append(',');
         out.append("key:")
            .append(mKey);
         if (hasRequirement()) {
@@ -245,20 +264,16 @@ public class FieldType
             out.append("requirement:")
                .append(mRequirement.asString());
         }
-        if (hasType()) {
-            out.append(',');
-            out.append("type:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mType))
-               .append('\"');
-        }
-        if (hasName()) {
-            out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
+        out.append(',');
+        out.append("type:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mType))
+           .append('\"');
+        out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
         if (hasDefaultValue()) {
             out.append(',');
             out.append("default_value:")
@@ -296,19 +311,11 @@ public class FieldType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mType != null, other.mType != null);
+        c = mType.compareTo(other.mType);
         if (c != 0) return c;
-        if (mType != null) {
-            c = mType.compareTo(other.mType);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mDefaultValue != null, other.mDefaultValue != null);
         if (c != 0) return c;
@@ -349,21 +356,17 @@ public class FieldType
             length += writer.writeInt(mRequirement.getValue());
         }
 
-        if (hasType()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 4);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 4);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 5);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_3.length());
-            length += writer.writeBinary(tmp_3);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 5);
+        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_3.length());
+        length += writer.writeBinary(tmp_3);
 
         if (hasDefaultValue()) {
             length += writer.writeByte((byte) 11);
@@ -400,13 +403,13 @@ public class FieldType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         KEY(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "key", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
-        REQUIREMENT(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "requirement", net.morimekta.providence.model.FieldRequirement.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultRequirement)),
+        REQUIREMENT(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "requirement", net.morimekta.providence.model.FieldRequirement.provider(), new net.morimekta.providence.descriptor.PDefaultValueProvider<>(kDefaultRequirement)),
         TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        DEFAULT_VALUE(6, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "default_value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        DEFAULT_VALUE(6, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "default_value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -568,6 +571,8 @@ public class FieldType
             optionals = new java.util.BitSet(7);
             modified = new java.util.BitSet(7);
             mKey = kDefaultKey;
+            mType = kDefaultType;
+            mName = kDefaultName;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
@@ -589,14 +594,10 @@ public class FieldType
                 optionals.set(2);
                 mRequirement = base.mRequirement;
             }
-            if (base.hasType()) {
-                optionals.set(3);
-                mType = base.mType;
-            }
-            if (base.hasName()) {
-                optionals.set(4);
-                mName = base.mName;
-            }
+            optionals.set(3);
+            mType = base.mType;
+            optionals.set(4);
+            mName = base.mName;
             if (base.hasDefaultValue()) {
                 optionals.set(5);
                 mDefaultValue = base.mDefaultValue;
@@ -626,17 +627,13 @@ public class FieldType
                 mRequirement = from.getRequirement();
             }
 
-            if (from.hasType()) {
-                optionals.set(3);
-                modified.set(3);
-                mType = from.getType();
-            }
+            optionals.set(3);
+            modified.set(3);
+            mType = from.getType();
 
-            if (from.hasName()) {
-                optionals.set(4);
-                modified.set(4);
-                mName = from.getName();
-            }
+            optionals.set(4);
+            modified.set(4);
+            mName = from.getName();
 
             if (from.hasDefaultValue()) {
                 optionals.set(5);
@@ -867,7 +864,7 @@ public class FieldType
         public _Builder clearType() {
             optionals.clear(3);
             modified.set(3);
-            mType = null;
+            mType = kDefaultType;
             return this;
         }
 
@@ -925,7 +922,7 @@ public class FieldType
         public _Builder clearName() {
             optionals.clear(4);
             modified.set(4);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

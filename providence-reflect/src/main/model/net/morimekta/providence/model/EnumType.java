@@ -13,6 +13,10 @@ public class EnumType
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = 5720337451968926862L;
 
+    private final static String kDefaultName = "";
+    private final static java.util.List<net.morimekta.providence.model.EnumValue> kDefaultValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.EnumValue>()
+                .build();
+
     private final String mDocumentation;
     private final String mName;
     private final java.util.List<net.morimekta.providence.model.EnumValue> mValues;
@@ -25,11 +29,15 @@ public class EnumType
                     java.util.List<net.morimekta.providence.model.EnumValue> pValues,
                     java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
-        mName = pName;
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
         if (pValues != null) {
             mValues = com.google.common.collect.ImmutableList.copyOf(pValues);
         } else {
-            mValues = null;
+            mValues = kDefaultValues;
         }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
@@ -40,11 +48,15 @@ public class EnumType
 
     private EnumType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mName = builder.mName;
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
         if (builder.isSetValues()) {
             mValues = builder.mValues.build();
         } else {
-            mValues = null;
+            mValues = kDefaultValues;
         }
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
@@ -65,7 +77,7 @@ public class EnumType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -80,7 +92,7 @@ public class EnumType
     }
 
     public boolean hasValues() {
-        return mValues != null;
+        return true;
     }
 
     /**
@@ -109,8 +121,8 @@ public class EnumType
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 2: return hasName();
-            case 3: return hasValues();
+            case 2: return true;
+            case 3: return true;
             case 4: return hasAnnotations();
             default: return false;
         }
@@ -120,7 +132,7 @@ public class EnumType
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 2: return hasName() ? 1 : 0;
+            case 2: return 1;
             case 3: return numValues();
             case 4: return numAnnotations();
             default: return 0;
@@ -180,22 +192,16 @@ public class EnumType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasName()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
-        if (hasValues()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("values:")
-               .append(net.morimekta.util.Strings.asString(mValues));
-        }
+        if (!first) out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        out.append(',');
+        out.append("values:")
+           .append(net.morimekta.util.Strings.asString(mValues));
         if (hasAnnotations()) {
-            if (!first) out.append(',');
+            out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
@@ -214,19 +220,11 @@ public class EnumType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mValues != null, other.mValues != null);
+        c = Integer.compare(mValues.hashCode(), other.mValues.hashCode());
         if (c != 0) return c;
-        if (mValues != null) {
-            c = Integer.compare(mValues.hashCode(), other.mValues.hashCode());
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -250,22 +248,18 @@ public class EnumType
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 2);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 2);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        if (hasValues()) {
-            length += writer.writeByte((byte) 15);
-            length += writer.writeShort((short) 3);
-            length += writer.writeByte((byte) 12);
-            length += writer.writeUInt32(mValues.size());
-            for (net.morimekta.providence.model.EnumValue entry_3 : mValues) {
-                length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_3);
-            }
+        length += writer.writeByte((byte) 15);
+        length += writer.writeShort((short) 3);
+        length += writer.writeByte((byte) 12);
+        length += writer.writeUInt32(mValues.size());
+        for (net.morimekta.providence.model.EnumValue entry_3 : mValues) {
+            length += net.morimekta.providence.serializer.rw.BinaryFormatUtils.writeMessage(writer, entry_3);
         }
 
         if (hasAnnotations()) {
@@ -295,10 +289,10 @@ public class EnumType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUES(3, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "values", net.morimekta.providence.descriptor.PList.provider(net.morimekta.providence.model.EnumValue.provider()), null),
-        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -443,6 +437,7 @@ public class EnumType
         public _Builder() {
             optionals = new java.util.BitSet(4);
             modified = new java.util.BitSet(4);
+            mName = kDefaultName;
             mValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
@@ -459,14 +454,10 @@ public class EnumType
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasName()) {
-                optionals.set(1);
-                mName = base.mName;
-            }
-            if (base.hasValues()) {
-                optionals.set(2);
-                mValues.addAll(base.mValues);
-            }
+            optionals.set(1);
+            mName = base.mName;
+            optionals.set(2);
+            mValues.addAll(base.mValues);
             if (base.hasAnnotations()) {
                 optionals.set(3);
                 mAnnotations.putAll(base.mAnnotations);
@@ -482,18 +473,14 @@ public class EnumType
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasName()) {
-                optionals.set(1);
-                modified.set(1);
-                mName = from.getName();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mName = from.getName();
 
-            if (from.hasValues()) {
-                optionals.set(2);
-                modified.set(2);
-                mValues.clear();
-                mValues.addAll(from.getValues());
-            }
+            optionals.set(2);
+            modified.set(2);
+            mValues.clear();
+            mValues.addAll(from.getValues());
 
             if (from.hasAnnotations()) {
                 optionals.set(3);
@@ -606,7 +593,7 @@ public class EnumType
         public _Builder clearName() {
             optionals.clear(1);
             modified.set(1);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 

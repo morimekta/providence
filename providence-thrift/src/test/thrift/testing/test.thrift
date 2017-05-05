@@ -27,7 +27,7 @@ enum Value {
 struct CompactFields {
     1: required string name
     2: required i32 id,
-    3: string label;
+    3: optional string label;
 } (compact = "")
 
 /*
@@ -112,9 +112,9 @@ struct DefaultValues {
     5:  i64           longValue    = 1234567891,
     6:  real          doubleValue  = 2.99792458e+8
     7:  string        stringValue  = "test\\twith escapes\\nand\\u00a0ũñı©ôðé.";
-    8:  binary        binaryValue;
+    8:  binary        binaryValue; // default binary not supported in thrift
     9:  Value         enumValue    = Value.SECOND;
-    10: CompactFields compactValue
+    10: CompactFields compactValue = {}
 }
 
 struct Containers {

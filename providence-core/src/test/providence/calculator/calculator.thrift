@@ -11,19 +11,19 @@ enum Operator {
 }
 
 union Operand {
-    1: Operation operation;
-    2: double number;
-    3: number.Imaginary imaginary;
+    1: optional Operation operation;
+    2: optional double number;
+    3: optional number.Imaginary imaginary;
 }
 
 struct Operation {
-    1: Operator operator;
-    2: list<Operand> operands;
+    1: optional Operator operator;
+    2: optional list<Operand> operands;
 }
 
 exception CalculateException {
     1: required string message;
-    2: Operation operation;
+    2: optional Operation operation;
 }
 
 service Calculator {

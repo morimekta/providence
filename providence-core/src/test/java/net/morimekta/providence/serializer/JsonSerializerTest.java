@@ -77,7 +77,7 @@ public class JsonSerializerTest {
     }
 
     @Test
-    public void testSerializer_OptionalFields() throws IOException {
+    public void testSerializer_RequiredFields() throws IOException {
         RequiredFields struct =
                 RequiredFields.builder()
                               .setBooleanValue(true)
@@ -137,13 +137,9 @@ public class JsonSerializerTest {
                          "    ]\n" +
                          "}");
         assertSerializer(lenient,
-                         struct.mutate()
-                               .clearBinaryValue()
-                               .clearStringValue()
-                               .clearCompactValue()
-                               .build(),
-                         "{\"1\":true,\"2\":123,\"3\":12345,\"4\":1234567890," +
-                         "\"5\":1234567890123456789,\"6\":12345.12345,\"9\":4181}");
+                         RequiredFields.builder().build(),
+                         "{\"1\":false,\"2\":0,\"3\":0,\"4\":0," +
+                         "\"5\":0,\"6\":0,\"7\":\"\",\"8\":\"\"}");
     }
 
     private <M extends PMessage<M,F>, F extends PField>

@@ -182,8 +182,8 @@ public class Operation
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        OPERATOR(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "operator", net.morimekta.test.providence.core.calculator.Operator.provider(), null),
-        OPERANDS(2, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "operands", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.calculator.Operand.provider()), null),
+        OPERATOR(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operator", net.morimekta.test.providence.core.calculator.Operator.provider(), null),
+        OPERANDS(2, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "operands", net.morimekta.providence.descriptor.PList.provider(net.morimekta.test.providence.core.calculator.Operand.provider()), null),
         ;
 
         private final int mKey;

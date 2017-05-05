@@ -11,6 +11,10 @@ public class ConstType
                    net.morimekta.providence.serializer.rw.BinaryWriter {
     private final static long serialVersionUID = -7030319550715264712L;
 
+    private final static String kDefaultType = "";
+    private final static String kDefaultName = "";
+    private final static String kDefaultValue = "";
+
     private final String mDocumentation;
     private final String mType;
     private final String mName;
@@ -25,9 +29,21 @@ public class ConstType
                      String pValue,
                      java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
-        mType = pType;
-        mName = pName;
-        mValue = pValue;
+        if (pType != null) {
+            mType = pType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (pName != null) {
+            mName = pName;
+        } else {
+            mName = kDefaultName;
+        }
+        if (pValue != null) {
+            mValue = pValue;
+        } else {
+            mValue = kDefaultValue;
+        }
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableMap.copyOf(pAnnotations);
         } else {
@@ -37,9 +53,21 @@ public class ConstType
 
     private ConstType(_Builder builder) {
         mDocumentation = builder.mDocumentation;
-        mType = builder.mType;
-        mName = builder.mName;
-        mValue = builder.mValue;
+        if (builder.isSetType()) {
+            mType = builder.mType;
+        } else {
+            mType = kDefaultType;
+        }
+        if (builder.isSetName()) {
+            mName = builder.mName;
+        } else {
+            mName = kDefaultName;
+        }
+        if (builder.isSetValue()) {
+            mValue = builder.mValue;
+        } else {
+            mValue = kDefaultValue;
+        }
         if (builder.isSetAnnotations()) {
             mAnnotations = builder.mAnnotations.build();
         } else {
@@ -59,7 +87,7 @@ public class ConstType
     }
 
     public boolean hasType() {
-        return mType != null;
+        return true;
     }
 
     /**
@@ -70,7 +98,7 @@ public class ConstType
     }
 
     public boolean hasName() {
-        return mName != null;
+        return true;
     }
 
     /**
@@ -81,7 +109,7 @@ public class ConstType
     }
 
     public boolean hasValue() {
-        return mValue != null;
+        return true;
     }
 
     /**
@@ -110,9 +138,9 @@ public class ConstType
     public boolean has(int key) {
         switch(key) {
             case 1: return hasDocumentation();
-            case 4: return hasType();
-            case 5: return hasName();
-            case 6: return hasValue();
+            case 4: return true;
+            case 5: return true;
+            case 6: return true;
             case 7: return hasAnnotations();
             default: return false;
         }
@@ -122,9 +150,9 @@ public class ConstType
     public int num(int key) {
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
-            case 4: return hasType() ? 1 : 0;
-            case 5: return hasName() ? 1 : 0;
-            case 6: return hasValue() ? 1 : 0;
+            case 4: return 1;
+            case 5: return 1;
+            case 6: return 1;
             case 7: return numAnnotations();
             default: return 0;
         }
@@ -186,32 +214,23 @@ public class ConstType
                .append(net.morimekta.util.Strings.escape(mDocumentation))
                .append('\"');
         }
-        if (hasType()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("type:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mType))
-               .append('\"');
-        }
-        if (hasName()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("name:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mName))
-               .append('\"');
-        }
-        if (hasValue()) {
-            if (first) first = false;
-            else out.append(',');
-            out.append("value:")
-               .append('\"')
-               .append(net.morimekta.util.Strings.escape(mValue))
-               .append('\"');
-        }
+        if (!first) out.append(',');
+        out.append("type:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mType))
+           .append('\"');
+        out.append(',');
+        out.append("name:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mName))
+           .append('\"');
+        out.append(',');
+        out.append("value:")
+           .append('\"')
+           .append(net.morimekta.util.Strings.escape(mValue))
+           .append('\"');
         if (hasAnnotations()) {
-            if (!first) out.append(',');
+            out.append(',');
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
@@ -230,26 +249,14 @@ public class ConstType
             if (c != 0) return c;
         }
 
-        c = Boolean.compare(mType != null, other.mType != null);
+        c = mType.compareTo(other.mType);
         if (c != 0) return c;
-        if (mType != null) {
-            c = mType.compareTo(other.mType);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mName != null, other.mName != null);
+        c = mName.compareTo(other.mName);
         if (c != 0) return c;
-        if (mName != null) {
-            c = mName.compareTo(other.mName);
-            if (c != 0) return c;
-        }
 
-        c = Boolean.compare(mValue != null, other.mValue != null);
+        c = mValue.compareTo(other.mValue);
         if (c != 0) return c;
-        if (mValue != null) {
-            c = mValue.compareTo(other.mValue);
-            if (c != 0) return c;
-        }
 
         c = Boolean.compare(mAnnotations != null, other.mAnnotations != null);
         if (c != 0) return c;
@@ -273,29 +280,23 @@ public class ConstType
             length += writer.writeBinary(tmp_1);
         }
 
-        if (hasType()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 4);
-            net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_2.length());
-            length += writer.writeBinary(tmp_2);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 4);
+        net.morimekta.util.Binary tmp_2 = net.morimekta.util.Binary.wrap(mType.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_2.length());
+        length += writer.writeBinary(tmp_2);
 
-        if (hasName()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 5);
-            net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_3.length());
-            length += writer.writeBinary(tmp_3);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 5);
+        net.morimekta.util.Binary tmp_3 = net.morimekta.util.Binary.wrap(mName.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_3.length());
+        length += writer.writeBinary(tmp_3);
 
-        if (hasValue()) {
-            length += writer.writeByte((byte) 11);
-            length += writer.writeShort((short) 6);
-            net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(mValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            length += writer.writeUInt32(tmp_4.length());
-            length += writer.writeBinary(tmp_4);
-        }
+        length += writer.writeByte((byte) 11);
+        length += writer.writeShort((short) 6);
+        net.morimekta.util.Binary tmp_4 = net.morimekta.util.Binary.wrap(mValue.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        length += writer.writeUInt32(tmp_4.length());
+        length += writer.writeBinary(tmp_4);
 
         if (hasAnnotations()) {
             length += writer.writeByte((byte) 13);
@@ -324,11 +325,11 @@ public class ConstType
     }
 
     public enum _Field implements net.morimekta.providence.descriptor.PField {
-        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
+        DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         TYPE(4, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "type", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.DEFAULT, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
         private final int mKey;
@@ -474,6 +475,9 @@ public class ConstType
         public _Builder() {
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
+            mType = kDefaultType;
+            mName = kDefaultName;
+            mValue = kDefaultValue;
             mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
         }
 
@@ -489,18 +493,12 @@ public class ConstType
                 optionals.set(0);
                 mDocumentation = base.mDocumentation;
             }
-            if (base.hasType()) {
-                optionals.set(1);
-                mType = base.mType;
-            }
-            if (base.hasName()) {
-                optionals.set(2);
-                mName = base.mName;
-            }
-            if (base.hasValue()) {
-                optionals.set(3);
-                mValue = base.mValue;
-            }
+            optionals.set(1);
+            mType = base.mType;
+            optionals.set(2);
+            mName = base.mName;
+            optionals.set(3);
+            mValue = base.mValue;
             if (base.hasAnnotations()) {
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
@@ -516,23 +514,17 @@ public class ConstType
                 mDocumentation = from.getDocumentation();
             }
 
-            if (from.hasType()) {
-                optionals.set(1);
-                modified.set(1);
-                mType = from.getType();
-            }
+            optionals.set(1);
+            modified.set(1);
+            mType = from.getType();
 
-            if (from.hasName()) {
-                optionals.set(2);
-                modified.set(2);
-                mName = from.getName();
-            }
+            optionals.set(2);
+            modified.set(2);
+            mName = from.getName();
 
-            if (from.hasValue()) {
-                optionals.set(3);
-                modified.set(3);
-                mValue = from.getValue();
-            }
+            optionals.set(3);
+            modified.set(3);
+            mValue = from.getValue();
 
             if (from.hasAnnotations()) {
                 optionals.set(4);
@@ -645,7 +637,7 @@ public class ConstType
         public _Builder clearType() {
             optionals.clear(1);
             modified.set(1);
-            mType = null;
+            mType = kDefaultType;
             return this;
         }
 
@@ -703,7 +695,7 @@ public class ConstType
         public _Builder clearName() {
             optionals.clear(2);
             modified.set(2);
-            mName = null;
+            mName = kDefaultName;
             return this;
         }
 
@@ -761,7 +753,7 @@ public class ConstType
         public _Builder clearValue() {
             optionals.clear(3);
             modified.set(3);
-            mValue = null;
+            mValue = kDefaultValue;
             return this;
         }
 

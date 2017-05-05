@@ -61,157 +61,158 @@ public class ThriftProgramParserTest {
         assertThat(debugString(program),
                    is(equalToLines(
                            "program_name = \"calculator\"\n" +
-                                    "includes = [\n" +
-                                    "  \"number.thrift\"\n" +
-                                    "]\n" +
-                                    "namespaces = {\n" +
-                                    "  \"java\": \"net.morimekta.test.calculator\"\n" +
-                                    "}\n" +
-                                    "decl = [\n" +
-                                    "  {\n" +
-                                    "    decl_enum = {\n" +
-                                    "      documentation = \"Block comment on type.\"\n" +
-                                    "      name = \"Operator\"\n" +
-                                    "      values = [\n" +
-                                    "        {\n" +
-                                    "          documentation = \"line comment on enum\"\n" +
-                                    "          name = \"IDENTITY\"\n" +
-                                    "          value = 1\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          documentation = \"Block comment on enum.\"\n" +
-                                    "          name = \"ADD\"\n" +
-                                    "          value = 2\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          name = \"SUBTRACT\"\n" +
-                                    "          value = 3\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          name = \"MULTIPLY\"\n" +
-                                    "          value = 4\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          name = \"DIVIDE\"\n" +
-                                    "          value = 5\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_struct = {\n" +
-                                    "      documentation = \"Line comment on type.\"\n" +
-                                    "      variant = UNION\n" +
-                                    "      name = \"Operand\"\n" +
-                                    "      fields = [\n" +
-                                    "        {\n" +
-                                    "          documentation = \"Double line\\ncomment on field.\"\n" +
-                                    "          key = 1\n" +
-                                    "          type = \"Operation\"\n" +
-                                    "          name = \"operation\"\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
-                                    "          key = 2\n" +
-                                    "          type = \"double\"\n" +
-                                    "          name = \"number\"\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          key = 3\n" +
-                                    "          type = \"number.Imaginary\"\n" +
-                                    "          name = \"imaginary\"\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_struct = {\n" +
-                                    "      name = \"Operation\"\n" +
-                                    "      fields = [\n" +
-                                    "        {\n" +
-                                    "          key = 1\n" +
-                                    "          type = \"Operator\"\n" +
-                                    "          name = \"operator\"\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          key = 2\n" +
-                                    "          type = \"list<Operand>\"\n" +
-                                    "          name = \"operands\"\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "      annotations = {\n" +
-                                    "        \"compact\": \"\"\n" +
-                                    "      }\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_struct = {\n" +
-                                    "      variant = EXCEPTION\n" +
-                                    "      name = \"CalculateException\"\n" +
-                                    "      fields = [\n" +
-                                    "        {\n" +
-                                    "          key = 1\n" +
-                                    "          requirement = REQUIRED\n" +
-                                    "          type = \"string\"\n" +
-                                    "          name = \"message\"\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          key = 2\n" +
-                                    "          type = \"Operation\"\n" +
-                                    "          name = \"operation\"\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_service = {\n" +
-                                    "      name = \"Calculator\"\n" +
-                                    "      methods = [\n" +
-                                    "        {\n" +
-                                    "          documentation = \"Block comment on method.\"\n" +
-                                    "          one_way = false\n" +
-                                    "          return_type = \"Operand\"\n" +
-                                    "          name = \"calculate\"\n" +
-                                    "          params = [\n" +
-                                    "            {\n" +
-                                    "              key = 1\n" +
-                                    "              type = \"Operation\"\n" +
-                                    "              name = \"op\"\n" +
-                                    "            }\n" +
-                                    "          ]\n" +
-                                    "          exceptions = [\n" +
-                                    "            {\n" +
-                                    "              key = 1\n" +
-                                    "              type = \"CalculateException\"\n" +
-                                    "              name = \"ce\"\n" +
-                                    "            }\n" +
-                                    "          ]\n" +
-                                    "        },\n" +
-                                    "        {\n" +
-                                    "          documentation = \"line comment on method.\"\n" +
-                                    "          one_way = true\n" +
-                                    "          name = \"iamalive\"\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_const = {\n" +
-                                    "      documentation = \"Block comment on constant.\"\n" +
-                                    "      type = \"Operand\"\n" +
-                                    "      name = \"PI\"\n" +
-                                    "      value = \"{\\\"number\\\":3.141592}\"\n" +
-                                    "    }\n" +
-                                    "  },\n" +
-                                    "  {\n" +
-                                    "    decl_const = {\n" +
-                                    "      documentation = \"Line comment on constant.\"\n" +
-                                    "      type = \"set<Operator>\"\n" +
-                                    "      name = \"kComplexOperands\"\n" +
-                                    "      value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
-                                    "    }\n" +
-                                    "  }\n" +
-                                    "]")));
+                           "includes = [\n" +
+                           "  \"number.thrift\"\n" +
+                           "]\n" +
+                           "namespaces = {\n" +
+                           "  \"java\": \"net.morimekta.test.calculator\"\n" +
+                           "}\n" +
+                           "decl = [\n" +
+                           "  {\n" +
+                           "    decl_enum = {\n" +
+                           "      documentation = \"Block comment on type.\"\n" +
+                           "      name = \"Operator\"\n" +
+                           "      values = [\n" +
+                           "        {\n" +
+                           "          documentation = \"line comment on enum\"\n" +
+                           "          name = \"IDENTITY\"\n" +
+                           "          value = 1\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          documentation = \"Block comment on enum.\"\n" +
+                           "          name = \"ADD\"\n" +
+                           "          value = 2\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          name = \"SUBTRACT\"\n" +
+                           "          value = 3\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          name = \"MULTIPLY\"\n" +
+                           "          value = 4\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          name = \"DIVIDE\"\n" +
+                           "          value = 5\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_struct = {\n" +
+                           "      documentation = \"Line comment on type.\"\n" +
+                           "      variant = UNION\n" +
+                           "      name = \"Operand\"\n" +
+                           "      fields = [\n" +
+                           "        {\n" +
+                           "          documentation = \"Double line\\ncomment on field.\"\n" +
+                           "          key = 1\n" +
+                           "          type = \"Operation\"\n" +
+                           "          name = \"operation\"\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          documentation = \"Block comment\\n - with formatting.\\nOn field.\"\n" +
+                           "          key = 2\n" +
+                           "          type = \"double\"\n" +
+                           "          name = \"number\"\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          key = 3\n" +
+                           "          type = \"number.Imaginary\"\n" +
+                           "          name = \"imaginary\"\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_struct = {\n" +
+                           "      name = \"Operation\"\n" +
+                           "      fields = [\n" +
+                           "        {\n" +
+                           "          key = 1\n" +
+                           "          type = \"Operator\"\n" +
+                           "          name = \"operator\"\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          key = 2\n" +
+                           "          type = \"list<Operand>\"\n" +
+                           "          name = \"operands\"\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "      annotations = {\n" +
+                           "        \"compact\": \"\"\n" +
+                           "      }\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_struct = {\n" +
+                           "      variant = EXCEPTION\n" +
+                           "      name = \"CalculateException\"\n" +
+                           "      fields = [\n" +
+                           "        {\n" +
+                           "          key = 1\n" +
+                           "          requirement = REQUIRED\n" +
+                           "          type = \"string\"\n" +
+                           "          name = \"message\"\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          key = 2\n" +
+                           "          type = \"Operation\"\n" +
+                           "          name = \"operation\"\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_service = {\n" +
+                           "      name = \"Calculator\"\n" +
+                           "      methods = [\n" +
+                           "        {\n" +
+                           "          documentation = \"Block comment on method.\"\n" +
+                           "          return_type = \"Operand\"\n" +
+                           "          name = \"calculate\"\n" +
+                           "          params = [\n" +
+                           "            {\n" +
+                           "              key = 1\n" +
+                           "              type = \"Operation\"\n" +
+                           "              name = \"op\"\n" +
+                           "            }\n" +
+                           "          ]\n" +
+                           "          exceptions = [\n" +
+                           "            {\n" +
+                           "              key = 1\n" +
+                           "              type = \"CalculateException\"\n" +
+                           "              name = \"ce\"\n" +
+                           "            }\n" +
+                           "          ]\n" +
+                           "        },\n" +
+                           "        {\n" +
+                           "          documentation = \"line comment on method.\"\n" +
+                           "          one_way = true\n" +
+                           "          name = \"iamalive\"\n" +
+                           "          params = [\n" +
+                           "          ]\n" +
+                           "        }\n" +
+                           "      ]\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_const = {\n" +
+                           "      documentation = \"Block comment on constant.\"\n" +
+                           "      type = \"Operand\"\n" +
+                           "      name = \"PI\"\n" +
+                           "      value = \"{\\\"number\\\":3.141592}\"\n" +
+                           "    }\n" +
+                           "  },\n" +
+                           "  {\n" +
+                           "    decl_const = {\n" +
+                           "      documentation = \"Line comment on constant.\"\n" +
+                           "      type = \"set<Operator>\"\n" +
+                           "      name = \"kComplexOperands\"\n" +
+                           "      value = \"[Operator.MULTIPLY,Operator.DIVIDE]\"\n" +
+                           "    }\n" +
+                           "  }\n" +
+                           "]")));
     }
 
     @Test
@@ -335,7 +336,6 @@ public class ThriftProgramParserTest {
                      "      methods = [\n" +
                      "        {\n" +
                      "          documentation = \"Block comment on method.\"\n" +
-                     "          one_way = false\n" +
                      "          return_type = \"Operand\"\n" +
                      "          name = \"calculate\"\n" +
                      "          params = [\n" +
@@ -357,6 +357,8 @@ public class ThriftProgramParserTest {
                      "          documentation = \"line comment on method.\"\n" +
                      "          one_way = true\n" +
                      "          name = \"iamalive\"\n" +
+                     "          params = [\n" +
+                     "          ]\n" +
                      "        }\n" +
                      "      ]\n" +
                      "    }\n" +
@@ -491,7 +493,6 @@ public class ThriftProgramParserTest {
                                 "      name = \"Srv\"\n" +
                                 "      methods = [\n" +
                                 "        {\n" +
-                                "          one_way = false\n" +
                                 "          name = \"method\"\n" +
                                 "          params = [\n" +
                                 "            {\n" +
@@ -508,7 +509,6 @@ public class ThriftProgramParserTest {
                                 "          }\n" +
                                 "        },\n" +
                                 "        {\n" +
-                                "          one_way = false\n" +
                                 "          name = \"method2\"\n" +
                                 "          params = [\n" +
                                 "            {\n" +
@@ -583,7 +583,6 @@ public class ThriftProgramParserTest {
                      "      name = \"AutoParam\"\n" +
                      "      methods = [\n" +
                      "        {\n" +
-                     "          one_way = false\n" +
                      "          return_type = \"i32\"\n" +
                      "          name = \"method\"\n" +
                      "          params = [\n" +
