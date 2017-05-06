@@ -20,10 +20,13 @@
  */
 package net.morimekta.providence.serializer;
 
+import net.morimekta.providence.PApplicationExceptionType;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
 
 import com.google.common.base.MoreObjects;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Wrapper for a JsonException into a SerializerException.
@@ -32,7 +35,7 @@ public class JsonSerializerException extends SerializerException {
     private final static long serialVersionUID = 1493883783445793582L;
 
     public JsonSerializerException(JsonException e) {
-        super(e.getMessage(), e);
+        super(e, e.getMessage());
     }
 
     @Override
@@ -63,16 +66,22 @@ public class JsonSerializerException extends SerializerException {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(getClass())
-                          .omitNullValues()
-                          .addValue(getMessage())
-                          .add("lineNo", getLineNo())
-                          .add("linePos", getLinePos())
-                          .add("method", getMethodName())
-                          .add("type", getCallType())
-                          .add("seq", getSequenceNo())
-                          .add("exception", getExceptionType())
-                          .toString();
+        MoreObjects.ToStringHelper tsh = MoreObjects.toStringHelper(getClass())
+                                                    .omitNullValues()
+                                                    .addValue(getMessage());
+        if (getExceptionType() != PApplicationExceptionType.PROTOCOL_ERROR) {
+            tsh.add("e", getExceptionType());
+        }
+        if (!isNullOrEmpty(getLine())) {
+            tsh.add("line", getLineNo())
+               .add("pos", getLinePos());
+        }
+        if (!isNullOrEmpty(getMethodName())) {
+            tsh.add("method", getMethodName())
+               .add("type", getCallType())
+               .add("seq", getSequenceNo());
+        }
+        return tsh.toString();
     }
 
     @Override
@@ -81,7 +90,7 @@ public class JsonSerializerException extends SerializerException {
             return String.format("JSON Error%s on line %d: %s%n" +
                                  "# %s%n" +
                                  "#%s%s",
-                                 getMethodName() == null ? "" : " in " + getMethodName(),
+                                 getMethodName().isEmpty() ? "" : " in " + getMethodName(),
                                  getLineNo(),
                                  getLocalizedMessage(),
                                  getLine(),
