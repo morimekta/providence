@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 /**
  * Provider of serializers based on a string mime-type.
  */
-@FunctionalInterface
 public interface SerializerProvider {
     /**
      * Get serializer for the given mime-type
@@ -41,7 +40,5 @@ public interface SerializerProvider {
      * @return The default serializer.
      */
     @Nonnull
-    default Serializer getDefault() {
-        return getSerializer(BinarySerializer.MIME_TYPE);
-    }
+    Serializer getDefault();
 }
