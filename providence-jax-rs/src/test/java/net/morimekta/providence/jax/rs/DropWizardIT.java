@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static net.morimekta.providence.jax.rs.test_web_app.TestNetUtil.factory;
-import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.test.providence.jax.rs.calculator.Operand.withImaginary;
 import static net.morimekta.test.providence.jax.rs.calculator.Operand.withNumber;
 import static org.hamcrest.CoreMatchers.equalTo;

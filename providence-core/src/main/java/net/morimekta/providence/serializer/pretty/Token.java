@@ -18,11 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.util.pretty;
+package net.morimekta.providence.serializer.pretty;
 
 import net.morimekta.util.Slice;
 import net.morimekta.util.Strings;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -76,14 +77,16 @@ public class Token extends Slice {
         if (o == null || !getClass().equals(o.getClass())) return false;
 
         Token other = (Token) o;
-        return super.equals(o) &&
+        return asString().equals(other.asString()) &&
+               (len == other.len) &&
+               (off == other.off) &&
                (lineNo == other.lineNo) &&
                (linePos == other.linePos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Token.class, fb, off, len, lineNo, linePos);
+        return Objects.hash(Token.class, Arrays.hashCode(fb), off, len, lineNo, linePos);
     }
 
     public int getLineNo() {
@@ -193,15 +196,31 @@ public class Token extends Slice {
                         i += 4;  // skipping 4 more characters.
                         break;
                     case '0':
+                        if (l == i + 1 ||
+                            (l > i + 1 && (tmp.charAt(i + 1) < '0' || tmp.charAt(i + 1) > '9'))) {
+                            // allow single digit '\0' if the next char is not a digit.
+                            out.append('\0');
+                            break;
+                        }
                     case '1':
                         if (l < (i + 3)) {
+                            if (strict) {
+                                throw new IllegalArgumentException("Invalid escaped char: '\\" +
+                                                                   Strings.escape(tmp.substring(i)) +
+                                                                   "'");
+                            }
                             out.append('?');
                         } else {
-                            String n = tmp.substring(i, i + 2);
+                            String n = tmp.substring(i, i + 3);
                             try {
                                 int cp = Integer.parseInt(n, 8);
                                 out.append((char) cp);
                             } catch (NumberFormatException e) {
+                                if (strict) {
+                                    throw new IllegalArgumentException("Invalid escaped char: '\\" +
+                                                                       Strings.escape(n) +
+                                                                       "'");
+                                }
                                 out.append('?');
                             }
                         }
@@ -234,6 +253,6 @@ public class Token extends Slice {
 
     @Override
     public String toString() {
-        return String.format("Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len);
+        return String.format("Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len - 1);
     }
 }

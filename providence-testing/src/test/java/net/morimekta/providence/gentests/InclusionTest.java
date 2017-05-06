@@ -1,7 +1,7 @@
 package net.morimekta.providence.gentests;
 
 import net.morimekta.providence.model.ProgramType;
-import net.morimekta.providence.util.PrettyPrinter;
+import net.morimekta.providence.util.ProvidenceHelper;
 import net.morimekta.test.providence.testing.includes.Program;
 
 import org.junit.Test;
@@ -29,6 +29,6 @@ public class InclusionTest {
                      "  decl = [\n" +
                      "  ]\n" +
                      "}",
-                     PrettyPrinter.debugString(prog));
+                     ProvidenceHelper.debugString(prog));
     }
 }

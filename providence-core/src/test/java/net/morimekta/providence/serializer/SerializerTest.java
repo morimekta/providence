@@ -29,7 +29,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.streams.MessageCollectors;
 import net.morimekta.providence.streams.MessageStreams;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util_internal.EqualToMessage;
 import net.morimekta.providence.util_internal.MessageGenerator;
 import net.morimekta.test.providence.core.CompactFields;

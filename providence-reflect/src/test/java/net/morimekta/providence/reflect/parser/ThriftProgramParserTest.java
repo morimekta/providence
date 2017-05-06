@@ -30,7 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.TreeSet;
 
-import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ExtraMatchers.equalToLines;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static org.hamcrest.CoreMatchers.is;

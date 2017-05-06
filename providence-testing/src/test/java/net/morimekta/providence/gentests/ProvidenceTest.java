@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
-import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;

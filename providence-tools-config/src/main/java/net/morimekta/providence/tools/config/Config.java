@@ -5,7 +5,7 @@ import net.morimekta.console.args.ArgumentParser;
 import net.morimekta.console.util.STTY;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.SerializerException;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 import java.io.IOException;
 

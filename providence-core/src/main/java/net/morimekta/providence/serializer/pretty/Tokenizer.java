@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package net.morimekta.providence.util.pretty;
+package net.morimekta.providence.serializer.pretty;
 
 import net.morimekta.util.Slice;
 import net.morimekta.util.Strings;
@@ -93,7 +93,7 @@ public class Tokenizer extends InputStream {
         this.readOffset = -1;
 
         this.lineNo = 1;
-        this.linePos = -1;
+        this.linePos = 0;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Tokenizer extends InputStream {
         int ret = buffer[readOffset];
         if (ret == '\n') {
             ++lineNo;
-            linePos = -1;
+            linePos = 0;
         } else {
             ++linePos;
         }
@@ -334,14 +334,16 @@ public class Tokenizer extends InputStream {
             if (lastByte < 0) {
                 throw new TokenizerException("Unexpected end of stream after negative indicator")
                         .setLineNo(lineNo)
-                        .setLinePos(startLinePos + len)
+                        .setLinePos(startLinePos)
+                        .setLength(len + 1)
                         .setLine(getLine(lineNo));
             }
             ++len;
             if (!(lastByte == '.' || (lastByte >= '0' && lastByte <= '9'))) {
                 throw new TokenizerException("No decimal after negative indicator")
                         .setLineNo(lineNo)
-                        .setLinePos(startLinePos + len)
+                        .setLinePos(startLinePos)
+                        .setLength(len + 1)
                         .setLine(getLine(lineNo));
             }
         } else if (lastByte == '0') {
@@ -361,8 +363,8 @@ public class Tokenizer extends InputStream {
                 }
 
                 return new Token(buffer, startOffset, len, lineNo, startLinePos);
-            } else if ('1' <= lastByte && lastByte <= '7') {
-                // Octals have *1* 0 in front.
+            } else if ('0' <= lastByte && lastByte <= '7') {
+                // Octals have 0 in front, and then more digits.
                 while ((lastByte = read()) != -1) {
                     if ((lastByte >= '0' && lastByte <= '7')) {
                         ++len;
@@ -405,6 +407,7 @@ public class Tokenizer extends InputStream {
         }
         // exponent part.
         if (lastByte == 'e' || lastByte == 'E') {
+            int llByte = lastByte;
             ++len;
             // numbers are terminated by first non-numeric character.
             lastByte = read();
@@ -417,6 +420,15 @@ public class Tokenizer extends InputStream {
                     lastByte = read();
                 }
 
+                if (lastByte < '0' || '9' < lastByte) {
+                    throw new TokenizerException("Missing exponent value")
+                            .setLineNo(lineNo)
+                            .setLinePos(startLinePos)
+                            .setLength(len + 1)
+                            .setLine(getLine(lineNo));
+
+                }
+
                 while (lastByte >= '0' && lastByte <= '9') {
                     ++len;
                     // numbers are terminated by first non-numeric character.
@@ -425,24 +437,27 @@ public class Tokenizer extends InputStream {
                         break;
                     }
                 }
+            } else {
+                unread();
+                --len;
+                lastByte = llByte;
             }
         }
-        Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
 
         // A number must be terminated correctly: End of stream, space, newline
-        // or a symbol that may be after a value: ':', ',' ';' '}' ')'.
+        // or a symbol that may be after a value: ':', ',' ';' '}' ')' ']', '#'.
         if (lastByte < 0 || lastByte == ' ' || lastByte == '\t' || lastByte == '\n' || lastByte == '\r' ||
             lastByte == Token.kKeyValueSep || lastByte == Token.kMessageEnd || lastByte == Token.kListEnd ||
             lastByte == Token.kLineSep1 || lastByte == Token.kLineSep2 || lastByte == Token.kShellComment) {
             if (Token.kSymbols.indexOf(lastByte) >= 0) {
                 unread();
             }
-            return token;
+            return new Token(buffer, startOffset, len, lineNo, startLinePos);
         } else {
-            throw new TokenizerException(token, "Invalid termination of number: '%s%s'",
-                                         Strings.escape(token.asString()),
-                                         escapeChar(lastByte))
-                    .setLinePos(startLinePos + len)
+            ++len;
+            Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
+            throw new TokenizerException(token, "Invalid termination of number: '%s'",
+                                         Strings.escape(token.asString()))
                     .setLine(getLine(lineNo));
         }
     }
@@ -505,7 +520,7 @@ public class Tokenizer extends InputStream {
         // reset read position.
         readOffset = -1;
         lineNo = 1;
-        linePos = -1;
+        linePos = 0;
 
         try {
             int line = theLine;

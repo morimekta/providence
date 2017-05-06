@@ -32,9 +32,9 @@ import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.util.pretty.Token;
-import net.morimekta.providence.util.pretty.Tokenizer;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Tokenizer;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 
 import java.io.ByteArrayInputStream;

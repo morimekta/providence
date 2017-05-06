@@ -1,9 +1,9 @@
 package net.morimekta.providence.config;
 
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.util.pretty.Token;
-import net.morimekta.providence.util.pretty.Tokenizer;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Tokenizer;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 import java.util.HashMap;
 import java.util.HashSet;

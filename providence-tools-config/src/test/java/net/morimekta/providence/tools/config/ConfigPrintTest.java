@@ -72,10 +72,9 @@ public class ConfigPrintTest extends ConfigTestBase {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(
-                "Error in base_service.cfg on line 8, pos 15:\n" +
-                "    No such reference 'http_porr'\n" +
+                "Error in base_service.cfg on line 8, pos 16: No such reference 'http_porr'\n" +
                 "        port = http_porr\n" +
-                "---------------^\n"));
+                "---------------^^^^^^^^^\n"));
         assertThat(exitCode, is(1));
     }
 }

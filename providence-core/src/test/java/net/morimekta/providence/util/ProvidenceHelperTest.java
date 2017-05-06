@@ -7,12 +7,13 @@ import net.morimekta.test.providence.core.calculator.Operation;
 import net.morimekta.test.providence.core.calculator.Operator;
 import net.morimekta.test.providence.core.number.Imaginary;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ProvidenceHelperTest {
     @Test
-    public void testFromJsonResource_compact() throws SerializerException, IOException {
+    public void testFromJsonResource_compact() throws IOException {
         Operation op = net.morimekta.providence.util.ProvidenceHelper.fromJsonResource("/json/calculator/compact.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -49,7 +50,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testFromJsonResource_named() throws SerializerException, IOException {
+    public void testFromJsonResource_named() throws IOException {
         Operation op = net.morimekta.providence.util.ProvidenceHelper.fromJsonResource("/json/calculator/named.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -78,7 +79,7 @@ public class ProvidenceHelperTest {
     }
 
     @Test
-    public void testFromJsonResource_pretty() throws SerializerException, IOException {
+    public void testFromJsonResource_pretty() throws IOException {
         Operation op = net.morimekta.providence.util.ProvidenceHelper.fromJsonResource("/json/calculator/pretty.json", Operation.kDescriptor);
 
         Operation expected = Operation.builder()
@@ -119,4 +120,84 @@ public class ProvidenceHelperTest {
             assertEquals(debugString(compact.get(i)), debugString(pretty.get(i)));
         }
     }
+
+    private Operation mOperation;
+
+    @Before
+    public void setUp() {
+        mOperation = Operation.builder()
+                              .setOperator(Operator.MULTIPLY)
+                              .addToOperands(Operand.builder()
+                                                    .setOperation(Operation.builder()
+                                                                           .setOperator(Operator.ADD)
+                                                                           .addToOperands(Operand.builder()
+                                                                                                 .setNumber(1234)
+                                                                                                 .build())
+                                                                           .addToOperands(Operand.builder()
+                                                                                                 .setNumber(4.321)
+                                                                                                 .build())
+                                                                           .build())
+                                                    .build())
+                              .addToOperands(Operand.builder()
+                                                    .setImaginary(Imaginary.builder()
+                                                                           .setV(1.7)
+                                                                           .setI(-2.0)
+                                                                           .build())
+                                                    .build())
+                              .build();
+    }
+
+    @Test
+    public void testDebugString() {
+        assertEquals("operator = MULTIPLY\n" +
+                     "operands = [\n" +
+                     "  {\n" +
+                     "    operation = {\n" +
+                     "      operator = ADD\n" +
+                     "      operands = [\n" +
+                     "        {\n" +
+                     "          number = 1234\n" +
+                     "        },\n" +
+                     "        {\n" +
+                     "          number = 4.321\n" +
+                     "        }\n" +
+                     "      ]\n" +
+                     "    }\n" +
+                     "  },\n" +
+                     "  {\n" +
+                     "    imaginary = {\n" +
+                     "      v = 1.7\n" +
+                     "      i = -2\n" +
+                     "    }\n" +
+                     "  }\n" +
+                     "]", ProvidenceHelper.debugString(mOperation));
+    }
+
+    @Test
+    public void testParseDebugString() {
+        assertEquals(mOperation, ProvidenceHelper.parseDebugString(
+                "operator = MULTIPLY\n" +
+                "operands = [\n" +
+                "  {\n" +
+                "    operation = {\n" +
+                "      operator = ADD\n" +
+                "      operands = [\n" +
+                "        {\n" +
+                "          number = 1234\n" +
+                "        },\n" +
+                "        {\n" +
+                "          number = 4.321\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  },\n" +
+                "  {\n" +
+                "    imaginary = {\n" +
+                "      v = 1.7\n" +
+                "      i = -2\n" +
+                "    }\n" +
+                "  }\n" +
+                "]", Operation.kDescriptor));
+    }
+
 }

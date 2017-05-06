@@ -30,7 +30,7 @@ import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
-import net.morimekta.providence.util.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IndentedPrintWriter;

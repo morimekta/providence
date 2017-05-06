@@ -22,8 +22,8 @@ package net.morimekta.providence.config;
 
 import net.morimekta.config.ConfigException;
 import net.morimekta.providence.serializer.SerializerException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.providence.util.TypeRegistry;
-import net.morimekta.providence.util.pretty.TokenizerException;
 import net.morimekta.test.providence.config.Database;
 import net.morimekta.test.providence.config.RefConfig1;
 import net.morimekta.test.providence.config.RefMerge;
@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static net.morimekta.providence.testing.ProvidenceMatchers.equalToMessage;
-import static net.morimekta.providence.util.PrettyPrinter.debugString;
+import static net.morimekta.providence.util.ProvidenceHelper.debugString;
 import static net.morimekta.testing.ResourceUtils.copyResourceTo;
 import static net.morimekta.testing.ResourceUtils.getResourceAsString;
 import static net.morimekta.testing.ResourceUtils.writeContentTo;
@@ -539,86 +539,72 @@ public class ProvidenceConfigTest {
 
         assertParseFailure("No message in config: test.cfg",
                            "");
-        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
-                           "    Invalid termination of number: '1f'\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Invalid termination of number: '1f'\n" +
                            "def { n = 1f }\n" +
-                           "-----------^",
+                           "----------^^",
                            "def { n = 1f }");
-        assertParseFailure("Error in test.cfg on line 3, pos 0:\n" +
-                           "    Defines already complete or passed.\n" +
+        assertParseFailure("Error in test.cfg on line 3, pos 1: Defines already complete or passed.\n" +
                            "def { y = \"baa\"}\n" +
-                           "^",
+                           "^^^",
                            "include \"a.cfg\" as a\n" +
                            "def { n = 1 }\n" +
                            "def { y = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 2, pos 0:\n" +
-                           "    Expected the token 'as', but got 'config.Database'\n" +
+        assertParseFailure("Error in test.cfg on line 2, pos 1: Expected the token 'as', but got 'config.Database'\n" +
                            "config.Database { driver = \"baa\"}\n" +
-                           "^",
+                           "^^^^^^^^^^^^^^^",
                            "include \"a.cfg\"\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 16:\n" +
-                           "    Expected token 'as' after included file \"a.cfg\".\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 17: Expected token 'as' after included file \"a.cfg\".\n" +
                            "include \"a.cfg\" ass db\n" +
-                           "----------------^",
+                           "----------------^^^",
                            "include \"a.cfg\" ass db\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 2, pos 0:\n" +
-                           "    Expected Include alias, but got 'config.Database'\n" +
+        assertParseFailure("Error in test.cfg on line 2, pos 1: Expected Include alias, but got 'config.Database'\n" +
                            "config.Database { driver = \"baa\"}\n" +
-                           "^",
+                           "^^^^^^^^^^^^^^^",
                            "include \"a.cfg\" as\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 19:\n" +
-                           "    Alias \"def\" is a reserved word.\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 20: Alias \"def\" is a reserved word.\n" +
                            "include \"a.cfg\" as def\n" +
-                           "-------------------^",
+                           "-------------------^^^",
                            "include \"a.cfg\" as def\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 2, pos 19:\n" +
-                           "    Alias \"a\" is already used.\n" +
+        assertParseFailure("Error in test.cfg on line 2, pos 20: Alias \"a\" is already used.\n" +
                            "include \"a.cfg\" as a\n" +
                            "-------------------^",
                            "include \"a.cfg\" as a\n" +
                            "include \"a.cfg\" as a\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
-                           "    Unexpected line break in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 12: Unexpected line break in literal\n" +
                            "def { s = \"\n" +
                            "-----------^",
                            "def { s = \"\n\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
-                           "    Unescaped non-printable char in literal: '\\t'\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 12: Unescaped non-printable char in literal: '\\t'\n" +
                            "def { s = \"\t\"}\n" +
                            "-----------^",
                            "def { s = \"\t\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 11:\n" +
-                           "    Unexpected end of stream in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 12: Unexpected end of stream in literal\n" +
                            "def { s = \"a\n" +
                            "-----------^",
                            "def { s = \"a");
-        assertParseFailure("Error in test.cfg on line 1, pos 6:\n" +
-                           "    Reference name '1' is not valid.\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 7: Reference name '1' is not valid.\n" +
                            "def { 1 = \"boo\" }\n" +
                            "------^",
                            "def { 1 = \"boo\" }");
-        assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
-                           "    Unexpected token '44'. Expected include, defines or message type\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 1: Unexpected token '44'. Expected include, defines or message type\n" +
                            "44\n" +
-                           "^",
+                           "^^",
                            "44");
-        assertParseFailure("Error in test.cfg on line 1, pos 0:\n" +
-                           "    Unexpected token 'boo'. Expected include, defines or message type\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 1: Unexpected token 'boo'. Expected include, defines or message type\n" +
                            "boo {\n" +
-                           "^",
+                           "^^^",
                            "boo {\n" +
                            "}\n");
 
         // Parsing that only fails in strict mode.
-        assertParseFailure("Error in test.cfg on line 1, pos 10:\n" +
-                           "    Unknown enum identifier: boo.En\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unknown enum identifier: boo.En\n" +
                            "def { s = boo.En.VAL }\n" +
-                           "----------^",
+                           "----------^^^^^^^^^^",
                            "def { s = boo.En.VAL }", true);
     }
 

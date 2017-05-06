@@ -40,9 +40,9 @@ import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 import net.morimekta.providence.descriptor.PServiceMethod;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.util.pretty.Token;
-import net.morimekta.providence.util.pretty.Tokenizer;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.Token;
+import net.morimekta.providence.serializer.pretty.Tokenizer;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.CountingOutputStream;
@@ -424,7 +424,7 @@ public class PrettySerializer extends Serializer {
                     throw new TokenizerException(token, "Expected string literal, got '%s'", token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-                return token.decodeLiteral();
+                return token.decodeLiteral(strict);
             }
             case BINARY: {
                 tokenizer.expectSymbol("binary content start", Token.kMethodStart);

@@ -24,17 +24,24 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.serializer.JsonSerializer;
+import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.providence.streams.MessageStreams;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
- * Convenience methods for reading providence messages from resources.
+ * Convenience methods for handling providence messages.
  */
 public class ProvidenceHelper {
     public static <Message extends PMessage<Message, Field>, Field extends PField>
@@ -71,6 +78,46 @@ public class ProvidenceHelper {
         return (ArrayList<Message>) MessageStreams.resource(path, serializer, descriptor)
                                                   .collect(Collectors.toList());
     }
+
+    /**
+     * Prints a pretty formatted string that is optimized for diffing (mainly
+     * for testing and debugging).
+     *
+     * @param message The message to stringify.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The resulting string.
+     */
+    @Nonnull
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    String debugString(Message message) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DEBUG_STRING_SERIALIZER.serialize(baos, message);
+        return new String(baos.toByteArray(), UTF_8);
+    }
+
+    /**
+     * Parses a pretty formatted string, and makes exceptions unchecked.
+     *
+     * @param string The message string to parse.
+     * @param descriptor The message descriptor.
+     * @param <Message> The message type.
+     * @param <Field> The message field type.
+     * @return The parsed message.
+     */
+    @Nonnull
+    public static <Message extends PMessage<Message, Field>, Field extends PField>
+    Message parseDebugString(String string, PMessageDescriptor<Message, Field> descriptor) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(string.getBytes(UTF_8));
+            return DEBUG_STRING_SERIALIZER.deserialize(bais, descriptor);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+
+    private static final PrettySerializer DEBUG_STRING_SERIALIZER = new PrettySerializer().debug();
 
     private ProvidenceHelper() {}
 }

@@ -88,13 +88,13 @@ public class JsonSerializerException extends SerializerException {
     public String asString() {
         if (getLine() != null) {
             return String.format("JSON Error%s on line %d: %s%n" +
-                                 "# %s%n" +
-                                 "#%s%s",
+                                 "%s%n" +
+                                 "%s%s",
                                  getMethodName().isEmpty() ? "" : " in " + getMethodName(),
                                  getLineNo(),
                                  getLocalizedMessage(),
                                  getLine(),
-                                 Strings.times("-", getLinePos()),
+                                 Strings.times("-", getLinePos() - 1),
                                  Strings.times("^", getLen()));
         } else {
             return String.format("JSON Error: %s", getLocalizedMessage());

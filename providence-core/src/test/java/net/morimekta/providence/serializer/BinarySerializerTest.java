@@ -30,7 +30,7 @@ import net.morimekta.providence.test_internal.Containers;
 import net.morimekta.providence.test_internal.OptionalFields;
 import net.morimekta.providence.test_internal.RequiredFields;
 import net.morimekta.providence.util.ProvidenceHelper;
-import net.morimekta.providence.util.pretty.TokenizerException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 import net.morimekta.test.providence.core.calculator.CalculateException;
 import net.morimekta.util.Binary;
 import net.morimekta.util.io.BigEndianBinaryWriter;
