@@ -537,7 +537,7 @@ public class ProvidenceConfigTest {
         writeContentTo("config.Database {}", temp.newFile("a.cfg"));
         writeContentTo("config.Database {}", temp.newFile("b.cfg"));
 
-        assertParseFailure("No message in config: test.cfg",
+        assertParseFailure("Error: No message in config: test.cfg",
                            "");
         assertParseFailure("Error in test.cfg on line 1, pos 11: Invalid termination of number: '1f'\n" +
                            "def { n = 1f }\n" +
@@ -575,17 +575,17 @@ public class ProvidenceConfigTest {
                            "include \"a.cfg\" as a\n" +
                            "include \"a.cfg\" as a\n" +
                            "config.Database { driver = \"baa\"}\n");
-        assertParseFailure("Error in test.cfg on line 1, pos 12: Unexpected line break in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected line break in literal\n" +
                            "def { s = \"\n" +
-                           "-----------^",
+                           "----------^",
                            "def { s = \"\n\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 12: Unescaped non-printable char in literal: '\\t'\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unescaped non-printable char in literal: '\\t'\n" +
                            "def { s = \"\t\"}\n" +
-                           "-----------^",
+                           "----------^^",
                            "def { s = \"\t\"}");
-        assertParseFailure("Error in test.cfg on line 1, pos 12: Unexpected end of stream in literal\n" +
+        assertParseFailure("Error in test.cfg on line 1, pos 11: Unexpected end of stream in literal\n" +
                            "def { s = \"a\n" +
-                           "-----------^",
+                           "----------^^",
                            "def { s = \"a");
         assertParseFailure("Error in test.cfg on line 1, pos 7: Reference name '1' is not valid.\n" +
                            "def { 1 = \"boo\" }\n" +
