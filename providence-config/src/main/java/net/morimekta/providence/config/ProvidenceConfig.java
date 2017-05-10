@@ -441,7 +441,7 @@ public class ProvidenceConfig {
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
                 token = tokenizer.expectStringLiteral("file to be included");
-                String includedFilePath = token.decodeLiteral();
+                String includedFilePath = token.decodeLiteral(strict);
                 PMessage included;
                 File includedFile;
                 try {
@@ -528,7 +528,7 @@ public class ProvidenceConfig {
             } else if (token.isInteger()) {
                 context.setReference(name, Long.parseLong(token.asString()));
             } else if (token.isStringLiteral()) {
-                context.setReference(name, token.decodeLiteral());
+                context.setReference(name, token.decodeLiteral(strict));
             } else if (TRUE.equalsIgnoreCase(token.asString())) {
                 context.setReference(name, true);
             } else if (FALSE.equalsIgnoreCase(token.asString())) {
@@ -974,7 +974,7 @@ public class ProvidenceConfig {
                     if (next.isReferenceIdentifier()) {
                         return resolve(context, next, tokenizer, descriptor);
                     } else if (next.isStringLiteral()) {
-                        return next.decodeLiteral();
+                        return next.decodeLiteral(strict);
                     }
                     break;
                 case BINARY:

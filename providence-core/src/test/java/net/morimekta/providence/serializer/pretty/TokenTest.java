@@ -1,7 +1,5 @@
 package net.morimekta.providence.serializer.pretty;
 
-import net.morimekta.util.Strings;
-
 import org.junit.Test;
 
 import java.io.IOException;
@@ -10,6 +8,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class TokenTest {
     @Test
@@ -55,10 +54,36 @@ public class TokenTest {
     @Test
     public void testLiteral() {
         assertThat(token("\"foo\"").isStringLiteral(), is(true));
-        assertThat(token("\"foo\"").decodeLiteral(), is("foo"));
+        assertThat(token("\"foo\"").decodeLiteral(true), is("foo"));
         assertThat(token("\"foo\"").asString(), is("\"foo\""));
-        assertThat(Strings.escape(token("\"\\b\\f\\n\\r\\t\\\"\\\'\\\\\\u2021\\\"\\177\\033\"").decodeLiteral()),
-                   is("\\b\\f\\n\\r\\t\\\"\\\'\\\\\u2021\\\"\\177\\033"));
+        assertThat(token("\"\\b\\f\\n\\r\\0\\t\\\"\\\'\\\\\\u2021\\\"\\177\\033\\0\"").decodeLiteral(true),
+                   is("\b\f\n\r\0\t\"\'\\\u2021\"\177\033\0"));
+    }
+
+    @Test
+    public void testBadLiteral() {
+        assertBadLiteral("\"\\02\"", "Invalid escaped char: '\\02'");
+        assertBadLiteral("\"\\03b\"", "Invalid escaped char: '\\03b'");
+        assertBadLiteral("\"\\g\"", "Invalid escaped char: '\\g'");
+        assertBadLiteral("\"\u0003\"", "Unescaped string char: '\\003'");
+        assertBadLiteral("\"\\u00gl\"", "Invalid escaped unicode char: '\\u00gl'");
+        assertBadLiteral("\"\\u32\"", "Invalid escaped unicode char: '\\u32'");
+
+        assertThat(token("\"\\02\"").decodeLiteral(false), is("?"));
+        assertThat(token("\"\\03b\"").decodeLiteral(false), is("?"));
+        assertThat(token("\"\\g\"").decodeLiteral(false), is("?"));
+        assertThat(token("\"\u0003\"").decodeLiteral(false), is("?"));
+        assertThat(token("\"\\u00gl\"").decodeLiteral(false), is("?"));
+        assertThat(token("\"\\u32\"").decodeLiteral(false), is("?"));
+    }
+
+    private void assertBadLiteral(String str, String message) {
+        try {
+            token(str).decodeLiteral(true);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is(message));
+        }
     }
 
     private Token token(String str) {

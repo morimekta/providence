@@ -42,7 +42,8 @@ public class TokenizerException extends SerializerException {
     private int    length;
 
     public TokenizerException(TokenizerException e, File file) {
-        super(e);
+        super(e.getMessage());
+        initCause(e);
         setLine(e.getLine());
         setLineNo(e.getLineNo());
         setLinePos(e.getLinePos());
@@ -161,7 +162,7 @@ public class TokenizerException extends SerializerException {
                                      getMessage());
             }
         } else {
-            return getMessage();
+            return String.format("Error: %s", getMessage());
         }
     }
 

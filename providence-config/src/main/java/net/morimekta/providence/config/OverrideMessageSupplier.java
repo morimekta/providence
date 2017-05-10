@@ -157,7 +157,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     if (tokenizer.hasNext()) {
                         Token next = tokenizer.next();
                         if (next.isStringLiteral()) {
-                            containedBuilder.set(field.getKey(), next.decodeLiteral());
+                            containedBuilder.set(field.getKey(), next.decodeLiteral(strict));
                             if (tokenizer.hasNext()) {
                                 throw new ConfigException("Garbage after string value [%s]: '%s'",
                                                           override.getKey(),
@@ -299,7 +299,7 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     throw new TokenizerException(token, "Expected string literal, got '%s'", token.asString())
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-                return token.decodeLiteral();
+                return token.decodeLiteral(strict);
             }
             case BINARY: {
                 switch (token.asString()) {

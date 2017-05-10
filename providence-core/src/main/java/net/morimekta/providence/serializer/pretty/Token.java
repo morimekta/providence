@@ -131,17 +131,6 @@ public class Token extends Slice {
                       .matches();
     }
 
-
-    /**
-     * Get the whole slice as a string.
-     *
-     * @return Slice decoded as UTF_8 string.
-     */
-    public String decodeLiteral() {
-        return decodeLiteral(false);
-    }
-
-
     /**
      * Get the whole slice as a string.
      *
@@ -183,6 +172,11 @@ public class Token extends Slice {
                         break;
                     case 'u':
                         if (l < i + 5) {
+                            if (strict) {
+                                throw new IllegalArgumentException("Invalid escaped unicode char: '\\" +
+                                                                   Strings.escape(tmp.substring(i)) +
+                                                                   "'");
+                            }
                             out.append('?');
                         } else {
                             String n = tmp.substring(i + 1, i + 5);
@@ -190,6 +184,11 @@ public class Token extends Slice {
                                 int cp = Integer.parseInt(n, 16);
                                 out.append((char) cp);
                             } catch (NumberFormatException e) {
+                                if (strict) {
+                                    throw new IllegalArgumentException("Invalid escaped unicode char: '\\u" +
+                                                                       Strings.escape(n) +
+                                                                       "'");
+                                }
                                 out.append('?');
                             }
                         }
@@ -202,6 +201,7 @@ public class Token extends Slice {
                             out.append('\0');
                             break;
                         }
+                        // Intentional fallthrough
                     case '1':
                         if (l < (i + 3)) {
                             if (strict) {
