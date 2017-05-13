@@ -34,16 +34,16 @@ import java.util.Set;
  */
 public class CService extends PService implements CAnnotatedDescriptor {
     private final Map<String, String> annotations;
-    private String comment;
+    private String                    documentation;
 
-    public CService(String comment,
-                    String packageName,
+    public CService(String documentation,
+                    String programName,
                     String name,
                     PServiceProvider extendsService,
                     Collection<CServiceMethod> methods,
                     Map<String, String> annotations) {
-        super(packageName, name, extendsService, methods);
-        this.comment = comment;
+        super(programName, name, extendsService, methods);
+        this.documentation = documentation;
         this.annotations = annotations;
     }
 
@@ -99,6 +99,6 @@ public class CService extends PService implements CAnnotatedDescriptor {
 
     @Override
     public String getDocumentation() {
-        return comment;
+        return documentation;
     }
 }

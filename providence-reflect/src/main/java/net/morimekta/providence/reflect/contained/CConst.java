@@ -32,11 +32,11 @@ import java.util.Map;
  * First stage before we have a totally separate CConst from the CField contained type class.
  */
 public class CConst extends CField {
-    public CConst(@Nullable String comment,
+    public CConst(@Nullable String documentation,
                   @Nonnull String name,
                   @Nonnull PDescriptorProvider typeProvider,
                   @Nonnull PValueProvider defaultValue,
                   @Nullable Map<String, String> annotations) {
-        super(comment, -1, PRequirement.REQUIRED, name, typeProvider, defaultValue, annotations);
+        super(documentation, -1, PRequirement.REQUIRED, name, typeProvider, defaultValue, annotations);
     }
 }

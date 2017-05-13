@@ -24,8 +24,10 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
-import java.util.Collections;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -36,21 +38,25 @@ import java.util.Set;
  */
 public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor {
     private final int                         value;
+    @Nonnull
     private final String                      name;
+    @Nonnull
     private final PEnumDescriptor<CEnumValue> type;
+    @Nullable
     private final String                      comment;
+    @Nonnull
     private final Map<String, String>         annotations;
 
-    public CEnumValue(String comment,
+    public CEnumValue(@Nullable String comment,
                       int value,
-                      String name,
-                      PEnumDescriptor<CEnumValue> type,
-                      Map<String, String> annotations) {
+                      @Nonnull String name,
+                      @Nonnull PEnumDescriptor<CEnumValue> type,
+                      @Nullable Map<String, String> annotations) {
         this.comment = comment;
         this.value = value;
         this.name = name;
         this.type = type;
-        this.annotations = annotations;
+        this.annotations = annotations == null ? ImmutableMap.of() : ImmutableMap.copyOf(annotations);
     }
 
     @Override
@@ -84,26 +90,17 @@ public class CEnumValue implements PEnumValue<CEnumValue>, CAnnotatedDescriptor 
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
-        if (annotations != null) {
-            return annotations.keySet();
-        }
-        return Collections.EMPTY_SET;
+        return annotations.keySet();
     }
 
     @Override
     public boolean hasAnnotation(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.containsKey(name);
-        }
-        return false;
+        return annotations.containsKey(name);
     }
 
     @Override
     public String getAnnotationValue(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.get(name);
-        }
-        return null;
+        return annotations.get(name);
     }
 
     @Nonnull

@@ -25,6 +25,7 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
+import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.serializer.PrettySerializer;
 import net.morimekta.providence.serializer.json.JsonCompactible;
 import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
@@ -96,8 +97,8 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
                 return value;
             } else if (field.hasDefaultValue()) {
                 return field.getDefaultValue();
-            } else if (field.getDescriptor() instanceof PPrimitive &&
-                       ((PPrimitive) field.getDescriptor()).isNativePrimitive()) {
+            } else if ((field.getDescriptor() instanceof PPrimitive && ((PPrimitive) field.getDescriptor()).isNativePrimitive()) ||
+                       (field.getRequirement() != PRequirement.OPTIONAL)) {
                 return field.getDescriptor().getDefaultValue();
             }
         }
@@ -157,6 +158,7 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
         int hash = getClass().hashCode();
         for (Map.Entry<Integer, Object> entry : values.entrySet()) {
             PField field = descriptor().getField(entry.getKey());
+            hash *= 29251;
             hash += Objects.hash(field, entry.getValue());
         }
         return hash;

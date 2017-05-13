@@ -50,8 +50,8 @@ public class CStructDescriptor extends PStructDescriptor<CStruct, CField> implem
     private final Map<String, String>  annotations;
     private final boolean              compactible;
 
-    public CStructDescriptor(String comment, String packageName, String name, List<CField> fields, Map<String, String> annotations) {
-        super(packageName, name, new _Factory(), false);
+    public CStructDescriptor(String comment, String programName, String name, List<CField> fields, Map<String, String> annotations) {
+        super(programName, name, new _Factory(), false);
         ((_Factory) getFactoryInternal()).setType(this);
 
         this.comment = comment;

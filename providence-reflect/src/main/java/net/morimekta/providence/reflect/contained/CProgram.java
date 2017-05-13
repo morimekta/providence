@@ -37,7 +37,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public class CProgram {
-    private final String                       comment;
+    private final String                       documentation;
     private final String                       programName;
     private final Set<String>                  includedPrograms;
     private final List<String>                 includedFiles;
@@ -47,7 +47,7 @@ public class CProgram {
     private final List<CService>               services;
     private final List<CConst>                 constants;
 
-    public CProgram(String comment,
+    public CProgram(String documentation,
                     String programName,
                     Map<String, String> namespaces,
                     Collection<String> includedPrograms,
@@ -56,7 +56,7 @@ public class CProgram {
                     Collection<PDeclaredDescriptor<?>> declaredTypes,
                     Collection<CService> services,
                     Collection<CConst> constants) {
-        this.comment          = comment;
+        this.documentation    = documentation;
         this.programName      = programName;
         this.namespaces       = namespaces       == null ? ImmutableMap.of()  : ImmutableMap.copyOf(namespaces);
         this.includedPrograms = includedPrograms == null ? ImmutableSet.of()  : ImmutableSet.copyOf(includedPrograms);
@@ -67,8 +67,8 @@ public class CProgram {
         this.constants        = constants        == null ? ImmutableList.of() : ImmutableList.copyOf(constants);
     }
 
-    public String getComment() {
-        return comment;
+    public String getDocumentation() {
+        return documentation;
     }
 
     public String getProgramName() {

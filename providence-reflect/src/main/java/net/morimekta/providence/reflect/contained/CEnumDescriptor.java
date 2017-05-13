@@ -24,9 +24,11 @@ import net.morimekta.providence.PEnumBuilder;
 import net.morimekta.providence.PEnumBuilderFactory;
 import net.morimekta.providence.descriptor.PEnumDescriptor;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,20 +40,22 @@ import java.util.Set;
  * Also see {@link CEnumValue}.
  */
 public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnnotatedDescriptor {
-    private CEnumValue[] values;
+    @Nonnull  private       CEnumValue[]        values;
+    @Nonnull  private final Map<String, String> annotations;
+    @Nullable private final String              comment;
 
-    private final Map<String, String> annotations;
-    private final String              comment;
-
-    public CEnumDescriptor(String comment, String packageName, String name, Map<String, String> annotations) {
+    public CEnumDescriptor(@Nullable String comment,
+                           @Nonnull String packageName,
+                           @Nonnull String name,
+                           @Nullable Map<String, String> annotations) {
         super(packageName, name, new _Factory());
         this.values = new CEnumValue[0];
         this.comment = comment;
-        this.annotations = annotations;
+        this.annotations = annotations == null ? ImmutableMap.of() : ImmutableMap.copyOf(annotations);
         ((_Factory) getFactoryInternal()).setType(this);
     }
 
-    public void setValues(List<CEnumValue> values) {
+    public void setValues(@Nonnull List<CEnumValue> values) {
         this.values = new CEnumValue[values.size()];
         Iterator<CEnumValue> iter = values.iterator();
         for (int i = 0; i < this.values.length; ++i) {
@@ -95,26 +99,17 @@ public class CEnumDescriptor extends PEnumDescriptor<CEnumValue> implements CAnn
     @Override
     @SuppressWarnings("unchecked")
     public Set<String> getAnnotations() {
-        if (annotations != null) {
-            return annotations.keySet();
-        }
-        return Collections.EMPTY_SET;
+        return annotations.keySet();
     }
 
     @Override
     public boolean hasAnnotation(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.containsKey(name);
-        }
-        return false;
+        return annotations.containsKey(name);
     }
 
     @Override
     public String getAnnotationValue(@Nonnull String name) {
-        if (annotations != null) {
-            return annotations.get(name);
-        }
-        return null;
+        return annotations.get(name);
     }
 
     private static class _Factory extends PEnumBuilderFactory<CEnumValue> {

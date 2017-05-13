@@ -59,6 +59,7 @@ public interface CAnnotatedDescriptor {
      * @param name Name of annotation.
      * @return The annotation value or null.
      */
+    @Nullable
     String getAnnotationValue(@Nonnull String name);
 
     /**
@@ -75,6 +76,7 @@ public interface CAnnotatedDescriptor {
      * @param annotation The annotation.
      * @return The annotation value or null.
      */
+    @Nullable
     default String getAnnotationValue(@Nonnull ThriftAnnotation annotation) {
         return getAnnotationValue(annotation.tag);
     }
