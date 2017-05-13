@@ -30,7 +30,7 @@ public enum ThriftCollection {
 
     public static ThriftCollection forName(String id) {
         if (id == null) return DEFAULT;
-        switch (id.toUpperCase()) {
+        switch (id.toLowerCase()) {
             case "ordered": return ORDERED;
             case "sorted": return SORTED;
         }
