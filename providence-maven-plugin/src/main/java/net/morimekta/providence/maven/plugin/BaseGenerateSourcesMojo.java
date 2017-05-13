@@ -248,12 +248,12 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         for (File in : inputs) {
             try {
                 documents.add(loader.load(in));
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
             } catch (ParseException e) {
-                getLog().warn(e.getMessage());
+                getLog().warn(e.asString());
                 getLog().warn(".---------------------.");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
+            } catch (IOException e) {
+                throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
             }
         }
 

@@ -383,7 +383,7 @@ public class ThriftProgramParserTest {
     }
 
     @Test
-    public void testParse_number() throws IOException, ParseException {
+    public void testParse_number() throws IOException {
         copyResourceTo("/parser/calculator/number.thrift", tmp.getRoot());
 
         File number = new File(tmp.getRoot(), "number.thrift");
@@ -418,7 +418,7 @@ public class ThriftProgramParserTest {
                      "          key = 2\n" +
                      "          type = \"double\"\n" +
                      "          name = \"i\"\n" +
-                     "          default_value = \"0.\"\n" +
+                     "          default_value = \"0.0\"\n" +
                      "        }\n" +
                      "      ]\n" +
                      "      annotations = {\n" +
@@ -430,7 +430,7 @@ public class ThriftProgramParserTest {
                      "    decl_const = {\n" +
                      "      type = \"Imaginary\"\n" +
                      "      name = \"kSqrtMinusOne\"\n" +
-                     "      value = \"{\\\"v\\\":0.,\\\"i\\\":-1.0}\"\n" +
+                     "      value = \"{\\\"v\\\":0.0,\\\"i\\\":-1.0}\"\n" +
                      "    }\n" +
                      "  }\n" +
                      "]", debugString(program));
@@ -678,35 +678,35 @@ public class ThriftProgramParserTest {
         copyResourceTo("/failure/unknown_type.thrift", tmp.getRoot());
         copyResourceTo("/failure/valid_reference.thrift", tmp.getRoot());
 
-        assertBadThrfit("Parse error on line 5, pos 9: Field separatedName has field with conflicting name in T\n" +
+        assertBadThrfit("Error on line 5, pos 10: Field separatedName has field with conflicting name in T\n" +
                         "  2: i32 separatedName;\n" +
-                        "---------^",
+                        "---------^^^^^^^^^^^^^",
                         "conflicting_field_name.thrift");
-        assertBadThrfit("Parse error on line 6, pos 2: Field id 1 already exists in struct T\n" +
+        assertBadThrfit("Error on line 6, pos 3: Field id 1 already exists in struct T\n" +
                         "  1: i32 second;\n" +
                         "--^",
                         "duplicate_field_id.thrift");
-        assertBadThrfit("Parse error on line 5, pos 9: Field first already exists in struct T\n" +
+        assertBadThrfit("Error on line 5, pos 10: Field first already exists in struct T\n" +
                         "  2: i32 first;\n" +
-                        "---------^",
+                        "---------^^^^^",
                         "duplicate_field_name.thrift");
-        assertBadThrfit("Parse error on line 1, pos 15: Identifier with double '..' at line 1 pos 15\n" +
+        assertBadThrfit("Error on line 1, pos 16: Identifier with double '.'\n" +
                         "namespace java org.apache..test.failure\n" +
-                        "---------------^",
+                        "---------------^^^^^^^^^^^^",
                         "invalid_namespace.thrift");
         // assertBadThrift("Unknown Type 'i128'",
         //                 "/failure/unknown_type.thrift");
-        assertBadThrfit("Parse error on line 8, pos 0: Unexpected token 'include', expected type declaration\n" +
+        assertBadThrfit("Error on line 8, pos 1: Unexpected token 'include', expected type declaration\n" +
                         "include \"valid_reference.thrift\"\n" +
-                        "^",
+                        "^^^^^^^",
                         "invalid_include.thrift");
-        assertBadThrfit("Parse error on line 4, pos 5: Unknown program valid_reference for type valid_reference.Message\n" +
+        assertBadThrfit("Error on line 4, pos 6: Unknown program valid_reference for type valid_reference.Message\n" +
                         "  1: valid_reference.Message message;\n" +
-                        "-----^",
+                        "-----^^^^^^^^^^^^^^^^^^^^^^^",
                         "unknown_program.thrift");
-        assertBadThrfit("Parse error on line 3, pos 8: Included file not found no_such_file.thrift\n" +
+        assertBadThrfit("Error on line 3, pos 9: Included file not found no_such_file.thrift\n" +
                         "include \"no_such_file.thrift\"\n" +
-                        "--------^",
+                        "--------^^^^^^^^^^^^^^^^^^^^^",
                         "unknown_include.thrift");
     }
 
@@ -715,7 +715,7 @@ public class ThriftProgramParserTest {
         copyResourceTo("/parser/calculator/calculator.thrift", tmp.getRoot());
         copyResourceTo("/parser/calculator/number.thrift", tmp.getRoot());
 
-        assertBadStrictThrfit("Parse error on line 14, pos 7: Missing enum value in strict declaration\n" +
+        assertBadStrictThrfit("Error on line 14, pos 8: Missing enum value in strict declaration\n" +
                               "    ADD,\n" +
                               "-------^",
                               "calculator.thrift");
@@ -728,9 +728,9 @@ public class ThriftProgramParserTest {
             parser.parse(new FileInputStream(file), file, new TreeSet<>());
             fail("No exception on bad thrift: " + fileName);
         } catch (ParseException e) {
-            assertEquals(message, e.asString().replaceAll("\\r", ""));
+            assertThat(e.asString().replaceAll("\\r", ""), is(message));
         } catch (IOException e) {
-            assertEquals(message, e.getMessage());
+            assertThat(e.getMessage(), is(message));
         }
     }
 

@@ -50,8 +50,8 @@ public class HazelcastPortableProgramFormatter implements BaseProgramFormatter {
 
     @Override
     public void appendProgramClass(CProgram document) throws GeneratorException {
-        if (document.getComment() != null) {
-            new BlockCommentBuilder(writer).comment(document.getComment())
+        if (document.getDocumentation() != null) {
+            new BlockCommentBuilder(writer).comment(document.getDocumentation())
                                            .finish();
         }
 

@@ -57,13 +57,23 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static net.morimekta.providence.reflect.util.ReflectionUtils.programNameFromPath;
+
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * Helper class that converts a parsed structured thrift model into the
+ * contained descriptors used when managing thrift models and descriptors
+ * in memory. This is use both in the various providence tools and in
+ * the providence generators.
  */
 public class ProgramConverter {
     private final ProgramRegistry registry;
 
+    /**
+     * Create a program converter that uses the given registry for type
+     * references.
+     *
+     * @param registry The program registry.
+     */
     public ProgramConverter(ProgramRegistry registry) {
         this.registry = registry;
     }
@@ -254,14 +264,11 @@ public class ProgramConverter {
         Set<String> out = new TreeSet<>();
         if (document.hasIncludes()) {
             for (String include : document.getIncludes()) {
-                int i = include.lastIndexOf('.');
-                if (i > 0) {
-                    include = include.substring(0, i);
+                String program = programNameFromPath(include);
+                if (out.contains(program)) {
+                    throw new IllegalArgumentException("Program " + document.getProgramName() + " includes multiple programs of name " + program);
                 }
-                if (include.contains("/")) {
-                    include = include.replaceAll(".*[/]", "");
-                }
-                out.add(include);
+                out.add(program);
             }
         }
         return out;

@@ -20,83 +20,17 @@
  */
 package net.morimekta.providence.reflect.parser;
 
-import net.morimekta.providence.reflect.parser.internal.Token;
-import net.morimekta.providence.reflect.parser.internal.Tokenizer;
-import net.morimekta.util.Stringable;
-import net.morimekta.util.Strings;
-
-import java.io.IOException;
+import net.morimekta.providence.serializer.pretty.TokenizerException;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 24.09.15
+ * Token specialization for the thrift parser and tokenizer.
  */
-public class ParseException extends Exception implements Stringable {
-    private final String line;
-    private final Token token;
-
+public class ParseException extends TokenizerException {
     public ParseException(Throwable cause, String message, Object... params) {
-        super(String.format(message, params), cause);
-
-        line = null;
-        token = null;
+        super(cause, String.format(message, params));
     }
 
     public ParseException(String message, Object... params) {
         super(String.format(message, params));
-
-        line = null;
-        token = null;
-    }
-
-    public ParseException(Tokenizer tokenizer, Token token, String message, Object... params) {
-        super(String.format(message, params));
-
-        String line = null;
-        try {
-            line = tokenizer.getLine(token.getLineNo());
-        }  catch (IOException e) {
-            // Ignore.
-        }
-        this.line = line;
-        this.token = token;
-    }
-
-    public Token getToken() {
-        return token;
-    }
-
-    public String getLine() {
-        return line;
-    }
-
-    @Override
-    public String asString() {
-        if (line != null && token != null) {
-            return String.format("Parse error on line %d, pos %d: %s%n" +
-                                 "%s%n" +
-                                 "%s^",
-                                 token.getLineNo(),
-                                 token.getLinePos(),
-                                 getLocalizedMessage(),
-                                 line,
-                                 Strings.times("-", token.getLinePos()));
-        } else {
-            return String.format("Parse error: %s", getLocalizedMessage());
-        }
-    }
-
-    @Override
-    public String toString() {
-        if (line != null && token != null) {
-            return String.format("ParseException(\"%s\",%d:%d,\"%s\")",
-                                 Strings.escape(getLocalizedMessage()),
-                                 token.getLineNo(),
-                                 token.getLinePos(),
-                                 Strings.escape(line));
-        } else {
-            return String.format("ParseException(\"%s\")",
-                                 Strings.escape(getLocalizedMessage()));
-        }
     }
 }

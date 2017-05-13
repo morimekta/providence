@@ -34,6 +34,7 @@ import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.util.TypeRegistry;
 import net.morimekta.util.Base64;
 import net.morimekta.util.Strings;
@@ -56,7 +57,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  *
  * <ul>
  *   <li> Enums can be 'EnumName.VALUE' or 'program.EnumName.VALUE', no quotes.
- *   <li> Enums values can be used as number constants.
+ *   <li> Enums values can be used as integer constants.
  *   <li> String literals can be single-quoted.
  *   <li> Lists and map entries have optional separator ',', ';' and none.
  *   <li> Last element of list or map may have an ending list separator.
@@ -76,7 +77,7 @@ public class ConstParser {
 
     public Object parse(InputStream inputStream, PDescriptor type) throws ParseException {
         try {
-            Tokenizer tokenizer = new Tokenizer(inputStream);
+            ThriftTokenizer tokenizer = new ThriftTokenizer(inputStream);
             return parseTypedValue(tokenizer.expect("const value"), tokenizer, type, true);
         } catch (IOException e) {
             throw new ParseException(e, "Unable to read const data from input: " + e.getMessage());
@@ -93,8 +94,8 @@ public class ConstParser {
      * @return The parsed message.
      */
     private <Message extends PMessage<Message, Field>, Field extends PField>
-    Message parseMessage(Tokenizer tokenizer,
-                         PMessageDescriptor<Message, Field> type) throws ParseException, IOException {
+    Message parseMessage(ThriftTokenizer tokenizer,
+                         PMessageDescriptor<Message, Field> type) throws IOException {
         PMessageBuilder<Message, Field> builder = type.builder();
 
         if (tokenizer.peek("checking for empty").isSymbol(Token.kMessageEnd)) {
@@ -103,12 +104,12 @@ public class ConstParser {
         }
 
         while (true) {
-            Token token = tokenizer.expectStringLiteral("message field name");
-            Field field = type.getField(token.decodeStringLiteral());
+            Token token = tokenizer.expectLiteral("message field name");
+            Field field = type.getField(token.decodeLiteral(true));
             if (field == null) {
-                throw new ParseException(tokenizer, token, "Not a valid field name: " + token.decodeStringLiteral());
+                throw tokenizer.failure(token, "Not a valid field name: " + token.decodeLiteral(true));
             }
-            tokenizer.expectSymbol("parsing message key-value sep", Token.kFieldIdSep);
+            tokenizer.expectSymbol("message key-value sep", Token.kKeyValueSep);
 
             builder.set(field.getKey(),
                         parseTypedValue(tokenizer.expect("parsing field value"), tokenizer, field.getDescriptor(), false));
@@ -127,7 +128,7 @@ public class ConstParser {
         return builder.build();
     }
 
-    private Object parseTypedValue(Token token, Tokenizer tokenizer, PDescriptor valueType, boolean allowNull)
+    private Object parseTypedValue(Token token, ThriftTokenizer tokenizer, PDescriptor valueType, boolean allowNull)
             throws ParseException, IOException {
         switch (valueType.getType()) {
             case BOOL:
@@ -136,7 +137,7 @@ public class ConstParser {
                 } else if (token.isInteger()) {
                     return token.parseInteger() != 0L;
                 }
-                throw new ParseException(tokenizer, token, "Not boolean value for bool: " + token.asString());
+                throw tokenizer.failure(token, "Not boolean value for bool: " + token.asString());
             case BYTE:
                 if (token.isInteger()) {
                     return (byte) token.parseInteger();
@@ -158,23 +159,23 @@ public class ConstParser {
                 }
                 return (long) findEnumValue(token.asString(), token, tokenizer, "i64");
             case DOUBLE:
-                if (token.isInteger() || token.isDouble()) {
+                if (token.isInteger() || token.isReal()) {
                     return token.parseDouble();
                 }
-                throw new ParseException(tokenizer, token, token.asString() + " is not a valid double value.");
+                throw tokenizer.failure(token, token.asString() + " is not a valid double value.");
             case STRING:
                 if (token.isStringLiteral()) {
-                    return token.decodeStringLiteral();
+                    return token.decodeLiteral(true);
                 } else if (allowNull && token.asString().equals(NULL)) {
                     return null;
                 }
-                throw new ParseException(tokenizer, token, "Not a valid string value.");
+                throw tokenizer.failure(token, "Not a valid string value.");
             case BINARY:
                 if (token.isStringLiteral()) {
                     return parseBinary(token.substring(1, -1)
                                             .asString());
                 }
-                throw new ParseException(tokenizer, token, "Not a valid binary value.");
+                throw tokenizer.failure(token, "Not a valid binary value.");
             case ENUM: {
                 PEnumBuilder<?> eb = ((PEnumDescriptor<?>) valueType).builder();
                 String name = token.asString();
@@ -184,7 +185,7 @@ public class ConstParser {
                 }
                 Object ev = eb.setByName(name).build();
                 if (ev == null) {
-                    throw new ParseException(tokenizer, token, "No such " + valueType.getQualifiedName() + " enum value.");
+                    throw tokenizer.failure(token, "No such " + valueType.getQualifiedName() + " enum value.");
                 }
                 return ev;
             }
@@ -195,14 +196,14 @@ public class ConstParser {
                     // messages can be null values in constants.
                     return null;
                 }
-                throw new ParseException(tokenizer, token, "Not a valid message start.");
+                throw tokenizer.failure(token, "Not a valid message start.");
             }
             case LIST: {
                 PDescriptor itemType = ((PList<?>) valueType).itemDescriptor();
                 LinkedList<Object> list = new LinkedList<>();
 
                 if (!token.isSymbol(Token.kListStart)) {
-                    throw new ParseException(tokenizer, token, "Expected list start, found " + token.asString());
+                    throw tokenizer.failure(token, "Expected list start, found " + token.asString());
                 }
 
                 if (tokenizer.peek("checking for empty list")
@@ -232,7 +233,7 @@ public class ConstParser {
                 HashSet<Object> set = new HashSet<>();
 
                 if (!token.isSymbol(Token.kListStart)) {
-                    throw new ParseException(tokenizer, token, "Expected list start, found " + token.asString());
+                    throw tokenizer.failure(token, "Expected list start, found " + token.asString());
                 }
 
                 if (tokenizer.peek("checking for empty list")
@@ -263,7 +264,7 @@ public class ConstParser {
                 HashMap<Object, Object> map = new HashMap<>();
 
                 if (!token.isSymbol(Token.kMessageStart)) {
-                    throw new ParseException(tokenizer, token, "Expected map start, found " + token.asString());
+                    throw tokenizer.failure(token, "Expected map start, found " + token.asString());
                 }
 
                 if (tokenizer.peek("checking for empty map")
@@ -276,15 +277,15 @@ public class ConstParser {
                     Object key;
                     token = tokenizer.expect("map key");
                     if (token.isStringLiteral()) {
-                        key = parsePrimitiveKey(token.decodeStringLiteral(), token, tokenizer, keyType);
+                        key = parsePrimitiveKey(token.decodeLiteral(true), token, tokenizer, keyType);
                     } else {
                         if (keyType.getType().equals(PType.STRING) ||
                             keyType.getType().equals(PType.BINARY)) {
-                            throw new ParseException(tokenizer, token, "Expected string literal for string key");
+                            throw tokenizer.failure(token, "Expected string literal for string key");
                         }
                         key = parsePrimitiveKey(token.asString(), token, tokenizer, keyType);
                     }
-                    tokenizer.expectSymbol("map key-value separator", Token.kFieldIdSep);
+                    tokenizer.expectSymbol("map KV separator", Token.kKeyValueSep);
                     map.put(key, parseTypedValue(tokenizer.expect("map value"), tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
@@ -305,8 +306,8 @@ public class ConstParser {
         }
     }
 
-    private Object parsePrimitiveKey(String key, Token token, Tokenizer tokenizer, PDescriptor keyType)
-            throws ParseException {
+    private Object parsePrimitiveKey(String key, Token token, ThriftTokenizer tokenizer, PDescriptor keyType)
+            throws IOException {
         switch (keyType.getType()) {
             case ENUM:
                 PEnumBuilder<?> eb = ((PEnumDescriptor<?>) keyType).builder();
@@ -369,8 +370,8 @@ public class ConstParser {
         }
     }
 
-    private int findEnumValue(String identifier, Token token, Tokenizer tokenizer, String expectedType)
-            throws ParseException {
+    private int findEnumValue(String identifier, Token token, ThriftTokenizer tokenizer, String expectedType)
+            throws IOException {
         String[] parts = identifier.split("[.]");
         String typeName;
         String valueName;
@@ -381,7 +382,7 @@ public class ConstParser {
             typeName = parts[0];
             valueName = parts[1];
         } else {
-            throw new ParseException(tokenizer, token, identifier + " is not a valid " + expectedType + " value.");
+            throw tokenizer.failure(token, identifier + " is not a valid " + expectedType + " value.");
         }
 
         @SuppressWarnings("unchecked")
@@ -394,7 +395,7 @@ public class ConstParser {
             }
         }
 
-        throw new ParseException(tokenizer, token, identifier + " is not a valid " + expectedType + " value.");
+        throw tokenizer.failure(token, identifier + " is not a valid " + expectedType + " value.");
     }
 
     /**

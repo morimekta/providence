@@ -141,7 +141,7 @@ public class ProgramRegistry extends TypeRegistry {
             return PList.provider(getProvider(itemType, context, null));
         }
 
-        if (!ThriftProgramParser.VALID_IDENTIFIER.matcher(name).matches()) {
+        if (!ThriftProgramParser.VALID_NAMESPACE.matcher(name).matches()) {
             throw new IllegalArgumentException(name + " is not a valid declared type identifier.");
         }
 

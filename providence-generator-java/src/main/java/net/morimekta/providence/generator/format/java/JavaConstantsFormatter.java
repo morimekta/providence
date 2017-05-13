@@ -46,9 +46,9 @@ public class JavaConstantsFormatter implements BaseProgramFormatter {
     public void appendProgramClass(CProgram program) throws GeneratorException {
         ValueBuilder value = new ValueBuilder(writer, helper);
 
-        if (program.getComment() != null) {
+        if (program.getDocumentation() != null) {
             new BlockCommentBuilder(writer)
-                    .comment(program.getComment())
+                    .comment(program.getDocumentation())
                     .finish();
         }
 

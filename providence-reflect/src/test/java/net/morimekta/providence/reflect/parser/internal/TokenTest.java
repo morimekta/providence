@@ -1,6 +1,7 @@
 package net.morimekta.providence.reflect.parser.internal;
 
 import net.morimekta.providence.reflect.parser.ParseException;
+import net.morimekta.providence.serializer.pretty.Token;
 
 import org.junit.Test;
 
@@ -17,11 +18,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class TokenTest {
     @Test
-    public void testIsDouble() throws IOException, ParseException {
-        Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream("\n\n  3.141692,\n".getBytes(StandardCharsets.UTF_8)));
-        Token token = tokenizer.next();
+    public void testIsDouble() throws IOException {
+        ThriftTokenizer tokenizer = new ThriftTokenizer(new ByteArrayInputStream("\n\n  3.141692,\n".getBytes(StandardCharsets.UTF_8)));
+        Token token = tokenizer.expect("anything");
 
         assertThat(token.asString(), is(equalTo("3.141692")));
-        assertThat(token.isDouble(), is(true));
+        assertThat(token.isReal(), is(true));
     }
 }

@@ -132,9 +132,9 @@ public class CompilerJavaTest {
 
         assertThat(console.output(), is(""));
         assertThat(console.error(), is(
-                "Parse error on line 3, pos 8: Included file not found ref.thrift\n" +
+                "Error on line 3, pos 9: Included file not found ref.thrift\n" +
                 "include \"ref.thrift\"\n" +
-                "--------^\n"));
+                "--------^^^^^^^^^^^^\n"));
         assertThat(exitCode, is(1));
     }
 

@@ -22,35 +22,34 @@ package net.morimekta.providence.reflect.util;
 
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PValueProvider;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.internal.ConstParser;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 07.09.15
+ * A value provider for thrift constants.
  */
 public class ConstProvider implements PValueProvider<Object> {
     private final ProgramRegistry registry;
     private final String          typeName;
     private final String          programContext;
-    private final String          defaultValue;
+    private final String          constantString;
 
     private Object parsedValue;
 
     public ConstProvider(@Nonnull ProgramRegistry registry,
                          @Nonnull String typeName,
                          @Nonnull String programContext,
-                         @Nonnull String defaultValue) {
+                         @Nonnull String constantString) {
         this.registry = registry;
         this.typeName = typeName;
         this.programContext = programContext;
-        this.defaultValue = defaultValue;
+        this.constantString = constantString;
         this.parsedValue = null;
     }
 
@@ -61,10 +60,10 @@ public class ConstProvider implements PValueProvider<Object> {
             @SuppressWarnings("unchecked")
             PDescriptor type = registry.getProvider(typeName, programContext, Collections.EMPTY_MAP)
                                        .descriptor();
-            try (ByteArrayInputStream in = new ByteArrayInputStream(defaultValue.getBytes(StandardCharsets.UTF_8))) {
+            try (ByteArrayInputStream in = new ByteArrayInputStream(constantString.getBytes(StandardCharsets.UTF_8))) {
                 parsedValue = parser.parse(in, type);
-            } catch (ParseException | IOException e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         }
 

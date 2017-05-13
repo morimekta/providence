@@ -122,13 +122,6 @@ public class RPC {
                     System.err.println();
                     e.printStackTrace();
                 }
-            } catch (ParseException e) {
-                System.out.flush();
-                System.err.format(e.asString());
-                if (options.verbose()) {
-                    System.err.println();
-                    e.printStackTrace();
-                }
             } catch (IllegalArgumentException e) {
                 System.out.flush();
                 System.err.println(e.getMessage());
