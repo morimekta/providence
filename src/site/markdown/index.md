@@ -76,7 +76,6 @@ generated code. Currently the recognized core annotations are:
   checked in the generator, it is plainly trusted as the exception class.
 * `java.service.methods.throws` Which replaces the declared exceptions with the
   given exception class on the **service interface only**. Also note that:
-
     - The property is **not** inherited, and only applies to the methods declared on
       the service with the annotation.
     - All the declared exceptions **must** extend the given exception.
