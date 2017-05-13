@@ -305,8 +305,8 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                 switch (token.asString()) {
                     case "b64": {
                         try {
-                            tokenizer.expectSymbol("binary content start", Token.kMethodStart);
-                            String content = tokenizer.readBinary(Token.kMethodEnd);
+                            tokenizer.expectSymbol("binary content start", Token.kParamsStart);
+                            String content = tokenizer.readBinary(Token.kParamsEnd);
                             return Binary.fromBase64(content);
                         } catch (IllegalArgumentException e) {
                             throw new TokenizerException(e, e.getMessage());
@@ -314,8 +314,8 @@ public class OverrideMessageSupplier<Message extends PMessage<Message, Field>, F
                     }
                     case "hex": {
                         try {
-                            tokenizer.expectSymbol("binary content start", Token.kMethodStart);
-                            String content = tokenizer.readBinary(Token.kMethodEnd);
+                            tokenizer.expectSymbol("binary content start", Token.kParamsStart);
+                            String content = tokenizer.readBinary(Token.kParamsEnd);
                             return Binary.fromHexString(content);
                         } catch (NumberFormatException e) {
                             throw new TokenizerException(e, "Invalid hex value: " + e.getMessage());

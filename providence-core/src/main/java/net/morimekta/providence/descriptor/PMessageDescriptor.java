@@ -114,6 +114,7 @@ public abstract class PMessageDescriptor<T extends PMessage<T, F>, F extends PFi
                                 getQualifiedName(),
                                 getVariant());
         for (PField field : getFields()) {
+            hash *= 28547;
             hash += Objects.hash(hash, field.hashCode());
         }
         return hash;

@@ -440,7 +440,7 @@ public class ProvidenceConfig {
                     throw new TokenizerException(token, "Include added after defines or message. Only one def block allowed.")
                             .setLine(tokenizer.getLine(token.getLineNo()));
                 }
-                token = tokenizer.expectStringLiteral("file to be included");
+                token = tokenizer.expectLiteral("file to be included");
                 String includedFilePath = token.decodeLiteral(strict);
                 PMessage included;
                 File includedFile;
@@ -534,11 +534,11 @@ public class ProvidenceConfig {
             } else if (FALSE.equalsIgnoreCase(token.asString())) {
                 context.setReference(name, false);
             } else if (Token.B64.equals(token.asString())) {
-                tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                context.setReference(name, Binary.fromBase64(tokenizer.readBinary(Token.kMethodEnd)));
+                tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+                context.setReference(name, Binary.fromBase64(tokenizer.readBinary(Token.kParamsEnd)));
             } else if (Token.HEX.equals(token.asString())) {
-                tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                context.setReference(name, Binary.fromHexString(tokenizer.readBinary(Token.kMethodEnd)));
+                tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+                context.setReference(name, Binary.fromHexString(tokenizer.readBinary(Token.kParamsEnd)));
             } else if (token.isDoubleQualifiedIdentifier()) {
                 // this may be an enum reference, must be
                 // - package.EnumType.IDENTIFIER
@@ -684,7 +684,8 @@ public class ProvidenceConfig {
                     if (tokenizer.peek().isSymbol(kDefineReference)) {
                         tokenizer.next();
                         context.setReference(
-                                context.initReference(tokenizer.expectIdentifier("reference name"), tokenizer),
+                                context.initReference(
+                                        tokenizer.expectIdentifier("reference name"), tokenizer),
                                 null);
                     }
 
@@ -709,8 +710,8 @@ public class ProvidenceConfig {
                 token = tokenizer.expect("list value or end");
             }
         } else if (token.asString().equals(Token.HEX)) {
-            tokenizer.expectSymbol("hex body start", Token.kMethodStart);
-            tokenizer.readBinary(Token.kMethodEnd);
+            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
+            tokenizer.readBinary(Token.kParamsEnd);
         } else if (!(token.isReal() ||  // number (double)
                      token.isInteger() ||  // number (int)
                      token.isStringLiteral() ||  // string literal
@@ -979,11 +980,11 @@ public class ProvidenceConfig {
                     break;
                 case BINARY:
                     if (Token.B64.equals(next.asString())) {
-                        tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                        return Binary.fromBase64(tokenizer.readBinary(Token.kMethodEnd));
+                        tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+                        return Binary.fromBase64(tokenizer.readBinary(Token.kParamsEnd));
                     } else if (Token.HEX.equals(next.asString())) {
-                        tokenizer.expectSymbol("binary data enclosing start", Token.kMethodStart);
-                        return Binary.fromHexString(tokenizer.readBinary(Token.kMethodEnd));
+                        tokenizer.expectSymbol("binary data enclosing start", Token.kParamsStart);
+                        return Binary.fromHexString(tokenizer.readBinary(Token.kParamsEnd));
                     } else if (next.isReferenceIdentifier()) {
                         return resolve(context, next, tokenizer, descriptor);
                     }

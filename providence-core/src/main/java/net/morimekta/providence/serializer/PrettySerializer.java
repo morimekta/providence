@@ -185,7 +185,7 @@ public class PrettySerializer extends Serializer {
         appendMessage(builder, call.getMessage(), true);
 
         builder.end()
-               .append(Token.kMethodEnd)
+               .append(Token.kParamsEnd)
                .newline()
                .flush();
 
@@ -228,7 +228,7 @@ public class PrettySerializer extends Serializer {
                         .setExceptionType(PApplicationExceptionType.UNKNOWN_METHOD);
             }
 
-            tokenizer.expectSymbol("call params start", Token.kMethodStart);
+            tokenizer.expectSymbol("call params start", Token.kParamsStart);
             tokenizer.expectSymbol("message encloser", Token.kMessageStart);
 
             Message message;
@@ -247,7 +247,7 @@ public class PrettySerializer extends Serializer {
                     throw new IllegalStateException("Unreachable code reached");
             }
 
-            tokenizer.expectSymbol("Call params closing", Token.kMethodEnd);
+            tokenizer.expectSymbol("Call params closing", Token.kParamsEnd);
 
             return new PServiceCall<>(methodName, callType, sequence, message);
         } catch (TokenizerException e) {
@@ -427,8 +427,8 @@ public class PrettySerializer extends Serializer {
                 return token.decodeLiteral(strict);
             }
             case BINARY: {
-                tokenizer.expectSymbol("binary content start", Token.kMethodStart);
-                String content = tokenizer.readBinary(Token.kMethodEnd);
+                tokenizer.expectSymbol("binary content start", Token.kParamsStart);
+                String content = tokenizer.readBinary(Token.kParamsEnd);
                 switch (token.asString()) {
                     case "b64":
                         return Binary.fromBase64(content);
@@ -692,9 +692,9 @@ public class PrettySerializer extends Serializer {
         } else if (o instanceof Binary) {
             Binary b = (Binary) o;
             writer.append(Token.B64)
-                  .append(Token.kMethodStart)
+                  .append(Token.kParamsStart)
                   .append(b.toBase64())
-                  .append(Token.kMethodEnd);
+                  .append(Token.kParamsEnd);
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {
@@ -759,8 +759,8 @@ public class PrettySerializer extends Serializer {
             }
         } else if (token.asString().equals(Token.HEX) ||
                    token.asString().equals(Token.B64)) {
-            tokenizer.expectSymbol("hex body start", Token.kMethodStart);
-            tokenizer.readBinary(Token.kMethodEnd);
+            tokenizer.expectSymbol("hex body start", Token.kParamsStart);
+            tokenizer.readBinary(Token.kParamsEnd);
         } else if (!(token.isReal() ||  // number (double)
                      token.isInteger() ||  // number (int)
                      token.isStringLiteral() ||  // string literal

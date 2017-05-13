@@ -24,6 +24,7 @@ import net.morimekta.util.Slice;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +36,15 @@ import java.io.UncheckedIOException;
  * newline.
  */
 public class Tokenizer extends InputStream {
+    @FunctionalInterface
+    public interface TokenValidator {
+        boolean validate(Token token);
+    }
+
     private final byte[] buffer;
-    private       int    readOffset;
-    private       int    lineNo;
-    private       int    linePos;
+    protected     int    readOffset;
+    protected     int    lineNo;
+    protected     int    linePos;
     private       Token  nextToken;
 
     public Tokenizer(InputStream in, boolean enclosedContent) throws IOException {
@@ -125,18 +131,40 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public Token expect(String expected) throws IOException {
+    /**
+     * Expect at a valid token containing anything.
+     *
+     * @param expected The expectation description.
+     * @return The token.
+     * @throws IOException If failed to read a token.
+     */
+    public Token expect(@Nonnull String expected) throws IOException {
         if (!hasNext()) {
-            throw new TokenizerException("Expected %s, got end of file", expected);
+            throw failure("Expected %s, got end of file", expected);
         }
         Token next = nextToken;
         nextToken = null;
         return next;
     }
 
-    public Token peek(String expected) throws IOException {
+    public Token expect(@Nonnull String expected,
+                        @Nonnull TokenValidator validator) throws IOException {
         if (!hasNext()) {
-            throw new TokenizerException("Expected %s, got end of file", expected);
+            throw failure("Expected %s, got end of file", expected);
+        } else if (validator.validate(nextToken)) {
+            Token next = nextToken;
+            nextToken = null;
+            return next;
+        }
+        throw failure(nextToken,
+                      "Expected %s, but got '%s'",
+                      expected,
+                      Strings.escape(nextToken.asString()));
+    }
+
+    public Token peek(@Nonnull String expected) throws IOException {
+        if (!hasNext()) {
+            throw failure("Expected %s, got end of file", expected);
         }
         return nextToken;
     }
@@ -146,9 +174,9 @@ public class Tokenizer extends InputStream {
         return nextToken;
     }
 
-    public char expectSymbol(String expected, char... symbols) throws IOException {
+    public char expectSymbol(@Nonnull String expected, char... symbols) throws IOException {
         if (!hasNext()) {
-            throw new TokenizerException("Expected %s, one of ['%s'], got end of file",
+            throw failure("Expected %s, one of ['%s'], got end of file",
                                          expected,
                                          Strings.joinP("', '", symbols));
         } else {
@@ -159,45 +187,26 @@ public class Tokenizer extends InputStream {
                 }
             }
 
-            throw new TokenizerException(nextToken,
-                                         "Expected %s, one of ['%s'], but found '%s'",
-                                         expected,
-                                         Strings.joinP("', '", symbols),
-                                         Strings.escape(nextToken.asString()))
-                    .setLine(getLine(nextToken.getLineNo()));
+            throw failure(nextToken,
+                          "Expected %s, one of ['%s'], but found '%s'",
+                          expected,
+                          Strings.joinP("', '", symbols),
+                          Strings.escape(nextToken.asString()));
         }
     }
 
-    public Token expectIdentifier(String message) throws IOException {
-        if (!hasNext()) {
-            throw new TokenizerException("Expected %s, got end of file", message);
-        } else if (nextToken.isIdentifier()) {
-            Token next = nextToken;
-            nextToken = null;
-            return next;
-        } else {
-            throw new TokenizerException(nextToken,
-                                         "Expected %s, but got '%s'",
-                                         message,
-                                         Strings.escape(nextToken.asString()))
-                    .setLine(getLine(nextToken.getLineNo()));
-        }
+    public Token expectIdentifier(@Nonnull String message) throws IOException {
+        return expect(message, Token::isIdentifier);
     }
 
-    public Token expectStringLiteral(String message) throws IOException {
-        if (!hasNext()) {
-            throw new TokenizerException("Expected %s, got end of file", message);
-        } else if (nextToken.isStringLiteral()) {
-            Token next = nextToken;
-            nextToken = null;
-            return next;
-        } else {
-            throw new TokenizerException(nextToken,
-                                         "Expected %s, but got '%s'",
-                                         message,
-                                         Strings.escape(nextToken.asString()))
-                    .setLine(getLine(nextToken.getLineNo()));
-        }
+    @Nonnull
+    public Token expectInteger(String message) throws IOException {
+        return expect(message, Token::isInteger);
+    }
+
+    @Nonnull
+    public Token expectLiteral(String message) throws IOException {
+        return expect(message, Token::isStringLiteral);
     }
 
     public boolean hasNext() throws IOException {
@@ -219,32 +228,23 @@ public class Tokenizer extends InputStream {
 
     private Token nextStringLiteral(int startQuote) throws TokenizerException {
         int startOffset = readOffset;
-        int startLineNo = lineNo;
         int startLinePos = linePos;
+        int startLineNo = lineNo;
         boolean escaped = false;
         while (true) {
             int r = read();
             if (r < 0x20 || r == 0x7F) {
                 int length = readOffset - startOffset;
                 if (r == -1) {
-                    throw new TokenizerException("Unexpected end of stream in literal")
-                            .setLineNo(startLineNo)
-                            .setLinePos(startLinePos)
-                            .setLine(getLine(startLineNo))
-                            .setLength(length);
-                } else if (r == '\n') {
-                    throw new TokenizerException("Unexpected line break in literal")
-                            .setLineNo(startLineNo)
-                            .setLinePos(startLinePos)
-                            .setLine(getLine(startLineNo))
-                            .setLength(length - 1);
+                    throw failure(startLineNo, startLinePos, length,
+                                  "Unexpected end of stream in literal");
+                } else if (r == '\n' || r == '\r') {
+                    throw failure(startLineNo, startLinePos, length - 1,
+                                  "Unexpected line break in literal");
                 } else {
-                    throw new TokenizerException("Unescaped non-printable char in literal: '%s'",
-                                                 Strings.escape(String.valueOf((char) r)))
-                            .setLineNo(startLineNo)
-                            .setLinePos(startLinePos)
-                            .setLine(getLine(startLineNo))
-                            .setLength(length + 1);
+                    throw failure(startLineNo, startLinePos, length + 1,
+                                  "Unescaped non-printable char in literal: '%s'",
+                                  escapeChar(r));
                 }
             }
 
@@ -257,11 +257,10 @@ public class Tokenizer extends InputStream {
             }
             // else just include into string token.
         }
-        return new Token(buffer, startOffset, readOffset - startOffset + 1, lineNo, startLinePos);
+        return token(startOffset, readOffset - startOffset + 1, startLinePos);
     }
 
     private Token nextInternal() throws IOException {
-        int startOffset = readOffset;
         int r;
         while ((r = read()) != -1) {
             if (r != ' ' && r != '\t' && r != '\r' && r != '\n') {
@@ -272,7 +271,6 @@ public class Tokenizer extends InputStream {
                         }
                     }
                 } else {
-                    startOffset = readOffset;
                     break;
                 }
             }
@@ -284,7 +282,7 @@ public class Tokenizer extends InputStream {
 
         // Known symbols.
         if (Token.kSymbols.indexOf(r) >= 0) {
-            return new Token(buffer, startOffset, 1, lineNo, linePos);
+            return nextSymbol(r);
         }
 
         // String literals.
@@ -302,10 +300,11 @@ public class Tokenizer extends InputStream {
             return nextIdentifier();
         }
 
-        throw new TokenizerException("Unknown token initiator '%c'", r)
-                .setLineNo(lineNo)
-                .setLinePos(linePos)
-                .setLine(getLine(lineNo));
+        throw failure(lineNo, linePos, 1, "Unknown token initiator '%c'", r);
+    }
+
+    protected Token nextSymbol(int lastByte) throws TokenizerException {
+        return token(readOffset, 1, linePos);
     }
 
     private Token nextNumber(int lastByte) throws TokenizerException {
@@ -325,6 +324,7 @@ public class Tokenizer extends InputStream {
         // correctly detect valid JSON (and what is invalid if not).
 
         int startLinePos = linePos;
+        int startLineNo = lineNo;
         int startOffset = readOffset;
         int len = 0;
 
@@ -332,18 +332,12 @@ public class Tokenizer extends InputStream {
             lastByte = read();
             ++len;
             if (lastByte < 0) {
-                throw new TokenizerException("Unexpected end of stream after negative indicator")
-                        .setLineNo(lineNo)
-                        .setLinePos(startLinePos)
-                        .setLength(len)
-                        .setLine(getLine(lineNo));
+                throw failure(startLineNo, startLinePos, len,
+                              "Unexpected end of stream after negative indicator");
             }
             if (!(lastByte == '.' || (lastByte >= '0' && lastByte <= '9'))) {
-                throw new TokenizerException("No decimal after negative indicator")
-                        .setLineNo(lineNo)
-                        .setLinePos(startLinePos)
-                        .setLength(len)
-                        .setLine(getLine(lineNo));
+                throw failure(startLineNo, startLinePos, len,
+                              "No decimal after negative indicator");
             }
         } else if (lastByte == '0') {
             lastByte = read();
@@ -404,7 +398,6 @@ public class Tokenizer extends InputStream {
         }
         // exponent part.
         if (lastByte == 'e' || lastByte == 'E') {
-            int llByte = lastByte;
             ++len;
             // numbers are terminated by first non-numeric character.
             lastByte = read();
@@ -418,12 +411,7 @@ public class Tokenizer extends InputStream {
                 }
 
                 if (lastByte < '0' || '9' < lastByte) {
-                    throw new TokenizerException("Missing exponent value")
-                            .setLineNo(lineNo)
-                            .setLinePos(startLinePos)
-                            .setLength(len + 1)
-                            .setLine(getLine(lineNo));
-
+                    throw failure(startLineNo, startLinePos, len + 1, "Missing exponent value");
                 }
 
                 while (lastByte >= '0' && lastByte <= '9') {
@@ -435,11 +423,8 @@ public class Tokenizer extends InputStream {
                     }
                 }
             } else {
-                throw new TokenizerException("Unexpected end of stream after exponent indicator")
-                        .setLineNo(lineNo)
-                        .setLinePos(startLinePos)
-                        .setLength(len)
-                        .setLine(getLine(lineNo));
+                throw failure(startLineNo, startLinePos, len,
+                              "Unexpected end of stream after exponent indicator");
             }
         }
 
@@ -452,18 +437,19 @@ public class Tokenizer extends InputStream {
         // or a symbol that may be after a value: ':', ',' ';' '}' ')' ']', '#'.
         if (lastByte < 0 || lastByte == ' ' || lastByte == '\t' || lastByte == '\n' || lastByte == '\r' ||
             lastByte == Token.kKeyValueSep ||
-            lastByte == Token.kMessageEnd || lastByte == Token.kListEnd || lastByte == Token.kMethodEnd ||
+            lastByte == Token.kMessageEnd || lastByte == Token.kListEnd || lastByte == Token.kParamsEnd ||
             lastByte == Token.kLineSep1 || lastByte == Token.kLineSep2 || lastByte == Token.kShellComment) {
             if (Token.kSymbols.indexOf(lastByte) >= 0) {
                 unread();
             }
-            return new Token(buffer, startOffset, len, lineNo, startLinePos);
+            return token(startOffset, len, startLinePos);
         } else {
+            // This is safe since line breaks are valid.
             ++len;
-            Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
-            throw new TokenizerException(token, "Invalid termination of number: '%s'",
-                                         Strings.escape(token.asString()))
-                    .setLine(getLine(lineNo));
+            Token token = token(startOffset, len, startLinePos);
+            throw failure(token,
+                          "Invalid termination of number: '%s'",
+                          Strings.escape(token.asString()));
         }
 
     }
@@ -471,6 +457,7 @@ public class Tokenizer extends InputStream {
     private Token nextIdentifier() throws TokenizerException {
         int startOffset = readOffset;
         int startLinePos = linePos;
+        int startLineNo = lineNo;
 
         int len = 1, r;
         boolean dot = false;
@@ -478,11 +465,8 @@ public class Tokenizer extends InputStream {
             if (r == '.') {
                 ++len;
                 if (dot) {
-                    throw new TokenizerException("Identifier with double '.'")
-                            .setLineNo(lineNo)
-                            .setLinePos(startLinePos)
-                            .setLine(getLine(lineNo))
-                            .setLength(len);
+                    throw failure(startLineNo, startLinePos, len,
+                                  "Identifier with double '.'");
                 }
                 dot = true;
                 continue;
@@ -491,17 +475,11 @@ public class Tokenizer extends InputStream {
                       (r >= 'a' && r <= 'z') ||
                       (r >= 'A' && r <= 'Z'))) {
                     if (r >= '0' && r <= '9') {
-                        throw new TokenizerException("Identifier part starting with digit '" + ((char) r) + "'")
-                                .setLineNo(lineNo)
-                                .setLinePos(startLinePos)
-                                .setLine(getLine(lineNo))
-                                .setLength(len + 1);
+                        throw failure(startLineNo, startLinePos, len + 1,
+                                     "Identifier part starting with digit '" + ((char) r) + "'");
                     } else {
-                        throw new TokenizerException("Identifier with trailing '.'")
-                                .setLineNo(lineNo)
-                                .setLinePos(startLinePos)
-                                .setLine(getLine(lineNo))
-                                .setLength(len);
+                        throw failure(startLineNo, startLinePos, len,
+                                      "Identifier with trailing '.'");
                     }
                 }
                 ++len;
@@ -518,22 +496,25 @@ public class Tokenizer extends InputStream {
             unread();
             break;
         }
-        Token token = new Token(buffer, startOffset, len, lineNo, startLinePos);
 
         if (r == -1 || r == ' ' || r == '\t' || r == '\n' || r == '\r' || Token.kSymbols.indexOf(r) >= 0) {
-            return token;
+            return token(startOffset, len, startLinePos);
         } else {
-            throw new TokenizerException("Wrongly terminated identifier: '%s'", escapeChar(r))
-                    .setLineNo(lineNo)
-                    .setLinePos(startLinePos)
-                    .setLength(len)
-                    .setLine(getLine(lineNo));
+            throw failure(startLineNo, startLinePos, len,
+                          "Wrongly terminated identifier: '%s'", escapeChar(r));
         }
     }
 
+    /**
+     * Get the full non-delimited line content of the 1-indexed line.
+     *
+     * @param theLine The nine number.
+     * @return The line string content.
+     */
+    @Nonnull
     public String getLine(final int theLine) {
         if (theLine < 1) {
-            throw new IllegalStateException(theLine + " is not a valid line number. Must be 1 .. N");
+            throw new IllegalArgumentException(theLine + " is not a valid line number. Must be 1 .. N");
         }
         int originalReadOffset = readOffset;
         int originalLineNo = lineNo;
@@ -561,7 +542,16 @@ public class Tokenizer extends InputStream {
         }
     }
 
-    public String readBinary(char end) throws TokenizerException {
+    /**
+     * Read the 'content' of encoded binary. This does not parse the
+     * binary, just read out from the buffer the string representing the
+     * binary data, as delimited by the requested 'end' char.
+     *
+     * @param end The char that ends the binary content.
+     * @return The string encoded string representation.
+     * @throws TokenizerException On illegal content.
+     */
+    public String readBinary(char end) throws IOException {
         int startOffset = readOffset + 1;
         int startLinePos = linePos;
         int startLineNo = lineNo;
@@ -571,20 +561,52 @@ public class Tokenizer extends InputStream {
             if (r == end) {
                 return new Slice(buffer, startOffset, readOffset - startOffset).asString();
             } else if (r == ' ' || r == '\t' || r == '\n' || r == '\r') {
-                throw new TokenizerException("Illegal char '%s' in binary", escapeChar(r))
-                        .setLineNo(lineNo)
-                        .setLinePos(startLinePos)
-                        .setLine(getLine(lineNo))
-                        .setLength(linePos - startLinePos + 1);
+                throw failure(startLineNo, startLinePos, linePos - startLinePos + 1, "Illegal char '%s' in binary", escapeChar(r));
             }
         }
 
         // throw in with the old start.
-        throw new TokenizerException("unexpected end of stream in binary")
-                .setLineNo(startLineNo)
-                .setLinePos(startLinePos)
-                .setLength(linePos - startLinePos + 1)
-                .setLine(getLine(lineNo));
+        throw failure(startLineNo, startLinePos, linePos - startLinePos + 1, "unexpected end of stream in binary");
+    }
+
+    @Nonnull
+    public TokenizerException failure(Token token, String message, Object... params) {
+        return failure(token.getLineNo(),
+                       token.getLinePos(),
+                       token.length(),
+                       message, params);
+    }
+
+    @Nonnull
+    protected TokenizerException failure(int startLineNo,
+                                         int startLinePos,
+                                         int length,
+                                         String format,
+                                         Object... params) {
+        return failure(format, params).setLineNo(startLineNo)
+                                      .setLinePos(startLinePos)
+                                      .setLine(getLine(startLineNo))
+                                      .setLength(length);
+    }
+
+    @Nonnull
+    protected TokenizerException failure(Throwable cause,
+                                         int startLineNo,
+                                         int startLinePos,
+                                         int length,
+                                         String message,
+                                         Object... params) {
+        return failure(startLineNo, startLinePos, length, message, params).initCause(cause);
+    }
+
+    @Nonnull
+    protected TokenizerException failure(String format, Object ... params) {
+        return new TokenizerException(format, params);
+    }
+
+    @Nonnull
+    protected Token token(int off, int len, int linePos) {
+        return new Token(buffer, off, len, lineNo, linePos);
     }
 
     private static String escapeChar(int c) {

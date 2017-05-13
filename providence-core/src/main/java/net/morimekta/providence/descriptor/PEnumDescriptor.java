@@ -26,6 +26,7 @@ import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -58,6 +59,7 @@ public abstract class PEnumDescriptor<T extends PEnumValue<T>> extends PDeclared
      * @param id Value to look up enum from.
      * @return Enum if found, null otherwise.
      */
+    @Nullable
     public abstract T getValueById(int id);
 
     /**

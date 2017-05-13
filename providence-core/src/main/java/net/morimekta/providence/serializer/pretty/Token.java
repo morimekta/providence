@@ -27,17 +27,21 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Pretty token.
  */
 public class Token extends Slice {
     // Various symbols.
+    public static final char kGenericStart  = '<';
+    public static final char kGenericEnd    = '>';
     public static final char kMessageStart  = '{';
     public static final char kMessageEnd    = '}';
     public static final char kKeyValueSep   = ':';
     public static final char kFieldValueSep = '=';
-    public static final char kMethodStart   = '(';
-    public static final char kMethodEnd     = ')';
+    public static final char kParamsStart   = '(';
+    public static final char kParamsEnd     = ')';
     public static final char kListStart     = '[';
     public static final char kListEnd       = ']';
     public static final char kLineSep1      = ',';
@@ -53,7 +57,7 @@ public class Token extends Slice {
     public static final String B64 = "b64";
     public static final String HEX = "hex";
 
-    public static final String kSymbols = "{}:=()<>,;#[]&/%$@^";
+    public static final String kSymbols = "{}:=()<>,;#[]&/*|%$@^";
 
     private static final Pattern RE_IDENTIFIER                  = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
     private static final Pattern RE_QUALIFIED_IDENTIFIER        = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*[.][_a-zA-Z][_a-zA-Z0-9]*");
@@ -102,7 +106,8 @@ public class Token extends Slice {
     }
 
     public boolean isStringLiteral() {
-        return (length() > 1 && charAt(0) == '\"' && charAt(-1) == '\"');
+        return (length() > 1 && ((charAt(0) == '\"' && charAt(-1) == '\"') ||
+                                 (charAt(0) == '\'' && charAt(-1) == '\'')));
     }
 
     public boolean isIdentifier() {
@@ -129,6 +134,10 @@ public class Token extends Slice {
     public boolean isReal() {
         return RE_REAL.matcher(asString())
                       .matches();
+    }
+
+    public boolean strEquals(String str) {
+        return super.strEquals(str.getBytes(UTF_8));
     }
 
     /**

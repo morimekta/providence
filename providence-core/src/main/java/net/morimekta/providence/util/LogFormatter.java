@@ -295,9 +295,9 @@ public class LogFormatter {
         } else if (o instanceof Binary) {
             Binary b = (Binary) o;
             writer.append(Token.B64)
-                  .append(Token.kMethodStart)
+                  .append(Token.kParamsStart)
                   .append(b.toBase64())
-                  .append(Token.kMethodEnd);
+                  .append(Token.kParamsEnd);
         } else if (o instanceof Boolean) {
             writer.print(((Boolean) o).booleanValue());
         } else if (o instanceof Byte || o instanceof Short || o instanceof Integer || o instanceof Long) {

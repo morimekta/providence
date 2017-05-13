@@ -116,14 +116,14 @@ public class TokenizerTest {
         }
 
         try {
-            tokenizer("").expectStringLiteral("id");
+            tokenizer("").expectLiteral("id");
             fail();
         } catch (TokenizerException e) {
             assertThat(e.getMessage(), is("Expected id, got end of file"));
         }
 
         try {
-            tokenizer("123").expectStringLiteral("id");
+            tokenizer("123").expectLiteral("id");
             fail();
         } catch (TokenizerException e) {
             assertThat(e.getMessage(), is("Expected id, but got '123'"));
