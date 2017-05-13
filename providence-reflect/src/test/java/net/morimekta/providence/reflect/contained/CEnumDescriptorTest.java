@@ -19,7 +19,9 @@
 
 package net.morimekta.providence.reflect.contained;
 
-import com.google.common.collect.ImmutableSet;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
+
+import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +29,10 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -42,7 +46,9 @@ public class CEnumDescriptorTest {
     @Before
     public void setUp() {
         List<CEnumValue> values = new LinkedList<>();
-        type = new CEnumDescriptor("My comment", "package", "MyEnum", null);
+        type = new CEnumDescriptor("My comment", "package", "MyEnum", ImmutableMap.of(
+                ThriftAnnotation.DEPRECATED.tag, ""
+        ));
 
         values.add(new CEnumValue(null, 1, "ONE", type, null));
         values.add(new CEnumValue(null, 2, "TWO", type, null));
@@ -57,9 +63,16 @@ public class CEnumDescriptorTest {
     @Test
     public void testEnum() {
         assertThat(type.getDocumentation(), is("My comment"));
-        assertThat(type.getAnnotations(), is(ImmutableSet.of()));
+        assertThat(type.getAnnotations(), hasSize(1));
+        assertThat(type.getAnnotations(), hasItem("deprecated"));
         assertThat(type.hasAnnotation("boo"), is(false));
         assertThat(type.getAnnotationValue("boo"), is(nullValue()));
+
+        assertThat(type.hasAnnotation(ThriftAnnotation.CONTAINER), is(false));
+        assertThat(type.getAnnotationValue(ThriftAnnotation.CONTAINER), is(nullValue()));
+
+        assertThat(type.hasAnnotation(ThriftAnnotation.DEPRECATED), is(true));
+        assertThat(type.getAnnotationValue(ThriftAnnotation.DEPRECATED), is(""));
 
         assertEquals(6, type.getValues().length);
 
