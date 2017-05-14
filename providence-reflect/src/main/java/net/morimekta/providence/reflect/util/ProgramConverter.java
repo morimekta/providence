@@ -165,7 +165,7 @@ public class ProgramConverter {
                                             .getName(),
                                         document.getProgramName(),
                                         decl.getDeclTypedef()
-                                             .getType());
+                                            .getType());
                     break;
                 }
                 case DECL_SERVICE: {
@@ -279,7 +279,12 @@ public class ProgramConverter {
         if (!field.hasValue()) {
             throw new IllegalArgumentException("Const " + pkg + "." + field.getName() + " does not have a value.");
         }
-        ConstProvider defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getValue());
+        ConstProvider defaultValue = new ConstProvider(registry,
+                                                       field.getType(),
+                                                       pkg,
+                                                       field.getValue(),
+                                                       field.getStartLineNo(),
+                                                       field.getStartLinePos());
 
         @SuppressWarnings("unchecked")
         CConst made = new CConst(field.getDocumentation(),
@@ -294,7 +299,12 @@ public class ProgramConverter {
         PDescriptorProvider type = registry.getProvider(field.getType(), pkg, field.getAnnotations());
         ConstProvider defaultValue = null;
         if (field.hasDefaultValue()) {
-            defaultValue = new ConstProvider(registry, field.getType(), pkg, field.getDefaultValue());
+            defaultValue = new ConstProvider(registry,
+                                             field.getType(),
+                                             pkg,
+                                             field.getDefaultValue(),
+                                             field.getStartLineNo(),
+                                             field.getStartLinePos());
         }
         PRequirement requirement = PRequirement.valueOf(field.getRequirement()
                                                              .getName());

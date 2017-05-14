@@ -39,24 +39,34 @@ public class ConstProvider implements PValueProvider<Object> {
     private final String          typeName;
     private final String          programContext;
     private final String          constantString;
+    private final int             startLineNo;
+    private final int             startLinePos;
 
     private Object parsedValue;
 
     public ConstProvider(@Nonnull ProgramRegistry registry,
                          @Nonnull String typeName,
                          @Nonnull String programContext,
-                         @Nonnull String constantString) {
+                         @Nonnull String constantString,
+                         int startLineNo,
+                         int startLinePos) {
         this.registry = registry;
         this.typeName = typeName;
         this.programContext = programContext;
         this.constantString = constantString;
         this.parsedValue = null;
+
+        this.startLineNo = startLineNo;
+        this.startLinePos = startLinePos;
     }
 
     @Override
     public Object get() {
         if (parsedValue == null) {
-            ConstParser parser = new ConstParser(registry, programContext);
+            ConstParser parser = new ConstParser(registry,
+                                                 programContext,
+                                                 startLineNo,
+                                                 startLinePos);
             @SuppressWarnings("unchecked")
             PDescriptor type = registry.getProvider(typeName, programContext, Collections.EMPTY_MAP)
                                        .descriptor();

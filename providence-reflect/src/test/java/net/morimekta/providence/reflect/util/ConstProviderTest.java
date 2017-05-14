@@ -9,7 +9,12 @@ public class ConstProviderTest {
     @Test
     public void testProvider() {
         ProgramRegistry registry = new ProgramRegistry();
-        ConstProvider provider = new ConstProvider(registry, "string", "prog", "\"value\"");
+        ConstProvider provider = new ConstProvider(registry,
+                                                   "string",
+                                                   "prog",
+                                                   "\"value\"",
+                                                   0,
+                                                   0);
 
         assertThat(provider.get(), is("value"));
     }

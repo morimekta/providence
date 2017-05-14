@@ -32,7 +32,12 @@ public class CProgramTest {
         CConst constant = new CConst(null,
                                      "kC",
                                      PPrimitive.STRING.provider(),
-                                     new ConstProvider(registry, "string", "prog","\"value\""),
+                                     new ConstProvider(registry,
+                                                       "string",
+                                                       "prog",
+                                                       "\"value\"",
+                                                       2,
+                                                       10),
                                      ImmutableMap.of());
 
         CProgram program = new CProgram(

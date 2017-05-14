@@ -36,7 +36,7 @@ import net.morimekta.providence.descriptor.PSet;
 import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.util.TypeRegistry;
-import net.morimekta.util.Base64;
+import net.morimekta.util.Binary;
 import net.morimekta.util.Strings;
 import net.morimekta.util.json.JsonException;
 import net.morimekta.util.json.JsonToken;
@@ -50,6 +50,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.morimekta.util.io.IOUtils.skipUntil;
 
 /**
  * Parsing thrift constants from string to actual value. This uses a JSON like
@@ -65,20 +67,52 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
  * </ul>
  */
 public class ConstParser {
-    public static final String NULL = "null";
+    private static final String NULL = "null";
 
     private final TypeRegistry registry;
-    private final String program;
+    private final String       programContext;
+    private final int          startLineNo;
+    private final int          startLinePos;
 
-    public ConstParser(TypeRegistry registry, String program) {
+    public ConstParser(TypeRegistry registry,
+                       String programContext,
+                       int startLineNo,
+                       int startLinePos) {
         this.registry = registry;
-        this.program = program;
+        this.programContext = programContext;
+        this.startLineNo = startLineNo;
+        this.startLinePos = startLinePos;
     }
 
+    /**
+     *
+     *
+     * @param inputStream Input stream to parse.
+     * @param type The constant type descriptor.
+     * @return The parsed constant value.
+     * @throws ParseException If not able to parse the constant.
+     */
     public Object parse(InputStream inputStream, PDescriptor type) throws ParseException {
         try {
             ThriftTokenizer tokenizer = new ThriftTokenizer(inputStream);
             return parseTypedValue(tokenizer.expect("const value"), tokenizer, type, true);
+        } catch (ParseException e) {
+            // The line is probably not representative of the "original".
+            if (startLinePos > 0 && e.getLineNo() == 1) {
+                e.setLinePos(e.getLinePos() + startLinePos - 1);
+                if (startLinePos > 3) {
+                    e.setLine(Strings.times(".", startLinePos - 4) +
+                              " = " +
+                              e.getLine());
+                } else {
+                    e.setLine(Strings.times(" ", startLinePos - 1) +
+                              e.getLine());
+                }
+            }
+            if (startLineNo > 0) {
+                e.setLineNo(e.getLineNo() + startLineNo - 1);
+            }
+            throw e;
         } catch (IOException e) {
             throw new ParseException(e, "Unable to read const data from input: " + e.getMessage());
         }
@@ -104,7 +138,17 @@ public class ConstParser {
         }
 
         while (true) {
-            Token token = tokenizer.expectLiteral("message field name");
+            Token token = tokenizer.expect("message field name",
+                                           t -> t.isStringLiteral() ||
+                                                t.strEquals(ThriftTokenizer.kBlockCommentStart) ||
+                                                t.strEquals(ThriftTokenizer.kLineCommentStart));
+            if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
+                skipUntil(tokenizer, (byte) '\n');
+                continue;
+            } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
+                skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                continue;
+            }
             Field field = type.getField(token.decodeLiteral(true));
             if (field == null) {
                 throw tokenizer.failure(token, "Not a valid field name: " + token.decodeLiteral(true));
@@ -129,7 +173,7 @@ public class ConstParser {
     }
 
     private Object parseTypedValue(Token token, ThriftTokenizer tokenizer, PDescriptor valueType, boolean allowNull)
-            throws ParseException, IOException {
+            throws IOException {
         switch (valueType.getType()) {
             case BOOL:
                 if (token.isIdentifier()) {
@@ -174,6 +218,8 @@ public class ConstParser {
                 if (token.isStringLiteral()) {
                     return parseBinary(token.substring(1, -1)
                                             .asString());
+                } else if (allowNull && token.asString().equals(NULL)) {
+                    return null;
                 }
                 throw tokenizer.failure(token, "Not a valid binary value.");
             case ENUM: {
@@ -182,9 +228,15 @@ public class ConstParser {
                 if (name.startsWith(valueType.getName())) {
                     name = name.substring(valueType.getName()
                                                    .length() + 1);
+                } else if (name.startsWith(valueType.getQualifiedName())) {
+                    name = name.substring(valueType.getQualifiedName()
+                                                   .length() + 1);
                 }
                 Object ev = eb.setByName(name).build();
                 if (ev == null) {
+                    if (allowNull && token.asString().equals(NULL)) {
+                        return null;
+                    }
                     throw tokenizer.failure(token, "No such " + valueType.getQualifiedName() + " enum value.");
                 }
                 return ev;
@@ -213,7 +265,15 @@ public class ConstParser {
                 }
 
                 while (true) {
-                    list.add(parseTypedValue(tokenizer.expect("list item value"), tokenizer, itemType, false));
+                    token = tokenizer.expect("list item value");
+                    if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
+                        skipUntil(tokenizer, (byte) '\n');
+                        continue;
+                    } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
+                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        continue;
+                    }
+                    list.add(parseTypedValue(token, tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
                     if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
@@ -243,7 +303,15 @@ public class ConstParser {
                 }
 
                 while (true) {
-                    set.add(parseTypedValue(tokenizer.expect("set item value"), tokenizer, itemType, false));
+                    token = tokenizer.expect("set item value");
+                    if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
+                        skipUntil(tokenizer, (byte) '\n');
+                        continue;
+                    } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
+                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        continue;
+                    }
+                    set.add(parseTypedValue(token, tokenizer, itemType, false));
 
                     Token sep = tokenizer.peek("optional item sep");
                     if (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2)) {
@@ -274,8 +342,16 @@ public class ConstParser {
                 }
 
                 while (true) {
-                    Object key;
                     token = tokenizer.expect("map key");
+                    if (token.strEquals(ThriftTokenizer.kLineCommentStart)) {
+                        skipUntil(tokenizer, (byte) '\n');
+                        continue;
+                    } else if (token.strEquals(ThriftTokenizer.kBlockCommentStart)) {
+                        skipUntil(tokenizer, ThriftTokenizer.kBlockCommentEnd.getBytes(UTF_8));
+                        continue;
+                    }
+
+                    Object key;
                     if (token.isStringLiteral()) {
                         key = parsePrimitiveKey(token.decodeLiteral(true), token, tokenizer, keyType);
                     } else {
@@ -386,7 +462,7 @@ public class ConstParser {
         }
 
         @SuppressWarnings("unchecked")
-        PDeclaredDescriptor descriptor = registry.getDeclaredType(typeName, program);
+        PDeclaredDescriptor descriptor = registry.getDeclaredType(typeName, programContext);
         if (descriptor != null && descriptor instanceof PEnumDescriptor) {
             PEnumDescriptor desc = (PEnumDescriptor) descriptor;
             PEnumValue value = desc.getValueByName(valueName);
@@ -404,7 +480,7 @@ public class ConstParser {
      * @param value The string to decode.
      * @return The decoded byte array.
      */
-    private byte[] parseBinary(String value) {
-        return Base64.decode(value);
+    private Binary parseBinary(String value) {
+        return Binary.fromBase64(value);
     }
 }
