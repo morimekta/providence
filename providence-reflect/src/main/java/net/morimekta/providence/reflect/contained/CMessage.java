@@ -20,68 +20,51 @@
  */
 package net.morimekta.providence.reflect.contained;
 
-import net.morimekta.providence.PEnumValue;
 import net.morimekta.providence.PMessage;
-import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.serializer.PrettySerializer;
-import net.morimekta.providence.serializer.json.JsonCompactible;
-import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
-import net.morimekta.util.Binary;
 
-import java.io.ByteArrayOutputStream;
+import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Stein Eldar Johnsen
  * @since 26.08.15
  */
-public abstract class CMessage<Message extends PMessage<Message, Field>, Field extends PField>
-        implements PMessage<Message, Field>, JsonCompactible {
-    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer().compact();
+public interface CMessage<Message extends PMessage<Message, CField>>
+        extends PMessage<Message, CField> {
+    /**
+     * Method to access all values in the message.
+     *
+     * @return The values map.
+     */
+    Map<Integer, Object> values();
 
-    private final Map<Integer, Object> values;
-
-    CMessage(Map<Integer, Object> fields) {
-        values = fields;
+    @Override
+    default boolean has(int key) {
+        CField field = descriptor().getField(key);
+        return field != null && values().containsKey(key);
     }
 
     @Override
-    public boolean has(int key) {
-        PField field = descriptor().getField(key);
-        if (field == null) {
-            return false;
-        }
-        return values.containsKey(key);
-    }
-
-    @Override
-    public int num(int key) {
-        PField field = descriptor().getField(key);
+    default int num(int key) {
+        CField field = descriptor().getField(key);
         if (field == null) {
             return 0;
         }
 
         // Non-present containers are empty.
-        if (!values.containsKey(key)) {
+        if (!values().containsKey(key)) {
             return 0;
         }
 
-        switch (field.getDescriptor()
-                     .getType()) {
+        switch (field.getDescriptor().getType()) {
             case MAP:
-                return ((Map<?, ?>) values.get(key)).size();
+                return ((Map<?, ?>) values().get(key)).size();
             case LIST:
             case SET:
-                return ((Collection<?>) values.get(key)).size();
+                return ((Collection<?>) values().get(key)).size();
             default:
                 // present non-containers also empty.
                 return 0;
@@ -89,10 +72,10 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
     }
 
     @Override
-    public Object get(int key) {
-        PField field = descriptor().getField(key);
+    default Object get(int key) {
+        CField field = descriptor().getField(key);
         if (field != null) {
-            Object value = values.get(key);
+            Object value = values().get(key);
             if (value != null) {
                 return value;
             } else if (field.hasDefaultValue()) {
@@ -106,155 +89,15 @@ public abstract class CMessage<Message extends PMessage<Message, Field>, Field e
     }
 
     @Override
-    public boolean jsonCompact() {
-        PMessageDescriptor descriptor = descriptor();
-        if (!(descriptor instanceof JsonCompactibleDescriptor)) {
-            return false;
-        }
-        if (!((JsonCompactibleDescriptor) descriptor).isJsonCompactible()) {
-            return false;
-        }
-        boolean missing = false;
-        for (PField field : descriptor.getFields()) {
-            if (has(field.getKey())) {
-                if (missing) {
-                    return false;
-                }
-            } else {
-                missing = true;
-            }
-        }
-        return true;
+    @SuppressWarnings("unchecked")
+    default int compareTo(@Nonnull Message other) {
+        return CStruct.compareMessages((Message) this, other);
     }
 
+    @Nonnull
     @Override
-    public boolean equals(Object o) {
-        if (o == null || !(o instanceof CMessage)) {
-            return false;
-        }
-
-        CMessage other = (CMessage) o;
-        PMessageDescriptor<?, ?> type = other.descriptor();
-        if (!descriptor().getQualifiedName()
-                         .equals(type.getQualifiedName()) || !descriptor().getVariant()
-                                                                          .equals(type.getVariant())) {
-            return false;
-        }
-
-        for (PField field : descriptor().getFields()) {
-            int id = field.getKey();
-            if (has(id) != other.has(id)) {
-                return false;
-            }
-            if (!Objects.equals(get(id), other.get(id))) {
-                return false;
-            }
-        }
-        return true;
+    @SuppressWarnings("unchecked")
+    default String asString() {
+        return CStruct.asString((PMessage) this);
     }
-
-    @Override
-    public int hashCode() {
-        int hash = getClass().hashCode();
-        for (Map.Entry<Integer, Object> entry : values.entrySet()) {
-            PField field = descriptor().getField(entry.getKey());
-            hash *= 29251;
-            hash += Objects.hash(field, entry.getValue());
-        }
-        return hash;
-    }
-
-    @Override
-    public int compareTo(Message other) {
-        return compare((Message) this, other);
-    }
-
-    @Override
-    public String toString() {
-        return descriptor().getQualifiedName() + asString();
-    }
-
-    @Override
-    public String asString() {
-        return asString((PMessage) this);
-    }
-
-    /**
-     * Prints a jsonCompact string representation of the message.
-     *
-     * @param message The message to stringify.
-     * @param <T> The message type.
-     * @param <F> The field type.
-     * @return The resulting string.
-     */
-    protected static <T extends PMessage<T, F>, F extends PField> String asString(T message) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PRETTY_SERIALIZER.serialize(baos, message);
-        return new String(baos.toByteArray(), UTF_8);
-    }
-
-    /**
-     * Compare two values to each other.
-     *
-     * @param o1 The first value.
-     * @param o2 The second value.
-     * @param <T> The object type.
-     * @return The compare value (-1, 0 or 1).
-     */
-    protected static <T extends Comparable<T>> int compare(T o1, T o2) {
-        if (o1 == null || o2 == null) {
-            return Boolean.compare(o1 != null, o2 != null);
-        } else if (o1 instanceof Boolean && o2 instanceof Boolean) {
-            return Boolean.compare((Boolean) o1, (Boolean) o2);
-        } else if (o1 instanceof Short && o2 instanceof Short) {
-            return Short.compare((Short) o1, (Short) o2);
-        } else if (o1 instanceof Integer && o2 instanceof Integer) {
-            return Integer.compare((Integer) o1, (Integer) o2);
-        } else if (o1 instanceof Long && o2 instanceof Long) {
-            return Long.compare((Long) o1, (Long) o2);
-        } else if (o1 instanceof Double && o2 instanceof Double) {
-            return Double.compare((Double) o1, (Double) o2);
-        } else if (o1 instanceof String && o2 instanceof String) {
-            return ((String) o1).compareTo((String) o2);
-        } else if (o1 instanceof Binary && o2 instanceof Binary) {
-            return ((Binary) o1).compareTo((Binary) o2);
-        } else if (o1 instanceof PEnumValue && o2 instanceof PEnumValue) {
-            return Integer.compare(((PEnumValue) o1).getValue(), ((PEnumValue) o2).getValue());
-        } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
-            return compareMessages((PMessage) o1, (PMessage) o2);
-        } else if (o1 instanceof Map && o2 instanceof Map) {
-            // Maps cannot be compared to each other.
-        } else if (o1 instanceof Set && o2 instanceof Set) {
-            // Sets cannot be compared to each other.
-        } else if (o1 instanceof List && o2 instanceof List) {
-            // Lists cannot be compared to each other.
-        }
-        return 0;
-    }
-
-    private static <T extends PMessage<T, F>, F extends PField> int compareMessages(T m1, T m2) {
-        int c = 0;
-        c = m1.descriptor()
-              .getQualifiedName()
-              .compareTo(m2.descriptor()
-                           .getQualifiedName());
-        if (c != 0) {
-            return c;
-        }
-        for (PField field : m1.descriptor()
-                              .getFields()) {
-            c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
-            if (c != 0) {
-                return c;
-            }
-            if (m1.has(field.getKey())) {
-                c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
-                if (c != 0) {
-                    return c;
-                }
-            }
-        }
-        return 0;
-    }
-
 }

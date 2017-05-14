@@ -45,15 +45,13 @@ import static net.morimekta.providence.reflect.contained.CStructDescriptor.MAX_C
 /**
  *
  */
-public class JMessage<T extends CMessage<T, CField>> {
-    private final PMessageDescriptor<?, ?> descriptor;
-    private final JHelper                  helper;
+public class JMessage<T extends CMessage<T>> {
+    private final PMessageDescriptor<T, CField> descriptor;
     private final ArrayList<JField>        declaredFields;
     private final ArrayList<JField>        numericalFields;
 
     public JMessage(PMessageDescriptor<T, CField> descriptor, JHelper helper) {
         this.descriptor = descriptor;
-        this.helper = helper;
         this.declaredFields = new ArrayList<>(descriptor.getFields().length);
 
         CField[] fields = descriptor.getFields();
@@ -65,7 +63,7 @@ public class JMessage<T extends CMessage<T, CField>> {
         this.numericalFields.sort(Comparator.comparingInt(JField::id));
     }
 
-    public PMessageDescriptor<?, ?> descriptor() {
+    public PMessageDescriptor<T, CField> descriptor() {
         return descriptor;
     }
 

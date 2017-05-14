@@ -22,34 +22,74 @@ package net.morimekta.providence.reflect.contained;
 
 import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
-import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
-
-import com.google.common.collect.ImmutableMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
+import net.morimekta.providence.serializer.PrettySerializer;
+import net.morimekta.providence.serializer.json.JsonCompactible;
+import net.morimekta.providence.serializer.json.JsonCompactibleDescriptor;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Objects;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * @author Stein Eldar Johnsen
- * @since 26.08.15
+ * A contained message of variant struct.
  */
-public class CStruct extends CMessage<CStruct,CField> {
-    CStructDescriptor descriptor;
+public class CStruct implements CMessage<CStruct>, JsonCompactible {
+    private static final PrettySerializer PRETTY_SERIALIZER = new PrettySerializer().compact();
+
+    Map<Integer,Object> values;
+    CStructDescriptor   descriptor;
 
     private CStruct(Builder builder) {
-        super(builder.getValueMap());
         descriptor = builder.descriptor;
+        values     = builder.getValueMap();
     }
 
+    public Map<Integer,Object> values() {
+        return values;
+    }
+
+    @Override
+    public boolean jsonCompact() {
+        PMessageDescriptor<CStruct, CField> descriptor = descriptor();
+        if (!((JsonCompactibleDescriptor) descriptor).isJsonCompactible()) {
+            return false;
+        }
+        boolean missing = false;
+        for (CField field : descriptor.getFields()) {
+            if (has(field.getKey())) {
+                if (missing) {
+                    return false;
+                }
+            } else {
+                missing = true;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o ||
+               !(o == null ||
+                 !(o instanceof CStruct)) && equals(this, (CStruct) o);
+    }
+
+    @Override
+    public int hashCode() {
+        return hashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return descriptor().getQualifiedName() + asString();
+    }
+
+    @Nonnull
     @Override
     public PMessageBuilder<CStruct,CField> mutate() {
         return new Builder(descriptor);
@@ -61,79 +101,16 @@ public class CStruct extends CMessage<CStruct,CField> {
         return descriptor;
     }
 
-    public static class Builder extends PMessageBuilder<CStruct,CField> {
-        private final CStructDescriptor    descriptor;
-        private final Map<Integer, Object> values;
+    public static class Builder extends CMessageBuilder<Builder,CStruct> {
+        private final CStructDescriptor descriptor;
 
         public Builder(CStructDescriptor descriptor) {
             this.descriptor = descriptor;
-            this.values = new TreeMap<>();
-        }
-        
-        @Nonnull
-        @Override
-        @SuppressWarnings("unchecked")
-        public Builder merge(CStruct from) {
-            for (PField field : descriptor.getFields()) {
-                int key = field.getKey();
-                if (from.has(key)) {
-                    switch (field.getType()) {
-                        case MESSAGE:
-                            ((PMessageBuilder) mutator(key)).merge((PMessage) from.get(key));
-                            break;
-                        case SET:
-                            if (values.containsKey(key)) {
-                                ((PSet.Builder<Object>) values.get(key)).addAll((Collection<Object>) from.get(key));
-                            } else {
-                                set(key, from.get(key));
-                            }
-                            break;
-                        case MAP:
-                            if (values.containsKey(key)) {
-                                ((PMap.Builder<Object, Object>) values.get(key)).putAll((Map<Object, Object>) from.get(key));
-                            } else {
-                                set(key, from.get(key));
-                            }
-                            break;
-                        default:
-                            set(key, from.get(key));
-                            break;
-                    }
-                }
-            }
-            
-            return this;
         }
 
         @Nonnull
         @Override
-        @SuppressWarnings("unchecked")
-        public PMessageBuilder mutator(int key) {
-            CField field = descriptor.getField(key);
-            if (field == null) {
-                throw new IllegalArgumentException("No such field ID " + key);
-            } else if (field.getType() != PType.MESSAGE) {
-                throw new IllegalArgumentException("Not a message field ID " + key + ": " + field.getName());
-            }
-
-            Object current = values.get(key);
-            if (current == null) {
-                current = ((PStructDescriptor) field.getDescriptor()).builder();
-                values.put(key, current);
-            } else if (current instanceof PMessage) {
-                current = ((PMessage) current).mutate();
-                values.put(key, current);
-            } else if (!(current instanceof PMessageBuilder)) {
-                // This should in theory not be possible. This is just a safe-guard.
-                throw new IllegalArgumentException("Invalid value in map on message type: " + current.getClass().getSimpleName());
-            }
-
-            return (PMessageBuilder) current;
-        }
-
-        @Nonnull
-        @Override
-        public PStructDescriptor<CStruct, CField> descriptor() {
+        public CStructDescriptor descriptor() {
             return descriptor;
         }
 
@@ -142,158 +119,93 @@ public class CStruct extends CMessage<CStruct,CField> {
         public CStruct build() {
             return new CStruct(this);
         }
+    }
 
-        @Override
-        public boolean valid() {
-            for (PField field : descriptor.getFields()) {
-                if (field.getRequirement() == PRequirement.REQUIRED) {
-                    if (!values.containsKey(field.getKey())) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        @Override
-        public void validate() {
-            LinkedList<String> missing = new LinkedList<>();
-            for (PField field : descriptor.getFields()) {
-                if (field.getRequirement() == PRequirement.REQUIRED) {
-                    if (!values.containsKey(field.getKey())) {
-                        missing.add(field.getName());
-                    }
-                }
-            }
-
-            if (missing.size() > 0) {
-                throw new IllegalStateException(
-                        "Missing required fields " +
-                        String.join(",", missing) +
-                        " in message " + descriptor().getQualifiedName());
-            }
-        }
-
-        @Nonnull
-        @Override
-        @SuppressWarnings("unchecked")
-        public Builder set(int key, Object value) {
-            PField field = descriptor.getField(key);
-            if (field == null) {
-                return this; // soft ignoring unsupported fields.
-            }
-            if (value == null) {
-                values.remove(key);
-            } else {
-                switch (field.getType()) {
-                    case LIST: {
-                        PList.Builder builder = ((PList) field.getDescriptor()).builder();
-                        builder.addAll((Collection<Object>) value);
-                        values.put(key, builder);
-                        break;
-                    }
-                    case SET: {
-                        PSet.Builder builder = ((PSet) field.getDescriptor()).builder();
-                        builder.addAll((Collection<Object>) value);
-                        values.put(key, builder);
-                        break;
-                    }
-                    case MAP: {
-                        PMap.Builder builder = ((PMap) field.getDescriptor()).builder();
-                        builder.putAll((Map<Object, Object>) value);
-                        values.put(key, builder);
-                        break;
-                    }
-                    default:
-                        values.put(key, value);
-                        break;
-                }
-            }
-
-            return this;
-        }
-
-        @Override
-        public boolean isSet(int key) {
-            return values.containsKey(key);
-        }
-
-        @Override
-        public boolean isModified(int key) {
+    protected static <M extends PMessage<M, CField>> boolean equals(M a, M b) {
+        PMessageDescriptor<?, ?> type = b.descriptor();
+        if (!a.descriptor()
+                 .getQualifiedName()
+                 .equals(type.getQualifiedName()) ||
+            !a.descriptor()
+                 .getVariant()
+                 .equals(type.getVariant())) {
             return false;
         }
 
-        @Nonnull
-        @Override
-        @SuppressWarnings("unchecked")
-        public Builder addTo(int key, Object value) {
-            PField field = descriptor.getField(key);
-            if (field == null) {
-                return this; // soft ignoring unsupported fields.
+        for (CField field : a.descriptor().getFields()) {
+            int id = field.getKey();
+            if (a.has(id) != b.has(id)) {
+                return false;
             }
-            if (value != null) {
-                if (field.getType() == PType.LIST) {
-                    @SuppressWarnings("unchecked")
-                    PList.Builder<Object> list = (PList.Builder<Object>) values.get(field.getKey());
-                    if (list == null) {
-                        list = ((PList) field.getDescriptor()).builder();
-                        values.put(field.getKey(), list);
-                    }
-                    list.add(value);
-                } else if (field.getType() == PType.SET) {
-                    @SuppressWarnings("unchecked")
-                    PSet.Builder<Object> set = (PSet.Builder<Object>) values.get(field.getKey());
-                    if (set == null) {
-                        set = ((PSet) field.getDescriptor()).builder();
-                        values.put(field.getKey(), set);
-                    }
-                    set.add(value);
-                } else {
-                    throw new IllegalArgumentException("Key " + key + " is not a collection: " + field.getType());
+            if (!Objects.equals(a.get(id), b.get(id))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected static <M extends CMessage<M>> int hashCode(M self) {
+        int hash = self.descriptor().hashCode();
+        for (CField field : self.descriptor().getFields()) {
+            hash *= 29251;
+            hash ^= Objects.hash(field, self.get(field));
+        }
+        return hash;
+    }
+
+    /**
+     * Prints a jsonCompact string representation of the message.
+     *
+     * @param message The message to stringify.
+     * @return The resulting string.
+     */
+    protected static <Message extends PMessage<Message, CField>>
+    String asString(Message message) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PRETTY_SERIALIZER.serialize(baos, message);
+        return new String(baos.toByteArray(), UTF_8);
+    }
+
+    /**
+     * Compare two values to each other.
+     *
+     * @param o1 The first value.
+     * @param o2 The second value.
+     * @param <T> The object type.
+     * @return The compare value (-1, 0 or 1).
+     */
+    @SuppressWarnings("unchecked")
+    private static <T extends Comparable<T>> int compare(T o1, T o2) {
+        if (o1 == null || o2 == null) {
+            return Boolean.compare(o1 != null, o2 != null);
+        } else if (o1 instanceof PMessage && o2 instanceof PMessage) {
+            return compareMessages((PMessage) o1, (PMessage) o2);
+        }
+        return o1.compareTo(o2);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T extends PMessage<T, F>, F extends PField> int compareMessages(T m1, T m2) {
+        int c = m1.descriptor()
+                  .getQualifiedName()
+                  .compareTo(m2.descriptor()
+                               .getQualifiedName());
+        if (c != 0) {
+            return c;
+        }
+        for (PField field : m1.descriptor()
+                              .getFields()) {
+            c = Boolean.compare(m1.has(field.getKey()), m2.has(field.getKey()));
+            if (c != 0) {
+                return c;
+            }
+            if (m1.has(field.getKey())) {
+                c = compare((Comparable) m1.get(field.getKey()), (Comparable) m2.get(field.getKey()));
+                if (c != 0) {
+                    return c;
                 }
             }
-            return this;
         }
-
-        @Nonnull
-        @Override
-        public Builder clear(int key) {
-            values.remove(key);
-            return this;
-        }
-
-        @SuppressWarnings("unchecked")
-        private Map<Integer, Object> getValueMap() {
-            ImmutableMap.Builder<Integer, Object> out = ImmutableMap.builder();
-            for (CField field : descriptor.getFields()) {
-                int key = field.getKey();
-                if (values.containsKey(key)) {
-                    switch (field.getType()) {
-                        case SET:
-                            out.put(key, ((PSet.Builder<Object>) values.get(key)).build());
-                            break;
-                        case LIST:
-                            out.put(key, ((PList.Builder<Object>) values.get(key)).build());
-                            break;
-                        case MAP:
-                            out.put(key, ((PMap.Builder<Object, Object>) values.get(key)).build());
-                            break;
-                        case MESSAGE:
-                            Object current = values.get(key);
-                            if (current instanceof PMessageBuilder) {
-                                out.put(key, ((PMessageBuilder) current).build());
-                            } else {
-                                out.put(key, current);
-                            }
-                            break;
-                        default:
-                            out.put(key, values.get(key));
-                            break;
-                    }
-                }
-            }
-            return out.build();
-        }
+        return 0;
     }
 }
