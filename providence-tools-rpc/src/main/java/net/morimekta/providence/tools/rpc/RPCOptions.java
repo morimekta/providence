@@ -204,7 +204,8 @@ public class RPCOptions extends CommonOptions {
                             .collect(Collectors.toSet()));
 
             throw new ArgumentException(
-                         "Unknown service %s in %s.\nFound %s",
+                         "Unknown service %s in %s.\n" +
+                         "Found %s",
                          service, namespace,
                          services.size() == 0 ? "none" : Strings.join(", ", services));
         }
