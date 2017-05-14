@@ -218,34 +218,41 @@ public class ThriftProgramParser implements ProgramParser {
     }
 
     private ConstType parseConst(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException, ParseException {
-        Token token = tokenizer.expect("const typename",
-                                       t -> t.isIdentifier() ||
-                                            t.isQualifiedIdentifier());
+        Token token = tokenizer.expect("const typename", t -> t.isIdentifier() || t.isQualifiedIdentifier());
         String type = parseType(tokenizer, token, includedPrograms);
         Token id = tokenizer.expectIdentifier("const identifier");
 
         tokenizer.expectSymbol("const value separator", Token.kFieldValueSep);
 
-        String value = parseValue(tokenizer);
-
+        Token value = parseValue(tokenizer);
         Token sep = tokenizer.peek();
         if (sep != null && (sep.isSymbol(Token.kLineSep1) || sep.isSymbol(Token.kLineSep2))) {
             tokenizer.next();
         }
 
         return ConstType.builder()
-                          .setDocumentation(comment)
-                          .setName(id.asString())
-                          .setType(type)
-                          .setValue(value)
-                          .build();
+                        .setDocumentation(comment)
+                        .setName(id.asString())
+                        .setType(type)
+                        .setValue(value.asString())
+                        .setStartLineNo(value.getLineNo())
+                        .setStartLinePos(value.getLinePos())
+                        .build();
     }
 
-    private String parseValue(ThriftTokenizer tokenizer) throws IOException {
+    private Token parseValue(ThriftTokenizer tokenizer) throws IOException {
         Stack<Character> enclosures = new Stack<>();
-        StringBuilder builder = new StringBuilder();
+
+        int startLineNo = 0;
+        int startLinePos = 0;
+        int offset = -1;
         while (true) {
             Token token = tokenizer.expect("const value");
+            if (offset < 0) {
+                offset = token.getOffset();
+                startLineNo = token.getLineNo();
+                startLinePos = token.getLinePos();
+            }
 
             if (token.strEquals(kBlockCommentStart)) {
                 parseDocBlock(tokenizer);  // ignore.
@@ -262,9 +269,11 @@ public class ThriftProgramParser implements ProgramParser {
                 enclosures.pop();
             }
 
-            builder.append(token.asString());
             if (enclosures.isEmpty()) {
-                return builder.toString();
+                return tokenizer.token(offset,
+                                       (token.getOffset() - offset) + token.length(),
+                                       startLineNo,
+                                       startLinePos);
             }
         }
     }
@@ -803,7 +812,10 @@ public class ThriftProgramParser implements ProgramParser {
             // Default value
             if (token.isSymbol(Token.kFieldValueSep)) {
                 tokenizer.next();
-                field.setDefaultValue(parseValue(tokenizer));
+                Token defaultValue = parseValue(tokenizer);
+                field.setDefaultValue(defaultValue.asString());
+                field.setStartLineNo(defaultValue.getLineNo());
+                field.setStartLinePos(defaultValue.getLinePos());
                 token = tokenizer.peek("");
             }
 

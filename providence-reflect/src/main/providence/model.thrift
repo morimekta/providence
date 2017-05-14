@@ -84,6 +84,12 @@ struct FieldType {
     5: required string name;
     6: optional string default_value;
     7: optional map<string,string> annotations;
+
+    // Note the start of the default value in the parsed thrift file, this
+    // can be used for making more accurate exception / parse data from the
+    // const parser.
+    10: optional i32 start_line_no;
+    11: optional i32 start_line_pos;
 }
 
 /**
@@ -134,6 +140,11 @@ struct ConstType {
     5: required string name;
     6: required string value;
     7: optional map<string,string> annotations;
+
+    // Note the start of the const in the parsed thrift file, this can be used
+    // for making more accurate exception / parse data from the const parser.
+    10: optional i32 start_line_no;
+    11: optional i32 start_line_pos;
 }
 
 /**

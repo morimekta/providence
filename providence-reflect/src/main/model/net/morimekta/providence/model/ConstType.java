@@ -14,12 +14,16 @@ public class ConstType
     private final static String kDefaultType = "";
     private final static String kDefaultName = "";
     private final static String kDefaultValue = "";
+    private final static int kDefaultStartLineNo = 0;
+    private final static int kDefaultStartLinePos = 0;
 
     private final String mDocumentation;
     private final String mType;
     private final String mName;
     private final String mValue;
     private final java.util.Map<String,String> mAnnotations;
+    private final Integer mStartLineNo;
+    private final Integer mStartLinePos;
 
     private volatile int tHashCode;
 
@@ -27,7 +31,9 @@ public class ConstType
                      String pType,
                      String pName,
                      String pValue,
-                     java.util.Map<String,String> pAnnotations) {
+                     java.util.Map<String,String> pAnnotations,
+                     Integer pStartLineNo,
+                     Integer pStartLinePos) {
         mDocumentation = pDocumentation;
         if (pType != null) {
             mType = pType;
@@ -49,6 +55,8 @@ public class ConstType
         } else {
             mAnnotations = null;
         }
+        mStartLineNo = pStartLineNo;
+        mStartLinePos = pStartLinePos;
     }
 
     private ConstType(_Builder builder) {
@@ -73,6 +81,8 @@ public class ConstType
         } else {
             mAnnotations = null;
         }
+        mStartLineNo = builder.mStartLineNo;
+        mStartLinePos = builder.mStartLinePos;
     }
 
     public boolean hasDocumentation() {
@@ -134,6 +144,31 @@ public class ConstType
         return mAnnotations;
     }
 
+    public boolean hasStartLineNo() {
+        return mStartLineNo != null;
+    }
+
+    /**
+     * Note the start of the const in the parsed thrift file, this can be used
+     * for making more accurate exception / parse data from the const parser.
+     *
+     * @return The field value
+     */
+    public int getStartLineNo() {
+        return hasStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
+    }
+
+    public boolean hasStartLinePos() {
+        return mStartLinePos != null;
+    }
+
+    /**
+     * @return The field value
+     */
+    public int getStartLinePos() {
+        return hasStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+    }
+
     @Override
     public boolean has(int key) {
         switch(key) {
@@ -142,6 +177,8 @@ public class ConstType
             case 5: return true;
             case 6: return true;
             case 7: return hasAnnotations();
+            case 10: return hasStartLineNo();
+            case 11: return hasStartLinePos();
             default: return false;
         }
     }
@@ -154,6 +191,8 @@ public class ConstType
             case 5: return 1;
             case 6: return 1;
             case 7: return numAnnotations();
+            case 10: return hasStartLineNo() ? 1 : 0;
+            case 11: return hasStartLinePos() ? 1 : 0;
             default: return 0;
         }
     }
@@ -166,6 +205,8 @@ public class ConstType
             case 5: return getName();
             case 6: return getValue();
             case 7: return getAnnotations();
+            case 10: return getStartLineNo();
+            case 11: return getStartLinePos();
             default: return null;
         }
     }
@@ -179,7 +220,9 @@ public class ConstType
                java.util.Objects.equals(mType, other.mType) &&
                java.util.Objects.equals(mName, other.mName) &&
                java.util.Objects.equals(mValue, other.mValue) &&
-               java.util.Objects.equals(mAnnotations, other.mAnnotations);
+               java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+               java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
+               java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
     }
 
     @Override
@@ -191,7 +234,9 @@ public class ConstType
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.ANNOTATIONS, mAnnotations,
+                    _Field.START_LINE_NO, mStartLineNo,
+                    _Field.START_LINE_POS, mStartLinePos);
         }
         return tHashCode;
     }
@@ -234,6 +279,16 @@ public class ConstType
             out.append("annotations:")
                .append(net.morimekta.util.Strings.asString(mAnnotations));
         }
+        if (hasStartLineNo()) {
+            out.append(',');
+            out.append("start_line_no:")
+               .append(mStartLineNo);
+        }
+        if (hasStartLinePos()) {
+            out.append(',');
+            out.append("start_line_pos:")
+               .append(mStartLinePos);
+        }
         out.append('}');
         return out.toString();
     }
@@ -262,6 +317,20 @@ public class ConstType
         if (c != 0) return c;
         if (mAnnotations != null) {
             c = Integer.compare(mAnnotations.hashCode(), other.mAnnotations.hashCode());
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mStartLineNo != null, other.mStartLineNo != null);
+        if (c != 0) return c;
+        if (mStartLineNo != null) {
+            c = Integer.compare(mStartLineNo, other.mStartLineNo);
+            if (c != 0) return c;
+        }
+
+        c = Boolean.compare(mStartLinePos != null, other.mStartLinePos != null);
+        if (c != 0) return c;
+        if (mStartLinePos != null) {
+            c = Integer.compare(mStartLinePos, other.mStartLinePos);
             if (c != 0) return c;
         }
 
@@ -314,6 +383,18 @@ public class ConstType
             }
         }
 
+        if (hasStartLineNo()) {
+            length += writer.writeByte((byte) 8);
+            length += writer.writeShort((short) 10);
+            length += writer.writeInt(mStartLineNo);
+        }
+
+        if (hasStartLinePos()) {
+            length += writer.writeByte((byte) 8);
+            length += writer.writeShort((short) 11);
+            length += writer.writeInt(mStartLinePos);
+        }
+
         length += writer.writeByte((byte) 0);
         return length;
     }
@@ -330,6 +411,8 @@ public class ConstType
         NAME(5, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         VALUE(6, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "value", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         ANNOTATIONS(7, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.provider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
+        START_LINE_NO(10, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_no", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        START_LINE_POS(11, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "start_line_pos", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         ;
 
         private final int mKey;
@@ -378,6 +461,8 @@ public class ConstType
                 case 5: return _Field.NAME;
                 case 6: return _Field.VALUE;
                 case 7: return _Field.ANNOTATIONS;
+                case 10: return _Field.START_LINE_NO;
+                case 11: return _Field.START_LINE_POS;
             }
             return null;
         }
@@ -389,6 +474,8 @@ public class ConstType
                 case "name": return _Field.NAME;
                 case "value": return _Field.VALUE;
                 case "annotations": return _Field.ANNOTATIONS;
+                case "start_line_no": return _Field.START_LINE_NO;
+                case "start_line_pos": return _Field.START_LINE_POS;
             }
             return null;
         }
@@ -468,13 +555,15 @@ public class ConstType
         private String mName;
         private String mValue;
         private net.morimekta.providence.descriptor.PMap.Builder<String,String> mAnnotations;
+        private Integer mStartLineNo;
+        private Integer mStartLinePos;
 
         /**
          * Make a model.ConstType builder.
          */
         public _Builder() {
-            optionals = new java.util.BitSet(5);
-            modified = new java.util.BitSet(5);
+            optionals = new java.util.BitSet(7);
+            modified = new java.util.BitSet(7);
             mType = kDefaultType;
             mName = kDefaultName;
             mValue = kDefaultValue;
@@ -503,6 +592,14 @@ public class ConstType
                 optionals.set(4);
                 mAnnotations.putAll(base.mAnnotations);
             }
+            if (base.hasStartLineNo()) {
+                optionals.set(5);
+                mStartLineNo = base.mStartLineNo;
+            }
+            if (base.hasStartLinePos()) {
+                optionals.set(6);
+                mStartLinePos = base.mStartLinePos;
+            }
         }
 
         @javax.annotation.Nonnull
@@ -530,6 +627,18 @@ public class ConstType
                 optionals.set(4);
                 modified.set(4);
                 mAnnotations.putAll(from.getAnnotations());
+            }
+
+            if (from.hasStartLineNo()) {
+                optionals.set(5);
+                modified.set(5);
+                mStartLineNo = from.getStartLineNo();
+            }
+
+            if (from.hasStartLinePos()) {
+                optionals.set(6);
+                modified.set(6);
+                mStartLinePos = from.getStartLinePos();
             }
             return this;
         }
@@ -842,6 +951,119 @@ public class ConstType
             return mAnnotations;
         }
 
+        /**
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setStartLineNo(int value) {
+            optionals.set(5);
+            modified.set(5);
+            mStartLineNo = value;
+            return this;
+        }
+
+        /**
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return True if start_line_no has been set.
+         */
+        public boolean isSetStartLineNo() {
+            return optionals.get(5);
+        }
+
+        /**
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return True if start_line_no has been modified.
+         */
+        public boolean isModifiedStartLineNo() {
+            return modified.get(5);
+        }
+
+        /**
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearStartLineNo() {
+            optionals.clear(5);
+            modified.set(5);
+            mStartLineNo = null;
+            return this;
+        }
+
+        /**
+         * Note the start of the const in the parsed thrift file, this can be used
+         * for making more accurate exception / parse data from the const parser.
+         *
+         * @return The field value
+         */
+        public int getStartLineNo() {
+            return isSetStartLineNo() ? mStartLineNo : kDefaultStartLineNo;
+        }
+
+        /**
+         * Sets the value of start_line_pos.
+         *
+         * @param value The new value
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder setStartLinePos(int value) {
+            optionals.set(6);
+            modified.set(6);
+            mStartLinePos = value;
+            return this;
+        }
+
+        /**
+         * Checks for presence of the start_line_pos field.
+         *
+         * @return True if start_line_pos has been set.
+         */
+        public boolean isSetStartLinePos() {
+            return optionals.get(6);
+        }
+
+        /**
+         * Checks if start_line_pos has been modified since the _Builder was created.
+         *
+         * @return True if start_line_pos has been modified.
+         */
+        public boolean isModifiedStartLinePos() {
+            return modified.get(6);
+        }
+
+        /**
+         * Clears the start_line_pos field.
+         *
+         * @return The builder
+         */
+        @javax.annotation.Nonnull
+        public _Builder clearStartLinePos() {
+            optionals.clear(6);
+            modified.set(6);
+            mStartLinePos = null;
+            return this;
+        }
+
+        /**
+         * Gets the value of the contained start_line_pos.
+         *
+         * @return The field value
+         */
+        public int getStartLinePos() {
+            return isSetStartLinePos() ? mStartLinePos : kDefaultStartLinePos;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -852,7 +1074,9 @@ public class ConstType
                    java.util.Objects.equals(mType, other.mType) &&
                    java.util.Objects.equals(mName, other.mName) &&
                    java.util.Objects.equals(mValue, other.mValue) &&
-                   java.util.Objects.equals(mAnnotations, other.mAnnotations);
+                   java.util.Objects.equals(mAnnotations, other.mAnnotations) &&
+                   java.util.Objects.equals(mStartLineNo, other.mStartLineNo) &&
+                   java.util.Objects.equals(mStartLinePos, other.mStartLinePos);
         }
 
         @Override
@@ -863,7 +1087,9 @@ public class ConstType
                     _Field.TYPE, mType,
                     _Field.NAME, mName,
                     _Field.VALUE, mValue,
-                    _Field.ANNOTATIONS, mAnnotations);
+                    _Field.ANNOTATIONS, mAnnotations,
+                    _Field.START_LINE_NO, mStartLineNo,
+                    _Field.START_LINE_POS, mStartLinePos);
         }
 
         @Override
@@ -885,6 +1111,8 @@ public class ConstType
                 case 5: setName((String) value); break;
                 case 6: setValue((String) value); break;
                 case 7: setAnnotations((java.util.Map<String,String>) value); break;
+                case 10: setStartLineNo((int) value); break;
+                case 11: setStartLinePos((int) value); break;
                 default: break;
             }
             return this;
@@ -898,6 +1126,8 @@ public class ConstType
                 case 5: return optionals.get(2);
                 case 6: return optionals.get(3);
                 case 7: return optionals.get(4);
+                case 10: return optionals.get(5);
+                case 11: return optionals.get(6);
                 default: break;
             }
             return false;
@@ -911,6 +1141,8 @@ public class ConstType
                 case 5: return modified.get(2);
                 case 6: return modified.get(3);
                 case 7: return modified.get(4);
+                case 10: return modified.get(5);
+                case 11: return modified.get(6);
                 default: break;
             }
             return false;
@@ -933,6 +1165,8 @@ public class ConstType
                 case 5: clearName(); break;
                 case 6: clearValue(); break;
                 case 7: clearAnnotations(); break;
+                case 10: clearStartLineNo(); break;
+                case 11: clearStartLinePos(); break;
                 default: break;
             }
             return this;
@@ -1043,6 +1277,24 @@ public class ConstType
                             optionals.set(4);
                         } else {
                             throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.annotations, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 10: {
+                        if (type == 8) {
+                            mStartLineNo = reader.expectInt();
+                            optionals.set(5);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.start_line_no, should be struct(12)");
+                        }
+                        break;
+                    }
+                    case 11: {
+                        if (type == 8) {
+                            mStartLinePos = reader.expectInt();
+                            optionals.set(6);
+                        } else {
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.ConstType.start_line_pos, should be struct(12)");
                         }
                         break;
                     }
