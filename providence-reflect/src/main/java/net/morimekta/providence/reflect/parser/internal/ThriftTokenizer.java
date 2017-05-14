@@ -24,6 +24,7 @@ import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.serializer.pretty.Token;
 import net.morimekta.providence.serializer.pretty.Tokenizer;
 import net.morimekta.providence.serializer.pretty.TokenizerException;
+import net.morimekta.util.Strings;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -37,19 +38,19 @@ import java.io.InputStream;
 public class ThriftTokenizer extends Tokenizer {
     // Various thrift keywords.
     public static final String kNamespace = "namespace";
-    public static final String kInclude = "include";
-    public static final String kTypedef = "typedef";
-    public static final String kEnum = "enum";
-    public static final String kStruct = "struct";
-    public static final String kUnion = "union";
+    public static final String kInclude   = "include";
+    public static final String kTypedef   = "typedef";
+    public static final String kEnum      = "enum";
+    public static final String kStruct    = "struct";
+    public static final String kUnion     = "union";
     public static final String kException = "exception";
-    public static final String kConst = "const";
-    public static final String kService = "service";
+    public static final String kConst     = "const";
+    public static final String kService   = "service";
 
-    public static final String kExtends = "extends";
-    public static final String kVoid = "void";
-    public static final String kOneway = "oneway";
-    public static final String kThrows = "throws";
+    public static final String kExtends  = "extends";
+    public static final String kVoid     = "void";
+    public static final String kOneway   = "oneway";
+    public static final String kThrows   = "throws";
     public static final String kRequired = "required";
     public static final String kOptional = "optional";
 
@@ -63,20 +64,22 @@ public class ThriftTokenizer extends Tokenizer {
     }
 
     protected Token nextSymbol(int lastByte) throws TokenizerException {
-        int startOffset = readOffset;
-        int startLineNo = lineNo;
-        int startLinePos = linePos;
         if (lastByte == '/') {
+            int startOffset = readOffset;
+            int startLineNo = lineNo;
+            int startLinePos = linePos;
+
             int next = read();
             if (next < 0) {
                 throw failure(startLineNo, startLinePos, 1,
-                              "");
+                              "Expected java-style comment, got end of file");
             }
             if (next == '/' || next == '*') {
                 return token(startOffset, 2, startLinePos);
             }
             throw failure(startLineNo, startLinePos, 2,
-                          "");
+                          "Expected java-style comment, got '%s' after '/'",
+                          Strings.escape((char) next));
         }
         return super.nextSymbol(lastByte);
     }
