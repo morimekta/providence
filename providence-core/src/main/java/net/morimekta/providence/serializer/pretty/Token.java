@@ -264,4 +264,8 @@ public class Token extends Slice {
     public String toString() {
         return String.format("Token('%s',%d:%d-%d)", asString(), lineNo, linePos, linePos + len - 1);
     }
+
+    public int getOffset() {
+        return off;
+    }
 }

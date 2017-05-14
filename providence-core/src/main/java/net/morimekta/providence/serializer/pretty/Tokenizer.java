@@ -606,6 +606,11 @@ public class Tokenizer extends InputStream {
 
     @Nonnull
     protected Token token(int off, int len, int linePos) {
+        return token(off, len, lineNo, linePos);
+    }
+
+    @Nonnull
+    public Token token(int off, int len, int lineNo, int linePos) {
         return new Token(buffer, off, len, lineNo, linePos);
     }
 
