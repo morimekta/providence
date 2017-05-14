@@ -25,7 +25,7 @@ public class LogformatterTest {
                 .setStringValue("username")
                 .setBinaryValue(Binary.fromBase64("password"))
                 .build();
-        LogFormatter formatter = new LogFormatter(false, (writer, field, value) -> {
+        LogFormatter formatter = new LogFormatter((writer, field, value) -> {
             if (field.getName()
                      .contains("binary")) {
                 writer.append("\"********\"");

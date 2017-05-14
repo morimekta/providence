@@ -1,6 +1,5 @@
 package net.morimekta.providence.util;
 
-import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.test.providence.core.Containers;
 import net.morimekta.test.providence.core.calculator.Operand;
 import net.morimekta.test.providence.core.calculator.Operation;
@@ -11,10 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static net.morimekta.providence.util.ProvidenceHelper.debugString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for reading json resources.
@@ -200,4 +204,16 @@ public class ProvidenceHelperTest {
                 "]", Operation.kDescriptor));
     }
 
+    @Test
+    public void testConstructor()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Constructor<ProvidenceHelper> constructor = ProvidenceHelper.class.getDeclaredConstructor();
+        assertThat(constructor.isAccessible(), is(false));
+        try {
+            constructor.setAccessible(true);
+            assertThat(constructor.newInstance(), is(instanceOf(ProvidenceHelper.class)));
+        } finally {
+            constructor.setAccessible(false);
+        }
+    }
 }

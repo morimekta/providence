@@ -25,10 +25,12 @@ import net.morimekta.providence.descriptor.PContainer;
 import net.morimekta.providence.descriptor.PDeclaredDescriptor;
 import net.morimekta.providence.descriptor.PDescriptor;
 import net.morimekta.providence.descriptor.PField;
+import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PPrimitive;
 import net.morimekta.providence.descriptor.PService;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,12 +43,12 @@ import java.util.Map;
  */
 public class TypeRegistry {
     private final Map<String, PDeclaredDescriptor<?>> declaredTypes;
-    private final HashSet<String>                     knownPackages;
+    private final HashSet<String>                     knownPrograms;
     private final Map<String, String>                 typedefs;
     private final Map<String, PService>               services;
 
     public TypeRegistry() {
-        knownPackages = new HashSet<>();
+        knownPrograms = new HashSet<>();
         declaredTypes = new LinkedHashMap<>();
         typedefs      = new HashMap<>();
         services      = new HashMap<>();
@@ -56,12 +58,13 @@ public class TypeRegistry {
      * Get the declared type with the given name and package context.
      *
      * @param name    Name of type, without any spaces.
-     * @param context The package context of the type.
+     * @param context The program context of the type.
      * @param <T>     The described type.
      * @return The type descriptor.
      */
     @SuppressWarnings("unchecked")
-    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(String name, String context) {
+    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String name,
+                                                                @Nonnull String context) {
         String declaredTypeName = finalTypename(name, context);
 
         context = declaredTypeName.replaceAll("\\..*", "");
@@ -71,7 +74,7 @@ public class TypeRegistry {
             return (T) declaredTypes.get(declaredTypeName);
         }
 
-        if (knownPackages.contains(context)) {
+        if (knownPrograms.contains(context)) {
             throw new IllegalArgumentException("No such type \"" + name + "\" in package \"" + context + "\"");
         } else {
             throw new IllegalArgumentException("No such package \"" + context + "\" exists for type \"" + name + "\"");
@@ -85,11 +88,15 @@ public class TypeRegistry {
      * @param <T>  The described type.
      * @return The type descriptor.
      */
-    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(String name) {
-        if (!name.contains(".")) {
-            throw new IllegalArgumentException("Global typename without package: \"" + name + "\"");
+    public <T extends PDeclaredDescriptor<T>> T getDeclaredType(@Nonnull String name) {
+        String[] parts = name.split("\\.");
+        if (parts.length < 2) {
+            throw new IllegalArgumentException("Requesting global typename without package: \"" + name + "\"");
+        } else if (parts.length > 2) {
+            throw new IllegalArgumentException("Invalid declared type: \"" + name + "\"");
         }
-        return getDeclaredType(name, name.replaceAll("\\..*", ""));
+        return getDeclaredType(parts[1],
+                               parts[0]);
     }
 
     /**
@@ -103,7 +110,7 @@ public class TypeRegistry {
         if (declaredTypes.containsKey(declaredTypeName)) {
             throw new IllegalStateException("Type " + declaredTypeName + " already exists");
         }
-        knownPackages.add(declaredType.getProgramName());
+        knownPrograms.add(declaredType.getProgramName());
         declaredTypes.put(declaredTypeName, declaredType);
     }
 
@@ -134,7 +141,7 @@ public class TypeRegistry {
      * @return The service or null if not found.
      */
     @Nullable
-    public PService getService(String name, final String context) {
+    public PService getService(String name, String context) {
         return services.get(qualifiedName(name, context));
     }
 
@@ -238,6 +245,13 @@ public class TypeRegistry {
         } else if (itemType.getType() == PType.ENUM ||
                    itemType.getType() == PType.MESSAGE){
             registerRecursively((PDeclaredDescriptor<?>) itemType);
+        }
+        if (containerType instanceof PMap) {
+            PDescriptor keyType = containerType.itemDescriptor();
+            if (keyType.getType() == PType.ENUM ||
+                keyType.getType() == PType.MESSAGE){
+                registerRecursively((PDeclaredDescriptor<?>) keyType);
+            }
         }
         // Else ignore.
     }
