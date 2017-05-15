@@ -86,7 +86,7 @@ public class CUnion implements PUnion<CUnion,CField> {
     @Nonnull
     @Override
     public PMessageBuilder<CUnion,CField> mutate() {
-        return new Builder(descriptor);
+        return new Builder(descriptor).merge(this);
     }
 
     @Nonnull
