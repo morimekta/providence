@@ -6,17 +6,20 @@ import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
 import net.morimekta.providence.descriptor.PList;
 import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
 import net.morimekta.providence.descriptor.PSet;
-import net.morimekta.providence.descriptor.PStructDescriptor;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Base message builder class for contained messages.
@@ -25,9 +28,11 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                                       Message extends PMessage<Message, CField>>
         extends PMessageBuilder<Message, CField> {
     private final Map<Integer, Object> values;
+    private final Set<Integer>         modified;
 
     public CMessageBuilder() {
         this.values = new TreeMap<>();
+        this.modified = new TreeSet<>();
     }
 
     @Nonnull
@@ -63,6 +68,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         set(key, from.get(key));
                         break;
                 }
+                modified.add(key);
             }
         }
 
@@ -82,7 +88,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
 
         Object current = values.get(key);
         if (current == null) {
-            current = ((PStructDescriptor) field.getDescriptor()).builder();
+            current = ((PMessageDescriptor) field.getDescriptor()).builder();
             values.put(key, current);
         } else if (current instanceof PMessage) {
             current = ((PMessage) current).mutate();
@@ -91,6 +97,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             // This should in theory not be possible. This is just a safe-guard.
             throw new IllegalArgumentException("Invalid value in map on message type: " + current.getClass().getSimpleName());
         }
+        modified.add(key);
 
         return (PMessageBuilder) current;
     }
@@ -163,6 +170,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             }
         }
 
+        modified.add(key);
         return (Builder) this;
     }
 
@@ -173,7 +181,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
 
     @Override
     public boolean isModified(int key) {
-        return false;
+        return modified.contains(key);
     }
 
     @Nonnull
@@ -184,27 +192,29 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         if (field == null) {
             return (Builder) this; // soft ignoring unsupported fields.
         }
-        if (value != null) {
-            if (field.getType() == PType.LIST) {
-                @SuppressWarnings("unchecked")
-                PList.Builder<Object> list = (PList.Builder<Object>) values.get(field.getKey());
-                if (list == null) {
-                    list = ((PList) field.getDescriptor()).builder();
-                    values.put(field.getKey(), list);
-                }
-                list.add(value);
-            } else if (field.getType() == PType.SET) {
-                @SuppressWarnings("unchecked")
-                PSet.Builder<Object> set = (PSet.Builder<Object>) values.get(field.getKey());
-                if (set == null) {
-                    set = ((PSet) field.getDescriptor()).builder();
-                    values.put(field.getKey(), set);
-                }
-                set.add(value);
-            } else {
-                throw new IllegalArgumentException("Key " + key + " is not a collection: " + field.getType());
-            }
+        if (value == null) {
+            throw new IllegalArgumentException("Adding null value");
         }
+        if (field.getType() == PType.LIST) {
+            @SuppressWarnings("unchecked")
+            PList.Builder<Object> list = (PList.Builder<Object>) values.get(field.getKey());
+            if (list == null) {
+                list = ((PList) field.getDescriptor()).builder();
+                values.put(field.getKey(), list);
+            }
+            list.add(value);
+        } else if (field.getType() == PType.SET) {
+            @SuppressWarnings("unchecked")
+            PSet.Builder<Object> set = (PSet.Builder<Object>) values.get(field.getKey());
+            if (set == null) {
+                set = ((PSet) field.getDescriptor()).builder();
+                values.put(field.getKey(), set);
+            }
+            set.add(value);
+        } else {
+            throw new IllegalArgumentException("Key " + key + " is not a collection: " + field.getType());
+        }
+        modified.add(key);
         return (Builder) this;
     }
 
@@ -213,6 +223,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @SuppressWarnings("unchecked")
     public Builder clear(int key) {
         values.remove(key);
+        modified.add(key);
         return (Builder) this;
     }
 
@@ -255,4 +266,11 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         return out.build();
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(getClass())
+                          .add("values", values)
+                          .add("modified", modified)
+                          .toString();
+    }
 }

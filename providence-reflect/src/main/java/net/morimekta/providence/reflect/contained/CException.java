@@ -63,7 +63,7 @@ public class CException extends Exception implements CMessage<CException> {
     @Override
     @Nonnull
     public PMessageBuilder<CException,CField> mutate() {
-        return new Builder(descriptor);
+        return new Builder(descriptor).merge(this);
     }
 
     @Nonnull

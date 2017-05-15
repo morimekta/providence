@@ -108,7 +108,7 @@ public class SerializerTest {
             if (pC == null) {
                 throw new PApplicationException("", PApplicationExceptionType.INTERNAL_ERROR);
             }
-            if (pC.mutate().collectSetFields().isEmpty()) {
+            if (pC.mutate().presentFields().isEmpty()) {
                 throw gen.generate(ExceptionFields.kDescriptor);
             }
             return CompactFields.builder()

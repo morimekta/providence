@@ -42,14 +42,14 @@ public class PMessageBuilderTest {
     public void testBuilder() {
         OptionalFields._Builder b = OptionalFields.builder();
 
-        assertThat(b.collectSetFields(), hasSize(0));
+        assertThat(b.presentFields(), hasSize(0));
         assertThat(b.modifiedFields(), hasSize(0));
 
         assertThat(b.mutator(COMPACT_VALUE), isA(PMessageBuilder.class));
         assertThat(b.setBooleanValue(false), is(sameInstance(b)));
 
-        assertThat(b.collectSetFields(), hasSize(2));
-        assertThat(b.collectSetFields(),
+        assertThat(b.presentFields(), hasSize(2));
+        assertThat(b.presentFields(),
                    hasItems(COMPACT_VALUE, BOOLEAN_VALUE));
 
         assertThat(b.build(), is(equalToMessage(OptionalFields.builder()
@@ -78,6 +78,6 @@ public class PMessageBuilderTest {
         Containers._Builder b2 = b1.build().mutate();
 
         assertThat(b2.modifiedFields(), hasSize(0));
-        assertThat(b2.collectSetFields(), hasSize(2));
+        assertThat(b2.presentFields(), hasSize(2));
     }
 }

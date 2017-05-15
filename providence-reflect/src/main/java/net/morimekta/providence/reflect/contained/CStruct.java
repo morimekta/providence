@@ -92,7 +92,7 @@ public class CStruct implements CMessage<CStruct>, JsonCompactible {
     @Nonnull
     @Override
     public PMessageBuilder<CStruct,CField> mutate() {
-        return new Builder(descriptor);
+        return new Builder(descriptor).merge(this);
     }
 
     @Nonnull

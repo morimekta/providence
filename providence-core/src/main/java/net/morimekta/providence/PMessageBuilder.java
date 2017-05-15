@@ -94,14 +94,15 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
     }
 
     /**
-     * Get a Collection of F with fields set on the builder.
+     * Get a Collection of F with fields set on the builder. A.k.a is
+     * present.
      *
      * Unusual naming because it avoids conflict with generated methods.
      *
      * @return Collection of F
      */
     @Nonnull
-    public Collection<F> collectSetFields() {
+    public Collection<F> presentFields() {
            return Arrays.stream(descriptor().getFields())
                         .filter(this::isSet)
                         .collect(Collectors.toList());
