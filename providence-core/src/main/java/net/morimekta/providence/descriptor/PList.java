@@ -85,11 +85,13 @@ public class PList<Item> extends PContainer<List<Item>> {
 
     public interface Builder<I> extends PBuilder<List<I>> {
         @Nonnull
-        Builder<I> add(I value);
+        Builder<I> add(@Nonnull I value);
         @Nonnull
-        Builder<I> addAll(Collection<I> items);
+        Builder<I> addAll(@Nonnull Collection<I> items);
         @Nonnull
         Builder<I> clear();
+
+        int size();
 
         @Nonnull
         @Override
@@ -104,6 +106,7 @@ public class PList<Item> extends PContainer<List<Item>> {
 
     public static class ImmutableListBuilder<I> implements Builder<I> {
         private ImmutableList.Builder<I> builder;
+        private int size;
 
         public ImmutableListBuilder() {
             builder = ImmutableList.builder();
@@ -111,15 +114,17 @@ public class PList<Item> extends PContainer<List<Item>> {
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> add(I value) {
+        public ImmutableListBuilder<I> add(@Nonnull I value) {
             builder.add(value);
+            ++size;
             return this;
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> addAll(Collection<I> items) {
+        public ImmutableListBuilder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
+            size += items.size();
             return this;
         }
 
@@ -127,7 +132,12 @@ public class PList<Item> extends PContainer<List<Item>> {
         @Override
         public ImmutableListBuilder<I> clear() {
             builder = ImmutableList.builder();
+            size = 0;
             return this;
+        }
+
+        public int size() {
+            return size;
         }
 
         @Nonnull

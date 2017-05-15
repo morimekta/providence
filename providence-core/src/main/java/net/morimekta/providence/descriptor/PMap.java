@@ -97,11 +97,13 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
 
     public interface Builder<K, V> extends PBuilder<Map<K, V>> {
         @Nonnull
-        Builder<K, V> put(K key, V value);
+        Builder<K, V> put(@Nonnull K key, @Nonnull V value);
         @Nonnull
-        Builder<K, V> putAll(Map<K, V> map);
+        Builder<K, V> putAll(@Nonnull Map<K, V> map);
         @Nonnull
         Builder<K, V> clear();
+
+        int size();
 
         @Nonnull
         @Override
@@ -113,78 +115,24 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         Builder<K, V> builder();
     }
 
-    public static class ImmutableMapBuilder<K, V> implements Builder<K, V> {
-        private ImmutableMap.Builder<K, V> builder;
-
-        public ImmutableMapBuilder() {
-            this.builder = ImmutableMap.builder();
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableMapBuilder<K, V> put(K key, V value) {
-            builder.put(key, value);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableMapBuilder<K, V> putAll(Map<K, V> map) {
-            builder.putAll(map);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableMapBuilder<K, V> clear() {
-            builder = ImmutableMap.builder();
-            return this;
-        }
-
+    public static class ImmutableMapBuilder<K, V> extends LinkedHashMapBuilder<K,V> {
         @Nonnull
         @Override
         public Map<K, V> build() {
-            return builder.build();
+            return ImmutableMap.copyOf(builder);
         }
     }
 
-    public static class ImmutableSortedMapBuilder<K extends Comparable, V> implements Builder<K, V> {
-        private ImmutableSortedMap.Builder<K, V> builder;
-
-        public ImmutableSortedMapBuilder() {
-            this.builder = ImmutableSortedMap.naturalOrder();
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedMapBuilder<K, V> put(K key, V value) {
-            builder.put(key, value);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedMapBuilder<K, V> putAll(Map<K, V> map) {
-            builder.putAll(map);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedMapBuilder<K, V> clear() {
-            builder = ImmutableSortedMap.naturalOrder();
-            return this;
-        }
-
+    public static class ImmutableSortedMapBuilder<K extends Comparable, V> extends LinkedHashMapBuilder<K, V> {
         @Nonnull
         @Override
         public Map<K, V> build() {
-            return builder.build();
+            return ImmutableSortedMap.copyOf(builder);
         }
     }
 
     public static class LinkedHashMapBuilder<K, V> implements Builder<K, V> {
-        private final LinkedHashMap<K, V> builder;
+        final LinkedHashMap<K, V> builder;
 
         public LinkedHashMapBuilder() {
             this.builder = new LinkedHashMap<>();
@@ -192,14 +140,14 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
 
         @Nonnull
         @Override
-        public LinkedHashMapBuilder<K, V> put(K key, V value) {
+        public LinkedHashMapBuilder<K, V> put(@Nonnull K key, @Nonnull V value) {
             builder.put(key, value);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashMapBuilder<K, V> putAll(Map<K, V> map) {
+        public LinkedHashMapBuilder<K, V> putAll(@Nonnull Map<K, V> map) {
             builder.putAll(map);
             return this;
         }
@@ -209,6 +157,10 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         public LinkedHashMapBuilder<K, V> clear() {
             builder.clear();
             return this;
+        }
+
+        public int size() {
+            return builder.size();
         }
 
         @Nonnull

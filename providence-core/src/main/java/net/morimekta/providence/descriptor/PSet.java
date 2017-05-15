@@ -87,11 +87,13 @@ public class PSet<Item> extends PContainer<Set<Item>> {
 
     public interface Builder<I> extends PBuilder<Set<I>> {
         @Nonnull
-        Builder<I> add(I value);
+        Builder<I> add(@Nonnull I value);
         @Nonnull
-        Builder<I> addAll(Collection<I> items);
+        Builder<I> addAll(@Nonnull Collection<I> items);
         @Nonnull
         Builder<I> clear();
+
+        int size();
 
         @Nonnull
         @Override
@@ -104,78 +106,24 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         Builder<I> builder();
     }
 
-    public static class ImmutableSetBuilder<I> implements Builder<I> {
-        private ImmutableSet.Builder<I> builder;
-
-        public ImmutableSetBuilder() {
-            this.builder = ImmutableSet.builder();
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSetBuilder<I> add(I value) {
-            builder.add(value);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSetBuilder<I> addAll(Collection<I> items) {
-            builder.addAll(items);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSetBuilder<I> clear() {
-            builder = ImmutableSet.builder();
-            return this;
-        }
-
+    public static class ImmutableSetBuilder<I> extends LinkedHashSetBuilder<I> {
         @Nonnull
         @Override
         public Set<I> build() {
-            return builder.build();
+            return ImmutableSet.copyOf(builder);
         }
     }
 
-    public static class ImmutableSortedSetBuilder<I extends Comparable<I>> implements Builder<I> {
-        private ImmutableSortedSet.Builder<I> builder;
-
-        public ImmutableSortedSetBuilder() {
-            this.builder = ImmutableSortedSet.naturalOrder();
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedSetBuilder<I> add(I value) {
-            builder.add(value);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedSetBuilder<I> addAll(Collection<I> items) {
-            builder.addAll(items);
-            return this;
-        }
-
-        @Nonnull
-        @Override
-        public ImmutableSortedSetBuilder<I> clear() {
-            builder = ImmutableSortedSet.naturalOrder();
-            return this;
-        }
-
+    public static class ImmutableSortedSetBuilder<I extends Comparable<I>> extends LinkedHashSetBuilder<I> {
         @Nonnull
         @Override
         public Set<I> build() {
-            return builder.build();
+            return ImmutableSortedSet.copyOf(builder);
         }
     }
 
     public static class LinkedHashSetBuilder<I> implements Builder<I> {
-        private final LinkedHashSet<I> builder;
+        final LinkedHashSet<I> builder;
 
         public LinkedHashSetBuilder() {
             this.builder = new LinkedHashSet<>();
@@ -183,14 +131,14 @@ public class PSet<Item> extends PContainer<Set<Item>> {
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> add(I value) {
+        public LinkedHashSetBuilder<I> add(@Nonnull I value) {
             builder.add(value);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> addAll(Collection<I> items) {
+        public LinkedHashSetBuilder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
             return this;
         }
@@ -200,6 +148,10 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         public LinkedHashSetBuilder<I> clear() {
             builder.clear();
             return this;
+        }
+
+        public int size() {
+            return builder.size();
         }
 
         @Nonnull
