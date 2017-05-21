@@ -8,29 +8,29 @@ import net.morimekta.util.Stringable;
 public enum Format implements Stringable, Comparable<Format> {
     // Common serialization formats.
     binary("bin", "Thrift Binary",
-            1.04, 1.00, 0.91, 1.00),
+            1.23, 1.00, 0.86, 1.00),
 
     // Unique providence formats.
     json_pretty("json", "Prettified JSON",
-            8.70, 0.00,11.43, 0.00),
+            9.25, 0.00,14.14, 0.00),
     json_named("json", "Named JSON",
-            6.26, 0.00, 8.91, 0.00),
+            6.81, 0.00,11.90, 0.00),
     json("json", "Compact JSON",
-            5.45, 0.00, 6.28, 0.00),
+            6.01, 0.00, 6.84, 0.00),
     pretty("cfg", "Pretty / Config",
-            9.52, 0.00, 9.12, 0.00),
+           10.38, 0.00, 7.94, 0.00),
     fast_binary("bin", "Fast Binary",
-            1.43, 0.00, 1.51, 0.00),
+            1.91, 0.00, 1.40, 0.00),
 
     // Unique thrift formats.
     binary_protocol("bin", "Thrift Binary (wrapper)",
-            1.85, 1.00, 2.13, 1.00),
+            2.61, 1.00, 2.23, 1.00),
     json_protocol("json", "Thrift JSON Protocol (wrapper)",
-            6.40, 5.25, 7.50, 5.70),
+            7.18, 5.26, 6.67, 5.07),
     compact_protocol("bin", "Thrift \"compact\" Protocol (wrapper)",
-            2.00, 1.04, 2.08, 1.15),
+            2.74, 1.11, 2.16, 0.92),
     tuple_protocol("tpl", "Thrift \"tuple\" Protocol (wrapper)",
-            1.83, 0.89, 1.87, 0.88);
+            2.29, 0.91, 1.80, 0.78);
 
     public final String suffix;
     public final String description;
