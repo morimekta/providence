@@ -47,7 +47,7 @@ Geo IP filtering, HTTP authorization, etc. E.g.:
  * set the 'bar' attribute on the request object in the same way many
  * information annotating filters operate.
  */
-class MyServer {
+public class MyServer {
     public void start() {
         Server server = new Server(8080);
         ServletContextHandler handler = new ServletContextHandler();
@@ -69,7 +69,7 @@ class MyServer {
  * instead of in the constructor, and rather pass processed arguments,injected
  * systems etc.
  */
-class MyServletImpl implements MyServlet.IFace {
+public class MyServletImpl implements MyServlet.IFace {
     public MyServletImpl(HttpServletRequest request) {
         this.request = request;
         // ... initialize handler instance
