@@ -17,6 +17,9 @@ there is a binary code generator available
 [here](https://github.com/morimekta/providence/releases) (check for the version of
 providence that you want to use).
 
+Note that you always need to add dependency to `providence-core` of the appropriate
+version for it to work.
+
 ### Maven
 
 In maven the setup is simply to add a directory `src/main/providence` or
@@ -48,7 +51,20 @@ Now the generated providence files should be available in your project.
 
 ### Gradle
 
-TODO: Show example.
+When using `gradle` as build engine, you can use the `providence-gradle-plugin`,
+which can be added with the lines.
+
+```groovy
+var providence_version = '{providence version}'
+
+plugins {
+    id "net.morimekta.providence.gradle" version "${providence_version}" apply false
+}
+
+apply plugin: 'java'
+apply plugin: 'net.morimekta.providence.gradle'
+
+```
 
 ## Developer Setup
 
