@@ -10,6 +10,8 @@
         <menu name="Introduction" inherit="top">
 
             <item href="index.html" name="Providence" />
+            <item href="services.html" name="Providence Services" />
+            <item href="apache-thrift.html" name="Comparing with Thrift" />
             <item href="https://github.com/morimekta/providence/releases" name="Downloads &amp; Releases" />
 
         </menu>
