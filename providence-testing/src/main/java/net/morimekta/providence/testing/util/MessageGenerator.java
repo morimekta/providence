@@ -55,7 +55,7 @@ import static org.junit.Assert.assertNotNull;
  *         MyMessage msg = gen.generate(MyMessage.kDescriptor);
  *         sut.doSomething(msg);
  *
- *         assertThat(sut.state() is(SystemToTest.CORRECT));
+ *         assertThat(sut.state(), is(SystemToTest.CORRECT));
  *     }
  * }
  * }</pre>
