@@ -192,7 +192,7 @@ public abstract class PMessageBuilder<T extends PMessage<T, F>, F extends PField
      * @return The message builder.
      */
     @Nonnull
-    public abstract PMessageBuilder<T, F> merge(T from);
+    public abstract PMessageBuilder<T, F> merge(@Nonnull T from);
 
     /**
      * Get the builder for the given message contained in this builder. If
