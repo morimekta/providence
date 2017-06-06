@@ -5,6 +5,85 @@ Services (a.k.a. thrift services) have a couple of implicit handling around it.
 The way this is organized in providence is by defining as much as possible
 around the service call handling in thrift as possible.
 
+## Service Definition
+
+Services are in essence an interface defined solely from thrift messages
+and types. Example simple service:
+
+```thrift
+service MyService {
+    i32 myMethod(1: i32 param);
+}
+```
+
+There can also be declared extra thrift `exceptions` on any service method,
+each being an `exception` type message, and is declared in a `throws` block
+after the method params, like:
+
+```thrift
+exception MyException {
+    1: string message;
+}
+
+service MyService {
+    i32 myMethod(1: i32 param) throws (1: MyException me);
+}
+```
+
+## Generated Classes
+
+For each service there is generated a single `Service` class. The service class
+itself actually have no functionality, but contains a number of inner classes
+that do.
+
+- **[IFace]**: An interface that defines what the service is. This has a 1-to-1
+  mapping in methods to the declared service methods.
+- **[Client]**: A class that implements the `IFace` interface, and takes a
+  single `PClientHandler` instance as constructor argument. The class is the
+  generated code bridge between the service interface and the client handling
+  code found in [providence-core-client](providence-core-server/index.html)
+  used to communicate with actual remote services.
+- **[Processor]**: A class that implements the `PProcessor` interface, and takes
+  a single `IFace` implementation as argument. This is the interface between
+  a server implementation, e.g. `ProvidenceServlet` and the service implementation
+  actually doing the job.
+
+```java
+class MyService {
+    public interface IFace {
+        int myMethod(int param) throws MyException;
+    }
+
+    public static class Client implements IFace {
+        public Client(PServiceCallHandler handler) {
+            // ...
+        }
+
+        public int myMethod(int param) throws MyException {
+            // transform the method call into a generic
+            // call on handler.
+        }
+    }
+
+    public static class Processor implements PProcessor {
+        public Processor(IFace impl) {
+            // ...
+        }
+
+        public PServiceCall handleCall(PServiceCall call) {
+            // ... handle the call and call iface.myMethod()
+        }
+    }
+}
+```
+
+Note that the `PProcessor` interface extends the `PServiceCall` method, so the
+rather useless construct `IFace iface ? new Client(new Processor(new MyServiceImpl()))`
+is a valid java. If you find yourself getting this construct for some reason:
+*try to get the implementation instance directly instead*.
+
+### Implicit Handling
+
 #### Service Interface
 
 The service is declare initially as a simple interface which mimics the service declaration
@@ -92,8 +171,8 @@ exception ApplicationException {
 #### Virtual Messages
 
 Each service method will generate a virtual `params` struct, and each
-non-oneway service method will generate a virtual `response` struct.
-These structs are used to handle the actual communication for the
+non-oneway service method will generate a virtual `response` union.
+These messages are used to wrap the called params and response data for the
 service method call.
 
 The `params` struct is essentially mimicking the method params as a struct.

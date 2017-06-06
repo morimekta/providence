@@ -6,9 +6,119 @@ much as possible. There are some exceptions, but these are designed to be
 non-conflicting with any other possible generated method name, and to
 separate static and non-static methods without weird naming schemes.
 
-## Messages
+## Enum Definitions
 
-All message typed implements the `PMessage` interface,
+Thrift enums are mapped as java enums in `providence`, where each enum
+value get's a java enum value. E.g.:
+
+```thrift
+enum MyEnum {
+    FIRST = 1,
+    SECOND,
+    THIRD
+}
+```
+
+Corresponds to the java enum:
+
+```java
+enum MyEnum {
+    FIRST(1),
+    SECOND(2),
+    THIRD(3);
+
+    private final int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    MyEnum(int value) {
+        this.value = value;
+    }
+}
+```
+
+## Message Definitions
+
+There are three types of messages in providence:
+
+- **[struct]**: Simple data structure containing a list of fields
+  corresponding to a java model class.
+- **[exception]**: A struct that also extends the java Exception
+  class and can be thrown as exception from service methods.
+- **[union]**: A struct that only allows one of it's fields to be
+  set.
+
+Example:
+
+```thrift
+struct MyStruct {
+    1: i32 my_field;
+    2: list<string> other_field;
+}
+```
+
+This roughly corresponds to a java POJO class that looks like:
+
+```java
+class MyStruct {
+    public int myField;
+    public List<String> otherField;
+}
+```
+
+Except that with providence, you get an immutable object with a builder to help
+setting it up. So more like:
+
+```java
+/**
+ * The actual 'struct' class.
+ */
+class MyStruct {
+    private final int myField;
+    private final List<String> otherField;
+
+    public MyStruct(int myField, List<String> otherField) {
+        this.myField = myField;
+        this.otherField = otherField;
+    }
+
+    public int getMyField() {
+        return myField;
+    }
+
+    public List<String> getOtherfield() {
+        return otherField;
+    }
+
+    /**
+     * MyStruct building helper class.
+     */
+    public static class _Builder {
+        private int myField;
+        private LinkedList<String> otherField;
+
+        public _Builder setMyField(int value) {
+            this.myField = value;
+            return this;
+        }
+
+        public _Builder setOtherField(List value) {
+            this.otherField = value;
+            return this;
+        }
+
+        public MyStruct build() {
+            return new MyStruct(myField, otherField);
+        }
+    }
+}
+```
+
+## Generated Classes
+
+All message types implements the `PMessage` interface,
 and contains a number of generated methods for accessing content and building
 new messages. All the objects are generated to be `immutable`, but with use
 of deeply nested containers that may be broken to some extent. The concept
