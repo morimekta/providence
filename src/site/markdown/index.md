@@ -1,5 +1,5 @@
-Providence Models
-=================
+Providence
+==========
 
 The `providence` project was made in order to make an immutable model java
 library for thrift. It is mostly separate from the thrift library, but can use
@@ -75,6 +75,39 @@ commands (I recommend `openjdk8-jdk`), and `maven` (3.3). Then check out
 ```bash
 mvn clean verify install
 ```
+
+## Terms and Definitions
+
+Throughout the providence documentation I use a number of terms that
+easily can be confused.
+
+- **[thrift]**: A system of converting files that follow the `thirft` IDL
+  specification found [here](https://thrift.apache.org/docs/idl) to some form of
+  code or data. I currently know of 5 `thrift` systems, other than `providence`:
+    - [Apache Thrift](https://thrift.apache.org): The "main" thrift implementation
+      containing lots of languages.
+    - [FB Thrift](https://github.com/facebook/fbthrift): A FaceBook managed fork
+      of thrift with changes and features that FaceBook wants.
+    - [Thrift-Nano](https://github.com/markrileybot/thrift-nano): A version of thrift
+      optimized for low memory consumption e.g. for using on low-power embedded systems.
+    - [Thrifty](https://github.com/Microsoft/thrifty): A compact and simple java version
+      of thrift aimed at mobile platforms.
+    - [ThriftPy](https://thriftpy.readthedocs.io/en/latest/): An alternative python
+      library and compiler for thrift.
+- **[Apache Thrift]**: Is the "official" Apache hosted implementation of thrift.
+  This is essentially what is compared with for determining compatibility.
+- **[Providence]**: Is all of this project (including some off-repository parts
+  like [providence-gradle-plugin](https://www.github.com/morimekta/providence-gradle-plugin)).
+
+Also inside providence, we use a little different set of definitions from
+Apache Thrift.
+
+- **[message]**: Message is the base type of all the structured data typed
+  defined in a thrift file, including `struct`, `exception` and `union`.
+  This is variantly called `struct` and `base type` in Apache Thrift.
+- **[service call]**: Is the wrapper structure that is sent with the
+  call to and response from a service method call.
+  This is what is called a `message` in Apache Thrift.
 
 ## Contributing
 

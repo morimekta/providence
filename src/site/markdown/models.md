@@ -6,9 +6,9 @@ much as possible. There are some exceptions, but these are designed to be
 non-conflicting with any other possible generated method name, and to
 separate static and non-static methods without weird naming schemes.
 
-## Structs
+## Messages
 
-All structs implements the [PMessage](pmessage) interface,
+All message typed implements the `PMessage` interface,
 and contains a number of generated methods for accessing content and building
 new messages. All the objects are generated to be `immutable`, but with use
 of deeply nested containers that may be broken to some extent. The concept
@@ -59,6 +59,11 @@ public class MyMessage {
     public int numMyContainer();
 }
 ```
+
+Note that bool fields use `is` prefix instead of `get`, so the generated getter
+method is `isMyBool()`. That is **not** the case in the builder, as a number of
+`is*` methods are defined for other purposes, and using `get` there avoids
+generating potential conflicts.
 
 ### Unions
 
