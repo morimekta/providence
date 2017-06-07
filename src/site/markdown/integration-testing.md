@@ -1,11 +1,23 @@
 Integration Testing
 ===================
 
-Integration testing of the providence protocols. To run the integration test
-suite run the command:
+The providence project contains integration tests. The integration
+tests can be run separately, and is not a dependency for running
+the main test suites.
 
-```sh
-$ mvn verify -Pit
+There are currently two IT test suites.
+
+- **[it-serialization]**: Thorough testing of serialization focusing on
+  serialization speed. The thrift compatibility is for the most part
+  already tested in `providence-thrift`.
+- **[it-hazelcast]**: Proper testing of generated hazelcast generated
+  code by using actual generated code against a local hazelcast instance
+  including how thrift IDL updates are handled both forward and backward. 
+
+To run an integration test suite, call the command:
+
+```bash
+mvn verify -Pit-serialization
 ```
 
 It will take a while, and print quite a log to the std out.
@@ -28,17 +40,16 @@ serialization time. Lower is better.
 ```
                            read          write            SUM
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr
-
-         fast_binary:   1.41       --  1.41        =   1.41        ( 18 kB)
-              binary:   1.69  1.00 --  1.68  1.00  =   1.69  1.00  ( 26 kB)
-      tuple_protocol:   1.82  0.90 --  1.60  0.89  =   1.74  0.89  ( 16 kB)
-     binary_protocol:   1.79  0.97 --  1.91  0.96  =   1.84  0.97  ( 26 kB)
-    compact_protocol:   1.95  1.04 --  1.93  0.96  =   1.94  1.01  ( 18 kB)
-                json:   4.92       --  6.02        =   5.35        ( 36 kB)
-       json_protocol:   5.85  4.84 --  6.54  5.28  =   6.11  5.01  ( 57 kB)
-          json_named:   5.78       --  8.50        =   6.83        ( 54 kB)
-         json_pretty:   8.00       -- 10.61        =   9.01        ( 92 kB)
-              pretty:   9.30       --  9.50        =   9.38        ( 74 kB)
+              binary:   1.23  1.00 --  0.86  1.00  =   1.04  1.00
+         fast_binary:   1.91       --  1.40        =   1.65
+      tuple_protocol:   2.29  0.91 --  1.80  0.89  =   2.04  0.90
+     binary_protocol:   2.61  1.00 --  2.23  1.00  =   2.42  1.00
+    compact_protocol:   2.74  1.11 --  2.16  0.92  =   2.45  1.01
+                json:   6.01       --  6.84        =   6.42
+       json_protocol:   7.18  5.26 --  6.67  5.07  =   6.92  6.12
+              pretty:  10.38       --  7.94        =   9.16
+          json_named:   6.81       -- 11.90        =   9.35
+         json_pretty:   9.25       -- 14.14        =  11.69
 ```
 
 **NOTE:** Since the test is for the *speed* of the serialization, we are only

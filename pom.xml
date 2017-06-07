@@ -908,13 +908,20 @@
                 <module>providence-tools</module>
             </modules>
         </profile>
+        <!-- one profile for each integration test module -->
         <profile>
-            <id>it</id>
+            <id>it-serialization</id>
             <modules>
                 <module>it-serialization</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>it-hazelcast</id>
+            <modules>
                 <module>it-hazelcast</module>
             </modules>
         </profile>
+        <!-- release process modifications -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
