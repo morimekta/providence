@@ -12,7 +12,7 @@ import net.morimekta.test.android.CompactFields;
 import net.morimekta.testing.rules.ConsoleWatcher;
 import net.morimekta.util.ExtraStreams;
 
-import org.jfairy.Fairy;
+import io.codearte.jfairy.Fairy;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.Description;

@@ -14,7 +14,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import org.jfairy.Fairy;
+import io.codearte.jfairy.Fairy;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,8 +38,8 @@ public class HazelcastIT {
 
     OptionalFields optionalFields;
     OptionalListFields optionalListFields;
-    private static Random rand = new Random();
-    private static Fairy fairy = Fairy.create();
+    private static Random rand  = new Random();
+    private static Fairy  fairy = Fairy.create();
 
     private static final boolean REPEAT_TEST      = false;
     private static final boolean IGNORE_HAZELCAST = true;

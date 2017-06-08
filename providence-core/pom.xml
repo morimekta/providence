@@ -40,7 +40,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jfairy</groupId>
+            <groupId>io.codearte.jfairy</groupId>
             <artifactId>jfairy</artifactId>
             <scope>test</scope>
         </dependency>

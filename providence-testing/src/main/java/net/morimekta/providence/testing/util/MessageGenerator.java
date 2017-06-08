@@ -21,7 +21,7 @@ import net.morimekta.providence.serializer.Serializer;
 import net.morimekta.util.Binary;
 
 import com.google.common.collect.ImmutableList;
-import org.jfairy.Fairy;
+import io.codearte.jfairy.Fairy;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -171,6 +171,31 @@ public class MessageGenerator extends TestWatcher {
         } else {
             this.globalFairy = fairy;
             this.fairy = fairy;
+        }
+        return this;
+    }
+
+    /**
+     * Set the locale to generate values for. Applies to default string
+     * values. Known good locales are:
+     * <ul>
+     *     <li>Engligh (US)
+     *     <li>German  (DE)
+     *     <li>French  (FR)
+     *     <li>Italian (IT)
+     *     <li>Spanish (ES)
+     *     <li>Polish  (PL)
+     *     <li>Swedish (SV)
+     *     <li>Chinese (ZH)
+     * </ul>
+     *
+     * @param locale The locale to set.
+     * @return The message generator.
+     */
+    public MessageGenerator setLocale(Locale locale) {
+        this.fairy = Fairy.create(locale);
+        if (!started) {
+            this.globalFairy = this.fairy;
         }
         return this;
     }
