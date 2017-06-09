@@ -81,7 +81,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             if (field.isVoid()) {
                 continue;
             }
-            writer.formatln("private %s %s;", field.builderFieldType(), field.member());
+            writer.formatln("private %s %s;", field.fieldType(), field.member());
             if (field.type() == PType.MESSAGE) {
                 writer.formatln("private %s._Builder %s_builder;", field.builderFieldType(), field.member());
             }
@@ -231,9 +231,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
 
         for (JField field : message.declaredOrderFields()) {
-            if (field.container()) {
-                writer.formatln("%s = new %s<>();", field.member(), field.builderInstanceType());
-            } else if (field.alwaysPresent()) {
+            if (field.alwaysPresent()) {
                 writer.formatln("%s = %s;", field.member(), field.kDefault());
             }
         }
@@ -265,20 +263,8 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             if (!message.isUnion()) {
                 writer.formatln("optionals.set(%d);", field.index());
             }
-            switch (field.type()) {
-                case VOID:
-                    // Void fields have no value.
-                    break;
-                case LIST:
-                case SET:
-                    writer.formatln("%s.addAll(base.%s);", field.member(), field.member());
-                    break;
-                case MAP:
-                    writer.formatln("%s.putAll(base.%s);", field.member(), field.member());
-                    break;
-                default:
-                    writer.formatln("%s = base.%s;", field.member(), field.member());
-                    break;
+            if (field.type() != PType.VOID) {
+                writer.formatln("%s = base.%s;", field.member(), field.member());
             }
             if (checkPresence) {
                 writer.end()
@@ -342,16 +328,13 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                 break;
             case SET:
             case LIST:
-                writer.formatln("%s.clear();", field.member())
-                      .formatln("%s.addAll(value);", field.member());
-                break;
             case MAP:
-                writer.formatln("%s.clear();", field.member())
-                      .formatln("%s.putAll(value);", field.member());
+                writer.formatln("%s = %s;", field.member(), field.fieldInstanceCopy("value"));
                 break;
             case MESSAGE:
+                writer.formatln("%s = value;", field.member());
                 writer.formatln("%s_builder = null;", field.member());
-                // intentional overrun.
+                break;
             default:
                 writer.formatln("%s = value;", field.member());
                 break;
@@ -405,7 +388,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                     writer.formatln("optionals.set(%d);", field.index());
                     writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("%s.put(key, value);", field.member())
+                writer.formatln("%s().put(key, value);", field.mutable())
                       .appendln("return this;")
                       .end()
                       .appendln('}')
@@ -428,9 +411,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                     writer.formatln("optionals.set(%d);", field.index());
                     writer.formatln("modified.set(%d);", field.index());
                 }
-                writer.formatln("for (%s item : values) {", liType)
+                writer.formatln("%s _container = %s();", field.fieldType(), field.mutable())
+                      .formatln("for (%s item : values) {", liType)
                       .begin()
-                      .formatln("%s.add(item);", field.member())
+                      .appendln("_container.add(item);")
                       .end()
                       .appendln('}')
                       .appendln("return this;")
@@ -524,16 +508,15 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             writer.formatln("modified.set(%d);", field.index());
         }
 
-        if (field.container()) {
-            writer.formatln("%s.clear();", field.member());
-        } else if (field.isVoid()) {
-            // Void fields have no value.
-        } else if (field.alwaysPresent()) {
-            writer.formatln("%s = %s;", field.member(), field.kDefault());
-        } else {
-            writer.formatln("%s = null;", field.member());
-            if (field.type() == PType.MESSAGE) {
-                writer.formatln("%s_builder = null;", field.member());
+        // Void fields have no value.
+        if (!field.isVoid()) {
+            if (field.alwaysPresent()) {
+                writer.formatln("%s = %s;", field.member(), field.kDefault());
+            } else {
+                writer.formatln("%s = null;", field.member());
+                if (field.type() == PType.MESSAGE) {
+                    writer.formatln("%s_builder = null;", field.member());
+                }
             }
         }
 
@@ -573,8 +556,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         }
         switch (field.type()) {
             case MESSAGE: {
-                writer.formatln("public %s._Builder %s() {", field.instanceType(),
-                                camelCase("mutable", field.name()))
+                writer.formatln("public %s._Builder %s() {", field.instanceType(), field.mutable())
                       .begin();
 
                 if (message.isUnion()) {
@@ -605,8 +587,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             case SET:
             case LIST:
             case MAP:
-                writer.formatln("public %s %s() {", field.builderFieldType(),
-                                camelCase("mutable", field.name()))
+                writer.formatln("public %s %s() {", field.fieldType(), field.mutable())
                       .begin();
 
                 if (message.isUnion()) {
@@ -619,6 +600,12 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
                     writer.formatln("optionals.set(%d);", field.index());
                     writer.formatln("modified.set(%d);", field.index());
                 }
+                writer.newline()
+                      .formatln("if (%s == null) {", field.member())
+                      .formatln("    %s = new %s<>();", field.member(), field.builderMutableType())
+                      .formatln("} else if (!(%s instanceof %s)) {", field.member(), field.builderMutableType())
+                      .formatln("    %s = new %s<>(%s);", field.member(), field.builderMutableType(), field.member())
+                      .appendln("}");
 
                 writer.formatln("return %s;", field.member());
 

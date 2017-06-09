@@ -663,14 +663,14 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
     private void writePortableFieldList(JField field, PDescriptor descriptor) throws GeneratorException {
         switch (descriptor.getType()) {
             case BYTE:
-                writer.formatln("%s.writeByteArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeByteArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Bytes.class.getName(),
                                 field.member());
                 break;
             case BINARY:
-                writer.formatln("%s.writeByteArray(\"%s\", %s.%s(%s.build()));",
+                writer.formatln("%s.writeByteArray(\"%s\", %s.%s(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 BinaryUtil.class.getName(),
@@ -678,55 +678,55 @@ public class HazelcastPortableMessageFormatter implements MessageMemberFormatter
                                 field.member());
                 break;
             case BOOL:
-                writer.formatln("%s.writeBooleanArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeBooleanArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Booleans.class.getName(),
                                 field.member());
                 break;
             case DOUBLE:
-                writer.formatln("%s.writeDoubleArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeDoubleArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Doubles.class.getName(),
                                 field.member());
                 break;
             case ENUM:
-                writer.formatln("%s.writeIntArray(\"%s\", %s.build().stream().mapToInt(t -> t.getValue()).toArray());",
+                writer.formatln("%s.writeIntArray(\"%s\", %s.stream().mapToInt(t -> t.getValue()).toArray());",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 field.member());
                 break;
             case I16:
-                writer.formatln("%s.writeShortArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeShortArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Shorts.class.getName(),
                                 field.member());
                 break;
             case I32:
-                writer.formatln("%s.writeIntArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeIntArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Ints.class.getName(),
                                 field.member());
                 break;
             case I64:
-                writer.formatln("%s.writeLongArray(\"%s\", %s.toArray(%s.build()));",
+                writer.formatln("%s.writeLongArray(\"%s\", %s.toArray(%s));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 Longs.class.getName(),
                                 field.member());
                 break;
             case STRING:
-                writer.formatln("%s.writeUTFArray(\"%s\", %s.build().toArray(new String[0]));",
+                writer.formatln("%s.writeUTFArray(\"%s\", %s.toArray(new String[0]));",
                                 PORTABLE_WRITER,
                                 field.name(),
                                 field.member());
                 break;
             case MESSAGE:
                 //TODO: need to verify that this actually has the annotation later on, or the portable will give compile time exception.
-                writer.formatln("%s<%s.%s> %sList = %s.build().stream().map(i -> i.mutate()).collect(%s.toList());",
+                writer.formatln("%s<%s.%s> %sList = %s.stream().map(i -> i.mutate()).collect(%s.toList());",
                                 List.class.getName(),
                                 helper.getValueType(descriptor),
                                 "_Builder",

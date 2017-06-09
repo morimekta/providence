@@ -113,7 +113,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                     pMap.itemDescriptor() instanceof PContainer) {
                     // If the container contains a container this code will
                     // break. Using the reader library in that case.
-                    writer.formatln("%s.putAll((%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict));",
+                    writer.formatln("%s = (%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict);",
                                     member,
                                     field.fieldType(),
                                     BinaryFormatUtils.class.getName(),
@@ -122,6 +122,14 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                                     helper.getFieldType(descriptor));
                     break;
                 }
+                String builder = "b_" + nextId.getAndIncrement();
+                writer.formatln("%s<%s,%s> %s = new %s<>();",
+                                field.builderInstanceType(),
+                                helper.getFieldType(pMap.keyDescriptor()),
+                                helper.getFieldType(pMap.itemDescriptor()),
+                                builder,
+                                field.builderInstanceType());
+
                 String len = "len_" + nextId.getAndIncrement();
                 String keyType = "t_" + nextId.getAndIncrement();
                 String valueType = "t_" + nextId.getAndIncrement();
@@ -152,10 +160,11 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 appendReadFieldValue(keyMember, null, null, pMap.keyDescriptor());
                 appendReadFieldValue(valueMember, null, null, pMap.itemDescriptor());
 
-                writer.formatln("%s.put(%s, %s);", member, key, value);
+                writer.formatln("%s.put(%s, %s);", builder, key, value);
 
                 writer.end()  // for len
                       .appendln('}');
+                writer.formatln("%s = %s.build();", member, builder);
 
                 writer.end()  // if keyType && valueType
                       .appendln("} else {")
@@ -183,7 +192,7 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                 if (pCont.itemDescriptor() instanceof PContainer) {
                     // If the container contains a container this code will
                     // break. Using the reader library in that case.
-                    writer.formatln("%s.addAll((%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict));",
+                    writer.formatln("%s = (%s) %s.readFieldValue(reader, new %s(field, type), _Field.%s.getDescriptor(), strict);",
                                     member,
                                     field.fieldType(),
                                     BinaryFormatUtils.class.getName(),
@@ -193,6 +202,12 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
                     break;
                 }
 
+                String builder = "b_" + nextId.getAndIncrement();
+                writer.formatln("%s<%s> %s = new %s<>();",
+                                field.builderInstanceType(),
+                                helper.getFieldType(pCont.itemDescriptor()),
+                                builder,
+                                field.builderInstanceType());
                 String len = "len_" + nextId.getAndIncrement();
                 String itemType = "t_" + nextId.getAndIncrement();
                 writer.formatln("byte %s = reader.expectByte();", itemType)
@@ -215,10 +230,12 @@ public class BinaryReaderBuilderFormatter implements MessageMemberFormatter {
 
                 appendReadFieldValue(itemMember, null, null, pCont.itemDescriptor());
 
-                writer.formatln("%s.add(%s);", member, item);
+                writer.formatln("%s.add(%s);", builder, item);
 
                 writer.end()  // for len
                       .appendln('}');
+
+                writer.formatln("%s = %s.build();", member, builder);
 
                 writer.end()  // if itemType
                       .appendln("} else {")

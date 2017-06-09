@@ -38,8 +38,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import static net.morimekta.providence.generator.format.java.utils.JUtils.camelCase;
 import static net.morimekta.util.Strings.c_case;
@@ -92,6 +97,10 @@ public class JField {
 
     public String member() {
         return camelCase("m", field.getName());
+    }
+
+    public String mutable() {
+        return camelCase("mutable", field.getName());
     }
 
     public String isSet() {
@@ -230,22 +239,63 @@ public class JField {
         }
     }
 
-    public String fieldInstanceType() throws GeneratorException  {
+    public String builderMutableType() throws GeneratorException  {
         switch (field.getType()) {
+            case LIST:
+                return LinkedList.class.getName().replace('$', '.');
             case MAP:
                 switch (containerType()) {
-                    case DEFAULT: return ImmutableMap.class.getName().replace('$', '.');
-                    case SORTED: return ImmutableSortedMap.class.getName().replace('$', '.');
+                    case DEFAULT: return HashMap.class.getName().replace('$', '.');
+                    case SORTED: return TreeMap.class.getName().replace('$', '.');
                     case ORDERED: return LinkedHashMap.class.getName().replace('$', '.');
                 }
             case SET:
                 switch (containerType()) {
-                    case DEFAULT: return ImmutableSet.class.getName().replace('$', '.');
-                    case SORTED: return ImmutableSortedSet.class.getName().replace('$', '.');
+                    case DEFAULT: return HashSet.class.getName().replace('$', '.');
+                    case SORTED: return TreeSet.class.getName().replace('$', '.');
                     case ORDERED: return LinkedHashSet.class.getName().replace('$', '.');
                 }
+            default:
+                return fieldType();
+        }
+    }
+
+    public String fieldInstanceCopy(String var) throws GeneratorException  {
+        switch (field.getType()) {
             case LIST:
-                return ImmutableList.class.getName().replace('$', '.');
+                return ImmutableList.class.getName().replace('$', '.') + ".copyOf(" + var + ")";
+            case MAP:
+                switch (containerType()) {
+                    case SORTED: return ImmutableSortedMap.class.getName().replace('$', '.') + ".copyOf(" + var + ")";
+                    // ImmutableMap is both both hash-map and order-preserving
+                    default: return ImmutableMap.class.getName().replace('$', '.') + ".copyOf(" + var + ")";
+                }
+            case SET:
+                switch (containerType()) {
+                    case SORTED: return ImmutableSortedSet.class.getName().replace('$', '.') + ".copyOf(" + var + ")";
+                    // ImmutableSet is both both hash-set and order-preserving
+                    default: return ImmutableSet.class.getName().replace('$', '.') + ".copyOf(" + var + ")";
+                }
+        }
+        throw new GeneratorException("Unable to instance copy " + field.getType());
+    }
+
+    public String builderInstanceType() throws GeneratorException  {
+        switch (field.getType()) {
+            case MAP:
+                switch (containerType()) {
+                    case DEFAULT: return PMap.ImmutableMapBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PMap.ImmutableSortedMapBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PMap.LinkedHashMapBuilder.class.getName().replace('$', '.');
+                }
+            case SET:
+                switch (containerType()) {
+                    case DEFAULT: return PSet.ImmutableSetBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PSet.ImmutableSortedSetBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PSet.LinkedHashSetBuilder.class.getName().replace('$', '.');
+                }
+            case LIST:
+                return PList.ImmutableListBuilder.class.getName().replace('$', '.');
             default:
                 return fieldType();
         }
@@ -298,28 +348,6 @@ public class JField {
                 return String.format("%s.%s.provider()",
                                      PPrimitive.class.getName(),
                                      field.getDescriptor().getName().toUpperCase());
-        }
-    }
-
-
-    public String builderInstanceType() throws GeneratorException  {
-        switch (field.getType()) {
-            case MAP:
-                switch (containerType()) {
-                    case DEFAULT: return PMap.ImmutableMapBuilder.class.getName().replace('$', '.');
-                    case SORTED: return PMap.ImmutableSortedMapBuilder.class.getName().replace('$', '.');
-                    case ORDERED: return PMap.LinkedHashMapBuilder.class.getName().replace('$', '.');
-                }
-            case SET:
-                switch (containerType()) {
-                    case DEFAULT: return PSet.ImmutableSetBuilder.class.getName().replace('$', '.');
-                    case SORTED: return PSet.ImmutableSortedSetBuilder.class.getName().replace('$', '.');
-                    case ORDERED: return PSet.LinkedHashSetBuilder.class.getName().replace('$', '.');
-                }
-            case LIST:
-                return PList.ImmutableListBuilder.class.getName().replace('$', '.');
-            default:
-                return fieldType();
         }
     }
 
