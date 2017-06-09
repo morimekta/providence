@@ -93,8 +93,6 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         @Nonnull
         Builder<I> clear();
 
-        int size();
-
         @Nonnull
         @Override
         Set<I> build();
@@ -148,10 +146,6 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         public LinkedHashSetBuilder<I> clear() {
             builder.clear();
             return this;
-        }
-
-        public int size() {
-            return builder.size();
         }
 
         @Nonnull

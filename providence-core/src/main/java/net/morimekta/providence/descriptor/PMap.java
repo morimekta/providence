@@ -103,8 +103,6 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         @Nonnull
         Builder<K, V> clear();
 
-        int size();
-
         @Nonnull
         @Override
         Map<K, V> build();
@@ -157,10 +155,6 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         public LinkedHashMapBuilder<K, V> clear() {
             builder.clear();
             return this;
-        }
-
-        public int size() {
-            return builder.size();
         }
 
         @Nonnull
