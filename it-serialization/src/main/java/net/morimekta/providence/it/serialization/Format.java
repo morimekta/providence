@@ -8,15 +8,15 @@ import net.morimekta.util.Stringable;
 public enum Format implements Stringable, Comparable<Format> {
     // Common serialization formats.
     binary("bin", "Thrift Binary",
-            1.23, 1.00, 0.86, 1.00),
+            1.20, 1.00, 79, 1.00),
 
     // Unique providence formats.
     json_pretty("json", "Prettified JSON",
-            9.25, 0.00,14.14, 0.00),
+           14.13, 0.00, 7.95, 0.00),
     json_named("json", "Named JSON",
-            6.81, 0.00,11.90, 0.00),
+            9.83, 0.00, 5.90, 0.00),
     json("json", "Compact JSON",
-            6.01, 0.00, 6.84, 0.00),
+            8.20, 0.00, 5.53, 0.00),
     pretty("cfg", "Pretty / Config",
            10.38, 0.00, 7.94, 0.00),
     fast_binary("bin", "Fast Binary",
