@@ -144,7 +144,7 @@ public class JsonSerializer extends Serializer {
         if (enumValueType == IdType.ID) {
             jsonWriter.value(call.getType().getValue());
         } else {
-            jsonWriter.value(call.getType().getName());
+            jsonWriter.valueUnescaped(call.getType().getName());
         }
         jsonWriter.value(call.getSequence());
 
@@ -221,7 +221,7 @@ public class JsonSerializer extends Serializer {
             tokenizer.expectSymbol("service call start", JsonToken.kListStart);
 
             methodName = tokenizer.expectString("method name")
-                                  .decodeJsonLiteral();
+                                  .rawJsonLiteral();
 
             tokenizer.expectSymbol("entry sep", JsonToken.kListSep);
 
@@ -234,7 +234,7 @@ public class JsonSerializer extends Serializer {
                             .setExceptionType(PApplicationExceptionType.INVALID_MESSAGE_TYPE);
                 }
             } else if (callTypeToken.isLiteral()) {
-                String typeName = callTypeToken.decodeJsonLiteral();
+                String typeName = callTypeToken.rawJsonLiteral();
                 type = PServiceCallType.forName(typeName);
                 if (type == null) {
                     throw new SerializerException("Service call type \"" + Strings.escape(typeName) + "\" is not valid")
@@ -305,7 +305,7 @@ public class JsonSerializer extends Serializer {
             char sep = JsonToken.kMapStart;
             while (sep != JsonToken.kMapEnd) {
                 JsonToken token = tokenizer.expectString("field spec");
-                String key = token.decodeJsonLiteral();
+                String key = token.rawJsonLiteral();
                 PField field;
                 if (Strings.isInteger(key)) {
                     field = type.getField(Integer.parseInt(key));
@@ -450,8 +450,7 @@ public class JsonSerializer extends Serializer {
             case BINARY:
                 if (token.isLiteral()) {
                     try {
-                        return Binary.fromBase64(token.substring(1, -1)
-                                                      .asString());
+                        return Binary.fromBase64(token.rawJsonLiteral());
                     } catch (IllegalArgumentException e) {
                         throw new SerializerException(e, "Unable to parse Base64 data: " + token.asString());
                     }
@@ -462,8 +461,7 @@ public class JsonSerializer extends Serializer {
                 if (token.isInteger()) {
                     eb.setByValue(token.intValue());
                 } else if (token.isLiteral()) {
-                    eb.setByName(token.substring(1, -1)
-                                      .asString());
+                    eb.setByName(token.rawJsonLiteral());
                 } else {
                     throw new SerializerException(token.asString() + " is not a enum value type");
                 }
@@ -663,7 +661,7 @@ public class JsonSerializer extends Serializer {
                 if (IdType.ID.equals(fieldIdType)) {
                     writer.key(field.getKey());
                 } else {
-                    writer.key(field.getName());
+                    writer.keyUnescaped(field.getName());
                 }
                 appendTypedValue(writer, field.getDescriptor(), value);
             }
@@ -687,7 +685,7 @@ public class JsonSerializer extends Serializer {
                         if (IdType.ID.equals(fieldIdType)) {
                             writer.key(field.getKey());
                         } else {
-                            writer.key(field.getName());
+                            writer.keyUnescaped(field.getName());
                         }
                         appendTypedValue(writer, field.getDescriptor(), value);
                     }
@@ -749,7 +747,7 @@ public class JsonSerializer extends Serializer {
             if (IdType.ID.equals(fieldIdType)) {
                 writer.key(((PEnumValue<?>) primitive).getValue());
             } else {
-                writer.key(primitive.toString());
+                writer.keyUnescaped(primitive.toString());
             }
         } else if (primitive instanceof Boolean) {
             writer.key(((Boolean) primitive));
@@ -796,7 +794,7 @@ public class JsonSerializer extends Serializer {
             if (IdType.ID.equals(enumValueType)) {
                 writer.value(((PEnumValue<?>) primitive).getValue());
             } else {
-                writer.value(primitive.toString());
+                writer.valueUnescaped(primitive.toString());
             }
         } else if (primitive instanceof Boolean) {
             writer.value(((Boolean) primitive));
@@ -810,7 +808,7 @@ public class JsonSerializer extends Serializer {
             writer.value(((Long) primitive));
         } else if (primitive instanceof Double) {
             writer.value(((Double) primitive));
-        } else if (primitive instanceof String) {
+        } else if (primitive instanceof CharSequence) {
             writer.value((String) primitive);
         } else if (primitive instanceof Binary) {
             writer.value((Binary) primitive);
