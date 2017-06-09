@@ -284,18 +284,18 @@ public class JField {
         switch (field.getType()) {
             case MAP:
                 switch (containerType()) {
-                    case DEFAULT: return PMap.ImmutableMapBuilder.class.getName().replace('$', '.');
-                    case SORTED: return PMap.ImmutableSortedMapBuilder.class.getName().replace('$', '.');
-                    case ORDERED: return PMap.LinkedHashMapBuilder.class.getName().replace('$', '.');
+                    case DEFAULT: return PMap.DefaultBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PMap.SortedBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PMap.OrderedBuilder.class.getName().replace('$', '.');
                 }
             case SET:
                 switch (containerType()) {
-                    case DEFAULT: return PSet.ImmutableSetBuilder.class.getName().replace('$', '.');
-                    case SORTED: return PSet.ImmutableSortedSetBuilder.class.getName().replace('$', '.');
-                    case ORDERED: return PSet.LinkedHashSetBuilder.class.getName().replace('$', '.');
+                    case DEFAULT: return PSet.DefaultBuilder.class.getName().replace('$', '.');
+                    case SORTED: return PSet.SortedBuilder.class.getName().replace('$', '.');
+                    case ORDERED: return PSet.OrderedBuilder.class.getName().replace('$', '.');
                 }
             case LIST:
-                return PList.ImmutableListBuilder.class.getName().replace('$', '.');
+                return PList.DefaultBuilder.class.getName().replace('$', '.');
             default:
                 return fieldType();
         }

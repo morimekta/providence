@@ -102,30 +102,30 @@ public class PList<Item> extends PContainer<List<Item>> {
         Builder<I> builder();
     }
 
-    public static class ImmutableListBuilder<I> implements Builder<I> {
+    public static class DefaultBuilder<I> implements Builder<I> {
         private ImmutableList.Builder<I> builder;
 
-        public ImmutableListBuilder() {
+        public DefaultBuilder() {
             builder = ImmutableList.builder();
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> add(@Nonnull I value) {
+        public DefaultBuilder<I> add(@Nonnull I value) {
             builder.add(value);
             return this;
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> addAll(@Nonnull Collection<I> items) {
+        public DefaultBuilder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
         @Nonnull
         @Override
-        public ImmutableListBuilder<I> clear() {
+        public DefaultBuilder<I> clear() {
             builder = ImmutableList.builder();
             return this;
         }
@@ -143,7 +143,7 @@ public class PList<Item> extends PContainer<List<Item>> {
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableListBuilder::new);
+        return provider(itemDesc, DefaultBuilder::new);
     }
 
     public static <I> PContainerProvider<List<I>, PList<I>> provider(PDescriptorProvider itemDesc,

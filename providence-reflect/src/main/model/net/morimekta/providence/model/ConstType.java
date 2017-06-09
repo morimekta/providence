@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
  */
@@ -567,7 +569,7 @@ public class ConstType
             mType = kDefaultType;
             mName = kDefaultName;
             mValue = kDefaultValue;
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

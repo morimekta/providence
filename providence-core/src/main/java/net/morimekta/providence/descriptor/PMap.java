@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableSortedMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -113,55 +112,77 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
         Builder<K, V> builder();
     }
 
-    public static class ImmutableMapBuilder<K, V> extends LinkedHashMapBuilder<K,V> {
-        @Nonnull
-        @Override
-        public Map<K, V> build() {
-            return ImmutableMap.copyOf(builder);
-        }
-    }
+    public static class DefaultBuilder<K, V> implements Builder<K,V> {
+        private ImmutableMap.Builder<K,V> builder;
 
-    public static class ImmutableSortedMapBuilder<K extends Comparable, V> extends LinkedHashMapBuilder<K, V> {
-        @Nonnull
-        @Override
-        public Map<K, V> build() {
-            return ImmutableSortedMap.copyOf(builder);
-        }
-    }
-
-    public static class LinkedHashMapBuilder<K, V> implements Builder<K, V> {
-        final LinkedHashMap<K, V> builder;
-
-        public LinkedHashMapBuilder() {
-            this.builder = new LinkedHashMap<>();
+        public DefaultBuilder() {
+            builder = ImmutableMap.builder();
         }
 
         @Nonnull
         @Override
-        public LinkedHashMapBuilder<K, V> put(@Nonnull K key, @Nonnull V value) {
+        public PMap.Builder<K,V> put(@Nonnull K key, @Nonnull V value) {
             builder.put(key, value);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashMapBuilder<K, V> putAll(@Nonnull Map<K, V> map) {
-            builder.putAll(map);
+        public PMap.Builder<K,V> putAll(@Nonnull Map<K,V> items) {
+            builder.putAll(items);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashMapBuilder<K, V> clear() {
-            builder.clear();
+        public PMap.Builder<K,V> clear() {
+            builder = ImmutableMap.builder();
             return this;
         }
 
         @Nonnull
         @Override
-        public Map<K, V> build() {
-            return Collections.unmodifiableMap(builder);
+        public Map<K,V> build() {
+            return builder.build();
         }
+    }
+
+    public static class SortedBuilder<K extends Comparable, V> implements Builder<K, V> {
+        private ImmutableSortedMap.Builder<K,V> builder;
+
+        public SortedBuilder() {
+            builder = ImmutableSortedMap.naturalOrder();
+        }
+
+        @Nonnull
+        @Override
+        public PMap.Builder<K,V> put(@Nonnull K key, @Nonnull V value) {
+            builder.put(key, value);
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public PMap.Builder<K,V> putAll(@Nonnull Map<K,V> items) {
+            builder.putAll(items);
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public PMap.Builder<K,V> clear() {
+            builder = ImmutableSortedMap.naturalOrder();
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public Map<K,V> build() {
+            return builder.build();
+        }
+    }
+
+    public static class OrderedBuilder<K, V> extends DefaultBuilder<K, V> {
     }
 
     @Override
@@ -171,17 +192,17 @@ public class PMap<Key, Value> extends PContainer<Map<Key, Value>> {
 
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,
                                                                             PDescriptorProvider itemDesc) {
-        return provider(keyDesc, itemDesc, ImmutableMapBuilder::new);
+        return provider(keyDesc, itemDesc, DefaultBuilder::new);
     }
 
     public static <K extends Comparable<K>, V> PContainerProvider<Map<K, V>, PMap<K, V>> sortedProvider(PDescriptorProvider keyDesc,
                                                                                                         PDescriptorProvider itemDesc) {
-        return provider(keyDesc, itemDesc, ImmutableSortedMapBuilder::new);
+        return provider(keyDesc, itemDesc, SortedBuilder::new);
     }
 
     public static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> orderedProvider(PDescriptorProvider keyDesc,
                                                                                    PDescriptorProvider itemDesc) {
-        return provider(keyDesc, itemDesc, LinkedHashMapBuilder::new);
+        return provider(keyDesc, itemDesc, OrderedBuilder::new);
     }
 
     private static <K, V> PContainerProvider<Map<K, V>, PMap<K, V>> provider(PDescriptorProvider keyDesc,

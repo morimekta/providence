@@ -1,5 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
+import net.morimekta.providence.descriptor.PList;
+
 @SuppressWarnings("unused")
 public class Operation
         implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
@@ -317,7 +319,7 @@ public class Operation
         public _Builder() {
             optionals = new java.util.BitSet(2);
             modified = new java.util.BitSet(2);
-            mOperands = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mOperands = new PList.DefaultBuilder<>();
         }
 
         /**

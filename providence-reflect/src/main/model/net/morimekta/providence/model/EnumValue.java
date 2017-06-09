@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * &lt;name&gt; (= &lt;value&gt;)
  */
@@ -425,7 +427,7 @@ public class EnumValue
             optionals = new java.util.BitSet(4);
             modified = new java.util.BitSet(4);
             mName = kDefaultName;
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

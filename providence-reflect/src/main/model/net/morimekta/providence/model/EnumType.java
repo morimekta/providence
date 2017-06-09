@@ -1,5 +1,8 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * enum {
  *   (&lt;value&gt; ([;,])?)*
@@ -14,7 +17,7 @@ public class EnumType
     private final static long serialVersionUID = 5720337451968926862L;
 
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.EnumValue> kDefaultValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.EnumValue>()
+    private final static java.util.List<net.morimekta.providence.model.EnumValue> kDefaultValues = new PList.DefaultBuilder<EnumValue>()
                 .build();
 
     private final String mDocumentation;
@@ -438,8 +441,8 @@ public class EnumType
             optionals = new java.util.BitSet(4);
             modified = new java.util.BitSet(4);
             mName = kDefaultName;
-            mValues = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mValues = new PList.DefaultBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

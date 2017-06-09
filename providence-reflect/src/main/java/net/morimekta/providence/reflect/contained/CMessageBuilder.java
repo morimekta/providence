@@ -4,18 +4,26 @@ import net.morimekta.providence.PMessage;
 import net.morimekta.providence.PMessageBuilder;
 import net.morimekta.providence.PType;
 import net.morimekta.providence.descriptor.PField;
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
 import net.morimekta.providence.descriptor.PMessageDescriptor;
 import net.morimekta.providence.descriptor.PRequirement;
-import net.morimekta.providence.descriptor.PSet;
+import net.morimekta.providence.reflect.util.ThriftAnnotation;
+import net.morimekta.providence.reflect.util.ThriftCollection;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableSortedSet;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -52,14 +60,14 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
                         break;
                     case SET:
                         if (values.containsKey(key)) {
-                            ((PSet.Builder<Object>) values.get(key)).addAll((Collection<Object>) from.get(key));
+                            ((Set<Object>) values.get(key)).addAll((Collection<Object>) from.get(key));
                         } else {
                             set(key, from.get(key));
                         }
                         break;
                     case MAP:
                         if (values.containsKey(key)) {
-                            ((PMap.Builder<Object, Object>) values.get(key)).putAll((Map<Object, Object>) from.get(key));
+                            ((Map<Object, Object>) values.get(key)).putAll((Map<Object, Object>) from.get(key));
                         } else {
                             set(key, from.get(key));
                         }
@@ -138,7 +146,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @Override
     @SuppressWarnings("unchecked")
     public Builder set(int key, Object value) {
-        PField field = descriptor().getField(key);
+        CField field = descriptor().getField(key);
         if (field == null) {
             return (Builder) this; // soft ignoring unsupported fields.
         }
@@ -147,21 +155,15 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
         } else {
             switch (field.getType()) {
                 case LIST: {
-                    PList.Builder builder = ((PList) field.getDescriptor()).builder();
-                    builder.addAll((Collection<Object>) value);
-                    values.put(key, builder);
+                    values.put(key, ImmutableList.copyOf((Collection<Object>) value));
                     break;
                 }
                 case SET: {
-                    PSet.Builder builder = ((PSet) field.getDescriptor()).builder();
-                    builder.addAll((Collection<Object>) value);
-                    values.put(key, builder);
+                    values.put(key, new LinkedHashSet<>((Set) value));
                     break;
                 }
                 case MAP: {
-                    PMap.Builder builder = ((PMap) field.getDescriptor()).builder();
-                    builder.putAll((Map<Object, Object>) value);
-                    values.put(key, builder);
+                    values.put(key, new LinkedHashMap<>((Map) value));
                     break;
                 }
                 default:
@@ -188,7 +190,7 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
     @Override
     @SuppressWarnings("unchecked")
     public Builder addTo(int key, Object value) {
-        PField field = descriptor().getField(key);
+        CField field = descriptor().getField(key);
         if (field == null) {
             return (Builder) this; // soft ignoring unsupported fields.
         }
@@ -196,18 +198,18 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             throw new IllegalArgumentException("Adding null value");
         }
         if (field.getType() == PType.LIST) {
-            @SuppressWarnings("unchecked")
-            PList.Builder<Object> list = (PList.Builder<Object>) values.get(field.getKey());
+            List<Object> list = (List<Object>) values.get(field.getKey());
             if (list == null) {
-                list = ((PList) field.getDescriptor()).builder();
+                list = new LinkedList<>();
                 values.put(field.getKey(), list);
             }
             list.add(value);
         } else if (field.getType() == PType.SET) {
-            @SuppressWarnings("unchecked")
-            PSet.Builder<Object> set = (PSet.Builder<Object>) values.get(field.getKey());
+            ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+
+            Set<Object> set = (Set<Object>) values.get(field.getKey());
             if (set == null) {
-                set = ((PSet) field.getDescriptor()).builder();
+                set = new LinkedHashSet<>();
                 values.put(field.getKey(), set);
             }
             set.add(value);
@@ -234,15 +236,33 @@ public abstract class CMessageBuilder<Builder extends CMessageBuilder<Builder, M
             int key = field.getKey();
             if (values.containsKey(key)) {
                 switch (field.getType()) {
-                    case SET:
-                        out.put(key, ((PSet.Builder<Object>) values.get(key)).build());
-                        break;
                     case LIST:
-                        out.put(key, ((PList.Builder<Object>) values.get(key)).build());
+                        out.put(key, ImmutableList.copyOf((List<Object>) values.get(key)));
                         break;
-                    case MAP:
-                        out.put(key, ((PMap.Builder<Object, Object>) values.get(key)).build());
+                    case SET: {
+                        ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                        switch (ctype) {
+                            case SORTED:
+                                out.put(key, ImmutableSortedSet.copyOf((Set) values.get(key)));
+                                break;
+                            default:
+                                out.put(key, ImmutableSet.copyOf((Set) values.get(key)));
+                                break;
+                        }
                         break;
+                    }
+                    case MAP: {
+                        ThriftCollection ctype = ThriftCollection.forName(field.getAnnotationValue(ThriftAnnotation.CONTAINER));
+                        switch (ctype) {
+                            case SORTED:
+                                out.put(key, ImmutableSortedMap.copyOf((Map) values.get(key)));
+                                break;
+                            default:
+                                out.put(key, ImmutableMap.copyOf((Map) values.get(key)));
+                                break;
+                        }
+                        break;
+                    }
                     case MESSAGE:
                         Object current = values.get(key);
                         if (current instanceof PMessageBuilder) {

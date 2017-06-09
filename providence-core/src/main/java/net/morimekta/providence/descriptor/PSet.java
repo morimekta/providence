@@ -31,7 +31,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -104,55 +103,77 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         Builder<I> builder();
     }
 
-    public static class ImmutableSetBuilder<I> extends LinkedHashSetBuilder<I> {
-        @Nonnull
-        @Override
-        public Set<I> build() {
-            return ImmutableSet.copyOf(builder);
-        }
-    }
+    public static class DefaultBuilder<I> implements Builder<I> {
+        private ImmutableSet.Builder<I> builder;
 
-    public static class ImmutableSortedSetBuilder<I extends Comparable<I>> extends LinkedHashSetBuilder<I> {
-        @Nonnull
-        @Override
-        public Set<I> build() {
-            return ImmutableSortedSet.copyOf(builder);
-        }
-    }
-
-    public static class LinkedHashSetBuilder<I> implements Builder<I> {
-        final LinkedHashSet<I> builder;
-
-        public LinkedHashSetBuilder() {
-            this.builder = new LinkedHashSet<>();
+        public DefaultBuilder() {
+            builder = ImmutableSet.builder();
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> add(@Nonnull I value) {
+        public Builder<I> add(@Nonnull I value) {
             builder.add(value);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> addAll(@Nonnull Collection<I> items) {
+        public Builder<I> addAll(@Nonnull Collection<I> items) {
             builder.addAll(items);
             return this;
         }
 
         @Nonnull
         @Override
-        public LinkedHashSetBuilder<I> clear() {
-            builder.clear();
+        public Builder<I> clear() {
+            builder = ImmutableSet.builder();
             return this;
         }
 
         @Nonnull
         @Override
         public Set<I> build() {
-            return Collections.unmodifiableSet(builder);
+            return builder.build();
         }
+    }
+
+    public static class SortedBuilder<I extends Comparable<I>> implements Builder<I> {
+        private ImmutableSortedSet.Builder<I> builder;
+
+        public SortedBuilder() {
+            builder = ImmutableSortedSet.naturalOrder();
+        }
+
+        @Nonnull
+        @Override
+        public Builder<I> add(@Nonnull I value) {
+            builder.add(value);
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public Builder<I> addAll(@Nonnull Collection<I> items) {
+            builder.addAll(items);
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public Builder<I> clear() {
+            builder = ImmutableSortedSet.naturalOrder();
+            return this;
+        }
+
+        @Nonnull
+        @Override
+        public Set<I> build() {
+            return builder.build();
+        }
+    }
+
+    public static class OrderedBuilder<I> extends DefaultBuilder<I> {
     }
 
     @Override
@@ -161,15 +182,15 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     }
 
     public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableSetBuilder::new);
+        return provider(itemDesc, DefaultBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> sortedProvider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, ImmutableSortedSetBuilder::new);
+        return provider(itemDesc, SortedBuilder::new);
     }
 
     public static <I extends Comparable<I>> PContainerProvider<Set<I>, PSet<I>> orderedProvider(PDescriptorProvider itemDesc) {
-        return provider(itemDesc, LinkedHashSetBuilder::new);
+        return provider(itemDesc, OrderedBuilder::new);
     }
 
     private static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc,

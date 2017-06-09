@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PSet;
+
 /**
  * Reflective thrift IDL description.
  * <p>
@@ -16,7 +18,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kThriftKeywords;
     static {
-        kThriftKeywords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+        kThriftKeywords = new PSet.DefaultBuilder<String>()
                 .add("struct")
                 .add("exception")
                 .add("bool")
@@ -49,7 +51,7 @@ public class Model_Constants {
 
     public static final java.util.Set<String> kReservedWords;
     static {
-        kReservedWords = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<String>()
+        kReservedWords = new PSet.DefaultBuilder<String>()
                 .add("private")
                 .add("byte")
                 .add("for")

@@ -1,5 +1,8 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * &lt;namespace&gt;* &lt;include&gt;* &lt;declataion&gt;*
  */
@@ -12,9 +15,9 @@ public class ProgramType
     private final static long serialVersionUID = 2224801959218006031L;
 
     private final static String kDefaultProgramName = "";
-    private final static java.util.Map<String,String> kDefaultNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<String,String>()
+    private final static java.util.Map<String,String> kDefaultNamespaces = new PMap.DefaultBuilder<String,String>()
                 .build();
-    private final static java.util.List<net.morimekta.providence.model.Declaration> kDefaultDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.Declaration>()
+    private final static java.util.List<net.morimekta.providence.model.Declaration> kDefaultDecl = new PList.DefaultBuilder<Declaration>()
                 .build();
 
     private final String mDocumentation;
@@ -502,9 +505,9 @@ public class ProgramType
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mProgramName = kDefaultProgramName;
-            mIncludes = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mNamespaces = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mDecl = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
+            mIncludes = new PList.DefaultBuilder<>();
+            mNamespaces = new PMap.DefaultBuilder<>();
+            mDecl = new PList.DefaultBuilder<>();
         }
 
         /**

@@ -1,5 +1,8 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * service (extends &lt;extend&gt;)? {
  *   (&lt;method&gt; [;,]?)*
@@ -14,7 +17,7 @@ public class ServiceType
     private final static long serialVersionUID = 789757775761432238L;
 
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FunctionType>()
+    private final static java.util.List<net.morimekta.providence.model.FunctionType> kDefaultMethods = new PList.DefaultBuilder<FunctionType>()
                 .build();
 
     private final String mDocumentation;
@@ -484,8 +487,8 @@ public class ServiceType
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mName = kDefaultName;
-            mMethods = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mMethods = new PList.DefaultBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

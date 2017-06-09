@@ -1,5 +1,9 @@
 package net.morimekta.test.providence.core;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+import net.morimekta.providence.descriptor.PSet;
+
 @SuppressWarnings("unused")
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
@@ -2356,37 +2360,37 @@ public class Containers
         public _Builder() {
             optionals = new java.util.BitSet(37);
             modified = new java.util.BitSet(37);
-            mBooleanList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mByteList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mShortList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mIntegerList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mLongList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mDoubleList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mStringList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mBinaryList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mBooleanSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mByteSet = new net.morimekta.providence.descriptor.PSet.ImmutableSortedSetBuilder<>();
-            mShortSet = new net.morimekta.providence.descriptor.PSet.LinkedHashSetBuilder<>();
-            mIntegerSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mLongSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mDoubleSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mStringSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mBinarySet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mBooleanMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mByteMap = new net.morimekta.providence.descriptor.PMap.ImmutableSortedMapBuilder<>();
-            mShortMap = new net.morimekta.providence.descriptor.PMap.LinkedHashMapBuilder<>();
-            mIntegerMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mLongMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mDoubleMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mStringMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mBinaryMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mEnumList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mEnumSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mEnumMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mMessageList = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mMessageSet = new net.morimekta.providence.descriptor.PSet.ImmutableSetBuilder<>();
-            mMessageMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
-            mMessageKeyMap = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mBooleanList = new PList.DefaultBuilder<>();
+            mByteList = new PList.DefaultBuilder<>();
+            mShortList = new PList.DefaultBuilder<>();
+            mIntegerList = new PList.DefaultBuilder<>();
+            mLongList = new PList.DefaultBuilder<>();
+            mDoubleList = new PList.DefaultBuilder<>();
+            mStringList = new PList.DefaultBuilder<>();
+            mBinaryList = new PList.DefaultBuilder<>();
+            mBooleanSet = new PSet.DefaultBuilder<>();
+            mByteSet = new PSet.SortedBuilder<>();
+            mShortSet = new PSet.OrderedBuilder<>();
+            mIntegerSet = new PSet.DefaultBuilder<>();
+            mLongSet = new PSet.DefaultBuilder<>();
+            mDoubleSet = new PSet.DefaultBuilder<>();
+            mStringSet = new PSet.DefaultBuilder<>();
+            mBinarySet = new PSet.DefaultBuilder<>();
+            mBooleanMap = new PMap.DefaultBuilder<>();
+            mByteMap = new PMap.SortedBuilder<>();
+            mShortMap = new PMap.OrderedBuilder<>();
+            mIntegerMap = new PMap.DefaultBuilder<>();
+            mLongMap = new PMap.DefaultBuilder<>();
+            mDoubleMap = new PMap.DefaultBuilder<>();
+            mStringMap = new PMap.DefaultBuilder<>();
+            mBinaryMap = new PMap.DefaultBuilder<>();
+            mEnumList = new PList.DefaultBuilder<>();
+            mEnumSet = new PSet.DefaultBuilder<>();
+            mEnumMap = new PMap.DefaultBuilder<>();
+            mMessageList = new PList.DefaultBuilder<>();
+            mMessageSet = new PSet.DefaultBuilder<>();
+            mMessageMap = new PMap.DefaultBuilder<>();
+            mMessageKeyMap = new PMap.DefaultBuilder<>();
         }
 
         /**

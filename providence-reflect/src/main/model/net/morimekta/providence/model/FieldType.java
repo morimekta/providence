@@ -1,5 +1,7 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * For fields:
  *   (&lt;key&gt;:)? (required|optional)? &lt;type&gt; &lt;name&gt; (= &lt;default_value&gt;)?
@@ -663,7 +665,7 @@ public class FieldType
             mKey = kDefaultKey;
             mType = kDefaultType;
             mName = kDefaultName;
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

@@ -1,5 +1,8 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * (oneway)? &lt;return_type&gt; &lt;name&gt;&#39;(&#39;&lt;param&gt;*&#39;)&#39; (throws &#39;(&#39; &lt;exception&gt;+ &#39;)&#39;)?
  */
@@ -13,7 +16,7 @@ public class FunctionType
 
     private final static boolean kDefaultOneWay = false;
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultParams = new PList.DefaultBuilder<FieldType>()
                 .build();
 
     private final String mDocumentation;
@@ -583,9 +586,9 @@ public class FunctionType
             optionals = new java.util.BitSet(7);
             modified = new java.util.BitSet(7);
             mName = kDefaultName;
-            mParams = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mExceptions = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mParams = new PList.DefaultBuilder<>();
+            mExceptions = new PList.DefaultBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**

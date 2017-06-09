@@ -1,5 +1,8 @@
 package net.morimekta.providence.model;
 
+import net.morimekta.providence.descriptor.PList;
+import net.morimekta.providence.descriptor.PMap;
+
 /**
  * &lt;variant&gt; {
  *   (&lt;field&gt; ([,;])?)*
@@ -15,7 +18,7 @@ public class MessageType
 
     private final static net.morimekta.providence.model.MessageVariant kDefaultVariant = net.morimekta.providence.model.MessageVariant.STRUCT;
     private final static String kDefaultName = "";
-    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<net.morimekta.providence.model.FieldType>()
+    private final static java.util.List<net.morimekta.providence.model.FieldType> kDefaultFields = new PList.DefaultBuilder<FieldType>()
                 .build();
 
     private final String mDocumentation;
@@ -482,8 +485,8 @@ public class MessageType
             optionals = new java.util.BitSet(5);
             modified = new java.util.BitSet(5);
             mName = kDefaultName;
-            mFields = new net.morimekta.providence.descriptor.PList.ImmutableListBuilder<>();
-            mAnnotations = new net.morimekta.providence.descriptor.PMap.ImmutableMapBuilder<>();
+            mFields = new PList.DefaultBuilder<>();
+            mAnnotations = new PMap.DefaultBuilder<>();
         }
 
         /**
