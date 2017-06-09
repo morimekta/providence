@@ -488,8 +488,8 @@ public class ContainerService {
 
                 optionals.set(0);
                 modified.set(0);
-                mC_builder = null;
                 mC = value;
+                mC_builder = null;
                 return this;
             }
 
@@ -1047,8 +1047,8 @@ public class ContainerService {
 
                 tUnionField = _Field.SUCCESS;
                 modified = true;
-                mSuccess_builder = null;
                 mSuccess = value;
+                mSuccess_builder = null;
                 return this;
             }
 
@@ -1110,8 +1110,8 @@ public class ContainerService {
 
                 tUnionField = _Field.EF;
                 modified = true;
-                mEf_builder = null;
                 mEf = value;
+                mEf_builder = null;
                 return this;
             }
 

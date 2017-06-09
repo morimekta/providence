@@ -1240,8 +1240,8 @@ public class DefaultFields
 
             optionals.set(9);
             modified.set(9);
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

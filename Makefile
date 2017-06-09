@@ -17,6 +17,9 @@ test-models: test-compile
 	rm -rf providence-core/src/test/java-gen/*
 	mv providence-core/target/generated-test-sources/providence/* \
 	   providence-core/src/test/java-gen/
+	rm -rf providence-reflect/src/test/java-gen/*
+	mv providence-reflect/target/generated-test-sources/providence/* \
+	   providence-reflect/src/test/java-gen/
 
 thrift:
 	gradle -b thrift.gradle generateStaticThrift

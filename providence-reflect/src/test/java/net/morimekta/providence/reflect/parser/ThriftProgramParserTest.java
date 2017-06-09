@@ -551,8 +551,8 @@ public class ThriftProgramParserTest {
                                 "        }\n" +
                                 "      ]\n" +
                                 "      annotations = {\n" +
-                                "        \"src\": \"src\"\n" +
                                 "        \"bin\": \"bin\"\n" +
+                                "        \"src\": \"src\"\n" +
                                 "      }\n" +
                                 "    }\n" +
                                 "  }\n" +

@@ -444,8 +444,8 @@ public class CalculateException
 
             optionals.set(1);
             modified.set(1);
-            mOperation_builder = null;
             mOperation = value;
+            mOperation_builder = null;
             return this;
         }
 

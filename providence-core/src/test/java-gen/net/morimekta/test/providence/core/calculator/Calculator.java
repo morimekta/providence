@@ -554,8 +554,8 @@ public class Calculator {
 
                 optionals.set(0);
                 modified.set(0);
-                mOp_builder = null;
                 mOp = value;
+                mOp_builder = null;
                 return this;
             }
 
@@ -1113,8 +1113,8 @@ public class Calculator {
 
                 tUnionField = _Field.SUCCESS;
                 modified = true;
-                mSuccess_builder = null;
                 mSuccess = value;
+                mSuccess_builder = null;
                 return this;
             }
 
@@ -1176,8 +1176,8 @@ public class Calculator {
 
                 tUnionField = _Field.CE;
                 modified = true;
-                mCe_builder = null;
                 mCe = value;
+                mCe_builder = null;
                 return this;
             }
 

@@ -1188,8 +1188,8 @@ public class UnionFields
 
             tUnionField = _Field.COMPACT_VALUE;
             modified = true;
-            mCompactValue_builder = null;
             mCompactValue = value;
+            mCompactValue_builder = null;
             return this;
         }
 

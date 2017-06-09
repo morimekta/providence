@@ -555,8 +555,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_ENUM;
             modified = true;
-            mDeclEnum_builder = null;
             mDeclEnum = value;
+            mDeclEnum_builder = null;
             return this;
         }
 
@@ -618,8 +618,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_TYPEDEF;
             modified = true;
-            mDeclTypedef_builder = null;
             mDeclTypedef = value;
+            mDeclTypedef_builder = null;
             return this;
         }
 
@@ -681,8 +681,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_STRUCT;
             modified = true;
-            mDeclStruct_builder = null;
             mDeclStruct = value;
+            mDeclStruct_builder = null;
             return this;
         }
 
@@ -744,8 +744,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_SERVICE;
             modified = true;
-            mDeclService_builder = null;
             mDeclService = value;
+            mDeclService_builder = null;
             return this;
         }
 
@@ -807,8 +807,8 @@ public class Declaration
 
             tUnionField = _Field.DECL_CONST;
             modified = true;
-            mDeclConst_builder = null;
             mDeclConst = value;
+            mDeclConst_builder = null;
             return this;
         }
 

@@ -434,8 +434,8 @@ public class Operand
 
             tUnionField = _Field.OPERATION;
             modified = true;
-            mOperation_builder = null;
             mOperation = value;
+            mOperation_builder = null;
             return this;
         }
 
@@ -542,8 +542,8 @@ public class Operand
 
             tUnionField = _Field.IMAGINARY;
             modified = true;
-            mImaginary_builder = null;
             mImaginary = value;
+            mImaginary_builder = null;
             return this;
         }
 

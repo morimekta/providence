@@ -1,7 +1,5 @@
 package net.morimekta.test.providence.core.calculator;
 
-import net.morimekta.providence.descriptor.PSet;
-
 @SuppressWarnings("unused")
 public class Calculator_Constants {
     private Calculator_Constants() {}
@@ -15,9 +13,9 @@ public class Calculator_Constants {
 
     public static final java.util.Set<net.morimekta.test.providence.core.calculator.Operator> kComplexOperands;
     static {
-        kComplexOperands = new PSet.DefaultBuilder<Operator>()
-                .add(net.morimekta.test.providence.core.calculator.Operator.MULTIPLY)
+        kComplexOperands = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.test.providence.core.calculator.Operator>()
                 .add(net.morimekta.test.providence.core.calculator.Operator.DIVIDE)
+                .add(net.morimekta.test.providence.core.calculator.Operator.MULTIPLY)
                 .build();
     }
 }

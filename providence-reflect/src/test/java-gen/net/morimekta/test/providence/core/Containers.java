@@ -1,9 +1,5 @@
 package net.morimekta.test.providence.core;
 
-import net.morimekta.providence.descriptor.PList;
-import net.morimekta.providence.descriptor.PMap;
-import net.morimekta.providence.descriptor.PSet;
-
 @SuppressWarnings("unused")
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
@@ -140,7 +136,7 @@ public class Containers
             mByteSet = null;
         }
         if (pShortSet != null) {
-            mShortSet = java.util.Collections.unmodifiableSet(pShortSet);
+            mShortSet = com.google.common.collect.ImmutableSet.copyOf(pShortSet);
         } else {
             mShortSet = null;
         }
@@ -180,7 +176,7 @@ public class Containers
             mByteMap = null;
         }
         if (pShortMap != null) {
-            mShortMap = java.util.Collections.unmodifiableMap(pShortMap);
+            mShortMap = com.google.common.collect.ImmutableMap.copyOf(pShortMap);
         } else {
             mShortMap = null;
         }
@@ -254,157 +250,157 @@ public class Containers
 
     private Containers(_Builder builder) {
         if (builder.isSetBooleanList()) {
-            mBooleanList = builder.mBooleanList.build();
+            mBooleanList = com.google.common.collect.ImmutableList.copyOf(builder.mBooleanList);
         } else {
             mBooleanList = null;
         }
         if (builder.isSetByteList()) {
-            mByteList = builder.mByteList.build();
+            mByteList = com.google.common.collect.ImmutableList.copyOf(builder.mByteList);
         } else {
             mByteList = null;
         }
         if (builder.isSetShortList()) {
-            mShortList = builder.mShortList.build();
+            mShortList = com.google.common.collect.ImmutableList.copyOf(builder.mShortList);
         } else {
             mShortList = null;
         }
         if (builder.isSetIntegerList()) {
-            mIntegerList = builder.mIntegerList.build();
+            mIntegerList = com.google.common.collect.ImmutableList.copyOf(builder.mIntegerList);
         } else {
             mIntegerList = null;
         }
         if (builder.isSetLongList()) {
-            mLongList = builder.mLongList.build();
+            mLongList = com.google.common.collect.ImmutableList.copyOf(builder.mLongList);
         } else {
             mLongList = null;
         }
         if (builder.isSetDoubleList()) {
-            mDoubleList = builder.mDoubleList.build();
+            mDoubleList = com.google.common.collect.ImmutableList.copyOf(builder.mDoubleList);
         } else {
             mDoubleList = null;
         }
         if (builder.isSetStringList()) {
-            mStringList = builder.mStringList.build();
+            mStringList = com.google.common.collect.ImmutableList.copyOf(builder.mStringList);
         } else {
             mStringList = null;
         }
         if (builder.isSetBinaryList()) {
-            mBinaryList = builder.mBinaryList.build();
+            mBinaryList = com.google.common.collect.ImmutableList.copyOf(builder.mBinaryList);
         } else {
             mBinaryList = null;
         }
         if (builder.isSetBooleanSet()) {
-            mBooleanSet = builder.mBooleanSet.build();
+            mBooleanSet = com.google.common.collect.ImmutableSet.copyOf(builder.mBooleanSet);
         } else {
             mBooleanSet = null;
         }
         if (builder.isSetByteSet()) {
-            mByteSet = builder.mByteSet.build();
+            mByteSet = com.google.common.collect.ImmutableSortedSet.copyOf(builder.mByteSet);
         } else {
             mByteSet = null;
         }
         if (builder.isSetShortSet()) {
-            mShortSet = builder.mShortSet.build();
+            mShortSet = com.google.common.collect.ImmutableSet.copyOf(builder.mShortSet);
         } else {
             mShortSet = null;
         }
         if (builder.isSetIntegerSet()) {
-            mIntegerSet = builder.mIntegerSet.build();
+            mIntegerSet = com.google.common.collect.ImmutableSet.copyOf(builder.mIntegerSet);
         } else {
             mIntegerSet = null;
         }
         if (builder.isSetLongSet()) {
-            mLongSet = builder.mLongSet.build();
+            mLongSet = com.google.common.collect.ImmutableSet.copyOf(builder.mLongSet);
         } else {
             mLongSet = null;
         }
         if (builder.isSetDoubleSet()) {
-            mDoubleSet = builder.mDoubleSet.build();
+            mDoubleSet = com.google.common.collect.ImmutableSet.copyOf(builder.mDoubleSet);
         } else {
             mDoubleSet = null;
         }
         if (builder.isSetStringSet()) {
-            mStringSet = builder.mStringSet.build();
+            mStringSet = com.google.common.collect.ImmutableSet.copyOf(builder.mStringSet);
         } else {
             mStringSet = null;
         }
         if (builder.isSetBinarySet()) {
-            mBinarySet = builder.mBinarySet.build();
+            mBinarySet = com.google.common.collect.ImmutableSet.copyOf(builder.mBinarySet);
         } else {
             mBinarySet = null;
         }
         if (builder.isSetBooleanMap()) {
-            mBooleanMap = builder.mBooleanMap.build();
+            mBooleanMap = com.google.common.collect.ImmutableMap.copyOf(builder.mBooleanMap);
         } else {
             mBooleanMap = null;
         }
         if (builder.isSetByteMap()) {
-            mByteMap = builder.mByteMap.build();
+            mByteMap = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mByteMap);
         } else {
             mByteMap = null;
         }
         if (builder.isSetShortMap()) {
-            mShortMap = builder.mShortMap.build();
+            mShortMap = com.google.common.collect.ImmutableMap.copyOf(builder.mShortMap);
         } else {
             mShortMap = null;
         }
         if (builder.isSetIntegerMap()) {
-            mIntegerMap = builder.mIntegerMap.build();
+            mIntegerMap = com.google.common.collect.ImmutableMap.copyOf(builder.mIntegerMap);
         } else {
             mIntegerMap = null;
         }
         if (builder.isSetLongMap()) {
-            mLongMap = builder.mLongMap.build();
+            mLongMap = com.google.common.collect.ImmutableMap.copyOf(builder.mLongMap);
         } else {
             mLongMap = null;
         }
         if (builder.isSetDoubleMap()) {
-            mDoubleMap = builder.mDoubleMap.build();
+            mDoubleMap = com.google.common.collect.ImmutableMap.copyOf(builder.mDoubleMap);
         } else {
             mDoubleMap = null;
         }
         if (builder.isSetStringMap()) {
-            mStringMap = builder.mStringMap.build();
+            mStringMap = com.google.common.collect.ImmutableMap.copyOf(builder.mStringMap);
         } else {
             mStringMap = null;
         }
         if (builder.isSetBinaryMap()) {
-            mBinaryMap = builder.mBinaryMap.build();
+            mBinaryMap = com.google.common.collect.ImmutableMap.copyOf(builder.mBinaryMap);
         } else {
             mBinaryMap = null;
         }
         if (builder.isSetEnumList()) {
-            mEnumList = builder.mEnumList.build();
+            mEnumList = com.google.common.collect.ImmutableList.copyOf(builder.mEnumList);
         } else {
             mEnumList = null;
         }
         if (builder.isSetEnumSet()) {
-            mEnumSet = builder.mEnumSet.build();
+            mEnumSet = com.google.common.collect.ImmutableSet.copyOf(builder.mEnumSet);
         } else {
             mEnumSet = null;
         }
         if (builder.isSetEnumMap()) {
-            mEnumMap = builder.mEnumMap.build();
+            mEnumMap = com.google.common.collect.ImmutableMap.copyOf(builder.mEnumMap);
         } else {
             mEnumMap = null;
         }
         if (builder.isSetMessageList()) {
-            mMessageList = builder.mMessageList.build();
+            mMessageList = com.google.common.collect.ImmutableList.copyOf(builder.mMessageList);
         } else {
             mMessageList = null;
         }
         if (builder.isSetMessageSet()) {
-            mMessageSet = builder.mMessageSet.build();
+            mMessageSet = com.google.common.collect.ImmutableSet.copyOf(builder.mMessageSet);
         } else {
             mMessageSet = null;
         }
         if (builder.isSetMessageMap()) {
-            mMessageMap = builder.mMessageMap.build();
+            mMessageMap = com.google.common.collect.ImmutableMap.copyOf(builder.mMessageMap);
         } else {
             mMessageMap = null;
         }
         if (builder.isSetMessageKeyMap()) {
-            mMessageKeyMap = builder.mMessageKeyMap.build();
+            mMessageKeyMap = com.google.common.collect.ImmutableMap.copyOf(builder.mMessageKeyMap);
         } else {
             mMessageKeyMap = null;
         }
@@ -2310,37 +2306,37 @@ public class Containers
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
-        private net.morimekta.providence.descriptor.PList.Builder<Boolean> mBooleanList;
-        private net.morimekta.providence.descriptor.PList.Builder<Byte> mByteList;
-        private net.morimekta.providence.descriptor.PList.Builder<Short> mShortList;
-        private net.morimekta.providence.descriptor.PList.Builder<Integer> mIntegerList;
-        private net.morimekta.providence.descriptor.PList.Builder<Long> mLongList;
-        private net.morimekta.providence.descriptor.PList.Builder<Double> mDoubleList;
-        private net.morimekta.providence.descriptor.PList.Builder<String> mStringList;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mBinaryList;
-        private net.morimekta.providence.descriptor.PSet.Builder<Boolean> mBooleanSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<Byte> mByteSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<Short> mShortSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<Integer> mIntegerSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<Long> mLongSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<Double> mDoubleSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<String> mStringSet;
-        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mBinarySet;
-        private net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mBooleanMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mByteMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mShortMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mIntegerMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mLongMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mDoubleMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,String> mStringMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.Value> mEnumList;
-        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.core.Value> mEnumSet;
-        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mEnumMap;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.DefaultFields> mMessageList;
-        private net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
-        private net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
-        private net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
+        private java.util.List<Boolean> mBooleanList;
+        private java.util.List<Byte> mByteList;
+        private java.util.List<Short> mShortList;
+        private java.util.List<Integer> mIntegerList;
+        private java.util.List<Long> mLongList;
+        private java.util.List<Double> mDoubleList;
+        private java.util.List<String> mStringList;
+        private java.util.List<net.morimekta.util.Binary> mBinaryList;
+        private java.util.Set<Boolean> mBooleanSet;
+        private java.util.Set<Byte> mByteSet;
+        private java.util.Set<Short> mShortSet;
+        private java.util.Set<Integer> mIntegerSet;
+        private java.util.Set<Long> mLongSet;
+        private java.util.Set<Double> mDoubleSet;
+        private java.util.Set<String> mStringSet;
+        private java.util.Set<net.morimekta.util.Binary> mBinarySet;
+        private java.util.Map<Boolean,Boolean> mBooleanMap;
+        private java.util.Map<Byte,Byte> mByteMap;
+        private java.util.Map<Short,Short> mShortMap;
+        private java.util.Map<Integer,Integer> mIntegerMap;
+        private java.util.Map<Long,Long> mLongMap;
+        private java.util.Map<Double,Double> mDoubleMap;
+        private java.util.Map<String,String> mStringMap;
+        private java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mBinaryMap;
+        private java.util.List<net.morimekta.test.providence.core.Value> mEnumList;
+        private java.util.Set<net.morimekta.test.providence.core.Value> mEnumSet;
+        private java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mEnumMap;
+        private java.util.List<net.morimekta.test.providence.core.DefaultFields> mMessageList;
+        private java.util.Set<net.morimekta.test.providence.core.DefaultFields> mMessageSet;
+        private java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mMessageMap;
+        private java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mMessageKeyMap;
         private net.morimekta.test.providence.core.RequiredFields mRequiredFields;
         private net.morimekta.test.providence.core.RequiredFields._Builder mRequiredFields_builder;
         private net.morimekta.test.providence.core.DefaultFields mDefaultFields;
@@ -2360,37 +2356,6 @@ public class Containers
         public _Builder() {
             optionals = new java.util.BitSet(37);
             modified = new java.util.BitSet(37);
-            mBooleanList = new PList.DefaultBuilder<>();
-            mByteList = new PList.DefaultBuilder<>();
-            mShortList = new PList.DefaultBuilder<>();
-            mIntegerList = new PList.DefaultBuilder<>();
-            mLongList = new PList.DefaultBuilder<>();
-            mDoubleList = new PList.DefaultBuilder<>();
-            mStringList = new PList.DefaultBuilder<>();
-            mBinaryList = new PList.DefaultBuilder<>();
-            mBooleanSet = new PSet.DefaultBuilder<>();
-            mByteSet = new PSet.SortedBuilder<>();
-            mShortSet = new PSet.OrderedBuilder<>();
-            mIntegerSet = new PSet.DefaultBuilder<>();
-            mLongSet = new PSet.DefaultBuilder<>();
-            mDoubleSet = new PSet.DefaultBuilder<>();
-            mStringSet = new PSet.DefaultBuilder<>();
-            mBinarySet = new PSet.DefaultBuilder<>();
-            mBooleanMap = new PMap.DefaultBuilder<>();
-            mByteMap = new PMap.SortedBuilder<>();
-            mShortMap = new PMap.OrderedBuilder<>();
-            mIntegerMap = new PMap.DefaultBuilder<>();
-            mLongMap = new PMap.DefaultBuilder<>();
-            mDoubleMap = new PMap.DefaultBuilder<>();
-            mStringMap = new PMap.DefaultBuilder<>();
-            mBinaryMap = new PMap.DefaultBuilder<>();
-            mEnumList = new PList.DefaultBuilder<>();
-            mEnumSet = new PSet.DefaultBuilder<>();
-            mEnumMap = new PMap.DefaultBuilder<>();
-            mMessageList = new PList.DefaultBuilder<>();
-            mMessageSet = new PSet.DefaultBuilder<>();
-            mMessageMap = new PMap.DefaultBuilder<>();
-            mMessageKeyMap = new PMap.DefaultBuilder<>();
         }
 
         /**
@@ -2403,127 +2368,127 @@ public class Containers
 
             if (base.hasBooleanList()) {
                 optionals.set(0);
-                mBooleanList.addAll(base.mBooleanList);
+                mBooleanList = base.mBooleanList;
             }
             if (base.hasByteList()) {
                 optionals.set(1);
-                mByteList.addAll(base.mByteList);
+                mByteList = base.mByteList;
             }
             if (base.hasShortList()) {
                 optionals.set(2);
-                mShortList.addAll(base.mShortList);
+                mShortList = base.mShortList;
             }
             if (base.hasIntegerList()) {
                 optionals.set(3);
-                mIntegerList.addAll(base.mIntegerList);
+                mIntegerList = base.mIntegerList;
             }
             if (base.hasLongList()) {
                 optionals.set(4);
-                mLongList.addAll(base.mLongList);
+                mLongList = base.mLongList;
             }
             if (base.hasDoubleList()) {
                 optionals.set(5);
-                mDoubleList.addAll(base.mDoubleList);
+                mDoubleList = base.mDoubleList;
             }
             if (base.hasStringList()) {
                 optionals.set(6);
-                mStringList.addAll(base.mStringList);
+                mStringList = base.mStringList;
             }
             if (base.hasBinaryList()) {
                 optionals.set(7);
-                mBinaryList.addAll(base.mBinaryList);
+                mBinaryList = base.mBinaryList;
             }
             if (base.hasBooleanSet()) {
                 optionals.set(8);
-                mBooleanSet.addAll(base.mBooleanSet);
+                mBooleanSet = base.mBooleanSet;
             }
             if (base.hasByteSet()) {
                 optionals.set(9);
-                mByteSet.addAll(base.mByteSet);
+                mByteSet = base.mByteSet;
             }
             if (base.hasShortSet()) {
                 optionals.set(10);
-                mShortSet.addAll(base.mShortSet);
+                mShortSet = base.mShortSet;
             }
             if (base.hasIntegerSet()) {
                 optionals.set(11);
-                mIntegerSet.addAll(base.mIntegerSet);
+                mIntegerSet = base.mIntegerSet;
             }
             if (base.hasLongSet()) {
                 optionals.set(12);
-                mLongSet.addAll(base.mLongSet);
+                mLongSet = base.mLongSet;
             }
             if (base.hasDoubleSet()) {
                 optionals.set(13);
-                mDoubleSet.addAll(base.mDoubleSet);
+                mDoubleSet = base.mDoubleSet;
             }
             if (base.hasStringSet()) {
                 optionals.set(14);
-                mStringSet.addAll(base.mStringSet);
+                mStringSet = base.mStringSet;
             }
             if (base.hasBinarySet()) {
                 optionals.set(15);
-                mBinarySet.addAll(base.mBinarySet);
+                mBinarySet = base.mBinarySet;
             }
             if (base.hasBooleanMap()) {
                 optionals.set(16);
-                mBooleanMap.putAll(base.mBooleanMap);
+                mBooleanMap = base.mBooleanMap;
             }
             if (base.hasByteMap()) {
                 optionals.set(17);
-                mByteMap.putAll(base.mByteMap);
+                mByteMap = base.mByteMap;
             }
             if (base.hasShortMap()) {
                 optionals.set(18);
-                mShortMap.putAll(base.mShortMap);
+                mShortMap = base.mShortMap;
             }
             if (base.hasIntegerMap()) {
                 optionals.set(19);
-                mIntegerMap.putAll(base.mIntegerMap);
+                mIntegerMap = base.mIntegerMap;
             }
             if (base.hasLongMap()) {
                 optionals.set(20);
-                mLongMap.putAll(base.mLongMap);
+                mLongMap = base.mLongMap;
             }
             if (base.hasDoubleMap()) {
                 optionals.set(21);
-                mDoubleMap.putAll(base.mDoubleMap);
+                mDoubleMap = base.mDoubleMap;
             }
             if (base.hasStringMap()) {
                 optionals.set(22);
-                mStringMap.putAll(base.mStringMap);
+                mStringMap = base.mStringMap;
             }
             if (base.hasBinaryMap()) {
                 optionals.set(23);
-                mBinaryMap.putAll(base.mBinaryMap);
+                mBinaryMap = base.mBinaryMap;
             }
             if (base.hasEnumList()) {
                 optionals.set(24);
-                mEnumList.addAll(base.mEnumList);
+                mEnumList = base.mEnumList;
             }
             if (base.hasEnumSet()) {
                 optionals.set(25);
-                mEnumSet.addAll(base.mEnumSet);
+                mEnumSet = base.mEnumSet;
             }
             if (base.hasEnumMap()) {
                 optionals.set(26);
-                mEnumMap.putAll(base.mEnumMap);
+                mEnumMap = base.mEnumMap;
             }
             if (base.hasMessageList()) {
                 optionals.set(27);
-                mMessageList.addAll(base.mMessageList);
+                mMessageList = base.mMessageList;
             }
             if (base.hasMessageSet()) {
                 optionals.set(28);
-                mMessageSet.addAll(base.mMessageSet);
+                mMessageSet = base.mMessageSet;
             }
             if (base.hasMessageMap()) {
                 optionals.set(29);
-                mMessageMap.putAll(base.mMessageMap);
+                mMessageMap = base.mMessageMap;
             }
             if (base.hasMessageKeyMap()) {
                 optionals.set(30);
-                mMessageKeyMap.putAll(base.mMessageKeyMap);
+                mMessageKeyMap = base.mMessageKeyMap;
             }
             if (base.hasRequiredFields()) {
                 optionals.set(31);
@@ -2557,197 +2522,187 @@ public class Containers
             if (from.hasBooleanList()) {
                 optionals.set(0);
                 modified.set(0);
-                mBooleanList.clear();
-                mBooleanList.addAll(from.getBooleanList());
+                mBooleanList = from.getBooleanList();
             }
 
             if (from.hasByteList()) {
                 optionals.set(1);
                 modified.set(1);
-                mByteList.clear();
-                mByteList.addAll(from.getByteList());
+                mByteList = from.getByteList();
             }
 
             if (from.hasShortList()) {
                 optionals.set(2);
                 modified.set(2);
-                mShortList.clear();
-                mShortList.addAll(from.getShortList());
+                mShortList = from.getShortList();
             }
 
             if (from.hasIntegerList()) {
                 optionals.set(3);
                 modified.set(3);
-                mIntegerList.clear();
-                mIntegerList.addAll(from.getIntegerList());
+                mIntegerList = from.getIntegerList();
             }
 
             if (from.hasLongList()) {
                 optionals.set(4);
                 modified.set(4);
-                mLongList.clear();
-                mLongList.addAll(from.getLongList());
+                mLongList = from.getLongList();
             }
 
             if (from.hasDoubleList()) {
                 optionals.set(5);
                 modified.set(5);
-                mDoubleList.clear();
-                mDoubleList.addAll(from.getDoubleList());
+                mDoubleList = from.getDoubleList();
             }
 
             if (from.hasStringList()) {
                 optionals.set(6);
                 modified.set(6);
-                mStringList.clear();
-                mStringList.addAll(from.getStringList());
+                mStringList = from.getStringList();
             }
 
             if (from.hasBinaryList()) {
                 optionals.set(7);
                 modified.set(7);
-                mBinaryList.clear();
-                mBinaryList.addAll(from.getBinaryList());
+                mBinaryList = from.getBinaryList();
             }
 
             if (from.hasBooleanSet()) {
                 optionals.set(8);
                 modified.set(8);
-                mBooleanSet.addAll(from.getBooleanSet());
+                mutableBooleanSet().addAll(from.getBooleanSet());
             }
 
             if (from.hasByteSet()) {
                 optionals.set(9);
                 modified.set(9);
-                mByteSet.addAll(from.getByteSet());
+                mutableByteSet().addAll(from.getByteSet());
             }
 
             if (from.hasShortSet()) {
                 optionals.set(10);
                 modified.set(10);
-                mShortSet.addAll(from.getShortSet());
+                mutableShortSet().addAll(from.getShortSet());
             }
 
             if (from.hasIntegerSet()) {
                 optionals.set(11);
                 modified.set(11);
-                mIntegerSet.addAll(from.getIntegerSet());
+                mutableIntegerSet().addAll(from.getIntegerSet());
             }
 
             if (from.hasLongSet()) {
                 optionals.set(12);
                 modified.set(12);
-                mLongSet.addAll(from.getLongSet());
+                mutableLongSet().addAll(from.getLongSet());
             }
 
             if (from.hasDoubleSet()) {
                 optionals.set(13);
                 modified.set(13);
-                mDoubleSet.addAll(from.getDoubleSet());
+                mutableDoubleSet().addAll(from.getDoubleSet());
             }
 
             if (from.hasStringSet()) {
                 optionals.set(14);
                 modified.set(14);
-                mStringSet.addAll(from.getStringSet());
+                mutableStringSet().addAll(from.getStringSet());
             }
 
             if (from.hasBinarySet()) {
                 optionals.set(15);
                 modified.set(15);
-                mBinarySet.addAll(from.getBinarySet());
+                mutableBinarySet().addAll(from.getBinarySet());
             }
 
             if (from.hasBooleanMap()) {
                 optionals.set(16);
                 modified.set(16);
-                mBooleanMap.putAll(from.getBooleanMap());
+                mutableBooleanMap().putAll(from.getBooleanMap());
             }
 
             if (from.hasByteMap()) {
                 optionals.set(17);
                 modified.set(17);
-                mByteMap.putAll(from.getByteMap());
+                mutableByteMap().putAll(from.getByteMap());
             }
 
             if (from.hasShortMap()) {
                 optionals.set(18);
                 modified.set(18);
-                mShortMap.putAll(from.getShortMap());
+                mutableShortMap().putAll(from.getShortMap());
             }
 
             if (from.hasIntegerMap()) {
                 optionals.set(19);
                 modified.set(19);
-                mIntegerMap.putAll(from.getIntegerMap());
+                mutableIntegerMap().putAll(from.getIntegerMap());
             }
 
             if (from.hasLongMap()) {
                 optionals.set(20);
                 modified.set(20);
-                mLongMap.putAll(from.getLongMap());
+                mutableLongMap().putAll(from.getLongMap());
             }
 
             if (from.hasDoubleMap()) {
                 optionals.set(21);
                 modified.set(21);
-                mDoubleMap.putAll(from.getDoubleMap());
+                mutableDoubleMap().putAll(from.getDoubleMap());
             }
 
             if (from.hasStringMap()) {
                 optionals.set(22);
                 modified.set(22);
-                mStringMap.putAll(from.getStringMap());
+                mutableStringMap().putAll(from.getStringMap());
             }
 
             if (from.hasBinaryMap()) {
                 optionals.set(23);
                 modified.set(23);
-                mBinaryMap.putAll(from.getBinaryMap());
+                mutableBinaryMap().putAll(from.getBinaryMap());
             }
 
             if (from.hasEnumList()) {
                 optionals.set(24);
                 modified.set(24);
-                mEnumList.clear();
-                mEnumList.addAll(from.getEnumList());
+                mEnumList = from.getEnumList();
             }
 
             if (from.hasEnumSet()) {
                 optionals.set(25);
                 modified.set(25);
-                mEnumSet.addAll(from.getEnumSet());
+                mutableEnumSet().addAll(from.getEnumSet());
             }
 
             if (from.hasEnumMap()) {
                 optionals.set(26);
                 modified.set(26);
-                mEnumMap.putAll(from.getEnumMap());
+                mutableEnumMap().putAll(from.getEnumMap());
             }
 
             if (from.hasMessageList()) {
                 optionals.set(27);
                 modified.set(27);
-                mMessageList.clear();
-                mMessageList.addAll(from.getMessageList());
+                mMessageList = from.getMessageList();
             }
 
             if (from.hasMessageSet()) {
                 optionals.set(28);
                 modified.set(28);
-                mMessageSet.addAll(from.getMessageSet());
+                mutableMessageSet().addAll(from.getMessageSet());
             }
 
             if (from.hasMessageMap()) {
                 optionals.set(29);
                 modified.set(29);
-                mMessageMap.putAll(from.getMessageMap());
+                mutableMessageMap().putAll(from.getMessageMap());
             }
 
             if (from.hasMessageKeyMap()) {
                 optionals.set(30);
                 modified.set(30);
-                mMessageKeyMap.putAll(from.getMessageKeyMap());
+                mutableMessageKeyMap().putAll(from.getMessageKeyMap());
             }
 
             if (from.hasRequiredFields()) {
@@ -2844,8 +2799,7 @@ public class Containers
 
             optionals.set(0);
             modified.set(0);
-            mBooleanList.clear();
-            mBooleanList.addAll(value);
+            mBooleanList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -2859,8 +2813,9 @@ public class Containers
         public _Builder addToBooleanList(boolean... values) {
             optionals.set(0);
             modified.set(0);
+            java.util.List<Boolean> _container = mutableBooleanList();
             for (boolean item : values) {
-                mBooleanList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -2892,7 +2847,7 @@ public class Containers
         public _Builder clearBooleanList() {
             optionals.clear(0);
             modified.set(0);
-            mBooleanList.clear();
+            mBooleanList = null;
             return this;
         }
 
@@ -2901,9 +2856,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Boolean> mutableBooleanList() {
+        public java.util.List<Boolean> mutableBooleanList() {
             optionals.set(0);
             modified.set(0);
+
+            if (mBooleanList == null) {
+                mBooleanList = new java.util.LinkedList<>();
+            } else if (!(mBooleanList instanceof java.util.LinkedList)) {
+                mBooleanList = new java.util.LinkedList<>(mBooleanList);
+            }
             return mBooleanList;
         }
 
@@ -2921,8 +2882,7 @@ public class Containers
 
             optionals.set(1);
             modified.set(1);
-            mByteList.clear();
-            mByteList.addAll(value);
+            mByteList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -2936,8 +2896,9 @@ public class Containers
         public _Builder addToByteList(byte... values) {
             optionals.set(1);
             modified.set(1);
+            java.util.List<Byte> _container = mutableByteList();
             for (byte item : values) {
-                mByteList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -2969,7 +2930,7 @@ public class Containers
         public _Builder clearByteList() {
             optionals.clear(1);
             modified.set(1);
-            mByteList.clear();
+            mByteList = null;
             return this;
         }
 
@@ -2978,9 +2939,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Byte> mutableByteList() {
+        public java.util.List<Byte> mutableByteList() {
             optionals.set(1);
             modified.set(1);
+
+            if (mByteList == null) {
+                mByteList = new java.util.LinkedList<>();
+            } else if (!(mByteList instanceof java.util.LinkedList)) {
+                mByteList = new java.util.LinkedList<>(mByteList);
+            }
             return mByteList;
         }
 
@@ -2998,8 +2965,7 @@ public class Containers
 
             optionals.set(2);
             modified.set(2);
-            mShortList.clear();
-            mShortList.addAll(value);
+            mShortList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3013,8 +2979,9 @@ public class Containers
         public _Builder addToShortList(short... values) {
             optionals.set(2);
             modified.set(2);
+            java.util.List<Short> _container = mutableShortList();
             for (short item : values) {
-                mShortList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3046,7 +3013,7 @@ public class Containers
         public _Builder clearShortList() {
             optionals.clear(2);
             modified.set(2);
-            mShortList.clear();
+            mShortList = null;
             return this;
         }
 
@@ -3055,9 +3022,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Short> mutableShortList() {
+        public java.util.List<Short> mutableShortList() {
             optionals.set(2);
             modified.set(2);
+
+            if (mShortList == null) {
+                mShortList = new java.util.LinkedList<>();
+            } else if (!(mShortList instanceof java.util.LinkedList)) {
+                mShortList = new java.util.LinkedList<>(mShortList);
+            }
             return mShortList;
         }
 
@@ -3075,8 +3048,7 @@ public class Containers
 
             optionals.set(3);
             modified.set(3);
-            mIntegerList.clear();
-            mIntegerList.addAll(value);
+            mIntegerList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3090,8 +3062,9 @@ public class Containers
         public _Builder addToIntegerList(int... values) {
             optionals.set(3);
             modified.set(3);
+            java.util.List<Integer> _container = mutableIntegerList();
             for (int item : values) {
-                mIntegerList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3123,7 +3096,7 @@ public class Containers
         public _Builder clearIntegerList() {
             optionals.clear(3);
             modified.set(3);
-            mIntegerList.clear();
+            mIntegerList = null;
             return this;
         }
 
@@ -3132,9 +3105,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Integer> mutableIntegerList() {
+        public java.util.List<Integer> mutableIntegerList() {
             optionals.set(3);
             modified.set(3);
+
+            if (mIntegerList == null) {
+                mIntegerList = new java.util.LinkedList<>();
+            } else if (!(mIntegerList instanceof java.util.LinkedList)) {
+                mIntegerList = new java.util.LinkedList<>(mIntegerList);
+            }
             return mIntegerList;
         }
 
@@ -3152,8 +3131,7 @@ public class Containers
 
             optionals.set(4);
             modified.set(4);
-            mLongList.clear();
-            mLongList.addAll(value);
+            mLongList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3167,8 +3145,9 @@ public class Containers
         public _Builder addToLongList(long... values) {
             optionals.set(4);
             modified.set(4);
+            java.util.List<Long> _container = mutableLongList();
             for (long item : values) {
-                mLongList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3200,7 +3179,7 @@ public class Containers
         public _Builder clearLongList() {
             optionals.clear(4);
             modified.set(4);
-            mLongList.clear();
+            mLongList = null;
             return this;
         }
 
@@ -3209,9 +3188,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Long> mutableLongList() {
+        public java.util.List<Long> mutableLongList() {
             optionals.set(4);
             modified.set(4);
+
+            if (mLongList == null) {
+                mLongList = new java.util.LinkedList<>();
+            } else if (!(mLongList instanceof java.util.LinkedList)) {
+                mLongList = new java.util.LinkedList<>(mLongList);
+            }
             return mLongList;
         }
 
@@ -3229,8 +3214,7 @@ public class Containers
 
             optionals.set(5);
             modified.set(5);
-            mDoubleList.clear();
-            mDoubleList.addAll(value);
+            mDoubleList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3244,8 +3228,9 @@ public class Containers
         public _Builder addToDoubleList(double... values) {
             optionals.set(5);
             modified.set(5);
+            java.util.List<Double> _container = mutableDoubleList();
             for (double item : values) {
-                mDoubleList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3277,7 +3262,7 @@ public class Containers
         public _Builder clearDoubleList() {
             optionals.clear(5);
             modified.set(5);
-            mDoubleList.clear();
+            mDoubleList = null;
             return this;
         }
 
@@ -3286,9 +3271,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<Double> mutableDoubleList() {
+        public java.util.List<Double> mutableDoubleList() {
             optionals.set(5);
             modified.set(5);
+
+            if (mDoubleList == null) {
+                mDoubleList = new java.util.LinkedList<>();
+            } else if (!(mDoubleList instanceof java.util.LinkedList)) {
+                mDoubleList = new java.util.LinkedList<>(mDoubleList);
+            }
             return mDoubleList;
         }
 
@@ -3306,8 +3297,7 @@ public class Containers
 
             optionals.set(6);
             modified.set(6);
-            mStringList.clear();
-            mStringList.addAll(value);
+            mStringList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3321,8 +3311,9 @@ public class Containers
         public _Builder addToStringList(String... values) {
             optionals.set(6);
             modified.set(6);
+            java.util.List<String> _container = mutableStringList();
             for (String item : values) {
-                mStringList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3354,7 +3345,7 @@ public class Containers
         public _Builder clearStringList() {
             optionals.clear(6);
             modified.set(6);
-            mStringList.clear();
+            mStringList = null;
             return this;
         }
 
@@ -3363,9 +3354,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<String> mutableStringList() {
+        public java.util.List<String> mutableStringList() {
             optionals.set(6);
             modified.set(6);
+
+            if (mStringList == null) {
+                mStringList = new java.util.LinkedList<>();
+            } else if (!(mStringList instanceof java.util.LinkedList)) {
+                mStringList = new java.util.LinkedList<>(mStringList);
+            }
             return mStringList;
         }
 
@@ -3383,8 +3380,7 @@ public class Containers
 
             optionals.set(7);
             modified.set(7);
-            mBinaryList.clear();
-            mBinaryList.addAll(value);
+            mBinaryList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -3398,8 +3394,9 @@ public class Containers
         public _Builder addToBinaryList(net.morimekta.util.Binary... values) {
             optionals.set(7);
             modified.set(7);
+            java.util.List<net.morimekta.util.Binary> _container = mutableBinaryList();
             for (net.morimekta.util.Binary item : values) {
-                mBinaryList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3431,7 +3428,7 @@ public class Containers
         public _Builder clearBinaryList() {
             optionals.clear(7);
             modified.set(7);
-            mBinaryList.clear();
+            mBinaryList = null;
             return this;
         }
 
@@ -3440,9 +3437,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.util.Binary> mutableBinaryList() {
+        public java.util.List<net.morimekta.util.Binary> mutableBinaryList() {
             optionals.set(7);
             modified.set(7);
+
+            if (mBinaryList == null) {
+                mBinaryList = new java.util.LinkedList<>();
+            } else if (!(mBinaryList instanceof java.util.LinkedList)) {
+                mBinaryList = new java.util.LinkedList<>(mBinaryList);
+            }
             return mBinaryList;
         }
 
@@ -3460,8 +3463,7 @@ public class Containers
 
             optionals.set(8);
             modified.set(8);
-            mBooleanSet.clear();
-            mBooleanSet.addAll(value);
+            mBooleanSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3475,8 +3477,9 @@ public class Containers
         public _Builder addToBooleanSet(boolean... values) {
             optionals.set(8);
             modified.set(8);
+            java.util.Set<Boolean> _container = mutableBooleanSet();
             for (boolean item : values) {
-                mBooleanSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3508,7 +3511,7 @@ public class Containers
         public _Builder clearBooleanSet() {
             optionals.clear(8);
             modified.set(8);
-            mBooleanSet.clear();
+            mBooleanSet = null;
             return this;
         }
 
@@ -3517,9 +3520,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Boolean> mutableBooleanSet() {
+        public java.util.Set<Boolean> mutableBooleanSet() {
             optionals.set(8);
             modified.set(8);
+
+            if (mBooleanSet == null) {
+                mBooleanSet = new java.util.HashSet<>();
+            } else if (!(mBooleanSet instanceof java.util.HashSet)) {
+                mBooleanSet = new java.util.HashSet<>(mBooleanSet);
+            }
             return mBooleanSet;
         }
 
@@ -3537,8 +3546,7 @@ public class Containers
 
             optionals.set(9);
             modified.set(9);
-            mByteSet.clear();
-            mByteSet.addAll(value);
+            mByteSet = com.google.common.collect.ImmutableSortedSet.copyOf(value);
             return this;
         }
 
@@ -3552,8 +3560,9 @@ public class Containers
         public _Builder addToByteSet(byte... values) {
             optionals.set(9);
             modified.set(9);
+            java.util.Set<Byte> _container = mutableByteSet();
             for (byte item : values) {
-                mByteSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3585,7 +3594,7 @@ public class Containers
         public _Builder clearByteSet() {
             optionals.clear(9);
             modified.set(9);
-            mByteSet.clear();
+            mByteSet = null;
             return this;
         }
 
@@ -3594,9 +3603,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Byte> mutableByteSet() {
+        public java.util.Set<Byte> mutableByteSet() {
             optionals.set(9);
             modified.set(9);
+
+            if (mByteSet == null) {
+                mByteSet = new java.util.TreeSet<>();
+            } else if (!(mByteSet instanceof java.util.TreeSet)) {
+                mByteSet = new java.util.TreeSet<>(mByteSet);
+            }
             return mByteSet;
         }
 
@@ -3614,8 +3629,7 @@ public class Containers
 
             optionals.set(10);
             modified.set(10);
-            mShortSet.clear();
-            mShortSet.addAll(value);
+            mShortSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3629,8 +3643,9 @@ public class Containers
         public _Builder addToShortSet(short... values) {
             optionals.set(10);
             modified.set(10);
+            java.util.Set<Short> _container = mutableShortSet();
             for (short item : values) {
-                mShortSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3662,7 +3677,7 @@ public class Containers
         public _Builder clearShortSet() {
             optionals.clear(10);
             modified.set(10);
-            mShortSet.clear();
+            mShortSet = null;
             return this;
         }
 
@@ -3671,9 +3686,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Short> mutableShortSet() {
+        public java.util.Set<Short> mutableShortSet() {
             optionals.set(10);
             modified.set(10);
+
+            if (mShortSet == null) {
+                mShortSet = new java.util.LinkedHashSet<>();
+            } else if (!(mShortSet instanceof java.util.LinkedHashSet)) {
+                mShortSet = new java.util.LinkedHashSet<>(mShortSet);
+            }
             return mShortSet;
         }
 
@@ -3691,8 +3712,7 @@ public class Containers
 
             optionals.set(11);
             modified.set(11);
-            mIntegerSet.clear();
-            mIntegerSet.addAll(value);
+            mIntegerSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3706,8 +3726,9 @@ public class Containers
         public _Builder addToIntegerSet(int... values) {
             optionals.set(11);
             modified.set(11);
+            java.util.Set<Integer> _container = mutableIntegerSet();
             for (int item : values) {
-                mIntegerSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3739,7 +3760,7 @@ public class Containers
         public _Builder clearIntegerSet() {
             optionals.clear(11);
             modified.set(11);
-            mIntegerSet.clear();
+            mIntegerSet = null;
             return this;
         }
 
@@ -3748,9 +3769,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Integer> mutableIntegerSet() {
+        public java.util.Set<Integer> mutableIntegerSet() {
             optionals.set(11);
             modified.set(11);
+
+            if (mIntegerSet == null) {
+                mIntegerSet = new java.util.HashSet<>();
+            } else if (!(mIntegerSet instanceof java.util.HashSet)) {
+                mIntegerSet = new java.util.HashSet<>(mIntegerSet);
+            }
             return mIntegerSet;
         }
 
@@ -3768,8 +3795,7 @@ public class Containers
 
             optionals.set(12);
             modified.set(12);
-            mLongSet.clear();
-            mLongSet.addAll(value);
+            mLongSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3783,8 +3809,9 @@ public class Containers
         public _Builder addToLongSet(long... values) {
             optionals.set(12);
             modified.set(12);
+            java.util.Set<Long> _container = mutableLongSet();
             for (long item : values) {
-                mLongSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3816,7 +3843,7 @@ public class Containers
         public _Builder clearLongSet() {
             optionals.clear(12);
             modified.set(12);
-            mLongSet.clear();
+            mLongSet = null;
             return this;
         }
 
@@ -3825,9 +3852,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Long> mutableLongSet() {
+        public java.util.Set<Long> mutableLongSet() {
             optionals.set(12);
             modified.set(12);
+
+            if (mLongSet == null) {
+                mLongSet = new java.util.HashSet<>();
+            } else if (!(mLongSet instanceof java.util.HashSet)) {
+                mLongSet = new java.util.HashSet<>(mLongSet);
+            }
             return mLongSet;
         }
 
@@ -3845,8 +3878,7 @@ public class Containers
 
             optionals.set(13);
             modified.set(13);
-            mDoubleSet.clear();
-            mDoubleSet.addAll(value);
+            mDoubleSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3860,8 +3892,9 @@ public class Containers
         public _Builder addToDoubleSet(double... values) {
             optionals.set(13);
             modified.set(13);
+            java.util.Set<Double> _container = mutableDoubleSet();
             for (double item : values) {
-                mDoubleSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3893,7 +3926,7 @@ public class Containers
         public _Builder clearDoubleSet() {
             optionals.clear(13);
             modified.set(13);
-            mDoubleSet.clear();
+            mDoubleSet = null;
             return this;
         }
 
@@ -3902,9 +3935,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<Double> mutableDoubleSet() {
+        public java.util.Set<Double> mutableDoubleSet() {
             optionals.set(13);
             modified.set(13);
+
+            if (mDoubleSet == null) {
+                mDoubleSet = new java.util.HashSet<>();
+            } else if (!(mDoubleSet instanceof java.util.HashSet)) {
+                mDoubleSet = new java.util.HashSet<>(mDoubleSet);
+            }
             return mDoubleSet;
         }
 
@@ -3922,8 +3961,7 @@ public class Containers
 
             optionals.set(14);
             modified.set(14);
-            mStringSet.clear();
-            mStringSet.addAll(value);
+            mStringSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -3937,8 +3975,9 @@ public class Containers
         public _Builder addToStringSet(String... values) {
             optionals.set(14);
             modified.set(14);
+            java.util.Set<String> _container = mutableStringSet();
             for (String item : values) {
-                mStringSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -3970,7 +4009,7 @@ public class Containers
         public _Builder clearStringSet() {
             optionals.clear(14);
             modified.set(14);
-            mStringSet.clear();
+            mStringSet = null;
             return this;
         }
 
@@ -3979,9 +4018,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<String> mutableStringSet() {
+        public java.util.Set<String> mutableStringSet() {
             optionals.set(14);
             modified.set(14);
+
+            if (mStringSet == null) {
+                mStringSet = new java.util.HashSet<>();
+            } else if (!(mStringSet instanceof java.util.HashSet)) {
+                mStringSet = new java.util.HashSet<>(mStringSet);
+            }
             return mStringSet;
         }
 
@@ -3999,8 +4044,7 @@ public class Containers
 
             optionals.set(15);
             modified.set(15);
-            mBinarySet.clear();
-            mBinarySet.addAll(value);
+            mBinarySet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -4014,8 +4058,9 @@ public class Containers
         public _Builder addToBinarySet(net.morimekta.util.Binary... values) {
             optionals.set(15);
             modified.set(15);
+            java.util.Set<net.morimekta.util.Binary> _container = mutableBinarySet();
             for (net.morimekta.util.Binary item : values) {
-                mBinarySet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -4047,7 +4092,7 @@ public class Containers
         public _Builder clearBinarySet() {
             optionals.clear(15);
             modified.set(15);
-            mBinarySet.clear();
+            mBinarySet = null;
             return this;
         }
 
@@ -4056,9 +4101,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.util.Binary> mutableBinarySet() {
+        public java.util.Set<net.morimekta.util.Binary> mutableBinarySet() {
             optionals.set(15);
             modified.set(15);
+
+            if (mBinarySet == null) {
+                mBinarySet = new java.util.HashSet<>();
+            } else if (!(mBinarySet instanceof java.util.HashSet)) {
+                mBinarySet = new java.util.HashSet<>(mBinarySet);
+            }
             return mBinarySet;
         }
 
@@ -4076,8 +4127,7 @@ public class Containers
 
             optionals.set(16);
             modified.set(16);
-            mBooleanMap.clear();
-            mBooleanMap.putAll(value);
+            mBooleanMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4092,7 +4142,7 @@ public class Containers
         public _Builder putInBooleanMap(boolean key, boolean value) {
             optionals.set(16);
             modified.set(16);
-            mBooleanMap.put(key, value);
+            mutableBooleanMap().put(key, value);
             return this;
         }
 
@@ -4123,7 +4173,7 @@ public class Containers
         public _Builder clearBooleanMap() {
             optionals.clear(16);
             modified.set(16);
-            mBooleanMap.clear();
+            mBooleanMap = null;
             return this;
         }
 
@@ -4132,9 +4182,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Boolean,Boolean> mutableBooleanMap() {
+        public java.util.Map<Boolean,Boolean> mutableBooleanMap() {
             optionals.set(16);
             modified.set(16);
+
+            if (mBooleanMap == null) {
+                mBooleanMap = new java.util.HashMap<>();
+            } else if (!(mBooleanMap instanceof java.util.HashMap)) {
+                mBooleanMap = new java.util.HashMap<>(mBooleanMap);
+            }
             return mBooleanMap;
         }
 
@@ -4152,8 +4208,7 @@ public class Containers
 
             optionals.set(17);
             modified.set(17);
-            mByteMap.clear();
-            mByteMap.putAll(value);
+            mByteMap = com.google.common.collect.ImmutableSortedMap.copyOf(value);
             return this;
         }
 
@@ -4168,7 +4223,7 @@ public class Containers
         public _Builder putInByteMap(byte key, byte value) {
             optionals.set(17);
             modified.set(17);
-            mByteMap.put(key, value);
+            mutableByteMap().put(key, value);
             return this;
         }
 
@@ -4199,7 +4254,7 @@ public class Containers
         public _Builder clearByteMap() {
             optionals.clear(17);
             modified.set(17);
-            mByteMap.clear();
+            mByteMap = null;
             return this;
         }
 
@@ -4208,9 +4263,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Byte,Byte> mutableByteMap() {
+        public java.util.Map<Byte,Byte> mutableByteMap() {
             optionals.set(17);
             modified.set(17);
+
+            if (mByteMap == null) {
+                mByteMap = new java.util.TreeMap<>();
+            } else if (!(mByteMap instanceof java.util.TreeMap)) {
+                mByteMap = new java.util.TreeMap<>(mByteMap);
+            }
             return mByteMap;
         }
 
@@ -4228,8 +4289,7 @@ public class Containers
 
             optionals.set(18);
             modified.set(18);
-            mShortMap.clear();
-            mShortMap.putAll(value);
+            mShortMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4244,7 +4304,7 @@ public class Containers
         public _Builder putInShortMap(short key, short value) {
             optionals.set(18);
             modified.set(18);
-            mShortMap.put(key, value);
+            mutableShortMap().put(key, value);
             return this;
         }
 
@@ -4275,7 +4335,7 @@ public class Containers
         public _Builder clearShortMap() {
             optionals.clear(18);
             modified.set(18);
-            mShortMap.clear();
+            mShortMap = null;
             return this;
         }
 
@@ -4284,9 +4344,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Short,Short> mutableShortMap() {
+        public java.util.Map<Short,Short> mutableShortMap() {
             optionals.set(18);
             modified.set(18);
+
+            if (mShortMap == null) {
+                mShortMap = new java.util.LinkedHashMap<>();
+            } else if (!(mShortMap instanceof java.util.LinkedHashMap)) {
+                mShortMap = new java.util.LinkedHashMap<>(mShortMap);
+            }
             return mShortMap;
         }
 
@@ -4304,8 +4370,7 @@ public class Containers
 
             optionals.set(19);
             modified.set(19);
-            mIntegerMap.clear();
-            mIntegerMap.putAll(value);
+            mIntegerMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4320,7 +4385,7 @@ public class Containers
         public _Builder putInIntegerMap(int key, int value) {
             optionals.set(19);
             modified.set(19);
-            mIntegerMap.put(key, value);
+            mutableIntegerMap().put(key, value);
             return this;
         }
 
@@ -4351,7 +4416,7 @@ public class Containers
         public _Builder clearIntegerMap() {
             optionals.clear(19);
             modified.set(19);
-            mIntegerMap.clear();
+            mIntegerMap = null;
             return this;
         }
 
@@ -4360,9 +4425,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Integer,Integer> mutableIntegerMap() {
+        public java.util.Map<Integer,Integer> mutableIntegerMap() {
             optionals.set(19);
             modified.set(19);
+
+            if (mIntegerMap == null) {
+                mIntegerMap = new java.util.HashMap<>();
+            } else if (!(mIntegerMap instanceof java.util.HashMap)) {
+                mIntegerMap = new java.util.HashMap<>(mIntegerMap);
+            }
             return mIntegerMap;
         }
 
@@ -4380,8 +4451,7 @@ public class Containers
 
             optionals.set(20);
             modified.set(20);
-            mLongMap.clear();
-            mLongMap.putAll(value);
+            mLongMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4396,7 +4466,7 @@ public class Containers
         public _Builder putInLongMap(long key, long value) {
             optionals.set(20);
             modified.set(20);
-            mLongMap.put(key, value);
+            mutableLongMap().put(key, value);
             return this;
         }
 
@@ -4427,7 +4497,7 @@ public class Containers
         public _Builder clearLongMap() {
             optionals.clear(20);
             modified.set(20);
-            mLongMap.clear();
+            mLongMap = null;
             return this;
         }
 
@@ -4436,9 +4506,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Long,Long> mutableLongMap() {
+        public java.util.Map<Long,Long> mutableLongMap() {
             optionals.set(20);
             modified.set(20);
+
+            if (mLongMap == null) {
+                mLongMap = new java.util.HashMap<>();
+            } else if (!(mLongMap instanceof java.util.HashMap)) {
+                mLongMap = new java.util.HashMap<>(mLongMap);
+            }
             return mLongMap;
         }
 
@@ -4456,8 +4532,7 @@ public class Containers
 
             optionals.set(21);
             modified.set(21);
-            mDoubleMap.clear();
-            mDoubleMap.putAll(value);
+            mDoubleMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4472,7 +4547,7 @@ public class Containers
         public _Builder putInDoubleMap(double key, double value) {
             optionals.set(21);
             modified.set(21);
-            mDoubleMap.put(key, value);
+            mutableDoubleMap().put(key, value);
             return this;
         }
 
@@ -4503,7 +4578,7 @@ public class Containers
         public _Builder clearDoubleMap() {
             optionals.clear(21);
             modified.set(21);
-            mDoubleMap.clear();
+            mDoubleMap = null;
             return this;
         }
 
@@ -4512,9 +4587,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<Double,Double> mutableDoubleMap() {
+        public java.util.Map<Double,Double> mutableDoubleMap() {
             optionals.set(21);
             modified.set(21);
+
+            if (mDoubleMap == null) {
+                mDoubleMap = new java.util.HashMap<>();
+            } else if (!(mDoubleMap instanceof java.util.HashMap)) {
+                mDoubleMap = new java.util.HashMap<>(mDoubleMap);
+            }
             return mDoubleMap;
         }
 
@@ -4532,8 +4613,7 @@ public class Containers
 
             optionals.set(22);
             modified.set(22);
-            mStringMap.clear();
-            mStringMap.putAll(value);
+            mStringMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4548,7 +4628,7 @@ public class Containers
         public _Builder putInStringMap(String key, String value) {
             optionals.set(22);
             modified.set(22);
-            mStringMap.put(key, value);
+            mutableStringMap().put(key, value);
             return this;
         }
 
@@ -4579,7 +4659,7 @@ public class Containers
         public _Builder clearStringMap() {
             optionals.clear(22);
             modified.set(22);
-            mStringMap.clear();
+            mStringMap = null;
             return this;
         }
 
@@ -4588,9 +4668,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,String> mutableStringMap() {
+        public java.util.Map<String,String> mutableStringMap() {
             optionals.set(22);
             modified.set(22);
+
+            if (mStringMap == null) {
+                mStringMap = new java.util.HashMap<>();
+            } else if (!(mStringMap instanceof java.util.HashMap)) {
+                mStringMap = new java.util.HashMap<>(mStringMap);
+            }
             return mStringMap;
         }
 
@@ -4608,8 +4694,7 @@ public class Containers
 
             optionals.set(23);
             modified.set(23);
-            mBinaryMap.clear();
-            mBinaryMap.putAll(value);
+            mBinaryMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4624,7 +4709,7 @@ public class Containers
         public _Builder putInBinaryMap(net.morimekta.util.Binary key, net.morimekta.util.Binary value) {
             optionals.set(23);
             modified.set(23);
-            mBinaryMap.put(key, value);
+            mutableBinaryMap().put(key, value);
             return this;
         }
 
@@ -4655,7 +4740,7 @@ public class Containers
         public _Builder clearBinaryMap() {
             optionals.clear(23);
             modified.set(23);
-            mBinaryMap.clear();
+            mBinaryMap = null;
             return this;
         }
 
@@ -4664,9 +4749,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
+        public java.util.Map<net.morimekta.util.Binary,net.morimekta.util.Binary> mutableBinaryMap() {
             optionals.set(23);
             modified.set(23);
+
+            if (mBinaryMap == null) {
+                mBinaryMap = new java.util.HashMap<>();
+            } else if (!(mBinaryMap instanceof java.util.HashMap)) {
+                mBinaryMap = new java.util.HashMap<>(mBinaryMap);
+            }
             return mBinaryMap;
         }
 
@@ -4684,8 +4775,7 @@ public class Containers
 
             optionals.set(24);
             modified.set(24);
-            mEnumList.clear();
-            mEnumList.addAll(value);
+            mEnumList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -4699,8 +4789,9 @@ public class Containers
         public _Builder addToEnumList(net.morimekta.test.providence.core.Value... values) {
             optionals.set(24);
             modified.set(24);
+            java.util.List<net.morimekta.test.providence.core.Value> _container = mutableEnumList();
             for (net.morimekta.test.providence.core.Value item : values) {
-                mEnumList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -4732,7 +4823,7 @@ public class Containers
         public _Builder clearEnumList() {
             optionals.clear(24);
             modified.set(24);
-            mEnumList.clear();
+            mEnumList = null;
             return this;
         }
 
@@ -4741,9 +4832,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.Value> mutableEnumList() {
+        public java.util.List<net.morimekta.test.providence.core.Value> mutableEnumList() {
             optionals.set(24);
             modified.set(24);
+
+            if (mEnumList == null) {
+                mEnumList = new java.util.LinkedList<>();
+            } else if (!(mEnumList instanceof java.util.LinkedList)) {
+                mEnumList = new java.util.LinkedList<>(mEnumList);
+            }
             return mEnumList;
         }
 
@@ -4761,8 +4858,7 @@ public class Containers
 
             optionals.set(25);
             modified.set(25);
-            mEnumSet.clear();
-            mEnumSet.addAll(value);
+            mEnumSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -4776,8 +4872,9 @@ public class Containers
         public _Builder addToEnumSet(net.morimekta.test.providence.core.Value... values) {
             optionals.set(25);
             modified.set(25);
+            java.util.Set<net.morimekta.test.providence.core.Value> _container = mutableEnumSet();
             for (net.morimekta.test.providence.core.Value item : values) {
-                mEnumSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -4809,7 +4906,7 @@ public class Containers
         public _Builder clearEnumSet() {
             optionals.clear(25);
             modified.set(25);
-            mEnumSet.clear();
+            mEnumSet = null;
             return this;
         }
 
@@ -4818,9 +4915,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.core.Value> mutableEnumSet() {
+        public java.util.Set<net.morimekta.test.providence.core.Value> mutableEnumSet() {
             optionals.set(25);
             modified.set(25);
+
+            if (mEnumSet == null) {
+                mEnumSet = new java.util.HashSet<>();
+            } else if (!(mEnumSet instanceof java.util.HashSet)) {
+                mEnumSet = new java.util.HashSet<>(mEnumSet);
+            }
             return mEnumSet;
         }
 
@@ -4838,8 +4941,7 @@ public class Containers
 
             optionals.set(26);
             modified.set(26);
-            mEnumMap.clear();
-            mEnumMap.putAll(value);
+            mEnumMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -4854,7 +4956,7 @@ public class Containers
         public _Builder putInEnumMap(net.morimekta.test.providence.core.Value key, net.morimekta.test.providence.core.Value value) {
             optionals.set(26);
             modified.set(26);
-            mEnumMap.put(key, value);
+            mutableEnumMap().put(key, value);
             return this;
         }
 
@@ -4885,7 +4987,7 @@ public class Containers
         public _Builder clearEnumMap() {
             optionals.clear(26);
             modified.set(26);
-            mEnumMap.clear();
+            mEnumMap = null;
             return this;
         }
 
@@ -4894,9 +4996,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mutableEnumMap() {
+        public java.util.Map<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> mutableEnumMap() {
             optionals.set(26);
             modified.set(26);
+
+            if (mEnumMap == null) {
+                mEnumMap = new java.util.HashMap<>();
+            } else if (!(mEnumMap instanceof java.util.HashMap)) {
+                mEnumMap = new java.util.HashMap<>(mEnumMap);
+            }
             return mEnumMap;
         }
 
@@ -4914,8 +5022,7 @@ public class Containers
 
             optionals.set(27);
             modified.set(27);
-            mMessageList.clear();
-            mMessageList.addAll(value);
+            mMessageList = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -4929,8 +5036,9 @@ public class Containers
         public _Builder addToMessageList(net.morimekta.test.providence.core.DefaultFields... values) {
             optionals.set(27);
             modified.set(27);
+            java.util.List<net.morimekta.test.providence.core.DefaultFields> _container = mutableMessageList();
             for (net.morimekta.test.providence.core.DefaultFields item : values) {
-                mMessageList.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -4962,7 +5070,7 @@ public class Containers
         public _Builder clearMessageList() {
             optionals.clear(27);
             modified.set(27);
-            mMessageList.clear();
+            mMessageList = null;
             return this;
         }
 
@@ -4971,9 +5079,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.DefaultFields> mutableMessageList() {
+        public java.util.List<net.morimekta.test.providence.core.DefaultFields> mutableMessageList() {
             optionals.set(27);
             modified.set(27);
+
+            if (mMessageList == null) {
+                mMessageList = new java.util.LinkedList<>();
+            } else if (!(mMessageList instanceof java.util.LinkedList)) {
+                mMessageList = new java.util.LinkedList<>(mMessageList);
+            }
             return mMessageList;
         }
 
@@ -4991,8 +5105,7 @@ public class Containers
 
             optionals.set(28);
             modified.set(28);
-            mMessageSet.clear();
-            mMessageSet.addAll(value);
+            mMessageSet = com.google.common.collect.ImmutableSet.copyOf(value);
             return this;
         }
 
@@ -5006,8 +5119,9 @@ public class Containers
         public _Builder addToMessageSet(net.morimekta.test.providence.core.DefaultFields... values) {
             optionals.set(28);
             modified.set(28);
+            java.util.Set<net.morimekta.test.providence.core.DefaultFields> _container = mutableMessageSet();
             for (net.morimekta.test.providence.core.DefaultFields item : values) {
-                mMessageSet.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -5039,7 +5153,7 @@ public class Containers
         public _Builder clearMessageSet() {
             optionals.clear(28);
             modified.set(28);
-            mMessageSet.clear();
+            mMessageSet = null;
             return this;
         }
 
@@ -5048,9 +5162,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PSet.Builder<net.morimekta.test.providence.core.DefaultFields> mutableMessageSet() {
+        public java.util.Set<net.morimekta.test.providence.core.DefaultFields> mutableMessageSet() {
             optionals.set(28);
             modified.set(28);
+
+            if (mMessageSet == null) {
+                mMessageSet = new java.util.HashSet<>();
+            } else if (!(mMessageSet instanceof java.util.HashSet)) {
+                mMessageSet = new java.util.HashSet<>(mMessageSet);
+            }
             return mMessageSet;
         }
 
@@ -5068,8 +5188,7 @@ public class Containers
 
             optionals.set(29);
             modified.set(29);
-            mMessageMap.clear();
-            mMessageMap.putAll(value);
+            mMessageMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -5084,7 +5203,7 @@ public class Containers
         public _Builder putInMessageMap(String key, net.morimekta.test.providence.core.DefaultFields value) {
             optionals.set(29);
             modified.set(29);
-            mMessageMap.put(key, value);
+            mutableMessageMap().put(key, value);
             return this;
         }
 
@@ -5115,7 +5234,7 @@ public class Containers
         public _Builder clearMessageMap() {
             optionals.clear(29);
             modified.set(29);
-            mMessageMap.clear();
+            mMessageMap = null;
             return this;
         }
 
@@ -5124,9 +5243,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<String,net.morimekta.test.providence.core.DefaultFields> mutableMessageMap() {
+        public java.util.Map<String,net.morimekta.test.providence.core.DefaultFields> mutableMessageMap() {
             optionals.set(29);
             modified.set(29);
+
+            if (mMessageMap == null) {
+                mMessageMap = new java.util.HashMap<>();
+            } else if (!(mMessageMap instanceof java.util.HashMap)) {
+                mMessageMap = new java.util.HashMap<>(mMessageMap);
+            }
             return mMessageMap;
         }
 
@@ -5144,8 +5269,7 @@ public class Containers
 
             optionals.set(30);
             modified.set(30);
-            mMessageKeyMap.clear();
-            mMessageKeyMap.putAll(value);
+            mMessageKeyMap = com.google.common.collect.ImmutableMap.copyOf(value);
             return this;
         }
 
@@ -5160,7 +5284,7 @@ public class Containers
         public _Builder putInMessageKeyMap(net.morimekta.test.providence.core.CompactFields key, String value) {
             optionals.set(30);
             modified.set(30);
-            mMessageKeyMap.put(key, value);
+            mutableMessageKeyMap().put(key, value);
             return this;
         }
 
@@ -5191,7 +5315,7 @@ public class Containers
         public _Builder clearMessageKeyMap() {
             optionals.clear(30);
             modified.set(30);
-            mMessageKeyMap.clear();
+            mMessageKeyMap = null;
             return this;
         }
 
@@ -5200,9 +5324,15 @@ public class Containers
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PMap.Builder<net.morimekta.test.providence.core.CompactFields,String> mutableMessageKeyMap() {
+        public java.util.Map<net.morimekta.test.providence.core.CompactFields,String> mutableMessageKeyMap() {
             optionals.set(30);
             modified.set(30);
+
+            if (mMessageKeyMap == null) {
+                mMessageKeyMap = new java.util.HashMap<>();
+            } else if (!(mMessageKeyMap instanceof java.util.HashMap)) {
+                mMessageKeyMap = new java.util.HashMap<>(mMessageKeyMap);
+            }
             return mMessageKeyMap;
         }
 
@@ -5220,8 +5350,8 @@ public class Containers
 
             optionals.set(31);
             modified.set(31);
-            mRequiredFields_builder = null;
             mRequiredFields = value;
+            mRequiredFields_builder = null;
             return this;
         }
 
@@ -5289,8 +5419,8 @@ public class Containers
 
             optionals.set(32);
             modified.set(32);
-            mDefaultFields_builder = null;
             mDefaultFields = value;
+            mDefaultFields_builder = null;
             return this;
         }
 
@@ -5358,8 +5488,8 @@ public class Containers
 
             optionals.set(33);
             modified.set(33);
-            mOptionalFields_builder = null;
             mOptionalFields = value;
+            mOptionalFields_builder = null;
             return this;
         }
 
@@ -5427,8 +5557,8 @@ public class Containers
 
             optionals.set(34);
             modified.set(34);
-            mUnionFields_builder = null;
             mUnionFields = value;
+            mUnionFields_builder = null;
             return this;
         }
 
@@ -5496,8 +5626,8 @@ public class Containers
 
             optionals.set(35);
             modified.set(35);
-            mExceptionFields_builder = null;
             mExceptionFields = value;
+            mExceptionFields_builder = null;
             return this;
         }
 
@@ -5565,8 +5695,8 @@ public class Containers
 
             optionals.set(36);
             modified.set(36);
-            mDefaultValues_builder = null;
             mDefaultValues = value;
+            mDefaultValues_builder = null;
             return this;
         }
 
@@ -5957,15 +6087,17 @@ public class Containers
                 switch (field) {
                     case 1: {
                         if (type == 15) {
-                            byte t_2 = reader.expectByte();
-                            if (t_2 == 2) {
-                                final int len_1 = reader.expectUInt32();
-                                for (int i_3 = 0; i_3 < len_1; ++i_3) {
-                                    Boolean key_4 = reader.expectUInt8() == 1;
-                                    mBooleanList.add(key_4);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Boolean> b_1 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_3 = reader.expectByte();
+                            if (t_3 == 2) {
+                                final int len_2 = reader.expectUInt32();
+                                for (int i_4 = 0; i_4 < len_2; ++i_4) {
+                                    Boolean key_5 = reader.expectUInt8() == 1;
+                                    b_1.add(key_5);
                                 }
+                                mBooleanList = b_1.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_2) + " for providence.Containers.booleanList, should be bool(2)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_3) + " for providence.Containers.booleanList, should be bool(2)");
                             }
                             optionals.set(0);
                         } else {
@@ -5975,15 +6107,17 @@ public class Containers
                     }
                     case 2: {
                         if (type == 15) {
-                            byte t_6 = reader.expectByte();
-                            if (t_6 == 3) {
-                                final int len_5 = reader.expectUInt32();
-                                for (int i_7 = 0; i_7 < len_5; ++i_7) {
-                                    Byte key_8 = reader.expectByte();
-                                    mByteList.add(key_8);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Byte> b_6 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_8 = reader.expectByte();
+                            if (t_8 == 3) {
+                                final int len_7 = reader.expectUInt32();
+                                for (int i_9 = 0; i_9 < len_7; ++i_9) {
+                                    Byte key_10 = reader.expectByte();
+                                    b_6.add(key_10);
                                 }
+                                mByteList = b_6.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_6) + " for providence.Containers.byteList, should be byte(3)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_8) + " for providence.Containers.byteList, should be byte(3)");
                             }
                             optionals.set(1);
                         } else {
@@ -5993,15 +6127,17 @@ public class Containers
                     }
                     case 3: {
                         if (type == 15) {
-                            byte t_10 = reader.expectByte();
-                            if (t_10 == 6) {
-                                final int len_9 = reader.expectUInt32();
-                                for (int i_11 = 0; i_11 < len_9; ++i_11) {
-                                    Short key_12 = reader.expectShort();
-                                    mShortList.add(key_12);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Short> b_11 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_13 = reader.expectByte();
+                            if (t_13 == 6) {
+                                final int len_12 = reader.expectUInt32();
+                                for (int i_14 = 0; i_14 < len_12; ++i_14) {
+                                    Short key_15 = reader.expectShort();
+                                    b_11.add(key_15);
                                 }
+                                mShortList = b_11.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_10) + " for providence.Containers.shortList, should be i16(6)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_13) + " for providence.Containers.shortList, should be i16(6)");
                             }
                             optionals.set(2);
                         } else {
@@ -6011,15 +6147,17 @@ public class Containers
                     }
                     case 4: {
                         if (type == 15) {
-                            byte t_14 = reader.expectByte();
-                            if (t_14 == 8) {
-                                final int len_13 = reader.expectUInt32();
-                                for (int i_15 = 0; i_15 < len_13; ++i_15) {
-                                    Integer key_16 = reader.expectInt();
-                                    mIntegerList.add(key_16);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Integer> b_16 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_18 = reader.expectByte();
+                            if (t_18 == 8) {
+                                final int len_17 = reader.expectUInt32();
+                                for (int i_19 = 0; i_19 < len_17; ++i_19) {
+                                    Integer key_20 = reader.expectInt();
+                                    b_16.add(key_20);
                                 }
+                                mIntegerList = b_16.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_14) + " for providence.Containers.integerList, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_18) + " for providence.Containers.integerList, should be i32(8)");
                             }
                             optionals.set(3);
                         } else {
@@ -6029,15 +6167,17 @@ public class Containers
                     }
                     case 5: {
                         if (type == 15) {
-                            byte t_18 = reader.expectByte();
-                            if (t_18 == 10) {
-                                final int len_17 = reader.expectUInt32();
-                                for (int i_19 = 0; i_19 < len_17; ++i_19) {
-                                    Long key_20 = reader.expectLong();
-                                    mLongList.add(key_20);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Long> b_21 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_23 = reader.expectByte();
+                            if (t_23 == 10) {
+                                final int len_22 = reader.expectUInt32();
+                                for (int i_24 = 0; i_24 < len_22; ++i_24) {
+                                    Long key_25 = reader.expectLong();
+                                    b_21.add(key_25);
                                 }
+                                mLongList = b_21.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_18) + " for providence.Containers.longList, should be i64(10)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_23) + " for providence.Containers.longList, should be i64(10)");
                             }
                             optionals.set(4);
                         } else {
@@ -6047,15 +6187,17 @@ public class Containers
                     }
                     case 6: {
                         if (type == 15) {
-                            byte t_22 = reader.expectByte();
-                            if (t_22 == 4) {
-                                final int len_21 = reader.expectUInt32();
-                                for (int i_23 = 0; i_23 < len_21; ++i_23) {
-                                    Double key_24 = reader.expectDouble();
-                                    mDoubleList.add(key_24);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<Double> b_26 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_28 = reader.expectByte();
+                            if (t_28 == 4) {
+                                final int len_27 = reader.expectUInt32();
+                                for (int i_29 = 0; i_29 < len_27; ++i_29) {
+                                    Double key_30 = reader.expectDouble();
+                                    b_26.add(key_30);
                                 }
+                                mDoubleList = b_26.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_22) + " for providence.Containers.doubleList, should be double(4)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_28) + " for providence.Containers.doubleList, should be double(4)");
                             }
                             optionals.set(5);
                         } else {
@@ -6065,16 +6207,18 @@ public class Containers
                     }
                     case 7: {
                         if (type == 15) {
-                            byte t_26 = reader.expectByte();
-                            if (t_26 == 11) {
-                                final int len_25 = reader.expectUInt32();
-                                for (int i_27 = 0; i_27 < len_25; ++i_27) {
-                                    int len_29 = reader.expectUInt32();
-                                    String key_28 = new String(reader.expectBytes(len_29), java.nio.charset.StandardCharsets.UTF_8);
-                                    mStringList.add(key_28);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<String> b_31 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_33 = reader.expectByte();
+                            if (t_33 == 11) {
+                                final int len_32 = reader.expectUInt32();
+                                for (int i_34 = 0; i_34 < len_32; ++i_34) {
+                                    int len_36 = reader.expectUInt32();
+                                    String key_35 = new String(reader.expectBytes(len_36), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_31.add(key_35);
                                 }
+                                mStringList = b_31.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_26) + " for providence.Containers.stringList, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_33) + " for providence.Containers.stringList, should be string(11)");
                             }
                             optionals.set(6);
                         } else {
@@ -6084,16 +6228,18 @@ public class Containers
                     }
                     case 8: {
                         if (type == 15) {
-                            byte t_31 = reader.expectByte();
-                            if (t_31 == 11) {
-                                final int len_30 = reader.expectUInt32();
-                                for (int i_32 = 0; i_32 < len_30; ++i_32) {
-                                    int len_34 = reader.expectUInt32();
-                                    net.morimekta.util.Binary key_33 = reader.expectBinary(len_34);
-                                    mBinaryList.add(key_33);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.util.Binary> b_37 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_39 = reader.expectByte();
+                            if (t_39 == 11) {
+                                final int len_38 = reader.expectUInt32();
+                                for (int i_40 = 0; i_40 < len_38; ++i_40) {
+                                    int len_42 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_41 = reader.expectBinary(len_42);
+                                    b_37.add(key_41);
                                 }
+                                mBinaryList = b_37.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_31) + " for providence.Containers.binaryList, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_39) + " for providence.Containers.binaryList, should be string(11)");
                             }
                             optionals.set(7);
                         } else {
@@ -6103,15 +6249,17 @@ public class Containers
                     }
                     case 11: {
                         if (type == 14) {
-                            byte t_36 = reader.expectByte();
-                            if (t_36 == 2) {
-                                final int len_35 = reader.expectUInt32();
-                                for (int i_37 = 0; i_37 < len_35; ++i_37) {
-                                    Boolean key_38 = reader.expectUInt8() == 1;
-                                    mBooleanSet.add(key_38);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<Boolean> b_43 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_45 = reader.expectByte();
+                            if (t_45 == 2) {
+                                final int len_44 = reader.expectUInt32();
+                                for (int i_46 = 0; i_46 < len_44; ++i_46) {
+                                    Boolean key_47 = reader.expectUInt8() == 1;
+                                    b_43.add(key_47);
                                 }
+                                mBooleanSet = b_43.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_36) + " for providence.Containers.booleanSet, should be bool(2)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_45) + " for providence.Containers.booleanSet, should be bool(2)");
                             }
                             optionals.set(8);
                         } else {
@@ -6121,15 +6269,17 @@ public class Containers
                     }
                     case 12: {
                         if (type == 14) {
-                            byte t_40 = reader.expectByte();
-                            if (t_40 == 3) {
-                                final int len_39 = reader.expectUInt32();
-                                for (int i_41 = 0; i_41 < len_39; ++i_41) {
-                                    Byte key_42 = reader.expectByte();
-                                    mByteSet.add(key_42);
+                            net.morimekta.providence.descriptor.PSet.SortedBuilder<Byte> b_48 = new net.morimekta.providence.descriptor.PSet.SortedBuilder<>();
+                            byte t_50 = reader.expectByte();
+                            if (t_50 == 3) {
+                                final int len_49 = reader.expectUInt32();
+                                for (int i_51 = 0; i_51 < len_49; ++i_51) {
+                                    Byte key_52 = reader.expectByte();
+                                    b_48.add(key_52);
                                 }
+                                mByteSet = b_48.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_40) + " for providence.Containers.byteSet, should be byte(3)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_50) + " for providence.Containers.byteSet, should be byte(3)");
                             }
                             optionals.set(9);
                         } else {
@@ -6139,15 +6289,17 @@ public class Containers
                     }
                     case 13: {
                         if (type == 14) {
-                            byte t_44 = reader.expectByte();
-                            if (t_44 == 6) {
-                                final int len_43 = reader.expectUInt32();
-                                for (int i_45 = 0; i_45 < len_43; ++i_45) {
-                                    Short key_46 = reader.expectShort();
-                                    mShortSet.add(key_46);
+                            net.morimekta.providence.descriptor.PSet.OrderedBuilder<Short> b_53 = new net.morimekta.providence.descriptor.PSet.OrderedBuilder<>();
+                            byte t_55 = reader.expectByte();
+                            if (t_55 == 6) {
+                                final int len_54 = reader.expectUInt32();
+                                for (int i_56 = 0; i_56 < len_54; ++i_56) {
+                                    Short key_57 = reader.expectShort();
+                                    b_53.add(key_57);
                                 }
+                                mShortSet = b_53.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_44) + " for providence.Containers.shortSet, should be i16(6)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_55) + " for providence.Containers.shortSet, should be i16(6)");
                             }
                             optionals.set(10);
                         } else {
@@ -6157,15 +6309,17 @@ public class Containers
                     }
                     case 14: {
                         if (type == 14) {
-                            byte t_48 = reader.expectByte();
-                            if (t_48 == 8) {
-                                final int len_47 = reader.expectUInt32();
-                                for (int i_49 = 0; i_49 < len_47; ++i_49) {
-                                    Integer key_50 = reader.expectInt();
-                                    mIntegerSet.add(key_50);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<Integer> b_58 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_60 = reader.expectByte();
+                            if (t_60 == 8) {
+                                final int len_59 = reader.expectUInt32();
+                                for (int i_61 = 0; i_61 < len_59; ++i_61) {
+                                    Integer key_62 = reader.expectInt();
+                                    b_58.add(key_62);
                                 }
+                                mIntegerSet = b_58.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_48) + " for providence.Containers.integerSet, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_60) + " for providence.Containers.integerSet, should be i32(8)");
                             }
                             optionals.set(11);
                         } else {
@@ -6175,15 +6329,17 @@ public class Containers
                     }
                     case 15: {
                         if (type == 14) {
-                            byte t_52 = reader.expectByte();
-                            if (t_52 == 10) {
-                                final int len_51 = reader.expectUInt32();
-                                for (int i_53 = 0; i_53 < len_51; ++i_53) {
-                                    Long key_54 = reader.expectLong();
-                                    mLongSet.add(key_54);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<Long> b_63 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_65 = reader.expectByte();
+                            if (t_65 == 10) {
+                                final int len_64 = reader.expectUInt32();
+                                for (int i_66 = 0; i_66 < len_64; ++i_66) {
+                                    Long key_67 = reader.expectLong();
+                                    b_63.add(key_67);
                                 }
+                                mLongSet = b_63.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_52) + " for providence.Containers.longSet, should be i64(10)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_65) + " for providence.Containers.longSet, should be i64(10)");
                             }
                             optionals.set(12);
                         } else {
@@ -6193,15 +6349,17 @@ public class Containers
                     }
                     case 16: {
                         if (type == 14) {
-                            byte t_56 = reader.expectByte();
-                            if (t_56 == 4) {
-                                final int len_55 = reader.expectUInt32();
-                                for (int i_57 = 0; i_57 < len_55; ++i_57) {
-                                    Double key_58 = reader.expectDouble();
-                                    mDoubleSet.add(key_58);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<Double> b_68 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_70 = reader.expectByte();
+                            if (t_70 == 4) {
+                                final int len_69 = reader.expectUInt32();
+                                for (int i_71 = 0; i_71 < len_69; ++i_71) {
+                                    Double key_72 = reader.expectDouble();
+                                    b_68.add(key_72);
                                 }
+                                mDoubleSet = b_68.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_56) + " for providence.Containers.doubleSet, should be double(4)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_70) + " for providence.Containers.doubleSet, should be double(4)");
                             }
                             optionals.set(13);
                         } else {
@@ -6211,16 +6369,18 @@ public class Containers
                     }
                     case 17: {
                         if (type == 14) {
-                            byte t_60 = reader.expectByte();
-                            if (t_60 == 11) {
-                                final int len_59 = reader.expectUInt32();
-                                for (int i_61 = 0; i_61 < len_59; ++i_61) {
-                                    int len_63 = reader.expectUInt32();
-                                    String key_62 = new String(reader.expectBytes(len_63), java.nio.charset.StandardCharsets.UTF_8);
-                                    mStringSet.add(key_62);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<String> b_73 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_75 = reader.expectByte();
+                            if (t_75 == 11) {
+                                final int len_74 = reader.expectUInt32();
+                                for (int i_76 = 0; i_76 < len_74; ++i_76) {
+                                    int len_78 = reader.expectUInt32();
+                                    String key_77 = new String(reader.expectBytes(len_78), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_73.add(key_77);
                                 }
+                                mStringSet = b_73.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_60) + " for providence.Containers.stringSet, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_75) + " for providence.Containers.stringSet, should be string(11)");
                             }
                             optionals.set(14);
                         } else {
@@ -6230,16 +6390,18 @@ public class Containers
                     }
                     case 18: {
                         if (type == 14) {
-                            byte t_65 = reader.expectByte();
-                            if (t_65 == 11) {
-                                final int len_64 = reader.expectUInt32();
-                                for (int i_66 = 0; i_66 < len_64; ++i_66) {
-                                    int len_68 = reader.expectUInt32();
-                                    net.morimekta.util.Binary key_67 = reader.expectBinary(len_68);
-                                    mBinarySet.add(key_67);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.util.Binary> b_79 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_81 = reader.expectByte();
+                            if (t_81 == 11) {
+                                final int len_80 = reader.expectUInt32();
+                                for (int i_82 = 0; i_82 < len_80; ++i_82) {
+                                    int len_84 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_83 = reader.expectBinary(len_84);
+                                    b_79.add(key_83);
                                 }
+                                mBinarySet = b_79.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_65) + " for providence.Containers.binarySet, should be string(11)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_81) + " for providence.Containers.binarySet, should be string(11)");
                             }
                             optionals.set(15);
                         } else {
@@ -6249,19 +6411,21 @@ public class Containers
                     }
                     case 21: {
                         if (type == 13) {
-                            byte t_70 = reader.expectByte();
-                            byte t_71 = reader.expectByte();
-                            if (t_70 == 2 && t_71 == 2) {
-                                final int len_69 = reader.expectUInt32();
-                                for (int i_72 = 0; i_72 < len_69; ++i_72) {
-                                    Boolean key_73 = reader.expectUInt8() == 1;
-                                    Boolean val_74 = reader.expectUInt8() == 1;
-                                    mBooleanMap.put(key_73, val_74);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<Boolean,Boolean> b_85 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_87 = reader.expectByte();
+                            byte t_88 = reader.expectByte();
+                            if (t_87 == 2 && t_88 == 2) {
+                                final int len_86 = reader.expectUInt32();
+                                for (int i_89 = 0; i_89 < len_86; ++i_89) {
+                                    Boolean key_90 = reader.expectUInt8() == 1;
+                                    Boolean val_91 = reader.expectUInt8() == 1;
+                                    b_85.put(key_90, val_91);
                                 }
+                                mBooleanMap = b_85.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_70) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_71) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_87) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_88) +
                                         " for providence.Containers.booleanMap, should be bool(2) and bool(2)");
                             }
                             optionals.set(16);
@@ -6272,19 +6436,21 @@ public class Containers
                     }
                     case 22: {
                         if (type == 13) {
-                            byte t_76 = reader.expectByte();
-                            byte t_77 = reader.expectByte();
-                            if (t_76 == 3 && t_77 == 3) {
-                                final int len_75 = reader.expectUInt32();
-                                for (int i_78 = 0; i_78 < len_75; ++i_78) {
-                                    Byte key_79 = reader.expectByte();
-                                    Byte val_80 = reader.expectByte();
-                                    mByteMap.put(key_79, val_80);
+                            net.morimekta.providence.descriptor.PMap.SortedBuilder<Byte,Byte> b_92 = new net.morimekta.providence.descriptor.PMap.SortedBuilder<>();
+                            byte t_94 = reader.expectByte();
+                            byte t_95 = reader.expectByte();
+                            if (t_94 == 3 && t_95 == 3) {
+                                final int len_93 = reader.expectUInt32();
+                                for (int i_96 = 0; i_96 < len_93; ++i_96) {
+                                    Byte key_97 = reader.expectByte();
+                                    Byte val_98 = reader.expectByte();
+                                    b_92.put(key_97, val_98);
                                 }
+                                mByteMap = b_92.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_76) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_77) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_94) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_95) +
                                         " for providence.Containers.byteMap, should be byte(3) and byte(3)");
                             }
                             optionals.set(17);
@@ -6295,19 +6461,21 @@ public class Containers
                     }
                     case 23: {
                         if (type == 13) {
-                            byte t_82 = reader.expectByte();
-                            byte t_83 = reader.expectByte();
-                            if (t_82 == 6 && t_83 == 6) {
-                                final int len_81 = reader.expectUInt32();
-                                for (int i_84 = 0; i_84 < len_81; ++i_84) {
-                                    Short key_85 = reader.expectShort();
-                                    Short val_86 = reader.expectShort();
-                                    mShortMap.put(key_85, val_86);
+                            net.morimekta.providence.descriptor.PMap.OrderedBuilder<Short,Short> b_99 = new net.morimekta.providence.descriptor.PMap.OrderedBuilder<>();
+                            byte t_101 = reader.expectByte();
+                            byte t_102 = reader.expectByte();
+                            if (t_101 == 6 && t_102 == 6) {
+                                final int len_100 = reader.expectUInt32();
+                                for (int i_103 = 0; i_103 < len_100; ++i_103) {
+                                    Short key_104 = reader.expectShort();
+                                    Short val_105 = reader.expectShort();
+                                    b_99.put(key_104, val_105);
                                 }
+                                mShortMap = b_99.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_82) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_83) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_101) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_102) +
                                         " for providence.Containers.shortMap, should be i16(6) and i16(6)");
                             }
                             optionals.set(18);
@@ -6318,19 +6486,21 @@ public class Containers
                     }
                     case 24: {
                         if (type == 13) {
-                            byte t_88 = reader.expectByte();
-                            byte t_89 = reader.expectByte();
-                            if (t_88 == 8 && t_89 == 8) {
-                                final int len_87 = reader.expectUInt32();
-                                for (int i_90 = 0; i_90 < len_87; ++i_90) {
-                                    Integer key_91 = reader.expectInt();
-                                    Integer val_92 = reader.expectInt();
-                                    mIntegerMap.put(key_91, val_92);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<Integer,Integer> b_106 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_108 = reader.expectByte();
+                            byte t_109 = reader.expectByte();
+                            if (t_108 == 8 && t_109 == 8) {
+                                final int len_107 = reader.expectUInt32();
+                                for (int i_110 = 0; i_110 < len_107; ++i_110) {
+                                    Integer key_111 = reader.expectInt();
+                                    Integer val_112 = reader.expectInt();
+                                    b_106.put(key_111, val_112);
                                 }
+                                mIntegerMap = b_106.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_88) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_89) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_108) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_109) +
                                         " for providence.Containers.integerMap, should be i32(8) and i32(8)");
                             }
                             optionals.set(19);
@@ -6341,19 +6511,21 @@ public class Containers
                     }
                     case 25: {
                         if (type == 13) {
-                            byte t_94 = reader.expectByte();
-                            byte t_95 = reader.expectByte();
-                            if (t_94 == 10 && t_95 == 10) {
-                                final int len_93 = reader.expectUInt32();
-                                for (int i_96 = 0; i_96 < len_93; ++i_96) {
-                                    Long key_97 = reader.expectLong();
-                                    Long val_98 = reader.expectLong();
-                                    mLongMap.put(key_97, val_98);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<Long,Long> b_113 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_115 = reader.expectByte();
+                            byte t_116 = reader.expectByte();
+                            if (t_115 == 10 && t_116 == 10) {
+                                final int len_114 = reader.expectUInt32();
+                                for (int i_117 = 0; i_117 < len_114; ++i_117) {
+                                    Long key_118 = reader.expectLong();
+                                    Long val_119 = reader.expectLong();
+                                    b_113.put(key_118, val_119);
                                 }
+                                mLongMap = b_113.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_94) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_95) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_115) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_116) +
                                         " for providence.Containers.longMap, should be i64(10) and i64(10)");
                             }
                             optionals.set(20);
@@ -6364,19 +6536,21 @@ public class Containers
                     }
                     case 26: {
                         if (type == 13) {
-                            byte t_100 = reader.expectByte();
-                            byte t_101 = reader.expectByte();
-                            if (t_100 == 4 && t_101 == 4) {
-                                final int len_99 = reader.expectUInt32();
-                                for (int i_102 = 0; i_102 < len_99; ++i_102) {
-                                    Double key_103 = reader.expectDouble();
-                                    Double val_104 = reader.expectDouble();
-                                    mDoubleMap.put(key_103, val_104);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<Double,Double> b_120 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_122 = reader.expectByte();
+                            byte t_123 = reader.expectByte();
+                            if (t_122 == 4 && t_123 == 4) {
+                                final int len_121 = reader.expectUInt32();
+                                for (int i_124 = 0; i_124 < len_121; ++i_124) {
+                                    Double key_125 = reader.expectDouble();
+                                    Double val_126 = reader.expectDouble();
+                                    b_120.put(key_125, val_126);
                                 }
+                                mDoubleMap = b_120.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_100) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_101) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_122) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_123) +
                                         " for providence.Containers.doubleMap, should be double(4) and double(4)");
                             }
                             optionals.set(21);
@@ -6387,21 +6561,23 @@ public class Containers
                     }
                     case 27: {
                         if (type == 13) {
-                            byte t_106 = reader.expectByte();
-                            byte t_107 = reader.expectByte();
-                            if (t_106 == 11 && t_107 == 11) {
-                                final int len_105 = reader.expectUInt32();
-                                for (int i_108 = 0; i_108 < len_105; ++i_108) {
-                                    int len_111 = reader.expectUInt32();
-                                    String key_109 = new String(reader.expectBytes(len_111), java.nio.charset.StandardCharsets.UTF_8);
-                                    int len_112 = reader.expectUInt32();
-                                    String val_110 = new String(reader.expectBytes(len_112), java.nio.charset.StandardCharsets.UTF_8);
-                                    mStringMap.put(key_109, val_110);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,String> b_127 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_129 = reader.expectByte();
+                            byte t_130 = reader.expectByte();
+                            if (t_129 == 11 && t_130 == 11) {
+                                final int len_128 = reader.expectUInt32();
+                                for (int i_131 = 0; i_131 < len_128; ++i_131) {
+                                    int len_134 = reader.expectUInt32();
+                                    String key_132 = new String(reader.expectBytes(len_134), java.nio.charset.StandardCharsets.UTF_8);
+                                    int len_135 = reader.expectUInt32();
+                                    String val_133 = new String(reader.expectBytes(len_135), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_127.put(key_132, val_133);
                                 }
+                                mStringMap = b_127.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_106) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_107) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_129) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_130) +
                                         " for providence.Containers.stringMap, should be string(11) and string(11)");
                             }
                             optionals.set(22);
@@ -6412,21 +6588,23 @@ public class Containers
                     }
                     case 28: {
                         if (type == 13) {
-                            byte t_114 = reader.expectByte();
-                            byte t_115 = reader.expectByte();
-                            if (t_114 == 11 && t_115 == 11) {
-                                final int len_113 = reader.expectUInt32();
-                                for (int i_116 = 0; i_116 < len_113; ++i_116) {
-                                    int len_119 = reader.expectUInt32();
-                                    net.morimekta.util.Binary key_117 = reader.expectBinary(len_119);
-                                    int len_120 = reader.expectUInt32();
-                                    net.morimekta.util.Binary val_118 = reader.expectBinary(len_120);
-                                    mBinaryMap.put(key_117, val_118);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<net.morimekta.util.Binary,net.morimekta.util.Binary> b_136 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_138 = reader.expectByte();
+                            byte t_139 = reader.expectByte();
+                            if (t_138 == 11 && t_139 == 11) {
+                                final int len_137 = reader.expectUInt32();
+                                for (int i_140 = 0; i_140 < len_137; ++i_140) {
+                                    int len_143 = reader.expectUInt32();
+                                    net.morimekta.util.Binary key_141 = reader.expectBinary(len_143);
+                                    int len_144 = reader.expectUInt32();
+                                    net.morimekta.util.Binary val_142 = reader.expectBinary(len_144);
+                                    b_136.put(key_141, val_142);
                                 }
+                                mBinaryMap = b_136.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_114) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_115) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_138) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_139) +
                                         " for providence.Containers.binaryMap, should be string(11) and string(11)");
                             }
                             optionals.set(23);
@@ -6437,15 +6615,17 @@ public class Containers
                     }
                     case 31: {
                         if (type == 15) {
-                            byte t_122 = reader.expectByte();
-                            if (t_122 == 8) {
-                                final int len_121 = reader.expectUInt32();
-                                for (int i_123 = 0; i_123 < len_121; ++i_123) {
-                                    net.morimekta.test.providence.core.Value key_124 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
-                                    mEnumList.add(key_124);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.core.Value> b_145 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_147 = reader.expectByte();
+                            if (t_147 == 8) {
+                                final int len_146 = reader.expectUInt32();
+                                for (int i_148 = 0; i_148 < len_146; ++i_148) {
+                                    net.morimekta.test.providence.core.Value key_149 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    b_145.add(key_149);
                                 }
+                                mEnumList = b_145.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_122) + " for providence.Containers.enumList, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_147) + " for providence.Containers.enumList, should be i32(8)");
                             }
                             optionals.set(24);
                         } else {
@@ -6455,15 +6635,17 @@ public class Containers
                     }
                     case 32: {
                         if (type == 14) {
-                            byte t_126 = reader.expectByte();
-                            if (t_126 == 8) {
-                                final int len_125 = reader.expectUInt32();
-                                for (int i_127 = 0; i_127 < len_125; ++i_127) {
-                                    net.morimekta.test.providence.core.Value key_128 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
-                                    mEnumSet.add(key_128);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.test.providence.core.Value> b_150 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_152 = reader.expectByte();
+                            if (t_152 == 8) {
+                                final int len_151 = reader.expectUInt32();
+                                for (int i_153 = 0; i_153 < len_151; ++i_153) {
+                                    net.morimekta.test.providence.core.Value key_154 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    b_150.add(key_154);
                                 }
+                                mEnumSet = b_150.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_126) + " for providence.Containers.enumSet, should be i32(8)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_152) + " for providence.Containers.enumSet, should be i32(8)");
                             }
                             optionals.set(25);
                         } else {
@@ -6473,19 +6655,21 @@ public class Containers
                     }
                     case 33: {
                         if (type == 13) {
-                            byte t_130 = reader.expectByte();
-                            byte t_131 = reader.expectByte();
-                            if (t_130 == 8 && t_131 == 8) {
-                                final int len_129 = reader.expectUInt32();
-                                for (int i_132 = 0; i_132 < len_129; ++i_132) {
-                                    net.morimekta.test.providence.core.Value key_133 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
-                                    net.morimekta.test.providence.core.Value val_134 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
-                                    mEnumMap.put(key_133, val_134);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<net.morimekta.test.providence.core.Value,net.morimekta.test.providence.core.Value> b_155 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_157 = reader.expectByte();
+                            byte t_158 = reader.expectByte();
+                            if (t_157 == 8 && t_158 == 8) {
+                                final int len_156 = reader.expectUInt32();
+                                for (int i_159 = 0; i_159 < len_156; ++i_159) {
+                                    net.morimekta.test.providence.core.Value key_160 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    net.morimekta.test.providence.core.Value val_161 = net.morimekta.test.providence.core.Value.forValue(reader.expectInt());
+                                    b_155.put(key_160, val_161);
                                 }
+                                mEnumMap = b_155.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_130) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_131) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_157) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_158) +
                                         " for providence.Containers.enumMap, should be i32(8) and i32(8)");
                             }
                             optionals.set(26);
@@ -6496,15 +6680,17 @@ public class Containers
                     }
                     case 41: {
                         if (type == 15) {
-                            byte t_136 = reader.expectByte();
-                            if (t_136 == 12) {
-                                final int len_135 = reader.expectUInt32();
-                                for (int i_137 = 0; i_137 < len_135; ++i_137) {
-                                    net.morimekta.test.providence.core.DefaultFields key_138 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
-                                    mMessageList.add(key_138);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.core.DefaultFields> b_162 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_164 = reader.expectByte();
+                            if (t_164 == 12) {
+                                final int len_163 = reader.expectUInt32();
+                                for (int i_165 = 0; i_165 < len_163; ++i_165) {
+                                    net.morimekta.test.providence.core.DefaultFields key_166 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
+                                    b_162.add(key_166);
                                 }
+                                mMessageList = b_162.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_136) + " for providence.Containers.messageList, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_164) + " for providence.Containers.messageList, should be struct(12)");
                             }
                             optionals.set(27);
                         } else {
@@ -6514,15 +6700,17 @@ public class Containers
                     }
                     case 42: {
                         if (type == 14) {
-                            byte t_140 = reader.expectByte();
-                            if (t_140 == 12) {
-                                final int len_139 = reader.expectUInt32();
-                                for (int i_141 = 0; i_141 < len_139; ++i_141) {
-                                    net.morimekta.test.providence.core.DefaultFields key_142 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
-                                    mMessageSet.add(key_142);
+                            net.morimekta.providence.descriptor.PSet.DefaultBuilder<net.morimekta.test.providence.core.DefaultFields> b_167 = new net.morimekta.providence.descriptor.PSet.DefaultBuilder<>();
+                            byte t_169 = reader.expectByte();
+                            if (t_169 == 12) {
+                                final int len_168 = reader.expectUInt32();
+                                for (int i_170 = 0; i_170 < len_168; ++i_170) {
+                                    net.morimekta.test.providence.core.DefaultFields key_171 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
+                                    b_167.add(key_171);
                                 }
+                                mMessageSet = b_167.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_140) + " for providence.Containers.messageSet, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_169) + " for providence.Containers.messageSet, should be struct(12)");
                             }
                             optionals.set(28);
                         } else {
@@ -6532,20 +6720,22 @@ public class Containers
                     }
                     case 43: {
                         if (type == 13) {
-                            byte t_144 = reader.expectByte();
-                            byte t_145 = reader.expectByte();
-                            if (t_144 == 11 && t_145 == 12) {
-                                final int len_143 = reader.expectUInt32();
-                                for (int i_146 = 0; i_146 < len_143; ++i_146) {
-                                    int len_149 = reader.expectUInt32();
-                                    String key_147 = new String(reader.expectBytes(len_149), java.nio.charset.StandardCharsets.UTF_8);
-                                    net.morimekta.test.providence.core.DefaultFields val_148 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
-                                    mMessageMap.put(key_147, val_148);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<String,net.morimekta.test.providence.core.DefaultFields> b_172 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_174 = reader.expectByte();
+                            byte t_175 = reader.expectByte();
+                            if (t_174 == 11 && t_175 == 12) {
+                                final int len_173 = reader.expectUInt32();
+                                for (int i_176 = 0; i_176 < len_173; ++i_176) {
+                                    int len_179 = reader.expectUInt32();
+                                    String key_177 = new String(reader.expectBytes(len_179), java.nio.charset.StandardCharsets.UTF_8);
+                                    net.morimekta.test.providence.core.DefaultFields val_178 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.DefaultFields.kDescriptor, strict);
+                                    b_172.put(key_177, val_178);
                                 }
+                                mMessageMap = b_172.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_144) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_145) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_174) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_175) +
                                         " for providence.Containers.messageMap, should be string(11) and struct(12)");
                             }
                             optionals.set(29);
@@ -6556,20 +6746,22 @@ public class Containers
                     }
                     case 44: {
                         if (type == 13) {
-                            byte t_151 = reader.expectByte();
-                            byte t_152 = reader.expectByte();
-                            if (t_151 == 12 && t_152 == 11) {
-                                final int len_150 = reader.expectUInt32();
-                                for (int i_153 = 0; i_153 < len_150; ++i_153) {
-                                    net.morimekta.test.providence.core.CompactFields key_154 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
-                                    int len_156 = reader.expectUInt32();
-                                    String val_155 = new String(reader.expectBytes(len_156), java.nio.charset.StandardCharsets.UTF_8);
-                                    mMessageKeyMap.put(key_154, val_155);
+                            net.morimekta.providence.descriptor.PMap.DefaultBuilder<net.morimekta.test.providence.core.CompactFields,String> b_180 = new net.morimekta.providence.descriptor.PMap.DefaultBuilder<>();
+                            byte t_182 = reader.expectByte();
+                            byte t_183 = reader.expectByte();
+                            if (t_182 == 12 && t_183 == 11) {
+                                final int len_181 = reader.expectUInt32();
+                                for (int i_184 = 0; i_184 < len_181; ++i_184) {
+                                    net.morimekta.test.providence.core.CompactFields key_185 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.CompactFields.kDescriptor, strict);
+                                    int len_187 = reader.expectUInt32();
+                                    String val_186 = new String(reader.expectBytes(len_187), java.nio.charset.StandardCharsets.UTF_8);
+                                    b_180.put(key_185, val_186);
                                 }
+                                mMessageKeyMap = b_180.build();
                             } else {
                                 throw new net.morimekta.providence.serializer.SerializerException(
-                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_151) +
-                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_152) +
+                                        "Wrong key type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_182) +
+                                        " or value type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_183) +
                                         " for providence.Containers.messageKeyMap, should be struct(12) and string(11)");
                             }
                             optionals.set(30);

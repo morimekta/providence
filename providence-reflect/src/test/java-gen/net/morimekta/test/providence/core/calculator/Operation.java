@@ -1,7 +1,5 @@
 package net.morimekta.test.providence.core.calculator;
 
-import net.morimekta.providence.descriptor.PList;
-
 @SuppressWarnings("unused")
 public class Operation
         implements net.morimekta.providence.PMessage<Operation,Operation._Field>,
@@ -28,7 +26,7 @@ public class Operation
     private Operation(_Builder builder) {
         mOperator = builder.mOperator;
         if (builder.isSetOperands()) {
-            mOperands = builder.mOperands.build();
+            mOperands = com.google.common.collect.ImmutableList.copyOf(builder.mOperands);
         } else {
             mOperands = null;
         }
@@ -311,7 +309,7 @@ public class Operation
         private java.util.BitSet modified;
 
         private net.morimekta.test.providence.core.calculator.Operator mOperator;
-        private net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.calculator.Operand> mOperands;
+        private java.util.List<net.morimekta.test.providence.core.calculator.Operand> mOperands;
 
         /**
          * Make a calculator.Operation builder.
@@ -319,7 +317,6 @@ public class Operation
         public _Builder() {
             optionals = new java.util.BitSet(2);
             modified = new java.util.BitSet(2);
-            mOperands = new PList.DefaultBuilder<>();
         }
 
         /**
@@ -336,7 +333,7 @@ public class Operation
             }
             if (base.hasOperands()) {
                 optionals.set(1);
-                mOperands.addAll(base.mOperands);
+                mOperands = base.mOperands;
             }
         }
 
@@ -352,8 +349,7 @@ public class Operation
             if (from.hasOperands()) {
                 optionals.set(1);
                 modified.set(1);
-                mOperands.clear();
-                mOperands.addAll(from.getOperands());
+                mOperands = from.getOperands();
             }
             return this;
         }
@@ -430,8 +426,7 @@ public class Operation
 
             optionals.set(1);
             modified.set(1);
-            mOperands.clear();
-            mOperands.addAll(value);
+            mOperands = com.google.common.collect.ImmutableList.copyOf(value);
             return this;
         }
 
@@ -445,8 +440,9 @@ public class Operation
         public _Builder addToOperands(net.morimekta.test.providence.core.calculator.Operand... values) {
             optionals.set(1);
             modified.set(1);
+            java.util.List<net.morimekta.test.providence.core.calculator.Operand> _container = mutableOperands();
             for (net.morimekta.test.providence.core.calculator.Operand item : values) {
-                mOperands.add(item);
+                _container.add(item);
             }
             return this;
         }
@@ -478,7 +474,7 @@ public class Operation
         public _Builder clearOperands() {
             optionals.clear(1);
             modified.set(1);
-            mOperands.clear();
+            mOperands = null;
             return this;
         }
 
@@ -487,9 +483,15 @@ public class Operation
          *
          * @return The field builder
          */
-        public net.morimekta.providence.descriptor.PList.Builder<net.morimekta.test.providence.core.calculator.Operand> mutableOperands() {
+        public java.util.List<net.morimekta.test.providence.core.calculator.Operand> mutableOperands() {
             optionals.set(1);
             modified.set(1);
+
+            if (mOperands == null) {
+                mOperands = new java.util.LinkedList<>();
+            } else if (!(mOperands instanceof java.util.LinkedList)) {
+                mOperands = new java.util.LinkedList<>(mOperands);
+            }
             return mOperands;
         }
 
@@ -604,15 +606,17 @@ public class Operation
                     }
                     case 2: {
                         if (type == 15) {
-                            byte t_2 = reader.expectByte();
-                            if (t_2 == 12) {
-                                final int len_1 = reader.expectUInt32();
-                                for (int i_3 = 0; i_3 < len_1; ++i_3) {
-                                    net.morimekta.test.providence.core.calculator.Operand key_4 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operand.kDescriptor, strict);
-                                    mOperands.add(key_4);
+                            net.morimekta.providence.descriptor.PList.DefaultBuilder<net.morimekta.test.providence.core.calculator.Operand> b_1 = new net.morimekta.providence.descriptor.PList.DefaultBuilder<>();
+                            byte t_3 = reader.expectByte();
+                            if (t_3 == 12) {
+                                final int len_2 = reader.expectUInt32();
+                                for (int i_4 = 0; i_4 < len_2; ++i_4) {
+                                    net.morimekta.test.providence.core.calculator.Operand key_5 = net.morimekta.providence.serializer.rw.BinaryFormatUtils.readMessage(reader, net.morimekta.test.providence.core.calculator.Operand.kDescriptor, strict);
+                                    b_1.add(key_5);
                                 }
+                                mOperands = b_1.build();
                             } else {
-                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_2) + " for calculator.Operation.operands, should be struct(12)");
+                                throw new net.morimekta.providence.serializer.SerializerException("Wrong item type " + net.morimekta.providence.serializer.rw.BinaryType.asString(t_3) + " for calculator.Operation.operands, should be struct(12)");
                             }
                             optionals.set(1);
                         } else {
