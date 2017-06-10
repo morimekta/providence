@@ -311,6 +311,7 @@ public class CalculateException
     public static class _Builder
             extends net.morimekta.providence.PMessageBuilder<CalculateException,_Field>
             implements net.morimekta.providence.serializer.rw.BinaryReader {
+        private Throwable cause;
         private java.util.BitSet optionals;
         private java.util.BitSet modified;
 
@@ -492,6 +493,17 @@ public class CalculateException
             return mOperation_builder;
         }
 
+        /**
+         * Initializes the cause of the calculator.CalculateException
+         *
+         * @param cause The cause
+         * @return Builder instance
+         */
+        public _Builder initCause(Throwable cause) {
+            this.cause = cause;
+            return this;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == this) return true;
@@ -634,7 +646,21 @@ public class CalculateException
 
         @Override
         public CalculateException build() {
-            return new CalculateException(this);
+            CalculateException e = new CalculateException(this);
+
+            try {
+                StackTraceElement[] stackTrace = e.getStackTrace();
+                StackTraceElement[] subTrace = new StackTraceElement[stackTrace.length - 1];
+                System.arraycopy(stackTrace, 1, subTrace, 0, subTrace.length);
+                e.setStackTrace(subTrace);
+            } catch (Throwable ignored) {
+            }
+
+            if (cause != null) {
+                e.initCause(cause);
+            }
+
+            return e;
         }
     }
 }

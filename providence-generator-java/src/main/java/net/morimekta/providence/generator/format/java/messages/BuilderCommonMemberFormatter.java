@@ -72,6 +72,9 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
         if (message.isUnion()) {
             appendUnionFields(message);
         } else {
+            if (message.isException()) {
+                appendExceptionFields(message);
+            }
             appendStructFields(message);
         }
         appendModifiedFields(message);
@@ -107,7 +110,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
             appendMutableGetters(message, field);
         }
         if( message.isUnion() ) {
-            appendIsModified(message);
+            appendIsUnionModified(message);
+        }
+        if (message.isException()) {
+            appendInitCause(message);
         }
         appendEquals(message);
         appendHashCode(message);
@@ -121,9 +127,29 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     private void appendBuilderBuild(JMessage<?> message) {
         writer.appendln("@Override")
               .formatln("public %s build() {", message.instanceType())
-              .begin()
-              .formatln("return new %s(this);", message.instanceType())
-              .end()
+              .begin();
+        if (message.isException()) {
+            writer.formatln("%s e = new %s(this);", message.instanceType(), message.instanceType())
+                  .newline();
+
+            writer.appendln("try {")
+                  .appendln("    StackTraceElement[] stackTrace = e.getStackTrace();")
+                  .appendln("    StackTraceElement[] subTrace = new StackTraceElement[stackTrace.length - 1];")
+                  .appendln("    System.arraycopy(stackTrace, 1, subTrace, 0, subTrace.length);")
+                  .appendln("    e.setStackTrace(subTrace);")
+                  .appendln("} catch (Throwable ignored) {")
+                  .appendln("}")
+                  .newline();
+
+            writer.appendln("if (cause != null) {")
+                  .appendln("    e.initCause(cause);")
+                  .appendln("}")
+                  .newline()
+                  .appendln("return e;");
+        } else {
+            writer.formatln("return new %s(this);", message.instanceType());
+        }
+        writer.end()
               .appendln('}');
     }
 
@@ -194,6 +220,10 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
     private void appendUnionFields(JMessage<?> message) {
         writer.formatln("private _Field %s;", UNION_FIELD)
               .newline();
+    }
+
+    private void appendExceptionFields(JMessage<?> message) {
+        writer.formatln("private Throwable cause;");
     }
 
     private void appendStructFields(JMessage<?> message) {
@@ -470,7 +500,7 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
               .newline();
     }
 
-    private void appendIsModified(JMessage message) {
+    private void appendIsUnionModified(JMessage message) {
         BlockCommentBuilder comment = new BlockCommentBuilder(writer);
         comment.comment("Checks if " + message.descriptor().getName() + " has been modified since the _Builder " +
                         "was created.");
@@ -654,6 +684,20 @@ public class BuilderCommonMemberFormatter implements MessageMemberFormatter {
 
         writer.end()
               .appendln('}')
+              .newline();
+    }
+
+    private void appendInitCause(JMessage<?> message) {
+        new BlockCommentBuilder(writer)
+                .comment("Initializes the cause of the " + message.descriptor().getQualifiedName())
+                .newline()
+                .param_("cause", "The cause")
+                .return_("Builder instance")
+                .finish();
+        writer.appendln("public _Builder initCause(Throwable cause) {")
+              .appendln("    this.cause = cause;")
+              .appendln("    return this;")
+              .appendln("}")
               .newline();
     }
 }
