@@ -78,8 +78,10 @@ public class CommonMemberFormatter implements MessageMemberFormatter {
             writer.appendln(JAnnotation.DEPRECATED);
         }
         writer.appendln("@SuppressWarnings(\"unused\")");
-        if (options.generated_annotation) {
+        if (options.generated_annotation_version) {
             writer.formatln("@%s(\"providence java generator %s\")", Generated.class.getName(), version);
+        } else {
+            writer.formatln("@%s(\"providence java generator\")", Generated.class.getName());
         }
     }
 

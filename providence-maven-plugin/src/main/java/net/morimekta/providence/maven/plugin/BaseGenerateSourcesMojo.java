@@ -113,10 +113,10 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
     protected boolean hazelcast_portable;
 
     /**
-     * If true add generated annotations to generated files.
+     * If true add version to generated annotations.
      */
     @Parameter(defaultValue = "false")
-    protected boolean generated_annotation;
+    protected boolean generated_annotation_version;
 
     /**
      * Dependencies to providence artifacts. 'providence' classifier and 'zip'
@@ -263,7 +263,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             options.jackson = jackson;
             options.rw_binary = rw_binary;
             options.hazelcast_portable = hazelcast_portable;
-            options.generated_annotation = generated_annotation;
+            options.generated_annotation_version = generated_annotation_version;
 
             Generator generator = new JavaGenerator(fileManager, loader.getRegistry(), options);
 
