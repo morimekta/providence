@@ -142,8 +142,10 @@ public class MyMessage {
      * are:
      *
      * bool: false,
-     * i8 - i64: 0
+     * i8 - i64: 0,
      * double: 0.0
+     *
+     * Note that boolean fields are prefixed with 'is', not 'get'.
      */
     public int getMyField();
 
@@ -153,15 +155,15 @@ public class MyMessage {
      * because in the built object, they are always present. Optional values
      * will return true if and only of the value was set in the builder.
      * And default values (no requirement indicator) will always be present
-     * if it's a primitive value, and behave as optional if non-primitive
-     * value (string, binary, enum and message).
+     * if it's a primitive value, and behave as optional if non-trivial
+     * value (enum and message) unless an explicit default was set.
      */
     public boolean hasMyField();
 
     // ---- CONTAINERS ----
 
     /**
-     * Containers will also have an extra method.
+     * Containers will also have an extra method for getting number of entries.
      *
      * The entry count returns the number of entries in the container, or 0
      * if the container is not present.
@@ -206,7 +208,7 @@ MyMessage._Builder mutator = my_message.mutate();
 
 // This is primarily there to let serializers etc have access to the message
 // builders.
-MyMessage._Builder builder = MyMessage.kDescriptor.factory().builder();
+MyMessage._Builder builder = MyMessage.kDescriptor.builder();
 ```
 
 The `Builder` extends the PMessageBuilder class, and will in addition have a
@@ -217,8 +219,8 @@ set of methods generated as field setters.
 public static class _Builder {
     /**
      * The field setter will set the field value. For non-primitive values,
-     * setting it to null will be the same as clearing the field. Primitive
-     * fields will only use the primitivy value type, and explicitly set
+     * setting it to null will be the same as clearing the field. Native
+     * fields will only use the primitive value type, and explicitly set
      * the value.
      */
     public _Builder setMyField(int value);
@@ -228,6 +230,23 @@ public static class _Builder {
      * field is explicitly not set after the call.
      */
     public _Builder clearMyField();
+
+    // -- primitives --
+
+    /**
+     * For convenience, a simple getter for primitive values and enums is
+     * provided. Note that it is prefixed 'get' even for boolean fields.
+     */
+    public String getMyField();
+
+    // -- messages --
+
+    /**
+     * Message fields on the other hand can return the message builder for
+     * that field. Changes to the given builder will be reflected in the
+     * built message.
+     */
+    public MyMessage._Builder mutableMyField();
 
     // ---- CONTAINERS ----
 
@@ -248,21 +267,29 @@ public static class _Builder {
      */
     public _Builder clearMyContainer();
 
+    /**
+     * For containers the mutable collection instance can be fetched with
+     * the mutable* method. It will transform an immutable instance into
+     * the appropriate mutable variant if needed.
+     */
+    public List<String> mutableMyContainer();
+
     // -- lists and sets --
 
     /**
-     * Add entries to the list or set. The field is present even if no values
-     * were given, and is still empty. Values must be valid, otherwise
-     * ClassCastException is thrown.
+     * Add entries to the list or set. Note that when adding by generic
+     * collection there is no item type checking. And adding with the
+     * (Type... values) will instantiate the container builder and
+     * set the field even if there are not values, as if the subsequent
+     * method was called with an empty collection.
      */
     public _Builder addToMyContainer(int... values);
+    public _Builder addToMyContainer(Collection<Integer> values);
 
     // -- maps --
 
     /**
-     * Put the key / value pair into the map. The field is marked as present
-     * (key / value pair must be valid, otherwise ClassCastException is
-     * thrown).
+     * Put the key / value pair into the map.
      */
     public _Builder putInMyContainer(int key, int value);
 }
