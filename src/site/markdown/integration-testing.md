@@ -40,16 +40,16 @@ serialization time. Lower is better.
 ```
                            read          write            SUM
         name        :   pvd   thr  --  pvd   thr   =   pvd   thr
-              binary:   1.23  1.00 --  0.86  1.00  =   1.04  1.00
-         fast_binary:   1.91       --  1.40        =   1.65
-      tuple_protocol:   2.29  0.91 --  1.80  0.89  =   2.04  0.90
-     binary_protocol:   2.61  1.00 --  2.23  1.00  =   2.42  1.00
-    compact_protocol:   2.74  1.11 --  2.16  0.92  =   2.45  1.01
-                json:   6.01       --  6.84        =   6.42
-       json_protocol:   7.18  5.26 --  6.67  5.07  =   6.92  6.12
-              pretty:  10.38       --  7.94        =   9.16
-          json_named:   6.81       -- 11.90        =   9.35
-         json_pretty:   9.25       -- 14.14        =  11.69
+              binary:   1.18  1.00 --  0.84  1.00  =   1.01  1.00
+         fast_binary:   1.46       --  1.45        =   1.45
+      tuple_protocol:   1.90  0.90 --  1.77  0.81  =   1.84  0.85
+     binary_protocol:   2.22  0.99 --  2.19  1.00  =   2.20  0.99
+    compact_protocol:   2.42  1.13 --  2.18  0.94  =   2.30  1.04
+                json:   7.48       --  5.86        =   6.67
+       json_protocol:   6.90  5.45 --  6.79  5.28  =   6.85  5.36
+          json_named:   8.77       --  6.38        =   7.57
+              pretty:  10.11       --  7.86        =   8.98
+         json_pretty:  12.85       --  8.62        =  10.74
 ```
 
 **NOTE:** Since the test is for the *speed* of the serialization, we are only
