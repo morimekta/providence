@@ -686,14 +686,13 @@
                         <include>net/morimekta/providence/**/*</include>
                     </includes>
                     <excludes>
-                        <exclude>**/test/java/**/*</exclude>
-                        <exclude>**/java-gen/**/*</exclude>
-                        <!-- actually only for providence-reflect -->
-                        <exclude>**/main/model/**/*</exclude>
                         <!-- actually only for providence-core -->
                         <exclude>**/PApplicationException*</exclude>
                         <exclude>**/PApplicationExceptionType*</exclude>
                         <exclude>**/PServiceCallType*</exclude>
+                        <!-- actually only for providence-reflect -->
+                        <exclude>net/morimekta/providence/model/*</exclude>
+                        <exclude>net/morimekta/providence/model/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -841,14 +840,13 @@
                                 <include>net/morimekta/providence/**/*</include>
                             </includes>
                             <excludes>
-                                <exclude>**/test/java/**/*</exclude>
-                                <exclude>**/java-gen/**/*</exclude>
-                                <!-- actually only for providence-reflect -->
-                                <exclude>**/main/model/**/*</exclude>
                                 <!-- actually only for providence-core -->
                                 <exclude>**/PApplicationException*</exclude>
                                 <exclude>**/PApplicationExceptionType*</exclude>
                                 <exclude>**/PServiceCallType*</exclude>
+                                <!-- actually only for providence-reflect -->
+                                <exclude>net/morimekta/providence/model/*</exclude>
+                                <exclude>net/morimekta/providence/model/**/*</exclude>
                             </excludes>
                         </configuration>
                     </reportSet>
