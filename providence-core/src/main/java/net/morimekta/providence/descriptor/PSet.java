@@ -21,7 +21,6 @@
 package net.morimekta.providence.descriptor;
 
 import net.morimekta.providence.PBuilder;
-import net.morimekta.providence.PBuilderFactory;
 import net.morimekta.providence.PType;
 
 import com.google.common.collect.ImmutableSet;
@@ -32,17 +31,18 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Descriptor for a set with item type.
  */
 public class PSet<Item> extends PContainer<Set<Item>> {
-    private final BuilderFactory<Item> builderFactory;
+    private final Supplier<Builder<Item>> builderSupplier;
 
     public PSet(PDescriptorProvider itemType,
-                BuilderFactory<Item> builderFactory) {
+                Supplier<Builder<Item>> builderSupplier) {
         super(itemType);
-        this.builderFactory = builderFactory;
+        this.builderSupplier = builderSupplier;
     }
 
     @Nonnull
@@ -84,25 +84,32 @@ public class PSet<Item> extends PContainer<Set<Item>> {
         return PSet.class.hashCode() + itemDescriptor().hashCode();
     }
 
+    @Override
+    public Builder<Item> builder() {
+        return builderSupplier.get();
+    }
+
+    /**
+     * Container builder used in serialization.
+     *
+     * @param <I> The item type.
+     */
     public interface Builder<I> extends PBuilder<Set<I>> {
         @Nonnull
         Builder<I> add(@Nonnull I value);
         @Nonnull
         Builder<I> addAll(@Nonnull Collection<I> items);
-        @Nonnull
-        Builder<I> clear();
 
         @Nonnull
         @Override
         Set<I> build();
     }
 
-    private interface BuilderFactory<I> extends PBuilderFactory<Set<I>> {
-        @Nonnull
-        @Override
-        Builder<I> builder();
-    }
-
+    /**
+     * Default builder returning an ImmutableSet.
+     *
+     * @param <I> The item type.
+     */
     public static class DefaultBuilder<I> implements Builder<I> {
         private ImmutableSet.Builder<I> builder;
 
@@ -126,18 +133,16 @@ public class PSet<Item> extends PContainer<Set<Item>> {
 
         @Nonnull
         @Override
-        public Builder<I> clear() {
-            builder = ImmutableSet.builder();
-            return this;
-        }
-
-        @Nonnull
-        @Override
         public Set<I> build() {
             return builder.build();
         }
     }
 
+    /**
+     * Default builder returning an ImmutableSortedSet.
+     *
+     * @param <I> The item type.
+     */
     public static class SortedBuilder<I extends Comparable<I>> implements Builder<I> {
         private ImmutableSortedSet.Builder<I> builder;
 
@@ -161,24 +166,18 @@ public class PSet<Item> extends PContainer<Set<Item>> {
 
         @Nonnull
         @Override
-        public Builder<I> clear() {
-            builder = ImmutableSortedSet.naturalOrder();
-            return this;
-        }
-
-        @Nonnull
-        @Override
         public Set<I> build() {
             return builder.build();
         }
     }
 
+    /**
+     * Default builder returning an ImmutableSet. The immutable set is
+     * order preserving.
+     *
+     * @param <I> The item type.
+     */
     public static class OrderedBuilder<I> extends DefaultBuilder<I> {
-    }
-
-    @Override
-    public Builder<Item> builder() {
-        return builderFactory.builder();
     }
 
     public static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc) {
@@ -194,7 +193,7 @@ public class PSet<Item> extends PContainer<Set<Item>> {
     }
 
     private static <I> PContainerProvider<Set<I>, PSet<I>> provider(PDescriptorProvider itemDesc,
-                                                                      BuilderFactory<I> builderFactory) {
+                                                                    Supplier<Builder<I>> builderFactory) {
         return new PContainerProvider<>(new PSet<>(itemDesc, builderFactory));
     }
 }

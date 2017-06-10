@@ -28,12 +28,14 @@ import org.junit.runner.Description;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.lang.Math.abs;
@@ -409,8 +411,8 @@ public class MessageGenerator extends TestWatcher {
                 Supplier<Object> itemSupplier = getValueSupplier(set.itemDescriptor());
                 return () -> {
                     int num = nextCollectionSize();
-                    // Maps does not necessary allow conflicting keys.
-                    HashSet<Object> builder = new HashSet<>();
+                    // Sets does not necessary allow conflicting items.
+                    Set<Object> builder = new LinkedHashSet<>();
                     for (int i = 0; i < num; ++i) {
                         builder.add(itemSupplier.get());
                     }
@@ -424,14 +426,11 @@ public class MessageGenerator extends TestWatcher {
                 Supplier<Object> itemSupplier = getValueSupplier(list.itemDescriptor());
                 return () -> {
                     int num = nextCollectionSize();
-                    // Maps does not necessary allow conflicting keys.
-                    List<Object> builder = new LinkedList<>();
+                    PList.Builder<Object> builder = list.builder();
                     for (int i = 0; i < num; ++i) {
                         builder.add(itemSupplier.get());
                     }
-                    return list.builder()
-                               .addAll(builder)
-                               .build();
+                    return builder.build();
                 };
             }
             case MAP: {
@@ -441,7 +440,7 @@ public class MessageGenerator extends TestWatcher {
                 return () -> {
                     int num = nextCollectionSize();
                     // Maps does not necessary allow conflicting keys.
-                    HashMap<Object, Object> builder = new HashMap<>();
+                    Map<Object, Object> builder = new LinkedHashMap<>();
                     for (int i = 0; i < num; ++i) {
                         builder.put(keySupplier.get(), itemSupplier.get());
                     }
