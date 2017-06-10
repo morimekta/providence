@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.core;
 
+@javax.annotation.Generated("providence java generator")
 public enum Value
         implements net.morimekta.providence.PEnumValue<Value> {
     FIRST(1, "FIRST"),

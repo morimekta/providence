@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * typedef &lt;type&gt; &lt;name&gt;
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class TypedefType
         implements net.morimekta.providence.PMessage<TypedefType,TypedefType._Field>,
                    Comparable<TypedefType>,

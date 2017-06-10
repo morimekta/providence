@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ContainerService {
     public interface Iface {
         /**
@@ -183,6 +184,7 @@ public class ContainerService {
 
     // type --> ContainerService.load.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _load_request
             implements net.morimekta.providence.PMessage<_load_request,_load_request._Field>,
                        Comparable<_load_request>,
@@ -664,6 +666,7 @@ public class ContainerService {
 
     // type <-- ContainerService.load.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _load_response
             implements net.morimekta.providence.PUnion<_load_response,_load_response._Field>,
                        Comparable<_load_response>,

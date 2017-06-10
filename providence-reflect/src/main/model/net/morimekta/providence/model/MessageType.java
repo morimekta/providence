@@ -6,6 +6,7 @@ package net.morimekta.providence.model;
  * }
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class MessageType
         implements net.morimekta.providence.PMessage<MessageType,MessageType._Field>,
                    Comparable<MessageType>,

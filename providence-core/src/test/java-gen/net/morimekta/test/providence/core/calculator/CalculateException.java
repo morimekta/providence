@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class CalculateException
         extends Exception
         implements net.morimekta.providence.PMessage<CalculateException,CalculateException._Field>,

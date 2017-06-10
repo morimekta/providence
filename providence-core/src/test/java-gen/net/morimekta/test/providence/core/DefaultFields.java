@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class DefaultFields
         implements net.morimekta.providence.PMessage<DefaultFields,DefaultFields._Field>,
                    Comparable<DefaultFields>,

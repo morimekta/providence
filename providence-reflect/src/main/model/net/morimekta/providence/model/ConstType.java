@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * const &lt;type&gt; &lt;name&gt; = &lt;value&gt;
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ConstType
         implements net.morimekta.providence.PMessage<ConstType,ConstType._Field>,
                    Comparable<ConstType>,

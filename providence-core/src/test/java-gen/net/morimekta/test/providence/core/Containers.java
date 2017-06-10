@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Containers
         implements net.morimekta.providence.PMessage<Containers,Containers._Field>,
                    Comparable<Containers>,

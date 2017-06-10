@@ -4,6 +4,7 @@ package net.morimekta.providence.model;
  * ( &lt;enum&gt; | &lt;typedef&gt; | &lt;struct&gt; | &lt;service&gt; | &lt;const&gt; )
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Declaration
         implements net.morimekta.providence.PUnion<Declaration,Declaration._Field>,
                    Comparable<Declaration>,

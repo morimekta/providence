@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class OptionalFields
         implements net.morimekta.providence.PMessage<OptionalFields,OptionalFields._Field>,
                    Comparable<OptionalFields>,

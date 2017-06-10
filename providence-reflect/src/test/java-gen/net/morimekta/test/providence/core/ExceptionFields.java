@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ExceptionFields
         extends Exception
         implements net.morimekta.providence.PMessage<ExceptionFields,ExceptionFields._Field>,

@@ -5,6 +5,7 @@ package net.morimekta.providence;
  * lets the server or client select the proper message to be serialized or
  * deserialized from the service method descriptor.
  */
+@javax.annotation.Generated("providence java generator")
 public enum PServiceCallType
         implements net.morimekta.providence.PEnumValue<PServiceCallType> {
     /**

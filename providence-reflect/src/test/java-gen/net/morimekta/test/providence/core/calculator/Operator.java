@@ -1,5 +1,6 @@
 package net.morimekta.test.providence.core.calculator;
 
+@javax.annotation.Generated("providence java generator")
 public enum Operator
         implements net.morimekta.providence.PEnumValue<Operator> {
     IDENTITY(1, "IDENTITY"),

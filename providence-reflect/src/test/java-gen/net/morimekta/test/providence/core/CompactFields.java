@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class CompactFields
         implements net.morimekta.providence.PMessage<CompactFields,CompactFields._Field>,
                    net.morimekta.providence.serializer.json.JsonCompactible,

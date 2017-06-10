@@ -3,6 +3,7 @@ package net.morimekta.providence;
 /**
  * General type of exception on the application level.
  */
+@javax.annotation.Generated("providence java generator")
 public enum PApplicationExceptionType
         implements net.morimekta.providence.PEnumValue<PApplicationExceptionType> {
     /**

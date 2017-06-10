@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class ConsumeAll
         implements net.morimekta.providence.PMessage<ConsumeAll,ConsumeAll._Field>,
                    Comparable<ConsumeAll>,

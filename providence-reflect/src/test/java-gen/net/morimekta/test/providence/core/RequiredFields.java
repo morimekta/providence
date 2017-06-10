@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class RequiredFields
         implements net.morimekta.providence.PMessage<RequiredFields,RequiredFields._Field>,
                    Comparable<RequiredFields>,

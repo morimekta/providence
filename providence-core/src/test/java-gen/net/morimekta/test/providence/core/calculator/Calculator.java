@@ -1,6 +1,7 @@
 package net.morimekta.test.providence.core.calculator;
 
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class Calculator {
     public interface Iface {
         /**
@@ -249,6 +250,7 @@ public class Calculator {
 
     // type --> Calculator.calculate.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _calculate_request
             implements net.morimekta.providence.PMessage<_calculate_request,_calculate_request._Field>,
                        Comparable<_calculate_request>,
@@ -730,6 +732,7 @@ public class Calculator {
 
     // type <-- Calculator.calculate.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _calculate_response
             implements net.morimekta.providence.PUnion<_calculate_response,_calculate_response._Field>,
                        Comparable<_calculate_response>,
@@ -1377,6 +1380,7 @@ public class Calculator {
 
     // type --> Calculator.iamalive.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _iamalive_request
             implements net.morimekta.providence.PMessage<_iamalive_request,_iamalive_request._Field>,
                        Comparable<_iamalive_request>,
@@ -1714,6 +1718,7 @@ public class Calculator {
 
     // type --> Calculator.ping.request
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _ping_request
             implements net.morimekta.providence.PMessage<_ping_request,_ping_request._Field>,
                        Comparable<_ping_request>,
@@ -2051,6 +2056,7 @@ public class Calculator {
 
     // type <-- Calculator.ping.response
     @SuppressWarnings("unused")
+    @javax.annotation.Generated("providence java generator")
     protected static class _ping_response
             implements net.morimekta.providence.PUnion<_ping_response,_ping_response._Field>,
                        Comparable<_ping_response>,

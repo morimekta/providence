@@ -5,6 +5,7 @@ package net.morimekta.providence;
  * other server-side service call issues.
  */
 @SuppressWarnings("unused")
+@javax.annotation.Generated("providence java generator")
 public class PApplicationException
         extends java.io.IOException
         implements net.morimekta.providence.PMessage<PApplicationException,PApplicationException._Field>,
