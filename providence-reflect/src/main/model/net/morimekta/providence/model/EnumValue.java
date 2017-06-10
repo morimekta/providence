@@ -13,18 +13,18 @@ public class EnumValue
     private final static long serialVersionUID = -4079600082644582517L;
 
     private final static String kDefaultName = "";
-    private final static int kDefaultValue = 0;
+    private final static int kDefaultId = 0;
 
     private final String mDocumentation;
     private final String mName;
-    private final Integer mValue;
+    private final Integer mId;
     private final java.util.Map<String,String> mAnnotations;
 
     private volatile int tHashCode;
 
     public EnumValue(String pDocumentation,
                      String pName,
-                     Integer pValue,
+                     Integer pId,
                      java.util.Map<String,String> pAnnotations) {
         mDocumentation = pDocumentation;
         if (pName != null) {
@@ -32,7 +32,7 @@ public class EnumValue
         } else {
             mName = kDefaultName;
         }
-        mValue = pValue;
+        mId = pId;
         if (pAnnotations != null) {
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(pAnnotations);
         } else {
@@ -47,7 +47,7 @@ public class EnumValue
         } else {
             mName = kDefaultName;
         }
-        mValue = builder.mValue;
+        mId = builder.mId;
         if (builder.isSetAnnotations()) {
             mAnnotations = com.google.common.collect.ImmutableSortedMap.copyOf(builder.mAnnotations);
         } else {
@@ -77,15 +77,15 @@ public class EnumValue
         return mName;
     }
 
-    public boolean hasValue() {
-        return mValue != null;
+    public boolean hasId() {
+        return mId != null;
     }
 
     /**
      * @return The field value
      */
-    public int getValue() {
-        return hasValue() ? mValue : kDefaultValue;
+    public int getId() {
+        return hasId() ? mId : kDefaultId;
     }
 
     public int numAnnotations() {
@@ -108,7 +108,7 @@ public class EnumValue
         switch(key) {
             case 1: return hasDocumentation();
             case 2: return true;
-            case 3: return hasValue();
+            case 3: return hasId();
             case 4: return hasAnnotations();
             default: return false;
         }
@@ -119,7 +119,7 @@ public class EnumValue
         switch(key) {
             case 1: return hasDocumentation() ? 1 : 0;
             case 2: return 1;
-            case 3: return hasValue() ? 1 : 0;
+            case 3: return hasId() ? 1 : 0;
             case 4: return numAnnotations();
             default: return 0;
         }
@@ -130,7 +130,7 @@ public class EnumValue
         switch(key) {
             case 1: return getDocumentation();
             case 2: return getName();
-            case 3: return getValue();
+            case 3: return getId();
             case 4: return getAnnotations();
             default: return null;
         }
@@ -143,7 +143,7 @@ public class EnumValue
         EnumValue other = (EnumValue) o;
         return java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                java.util.Objects.equals(mName, other.mName) &&
-               java.util.Objects.equals(mValue, other.mValue) &&
+               java.util.Objects.equals(mId, other.mId) &&
                java.util.Objects.equals(mAnnotations, other.mAnnotations);
     }
 
@@ -154,7 +154,7 @@ public class EnumValue
                     EnumValue.class,
                     _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
-                    _Field.VALUE, mValue,
+                    _Field.ID, mId,
                     _Field.ANNOTATIONS, mAnnotations);
         }
         return tHashCode;
@@ -183,10 +183,10 @@ public class EnumValue
            .append('\"')
            .append(net.morimekta.util.Strings.escape(mName))
            .append('\"');
-        if (hasValue()) {
+        if (hasId()) {
             out.append(',');
-            out.append("value:")
-               .append(mValue);
+            out.append("id:")
+               .append(mId);
         }
         if (hasAnnotations()) {
             out.append(',');
@@ -211,10 +211,10 @@ public class EnumValue
         c = mName.compareTo(other.mName);
         if (c != 0) return c;
 
-        c = Boolean.compare(mValue != null, other.mValue != null);
+        c = Boolean.compare(mId != null, other.mId != null);
         if (c != 0) return c;
-        if (mValue != null) {
-            c = Integer.compare(mValue, other.mValue);
+        if (mId != null) {
+            c = Integer.compare(mId, other.mId);
             if (c != 0) return c;
         }
 
@@ -246,10 +246,10 @@ public class EnumValue
         length += writer.writeUInt32(tmp_2.length());
         length += writer.writeBinary(tmp_2);
 
-        if (hasValue()) {
+        if (hasId()) {
             length += writer.writeByte((byte) 8);
             length += writer.writeShort((short) 3);
-            length += writer.writeInt(mValue);
+            length += writer.writeInt(mId);
         }
 
         if (hasAnnotations()) {
@@ -281,7 +281,7 @@ public class EnumValue
     public enum _Field implements net.morimekta.providence.descriptor.PField {
         DOCUMENTATION(1, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "documentation", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
         NAME(2, net.morimekta.providence.descriptor.PRequirement.REQUIRED, "name", net.morimekta.providence.descriptor.PPrimitive.STRING.provider(), null),
-        VALUE(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "value", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
+        ID(3, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "id", net.morimekta.providence.descriptor.PPrimitive.I32.provider(), null),
         ANNOTATIONS(4, net.morimekta.providence.descriptor.PRequirement.OPTIONAL, "annotations", net.morimekta.providence.descriptor.PMap.sortedProvider(net.morimekta.providence.descriptor.PPrimitive.STRING.provider(),net.morimekta.providence.descriptor.PPrimitive.STRING.provider()), null),
         ;
 
@@ -328,7 +328,7 @@ public class EnumValue
             switch (key) {
                 case 1: return _Field.DOCUMENTATION;
                 case 2: return _Field.NAME;
-                case 3: return _Field.VALUE;
+                case 3: return _Field.ID;
                 case 4: return _Field.ANNOTATIONS;
             }
             return null;
@@ -338,7 +338,7 @@ public class EnumValue
             switch (name) {
                 case "documentation": return _Field.DOCUMENTATION;
                 case "name": return _Field.NAME;
-                case "value": return _Field.VALUE;
+                case "id": return _Field.ID;
                 case "annotations": return _Field.ANNOTATIONS;
             }
             return null;
@@ -408,7 +408,7 @@ public class EnumValue
 
         private String mDocumentation;
         private String mName;
-        private Integer mValue;
+        private Integer mId;
         private java.util.Map<String,String> mAnnotations;
 
         /**
@@ -434,9 +434,9 @@ public class EnumValue
             }
             optionals.set(1);
             mName = base.mName;
-            if (base.hasValue()) {
+            if (base.hasId()) {
                 optionals.set(2);
-                mValue = base.mValue;
+                mId = base.mId;
             }
             if (base.hasAnnotations()) {
                 optionals.set(3);
@@ -457,10 +457,10 @@ public class EnumValue
             modified.set(1);
             mName = from.getName();
 
-            if (from.hasValue()) {
+            if (from.hasId()) {
                 optionals.set(2);
                 modified.set(2);
-                mValue = from.getValue();
+                mId = from.getId();
             }
 
             if (from.hasAnnotations()) {
@@ -588,57 +588,57 @@ public class EnumValue
         }
 
         /**
-         * Sets the value of value.
+         * Sets the value of id.
          *
          * @param value The new value
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder setValue(int value) {
+        public _Builder setId(int value) {
             optionals.set(2);
             modified.set(2);
-            mValue = value;
+            mId = value;
             return this;
         }
 
         /**
-         * Checks for presence of the value field.
+         * Checks for presence of the id field.
          *
-         * @return True if value has been set.
+         * @return True if id has been set.
          */
-        public boolean isSetValue() {
+        public boolean isSetId() {
             return optionals.get(2);
         }
 
         /**
-         * Checks if value has been modified since the _Builder was created.
+         * Checks if id has been modified since the _Builder was created.
          *
-         * @return True if value has been modified.
+         * @return True if id has been modified.
          */
-        public boolean isModifiedValue() {
+        public boolean isModifiedId() {
             return modified.get(2);
         }
 
         /**
-         * Clears the value field.
+         * Clears the id field.
          *
          * @return The builder
          */
         @javax.annotation.Nonnull
-        public _Builder clearValue() {
+        public _Builder clearId() {
             optionals.clear(2);
             modified.set(2);
-            mValue = null;
+            mId = null;
             return this;
         }
 
         /**
-         * Gets the value of the contained value.
+         * Gets the value of the contained id.
          *
          * @return The field value
          */
-        public int getValue() {
-            return isSetValue() ? mValue : kDefaultValue;
+        public int getId() {
+            return isSetId() ? mId : kDefaultId;
         }
 
         /**
@@ -730,7 +730,7 @@ public class EnumValue
             return java.util.Objects.equals(optionals, other.optionals) &&
                    java.util.Objects.equals(mDocumentation, other.mDocumentation) &&
                    java.util.Objects.equals(mName, other.mName) &&
-                   java.util.Objects.equals(mValue, other.mValue) &&
+                   java.util.Objects.equals(mId, other.mId) &&
                    java.util.Objects.equals(mAnnotations, other.mAnnotations);
         }
 
@@ -740,7 +740,7 @@ public class EnumValue
                     EnumValue.class, optionals,
                     _Field.DOCUMENTATION, mDocumentation,
                     _Field.NAME, mName,
-                    _Field.VALUE, mValue,
+                    _Field.ID, mId,
                     _Field.ANNOTATIONS, mAnnotations);
         }
 
@@ -760,7 +760,7 @@ public class EnumValue
             switch (key) {
                 case 1: setDocumentation((String) value); break;
                 case 2: setName((String) value); break;
-                case 3: setValue((int) value); break;
+                case 3: setId((int) value); break;
                 case 4: setAnnotations((java.util.Map<String,String>) value); break;
                 default: break;
             }
@@ -805,7 +805,7 @@ public class EnumValue
             switch (key) {
                 case 1: clearDocumentation(); break;
                 case 2: clearName(); break;
-                case 3: clearValue(); break;
+                case 3: clearId(); break;
                 case 4: clearAnnotations(); break;
                 default: break;
             }
@@ -867,10 +867,10 @@ public class EnumValue
                     }
                     case 3: {
                         if (type == 8) {
-                            mValue = reader.expectInt();
+                            mId = reader.expectInt();
                             optionals.set(2);
                         } else {
-                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.value, should be struct(12)");
+                            throw new net.morimekta.providence.serializer.SerializerException("Wrong type " + net.morimekta.providence.serializer.rw.BinaryType.asString(type) + " for model.EnumValue.id, should be struct(12)");
                         }
                         break;
                     }

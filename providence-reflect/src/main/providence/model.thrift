@@ -16,7 +16,7 @@ namespace java net.morimekta.providence.model
 struct EnumValue {
     1: optional string documentation;
     2: required string name;
-    3: optional i32 value;
+    3: optional i32    id;
     4: optional map<string,string> annotations (container = "SORTED");
 }
 
@@ -78,7 +78,7 @@ enum FieldRequirement {
  */
 struct FieldType {
     1: optional string documentation;
-    2: required i32 key;
+    2: required i32    key;
     3: optional FieldRequirement requirement = DEFAULT;
     4: required string type;
     5: required string name;

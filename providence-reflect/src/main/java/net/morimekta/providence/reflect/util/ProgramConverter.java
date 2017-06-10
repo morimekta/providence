@@ -102,9 +102,9 @@ public class ProgramConverter {
                                                                enumType.getAnnotations());
                     List<CEnumValue> values = new LinkedList<>();
                     for (EnumValue value : enumType.getValues()) {
-                        int v = value.hasValue() ? value.getValue() : nextValue;
+                        int v = value.hasId() ? value.getId() : nextValue;
                         nextValue = v + 1;
-                        values.add(new CEnumValue(value.getDocumentation(), value.getValue(), value.getName(), type, value.getAnnotations()));
+                        values.add(new CEnumValue(value.getDocumentation(), value.getId(), value.getName(), type, value.getAnnotations()));
                     }
                     type.setValues(values);
                     declaredTypes.add(type);

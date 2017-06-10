@@ -76,24 +76,24 @@ public class ThriftProgramParserTest {
                            "        {\n" +
                            "          documentation = \"line comment on enum\"\n" +
                            "          name = \"IDENTITY\"\n" +
-                           "          value = 1\n" +
+                           "          id = 1\n" +
                            "        },\n" +
                            "        {\n" +
                            "          documentation = \"Block comment on enum.\"\n" +
                            "          name = \"ADD\"\n" +
-                           "          value = 2\n" +
+                           "          id = 2\n" +
                            "        },\n" +
                            "        {\n" +
                            "          name = \"SUBTRACT\"\n" +
-                           "          value = 3\n" +
+                           "          id = 3\n" +
                            "        },\n" +
                            "        {\n" +
                            "          name = \"MULTIPLY\"\n" +
-                           "          value = 4\n" +
+                           "          id = 4\n" +
                            "        },\n" +
                            "        {\n" +
                            "          name = \"DIVIDE\"\n" +
-                           "          value = 5\n" +
+                           "          id = 5\n" +
                            "        }\n" +
                            "      ]\n" +
                            "    }\n" +
@@ -248,24 +248,24 @@ public class ThriftProgramParserTest {
                 "        {\n" +
                 "          documentation = \"line comment on enum\"\n" +
                 "          name = \"IDENTITY\"\n" +
-                "          value = 1\n" +
+                "          id = 1\n" +
                 "        },\n" +
                 "        {\n" +
                 "          documentation = \"Block comment on enum.\"\n" +
                 "          name = \"ADD\"\n" +
-                "          value = 2\n" +
+                "          id = 2\n" +
                 "        },\n" +
                 "        {\n" +
                 "          name = \"SUBTRACT\"\n" +
-                "          value = 3\n" +
+                "          id = 3\n" +
                 "        },\n" +
                 "        {\n" +
                 "          name = \"MULTIPLY\"\n" +
-                "          value = 4\n" +
+                "          id = 4\n" +
                 "        },\n" +
                 "        {\n" +
                 "          name = \"DIVIDE\"\n" +
-                "          value = 5\n" +
+                "          id = 5\n" +
                 "        }\n" +
                 "      ]\n" +
                 "    }\n" +
@@ -472,7 +472,7 @@ public class ThriftProgramParserTest {
                                 "      values = [\n" +
                                 "        {\n" +
                                 "          name = \"VAL\"\n" +
-                                "          value = 0\n" +
+                                "          id = 0\n" +
                                 "          annotations = {\n" +
                                 "            \"anno\": \"str\"\n" +
                                 "            \"anno.other\": \"other\"\n" +
@@ -645,14 +645,14 @@ public class ThriftProgramParserTest {
                      "      values = [\n" +
                      "        {\n" +
                      "          name = \"FIRST\"\n" +
-                     "          value = 0\n" +
+                     "          id = 0\n" +
                      "        },\n" + "        {\n" +
                      "          name = \"SECOND\"\n" +
-                     "          value = 1\n" +
+                     "          id = 1\n" +
                      "        },\n" +
                      "        {\n" +
                      "          name = \"THIRD\"\n" +
-                     "          value = 2\n" +
+                     "          id = 2\n" +
                      "        }\n" +
                      "      ]\n" +
                      "    }\n" +
@@ -663,15 +663,15 @@ public class ThriftProgramParserTest {
                      "      values = [\n" +
                      "        {\n" +
                      "          name = \"FIRST\"\n" +
-                     "          value = 5\n" +
+                     "          id = 5\n" +
                      "        },\n" +
                      "        {\n" +
                      "          name = \"SECOND\"\n" +
-                     "          value = 6\n" +
+                     "          id = 6\n" +
                      "        },\n" +
                      "        {\n" +
                      "          name = \"THIRD\"\n" +
-                     "          value = 7\n" +
+                     "          id = 7\n" +
                      "        }\n" +
                      "      ]\n" +
                      "    }\n" +
@@ -697,11 +697,11 @@ public class ThriftProgramParserTest {
                         "  2: i32 separatedName;\n" +
                         "---------^^^^^^^^^^^^^",
                         "conflicting_field_name.thrift");
-        assertBadThrfit("Error on line 6, pos 3: Field id 1 already exists in struct T\n" +
+        assertBadThrfit("Error on line 6, pos 3: Field id 1 already exists in T\n" +
                         "  1: i32 second;\n" +
                         "--^",
                         "duplicate_field_id.thrift");
-        assertBadThrfit("Error on line 5, pos 10: Field first already exists in struct T\n" +
+        assertBadThrfit("Error on line 5, pos 10: Field first already exists in T\n" +
                         "  2: i32 first;\n" +
                         "---------^^^^^",
                         "duplicate_field_name.thrift");
@@ -715,7 +715,7 @@ public class ThriftProgramParserTest {
                         "include \"valid_reference.thrift\"\n" +
                         "^^^^^^^",
                         "invalid_include.thrift");
-        assertBadThrfit("Error on line 4, pos 6: Unknown program valid_reference for type valid_reference.Message\n" +
+        assertBadThrfit("Error on line 4, pos 6: Unknown program 'valid_reference' for type valid_reference.Message\n" +
                         "  1: valid_reference.Message message;\n" +
                         "-----^^^^^^^^^^^^^^^^^^^^^^^",
                         "unknown_program.thrift");

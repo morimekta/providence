@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -109,7 +110,7 @@ public class ThriftProgramParser implements ProgramParser {
         }
         program.setProgramName(programName);
 
-        List<String> includeFiles = new LinkedList<>();
+        List<String> include_files = new LinkedList<>();
         Set<String> includedPrograms = new HashSet<>();
         Map<String, String> namespaces = new LinkedHashMap<>();
 
@@ -117,36 +118,36 @@ public class ThriftProgramParser implements ProgramParser {
 
         ThriftTokenizer tokenizer = new ThriftTokenizer(in);
 
-        boolean hasHeader = false;
+        boolean has_header = false;
         boolean hasDeclaration = false;
 
-        String documentation = null;
+        String doc_string = null;
         Token token;
         while ((token = tokenizer.next()) != null) {
             if (token.strEquals(kLineCommentStart)) {
-                documentation = parseDocLine(tokenizer, documentation);
+                doc_string = parseDocLine(tokenizer, doc_string);
                 continue;
             } else if (token.strEquals(kBlockCommentStart)) {
-                documentation = parseDocBlock(tokenizer);
+                doc_string = parseDocBlock(tokenizer);
                 continue;
             }
 
-            String id = token.asString();
-            if (!Model_Constants.kThriftKeywords.contains(id)) {
+            String keyword = token.asString();
+            if (!Model_Constants.kThriftKeywords.contains(keyword)) {
                 throw tokenizer.failure(token,
                                         "Unexpected token \'%s\'", token.asString());
             }
-            switch (id) {
+            switch (keyword) {
                 case kNamespace:
                     if (hasDeclaration) {
                         throw tokenizer.failure(token,
                                                 "Unexpected token 'namespace', expected type declaration");
                     }
-                    if (documentation != null && !hasHeader) {
-                        program.setDocumentation(documentation);
+                    if (doc_string != null && !has_header) {
+                        program.setDocumentation(doc_string);
                     }
-                    documentation = null;
-                    hasHeader = true;
+                    doc_string = null;
+                    has_header = true;
                     parseNamespace(tokenizer, namespaces);
                     break;
                 case kInclude:
@@ -154,48 +155,48 @@ public class ThriftProgramParser implements ProgramParser {
                         throw tokenizer.failure(token,
                                                 "Unexpected token 'include', expected type declaration");
                     }
-                    if (documentation != null && !hasHeader) {
-                        program.setDocumentation(documentation);
+                    if (doc_string != null && !has_header) {
+                        program.setDocumentation(doc_string);
                     }
-                    documentation = null;
-                    hasHeader = true;
-                    parseIncludes(tokenizer, includeFiles, file, includedPrograms, includeDirs);
+                    doc_string = null;
+                    has_header = true;
+                    parseIncludes(tokenizer, include_files, file, includedPrograms, includeDirs);
                     break;
                 case kTypedef:
-                    hasHeader = true;
+                    has_header = true;
                     hasDeclaration = true;
-                    parseTypedef(tokenizer, documentation, declarations, includedPrograms);
-                    documentation = null;
+                    parseTypedef(tokenizer, doc_string, declarations, includedPrograms);
+                    doc_string = null;
                     break;
                 case kEnum:
-                    hasHeader = true;
+                    has_header = true;
                     hasDeclaration = true;
-                    EnumType et = parseEnum(tokenizer, documentation);
+                    EnumType et = parseEnum(tokenizer, doc_string);
                     declarations.add(Declaration.withDeclEnum(et));
-                    documentation = null;
+                    doc_string = null;
                     break;
                 case kStruct:
                 case kUnion:
                 case kException:
-                    hasHeader = true;
+                    has_header = true;
                     hasDeclaration = true;
-                    MessageType st = parseMessage(tokenizer, token.asString(), documentation, includedPrograms);
+                    MessageType st = parseMessage(tokenizer, token.asString(), doc_string, includedPrograms);
                     declarations.add(Declaration.withDeclStruct(st));
-                    documentation = null;
+                    doc_string = null;
                     break;
                 case kService:
-                    hasHeader = true;
+                    has_header = true;
                     hasDeclaration = true;
-                    ServiceType srv = parseService(tokenizer, documentation, includedPrograms);
+                    ServiceType srv = parseService(tokenizer, doc_string, includedPrograms);
                     declarations.add(Declaration.withDeclService(srv));
-                    documentation = null;
+                    doc_string = null;
                     break;
                 case kConst:
-                    hasHeader = true;
+                    has_header = true;
                     hasDeclaration = true;
-                    ConstType cnst = parseConst(tokenizer, documentation, includedPrograms);
+                    ConstType cnst = parseConst(tokenizer, doc_string, includedPrograms);
                     declarations.add(Declaration.withDeclConst(cnst));
-                    documentation = null;
+                    doc_string = null;
                     break;
                 default:
                     throw tokenizer.failure(token,
@@ -207,8 +208,8 @@ public class ThriftProgramParser implements ProgramParser {
         if (namespaces.size() > 0) {
             program.setNamespaces(namespaces);
         }
-        if (includeFiles.size() > 0) {
-            program.setIncludes(includeFiles);
+        if (include_files.size() > 0) {
+            program.setIncludes(include_files);
         }
         if (declarations.size() > 0) {
             program.setDecl(declarations);
@@ -301,14 +302,14 @@ public class ThriftProgramParser implements ProgramParser {
                       .trim();
     }
 
-    private ServiceType parseService(ThriftTokenizer tokenizer, String comment, Set<String> includedPrograms) throws IOException, ParseException {
+    private ServiceType parseService(ThriftTokenizer tokenizer, String doc_string, Set<String> includedPrograms) throws IOException, ParseException {
         ServiceType._Builder service = ServiceType.builder();
 
-        if (comment != null) {
-            service.setDocumentation(comment);
-            comment = null;
+        if (doc_string != null) {
+            service.setDocumentation(doc_string);
+            doc_string = null;
         }
-        Token identifier = tokenizer.expectIdentifier("service identifier");
+        Token identifier = tokenizer.expectIdentifier("service name");
         service.setName(identifier.asString());
 
         if (tokenizer.peek("service start or extends").strEquals(kExtends)) {
@@ -326,17 +327,17 @@ public class ThriftProgramParser implements ProgramParser {
             if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             } else if (token.strEquals(kLineCommentStart)) {
-                comment = parseDocLine(tokenizer, comment);
+                doc_string = parseDocLine(tokenizer, doc_string);
                 continue;
             } else if (token.strEquals(kBlockCommentStart)) {
-                comment = parseDocBlock(tokenizer);
+                doc_string = parseDocBlock(tokenizer);
                 continue;
             }
 
             FunctionType._Builder method = FunctionType.builder();
-            if (comment != null) {
-                method.setDocumentation(comment);
-                comment = null;
+            if (doc_string != null) {
+                method.setDocumentation(doc_string);
+                doc_string = null;
             }
 
             if (token.strEquals(kOneway)) {
@@ -372,17 +373,17 @@ public class ThriftProgramParser implements ProgramParser {
                 if (token.isSymbol(Token.kParamsEnd)) {
                     break;
                 } else if (token.strEquals(kLineCommentStart)) {
-                    comment = parseDocLine(tokenizer, comment);
+                    doc_string = parseDocLine(tokenizer, doc_string);
                     continue;
                 } else if (token.strEquals(kBlockCommentStart)) {
-                    comment = parseDocBlock(tokenizer);
+                    doc_string = parseDocBlock(tokenizer);
                     continue;
                 }
 
                 FieldType._Builder field = FieldType.builder();
-                if (comment != null) {
-                    field.setDocumentation(comment);
-                    comment = null;
+                if (doc_string != null) {
+                    field.setDocumentation(doc_string);
+                    doc_string = null;
                 }
 
                 if (token.isInteger()) {
@@ -404,18 +405,7 @@ public class ThriftProgramParser implements ProgramParser {
                 if (tokenizer.peek("method param annotation")
                              .isSymbol(Token.kParamsStart)) {
                     tokenizer.next();
-                    char sep = Token.kParamsStart;
-                    while (sep != Token.kParamsEnd) {
-                        token = tokenizer.expect("annotation name",
-                                                 t -> t.isIdentifier() || t.isQualifiedIdentifier());
-                        name = token.asString();
-                        tokenizer.expectSymbol("", Token.kFieldValueSep);
-                        Token value = tokenizer.expectLiteral("annotation value");
-
-                        field.putInAnnotations(name, value.decodeLiteral(true));
-
-                        sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-                    }
+                    field.setAnnotations(parseAnnotations(tokenizer, "params"));
                 }
 
                 token = tokenizer.peek("method params");
@@ -425,38 +415,38 @@ public class ThriftProgramParser implements ProgramParser {
 
                 method.addToParams(field.build());
             }  // for each param
-            comment = null;
+            doc_string = null;
 
-            if (tokenizer.peek("parsing method exceptions")
+            if (tokenizer.peek("possible throws statement")
                          .strEquals(kThrows)) {
                 tokenizer.next();
-                tokenizer.expectSymbol("parsing method exceptions", Token.kParamsStart);
+                tokenizer.expectSymbol("throws group start", Token.kParamsStart);
 
                 int nextAutoExceptionKey = -1;
 
                 while (true) {
-                    token = tokenizer.expect("parsing method exception");
+                    token = tokenizer.expect("exception key, type or end throws");
 
                     if (token.isSymbol(Token.kParamsEnd)) {
                         break;
                     } else if (token.strEquals(kLineCommentStart)) {
-                        comment = parseDocLine(tokenizer, comment);
+                        doc_string = parseDocLine(tokenizer, doc_string);
                         continue;
                     } else if (token.strEquals(kBlockCommentStart)) {
-                        comment = parseDocBlock(tokenizer);
+                        doc_string = parseDocBlock(tokenizer);
                         continue;
                     }
 
                     FieldType._Builder field = FieldType.builder();
-                    if (comment != null) {
-                        field.setDocumentation(comment);
-                        comment = null;
+                    if (doc_string != null) {
+                        field.setDocumentation(doc_string);
+                        doc_string = null;
                     }
 
                     if (token.isInteger()) {
                         field.setKey((int) token.parseInteger());
-                        tokenizer.expectSymbol("reading method exception", Token.kKeyValueSep);
-                        token = tokenizer.expect("reading method exception type");
+                        tokenizer.expectSymbol("exception KV sep", Token.kKeyValueSep);
+                        token = tokenizer.expect("exception type");
                     } else {
                         if (requireFieldId) {
                             throw tokenizer.failure(token, "Missing exception ID in strict declaration");
@@ -465,33 +455,19 @@ public class ThriftProgramParser implements ProgramParser {
                     }
 
                     field.setType(parseType(tokenizer, token, includedPrograms));
-                    field.setName(tokenizer.expectIdentifier("reading method exception name")
+                    field.setName(tokenizer.expectIdentifier("exception name")
                                            .asString());
 
                     // Annotations.
-                    if (tokenizer.peek("reading method exception annotation")
+                    if (tokenizer.peek("exception annotation start")
                                  .isSymbol(Token.kParamsStart)) {
                         tokenizer.next();
-                        char sep = Token.kParamsStart;
-                        while (sep != Token.kParamsEnd) {
-                            token = tokenizer.expect("exception annotation name",
-                                                     t -> t.isIdentifier() || t.isQualifiedIdentifier());
-                            name = token.asString();
-                            tokenizer.expectSymbol("", Token.kFieldValueSep);
-                            Token value = tokenizer.expectLiteral("exception annotation value");
-
-                            field.putInAnnotations(name, value.decodeLiteral(true));
-
-                            sep = tokenizer.expectSymbol("exception annotation sep",
-                                                         Token.kParamsEnd,
-                                                         Token.kLineSep1,
-                                                         Token.kLineSep2);
-                        }
+                        field.setAnnotations(parseAnnotations(tokenizer, "exception"));
                     }
 
                     method.addToExceptions(field.build());
 
-                    token = tokenizer.peek("reading method exceptions");
+                    token = tokenizer.peek("method exceptions");
                     if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
                         tokenizer.next();
                     }
@@ -502,18 +478,8 @@ public class ThriftProgramParser implements ProgramParser {
             // Method Annotations.
             if (token.isSymbol(Token.kParamsStart)) {
                 tokenizer.next();
-                char sep = Token.kParamsStart;
-                while (sep != Token.kParamsEnd) {
-                    token = tokenizer.expect("annotation name", Token::isReferenceIdentifier);
-                    name = token.asString();
-                    tokenizer.expectSymbol("", Token.kFieldValueSep);
-                    Token value = tokenizer.expectLiteral("annotation value");
-
-                    method.putInAnnotations(name, value.decodeLiteral(true));
-
-                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-                }
-                token = tokenizer.peek("reading method params");
+                method.setAnnotations(parseAnnotations(tokenizer, "method"));
+                token = tokenizer.peek("method or service end");
             }
 
             service.addToMethods(method.build());
@@ -528,21 +494,30 @@ public class ThriftProgramParser implements ProgramParser {
             if (token.isSymbol(Token.kParamsStart)) {
                 // Method Annotations.
                 tokenizer.next();
-                char sep = Token.kParamsStart;
-                while (sep != Token.kParamsEnd) {
-                    token = tokenizer.expect("annotation name", Token::isReferenceIdentifier);
-                    String name = token.asString();
-                    tokenizer.expectSymbol("", Token.kFieldValueSep);
-                    Token value = tokenizer.expectLiteral("annotation value");
-
-                    service.putInAnnotations(name, value.decodeLiteral(true));
-
-                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-                }
+                service.setAnnotations(parseAnnotations(tokenizer, "service"));
             }
         }
 
         return service.build();
+    }
+
+    private Map<String,String> parseAnnotations(ThriftTokenizer tokenizer, String annotationsOn) throws IOException {
+        Map<String,String> annotations = new TreeMap<>();
+        char sep = Token.kParamsStart;
+        while (sep != Token.kParamsEnd) {
+            Token token = tokenizer.expect(annotationsOn + " annotation name", Token::isReferenceIdentifier);
+            String name = token.asString();
+            sep = tokenizer.expectSymbol(annotationsOn + " annotation KV, sep or end", Token.kFieldValueSep, Token.kParamsEnd, Token.kParamsEnd, Token.kLineSep1);
+            if (sep == Token.kFieldValueSep) {
+                Token value = tokenizer.expectLiteral(annotationsOn + " annotation value");
+                annotations.put(name, value.decodeLiteral(true));
+                sep = tokenizer.expectSymbol(annotationsOn + " annotation sep or end", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
+            } else {
+                annotations.put(name, "");
+            }
+        }
+
+        return annotations;
     }
 
     private void parseNamespace(ThriftTokenizer tokenizer, Map<String, String> namespaces) throws IOException {
@@ -555,7 +530,7 @@ public class ThriftProgramParser implements ProgramParser {
         }
 
         Token namespace = tokenizer.expect(
-                "parsing namespace",
+                "namespace",
                 t -> VALID_NAMESPACE.matcher(t.asString()).matches() ||
                      VALID_SDI_NAMESPACE.matcher(t.asString()).matches());
 
@@ -592,8 +567,8 @@ public class ThriftProgramParser implements ProgramParser {
 
     private void parseTypedef(ThriftTokenizer tokenizer, String comment, List<Declaration> declarations, Set<String> includedPrograms)
             throws IOException {
-        String type = parseType(tokenizer, tokenizer.expect("parsing typedef type."), includedPrograms);
-        Token id = tokenizer.expectIdentifier("parsing typedef identifier.");
+        String type = parseType(tokenizer, tokenizer.expect("typename"), includedPrograms);
+        Token id = tokenizer.expectIdentifier("typedef identifier");
 
         TypedefType typedef = TypedefType.builder()
                                          .setDocumentation(comment)
@@ -603,44 +578,44 @@ public class ThriftProgramParser implements ProgramParser {
         declarations.add(Declaration.withDeclTypedef(typedef));
     }
 
-    private EnumType parseEnum(ThriftTokenizer tokenizer, String comment) throws IOException {
-        String id = tokenizer.expectIdentifier("parsing enum identifier").asString();
+    private EnumType parseEnum(ThriftTokenizer tokenizer, String doc_string) throws IOException {
+        String enum_name = tokenizer.expectIdentifier("enum name").asString();
 
-        EnumType._Builder etb = EnumType.builder();
-        if (comment != null) {
-            etb.setDocumentation(comment);
-            comment = null;
+        EnumType._Builder enum_type = EnumType.builder();
+        if (doc_string != null) {
+            enum_type.setDocumentation(doc_string);
+            doc_string = null;
         }
-        etb.setName(id);
+        enum_type.setName(enum_name);
 
-        int nextValue = PEnumDescriptor.DEFAULT_FIRST_VALUE;
+        int nextValueID = PEnumDescriptor.DEFAULT_FIRST_VALUE;
 
-        tokenizer.expectSymbol("parsing enum " + id, Token.kMessageStart);
+        tokenizer.expectSymbol("enum start", Token.kMessageStart);
 
         if (!tokenizer.peek("").isSymbol(Token.kMessageEnd)) {
             while (true) {
-                Token token = tokenizer.expect("parsing enum " + id);
+                Token token = tokenizer.expect("enum value or end");
                 if (token.isSymbol(Token.kMessageEnd)) {
                     break;
                 } else if (token.strEquals(kLineCommentStart)) {
-                    comment = parseDocLine(tokenizer, comment);
+                    doc_string = parseDocLine(tokenizer, doc_string);
                 } else if (token.strEquals(kBlockCommentStart)) {
-                    comment = parseDocBlock(tokenizer);
+                    doc_string = parseDocBlock(tokenizer);
                 } else if (token.isIdentifier()) {
-                    EnumValue._Builder evb = EnumValue.builder();
-                    evb.setName(token.asString());
-                    if (comment != null) {
-                        evb.setDocumentation(comment);
-                        comment = null;
+                    EnumValue._Builder enum_value = EnumValue.builder();
+                    enum_value.setName(token.asString());
+                    if (doc_string != null) {
+                        enum_value.setDocumentation(doc_string);
+                        doc_string = null;
                     }
 
-                    int value = nextValue++;
-                    if (tokenizer.peek("parsing enum " + id)
+                    int value_id = nextValueID++;
+                    if (tokenizer.peek("enum value ID")
                                  .isSymbol(Token.kFieldValueSep)) {
                         tokenizer.next();
                         Token v = tokenizer.expectInteger("enum value");
-                        value = (int) v.parseInteger();
-                        nextValue = value + 1;
+                        value_id = (int) v.parseInteger();
+                        nextValueID = value_id + 1;
                     } else if (requireEnumValue) {
                         // So the token points at the token that *should* have been '='.
                         if (tokenizer.hasNext()) {
@@ -649,36 +624,24 @@ public class ThriftProgramParser implements ProgramParser {
                         throw tokenizer.failure(token, "Missing enum value in strict declaration");
                     }
 
-                    evb.setValue(value);
+                    enum_value.setId(value_id);
 
                     // Enum value annotations.
-                    if (tokenizer.peek("parsing enum " + id)
+                    if (tokenizer.peek("enum value annotation")
                                  .isSymbol(Token.kParamsStart)) {
                         tokenizer.next();
-                        char sep2 = Token.kParamsStart;
-                        while (sep2 != Token.kParamsEnd) {
-                            token = tokenizer.expect("annotation name", Token::isReferenceIdentifier);
-                            String name = token.asString();
-                            tokenizer.expectSymbol("", Token.kFieldValueSep);
-                            Token val = tokenizer.expectLiteral("annotation value");
-
-                            evb.putInAnnotations(name, val.decodeLiteral(true));
-
-                            sep2 = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-                        }
+                        enum_value.setAnnotations(parseAnnotations(tokenizer, "enum value"));
                     }
 
-                    etb.addToValues(evb.build());
+                    enum_type.addToValues(enum_value.build());
 
                     // Optional separator...
-                    token = tokenizer.peek("parsing enum " + id);
+                    token = tokenizer.peek("enum value or end");
                     if (token.isSymbol(Token.kLineSep1) || token.isSymbol(Token.kLineSep2)) {
                         tokenizer.next();
                     }
                 } else {
-                    throw tokenizer.failure(token,
-                                            "Unexpected token while parsing enum %d: %s",
-                                            id, token.asString());
+                    throw tokenizer.failure(token, "Unexpected token: %s", token.asString());
                 }
             }
         } // if has values.
@@ -686,39 +649,25 @@ public class ThriftProgramParser implements ProgramParser {
         Token token = tokenizer.peek();
         if (token != null && token.isSymbol(Token.kParamsStart)) {
             tokenizer.next();
-            char sep = token.charAt(0);
-            while (sep != Token.kParamsEnd) {
-                token = tokenizer.expect("annotation name", Token::isReferenceIdentifier);
-                String name = token.asString();
-                tokenizer.expectSymbol("", Token.kFieldValueSep);
-                Token val = tokenizer.expectLiteral("annotation value");
-
-                etb.putInAnnotations(name, val.decodeLiteral(true));
-
-                sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-            }
+            enum_type.setAnnotations(parseAnnotations(tokenizer, "enum type"));
         }
 
-        return etb.build();
+        return enum_type.build();
     }
 
-    private MessageType parseMessage(ThriftTokenizer tokenizer, String type, String comment, Set<String> includedPrograms)
+    private MessageType parseMessage(ThriftTokenizer tokenizer, String variant, String comment, Set<String> includedPrograms)
             throws IOException {
         MessageType._Builder struct = MessageType.builder();
         if (comment != null) {
             struct.setDocumentation(comment);
             comment = null;
         }
-        boolean union = type.equals("union");
-        if (!type.equals("struct")) {
-            struct.setVariant(MessageVariant.forName(type.toUpperCase()));
+        boolean union = variant.equals("union");
+        if (!variant.equals("struct")) {
+            struct.setVariant(MessageVariant.forName(variant.toUpperCase()));
         }
 
-        Token id = tokenizer.expectIdentifier("parsing " + type + " identifier");
-        if (!id.isIdentifier()) {
-            throw tokenizer.failure(id, "Invalid type identifier " + id.asString());
-        }
-        struct.setName(id.asString());
+        struct.setName(tokenizer.expectIdentifier("message name identifier").asString());
 
         int nextAutoFieldKey = -1;
 
@@ -729,7 +678,7 @@ public class ThriftProgramParser implements ProgramParser {
         Set<Integer> fieldIds = new HashSet<>();
 
         while (true) {
-            Token token = tokenizer.expect("field def");
+            Token token = tokenizer.expect("field def or message end");
             if (token.isSymbol(Token.kMessageEnd)) {
                 break;
             } else if (token.strEquals(kLineCommentStart)) {
@@ -748,11 +697,11 @@ public class ThriftProgramParser implements ProgramParser {
                 int fId = (int) token.parseInteger();
                 if (fId < 1) {
                     throw tokenizer.failure(token,
-                                            "Negative field id " + fId + " not allowed.");
+                                            "Negative or 0 field id " + fId + " not allowed.");
                 }
                 if (fieldIds.contains(fId)) {
                     throw tokenizer.failure(token,
-                                            "Field id " + fId + " already exists in struct " + struct.build().getName());
+                                            "Field id " + fId + " already exists in " + struct.build().getName());
                 }
                 fieldIds.add(fId);
                 field.setKey(fId);
@@ -788,11 +737,11 @@ public class ThriftProgramParser implements ProgramParser {
             // Get type.... This is mandatory.
             field.setType(parseType(tokenizer, token, includedPrograms));
 
-            Token name = tokenizer.expectIdentifier("parsing struct " + id.asString());
+            Token name = tokenizer.expectIdentifier("field name");
             String fName = name.asString();
             if (fieldNames.contains(fName)) {
                 throw tokenizer.failure(name,
-                                        "Field %s already exists in struct %s",
+                                        "Field %s already exists in %s",
                                         fName,
                                         struct.build().getName());
             }
@@ -807,7 +756,7 @@ public class ThriftProgramParser implements ProgramParser {
 
             field.setName(fName);
 
-            token = tokenizer.peek("");
+            token = tokenizer.peek("default sep, annotation, field def or message end");
 
             // Default value
             if (token.isSymbol(Token.kFieldValueSep)) {
@@ -816,24 +765,14 @@ public class ThriftProgramParser implements ProgramParser {
                 field.setDefaultValue(defaultValue.asString());
                 field.setStartLineNo(defaultValue.getLineNo());
                 field.setStartLinePos(defaultValue.getLinePos());
-                token = tokenizer.peek("");
+                token = tokenizer.peek("field annotation, def or message end");
             }
 
-            // annotation
+            // Annotation
             if (token.isSymbol(Token.kParamsStart)) {
                 tokenizer.next();
-                char sep = token.charAt(0);
-                while (sep != Token.kParamsEnd) {
-                    token = tokenizer.expect("annotation name", Token::isReferenceIdentifier);
-                    String aName = token.asString();
-                    tokenizer.expectSymbol("", Token.kFieldValueSep);
-                    Token val = tokenizer.expectLiteral("annotation value");
-
-                    field.putInAnnotations(aName, val.decodeLiteral(true));
-
-                    sep = tokenizer.expectSymbol("annotation sep", Token.kParamsEnd, Token.kLineSep1, Token.kLineSep2);
-                }
-                token = tokenizer.peek("");
+                field.setAnnotations(parseAnnotations(tokenizer, "field"));
+                token = tokenizer.peek("field def or message end");
             }
 
             struct.addToFields(field.build());
@@ -846,29 +785,7 @@ public class ThriftProgramParser implements ProgramParser {
         Token token = tokenizer.peek();
         if (token != null && token.isSymbol(Token.kParamsStart)) {
             tokenizer.next();
-            char sep = token.charAt(0);
-            while (sep != Token.kParamsEnd) {
-                token = tokenizer.expect("annotation name",
-                                         Token::isReferenceIdentifier);
-                String annotationKey = token.asString();
-                sep = tokenizer.expectSymbol("annotation value sep",
-                                             Token.kFieldValueSep,
-                                             Token.kParamsEnd,
-                                             Token.kLineSep1,
-                                             Token.kLineSep2);
-                if (sep != Token.kFieldValueSep) {
-                    struct.putInAnnotations(annotationKey, "");
-                    continue;
-                }
-
-                Token annotationValue = tokenizer.expectLiteral("annotation value");
-                struct.putInAnnotations(annotationKey, annotationValue.decodeLiteral(true));
-
-                sep = tokenizer.expectSymbol("annotation sep",
-                                             Token.kParamsEnd,
-                                             Token.kLineSep1,
-                                             Token.kLineSep2);
-            }
+            struct.setAnnotations(parseAnnotations(tokenizer, "message"));
         }
 
         return struct.build();
@@ -877,29 +794,29 @@ public class ThriftProgramParser implements ProgramParser {
     private String parseType(ThriftTokenizer tokenizer, Token token, Set<String> includedPrograms) throws IOException {
         if (!token.isQualifiedIdentifier() &&
             !token.isIdentifier()) {
-            throw tokenizer.failure(token, "Expected type identifier but found " + token);
+            throw tokenizer.failure(token, "Expected type identifier but found " + token.asString());
         }
 
         String type = token.asString();
         switch (type) {
             case "list":
             case "set": {
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
-                String item = parseType(tokenizer, tokenizer.expect("parsing " + type + " item type",
+                tokenizer.expectSymbol(type + " generic start", Token.kGenericStart);
+                String item = parseType(tokenizer, tokenizer.expect(type + " item type",
                                                                     t -> t.isIdentifier() || t.isQualifiedIdentifier()), includedPrograms);
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+                tokenizer.expectSymbol(type + " generic end", Token.kGenericEnd);
 
                 return String.format("%s<%s>", type, item);
             }
             case "map": {
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericStart);
-                String key = parseType(tokenizer, tokenizer.expect("parsing " + type + " key type",
+                tokenizer.expectSymbol(type + " generic start", Token.kGenericStart);
+                String key = parseType(tokenizer, tokenizer.expect(type + " key type",
                                                                    t -> t.isIdentifier() || t.isQualifiedIdentifier()
                                                                    ), includedPrograms);
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kLineSep1);
-                String item = parseType(tokenizer, tokenizer.expect("parsing " + type + " item type",
+                tokenizer.expectSymbol(type + " generic sep", Token.kLineSep1);
+                String item = parseType(tokenizer, tokenizer.expect(type + " item type",
                                                                     t -> t.isIdentifier() || t.isQualifiedIdentifier()), includedPrograms);
-                tokenizer.expectSymbol("parsing " + type + " item type", Token.kGenericEnd);
+                tokenizer.expectSymbol(type + " generic end", Token.kGenericEnd);
 
                 return String.format("%s<%s,%s>", type, key, item);
             }
@@ -908,7 +825,7 @@ public class ThriftProgramParser implements ProgramParser {
                     // Enforce scope by program name.
                     String program = type.replaceAll("[.].*", "");
                     if (!includedPrograms.contains(program)) {
-                        throw tokenizer.failure(token, "Unknown program %s for type %s", program, type);
+                        throw tokenizer.failure(token, "Unknown program '%s' for type %s", program, type);
                     }
                 }
                 return type;

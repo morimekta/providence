@@ -6,7 +6,7 @@ enum E {
 
 exception S {
     1: bool val (anno = "str")
-} (other = "")
+} (other)
 
 service Srv {
     void method(1: i32 param (abba = "7")) (anno = "anno")
