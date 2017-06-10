@@ -682,11 +682,18 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <includes>
+                        <include>net/morimekta/providence/*</include>
                         <include>net/morimekta/providence/**/*</include>
                     </includes>
                     <excludes>
-                        <exclude>**/test/**/*</exclude>
-                        <exclude>**/model/**/*</exclude>
+                        <exclude>**/test/java/**/*</exclude>
+                        <exclude>**/java-gen/**/*</exclude>
+                        <!-- actually only for providence-reflect -->
+                        <exclude>**/main/model/**/*</exclude>
+                        <!-- actually only for providence-core -->
+                        <exclude>**/PApplicationException*</exclude>
+                        <exclude>**/PApplicationExceptionType*</exclude>
+                        <exclude>**/PServiceCallType*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -828,6 +835,22 @@
                             <!-- select non-aggregate reports -->
                             <report>report</report>
                         </reports>
+                        <configuration>
+                            <includes>
+                                <include>net/morimekta/providence/*</include>
+                                <include>net/morimekta/providence/**/*</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/test/java/**/*</exclude>
+                                <exclude>**/java-gen/**/*</exclude>
+                                <!-- actually only for providence-reflect -->
+                                <exclude>**/main/model/**/*</exclude>
+                                <!-- actually only for providence-core -->
+                                <exclude>**/PApplicationException*</exclude>
+                                <exclude>**/PApplicationExceptionType*</exclude>
+                                <exclude>**/PServiceCallType*</exclude>
+                            </excludes>
+                        </configuration>
                     </reportSet>
                 </reportSets>
             </plugin>
