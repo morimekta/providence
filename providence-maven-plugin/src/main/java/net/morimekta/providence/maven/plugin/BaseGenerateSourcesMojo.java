@@ -28,10 +28,10 @@ import net.morimekta.providence.generator.util.FileManager;
 import net.morimekta.providence.maven.util.ProvidenceInput;
 import net.morimekta.providence.reflect.TypeLoader;
 import net.morimekta.providence.reflect.contained.CProgram;
-import net.morimekta.providence.reflect.parser.ParseException;
 import net.morimekta.providence.reflect.parser.ProgramParser;
 import net.morimekta.providence.reflect.parser.ThriftProgramParser;
 import net.morimekta.providence.reflect.util.ReflectionUtils;
+import net.morimekta.providence.serializer.SerializerException;
 import net.morimekta.util.Strings;
 import net.morimekta.util.io.IOUtils;
 
@@ -61,6 +61,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -248,9 +249,14 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
         for (File in : inputs) {
             try {
                 documents.add(loader.load(in));
-            } catch (ParseException e) {
-                getLog().warn(e.asString());
-                getLog().warn(".---------------------.");
+            } catch (SerializerException e) {
+                // ParseException is a SerializerException. And serialize exceptions can come from
+                // failing to make sense of constant definitions.
+                getLog().warn("    ============ >> PROVIDENCE << ============");
+                getLog().warn("");
+                Arrays.stream(e.asString().split("\r?\n")).forEach(l -> getLog().warn(l));
+                getLog().warn("");
+                getLog().warn("    ============ << PROVIDENCE >> ============");
                 throw new MojoFailureException("Failed to parse thrift file: " + in.getName(), e);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read thrift file: " + in.getName(), e);
@@ -270,15 +276,13 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             for (CProgram doc : documents) {
                 try {
                     generator.generate(doc);
+                } catch (GeneratorException e) {
+                    throw new MojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Failed to write document: " + doc.getProgramName(), e);
-                } catch (GeneratorException e) {
-                    getLog().warn(e.getMessage());
-                    throw new MojoFailureException("Failed to generate document: " + doc.getProgramName(), e);
                 }
             }
         } catch (GeneratorException e) {
-            getLog().warn(e.getMessage());
             throw new MojoFailureException("Failed to generate file: " + e.getMessage(), e);
         }
 
@@ -332,7 +336,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
 
         if (artifact.getFile().isDirectory()) {
             // Otherwise the dependency is a local module, and not packaged.
-            // In this case the we need to try to find thrift files in the
+            // In this case the we need to try to find thrift testFiles in the
             // file tree under that directly.
             DirectoryScanner includeScanner = new DirectoryScanner();
             includeScanner.setBasedir(artifact.getFile());
@@ -341,7 +345,7 @@ public abstract class BaseGenerateSourcesMojo extends AbstractMojo {
             includeScanner.setIncludes(new String[]{
                     "**/*.*",
             });
-            // Skip java class files. These cannot be used as includes anyway, and
+            // Skip java class testFiles. These cannot be used as includes anyway, and
             // is hte most common content of the default artifacts.
             includeScanner.setExcludes(new String[]{
                     "**/*.class",

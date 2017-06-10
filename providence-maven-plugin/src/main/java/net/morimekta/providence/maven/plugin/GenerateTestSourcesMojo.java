@@ -54,14 +54,14 @@ public class GenerateTestSourcesMojo extends BaseGenerateSourcesMojo {
      * 'src/test/providence/' and subdirectories.
      */
     @Parameter(alias = "inputFiles")
-    protected IncludeExcludeFileSelector files;
+    protected IncludeExcludeFileSelector testFiles;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skipTestCompile) {
             getLog().info("Skipping providence:testCompile");
             return;
         }
-        if (executeInternal(outputDir, files, "src/test/providence/**/*.thrift", true)) {
+        if (executeInternal(outputDir, testFiles, "src/test/providence/**/*.thrift", true)) {
             project.addTestCompileSourceRoot(outputDir.getPath());
         }
     }

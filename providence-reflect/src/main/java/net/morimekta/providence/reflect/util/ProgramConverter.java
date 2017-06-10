@@ -145,7 +145,7 @@ public class ProgramConverter {
                                                             messageType.getAnnotations());
                             break;
                         default:
-                            throw new IllegalArgumentException("Unhandled struct type " + messageType.getVariant());
+                            throw new UnsupportedOperationException("Unhandled message variant " + messageType.getVariant());
                     }
                     declaredTypes.add(type);
                     registry.putDeclaredType(type);

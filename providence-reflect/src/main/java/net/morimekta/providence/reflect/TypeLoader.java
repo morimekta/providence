@@ -103,20 +103,20 @@ public class TypeLoader {
      *
      * @param file The file to load.
      * @return The loaded contained document.
-     * @throws IOException If the file could not be read.
-     * @throws ParseException If the file could not be parsed.
+     * @throws IOException If the file could not be read or parsed.
      */
-    public CProgram load(File file) throws IOException, ParseException {
+    public CProgram load(File file) throws IOException {
         file = file.getCanonicalFile();
         if (!file.exists()) {
             throw new IllegalArgumentException("No such file " + file.getCanonicalPath());
         }
-        if (file.isDirectory()) {
+        if (!file.isFile()) {
             throw new IllegalArgumentException(
-                    "Unable to load thrift definition from directory: " + file.getCanonicalPath());
+                    "Unable to load thrift program: " + file.getCanonicalPath() + " is not a file.");
         }
+        file = file.getAbsoluteFile();
 
-        CProgram cdoc = registry.getDocument(file.getCanonicalPath());
+        CProgram cdoc = registry.getDocument(file.getPath());
         if (cdoc != null) {
             return cdoc;
         }
@@ -129,6 +129,10 @@ public class TypeLoader {
             for (String include : doc.getIncludes()) {
                 File location = new File(file.getParent(), include).getCanonicalFile();
                 if (!location.exists()) {
+                    if (include.startsWith(".") || include.startsWith(File.separator)) {
+                        throw new ParseException("No such file \"" + include + "\" to include from " + file.getName());
+                    }
+
                     for (File inc : includes) {
                         File i = new File(inc, include);
                         if (i.exists()) {
@@ -139,7 +143,7 @@ public class TypeLoader {
                 }
 
                 if (location.exists() && !queue.contains(location)) {
-                    queue.add(location);
+                    queue.add(location.getAbsoluteFile());
                 }
             }
         }
@@ -147,9 +151,9 @@ public class TypeLoader {
         // Load includes in reverse order, in case of serial dependencies.
         Collections.reverse(queue);
 
-        loadedDocuments.put(file.getCanonicalPath(), doc);
+        loadedDocuments.put(file.getPath(), doc);
         for (File include : queue) {
-            if (!loadedDocuments.containsKey(include.getCanonicalPath())) {
+            if (!loadedDocuments.containsKey(include.getPath())) {
                 load(include);
             }
         }
@@ -157,7 +161,7 @@ public class TypeLoader {
         // Now everything it depends on is loaded.
 
         cdoc = converter.convert(doc);
-        registry.putDocument(file.getCanonicalPath(), cdoc);
+        registry.putDocument(file.getPath(), cdoc);
         return cdoc;
     }
 

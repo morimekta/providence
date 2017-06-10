@@ -69,7 +69,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
     protected boolean skipAssembly = false;
 
     /**
-     * Files to assemble. By default will select all '.thrift' files in
+     * Files to assemble. By default will select all '.thrift' testFiles in
      * 'src/main/providence/' and subdirectories.
      */
     @Parameter(alias = "inputFiles")
@@ -101,7 +101,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
         if (!skipAssembly) {
             Set<File> inputFiles = ProvidenceInput.getInputFiles(project, files, "src/main/providence/**/*.thrift");
             if (inputFiles.isEmpty()) {
-                getLog().info("No providence files, skipping assembly");
+                getLog().info("No providence testFiles, skipping assembly");
                 return;
             }
 
@@ -150,7 +150,7 @@ public class ProvidenceAssemblyMojo extends AbstractMojo {
                 throw new MojoFailureException("Unable to write providence assembly: " + ie.getMessage(), ie);
             }
 
-            getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " files.");
+            getLog().info("Created assembly: " + target.getName() + " with " + numFiles + " testFiles.");
             projectHelper.attachArtifact(project, TYPE, classifier, target);
         }
     }
